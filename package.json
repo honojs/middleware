@@ -1,0 +1,34 @@
+{
+  "name": "@honojs/graphql-server",
+  "version": "0.0.1",
+  "repository": "git@github.com:honojs/grahql-server.git",
+  "author": "Minghe Huang <h.minghe@gmail.com>",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "test:deno": "deno test deno_test",
+    "test:bun": "bun wiptest bun_test/index.test.ts",
+    "test:all": "yarn test && yarn test:deno && yarn test:bun",
+    "denoify": "rimraf deno_dist && denoify",
+    "build": "rimraf dist && tsc",
+    "release": "npm publish"
+  },
+  "dependencies": {
+    "graphql": "^16.5.0",
+    "hono": "^2.0.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.14.0",
+    "@types/jest": "^28.1.4",
+    "denoify": "^0.11.1",
+    "jest": "^28.1.2",
+    "jest-environment-miniflare": "^2.6.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.7.4"
+  }
+}
