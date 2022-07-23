@@ -1,0 +1,7 @@
+dist
+
+node_modules
+.yarn/*
+
+# for debug or playing
+sandbox
