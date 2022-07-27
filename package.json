@@ -5,15 +5,17 @@
   "author": "Minghe Huang <h.minghe@gmail.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "scripts": {
     "test": "jest",
     "test:deno": "deno test deno_test",
     "test:bun": "bun wiptest bun_test/index.test.ts",
     "test:all": "yarn test && yarn test:deno && yarn test:bun",
-    "denoify": "rimraf deno_dist && denoify",
-    "build": "rimraf dist && tsc",
+    "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
+    "build": "rimraf dist && tsc --project tsconfig.build.json",
     "release": "npm publish"
   },
   "dependencies": {
