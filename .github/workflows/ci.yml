@@ -15,4 +15,4 @@ jobs:
           node-version: 18.x
       - run: yarn install --frozen-lockfile
       - run: yarn build
-      - run: yarn test
+      - run: yarn test-with-emulator

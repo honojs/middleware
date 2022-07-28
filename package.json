@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
+    "test-with-emulator": "firebase emulators:exec --project example-project12345 'jest'",
     "test": "jest",
     "build": "tsc",
     "prerelease": "yarn build",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
     "@types/jest": "^28.1.4",
+    "firebase-tools": "^11.4.0",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "prettier": "^2.7.1",
