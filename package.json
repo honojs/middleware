@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
+    "test-with-emulator": "firebase emulators:exec --project example-project12345 'jest'",
     "test": "jest",
     "build": "tsc",
     "prerelease": "yarn build",
