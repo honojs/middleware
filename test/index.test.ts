@@ -1,26 +1,283 @@
-import { Hono } from 'hono'
-import { hello } from '../src'
+import { getFirebaseToken } from "./../src/index";
+import { Auth, KeyStorer } from "firebase-auth-cloudflare-workers";
+import { Hono } from "hono";
+import { VerifyFirebaseAuthEnv, verifyFirebaseAuth } from "../src";
 
-describe('Hello middleware', () => {
-  const app = new Hono()
+describe("verifyFirebaseAuth middleware", () => {
+  const emulatorHost = "127.0.0.1:9099";
+  const validProjectId = "example-project12345"; // see package.json
 
-  app.use('/hello/*', hello())
-  app.get('/hello/foo', (c) => c.text('foo'))
+  // @ts-ignore
+  const { PUBLIC_JWK_CACHE_KV } = getMiniflareBindings();
 
-  app.use('/x/*', hello('X'))
-  app.get('/x/foo', (c) => c.text('foo'))
+  let user: signUpResponse;
 
-  it('Should be hello message', async () => {
-    const res = await app.request('http://localhost/hello/foo')
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(200)
-    expect(res.headers.get('X-Message')).toBe('Hello')
-  })
+  beforeAll(async () => {
+    await deleteAccountEmulator(emulatorHost, validProjectId);
 
-  it('Should be X', async () => {
-    const res = await app.request('http://localhost/x/foo')
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(200)
-    expect(res.headers.get('X-Message')).toBe('X')
-  })
-})
+    user = await signUpEmulator(emulatorHost, {
+      email: "codehex@hono.js",
+      password: "honojs",
+    });
+
+    await sleep(1000); // wait for iat
+  });
+
+  test.each([
+    [
+      "valid case, should be 200",
+      {
+        headerKey: "Authorization",
+        env: {
+          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+          PUBLIC_JWK_CACHE_KV,
+        },
+        config: {
+          projectId: validProjectId,
+        },
+        wantStatus: 200,
+      },
+    ],
+    [
+      "valid specified headerKey, should be 200",
+      {
+        headerKey: "X-Authorization",
+        env: {
+          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+          PUBLIC_JWK_CACHE_KV,
+        },
+        config: {
+          projectId: validProjectId,
+          authorizationHeaderKey: "X-Authorization",
+        },
+        wantStatus: 200,
+      },
+    ],
+    [
+      "invalid authorization header, should be 400",
+      {
+        headerKey: "X-Authorization",
+        env: {
+          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+          PUBLIC_JWK_CACHE_KV,
+        },
+        config: {
+          projectId: validProjectId, // see package.json
+          // No specified header key.
+        },
+        wantStatus: 400,
+      },
+    ],
+    [
+      "invalid project ID, should be 401",
+      {
+        headerKey: "Authorization",
+        env: {
+          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+          PUBLIC_JWK_CACHE_KV,
+        },
+        config: {
+          projectId: "invalid-projectId",
+        },
+        wantStatus: 401,
+      },
+    ],
+  ])("%s", async (_, { headerKey, env, config, wantStatus }) => {
+    const app = new Hono<VerifyFirebaseAuthEnv>();
+
+    resetAuth();
+
+    app.use(
+      "*",
+      verifyFirebaseAuth({
+        ...config,
+        disableErrorLog: true,
+      })
+    );
+    app.get("/hello", (c) => c.text("OK"));
+
+    const req = new Request("http://localhost/hello", {
+      headers: {
+        [headerKey]: `Bearer ${user.idToken}`,
+      },
+    });
+
+    const res = await app.fetch(req, env);
+
+    expect(res).not.toBeNull();
+    expect(res.status).toBe(wantStatus);
+  });
+
+  test("specified keyStore is used", async () => {
+    const testingJWT = generateDummyJWT();
+
+    const nopKeyStore = new NopKeyStore();
+    const getSpy = jest.spyOn(nopKeyStore, "get");
+    const putSpy = jest.spyOn(nopKeyStore, "put");
+
+    const app = new Hono<VerifyFirebaseAuthEnv>();
+
+    resetAuth();
+
+    app.use(
+      "*",
+      verifyFirebaseAuth({
+        projectId: validProjectId,
+        keyStore: nopKeyStore,
+        disableErrorLog: true,
+      })
+    );
+    app.get("/hello", (c) => c.text("OK"));
+
+    const req = new Request("http://localhost/hello", {
+      headers: {
+        Authorization: `Bearer ${testingJWT}`,
+      },
+    });
+
+    // not use firebase emulator to check using key store
+    const res = await app.fetch(req, {
+      FIREBASE_AUTH_EMULATOR_HOST: undefined,
+    });
+
+    expect(res).not.toBeNull();
+    expect(res.status).toBe(401);
+    expect(getSpy).toHaveBeenCalled();
+    expect(putSpy).toHaveBeenCalled();
+  });
+
+  test("usable id-token in main handler", async () => {
+    const testingJWT = generateDummyJWT();
+
+    const nopKeyStore = new NopKeyStore();
+    const app = new Hono<VerifyFirebaseAuthEnv>();
+
+    resetAuth();
+
+    app.use(
+      "*",
+      verifyFirebaseAuth({
+        projectId: validProjectId,
+        keyStore: nopKeyStore,
+        disableErrorLog: true,
+      })
+    );
+    app.get("/hello", (c) => c.json(getFirebaseToken(c)));
+
+    const req = new Request("http://localhost/hello", {
+      headers: {
+        Authorization: `Bearer ${testingJWT}`,
+      },
+    });
+
+    const res = await app.fetch(req, {
+      FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+    });
+
+    expect(res).not.toBeNull();
+    expect(res.status).toBe(200);
+
+    const json = await res.json<{ aud: string; email: string }>();
+    expect(json.aud).toBe(validProjectId);
+    expect(json.email).toBe("codehex@example.com");
+  });
+});
+
+class NopKeyStore implements KeyStorer {
+  constructor() {}
+  get(): Promise<null> {
+    return new Promise((resolve) => resolve(null));
+  }
+  put(): Promise<void> {
+    return new Promise((resolve) => resolve());
+  }
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// magic to reset state of static object for "firebase-auth-cloudflare-workers"
+const resetAuth = () => delete Auth["instance"];
+
+const generateDummyJWT = () => {
+  const header = JSON.stringify({
+    alg: "RS256",
+    kid: "kid",
+    typ: "JWT",
+  });
+  const now = Math.floor(Date.now() / 1000);
+  const payload = JSON.stringify({
+    iss: `https://securetoken.google.com/example-project12345`,
+    aud: "example-project12345",
+    auth_time: now - 1000,
+    user_id: "t1aLdTkAs0S0J0P6TNbjwbmry5B3",
+    sub: "t1aLdTkAs0S0J0P6TNbjwbmry5B3",
+    iat: now - 1000,
+    exp: now + 3000, // + 3s
+    email: "codehex@example.com",
+    email_verified: false,
+    firebase: {
+      identities: {
+        email: ["codehex@example.com"],
+      },
+      sign_in_provider: "password",
+    },
+  });
+  return `${btoa(header)}.${btoa(payload)}.`;
+};
+
+interface EmailPassword {
+  email: string;
+  password: string;
+}
+
+export interface signUpResponse {
+  kind: string;
+  localId: string;
+  email: string;
+  idToken: string;
+  refreshToken: string;
+  expiresIn: string;
+}
+
+const signUpEmulator = async (
+  emulatorHost: string,
+  body: EmailPassword
+): Promise<signUpResponse> => {
+  // http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=dummy
+  const url = `http://${emulatorHost}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=dummy`;
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...body,
+      returnSecureToken: true,
+    }),
+  });
+  if (resp.status !== 200) {
+    console.log({ status: resp.status });
+    throw new Error("error");
+  }
+  return await resp.json();
+};
+
+const deleteAccountEmulator = async (
+  emulatorHost: string,
+  projectId: string
+): Promise<void> => {
+  // https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
+  const url = `http://${emulatorHost}/emulator/v1/projects/${projectId}/accounts`;
+  const resp = await fetch(url, {
+    method: "DELETE",
+  });
+  if (resp.status !== 200) {
+    console.log({ status: resp.status });
+    throw new Error("error when clear accounts");
+  }
+  return;
+};

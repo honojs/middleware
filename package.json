@@ -1,19 +1,17 @@
 {
-  "name": "@honojs/hello",
-  "version": "0.0.6",
-  "description": "An example of third-party middleware for Hono",
+  "name": "@honojs/firebase-auth",
+  "version": "0.1.0",
+  "description": "A third-party firebase auth middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
+    "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test": "jest",
-    "test:deno": "deno test deno_test",
-    "test:all": "yarn test && yarn test:deno",
-    "denoify": "rimraf deno_dist && denoify",
-    "build": "rimraf dist && tsc",
-    "prerelease": "yarn denoify && yarn build && yarn test:all",
+    "build": "tsc",
+    "prerelease": "yarn build",
     "release": "yarn publish"
   },
   "license": "MIT",
@@ -22,22 +20,21 @@
     "url": "https://github.com/honojs/middleware-template.git"
   },
   "homepage": "https://github.com/honojs/middleware-template",
-  "author": "Yusuke Wada <yusuke@kamawada.com> (https://github.com/yusukebe)",
+  "author": "codehex",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
   "dependencies": {
+    "firebase-auth-cloudflare-workers": "^1.0.0",
     "hono": "^2.0.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.14.0",
+    "@cloudflare/workers-types": "^3.14.1",
     "@types/jest": "^28.1.4",
-    "denoify": "^0.11.1",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "prettier": "^2.7.1",
-    "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
   }
