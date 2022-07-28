@@ -15,4 +15,5 @@ jobs:
           node-version: 18.x
       - run: yarn install --frozen-lockfile
       - run: yarn build
+      - run: yarn start-firebase-emulator
       - run: yarn test
