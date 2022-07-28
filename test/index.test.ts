@@ -1,7 +1,10 @@
-import { getFirebaseToken } from "./../src/index";
 import { Auth, KeyStorer } from "firebase-auth-cloudflare-workers";
 import { Hono } from "hono";
-import { VerifyFirebaseAuthEnv, verifyFirebaseAuth } from "../src";
+import {
+  VerifyFirebaseAuthEnv,
+  verifyFirebaseAuth,
+  getFirebaseToken,
+} from "../src";
 
 describe("verifyFirebaseAuth middleware", () => {
   const emulatorHost = "127.0.0.1:9099";

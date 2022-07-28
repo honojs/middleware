@@ -1,40 +1,62 @@
-# Hello middleware for Hono
+# Hono Firebase Auth middleware for Cloudflare Workers.
 
-An example project of the third-party middleware for [Hono](https://github.com/honojs/hono).
-This middleware add `X-Message` header to the Response.
+This is a Firebase Auth middleware library for [Hono](https://github.com/honojs/hono) which is used [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers).
 
-## Usage
+Currently only Cloudflare Workers are supported officially. However, it may work in other environments as well, so please let us know in an issue if it works.
+
+## Synopsis
 
 ```ts
-import { hello } from '@honojs/hello'
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { VerifyFirebaseAuthConfig, VerifyFirebaseAuthEnv, verifyFirebaseAuth, getFirebaseToken } from "@honojs/firebase-auth";
 
-const app = new Hono()
+const config: VerifyFirebaseAuthConfig = {
+  // specify your firebase project ID.
+  projectId: "your-project-id",
+}
 
-app.use('*', hello('Hello!! Hono!!'))
-app.get('/', (c) => c.text('foo'))
+// Or you can specify here the extended VerifyFirebaseAuthEnv type.
+const app = new Hono<VerifyFirebaseAuthEnv>()
+
+// set middleware
+app.use("*", verifyFirebaseAuth(config));
+app.get("/hello", (c) => {
+  const idToken = getFirebaseToken(c) // get id-token object.
+  return c.json(idToken)
+});
 
 export default app
 ```
 
-## Deno
+## Config (`VerifyFirebaseAuthConfig`)
 
-```ts
-import { serve } from 'https://deno.land/std/http/server.ts'
-import { hello } from 'https://deno.land/x/hono_hello/mod.ts'
-import { Hono } from 'https://deno.land/x/hono/mod.ts'
+### `projectId: string` (**required**)
 
-const app = new Hono()
+This field indicates your firebase project ID.
 
-app.use('*', hello('Hello!! Hono!!'))
-app.get('/', (c) => c.text('foo'))
+### `authorizationHeaderKey?: string` (optional)
 
-serve(app.fetch)
-```
+Based on this configuration, the JWT created by firebase auth is looked for in the HTTP headers. The default is "Authorization".
+
+### `keyStore?: KeyStorer` (optional)
+
+This is used to cache the public key used to validate the Firebase ID token (JWT). This KeyStorer type has been defined in [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#keystorer) library. 
+
+If you don't specify the field, this library uses [WorkersKVStoreSingle](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#workerskvstoresinglegetorinitializecachekey-string-cfkvnamespace-kvnamespace-workerskvstoresingle) instead. You must fill in the fields defined in `VerifyFirebaseAuthEnv`.
+
+### `keyStoreInitializer?: (c: Context) => KeyStorer` (optional)
+
+Use this when initializing KeyStorer and environment variables, etc. are required.
+
+If you don't specify the field, this library uses [WorkersKVStoreSingle](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#workerskvstoresinglegetorinitializecachekey-string-cfkvnamespace-kvnamespace-workerskvstoresingle) instead. You must fill in the fields defined in `VerifyFirebaseAuthEnv`.
+
+### `disableErrorLog?: boolean` (optional)
+
+Throws an exception if JWT validation fails. By default, this is output to the error log, but if you don't expect it, use this.
 
 ## Author
 
-Yusuke Wada <https://github.com/yusukebe>
+codehex <https://github.com/Code-Hex>
 
 ## License
 
