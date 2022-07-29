@@ -18,9 +18,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware-template.git"
+    "url": "https://github.com/honojs/firebase-auth.git"
   },
-  "homepage": "https://github.com/honojs/middleware-template",
+  "homepage": "https://github.com/honojs/firebase-auth",
   "author": "codehex",
   "private": false,
   "publishConfig": {
