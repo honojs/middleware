@@ -1,4 +1,8 @@
-import { Auth, KeyStorer } from "firebase-auth-cloudflare-workers";
+import {
+  Auth,
+  KeyStorer,
+  WorkersKVStoreSingle,
+} from "firebase-auth-cloudflare-workers";
 import { Hono } from "hono";
 import {
   VerifyFirebaseAuthEnv,
@@ -26,167 +30,209 @@ describe("verifyFirebaseAuth middleware", () => {
     await sleep(1000); // wait for iat
   });
 
-  test.each([
-    [
-      "valid case, should be 200",
-      {
-        headerKey: "Authorization",
-        env: {
-          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
-          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
-          PUBLIC_JWK_CACHE_KV,
-        },
-        config: {
+  describe("service worker syntax", () => {
+    test("valid case, should be 200", async () => {
+      const app = new Hono<VerifyFirebaseAuthEnv>();
+
+      resetAuth();
+
+      // This is assumed to be obtained from an environment variable.
+      const PUBLIC_JWK_CACHE_KEY = "testing-cache-key";
+
+      app.use(
+        "*",
+        verifyFirebaseAuth({
           projectId: validProjectId,
-        },
-        wantStatus: 200,
-      },
-    ],
-    [
-      "valid specified headerKey, should be 200",
-      {
-        headerKey: "X-Authorization",
-        env: {
-          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
-          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
-          PUBLIC_JWK_CACHE_KV,
-        },
-        config: {
-          projectId: validProjectId,
-          authorizationHeaderKey: "X-Authorization",
-        },
-        wantStatus: 200,
-      },
-    ],
-    [
-      "invalid authorization header, should be 400",
-      {
-        headerKey: "X-Authorization",
-        env: {
-          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
-          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
-          PUBLIC_JWK_CACHE_KV,
-        },
-        config: {
-          projectId: validProjectId, // see package.json
-          // No specified header key.
-        },
-        wantStatus: 400,
-      },
-    ],
-    [
-      "invalid project ID, should be 401",
-      {
-        headerKey: "Authorization",
-        env: {
-          FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
-          PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
-          PUBLIC_JWK_CACHE_KV,
-        },
-        config: {
-          projectId: "invalid-projectId",
-        },
-        wantStatus: 401,
-      },
-    ],
-  ])("%s", async (_, { headerKey, env, config, wantStatus }) => {
-    const app = new Hono<VerifyFirebaseAuthEnv>();
+          keyStore: WorkersKVStoreSingle.getOrInitialize(
+            PUBLIC_JWK_CACHE_KEY,
+            PUBLIC_JWK_CACHE_KV
+          ),
+          disableErrorLog: true,
+          firebaseEmulatorHost: emulatorHost,
+        })
+      );
+      app.get("/hello", (c) => c.json(getFirebaseToken(c)));
 
-    resetAuth();
+      const req = new Request("http://localhost/hello", {
+        headers: {
+          Authorization: `Bearer ${user.idToken}`,
+        },
+      });
 
-    app.use(
-      "*",
-      verifyFirebaseAuth({
-        ...config,
-        disableErrorLog: true,
-      })
-    );
-    app.get("/hello", (c) => c.text("OK"));
+      const res = await app.request(req);
 
-    const req = new Request("http://localhost/hello", {
-      headers: {
-        [headerKey]: `Bearer ${user.idToken}`,
-      },
+      expect(res).not.toBeNull();
+      expect(res.status).toBe(200);
+
+      const json = await res.json<{ aud: string; email: string }>();
+      expect(json.aud).toBe(validProjectId);
+      expect(json.email).toBe("codehex@hono.js");
     });
-
-    const res = await app.fetch(req, env);
-
-    expect(res).not.toBeNull();
-    expect(res.status).toBe(wantStatus);
   });
 
-  test("specified keyStore is used", async () => {
-    const testingJWT = generateDummyJWT();
+  describe("module worker syntax", () => {
+    test.each([
+      [
+        "valid case, should be 200",
+        {
+          headerKey: "Authorization",
+          env: {
+            FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+            PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+            PUBLIC_JWK_CACHE_KV,
+          },
+          config: {
+            projectId: validProjectId,
+          },
+          wantStatus: 200,
+        },
+      ],
+      [
+        "valid specified headerKey, should be 200",
+        {
+          headerKey: "X-Authorization",
+          env: {
+            FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+            PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+            PUBLIC_JWK_CACHE_KV,
+          },
+          config: {
+            projectId: validProjectId,
+            authorizationHeaderKey: "X-Authorization",
+          },
+          wantStatus: 200,
+        },
+      ],
+      [
+        "invalid authorization header, should be 400",
+        {
+          headerKey: "X-Authorization",
+          env: {
+            FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+            PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+            PUBLIC_JWK_CACHE_KV,
+          },
+          config: {
+            projectId: validProjectId, // see package.json
+            // No specified header key.
+          },
+          wantStatus: 400,
+        },
+      ],
+      [
+        "invalid project ID, should be 401",
+        {
+          headerKey: "Authorization",
+          env: {
+            FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099",
+            PUBLIC_JWK_CACHE_KEY: "testing-cache-key",
+            PUBLIC_JWK_CACHE_KV,
+          },
+          config: {
+            projectId: "invalid-projectId",
+          },
+          wantStatus: 401,
+        },
+      ],
+    ])("%s", async (_, { headerKey, env, config, wantStatus }) => {
+      const app = new Hono<VerifyFirebaseAuthEnv>();
 
-    const nopKeyStore = new NopKeyStore();
-    const getSpy = jest.spyOn(nopKeyStore, "get");
-    const putSpy = jest.spyOn(nopKeyStore, "put");
+      resetAuth();
 
-    const app = new Hono<VerifyFirebaseAuthEnv>();
+      app.use(
+        "*",
+        verifyFirebaseAuth({
+          ...config,
+          disableErrorLog: true,
+        })
+      );
+      app.get("/hello", (c) => c.text("OK"));
 
-    resetAuth();
+      const req = new Request("http://localhost/hello", {
+        headers: {
+          [headerKey]: `Bearer ${user.idToken}`,
+        },
+      });
 
-    app.use(
-      "*",
-      verifyFirebaseAuth({
-        projectId: validProjectId,
-        keyStore: nopKeyStore,
-        disableErrorLog: true,
-      })
-    );
-    app.get("/hello", (c) => c.text("OK"));
+      const res = await app.fetch(req, env);
 
-    const req = new Request("http://localhost/hello", {
-      headers: {
-        Authorization: `Bearer ${testingJWT}`,
-      },
+      expect(res).not.toBeNull();
+      expect(res.status).toBe(wantStatus);
     });
 
-    // not use firebase emulator to check using key store
-    const res = await app.fetch(req, {
-      FIREBASE_AUTH_EMULATOR_HOST: undefined,
+    test("specified keyStore is used", async () => {
+      const testingJWT = generateDummyJWT();
+
+      const nopKeyStore = new NopKeyStore();
+      const getSpy = jest.spyOn(nopKeyStore, "get");
+      const putSpy = jest.spyOn(nopKeyStore, "put");
+
+      const app = new Hono<VerifyFirebaseAuthEnv>();
+
+      resetAuth();
+
+      app.use(
+        "*",
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          keyStore: nopKeyStore,
+          disableErrorLog: true,
+        })
+      );
+      app.get("/hello", (c) => c.text("OK"));
+
+      const req = new Request("http://localhost/hello", {
+        headers: {
+          Authorization: `Bearer ${testingJWT}`,
+        },
+      });
+
+      // not use firebase emulator to check using key store
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: undefined,
+      });
+
+      expect(res).not.toBeNull();
+      expect(res.status).toBe(401);
+      expect(getSpy).toHaveBeenCalled();
+      expect(putSpy).toHaveBeenCalled();
     });
 
-    expect(res).not.toBeNull();
-    expect(res.status).toBe(401);
-    expect(getSpy).toHaveBeenCalled();
-    expect(putSpy).toHaveBeenCalled();
-  });
+    test("usable id-token in main handler", async () => {
+      const testingJWT = generateDummyJWT();
 
-  test("usable id-token in main handler", async () => {
-    const testingJWT = generateDummyJWT();
+      const nopKeyStore = new NopKeyStore();
+      const app = new Hono<VerifyFirebaseAuthEnv>();
 
-    const nopKeyStore = new NopKeyStore();
-    const app = new Hono<VerifyFirebaseAuthEnv>();
+      resetAuth();
 
-    resetAuth();
+      app.use(
+        "*",
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          keyStore: nopKeyStore,
+          disableErrorLog: true,
+        })
+      );
+      app.get("/hello", (c) => c.json(getFirebaseToken(c)));
 
-    app.use(
-      "*",
-      verifyFirebaseAuth({
-        projectId: validProjectId,
-        keyStore: nopKeyStore,
-        disableErrorLog: true,
-      })
-    );
-    app.get("/hello", (c) => c.json(getFirebaseToken(c)));
+      const req = new Request("http://localhost/hello", {
+        headers: {
+          Authorization: `Bearer ${testingJWT}`,
+        },
+      });
 
-    const req = new Request("http://localhost/hello", {
-      headers: {
-        Authorization: `Bearer ${testingJWT}`,
-      },
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+      });
+
+      expect(res).not.toBeNull();
+      expect(res.status).toBe(200);
+
+      const json = await res.json<{ aud: string; email: string }>();
+      expect(json.aud).toBe(validProjectId);
+      expect(json.email).toBe("codehex@hono.js");
     });
-
-    const res = await app.fetch(req, {
-      FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
-    });
-
-    expect(res).not.toBeNull();
-    expect(res.status).toBe(200);
-
-    const json = await res.json<{ aud: string; email: string }>();
-    expect(json.aud).toBe(validProjectId);
-    expect(json.email).toBe("codehex@example.com");
   });
 });
 
@@ -220,11 +266,11 @@ const generateDummyJWT = () => {
     sub: "t1aLdTkAs0S0J0P6TNbjwbmry5B3",
     iat: now - 1000,
     exp: now + 3000, // + 3s
-    email: "codehex@example.com",
+    email: "codehex@hono.js",
     email_verified: false,
     firebase: {
       identities: {
-        email: ["codehex@example.com"],
+        email: ["codehex@hono.js"],
       },
       sign_in_provider: "password",
     },
