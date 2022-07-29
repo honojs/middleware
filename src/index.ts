@@ -31,7 +31,7 @@ const defaultKeyStoreInitializer = (c: Context): KeyStorer => {
 
 export const verifyFirebaseAuth = (
   userConfig: VerifyFirebaseAuthConfig
-): Handler<string, VerifyFirebaseAuthEnv> => {
+): Handler => {
   const config = {
     projectId: userConfig.projectId,
     AuthorizationHeaderKey:

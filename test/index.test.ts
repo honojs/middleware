@@ -32,7 +32,7 @@ describe("verifyFirebaseAuth middleware", () => {
 
   describe("service worker syntax", () => {
     test("valid case, should be 200", async () => {
-      const app = new Hono<VerifyFirebaseAuthEnv>();
+      const app = new Hono();
 
       resetAuth();
 
