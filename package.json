@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "firebase-auth-cloudflare-workers": "^1.0.0",
-    "hono": "^2.0.2"
+    "hono": "^2.0.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",

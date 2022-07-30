@@ -100,3 +100,13 @@ codehex <https://github.com/Code-Hex>
 ## License
 
 MIT
+
+## Contribution
+
+If you are interested, send me PR would be greatly appreciated!
+
+To test this code in your local environment, execute the following command.
+
+```
+$ yarn test-with-emulator
+```
