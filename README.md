@@ -6,6 +6,8 @@ Currently only Cloudflare Workers are supported officially. However, it may work
 
 ## Synopsis
 
+### Module Worker Syntax (recommend)
+
 ```ts
 import { Hono } from "hono";
 import { VerifyFirebaseAuthConfig, VerifyFirebaseAuthEnv, verifyFirebaseAuth, getFirebaseToken } from "@honojs/firebase-auth";
@@ -27,6 +29,37 @@ app.get("/hello", (c) => {
 
 export default app
 ```
+
+### Service Worker Syntax
+
+```ts
+import { Hono } from "hono";
+import { VerifyFirebaseAuthConfig, verifyFirebaseAuth, getFirebaseToken } from "@honojs/firebase-auth";
+
+const config: VerifyFirebaseAuthConfig = {
+  // specify your firebase project ID.
+  projectId: "your-project-id",
+  // this is optional. but required in this mode.
+  keyStore: WorkersKVStoreSingle.getOrInitialize(
+    PUBLIC_JWK_CACHE_KEY,
+    PUBLIC_JWK_CACHE_KV
+  ),
+  // this is also optional. But in this mode, you can only specify here.
+  firebaseEmulatorHost: FIREBASE_AUTH_EMULATOR_HOST,
+}
+
+const app = new Hono()
+
+// set middleware
+app.use("*", verifyFirebaseAuth(config));
+app.get("/hello", (c) => {
+  const idToken = getFirebaseToken(c) // get id-token object.
+  return c.json(idToken)
+});
+
+app.fire()
+```
+
 
 ## Config (`VerifyFirebaseAuthConfig`)
 
@@ -53,6 +86,12 @@ If you don't specify the field, this library uses [WorkersKVStoreSingle](https:/
 ### `disableErrorLog?: boolean` (optional)
 
 Throws an exception if JWT validation fails. By default, this is output to the error log, but if you don't expect it, use this.
+
+### `firebaseEmulatorHost?: string` (optional)
+
+You can specify a host for the Firebase Auth emulator. This config is mainly used when **Service Worker Syntax** is used.
+
+If not specified, check the [`FIREBASE_AUTH_EMULATOR_HOST` environment variable obtained from the request](https://github.com/Code-Hex/firebase-auth-cloudflare-workers#emulatorenv).
 
 ## Author
 

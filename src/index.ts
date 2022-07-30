@@ -18,6 +18,7 @@ export interface VerifyFirebaseAuthConfig {
   keyStore?: KeyStorer;
   keyStoreInitializer?: (c: Context) => KeyStorer;
   disableErrorLog?: boolean;
+  firebaseEmulatorHost?: string;
 }
 
 const defaultKVStoreJWKCacheKey = "verify-firebase-auth-cached-public-key";
@@ -30,7 +31,7 @@ const defaultKeyStoreInitializer = (c: Context): KeyStorer => {
 
 export const verifyFirebaseAuth = (
   userConfig: VerifyFirebaseAuthConfig
-): Handler<string, VerifyFirebaseAuthEnv> => {
+): Handler => {
   const config = {
     projectId: userConfig.projectId,
     AuthorizationHeaderKey:
@@ -39,6 +40,7 @@ export const verifyFirebaseAuth = (
     keyStoreInitializer:
       userConfig.keyStoreInitializer ?? defaultKeyStoreInitializer,
     disableErrorLog: userConfig.disableErrorLog,
+    firebaseEmulatorHost: userConfig.firebaseEmulatorHost,
   };
 
   return async (c, next) => {
@@ -55,7 +57,10 @@ export const verifyFirebaseAuth = (
     );
 
     try {
-      const idToken = await auth.verifyIdToken(jwt, c.env);
+      const idToken = await auth.verifyIdToken(jwt, {
+        FIREBASE_AUTH_EMULATOR_HOST:
+          config.firebaseEmulatorHost ?? c.env.FIREBASE_AUTH_EMULATOR_HOST,
+      });
       setFirebaseToken(c, idToken);
     } catch (err) {
       if (!userConfig.disableErrorLog) {
