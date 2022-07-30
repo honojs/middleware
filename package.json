@@ -1,6 +1,6 @@
 {
   "name": "@honojs/firebase-auth",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A third-party firebase auth middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
