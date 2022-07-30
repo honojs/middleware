@@ -3245,10 +3245,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hono@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-2.0.2.tgz#5bf8b5be27523245364f8438c9a7151ac4b4d945"
-  integrity sha512-ge85omRQyDfOHe3EAJEG+leRsoFcwUkWeMD5UX5TMmPxd4mRbiu+yBLCUS/Dn9mUF550i0io1OUI9/6Mz2Xqkg==
+hono@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-2.0.5.tgz#a40355f5fddb287f631c3953828b834c2775cb45"
+  integrity sha512-Vuwj2Qbk94y6NSTzaMo2eYHLyX0OpKmTONKOhUYUK6Lx6L/IRsDJ37aBY+7wi3oli7Sez792cAuZ5vdSt/Qt+g==
 
 html-escaper@^2.0.0:
   version "2.0.2"
