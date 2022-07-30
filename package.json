@@ -21,6 +21,8 @@
     "test:all": "yarn test && yarn test:deno && yarn test:bun",
     "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
     "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "lint": "eslint --ext js,ts src .eslintrc.js",
+    "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
     "release": "npm publish"
   },
   "dependencies": {
@@ -33,9 +35,22 @@
     "denoify": "^0.11.1",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
     "prettier": "^2.7.1",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-define-config": "^1.4.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
+  },
+  "engines": {
+    "node": ">=11.0.0"
   }
 }
