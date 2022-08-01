@@ -1,6 +1,3 @@
-// Based on the code in the `express-graphql` package.
-// https://github.com/graphql/express-graphql/blob/main/src/index.ts
-
 import {
   Source,
   parse,
@@ -21,12 +18,13 @@ import type {
 } from 'graphql'
 
 import type { Context } from 'hono'
-import type { Next } from 'hono'
 import { parseBody } from './parse-body'
+
+export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
 
 type Options = {
   schema: GraphQLSchema
-  rootValue?: unknown
+  rootResolver?: RootResolver,
   pretty?: boolean
   validationRules?: ReadonlyArray<ValidationRule>
   // graphiql?: boolean
@@ -34,12 +32,11 @@ type Options = {
 
 export const graphqlServer = (options: Options) => {
   const schema = options.schema
-  const rootValue = options.rootValue
   const pretty = options.pretty ?? false
   const validationRules = options.validationRules ?? []
   // const showGraphiQL = options.graphiql ?? false
 
-  return async (c: Context, next: Next) => {
+  return async (c: Context) => {
     // GraphQL HTTP only supports GET and POST methods.
     if (c.req.method !== 'GET' && c.req.method !== 'POST') {
       return c.json(errorMessages(['GraphQL only supports GET and POST requests.']), 405, {
@@ -119,12 +116,13 @@ export const graphqlServer = (options: Options) => {
     }
 
     let result: FormattedExecutionResult
+    const { rootResolver } = options
 
     try {
       result = await execute({
         schema,
         document: documentAST,
-        rootValue,
+        rootValue: rootResolver ? await rootResolver(c) : null,
         variableValues: variables,
         operationName: operationName,
       })
@@ -161,8 +159,6 @@ export const graphqlServer = (options: Options) => {
     } else {
       return c.json(result)
     }
-
-    await next() // XXX
   }
 }
 

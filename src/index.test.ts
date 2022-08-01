@@ -6,7 +6,9 @@ import {
   GraphQLNonNull,
 } from 'graphql'
 import { Hono } from 'hono'
+import type { Context, Next } from 'hono'
 import { errorMessages, graphqlServer } from '.'
+import type { RootResolver } from './index'
 
 // Do not show `console.error` messages
 jest.spyOn(console, 'error').mockImplementation()
@@ -26,34 +28,32 @@ describe('errorMessages', () => {
 })
 
 describe('GraphQL Middleware - Simple way', () => {
-  // Construct a schema, using GraphQL schema language
-  const schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`)
-
-  // The root provides a resolver function for each API endpoint
-  const rootValue = {
-    hello: () => 'Hello world!',
-  }
-
-  const app = new Hono()
-
-  app.use(
-    '/graphql',
-    graphqlServer({
-      schema,
-      rootValue,
-    })
-  )
-
-  app.all('*', (c) => {
-    c.header('foo', 'bar')
-    return c.text('fallback')
-  })
-
   it('Should return GraphQL response', async () => {
+    const schema = buildSchema(`
+    type Query {
+      hello: String
+    }
+  `)
+
+    const rootValue = {
+      hello: () => 'Hello world!',
+    }
+
+    const app = new Hono()
+
+    app.use(
+      '/graphql',
+      graphqlServer({
+        schema,
+        rootResolver: () => rootValue,
+      })
+    )
+
+    app.all('*', (c) => {
+      c.header('foo', 'bar')
+      return c.text('fallback')
+    })
+
     const query = 'query { hello }'
     const body = {
       query: query,
@@ -69,6 +69,59 @@ describe('GraphQL Middleware - Simple way', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe('{"data":{"hello":"Hello world!"}}')
+    expect(res.headers.get('foo')).toBeNull() // GraphQL Server middleware should be Handler
+  })
+
+  it('Should access the ctx', async () => {
+    const schema = buildSchema(`
+    type Query {
+      hi: String
+    }
+  `)
+
+  const rootResolver: RootResolver = (ctx?: Context) => {
+    const name = ctx?.get('name')
+    return {
+      hi: `hi ${name}`
+    }
+  }
+
+    const app = new Hono()
+
+    app.use('*', async (ctx: Context, next: Next) => {
+      ctx.set('name', 'Jason')
+      await next()
+    })
+
+
+    app.use(
+      '/graphql',
+      graphqlServer({
+        schema,
+        rootResolver,
+      })
+    )
+
+    app.all('*', (c) => {
+      c.header('foo', 'bar')
+      return c.text('fallback')
+    })
+
+    const query = 'query { hi }'
+    const body = {
+      query: query,
+    }
+
+    const res = await app.request('http://localhost/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('{"data":{"hi":"hi Jason"}}')
     expect(res.headers.get('foo')).toBeNull() // GraphQL Server middleware should be Handler
   })
 })
