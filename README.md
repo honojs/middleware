@@ -4,14 +4,14 @@
 
 This middleware depends on [GraphQL.js](https://www.npmjs.com/package/graphql).
 
-```plain
-npm i graphql
+```sh
+npm i @honojs/graphql-server
 ```
 
 or
 
 ```plain
-yarn add graphql
+yarn add @honojs/graphql-server
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ index.js:
 
 ```js
 import { Hono } from 'hono'
-import { graphqlServer } from 'hono/graphql-server'
+import { graphqlServer } from '@hono/graphql-server'
 import { buildSchema } from 'graphql'
 
 export const app = new Hono()
@@ -31,15 +31,17 @@ type Query {
 }
 `)
 
-const rootValue = {
-  hello: () => 'Hello Hono!',
+const rootResolver = (ctx) => {
+  return {
+    hello: () => 'Hello Hono!',
+  }
 }
 
 app.use(
   '/graphql',
   graphqlServer({
     schema,
-    rootValue,
+    rootResolver,
   })
 )
 
