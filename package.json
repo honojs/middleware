@@ -34,7 +34,8 @@
     "access": "public"
   },
   "dependencies": {
-    "hono": "^2.0.6"
+    "hono": "^2.0.6",
+    "toucan-js": "^2.6.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.0",
