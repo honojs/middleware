@@ -1,0 +1,9 @@
+dist
+
+node_modules
+.yarn/*
+yarn-error.log
+*.tgz
+
+# for debug or playing
+sandbox
