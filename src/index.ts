@@ -1,7 +1,7 @@
 import type { Handler } from 'hono'
 import Toucan from 'toucan-js'
 
-export const hello = (): Handler => {
+export const sentry = (): Handler => {
   return async (c, next) => {
     const sentry = new Toucan({
       dsn: c.env.SENTRY_DSN,
