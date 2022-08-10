@@ -14,6 +14,7 @@ export const sentry = (): Handler => {
       await next()
     } catch (error) {
       sentry.captureException(error)
+      throw error
     }
   }
 }
