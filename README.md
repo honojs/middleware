@@ -20,7 +20,7 @@ index.js:
 
 ```js
 import { Hono } from 'hono'
-import { graphqlServer } from '@hono/graphql-server'
+import { graphqlServer } from '@honojs/graphql-server'
 import { buildSchema } from 'graphql'
 
 export const app = new Hono()
