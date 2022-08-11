@@ -1,24 +1,17 @@
-import type { Options as SentryOptions, StackFrame } from '@sentry/types'
 import type { Handler } from 'hono'
 import Toucan from 'toucan-js'
 
-export type RewriteFrames = {
-  root?: string
-  iteratee?: (frame: StackFrame) => StackFrame
-}
-
-type Options = {
-  dsn?: SentryOptions['dsn']
+export type Options = {
+  dsn?: string
   allowedCookies?: string[] | RegExp
   allowedHeaders?: string[] | RegExp
   allowedSearchParams?: string[] | RegExp
-  attachStacktrace?: SentryOptions['attachStacktrace']
-  debug?: SentryOptions['debug']
-  environment?: SentryOptions['environment']
-  maxBreadcrumbs?: SentryOptions['maxBreadcrumbs']
+  attachStacktrace?: boolean
+  debug?: boolean
+  environment?: string
+  maxBreadcrumbs?: number
   pkg?: Record<string, any>
-  release?: SentryOptions['release']
-  rewriteFrames?: RewriteFrames
+  release?: string
 }
 
 export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler => {
