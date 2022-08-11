@@ -1,6 +1,16 @@
 import { Hono } from 'hono'
 import { sentry } from '../src'
 
+// Mock
+class Context implements ExecutionContext {
+  passThroughOnException(): void {
+    throw new Error('Method not implemented.')
+  }
+  async waitUntil(promise: Promise<any>): Promise<void> {
+    await promise
+  }
+}
+
 const captureException = jest.fn()
 jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException })))
 
@@ -14,13 +24,15 @@ describe('Sentry middleware', () => {
   })
 
   it('Should initialize Toucan', async () => {
-    const res = await app.request('http://localhost/sentry/foo')
+    const req = new Request('http://localhost/sentry/foo')
+    const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
   })
 
   it('Should report errors', async () => {
-    const res = await app.request('http://localhost/sentry/error')
+    const req = new Request('http://localhost/sentry/error')
+    const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
     expect(captureException).toHaveBeenCalled()
