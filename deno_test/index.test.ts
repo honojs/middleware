@@ -17,7 +17,12 @@ class Context implements ExecutionContext {
 
 Deno.test('Sentry Middleware', async () => {
   const app = new Hono()
-  app.use('/sentry/*', sentry())
+  app.use(
+    '/sentry/*',
+    sentry(undefined, (sentry) => {
+      sentry.captureMessage('foo')
+    })
+  )
   app.get('/sentry/foo', (c) => c.text('foo'))
   app.get('/sentry/error', () => {
     throw new Error('a catastrophic error')
