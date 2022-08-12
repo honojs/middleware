@@ -1,11 +1,12 @@
 {
-  "name": "@honojs/hello",
-  "version": "0.0.6",
-  "description": "An example of third-party middleware for Hono",
+  "name": "@honojs/sentry",
+  "version": "0.0.1",
+  "description": "Sentry Middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/index.js",
+    "dist/index.d.ts"
   ],
   "scripts": {
     "test": "jest",
@@ -13,21 +14,19 @@
     "test:all": "yarn test && yarn test:deno",
     "denoify": "rimraf deno_dist && denoify",
     "build": "rimraf dist && tsc",
-    "prerelease": "yarn denoify && yarn build && yarn test:all",
+    "prerelease": "yarn build && yarn denoify && yarn test:all",
     "release": "yarn publish"
   },
   "denoify": {
-    "port": {
-      "hono": "honojs/hono"
-    }
+    "replacer": "dist/replacer.js"
   },
   "license": "MIT",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware-template.git"
+    "url": "https://github.com/honojs/sentry.git"
   },
-  "homepage": "https://github.com/honojs/middleware-template",
+  "homepage": "https://github.com/honojs/sentry",
   "author": "Yusuke Wada <yusuke@kamawada.com> (https://github.com/yusukebe)",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

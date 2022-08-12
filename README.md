@@ -26,7 +26,7 @@ import { Hono } from 'https://deno.land/x/hono/mod.ts'
 
 const app = new Hono()
 
-app.use('*', sentry())
+app.use('*', sentry({ dsn: 'https://xxxxxx@xxx.ingest.sentry.io/xxxxxx' }))
 app.get('/', (c) => c.text('foo'))
 
 serve(app.fetch)

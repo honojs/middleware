@@ -1,5 +1,20 @@
-import type { Handler } from 'hono'
+import type { Context, Handler } from 'hono'
 import Toucan from 'toucan-js'
+
+declare module 'hono' {
+  interface ContextVariableMap {
+    sentry: Toucan
+  }
+}
+
+class MockContext implements ExecutionContext {
+  passThroughOnException(): void {
+    throw new Error('Method not implemented.')
+  }
+  async waitUntil(promise: Promise<any>): Promise<void> {
+    await promise
+  }
+}
 
 export type Options = {
   dsn?: string
@@ -16,12 +31,18 @@ export type Options = {
 
 export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler => {
   return async (c, next) => {
+    let hasExecutionContext = true
+    try {
+      c.executionCtx
+    } catch {
+      hasExecutionContext = false
+    }
     const sentry = new Toucan({
       dsn: c.env.SENTRY_DSN || c.env.NEXT_PUBLIC_SENTRY_DSN,
       allowedHeaders: ['user-agent'],
       allowedSearchParams: /(.*)/,
       request: c.req,
-      context: c.executionCtx,
+      context: hasExecutionContext ? c.executionCtx : new MockContext(),
       ...options,
     })
 
@@ -34,4 +55,8 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
       throw error
     }
   }
+}
+
+export const getSentry = (c: Context) => {
+  return c.get('sentry')
 }
