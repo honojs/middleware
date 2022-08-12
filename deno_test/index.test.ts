@@ -20,7 +20,7 @@ Deno.test('Sentry Middleware', async () => {
   app.use(
     '/sentry/*',
     sentry(undefined, (sentry) => {
-      sentry.captureMessage('foo')
+      sentry.setUser({ id: 'test' })
     })
   )
   app.get('/sentry/foo', (c) => c.text('foo'))
