@@ -13,11 +13,12 @@ class Context implements ExecutionContext {
 
 const captureException = jest.fn()
 jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException })))
+const callback = jest.fn()
 
 describe('Sentry middleware', () => {
   const app = new Hono()
 
-  app.use('/sentry/*', sentry())
+  app.use('/sentry/*', sentry(undefined, callback))
   app.get('/sentry/foo', (c) => c.text('foo'))
   app.get('/sentry/error', () => {
     throw new Error('a catastrophic error')
@@ -28,6 +29,7 @@ describe('Sentry middleware', () => {
     const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
+    expect(callback).toHaveBeenCalled()
   })
 
   it('Should report errors', async () => {
