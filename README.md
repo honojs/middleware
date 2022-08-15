@@ -1,7 +1,7 @@
 # Sentry middleware for Hono
 
 Sentry middleware for [Hono](https://github.com/honojs/hono).
-This middleware sends captured exceptions to the Sentry data source named by the `SENTRY_DSN` environment variable via [toucan-js](https://github.com/robertcepa/toucan-js).
+This middleware sends captured exceptions to the specified Sentry data source name via [toucan-js](https://github.com/robertcepa/toucan-js).
 
 ## Usage
 
