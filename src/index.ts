@@ -1,8 +1,62 @@
-import type { Handler } from 'hono'
+import type { Context, Handler } from 'hono'
+import Toucan from 'toucan-js'
 
-export const hello = (message: string = 'Hello'): Handler => {
-  return async (c, next) => {
-    await next()
-    c.res.headers.append('X-Message', message)
+declare module 'hono' {
+  interface ContextVariableMap {
+    sentry: Toucan
   }
+}
+
+class MockContext implements ExecutionContext {
+  passThroughOnException(): void {
+    throw new Error('Method not implemented.')
+  }
+  async waitUntil(promise: Promise<any>): Promise<void> {
+    await promise
+  }
+}
+
+export type Options = {
+  dsn?: string
+  allowedCookies?: string[] | RegExp
+  allowedHeaders?: string[] | RegExp
+  allowedSearchParams?: string[] | RegExp
+  attachStacktrace?: boolean
+  debug?: boolean
+  environment?: string
+  maxBreadcrumbs?: number
+  pkg?: Record<string, any>
+  release?: string
+}
+
+export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler => {
+  return async (c, next) => {
+    let hasExecutionContext = true
+    try {
+      c.executionCtx
+    } catch {
+      hasExecutionContext = false
+    }
+    const sentry = new Toucan({
+      dsn: c.env.SENTRY_DSN || c.env.NEXT_PUBLIC_SENTRY_DSN,
+      allowedHeaders: ['user-agent'],
+      allowedSearchParams: /(.*)/,
+      request: c.req,
+      context: hasExecutionContext ? c.executionCtx : new MockContext(),
+      ...options,
+    })
+
+    if (callback) callback(sentry)
+
+    try {
+      await next()
+    } catch (error) {
+      sentry.captureException(error)
+      throw error
+    }
+  }
+}
+
+export const getSentry = (c: Context) => {
+  return c.get('sentry')
 }

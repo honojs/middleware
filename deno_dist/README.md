@@ -1,17 +1,17 @@
-# Hello middleware for Hono
+# Sentry middleware for Hono
 
-An example project of the third-party middleware for [Hono](https://github.com/honojs/hono).
-This middleware add `X-Message` header to the Response.
+Sentry middleware for [Hono](https://github.com/honojs/hono).
+This middleware sends captured exceptions to the Sentry data source named by the `SENTRY_DSN` environment variable via [toucan-js](https://github.com/robertcepa/toucan-js).
 
 ## Usage
 
 ```ts
-import { hello } from '@honojs/hello'
+import { sentry } from '@honojs/sentry'
 import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', hello('Hello!! Hono!!'))
+app.use('*', sentry())
 app.get('/', (c) => c.text('foo'))
 
 export default app
@@ -21,12 +21,12 @@ export default app
 
 ```ts
 import { serve } from 'https://deno.land/std/http/server.ts'
-import { hello } from 'https://deno.land/x/hono_hello/mod.ts'
+import { sentry } from 'https://deno.land/x/hono_sentry/mod.ts'
 import { Hono } from 'https://deno.land/x/hono/mod.ts'
 
 const app = new Hono()
 
-app.use('*', hello('Hello!! Hono!!'))
+app.use('*', sentry({ dsn: 'https://xxxxxx@xxx.ingest.sentry.io/xxxxxx' }))
 app.get('/', (c) => c.text('foo'))
 
 serve(app.fetch)

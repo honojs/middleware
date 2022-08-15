@@ -1,26 +1,42 @@
 import { Hono } from 'hono'
-import { hello } from '../src'
+import { sentry } from '../src'
 
-describe('Hello middleware', () => {
+// Mock
+class Context implements ExecutionContext {
+  passThroughOnException(): void {
+    throw new Error('Method not implemented.')
+  }
+  async waitUntil(promise: Promise<any>): Promise<void> {
+    await promise
+  }
+}
+
+const captureException = jest.fn()
+jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException })))
+const callback = jest.fn()
+
+describe('Sentry middleware', () => {
   const app = new Hono()
 
-  app.use('/hello/*', hello())
-  app.get('/hello/foo', (c) => c.text('foo'))
-
-  app.use('/x/*', hello('X'))
-  app.get('/x/foo', (c) => c.text('foo'))
-
-  it('Should be hello message', async () => {
-    const res = await app.request('http://localhost/hello/foo')
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(200)
-    expect(res.headers.get('X-Message')).toBe('Hello')
+  app.use('/sentry/*', sentry(undefined, callback))
+  app.get('/sentry/foo', (c) => c.text('foo'))
+  app.get('/sentry/error', () => {
+    throw new Error('a catastrophic error')
   })
 
-  it('Should be X', async () => {
-    const res = await app.request('http://localhost/x/foo')
+  it('Should initialize Toucan', async () => {
+    const req = new Request('http://localhost/sentry/foo')
+    const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(res.headers.get('X-Message')).toBe('X')
+    expect(callback).toHaveBeenCalled()
+  })
+
+  it('Should report errors', async () => {
+    const req = new Request('http://localhost/sentry/error')
+    const res = await app.fetch(req, {}, new Context())
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+    expect(captureException).toHaveBeenCalled()
   })
 })
