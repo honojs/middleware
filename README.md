@@ -34,7 +34,7 @@ serve(app.fetch)
 
 ## Author
 
-Yusuke Wada <https://github.com/yusukebe>
+Samuel Lippert <https://github.com/sam-lippert>
 
 ## License
 
