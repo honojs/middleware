@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sentry } from '../src'
+import { sentry, getSentry } from '../src'
 
 // Mock
 class Context implements ExecutionContext {
@@ -12,7 +12,8 @@ class Context implements ExecutionContext {
 }
 
 const captureException = jest.fn()
-jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException })))
+const log = jest.fn()
+jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException, log })))
 const callback = jest.fn()
 
 describe('Sentry middleware', () => {
@@ -20,6 +21,7 @@ describe('Sentry middleware', () => {
 
   app.use('/sentry/*', sentry(undefined, callback))
   app.get('/sentry/foo', (c) => c.text('foo'))
+  app.get('/sentry/bar', (c) => getSentry(c).log('bar') && c.text('bar'))
   app.get('/sentry/error', () => {
     throw new Error('a catastrophic error')
   })
@@ -30,6 +32,14 @@ describe('Sentry middleware', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(callback).toHaveBeenCalled()
+  })
+
+  it('Should make Sentry available via context', async () => {
+    const req = new Request('http://localhost/sentry/bar')
+    const res = await app.fetch(req, {}, new Context())
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+    expect(log).toHaveBeenCalled()
   })
 
   it('Should report errors', async () => {

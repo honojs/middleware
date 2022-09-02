@@ -45,7 +45,7 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
       context: hasExecutionContext ? c.executionCtx : new MockContext(),
       ...options,
     })
-
+    c.set('sentry', sentry)
     if (callback) callback(sentry)
 
     try {

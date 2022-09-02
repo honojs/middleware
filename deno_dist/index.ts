@@ -1,5 +1,5 @@
 import type { Context, Handler } from 'https://raw.githubusercontent.com/honojs/hono/v2.0.6/deno_dist/mod.ts'
-import Toucan from "https://cdn.skypack.dev/toucan-js@2.6.1"
+import Toucan from 'https://cdn.skypack.dev/toucan-js@2.6.1'
 
 declare module 'https://raw.githubusercontent.com/honojs/hono/v2.0.6/deno_dist/mod.ts' {
   interface ContextVariableMap {
@@ -45,7 +45,7 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
       context: hasExecutionContext ? c.executionCtx : new MockContext(),
       ...options,
     })
-
+    c.set('sentry', sentry)
     if (callback) callback(sentry)
 
     try {
