@@ -135,7 +135,7 @@ describe("verifyFirebaseAuth middleware", () => {
         },
       ],
     ])("%s", async (_, { headerKey, env, config, wantStatus }) => {
-      const app = new Hono<VerifyFirebaseAuthEnv>();
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>();
 
       resetAuth();
 
@@ -167,7 +167,7 @@ describe("verifyFirebaseAuth middleware", () => {
       const getSpy = jest.spyOn(nopKeyStore, "get");
       const putSpy = jest.spyOn(nopKeyStore, "put");
 
-      const app = new Hono<VerifyFirebaseAuthEnv>();
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>();
 
       resetAuth();
 
@@ -202,7 +202,7 @@ describe("verifyFirebaseAuth middleware", () => {
       const testingJWT = generateDummyJWT();
 
       const nopKeyStore = new NopKeyStore();
-      const app = new Hono<VerifyFirebaseAuthEnv>();
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>();
 
       resetAuth();
 
