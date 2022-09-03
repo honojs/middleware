@@ -18,7 +18,7 @@ const config: VerifyFirebaseAuthConfig = {
 }
 
 // Or you can specify here the extended VerifyFirebaseAuthEnv type.
-const app = new Hono<VerifyFirebaseAuthEnv>()
+const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
 // set middleware
 app.use("*", verifyFirebaseAuth(config));
