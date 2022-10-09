@@ -1,7 +1,7 @@
-import type { Context, Handler } from 'https://raw.githubusercontent.com/honojs/hono/v2.0.6/deno_dist/mod.ts'
+import type { Context, Handler } from 'https://raw.githubusercontent.com/honojs/hono/v2.2.5/deno_dist/mod.ts'
 import Toucan from 'https://cdn.skypack.dev/toucan-js@2.6.1'
 
-declare module 'https://raw.githubusercontent.com/honojs/hono/v2.0.6/deno_dist/mod.ts' {
+declare module 'https://raw.githubusercontent.com/honojs/hono/v2.2.5/deno_dist/mod.ts' {
   interface ContextVariableMap {
     sentry: Toucan
   }
@@ -48,11 +48,9 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
     c.set('sentry', sentry)
     if (callback) callback(sentry)
 
-    try {
-      await next()
-    } catch (error) {
-      sentry.captureException(error)
-      throw error
+    await next()
+    if (c.error) {
+      sentry.captureException(c.error)
     }
   }
 }
