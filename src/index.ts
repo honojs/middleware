@@ -48,11 +48,9 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
     c.set('sentry', sentry)
     if (callback) callback(sentry)
 
-    try {
-      await next()
-    } catch (error) {
-      sentry.captureException(error)
-      throw error
+    await next()
+    if (c.error) {
+      sentry.captureException(c.error)
     }
   }
 }

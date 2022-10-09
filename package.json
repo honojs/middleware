@@ -33,7 +33,7 @@
     "access": "public"
   },
   "dependencies": {
-    "hono": "^2.0.6",
+    "hono": "^2.2.5",
     "toucan-js": "^2.6.1"
   },
   "devDependencies": {

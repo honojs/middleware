@@ -21,6 +21,8 @@ describe('Sentry middleware', () => {
 
   app.use('/sentry/*', sentry(undefined, callback))
   app.get('/sentry/foo', (c) => c.text('foo'))
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   app.get('/sentry/bar', (c) => getSentry(c).log('bar') || c.text('bar'))
   app.get('/sentry/error', () => {
     throw new Error('a catastrophic error')
