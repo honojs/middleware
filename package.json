@@ -15,7 +15,7 @@
     "denoify": "rimraf deno_dist && denoify",
     "build": "rimraf dist && tsc",
     "prerelease": "yarn build && yarn denoify && yarn test:all",
-    "release": "yarn publish"
+    "release": "np"
   },
   "denoify": {
     "replacer": "dist/replacer.js"
@@ -52,6 +52,7 @@
     "eslint-plugin-node": "^11.1.0",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
+    "np": "^7.6.2",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
