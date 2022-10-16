@@ -2532,6 +2532,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hono@^2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-2.2.5.tgz#c0258d796d1e48e2b83b76f915a24c14fdf4f289"
+  integrity sha512-qIOLwQYJrTGwSSLahXvQ60nJT+NhZqsf+zSvj3eitBPCxpb+bsA2cl4clJzo1WNB+3KdxAdfVmUzq2stzby3eg==
+
 hosted-git-info@^2.1.4:
   version "2.8.9"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz#dffc0bf9a21c02209090f2aa69429e1414daf3f9"
