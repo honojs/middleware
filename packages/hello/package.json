@@ -1,0 +1,26 @@
+{
+  "name": "@honojs/hello",
+  "version": "0.0.6",
+  "description": "An example of third-party middleware for Hono",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "rimraf dist && tsc",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "dependencies": {
+    "hono": "^2.2.5"
+  }
+}
