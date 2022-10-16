@@ -1,6 +1,6 @@
 {
   "name": "@honojs/hello",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "An example of third-party middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
