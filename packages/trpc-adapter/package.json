@@ -1,0 +1,30 @@
+{
+  "name": "@honojs/trpc-adapter",
+  "version": "0.0.0",
+  "description": "tRPC Adapter Middleware for Hono",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "rimraf dist && tsc",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://honojs.dev",
+  "dependencies": {
+    "hono": "^2.2.5"
+  }
+}
