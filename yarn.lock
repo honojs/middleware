@@ -2532,10 +2532,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hono@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-2.2.5.tgz#c0258d796d1e48e2b83b76f915a24c14fdf4f289"
-  integrity sha512-qIOLwQYJrTGwSSLahXvQ60nJT+NhZqsf+zSvj3eitBPCxpb+bsA2cl4clJzo1WNB+3KdxAdfVmUzq2stzby3eg==
+hono@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-2.3.0.tgz#1057d97a8bf9e4eea3ff54cc8a782e30623c570d"
+  integrity sha512-xNHIyB1a+kN7RCS8YZfrdO1LM10UsRZHBn65tj/MPejZvDrl1TIIewu1kRChrpx36M36TNy2P1c+ZbT8ZRRu/A==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"

@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
-    "hono": "^2.2.5"
+    "hono": "^2.3.0"
   }
 }
