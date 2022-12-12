@@ -5,6 +5,12 @@ declare module 'hono' {
   interface ContextVariableMap {
     sentry: Toucan
   }
+
+}
+
+interface Bindings {
+  SENTRY_DSN?: string;
+  NEXT_PUBLIC_SENTRY_DSN?: string;
 }
 
 class MockContext implements ExecutionContext {
@@ -29,7 +35,7 @@ export type Options = {
   release?: string
 }
 
-export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler => {
+export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler<string, { Bindings: Bindings }> => {
   return async (c, next) => {
     let hasExecutionContext = true
     try {
@@ -38,7 +44,7 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
       hasExecutionContext = false
     }
     const sentry = new Toucan({
-      dsn: c.env.SENTRY_DSN || c.env.NEXT_PUBLIC_SENTRY_DSN,
+      dsn: c.env.SENTRY_DSN ?? c.env.NEXT_PUBLIC_SENTRY_DSN,
       allowedHeaders: ['user-agent'],
       allowedSearchParams: /(.*)/,
       request: c.req,

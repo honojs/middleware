@@ -32,8 +32,10 @@
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
+  "peerDependencies": {
+    "hono": "^2.2.5"
+  },
   "dependencies": {
-    "hono": "^2.2.5",
     "toucan-js": "^2.6.1"
   },
   "devDependencies": {
@@ -50,6 +52,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
+    "hono": "^2.2.5",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "np": "^7.6.2",
