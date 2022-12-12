@@ -1,10 +1,15 @@
-import type { Context, Handler } from 'https://raw.githubusercontent.com/honojs/hono/v2.2.5/deno_dist/mod.ts'
+import type { Context, MiddlewareHandler } from 'https://raw.githubusercontent.com/honojs/hono/v2.6.1/deno_dist/mod.ts'
 import Toucan from 'https://cdn.skypack.dev/toucan-js@2.6.1'
 
-declare module 'https://raw.githubusercontent.com/honojs/hono/v2.2.5/deno_dist/mod.ts' {
+declare module 'https://raw.githubusercontent.com/honojs/hono/v2.6.1/deno_dist/mod.ts' {
   interface ContextVariableMap {
     sentry: Toucan
   }
+}
+
+interface Bindings {
+  SENTRY_DSN?: string
+  NEXT_PUBLIC_SENTRY_DSN?: string
 }
 
 class MockContext implements ExecutionContext {
@@ -29,7 +34,10 @@ export type Options = {
   release?: string
 }
 
-export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler => {
+export const sentry = (
+  options?: Options,
+  callback?: (sentry: Toucan) => void
+): MiddlewareHandler<string, { Bindings: Bindings }> => {
   return async (c, next) => {
     let hasExecutionContext = true
     try {
@@ -38,7 +46,7 @@ export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): 
       hasExecutionContext = false
     }
     const sentry = new Toucan({
-      dsn: c.env.SENTRY_DSN || c.env.NEXT_PUBLIC_SENTRY_DSN,
+      dsn: c.env.SENTRY_DSN ?? c.env.NEXT_PUBLIC_SENTRY_DSN,
       allowedHeaders: ['user-agent'],
       allowedSearchParams: /(.*)/,
       request: c.req,
