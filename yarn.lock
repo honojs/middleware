@@ -2874,7 +2874,7 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hono@^2.2.5:
+hono@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/hono/-/hono-2.6.1.tgz#9e85b69cff97586eb53db329c52961e8eade943b"
   integrity sha512-DsJSOkwV2M7TkuRsp8VJrD02ISMsT7BXGUWjPBJS3n1fIx7NQEhat395lo7024w2ibrbmo+5FivUG0vqij9YYg==

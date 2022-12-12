@@ -1,16 +1,15 @@
-import type { Context, Handler } from 'hono'
+import type { Context, MiddlewareHandler } from 'hono'
 import Toucan from 'toucan-js'
 
 declare module 'hono' {
   interface ContextVariableMap {
     sentry: Toucan
   }
-
 }
 
 interface Bindings {
-  SENTRY_DSN?: string;
-  NEXT_PUBLIC_SENTRY_DSN?: string;
+  SENTRY_DSN?: string
+  NEXT_PUBLIC_SENTRY_DSN?: string
 }
 
 class MockContext implements ExecutionContext {
@@ -35,7 +34,10 @@ export type Options = {
   release?: string
 }
 
-export const sentry = (options?: Options, callback?: (sentry: Toucan) => void): Handler<string, { Bindings: Bindings }> => {
+export const sentry = (
+  options?: Options,
+  callback?: (sentry: Toucan) => void
+): MiddlewareHandler<string, { Bindings: Bindings }> => {
   return async (c, next) => {
     let hasExecutionContext = true
     try {
