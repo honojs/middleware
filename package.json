@@ -19,11 +19,12 @@
     "test:deno": "deno test deno_test",
     "test:bun": "bun wiptest bun_test/index.test.ts",
     "test:all": "yarn test && yarn test:deno && yarn test:bun",
-    "denoify": "yarn build && rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
+    "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
     "build": "rimraf dist && tsc --project tsconfig.build.json",
     "lint": "eslint --ext js,ts src .eslintrc.js",
     "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
-    "release": "npm publish"
+    "prerelease": "yarn build && yarn denoify && yarn test:all",
+    "release": "np"
   },
   "denoify": {
     "replacer": "dist/replacer.js"
@@ -51,6 +52,7 @@
     "hono": "^2.6.1",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
+    "np": "^7.6.2",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
