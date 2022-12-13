@@ -1,6 +1,6 @@
 {
   "name": "@honojs/sentry",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Sentry Middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
