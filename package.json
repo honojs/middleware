@@ -43,7 +43,7 @@
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
-    "denoify": "^0.11.1",
+    "denoify": "^1.4.5",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.6.0",

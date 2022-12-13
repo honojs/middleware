@@ -1,7 +1,7 @@
-import type { Context, MiddlewareHandler } from 'https://raw.githubusercontent.com/honojs/hono/v2.6.1/deno_dist/mod.ts'
+import type { Context, MiddlewareHandler } from 'https://deno.land/x/hono/mod.ts'
 import Toucan from 'https://cdn.skypack.dev/toucan-js@2.6.1'
 
-declare module 'https://raw.githubusercontent.com/honojs/hono/v2.6.1/deno_dist/mod.ts' {
+declare module 'https://deno.land/x/hono/mod.ts' {
   interface ContextVariableMap {
     sentry: Toucan
   }
