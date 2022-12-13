@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'bun:test'
 import {
   buildSchema,
   GraphQLSchema,
@@ -6,8 +7,7 @@ import {
   GraphQLNonNull,
 } from 'graphql'
 import { Hono } from 'hono'
-import { errorMessages, graphqlServer } from '../src/index'
-import { describe, expect, it } from 'bun:test'
+import { graphqlServer } from '../src/index'
 
 // Test just only minimal patterns.
 // Because others are tested well in Cloudflare Workers environment already.
@@ -31,7 +31,7 @@ describe('graphql-server', () => {
     '/graphql',
     graphqlServer({
       schema,
-      rootValue,
+      rootResolver: () => rootValue,
     })
   )
 
