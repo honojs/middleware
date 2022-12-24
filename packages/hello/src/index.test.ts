@@ -14,7 +14,7 @@ describe('Hello middleware', () => {
     const res = await app.request('http://localhost/hello/foo')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(res.headers.get('X-Message')).toBe('Hello')
+    expect(res.headers.get('X-Message')).toBe('Hello!')
   })
 
   it('Should be X', async () => {
