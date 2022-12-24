@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/honojs/middleware.git"
   },
-  "homepage": "https://github.com/honojs/middleware/tree/main/packages/hello",
+  "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
     "hono": "^2.6.2"
   }
