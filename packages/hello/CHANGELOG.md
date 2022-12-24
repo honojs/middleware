@@ -1,5 +1,11 @@
 # @honojs/hello
 
+## 0.0.13
+
+### Patch Changes
+
+- 10dd016: new message
+
 ## 0.0.11
 
 ### Patch Changes
