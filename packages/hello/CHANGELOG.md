@@ -1,5 +1,11 @@
 # @honojs/hello
 
+## 0.0.11
+
+### Patch Changes
+
+- 845f880: this is a "blank" update
+
 ## 0.0.8
 
 ### Patch Changes
