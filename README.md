@@ -11,17 +11,17 @@ Hono has three types of middleware.
 2. Built-in middleware - Included in the Hono core package. It does not depend on any other external libraries.
 3. Third-party middleware - Created outside of the core package. It can depend on the external libraries.
 
-Third-party middleware is maintained in this `github.com/honojs/middleware` repository and published to npm in the `@honojs` namespace. For example, a third-party middleware called hello is hosted at `github.com/honojs/middleware/packages/hello` and distributed under the name `@honojs/hello`.
+Third-party middleware is maintained in this `github.com/honojs/middleware` repository and published to npm in the `@hono` namespace. For example, a third-party middleware called hello is hosted at `github.com/honojs/middleware/packages/hello` and distributed under the name `@hono/hello`.
 You can install with the following command.
 
 ```
-npm install @honojs/hello
+npm install @hono/hello
 ```
 
 For Deno, the modules, we do not publish them on `deno.land/x`, but distribute them via CDNs such as Skypack and esm.sh. We will also use the `npm:` that will be introduced in the Deno itself in the future.
 
 ```ts
-import { hello } from 'npm:@honojs/hello'
+import { hello } from 'npm:@hono/hello'
 ```
 
 ## How to contribute
