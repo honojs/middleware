@@ -6,7 +6,7 @@ This middleware add `X-Message` header to the Response.
 ## Usage
 
 ```ts
-import { hello } from '@honojs/hello'
+import { hello } from '@hono/hello'
 import { Hono } from 'hono'
 
 const app = new Hono()
