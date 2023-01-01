@@ -8,7 +8,7 @@
   "scripts": {
     "build:hello": "yarn workspace @hono/hello build",
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
-    "build": "yarn build:hello && yarn:zod-validator"
+    "build": "yarn build:hello && yarn build:zod-validator"
   },
   "license": "MIT",
   "private": true,
