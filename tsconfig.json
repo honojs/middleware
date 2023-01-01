@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "strictPropertyInitialization": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "types": [
       "jest",
