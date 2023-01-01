@@ -6,7 +6,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspace @hono/hello build"
+    "build:hello": "yarn workspace @hono/hello build",
+    "build:zod-validator": "yarn workspace @hono/zod-validator build",
+    "build": "yarn build:hello && yarn:zod-validator"
   },
   "license": "MIT",
   "private": true,
