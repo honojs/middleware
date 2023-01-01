@@ -1,4 +1,4 @@
-name: ci-hello
+name: ci-zod-validator
 on:
   push:
     branches: [main]
