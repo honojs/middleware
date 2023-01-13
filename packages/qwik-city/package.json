@@ -1,0 +1,40 @@
+{
+  "name": "@hono/qwik-city",
+  "version": "0.0.0",
+  "description": "Qwik City middleware for Hono",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "@builder.io/qwik-city": "^0.1.0-beta9",
+    "hono": "^3.0.0-rc.4"
+  },
+  "devDependencies": {
+    "@builder.io/qwik-city": "^0.1.0-beta9",
+    "hono": "3.0.0-rc.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
