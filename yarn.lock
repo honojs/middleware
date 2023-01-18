@@ -2780,15 +2780,15 @@ hast-util-whitespace@^2.0.0:
   resolved "https://registry.yarnpkg.com/hast-util-whitespace/-/hast-util-whitespace-2.0.1.tgz#0ec64e257e6fc216c7d14c8a1b74d27d650b4557"
   integrity sha512-nAxA0v8+vXSBDt3AnRUNjyRIQ0rD+ntpbAp4LnPkumc5M9yUbSMa4XDU9Q6etY4f1Wp4bNgvc1yjiZtsTTrSng==
 
-hono@3.0.0-rc.3:
-  version "3.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.3.tgz#8f4cfc03816114bc3541c1802f0c65e0730327e8"
-  integrity sha512-j5GLwfTb9smHcneQ8hm1I7bwnLGxKHAZYuCOZuq+CGpEg/SrWW0niIiuhLE4FIIFAfeL3vUsjy0BzOWS6Hur0w==
-
 hono@3.0.0-rc.4:
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.4.tgz#7bfe8c89d4b004ff90d587c8ba45279a175fbce7"
   integrity sha512-76R3mb8kPeuD9TOmQ1WZi59w4QbpaUOlyX3wC7zQpt7IM7iFVBTxj2fpv++6ROPtd5iUBMCrmH/65ZrNXYYgmg==
+
+hono@3.0.0-rc.7:
+  version "3.0.0-rc.7"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.7.tgz#c6a5c44ce7fad1e187f47e1d7828a20fad2b20b2"
+  integrity sha512-ZiAz4XnIDgRFw8ZRwvxv8EfArEoCOdxkz1rDE2N6TOrYi7mf7DGIbIjgj/T1CwXlbV9VulKU17IqEZg0asqkTQ==
 
 hono@^2.3.0:
   version "2.6.2"
