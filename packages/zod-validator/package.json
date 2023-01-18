@@ -34,5 +34,8 @@
   "devDependencies": {
     "hono": "3.0.0-rc.3",
     "zod": "3.19.1"
+  },
+  "dependencies": {
+    "hono": "3.0.0-rc.7"
   }
 }

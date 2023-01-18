@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { Context, MiddlewareHandler, Env } from 'hono'
 import { validator } from 'hono/validator'
 import type { z } from 'zod'
 import type { ZodSchema, ZodError } from 'zod'
@@ -9,11 +9,16 @@ type Hook<T> = (
   c: Context
 ) => Response | Promise<Response> | void
 
-export const zValidator = <T extends ZodSchema, Type extends ValidationTypes>(
+export const zValidator = <
+  T extends ZodSchema,
+  Type extends ValidationTypes,
+  E extends Env,
+  P extends string
+>(
   type: Type,
   schema: T,
   hook?: Hook<z.infer<T>>
-) =>
+): MiddlewareHandler<E, P, { type: Type; data: z.infer<T> }> =>
   validator(type, (value, c) => {
     const result = schema.safeParse(value)
 
