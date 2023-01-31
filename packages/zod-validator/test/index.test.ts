@@ -3,6 +3,9 @@ import type { Equal, Expect } from 'hono/utils/types'
 import { z } from 'zod'
 import { zValidator } from '../src'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
+
 describe('Basic', () => {
   const app = new Hono()
 
@@ -11,20 +14,18 @@ describe('Basic', () => {
     age: z.number(),
   })
 
-  const route = app
-    .post('/author', zValidator('json', schema), (c) => {
-      const data = c.req.valid()
-      return c.jsonT({
-        success: true,
-        message: `${data.name} is ${data.age}`,
-      })
+  const route = app.post('/author', zValidator('json', schema), (c) => {
+    const data = c.req.valid()
+    return c.jsonT({
+      success: true,
+      message: `${data.name} is ${data.age}`,
     })
-    .build()
+  })
 
-  type Actual = typeof route
+  type Actual = ExtractSchema<typeof route>
   type Expected = {
-    post: {
-      '/author': {
+    '/author': {
+      $post: {
         input: {
           json: {
             name: string
@@ -32,17 +33,15 @@ describe('Basic', () => {
           }
         }
         output: {
-          json: {
-            success: boolean
-            message: string
-          }
+          success: boolean
+          message: string
         }
       }
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Actual, Expected>>
+  type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author', {

@@ -2785,10 +2785,10 @@ hono@3.0.0-rc.4:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.4.tgz#7bfe8c89d4b004ff90d587c8ba45279a175fbce7"
   integrity sha512-76R3mb8kPeuD9TOmQ1WZi59w4QbpaUOlyX3wC7zQpt7IM7iFVBTxj2fpv++6ROPtd5iUBMCrmH/65ZrNXYYgmg==
 
-hono@3.0.0-rc.7:
-  version "3.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.7.tgz#c6a5c44ce7fad1e187f47e1d7828a20fad2b20b2"
-  integrity sha512-ZiAz4XnIDgRFw8ZRwvxv8EfArEoCOdxkz1rDE2N6TOrYi7mf7DGIbIjgj/T1CwXlbV9VulKU17IqEZg0asqkTQ==
+hono@3.0.0-rc.9:
+  version "3.0.0-rc.9"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.9.tgz#6077bc67fce850dca99cd58452bda21ff8984da8"
+  integrity sha512-gW/I51Uay6RhrDhtRN/3WTg7ALT3VRdk0NZBdGpkEOgF+TrzFwmWHDbzHUPa9MffiXSlrkFtMmJVvdKO3Iab8Q==
 
 hono@^2.3.0:
   version "2.6.2"
