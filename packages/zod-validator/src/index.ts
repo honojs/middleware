@@ -18,7 +18,7 @@ export const zValidator = <
   type: Type,
   schema: T,
   hook?: Hook<z.infer<T>>
-): MiddlewareHandler<E, P, { type: Type; data: z.infer<T> }> =>
+): MiddlewareHandler<E, P, { [K in Type]: z.infer<T> }> =>
   validator(type, (value, c) => {
     const result = schema.safeParse(value)
 
