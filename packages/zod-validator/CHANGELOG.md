@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.0.3
+
+### Patch Changes
+
+- e45805f: bump up Hono version to v3.0.0-rc.9
+
 ## 0.0.2
 
 ### Patch Changes
