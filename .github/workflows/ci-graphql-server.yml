@@ -1,0 +1,25 @@
+name: ci-graphql-server
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/graphql-server/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/graphql-server/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/graphql-server
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

@@ -15,6 +15,5 @@
       "node",
       "@cloudflare/workers-types"
     ],
-  },
-  "include": [],
+  }
 }
