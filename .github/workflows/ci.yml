@@ -33,4 +33,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: curl -fsSL https://bun.sh/install | bash
       - run: echo "${HOME}/.bun/bin" >> $GITHUB_PATH
+      - run: bun install
       - run: bun wiptest bun_test/index.test.ts
