@@ -1,5 +1,5 @@
 import type { Context, MiddlewareHandler } from 'https://deno.land/x/hono/mod.ts'
-import Toucan from 'https://cdn.skypack.dev/toucan-js@2.6.1'
+import Toucan from 'https://cdn.skypack.dev/toucan-js@2.7.0'
 
 declare module 'https://deno.land/x/hono/mod.ts' {
   interface ContextVariableMap {

@@ -1,27 +1,25 @@
-name: ci
+name: ci-sentry
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/sentry/**'
   pull_request:
     branches: ['*']
+    paths:
+      - 'packages/sentry/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/sentry
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test
-
-  deno:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - run: deno test deno_test

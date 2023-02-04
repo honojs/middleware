@@ -10,6 +10,7 @@
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
     "build:qwik-city": "yarn workspace @hono/qwik-city build",
     "build:graphql-server": "yarn workspace @hono/graphql-server build",
+    "build:sentry": "yarn workspace @hono/sentry build",
     "build": "run-p build:*"
   },
   "license": "MIT",
