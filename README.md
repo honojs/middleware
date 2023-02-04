@@ -1,5 +1,13 @@
 # Hono Firebase Auth middleware for Cloudflare Workers.
 
+## Moving
+
+Firebase Auth Middleware `@honojs/firebase-auth` is renamed to `@hono/firebase-auth`.
+`@honojs/firebase-auth` is not maintained, please use `@hono/firebase-auth`.
+Also, for Deno, you can use import with `npm:` prefix like `npm:@hono/firebase-auth`.
+
+---
+
 This is a Firebase Auth middleware library for [Hono](https://github.com/honojs/hono) which is used [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers).
 
 Currently only Cloudflare Workers are supported officially. However, it may work in other environments as well, so please let us know in an issue if it works.
@@ -10,7 +18,7 @@ Currently only Cloudflare Workers are supported officially. However, it may work
 
 ```ts
 import { Hono } from "hono";
-import { VerifyFirebaseAuthConfig, VerifyFirebaseAuthEnv, verifyFirebaseAuth, getFirebaseToken } from "@honojs/firebase-auth";
+import { VerifyFirebaseAuthConfig, VerifyFirebaseAuthEnv, verifyFirebaseAuth, getFirebaseToken } from "@hono/firebase-auth";
 
 const config: VerifyFirebaseAuthConfig = {
   // specify your firebase project ID.
@@ -34,7 +42,7 @@ export default app
 
 ```ts
 import { Hono } from "hono";
-import { VerifyFirebaseAuthConfig, verifyFirebaseAuth, getFirebaseToken } from "@honojs/firebase-auth";
+import { VerifyFirebaseAuthConfig, verifyFirebaseAuth, getFirebaseToken } from "@hono/firebase-auth";
 
 const config: VerifyFirebaseAuthConfig = {
   // specify your firebase project ID.
