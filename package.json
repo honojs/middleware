@@ -1,6 +1,6 @@
 {
   "name": "@honojs/graphql-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": "git@github.com:honojs/grahql-server.git",
   "author": "Minghe Huang <h.minghe@gmail.com>",
   "main": "dist/index.js",
