@@ -7,7 +7,7 @@ import {
   specifiedRules,
   getOperationAST,
   GraphQLError,
-} from 'https://cdn.skypack.dev/graphql@16.5.0?dts'
+} from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
 
 import type {
   GraphQLSchema,
@@ -15,16 +15,16 @@ import type {
   ValidationRule,
   FormattedExecutionResult,
   GraphQLFormattedError,
-} from 'https://cdn.skypack.dev/graphql@16.5.0?dts'
+} from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
 
-import type { Context } from 'https://deno.land/x/hono/mod.ts'
+import type { Context } from 'https://deno.land/x/hono@v2.7.5/mod.ts'
 import { parseBody } from './parse-body.ts'
 
 export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
 
 type Options = {
   schema: GraphQLSchema
-  rootResolver?: RootResolver,
+  rootResolver?: RootResolver
   pretty?: boolean
   validationRules?: ReadonlyArray<ValidationRule>
   // graphiql?: boolean

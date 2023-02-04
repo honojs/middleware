@@ -415,8 +415,6 @@ describe('Pretty printing', () => {
       })
     )
 
-    const res = await app.request(urlString({ query: '{test}' }))
-
     // TODO enable this
     // expect(await res.text()).toEqual(
     //   [

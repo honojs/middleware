@@ -1,4 +1,4 @@
-import { parseBody } from './parse-body'
+import { parseBody } from '../src/parse-body'
 
 describe('parseBody', () => {
   it('Should return a blank JSON object', async () => {

@@ -1,5 +1,5 @@
 {
-  "name": "@honojs/graphql-server",
+  "name": "@hono/graphql-server",
   "version": "0.1.2",
   "repository": "git@github.com:honojs/grahql-server.git",
   "author": "Minghe Huang <h.minghe@gmail.com>",
@@ -20,14 +20,11 @@
     "test:bun": "bun wiptest bun_test/index.test.ts",
     "test:all": "yarn test && yarn test:deno && yarn test:bun",
     "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
-    "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "build": "rimraf dist && tsc",
     "lint": "eslint --ext js,ts src .eslintrc.js",
     "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
     "prerelease": "yarn build && yarn denoify && yarn test:all",
     "release": "np"
-  },
-  "denoify": {
-    "replacer": "dist/replacer.js"
   },
   "peerDependencies": {
     "hono": "^2.6.1"
@@ -40,7 +37,7 @@
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
-    "denoify": "^1.4.5",
+    "denoify": "^1.4.9",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.4.0",
@@ -59,6 +56,6 @@
     "typescript": "^4.7.4"
   },
   "engines": {
-    "node": ">=11.0.0"
+    "node": ">=16.0.0"
   }
 }

@@ -1,11 +1,5 @@
 # GraphQL Server Middleware
 
-## Information
-
-GraphQL Server Middleware `@honojs/graphql-server` is renamed to `@hono/graphql-server`.
-`@honojs/graphql-server` is not maintained, please use `@hono/graphql-server`.
-Also, for Deno, you can use import with `npm:` prefix like `npm:@hono/graphql-server`.
-
 ## Requirements
 
 This middleware depends on [GraphQL.js](https://www.npmjs.com/package/graphql).
@@ -53,3 +47,7 @@ app.use(
 
 app.fire()
 ```
+
+## Author
+
+Minghe Huang <h.minghe@gmail.com>

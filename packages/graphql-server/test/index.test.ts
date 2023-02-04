@@ -7,8 +7,8 @@ import {
 } from 'graphql'
 import { Hono } from 'hono'
 import type { Context, Next } from 'hono'
-import { errorMessages, graphqlServer } from '.'
-import type { RootResolver } from './index'
+import { errorMessages, graphqlServer } from '../src'
+import type { RootResolver } from '../src'
 
 // Do not show `console.error` messages
 jest.spyOn(console, 'error').mockImplementation()
@@ -79,12 +79,12 @@ describe('GraphQL Middleware - Simple way', () => {
     }
   `)
 
-  const rootResolver: RootResolver = (ctx?: Context) => {
-    const name = ctx?.get('name')
-    return {
-      hi: `hi ${name}`
+    const rootResolver: RootResolver = (ctx?: Context) => {
+      const name = ctx?.get('name')
+      return {
+        hi: `hi ${name}`,
+      }
     }
-  }
 
     const app = new Hono()
 
@@ -92,7 +92,6 @@ describe('GraphQL Middleware - Simple way', () => {
       ctx.set('name', 'Jason')
       await next()
     })
-
 
     app.use(
       '/graphql',

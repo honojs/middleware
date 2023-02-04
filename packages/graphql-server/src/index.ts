@@ -24,7 +24,7 @@ export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
 
 type Options = {
   schema: GraphQLSchema
-  rootResolver?: RootResolver,
+  rootResolver?: RootResolver
   pretty?: boolean
   validationRules?: ReadonlyArray<ValidationRule>
   // graphiql?: boolean

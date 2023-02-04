@@ -1,7 +1,7 @@
-import { buildSchema } from 'https://cdn.skypack.dev/graphql@16.5.0?dts'
-import { Hono } from 'https://deno.land/x/hono@v2.6.1/mod.ts'
-import { graphqlServer } from '../deno_dist/index.ts'
+import { buildSchema } from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
 import { assertEquals } from 'https://deno.land/std@0.149.0/testing/asserts.ts'
+import { Hono } from 'https://deno.land/x/hono@v2.7.5/mod.ts'
+import { graphqlServer } from '../deno_dist/index.ts'
 
 Deno.test('graphql-server', async (t) => {
   // Construct a schema, using GraphQL schema language
