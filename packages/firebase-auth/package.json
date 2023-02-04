@@ -1,5 +1,5 @@
 {
-  "name": "@honojs/firebase-auth",
+  "name": "@hono/firebase-auth",
   "version": "1.0.2",
   "description": "A third-party firebase auth middleware for Hono",
   "main": "dist/index.js",
@@ -18,9 +18,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/firebase-auth.git"
+    "url": "https://github.com/honojs/middleware.git"
   },
-  "homepage": "https://github.com/honojs/firebase-auth",
+  "homepage": "https://github.com/honojs/middleware",
   "author": "codehex",
   "private": false,
   "publishConfig": {
@@ -28,10 +28,13 @@
     "access": "public"
   },
   "dependencies": {
-    "firebase-auth-cloudflare-workers": "^1.0.0",
-    "hono": "^2.1.3"
+    "firebase-auth-cloudflare-workers": "^1.0.0"
+  },
+  "peerDependencies": {
+    "hono": "^2.7.2"
   },
   "devDependencies": {
+    "hono": "^2.7.2",
     "@cloudflare/workers-types": "^3.14.1",
     "@types/jest": "^28.1.4",
     "firebase-tools": "^11.4.0",

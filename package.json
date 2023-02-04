@@ -11,6 +11,7 @@
     "build:qwik-city": "yarn workspace @hono/qwik-city build",
     "build:graphql-server": "yarn workspace @hono/graphql-server build",
     "build:sentry": "yarn workspace @hono/sentry build",
+    "build:firebase-auth": "yarn workspace @hono/firebase-auth build",
     "build": "run-p build:*"
   },
   "license": "MIT",
