@@ -1511,6 +1511,11 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
+"@trpc/server@^10.10.0":
+  version "10.10.0"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-10.10.0.tgz#0b494335140d4fd5e1452f7b57dcc9b8886720a4"
+  integrity sha512-tCTqcqBT+3nebYFTHtwM877qo5xQPtVlptxKdUzMVWleWT4lFTL4oddk45qVURToci2iMbVJjd4jQU9y9/XwlQ==
+
 "@types/acorn@^4.0.0":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@types/acorn/-/acorn-4.0.6.tgz#d61ca5480300ac41a7d973dd5b84d0a591154a22"
@@ -5185,12 +5190,7 @@ hono@3.0.0-rc.9:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.9.tgz#6077bc67fce850dca99cd58452bda21ff8984da8"
   integrity sha512-gW/I51Uay6RhrDhtRN/3WTg7ALT3VRdk0NZBdGpkEOgF+TrzFwmWHDbzHUPa9MffiXSlrkFtMmJVvdKO3Iab8Q==
 
-hono@^2.3.0:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-2.6.2.tgz#1e32a4b4b3bf557a8aa87e392b00b505a1ec1fdd"
-  integrity sha512-Y4Uv6dPPx6u7TNoWN245tLw8jycBf97w0FJGJoEMdgdBqQEv1dqIvg5IfDhiYMkimSIt4SXxmMgiyPf2wzwFWQ==
-
-hono@^2.6.1:
+hono@^2.6.1, hono@^2.7.5:
   version "2.7.5"
   resolved "https://registry.yarnpkg.com/hono/-/hono-2.7.5.tgz#2b0c39d39a057575962a7025373be4304dedca9c"
   integrity sha512-UYrhUT1Xtalh7Xw/YGXee25wlWMiVIRfr0FbAJMEMyRpX9TFZ/6JKmVdCK7ioRnhAw7PfWBasjSBhdNXQ8/okQ==
@@ -10805,6 +10805,11 @@ zod@3.19.1:
   version "3.19.1"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.19.1.tgz#112f074a97b50bfc4772d4ad1576814bd8ac4473"
   integrity sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==
+
+zod@^3.20.2:
+  version "3.20.2"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.2.tgz#068606642c8f51b3333981f91c0a8ab37dfc2807"
+  integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
 
 zwitch@^2.0.0:
   version "2.0.4"
