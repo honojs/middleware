@@ -1,12 +1,4 @@
-# Hono Firebase Auth middleware for Cloudflare Workers.
-
-## Moving
-
-Firebase Auth Middleware `@honojs/firebase-auth` is renamed to `@hono/firebase-auth`.
-`@honojs/firebase-auth` is not maintained, please use `@hono/firebase-auth`.
-Also, for Deno, you can use import with `npm:` prefix like `npm:@hono/firebase-auth`.
-
----
+# Hono Firebase Auth middleware for Cloudflare Workers
 
 This is a Firebase Auth middleware library for [Hono](https://github.com/honojs/hono) which is used [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers).
 
@@ -17,23 +9,28 @@ Currently only Cloudflare Workers are supported officially. However, it may work
 ### Module Worker Syntax (recommend)
 
 ```ts
-import { Hono } from "hono";
-import { VerifyFirebaseAuthConfig, VerifyFirebaseAuthEnv, verifyFirebaseAuth, getFirebaseToken } from "@hono/firebase-auth";
+import { Hono } from 'hono'
+import {
+  VerifyFirebaseAuthConfig,
+  VerifyFirebaseAuthEnv,
+  verifyFirebaseAuth,
+  getFirebaseToken,
+} from '@hono/firebase-auth'
 
 const config: VerifyFirebaseAuthConfig = {
   // specify your firebase project ID.
-  projectId: "your-project-id",
+  projectId: 'your-project-id',
 }
 
 // Or you can specify here the extended VerifyFirebaseAuthEnv type.
 const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
 // set middleware
-app.use("*", verifyFirebaseAuth(config));
-app.get("/hello", (c) => {
+app.use('*', verifyFirebaseAuth(config))
+app.get('/hello', (c) => {
   const idToken = getFirebaseToken(c) // get id-token object.
   return c.json(idToken)
-});
+})
 
 export default app
 ```
@@ -41,17 +38,14 @@ export default app
 ### Service Worker Syntax
 
 ```ts
-import { Hono } from "hono";
-import { VerifyFirebaseAuthConfig, verifyFirebaseAuth, getFirebaseToken } from "@hono/firebase-auth";
+import { Hono } from 'hono'
+import { VerifyFirebaseAuthConfig, verifyFirebaseAuth, getFirebaseToken } from '@hono/firebase-auth'
 
 const config: VerifyFirebaseAuthConfig = {
   // specify your firebase project ID.
-  projectId: "your-project-id",
+  projectId: 'your-project-id',
   // this is optional. but required in this mode.
-  keyStore: WorkersKVStoreSingle.getOrInitialize(
-    PUBLIC_JWK_CACHE_KEY,
-    PUBLIC_JWK_CACHE_KV
-  ),
+  keyStore: WorkersKVStoreSingle.getOrInitialize(PUBLIC_JWK_CACHE_KEY, PUBLIC_JWK_CACHE_KV),
   // this is also optional. But in this mode, you can only specify here.
   firebaseEmulatorHost: FIREBASE_AUTH_EMULATOR_HOST,
 }
@@ -59,15 +53,14 @@ const config: VerifyFirebaseAuthConfig = {
 const app = new Hono()
 
 // set middleware
-app.use("*", verifyFirebaseAuth(config));
-app.get("/hello", (c) => {
+app.use('*', verifyFirebaseAuth(config))
+app.get('/hello', (c) => {
   const idToken = getFirebaseToken(c) // get id-token object.
   return c.json(idToken)
-});
+})
 
 app.fire()
 ```
-
 
 ## Config (`VerifyFirebaseAuthConfig`)
 
@@ -81,7 +74,7 @@ Based on this configuration, the JWT created by firebase auth is looked for in t
 
 ### `keyStore?: KeyStorer` (optional)
 
-This is used to cache the public key used to validate the Firebase ID token (JWT). This KeyStorer type has been defined in [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#keystorer) library. 
+This is used to cache the public key used to validate the Firebase ID token (JWT). This KeyStorer type has been defined in [firebase-auth-cloudflare-workers](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#keystorer) library.
 
 If you don't specify the field, this library uses [WorkersKVStoreSingle](https://github.com/Code-Hex/firebase-auth-cloudflare-workers/tree/main#workerskvstoresinglegetorinitializecachekey-string-cfkvnamespace-kvnamespace-workerskvstoresingle) instead. You must fill in the fields defined in `VerifyFirebaseAuthEnv`.
 
