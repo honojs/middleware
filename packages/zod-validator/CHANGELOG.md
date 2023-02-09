@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.0.4
+
+### Patch Changes
+
+- e1a49cf: bump up Hono version
+
 ## 0.0.3
 
 ### Patch Changes
