@@ -15,7 +15,7 @@ describe('Basic', () => {
   })
 
   const route = app.post('/author', zValidator('json', schema), (c) => {
-    const data = c.req.valid()
+    const data = c.req.valid('json')
     return c.jsonT({
       success: true,
       message: `${data.name} is ${data.age}`,
@@ -94,7 +94,7 @@ describe('With Hook', () => {
       return c.text(`${data.id} is valid!`)
     }),
     (c) => {
-      const data = c.req.valid()
+      const data = c.req.valid('json')
       return c.json({
         success: true,
         message: `${data.id} is ${data.title}`,
