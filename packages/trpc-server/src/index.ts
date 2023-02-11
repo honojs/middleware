@@ -10,7 +10,7 @@ type tRPCOptions =
   > & Partial<Pick<FetchHandlerRequestOptions<AnyRouter>, 'endpoint'>>
 
 export const trpcServer = ({ endpoint = '/trpc', ...rest }: tRPCOptions): MiddlewareHandler => {
-  return async (c) => {  
+  return async (c) => {
     const res = fetchRequestHandler({
       ...rest,
       endpoint,
