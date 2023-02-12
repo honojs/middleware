@@ -1,5 +1,11 @@
 # @honojs/hello
 
+## 0.0.15
+
+### Patch Changes
+
+- [#44](https://github.com/honojs/middleware/pull/44) [`fe80b93`](https://github.com/honojs/middleware/commit/fe80b939e5e8cfbfdb6fe9a59c8c6477ce1bb766) Thanks [@yusukebe](https://github.com/yusukebe)! - fix peerDependencies
+
 ## 0.0.14
 
 ### Patch Changes
