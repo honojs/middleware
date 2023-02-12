@@ -22,6 +22,7 @@
     "url": "https://github.com/honojs/middleware.git"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.25.0",
     "@cloudflare/workers-types": "^3.17.0",
     "@types/jest": "^29.1.2",
