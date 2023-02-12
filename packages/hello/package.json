@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "^2.7.2"
+    "hono": "*"
   },
   "devDependencies": {
     "hono": "^2.7.2"
