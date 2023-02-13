@@ -1,7 +1,5 @@
 # Zod validator middleware for Hono
 
-**WIP**
-
 The validator middleware using [Zod](https://zod.dev) for [Hono](https://honojs.dev) applications.
 You can write a schema with Zod and validate the incoming values.
 
@@ -23,6 +21,20 @@ app.post('/author', zValidator('json', schema), (c) => {
     message: `${data.name} is ${data.age}`,
   })
 })
+```
+
+Hook:
+
+```ts
+app.post(
+  '/post',
+  zValidator('json', schema, (result, c) => {
+    if (!result.success) {
+      return c.text('Invalid!', 400)
+    }
+  })
+  //...
+)
 ```
 
 ## Author
