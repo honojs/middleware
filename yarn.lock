@@ -5212,7 +5212,7 @@ hono@3.0.0-rc.4:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.0.0-rc.4.tgz#7bfe8c89d4b004ff90d587c8ba45279a175fbce7"
   integrity sha512-76R3mb8kPeuD9TOmQ1WZi59w4QbpaUOlyX3wC7zQpt7IM7iFVBTxj2fpv++6ROPtd5iUBMCrmH/65ZrNXYYgmg==
 
-hono@^2.6.1, hono@^2.7.5:
+hono@^2.6.1:
   version "2.7.5"
   resolved "https://registry.yarnpkg.com/hono/-/hono-2.7.5.tgz#2b0c39d39a057575962a7025373be4304dedca9c"
   integrity sha512-UYrhUT1Xtalh7Xw/YGXee25wlWMiVIRfr0FbAJMEMyRpX9TFZ/6JKmVdCK7ioRnhAw7PfWBasjSBhdNXQ8/okQ==
