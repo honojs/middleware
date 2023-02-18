@@ -29,11 +29,11 @@
   "homepage": "https://honojs.dev",
   "peerDependencies": {
     "@trpc/server": "^10.10.0",
-    "hono": "^2.7.5"
+    "hono": "3.*"
   },
   "devDependencies": {
     "@trpc/server": "^10.10.0",
-    "hono": "^2.7.5",
+    "hono": "^3.0.0",
     "zod": "^3.20.2"
   },
   "engines": {
