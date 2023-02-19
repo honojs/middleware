@@ -1,7 +1,7 @@
 {
-  "name": "@hono/zod-validator",
-  "version": "0.0.6",
-  "description": "Validator middleware using Zod",
+  "name": "@hono/authjs-server",
+  "version": "0.0.1",
+  "description": "Auth.js Server Middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -28,11 +28,14 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "3.*",
-    "zod": "^3.19.1"
+    "@auth/core": "^0.4.0",
+    "hono": "3.*"
   },
   "devDependencies": {
-    "hono": "^3.0.0",
-    "zod": "3.19.1"
+    "@auth/core": "^0.4.0",
+    "hono": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

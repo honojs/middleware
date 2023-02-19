@@ -34,10 +34,10 @@
     "hono": "^2.7.2"
   },
   "devDependencies": {
-    "hono": "^2.7.2",
     "@cloudflare/workers-types": "^3.14.1",
     "@types/jest": "^28.1.4",
     "firebase-tools": "^11.4.0",
+    "hono": "^2.7.2",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "prettier": "^2.7.1",

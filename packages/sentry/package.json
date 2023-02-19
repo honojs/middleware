@@ -21,13 +21,13 @@
     "replacer": "dist/replacer.js"
   },
   "license": "MIT",
-  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/honojs/middleware.git"
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "Samuel Lippert <samuel@driv.ly> (https://github.com/sam-lippert)",
+  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
