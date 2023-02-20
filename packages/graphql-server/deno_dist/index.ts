@@ -7,7 +7,7 @@ import {
   specifiedRules,
   getOperationAST,
   GraphQLError,
-} from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
+} from 'https://esm.sh/graphql@16.6.0'
 
 import type {
   GraphQLSchema,
@@ -15,10 +15,11 @@ import type {
   ValidationRule,
   FormattedExecutionResult,
   GraphQLFormattedError,
-} from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
+} from 'https://esm.sh/graphql@16.6.0'
 
-import type { Context } from 'https://deno.land/x/hono@v2.7.5/mod.ts'
+import type { Context } from 'https://deno.land/x/hono@v3.0.0/mod.ts'
 import { parseBody } from './parse-body.ts'
+import { HonoRequest } from "https://deno.land/x/hono@v3.0.0/request.ts";
 
 export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
 
@@ -169,7 +170,7 @@ export interface GraphQLParams {
   raw: boolean
 }
 
-export const getGraphQLParams = async (request: Request): Promise<GraphQLParams> => {
+export const getGraphQLParams = async (request: HonoRequest): Promise<GraphQLParams> => {
   const urlData = new URLSearchParams(request.url.split('?')[1])
   const bodyData = await parseBody(request)
 
