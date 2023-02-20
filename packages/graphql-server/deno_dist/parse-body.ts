@@ -1,6 +1,4 @@
-import { HonoRequest } from "https://deno.land/x/hono@v3.0.0/request.ts";
-
-export async function parseBody(req: HonoRequest): Promise<Record<string, unknown>> {
+export async function parseBody(req: Request): Promise<Record<string, unknown>> {
   const contentType = req.headers.get('content-type')
 
   switch (contentType) {
@@ -22,7 +20,7 @@ export async function parseBody(req: HonoRequest): Promise<Record<string, unknow
   return {}
 }
 
-const parseFormURL = async (req: HonoRequest) => {
+const parseFormURL = async (req: Request) => {
   const text = await req.text()
   const searchParams = new URLSearchParams(text)
   const res: { [params: string]: string } = {}
