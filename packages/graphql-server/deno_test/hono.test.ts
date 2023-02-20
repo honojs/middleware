@@ -1,4 +1,4 @@
-import { buildSchema } from 'https://esm.sh/graphql@16.6.0'
+import { buildSchema } from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
 import { assertEquals } from 'https://deno.land/std@0.177.0/testing/asserts.ts'
 import { Hono } from 'https://deno.land/x/hono@v3.0.0/mod.ts'
 import { graphqlServer } from '../deno_dist/index.ts'
