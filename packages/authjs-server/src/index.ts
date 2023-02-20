@@ -38,30 +38,5 @@ function HonoAuthHandler(prefix: string, authOptions: HonoAuthConfig) {
 
 export const authjsServer = (config: HonoAuthConfig): MiddlewareHandler => {
   const { prefix = '/auth', ...authOptions } = config
-  authOptions.secret ??= process.env.AUTH_SECRET
-  authOptions.trustHost ??= !!(
-    process.env.AUTH_TRUST_HOST ??
-    process.env.VERCEL ??
-    process.env.NODE_ENV !== 'production'
-  )
   return HonoAuthHandler(prefix, authOptions)
-}
-
-export type GetSessionResult = Promise<Session | null>
-
-export async function getSession(req: Request, options: AuthConfig): GetSessionResult {
-  options.secret ??= process.env.AUTH_SECRET
-  options.trustHost ??= true
-
-  const url = new URL('/auth/session', req.url)
-  const response = await Auth(new Request(url, { headers: req.headers }), options)
-
-  const { status = 200 } = response
-
-  const data = await response.json()
-
-  if (!data || !Object.keys(data).length) return null
-  if (status === 200) return data as Session
-  const error = data as { message?: string }
-  throw new Error(error?.message)
 }
