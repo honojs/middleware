@@ -17,7 +17,7 @@ import type {
   GraphQLFormattedError,
 } from 'https://cdn.skypack.dev/graphql@16.6.0?dts'
 
-import type { Context } from 'https://deno.land/x/hono@v2.7.5/mod.ts'
+import type { Context } from 'https://deno.land/x/hono@v3.0.0/mod.ts'
 import { parseBody } from './parse-body.ts'
 
 export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
@@ -46,7 +46,7 @@ export const graphqlServer = (options: Options) => {
 
     let params: GraphQLParams
     try {
-      params = await getGraphQLParams(c.req)
+      params = await getGraphQLParams(c.req.raw)
     } catch (e) {
       if (e instanceof Error) {
         console.error(`${e.stack || e.message}`)
