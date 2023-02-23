@@ -7,7 +7,7 @@ You can write a schema with Zod and validate the incoming values.
 
 ```ts
 import { z } from 'zod'
-import { zValidator } from '../src'
+import { zValidator } from '@hono/zod-validator'
 
 const schema = z.object({
   name: z.string(),
