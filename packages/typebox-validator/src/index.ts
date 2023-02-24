@@ -26,7 +26,7 @@ type Hook<T> = (
  * })
  *
  * const route = app.post('/user', tbValidator('json', schema), (c) => {
- *   const user = c.req.valid()
+ *   const user = c.req.valid('json')
  *   return c.json({ success: true, message: `${user.name} is ${user.age}` })
  * })
  * ```

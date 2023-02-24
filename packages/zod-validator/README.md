@@ -15,7 +15,7 @@ const schema = z.object({
 })
 
 app.post('/author', zValidator('json', schema), (c) => {
-  const data = c.req.valid()
+  const data = c.req.valid('json')
   return c.json({
     success: true,
     message: `${data.name} is ${data.age}`,
