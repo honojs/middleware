@@ -7,7 +7,7 @@ You can write a schema with Zod and validate the incoming values.
 
 ```ts
 import { z } from 'zod'
-import { zValidator } from '../src'
+import { zValidator } from '@hono/zod-validator'
 
 const schema = z.object({
   name: z.string(),
@@ -15,7 +15,7 @@ const schema = z.object({
 })
 
 app.post('/author', zValidator('json', schema), (c) => {
-  const data = c.req.valid()
+  const data = c.req.valid('json')
   return c.json({
     success: true,
     message: `${data.name} is ${data.age}`,

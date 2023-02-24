@@ -13,6 +13,7 @@
     "build:sentry": "yarn workspace @hono/sentry build",
     "build:firebase-auth": "yarn workspace @hono/firebase-auth build",
     "build:trpc-server": "yarn workspace @hono/trpc-server build",
+    "build:typebox-validator": "yarn workspace @hono/typebox-validator build",
     "build": "run-p build:*"
   },
   "license": "MIT",
