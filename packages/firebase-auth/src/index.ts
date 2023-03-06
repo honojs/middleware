@@ -1,10 +1,11 @@
-import type { EmulatorEnv, KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
+import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { Context, MiddlewareHandler } from 'hono'
 
-export interface VerifyFirebaseAuthEnv extends EmulatorEnv {
+export type VerifyFirebaseAuthEnv = {
   PUBLIC_JWK_CACHE_KEY?: string | undefined
   PUBLIC_JWK_CACHE_KV?: KVNamespace | undefined
+  FIREBASE_AUTH_EMULATOR_HOST: string | undefined
 }
 
 export interface VerifyFirebaseAuthConfig {
@@ -22,12 +23,6 @@ const defaultKeyStoreInitializer = (c: Context): KeyStorer => {
     c.env.PUBLIC_JWK_CACHE_KEY ?? defaultKVStoreJWKCacheKey,
     c.env.PUBLIC_JWK_CACHE_KV
   )
-}
-
-type Env = {
-  Bindings: {
-    FIREBASE_AUTH_EMULATOR_HOST: string
-  }
 }
 
 export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): MiddlewareHandler => {
