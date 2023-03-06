@@ -46,7 +46,7 @@ export const graphqlServer = (options: Options) => {
 
     let params: GraphQLParams
     try {
-      params = await getGraphQLParams(c.req)
+      params = await getGraphQLParams(c.req.raw)
     } catch (e) {
       if (e instanceof Error) {
         console.error(`${e.stack || e.message}`)

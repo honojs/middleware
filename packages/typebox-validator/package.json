@@ -1,0 +1,38 @@
+{
+  "name": "@hono/typebox-validator",
+  "version": "0.0.1",
+  "description": "Validator middleware using TypeBox",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "3.*",
+    "@sinclair/typebox": "^0.25.24"
+  },
+  "devDependencies": {
+    "hono": "^3.0.0",
+    "@sinclair/typebox": "^0.25.24"
+  }
+}

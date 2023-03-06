@@ -53,3 +53,7 @@ app.use(
 
 app.fire()
 ```
+
+## Author
+
+Minghe Huang <h.minghe@gmail.com>
