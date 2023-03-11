@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@auth/core": "^0.4.0",
+    "@auth/core": "^0.5.1",
     "hono": "3.*"
   },
   "devDependencies": {
-    "@auth/core": "^0.4.0",
+    "@auth/core": "^0.5.1",
     "hono": "^3.0.0"
   },
   "engines": {
