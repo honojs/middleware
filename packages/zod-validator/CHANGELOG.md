@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.0
+
+### Minor Changes
+
+- [#63](https://github.com/honojs/middleware/pull/63) [`3c9dca1`](https://github.com/honojs/middleware/commit/3c9dca1c2d1cb0bff34dfdbedfc4e0a502dafd98) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: Support Hono v3.1.0
+
 ## 0.0.6
 
 ### Patch Changes
