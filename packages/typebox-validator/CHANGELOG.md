@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.1.0
+
+### Minor Changes
+
+- [#65](https://github.com/honojs/middleware/pull/65) [`5723cc0`](https://github.com/honojs/middleware/commit/5723cc08c505ab817166cf79d2dee56bd15d8c19) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: Support Hono v3.1.0
+
 ## 0.0.1
 
 ### Patch Changes
