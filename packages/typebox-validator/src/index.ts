@@ -63,7 +63,11 @@ export function tbValidator<
   target: Target,
   schema: T,
   hook?: Hook<Static<T>>
-): MiddlewareHandler<E, P, { [K in Target]: Static<T> }> {
+): MiddlewareHandler<
+  E,
+  P,
+  { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
+> {
   // Compile the provided schema once rather than per validation. This could be optimized further using a shared schema
   // compilation pool similar to the Fastify implementation.
   const compiled = TypeCompiler.Compile(schema)

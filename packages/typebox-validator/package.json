@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "3.*",
-    "@sinclair/typebox": "^0.25.24"
+    "@sinclair/typebox": "^0.25.24",
+    "hono": "3.*"
   },
   "devDependencies": {
-    "hono": "^3.0.0",
-    "@sinclair/typebox": "^0.25.24"
+    "@sinclair/typebox": "^0.25.24",
+    "hono": "^3.1.0"
   }
 }
