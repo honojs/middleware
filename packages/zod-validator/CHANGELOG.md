@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.2
+
+### Patch Changes
+
+- [#74](https://github.com/honojs/middleware/pull/74) [`7d84e06`](https://github.com/honojs/middleware/commit/7d84e069431ad15ecfb86c953b940c3bb99a2a96) Thanks [@yusukebe](https://github.com/yusukebe)! - refactor: pass the path to Context for the hook
+
 ## 0.1.1
 
 ### Patch Changes
