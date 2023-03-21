@@ -1,12 +1,11 @@
 import type { TSchema, Static } from '@sinclair/typebox'
 import { TypeCompiler, type ValueError } from '@sinclair/typebox/compiler'
-import type { Context, Env, MiddlewareHandler } from 'hono'
+import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 
-type ValidationTargets = 'json' | 'form' | 'query' | 'queries'
-type Hook<T> = (
+type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; errors: ValueError[] },
-  c: Context
+  c: Context<E, P>
 ) => Response | Promise<Response> | void
 
 /**
@@ -56,18 +55,11 @@ type Hook<T> = (
  */
 export function tbValidator<
   T extends TSchema,
-  Target extends ValidationTargets,
+  Target extends keyof ValidationTargets,
   E extends Env,
-  P extends string
->(
-  target: Target,
-  schema: T,
-  hook?: Hook<Static<T>>
-): MiddlewareHandler<
-  E,
-  P,
-  { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
-> {
+  P extends string,
+  V extends { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
+>(target: Target, schema: T, hook?: Hook<Static<T>, E, P>): MiddlewareHandler<E, P, V> {
   // Compile the provided schema once rather than per validation. This could be optimized further using a shared schema
   // compilation pool similar to the Fastify implementation.
   const compiled = TypeCompiler.Compile(schema)
@@ -75,7 +67,7 @@ export function tbValidator<
     if (compiled.Check(data)) {
       if (hook) {
         const hookResult = hook({ success: true, data }, c)
-        if (hookResult instanceof Response || hookResult instanceof Promise<Response>) {
+        if (hookResult instanceof Response || hookResult instanceof Promise) {
           return hookResult
         }
       }
