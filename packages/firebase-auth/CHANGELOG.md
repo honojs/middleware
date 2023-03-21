@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.3.0
+
+### Minor Changes
+
+- [#68](https://github.com/honojs/middleware/pull/68) [`89505f4`](https://github.com/honojs/middleware/commit/89505f4f7577d1a3c706b22dc26e510d16163a63) Thanks [@nmemoto](https://github.com/nmemoto)! - Update firebase-auth-cloudflare-workers
+
 ## 1.2.0
 
 ### Minor Changes
