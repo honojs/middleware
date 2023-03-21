@@ -3,9 +3,9 @@ import { validator } from 'hono/validator'
 import type { z } from 'zod'
 import type { ZodSchema, ZodError } from 'zod'
 
-type Hook<T, E extends Env> = (
+type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; error: ZodError },
-  c: Context<E>
+  c: Context<E, P>
 ) => Response | Promise<Response> | void
 
 export const zValidator = <
@@ -23,7 +23,7 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
-  hook?: Hook<z.infer<T>, E>
+  hook?: Hook<z.infer<T>, E, P>
 ): MiddlewareHandler<E, P, V> =>
   validator(target, (value, c) => {
     const result = schema.safeParse(value)
