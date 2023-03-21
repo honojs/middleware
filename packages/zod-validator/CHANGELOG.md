@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.1
+
+### Patch Changes
+
+- [#69](https://github.com/honojs/middleware/pull/69) [`f263d58`](https://github.com/honojs/middleware/commit/f263d58c8734c09c622fd3e7734fa6bba1a6b706) Thanks [@yusukebe](https://github.com/yusukebe)! - patch: refactor types
+
 ## 0.1.0
 
 ### Minor Changes
