@@ -28,7 +28,7 @@
     "access": "public"
   },
   "dependencies": {
-    "firebase-auth-cloudflare-workers": "^1.0.0"
+    "firebase-auth-cloudflare-workers": "^1.0.1"
   },
   "peerDependencies": {
     "hono": "3.*"

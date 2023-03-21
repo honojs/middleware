@@ -4494,10 +4494,10 @@ find-yarn-workspace-root2@1.2.16:
     micromatch "^4.0.2"
     pkg-dir "^4.2.0"
 
-firebase-auth-cloudflare-workers@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/firebase-auth-cloudflare-workers/-/firebase-auth-cloudflare-workers-1.0.0.tgz#735eb0808a763598d778885b000a0e8187f05589"
-  integrity sha512-hS4PAskZZ345y9HqSP4PeP7IiFoei5mnAOE0ZwTr6i9dFmUFzYczL0gniFfToD75c60a6moiv0Zu5LYOj7akog==
+firebase-auth-cloudflare-workers@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/firebase-auth-cloudflare-workers/-/firebase-auth-cloudflare-workers-1.0.1.tgz#1cb374bb69eaf2d95e20bcae4685be3b65823a3d"
+  integrity sha512-gkFTpxnsbpRvLo5HGGgK8KvC+El5RmiIKeQCn3guy9vhdGhRcixXMXJ0VoeNWl1MciOgy94KwyhQ3zPKzF2PYg==
 
 firebase-tools@^11.4.0:
   version "11.22.0"
