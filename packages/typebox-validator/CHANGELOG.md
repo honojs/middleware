@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.1.1
+
+### Patch Changes
+
+- [#72](https://github.com/honojs/middleware/pull/72) [`9ce42c2`](https://github.com/honojs/middleware/commit/9ce42c23dd622a70628d5e0138366b5646df7da7) Thanks [@yusukebe](https://github.com/yusukebe)! - refactor: refactored types
+
 ## 0.1.0
 
 ### Minor Changes
