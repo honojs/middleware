@@ -1,34 +1,36 @@
-import type { Context, MiddlewareHandler, Env } from 'hono'
+import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 import type { z } from 'zod'
 import type { ZodSchema, ZodError } from 'zod'
 
-type ValidationTargets = 'json' | 'form' | 'query' | 'queries'
-type Hook<T> = (
+type Hook<T, E extends Env> = (
   result: { success: true; data: T } | { success: false; error: ZodError },
-  c: Context
+  c: Context<E>
 ) => Response | Promise<Response> | void
 
 export const zValidator = <
   T extends ZodSchema,
-  Target extends ValidationTargets,
+  Target extends keyof ValidationTargets,
   E extends Env,
-  P extends string
+  P extends string,
+  V extends {
+    in: { [K in Target]: z.input<T> }
+    out: { [K in Target]: z.output<T> }
+  } = {
+    in: { [K in Target]: z.input<T> }
+    out: { [K in Target]: z.output<T> }
+  }
 >(
   target: Target,
   schema: T,
-  hook?: Hook<z.infer<T>>
-): MiddlewareHandler<
-  E,
-  P,
-  { in: { [K in Target]: z.input<T> }; out: { [K in Target]: z.output<T> } }
-> =>
+  hook?: Hook<z.infer<T>, E>
+): MiddlewareHandler<E, P, V> =>
   validator(target, (value, c) => {
     const result = schema.safeParse(value)
 
     if (hook) {
       const hookResult = hook(result, c)
-      if (hookResult instanceof Response || hookResult instanceof Promise<Response>) {
+      if (hookResult instanceof Response || hookResult instanceof Promise) {
         return hookResult
       }
     }
