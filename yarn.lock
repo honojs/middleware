@@ -327,6 +327,11 @@
     vfile "5.3.7"
     zod "^3.21.4"
 
+"@builder.io/qwik@^0.100.0":
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.100.0.tgz#5d1b850b3315a47b722a371f49519a78fe996ea9"
+  integrity sha512-p2DAHZTkPFVN3fz3I6Ael6pLLdlzf89owPJVAIoQ9vt5jULnDJRf096qGc84Y+gaoqfoFWBYHYVnHOP0fnRjQg==
+
 "@changesets/apply-release-plan@^6.1.3":
   version "6.1.3"
   resolved "https://registry.yarnpkg.com/@changesets/apply-release-plan/-/apply-release-plan-6.1.3.tgz#3bcc0bd57ba00d50d20df7d0141f1a9b2134eaf7"
@@ -11356,6 +11361,11 @@ zip-stream@^4.1.0:
     archiver-utils "^2.1.0"
     compress-commons "^4.1.0"
     readable-stream "^3.6.0"
+
+zod@3.19.1:
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.19.1.tgz#112f074a97b50bfc4772d4ad1576814bd8ac4473"
+  integrity sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==
 
 zod@^3.20.2, zod@^3.21.4:
   version "3.21.4"
