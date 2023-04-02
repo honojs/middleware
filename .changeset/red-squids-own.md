@@ -1,5 +1,5 @@
 ---
-'@hono/qwik-city': major
+'@hono/qwik-city': patch
 ---
 
 feat: bump up Qwik
