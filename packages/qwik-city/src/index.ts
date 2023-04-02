@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { _deserializeData, _serializeData, _verifySerializable } from '@builder.io/qwik'
 import type {
   ServerRenderOptions,
   ServerRequestEvent,
@@ -28,8 +29,14 @@ export const qwikMiddleware = (opts: ServerRenderOptions): MiddlewareHandler => 
         return writable
       },
       platform: {},
+      env: c.env,
     }
-    const handledResponse = await requestHandler(serverRequestEv, opts)
+    const qwikSerializer = {
+      _deserializeData,
+      _serializeData,
+      _verifySerializable,
+    }
+    const handledResponse = await requestHandler(serverRequestEv, opts, qwikSerializer)
     if (handledResponse) {
       const response = await handledResponse.response
       if (response) {
