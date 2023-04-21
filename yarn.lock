@@ -1196,6 +1196,13 @@
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
+"@medley/router@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@medley/router/-/router-0.2.1.tgz#d8b8aad3fb1de710e9bd35e9e249545dc65945d0"
+  integrity sha512-mdvS1spIxmZoUbTdYmWknHtwm72WwrGNoQCDd4RTvcXJ9G6XThxeC3g+cpOf6Fw6vIERHt50pYiJpsk5XTJQ5w==
+  dependencies:
+    object-treeify "^1.1.20"
+
 "@miniflare/cache@2.12.2":
   version "2.12.2"
   resolved "https://registry.yarnpkg.com/@miniflare/cache/-/cache-2.12.2.tgz#402cbf67c9fc717b26c06516a166100d4b020870"
@@ -5369,15 +5376,15 @@ hono@3.1.5:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.1.5.tgz#a1c5314bb1cf0fd8b72bd2b6b6698eee16fbc520"
   integrity sha512-ypFLhNYoXXtep4I9zJt3VpB5/Ze3p9BLU4dpnAp7fxHOmSg8lu/Wwjs5sTJnb2GwVdfjbt9KFB9alA4Zt/P0jw==
 
-hono@^2.7.2:
-  version "2.7.8"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-2.7.8.tgz#5f6916c7f6838fe1f909f6046b30e6a0900f3128"
-  integrity sha512-LXLXw6LilE16QO0siFBDiNzmaRP6ca5ZyF0gDWcaiUqJJtE/d4lV/Hpst2O33AmJB5n0DQa5w53gZLUVf7uXNg==
-
 hono@^3.0.0, hono@^3.0.2, hono@^3.0.3, hono@^3.1.0, hono@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.1.2.tgz#896231b8940c201212bb3d440bebce637e68be26"
   integrity sha512-keNMGSlBX2VbwD5gF10Xu0zuUm9mTy1HWctIhuom8FJEJY6aKo1Bb/vQXTEjBupKDG7MJi2aG05YMo01GjkMQA==
+
+hono@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.1.6.tgz#7a7ca700fff69553a8c2a7a97d544f49bb8b1bd3"
+  integrity sha512-ugC7YbuyATZChp+SxfstiavvTCqENjvSiTiDAkbAOP20pJ58N4kXcbDi93SwZrvMFA2VVx1veMYHrsvUY9hcVA==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"
@@ -8498,6 +8505,11 @@ object-keys@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.1.1.tgz#1c47f272df277f3b1daf061677d9c82e2322c60e"
   integrity sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==
+
+object-treeify@^1.1.20:
+  version "1.1.33"
+  resolved "https://registry.yarnpkg.com/object-treeify/-/object-treeify-1.1.33.tgz#f06fece986830a3cba78ddd32d4c11d1f76cdf40"
+  integrity sha512-EFVjAYfzWqWsBMRHPMAXLCDIJnpMhdWAqR7xG6M6a2cs6PMFpl/+Z20w9zDW4vkxOFfddegBKq9Rehd0bxWE7A==
 
 object.assign@^4.1.4:
   version "4.1.4"
