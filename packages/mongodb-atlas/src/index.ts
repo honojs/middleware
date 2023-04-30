@@ -18,7 +18,7 @@ const KEYS = {
 }
 
 const dbCache: Record<string, MongoDBDatabase> = {}
-const collectionCache: Record<string, MongoDB.MongoDBCollection<Document>> = {}
+
 
 export interface IMongoDBAtlasOptions {
    realmAppId: string;
@@ -65,10 +65,9 @@ export function getDb(c: Context, name: string): MongoDBDatabase {
    return dbCache[name]
 }
 
+const collectionCache: Record<string, MongoDB.MongoDBCollection<Document>> = {}
 export function getCollection<T extends Document>(c: Context, dbName: string, collectionName: string): MongoDB.MongoDBCollection<T> {
    if (!collectionCache[collectionName])
-      collectionCache[collectionName] = getDb(c, dbName).collection<T>(collectionName)
-   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-   // @ts-ignore
-   return collectionCache[collectionName]
+      collectionCache[collectionName] = getDb(c, dbName).collection(collectionName)
+   return collectionCache[collectionName] as MongoDB.MongoDBCollection<T>
 }
