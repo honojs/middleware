@@ -22,8 +22,8 @@ const KEYS = {
 const dbCache: Record<string, globalThis.Realm.Services.MongoDBDatabase> = {}
 const collectionCache: Record<string, globalThis.Realm.Services.MongoDB.MongoDBCollection<Document>> = {}
 
-export async function mongoDBAtlas() {
-   return async (c: Context, next: Next) => {
+export function mongoDBAtlas() {
+   return async function(c: Context, next: Next) {
       if (App) {
          await next()
          return
