@@ -22,21 +22,23 @@ const KEYS = {
 const dbCache: Record<string, globalThis.Realm.Services.MongoDBDatabase> = {}
 const collectionCache: Record<string, globalThis.Realm.Services.MongoDB.MongoDBCollection<Document>> = {}
 
-export async function mongoDBAtlas(c: Context, next: Next) {
-   if (App) {
+export async function mongoDBAtlas() {
+   return async (c: Context, next: Next) => {
+      if (App) {
+         await next()
+         return
+      }
+
+      App = App || new Realm.App(c.env.REALM_APPID)
+      user = await App.logIn(Realm.Credentials.apiKey(c.env.REALM_API_KEY))
+      client = user.mongoClient('mongodb-atlas')
+
+      c.set(KEYS.APP, App)
+      c.set(KEYS.USER, user)
+      c.set(KEYS.CLIENT, client)
+
       await next()
-      return
    }
-
-   App = App || new Realm.App(c.env.REALM_APPID)
-   user = await App.logIn(Realm.Credentials.apiKey(c.env.REALM_API_KEY))
-   client = user.mongoClient('mongodb-atlas')
-
-   c.set(KEYS.APP, App)
-   c.set(KEYS.USER, user)
-   c.set(KEYS.CLIENT, client)
-
-   await next()
 }
 
 export function getApp(c: Context) {
