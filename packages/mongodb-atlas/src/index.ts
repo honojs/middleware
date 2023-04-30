@@ -22,15 +22,23 @@ const KEYS = {
 const dbCache: Record<string, globalThis.Realm.Services.MongoDBDatabase> = {}
 const collectionCache: Record<string, globalThis.Realm.Services.MongoDB.MongoDBCollection<Document>> = {}
 
-export function mongoDBAtlas() {
+export interface IMongoDBAtlasOptions {
+   realmAppId: string;
+   realmApiKey: string;
+}
+
+export function mongoDBAtlas(options: IMongoDBAtlasOptions) {
+   if (!options.realmAppId || !options.realmApiKey)
+      throw new Error('Missing Realm App ID or API Key')
+
    return async function(c: Context, next: Next) {
       if (App) {
          await next()
          return
       }
 
-      App = App || new Realm.App(c.env.REALM_APPID)
-      user = await App.logIn(Realm.Credentials.apiKey(c.env.REALM_API_KEY))
+      App = App || new Realm.App(options.realmAppId)
+      user = await App.logIn(Realm.Credentials.apiKey(options.realmApiKey))
       client = user.mongoClient('mongodb-atlas')
 
       c.set(KEYS.APP, App)

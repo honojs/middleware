@@ -1,28 +1,32 @@
 # MongoDB Atlas middleware for Hono
 
-**WIP**
+A MongoDB Atlas middleware for Hono
 
 ## Usage
 
 ```ts
-import { mongoDBAtlas } from '@hono/mongodb-atlas'
-import { Hono } from 'hono'
+// index.ts
+import {Hono} from "hono";
+import {mongoDBAtlas, getCollection, IMongoDBAtlasOptions} from '@hono/packages/mongodb-atlas/src/index'
+
+const options: IMongoDBAtlasOptions = {
+   realmAppId: "mongodb-real-app-id",
+   realmApiKey: "mongodb-real-api-key"
+}
 
 const app = new Hono()
-
-app.use('*', mongoDBAtlas())
+app.use('/', mongoDBAtlas(options))
 app.get('/', async (c) => {
-   const db = c.get('mongodb-atlas').db('foo') 
-   const insertedDoc = await db.collection('bar').insertOne({ foo: 'bar' })
-   c.json(insertedDoc)
+   const rs = await getCollection(c, 'test', 'users').find()
+   return c.json(rs)
 })
 
-export default app
+export default app;
 ```
 
 ## Author
 
-Yusuke Wada <https://github.com/yusukebe>
+Thinh Vu <https://github.com/ThinhVu>
 
 ## License
 
