@@ -7,17 +7,27 @@ A MongoDB Atlas middleware for Hono
 ```ts
 // index.ts
 import {Hono} from "hono";
-import {mongoDBAtlas, getCollection, IMongoDBAtlasOptions} from '@hono/packages/mongodb-atlas/src/index'
+import {mongoDBAtlas, IMongoDBAtlasOptions} from '@hono/packages/mongodb-atlas/src/index'
+
+const ACPN = 'ACPN'
 
 const options: IMongoDBAtlasOptions = {
    realmAppId: "mongodb-real-app-id",
-   realmApiKey: "mongodb-real-api-key"
+   realmApiKey: "mongodb-real-api-key",
+   defaultDatabase: "test",
+   accessCollectionPropName: ACPN
 }
 
 const app = new Hono()
 app.use('/', mongoDBAtlas(options))
 app.get('/', async (c) => {
-   const rs = await getCollection(c, 'test', 'users').find()
+   // access collection 'users' at default database named 'test'
+   const rs = await c.get(ACPN)('users').find()
+   return c.json(rs)
+})
+app.get('/db2', async (c) => {
+   // access collection 'users' at database 'db2'
+   const rs = await c.get(ACPN)('users', 'db2').find()
    return c.json(rs)
 })
 
