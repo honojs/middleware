@@ -1,6 +1,6 @@
 {
   "name": "@hono/mongodb-atlas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MongodDB Atlas middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
