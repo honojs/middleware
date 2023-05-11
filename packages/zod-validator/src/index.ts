@@ -1,7 +1,6 @@
 import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { z } from 'zod'
-import type { ZodSchema, ZodError } from 'zod'
+import type { z, ZodSchema, ZodError } from 'zod'
 
 type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; error: ZodError },
