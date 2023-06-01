@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 0.2.1
+
+### Patch Changes
+
+- [#89](https://github.com/honojs/middleware/pull/89) [`963b1ac`](https://github.com/honojs/middleware/commit/963b1ac0de4083b8d0fc7c8d2f9f0202e9d15bfd) Thanks [@mllnd](https://github.com/mllnd)! - Use optional chaining for determining Sentry DSN from environment (#89)
+
 ## 0.2.0
 
 ### Minor Changes
