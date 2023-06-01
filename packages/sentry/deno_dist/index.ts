@@ -41,7 +41,7 @@ export const sentry = (
       hasExecutionContext = false
     }
     const sentry = new Toucan({
-      dsn: c.env.SENTRY_DSN ?? c.env.NEXT_PUBLIC_SENTRY_DSN,
+      dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
       allowedHeaders: ['user-agent'],
       allowedSearchParams: /(.*)/,
       request: c.req.raw,
