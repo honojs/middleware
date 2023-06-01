@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.3
+
+### Patch Changes
+
+- [#87](https://github.com/honojs/middleware/pull/87) [`b7fe359`](https://github.com/honojs/middleware/commit/b7fe359dbc63b493d275df09f00c676de80b3f11) Thanks [@Sacramentix](https://github.com/Sacramentix)! - merge zod import into 1 line
+
 ## 0.1.2
 
 ### Patch Changes
