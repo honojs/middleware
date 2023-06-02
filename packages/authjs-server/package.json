@@ -1,7 +1,7 @@
 {
-  "name": "@hono/qwik-city",
-  "version": "0.0.2",
-  "description": "Qwik City middleware for Hono",
+  "name": "@hono/authjs-server",
+  "version": "0.0.1",
+  "description": "Auth.js Server Middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -9,6 +9,7 @@
     "dist"
   ],
   "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
@@ -27,15 +28,14 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@builder.io/qwik-city": "^0.100.0",
-    "hono": "^3.1.5"
+    "@auth/core": "^0.5.1",
+    "hono": "3.*"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^0.100.0",
-    "@builder.io/qwik-city": "^0.100.0",
-    "hono": "3.1.5"
+    "@auth/core": "^0.5.1",
+    "hono": "^3.0.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=16.0.0"
   }
 }
