@@ -6,6 +6,7 @@ import type { Result, Router } from 'hono/dist/types/router'
 
 export class MedleyRouter<T> implements Router<T> {
   router: any
+  name: string = 'MedleyRouter'
 
   constructor() {
     this.router = new OriginalRouter()

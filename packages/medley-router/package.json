@@ -28,7 +28,7 @@
     "hono": "*"
   },
   "devDependencies": {
-    "hono": "^3.1.6"
+    "hono": "^3.2.6"
   },
   "dependencies": {
     "@medley/router": "^0.2.1"
