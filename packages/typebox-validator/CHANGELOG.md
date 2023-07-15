@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.2.0
+
+### Minor Changes
+
+- [#90](https://github.com/honojs/middleware/pull/90) [`65ed112`](https://github.com/honojs/middleware/commit/65ed112e0e6cc50c79d34986703d156bc88bb304) Thanks [@NotAmaan](https://github.com/NotAmaan)! - Fixed EvalError
+
 ## 0.1.1
 
 ### Patch Changes
