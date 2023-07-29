@@ -11053,6 +11053,11 @@ vali-date@^1.0.0:
   resolved "https://registry.yarnpkg.com/vali-date/-/vali-date-1.0.0.tgz#1b904a59609fb328ef078138420934f6b86709a6"
   integrity sha512-sgECfZthyaCKW10N0fm27cg8HYTFK5qMWgypqkXMQ4Wbl/zZKx7xZICgcoxIIE+WFAP/MBL2EFwC/YvLxw3Zeg==
 
+valibot@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.5.0.tgz#027bdbfa9e64a6cca2f00fa8d0cd6e361877f6f4"
+  integrity sha512-xjL/zMuQloTyK6sVzGO4HVg3AcPb970kIi2H3yMgl7gadBKKzepje31DWRyvOxhXJnIrFX8rJM0mhkMcmWz4bg==
+
 valid-url@^1:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/valid-url/-/valid-url-1.0.9.tgz#1c14479b40f1397a75782f115e4086447433a200"
