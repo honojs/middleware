@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.4
+
+### Patch Changes
+
+- [#104](https://github.com/honojs/middleware/pull/104) [`1fb2ab1`](https://github.com/honojs/middleware/commit/1fb2ab1dad5e1f7c4071e33af342a08690832054) Thanks [@yusukebe](https://github.com/yusukebe)! - fix a Hook type
+
 ## 0.1.3
 
 ### Patch Changes
