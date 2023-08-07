@@ -6,7 +6,7 @@ import { safeParse } from 'valibot'
 type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; error: ValiError },
   c: Context<E, P>
-) => Response | Promise<Response> | void
+) => Response | Promise<Response> | void | Promise<Response | void>
 
 export const vValidator = <
   T extends BaseSchema,
