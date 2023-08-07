@@ -88,7 +88,7 @@ describe('With Hook', () => {
     '/post',
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
-        return c.text('Invalid!', 400)
+        return c.text(`${result.data.id} is invalid!`, 400)
       }
       const data = result.data
       return c.text(`${data.id} is valid!`)
@@ -127,5 +127,6 @@ describe('With Hook', () => {
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
+    expect(await res.text()).toBe('123 is invalid!')
   })
 })
