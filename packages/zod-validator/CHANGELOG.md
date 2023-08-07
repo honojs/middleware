@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.5
+
+### Patch Changes
+
+- [#107](https://github.com/honojs/middleware/pull/107) [`8eb3967`](https://github.com/honojs/middleware/commit/8eb3967477fce4ccbaf995e811b6d6a014c2e052) Thanks [@yusukebe](https://github.com/yusukebe)! - fix passing data to hook
+
 ## 0.1.4
 
 ### Patch Changes
