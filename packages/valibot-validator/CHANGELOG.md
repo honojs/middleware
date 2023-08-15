@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.1.2
+
+### Patch Changes
+
+- [#111](https://github.com/honojs/middleware/pull/111) [`945938b`](https://github.com/honojs/middleware/commit/945938b6afe45f7f4f934b9fafebf9fb503560eb) Thanks [@yusukebe](https://github.com/yusukebe)! - bump up valibot
+
 ## 0.1.1
 
 ### Patch Changes
