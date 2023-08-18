@@ -78,12 +78,13 @@ describe('Basic', () => {
     },
     (result, c) => {
       if (!result.success) {
-        return c.jsonT(
+        const res = c.jsonT(
           {
             ok: false,
           },
           400
         )
+        return res
       }
     }
   )
