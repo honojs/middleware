@@ -1,0 +1,44 @@
+{
+  "name": "@hono/zod-openapi",
+  "version": "0.0.0",
+  "description": "A wrapper class of Hono which supports OpenAPI.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*",
+    "zod": "3.*"
+  },
+  "devDependencies": {
+    "hono": "^3.4.3",
+    "zod": "^3.22.1"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^5.5.0",
+    "@hono/zod-validator": "^0.1.7"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

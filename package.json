@@ -2,9 +2,11 @@
   "name": "hono-middleware",
   "version": "0.0.0",
   "description": "Third-party middleware for Hono",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "scripts": {
     "build:hello": "yarn workspace @hono/hello build",
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
@@ -16,6 +18,7 @@
     "build:typebox-validator": "yarn workspace @hono/typebox-validator build",
     "build:medley-router": "yarn workspace @hono/medley-router build",
     "build:valibot-validator": "yarn workspace @hono/valibot-validator build",
+    "build:zod-openapi": "yarn workspace @hono/zod-openapi build",
     "build": "run-p build:*"
   },
   "license": "MIT",
@@ -43,8 +46,11 @@
     "jest-environment-miniflare": "^2.10.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
+    "publint": "^0.2.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.5",
-    "typescript": "^4.7.4"
+    "tsup": "^7.2.0",
+    "typescript": "^4.7.4",
+    "vitest": "^0.34.2"
   }
 }
