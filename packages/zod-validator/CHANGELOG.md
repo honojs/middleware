@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.8
+
+### Patch Changes
+
+- [#119](https://github.com/honojs/middleware/pull/119) [`3b37eb4`](https://github.com/honojs/middleware/commit/3b37eb4aefb22f6e7711c390f94b022eaa3695cf) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-validator): fixed zod-validator hook types
+
 ## 0.1.7
 
 ### Patch Changes
