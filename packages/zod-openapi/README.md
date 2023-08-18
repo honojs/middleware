@@ -84,6 +84,8 @@ const route = createRoute({
 Create the App:
 
 ```ts
+import { OpenAPIHono } from '@hono/zod-openapi'
+
 const app = new OpenAPIHono()
 
 app.openapi(
