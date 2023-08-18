@@ -59,8 +59,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
     ? R['request']['body']['content'] extends ZodContentObject
       ? IsJson<keyof R['request']['body']['content']> extends never
         ? {}
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
+        : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             out: {
               json: z.input<
@@ -78,8 +77,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
     ? R['request']['body']['content'] extends ZodContentObject
       ? IsForm<keyof R['request']['body']['content']> extends never
         ? {}
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
+        : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             out: {
               form: z.input<

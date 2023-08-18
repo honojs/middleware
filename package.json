@@ -16,6 +16,7 @@
     "build:typebox-validator": "yarn workspace @hono/typebox-validator build",
     "build:medley-router": "yarn workspace @hono/medley-router build",
     "build:valibot-validator": "yarn workspace @hono/valibot-validator build",
+    "build:zod-openapi": "yarn workspace @hono/zod-openapi build",
     "build": "run-p build:*"
   },
   "license": "MIT",
