@@ -36,13 +36,13 @@ export const zValidator = <
 
     if (hook) {
       const hookResult = hook({ data: value, ...result }, c)
-      if (
-        hookResult &&
-        (hookResult instanceof Response ||
-          hookResult instanceof Promise ||
-          'response' in hookResult)
-      ) {
-        return hookResult
+      if (hookResult) {
+        if (hookResult instanceof Response || hookResult instanceof Promise) {
+          return hookResult
+        }
+        if ('response' in hookResult) {
+          return hookResult.response
+        }
       }
     }
 
