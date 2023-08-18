@@ -5,14 +5,7 @@ import type { z, ZodSchema, ZodError } from 'zod'
 export type Hook<T, E extends Env, P extends string, O = {}> = (
   result: { success: true; data: T } | { success: false; error: ZodError; data: T },
   c: Context<E, P>
-) =>
-  | Response
-  | Promise<Response>
-  | void
-  | Promise<Response | void>
-  | TypedResponse<O>
-  | Promise<TypedResponse<O>>
-  | Promise<TypedResponse<O> | void>
+) => Response | Promise<Response> | void | Promise<Response | void> | TypedResponse<O>
 
 export const zValidator = <
   T extends ZodSchema,
