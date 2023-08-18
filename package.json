@@ -2,9 +2,14 @@
   "name": "hono-middleware",
   "version": "0.0.0",
   "description": "Third-party middleware for Hono",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "@hono/zod-validator"
+    ]
+  },
   "scripts": {
     "build:hello": "yarn workspace @hono/hello build",
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
