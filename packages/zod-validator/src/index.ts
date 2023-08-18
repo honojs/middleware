@@ -1,11 +1,18 @@
-import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
+import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse } from 'hono'
 import { validator } from 'hono/validator'
 import type { z, ZodSchema, ZodError } from 'zod'
 
-type Hook<T, E extends Env, P extends string> = (
+export type Hook<T, E extends Env, P extends string, O = {}> = (
   result: { success: true; data: T } | { success: false; error: ZodError; data: T },
   c: Context<E, P>
-) => Response | Promise<Response> | void | Promise<Response | void>
+) =>
+  | Response
+  | Promise<Response>
+  | void
+  | Promise<Response | void>
+  | TypedResponse<O>
+  | Promise<TypedResponse<O>>
+  | Promise<TypedResponse<O> | void>
 
 export const zValidator = <
   T extends ZodSchema,
@@ -29,7 +36,12 @@ export const zValidator = <
 
     if (hook) {
       const hookResult = hook({ data: value, ...result }, c)
-      if (hookResult instanceof Response || hookResult instanceof Promise) {
+      if (
+        hookResult &&
+        (hookResult instanceof Response ||
+          hookResult instanceof Promise ||
+          'response' in hookResult)
+      ) {
         return hookResult
       }
     }
