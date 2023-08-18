@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.7
+
+### Patch Changes
+
+- [#116](https://github.com/honojs/middleware/pull/116) [`c271b6d`](https://github.com/honojs/middleware/commit/c271b6d502f1b9e193beb897ff561e08e3877ce5) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-validator): convert TypedResponse to Response in hook
+
 ## 0.1.6
 
 ### Patch Changes
