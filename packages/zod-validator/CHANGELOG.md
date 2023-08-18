@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.6
+
+### Patch Changes
+
+- [#114](https://github.com/honojs/middleware/pull/114) [`3de3d7c`](https://github.com/honojs/middleware/commit/3de3d7cd1bfc064f4f2c38da35f46da4998dac35) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-validator): support TypedResponse in hook
+
 ## 0.1.5
 
 ### Patch Changes
