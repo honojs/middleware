@@ -1,22 +1,27 @@
 # Zod OpenAPI Hono
 
-A wrapper class for Hono that supports OpenAPI. With it, you can validate values and types using [Zod](https://zod.dev/) and generate OpenAPI Swagger documentation.
-This is based on [Zod to OpenAPI](https://github.com/asteasolutions/zod-to-openapi).
+**Zod OpenAPI Hono** is extending Hono to support OpenAPI.
+With it, you can validate values and types using [**Zod**](https://zod.dev/) and generate OpenAPI Swagger documentation.
+This is based on [**Zod to OpenAPI**](https://github.com/asteasolutions/zod-to-openapi).
 For details on creating schemas and defining routes, please refer to this resource.
 
-_This is not a middleware but hosted on this monorepo_
+_This is not a real middleware but hosted on this monorepo._
 
 ## Usage
 
-### Install
+### Installation
 
-```
+You can install it via the npm. Should be installed with `hono` and `zod`.
+
+```sh
 npm i hono zod @hono/zod-openapi
 ```
 
-### Write your application
+### Basic Usage
 
-Define schemas:
+#### Write your application
+
+First, define schemas with Zod:
 
 ```ts
 import { z } from '@hono/zod-openapi'
@@ -36,7 +41,7 @@ const ParamsSchema = z.object({
 
 const UserSchema = z
   .object({
-    id: z.number().openapi({
+    id: z.string().openapi({
       example: 123,
     }),
     name: z.string().openapi({
@@ -49,7 +54,7 @@ const UserSchema = z
   .openapi('User')
 ```
 
-Create routes:
+Next, create routes:
 
 ```ts
 import { createRoute } from '@hono/zod-openapi'
@@ -69,25 +74,78 @@ const route = createRoute({
       },
       description: 'Get the user',
     },
-    400: {
-      content: {
-        'application/json': {
-          schema: ErrorSchema,
-        },
-      },
-      description: 'Error!',
-    },
   },
 })
 ```
 
-Create the App:
+Finally, create the App:
 
 ```ts
 import { OpenAPIHono } from '@hono/zod-openapi'
 
 const app = new OpenAPIHono()
 
+app.openapi(route, (c) => {
+  const { id } = c.req.valid('param')
+  return c.jsonT({
+    id,
+    age: 20,
+    name: 'Ultra-man',
+  })
+})
+
+// OpenAPI document will be served on /doc
+app.doc('/doc', {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+})
+```
+
+### Handling validation errors
+
+You can handle the validation errors the following ways.
+
+Define the schema:
+
+```ts
+const ErrorSchema = z.object({
+  code: z.number().openapi({
+    example: 400,
+  }),
+  message: z.string().openapi({
+    example: 'Bad Request',
+  }),
+})
+```
+
+Add the response:
+
+```ts
+const route = createRoute({
+  method: 'get',
+  path: '/users/:id',
+  request: {
+    params: ParamsSchema,
+  },
+  responses: {
+    400: {
+      content: {
+        'application/json': {
+          schema: ErrorSchema,
+        },
+      },
+      description: 'Return Error!',
+    },
+  },
+})
+```
+
+Add the hook:
+
+```ts
 app.openapi(
   route,
   (c) => {
@@ -98,31 +156,42 @@ app.openapi(
       name: 'Ultra-man',
     })
   },
+  // Hook
   (result, c) => {
     if (!result.success) {
-      const res = c.jsonT(
+      return c.jsonT(
         {
-          ok: false,
+          code: 400,
+          message: 'Validation Error!',
         },
         400
       )
-      return res
     }
   }
 )
-
-app.doc('/doc', {
-  openapi: '3.0.0',
-  info: {
-    version: '1.0.0',
-    title: 'My API',
-  },
-})
 ```
 
-## Author
+### Middleware
 
-Yusuke Wada <https://github.com/yusukebe>
+You can use Hono's middleware as same as using Hono because Zod OpenAPI is just extending Hono.
+
+```ts
+import { prettyJSON } from 'hono/pretty-json'
+
+//...
+
+app.use('/doc/*', prettyJSON())
+```
+
+## References
+
+- [Hono](https://hono.dev/)
+- [Zod](https://zod.dev/)
+- [Zod to OpenAPI](https://github.com/asteasolutions/zod-to-openapi)
+
+## Authors
+
+- Yusuke Wada <https://github.com/yusukebe>
 
 ## License
 
