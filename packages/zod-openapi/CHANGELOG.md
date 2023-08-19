@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.1.0
+
+### Minor Changes
+
+- [#124](https://github.com/honojs/middleware/pull/124) [`e6b20c6`](https://github.com/honojs/middleware/commit/e6b20c64b61654dc742b233ad09d764c71db7186) Thanks [@yusukebe](https://github.com/yusukebe)! - feat(zod-openapi): support RPC-mode
+
 ## 0.0.1
 
 ### Patch Changes
