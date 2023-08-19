@@ -1,17 +1,19 @@
 # Zod OpenAPI Hono
 
-**Zod OpenAPI Hono** is extending Hono to support OpenAPI.
-With it, you can validate values and types using [**Zod**](https://zod.dev/) and generate OpenAPI Swagger documentation.
-This is based on [**Zod to OpenAPI**](https://github.com/asteasolutions/zod-to-openapi).
-For details on creating schemas and defining routes, please refer to this resource.
+**Zod OpenAPI Hono** is an extended Hono class that supports OpenAPI. With it, you can validate values and types using [**Zod**](https://zod.dev/) and generate OpenAPI Swagger documentation. This is based on [**Zod to OpenAPI**](https://github.com/asteasolutions/zod-to-openapi) (thanks a lot!). For details on creating schemas and defining routes, please refer to [the "Zod to OpenAPI" resource](https://github.com/asteasolutions/zod-to-openapi).
 
-_This is not a real middleware but hosted on this monorepo._
+_Note: This is not standalone middleware but is hosted on the monorepo "[github.com/honojs/middleware](https://github.com/honojs/middleware)"._
+
+## Limitations
+
+- Currently, it does not support validation of _headers_ and _cookies_.
+- An instance of Zod OpenAPI Hono cannot be used as a "subApp" in conjunction with `rootApp.route('/api', subApp)`.
 
 ## Usage
 
 ### Installation
 
-You can install it via the npm. Should be installed with `hono` and `zod`.
+You can install it via npm. It should be installed alongside `hono` and `zod`.
 
 ```sh
 npm i hono zod @hono/zod-openapi
@@ -19,9 +21,9 @@ npm i hono zod @hono/zod-openapi
 
 ### Basic Usage
 
-#### Write your application
+#### Setting up your application
 
-First, define schemas with Zod:
+First, define your schemas with Zod. The `z` object should be imported from `@hono/zod-openapi`:
 
 ```ts
 import { z } from '@hono/zod-openapi'
@@ -54,7 +56,7 @@ const UserSchema = z
   .openapi('User')
 ```
 
-Next, create routes:
+Next, create a route:
 
 ```ts
 import { createRoute } from '@hono/zod-openapi'
@@ -72,13 +74,13 @@ const route = createRoute({
           schema: UserSchema,
         },
       },
-      description: 'Get the user',
+      description: 'Retrieve the user',
     },
   },
 })
 ```
 
-Finally, create the App:
+Finally, set up the app:
 
 ```ts
 import { OpenAPIHono } from '@hono/zod-openapi'
@@ -94,7 +96,7 @@ app.openapi(route, (c) => {
   })
 })
 
-// OpenAPI document will be served on /doc
+// The OpenAPI documentation will be available at /doc
 app.doc('/doc', {
   openapi: '3.0.0',
   info: {
@@ -104,11 +106,17 @@ app.doc('/doc', {
 })
 ```
 
-### Handling validation errors
+You can start your app just like you would with Hono. For Cloudflare Workers and Bun, use this entry point:
 
-You can handle the validation errors the following ways.
+```ts
+export default app
+```
 
-Define the schema:
+### Handling Validation Errors
+
+Validation errors can be handled as follows:
+
+First, define the error schema:
 
 ```ts
 const ErrorSchema = z.object({
@@ -121,7 +129,7 @@ const ErrorSchema = z.object({
 })
 ```
 
-Add the response:
+Then, add the error response:
 
 ```ts
 const route = createRoute({
@@ -137,13 +145,13 @@ const route = createRoute({
           schema: ErrorSchema,
         },
       },
-      description: 'Return Error!',
+      description: 'Returns an error',
     },
   },
 })
 ```
 
-Add the hook:
+Finally, add the hook:
 
 ```ts
 app.openapi(
@@ -162,7 +170,7 @@ app.openapi(
       return c.jsonT(
         {
           code: 400,
-          message: 'Validation Error!',
+          message: 'Validation Error',
         },
         400
       )
@@ -173,7 +181,7 @@ app.openapi(
 
 ### Middleware
 
-You can use Hono's middleware as same as using Hono because Zod OpenAPI is just extending Hono.
+Zod OpenAPI Hono is an extension of Hono, so you can use Hono's middleware in the same way:
 
 ```ts
 import { prettyJSON } from 'hono/pretty-json'
@@ -183,9 +191,9 @@ import { prettyJSON } from 'hono/pretty-json'
 app.use('/doc/*', prettyJSON())
 ```
 
-### RPC-mode
+### RPC Mode
 
-Zod OpenAPI Hono supports Hono's RPC-mode. You can create the types for passing Hono Client:
+Zod OpenAPI Hono supports Hono's RPC mode. You can define types for the Hono Client as follows:
 
 ```ts
 import { hc } from 'hono/client'
