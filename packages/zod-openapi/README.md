@@ -44,7 +44,7 @@ const ParamsSchema = z.object({
 const UserSchema = z
   .object({
     id: z.string().openapi({
-      example: 123,
+      example: '123',
     }),
     name: z.string().openapi({
       example: 'John Doe',
