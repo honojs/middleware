@@ -177,10 +177,9 @@ describe('Query', () => {
     }),
   })
 
-  const PostsSchema = z
+  const BooksSchema = z
     .object({
-      title: z.string().openapi({}),
-      content: z.string().openapi({}),
+      titles: z.array(z.string().openapi({})),
       page: z.number().openapi({}),
     })
     .openapi('Post')
@@ -195,10 +194,10 @@ describe('Query', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostsSchema,
+            schema: BooksSchema,
           },
         },
-        description: 'Get the posts',
+        description: 'Get books',
       },
     },
   })
@@ -208,8 +207,7 @@ describe('Query', () => {
   app.openapi(route, (c) => {
     const { page } = c.req.valid('query')
     return c.jsonT({
-      title: 'Good title',
-      content: 'Good content',
+      titles: ['Good title'],
       page: Number(page),
     })
   })
@@ -218,8 +216,7 @@ describe('Query', () => {
     const res = await app.request('/books?page=123')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      title: 'Good title',
-      content: 'Good content',
+      titles: ['Good title'],
       page: 123,
     })
   })
@@ -236,7 +233,7 @@ describe('JSON', () => {
     title: z.string().openapi({}),
   })
 
-  const PostsSchema = z
+  const PostSchema = z
     .object({
       id: z.number().openapi({}),
       title: z.string().openapi({}),
@@ -259,10 +256,10 @@ describe('JSON', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostsSchema,
+            schema: PostSchema,
           },
         },
-        description: 'Get the posts',
+        description: 'Post a post',
       },
     },
   })
@@ -304,6 +301,7 @@ describe('JSON', () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({}),
     })
     const res = await app.request(req)
     expect(res.status).toBe(400)
@@ -316,7 +314,7 @@ describe('Form', () => {
     title: z.string().openapi({}),
   })
 
-  const PostsSchema = z
+  const PostSchema = z
     .object({
       id: z.number().openapi({}),
       title: z.string().openapi({}),
@@ -339,10 +337,10 @@ describe('Form', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostsSchema,
+            schema: PostSchema,
           },
         },
-        description: 'Post the post',
+        description: 'Post a post',
       },
     },
   })
@@ -393,7 +391,7 @@ describe('Types', () => {
     title: z.string().openapi({}),
   })
 
-  const PostsSchema = z
+  const PostSchema = z
     .object({
       id: z.number().openapi({}),
       message: z.string().openapi({}),
@@ -416,10 +414,10 @@ describe('Types', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostsSchema,
+            schema: PostSchema,
           },
         },
-        description: 'Post the post',
+        description: 'Post a post',
       },
     },
   })
