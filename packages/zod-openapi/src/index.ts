@@ -11,7 +11,7 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import type { Context, Input, TypedResponse } from 'hono'
+import type { Context, Input, Schema, TypedResponse } from 'hono'
 import type { Env, Handler, MiddlewareHandler } from 'hono'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
@@ -40,7 +40,7 @@ type IsForm<T> = T extends string
 
 type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyof R['request']
   ? R['request'][Part]
-  : never
+  : {}
 
 type InputTypeBase<
   R extends RouteConfig,
@@ -49,6 +49,7 @@ type InputTypeBase<
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends AnyZodObject
     ? {
+        in: { [K in Type]: z.input<RequestPart<R, Part>> }
         out: { [K in Type]: z.input<RequestPart<R, Part>> }
       }
     : {}
@@ -61,6 +62,11 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
+            in: {
+              json: z.input<
+                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+              >
+            }
             out: {
               json: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
@@ -79,6 +85,11 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
+            in: {
+              form: z.input<
+                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+              >
+            }
             out: {
               form: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
@@ -137,7 +148,7 @@ export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = 
     route: R,
     handler: Handler<E, R['path'], I, OutputType<R>>,
     hook?: Hook<I, E, R['path'], OutputType<R>>
-  ) => {
+  ): Hono<E, Schema<R['method'], R['path'], I['in'], OutputType<R>>, BasePath> => {
     this.#registry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
