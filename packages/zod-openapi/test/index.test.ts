@@ -1,5 +1,9 @@
-// eslint-disable-next-line node/no-extraneous-import
-import { describe, it, expect } from 'vitest'
+/* eslint-disable node/no-extraneous-import */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Env } from 'hono'
+import type { Hono } from 'hono'
+import { describe, it, expect, expectTypeOf } from 'vitest'
+import type { Schema } from 'zod'
 import { OpenAPIHono, createRoute, z } from '../src'
 
 describe('Basic - params', () => {
@@ -338,7 +342,7 @@ describe('Form', () => {
             schema: PostsSchema,
           },
         },
-        description: 'Get the posts',
+        description: 'Post the post',
       },
     },
   })
@@ -380,5 +384,77 @@ describe('Form', () => {
     })
     const res = await app.request(req)
     expect(res.status).toBe(400)
+  })
+})
+
+describe('Types', () => {
+  const RequestSchema = z.object({
+    id: z.number().openapi({}),
+    title: z.string().openapi({}),
+  })
+
+  const PostsSchema = z
+    .object({
+      id: z.number().openapi({}),
+      message: z.string().openapi({}),
+    })
+    .openapi('Post')
+
+  const route = createRoute({
+    method: 'post',
+    path: '/posts',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: RequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PostsSchema,
+          },
+        },
+        description: 'Post the post',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  const appRoutes = app.openapi(route, (c) => {
+    const data = c.req.valid('json')
+    return c.jsonT({
+      id: data.id,
+      message: 'Success',
+    })
+  })
+
+  it('Should return correct types', () => {
+    type H = Hono<
+      Env,
+      Schema<{
+        '/posts': {
+          $post: {
+            input: {
+              json: {
+                title: string
+                id: number
+              }
+            }
+            output: {
+              id: number
+              message: string
+            }
+          }
+        }
+      }>,
+      '/'
+    >
+    expectTypeOf(appRoutes).toMatchTypeOf<H>
   })
 })

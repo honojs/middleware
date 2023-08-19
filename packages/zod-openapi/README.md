@@ -183,6 +183,24 @@ import { prettyJSON } from 'hono/pretty-json'
 app.use('/doc/*', prettyJSON())
 ```
 
+### RPC-mode
+
+Zod OpenAPI Hono supports Hono's RPC-mode. You can create the types for passing Hono Client:
+
+```ts
+import { hc } from 'hono/client'
+
+const appRoutes = app.openapi(route, (c) => {
+  const data = c.req.valid('json')
+  return c.jsonT({
+    id: data.id,
+    message: 'Success',
+  })
+})
+
+const client = hc<typeof appRoutes>('http://localhost:8787/')
+```
+
 ## References
 
 - [Hono](https://hono.dev/)
