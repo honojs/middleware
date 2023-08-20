@@ -29,12 +29,12 @@
   "peerDependencies": {
     "@builder.io/qwik": "^1.0.0",
     "@builder.io/qwik-city": "^1.0.0",
-    "hono": "3.1.5"
+    "hono": "^3.1.5"
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.0.0",
     "@builder.io/qwik-city": "^1.0.0",
-    "hono": "3.1.5"
+    "hono": "^3.1.5"
   },
   "engines": {
     "node": ">=18"
