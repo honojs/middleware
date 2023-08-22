@@ -1,5 +1,11 @@
 # @hono/qwik-city
 
+## 0.0.4
+
+### Patch Changes
+
+- [#127](https://github.com/honojs/middleware/pull/127) [`bbe197a`](https://github.com/honojs/middleware/commit/bbe197acc34b0ebc47a9609710eb420ecec6aded) Thanks [@shuymn](https://github.com/shuymn)! - feat(qwik-city): adapt to qwik-city changes in v1.2.0
+
 ## 0.0.3
 
 ### Patch Changes
