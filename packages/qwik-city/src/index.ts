@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { _deserializeData, _serializeData, _verifySerializable } from '@builder.io/qwik'
+import { setServerPlatform } from '@builder.io/qwik/server'
 import type {
   ServerRenderOptions,
   ServerRequestEvent,
@@ -12,6 +13,16 @@ import {
 import type { MiddlewareHandler } from 'hono'
 
 export const qwikMiddleware = (opts: ServerRenderOptions): MiddlewareHandler => {
+  // eslint-disable-next-line @typescript-eslint/no-extra-semi
+  ;(globalThis as any).TextEncoderStream = TextEncoderStream
+  const qwikSerializer = {
+    _deserializeData,
+    _serializeData,
+    _verifySerializable,
+  }
+  if (opts.manifest) {
+    setServerPlatform(opts.manifest)
+  }
   return async (c, next) => {
     const url = new URL(c.req.url)
     const serverRequestEv: ServerRequestEvent<Response> = {
@@ -28,16 +39,17 @@ export const qwikMiddleware = (opts: ServerRenderOptions): MiddlewareHandler => 
         resolve(response)
         return writable
       },
+      getClientConn: () => ({}),
       platform: {},
       env: c.env,
     }
-    const qwikSerializer = {
-      _deserializeData,
-      _serializeData,
-      _verifySerializable,
-    }
     const handledResponse = await requestHandler(serverRequestEv, opts, qwikSerializer)
     if (handledResponse) {
+      handledResponse.completion.then((v) => {
+        if (v) {
+          console.error(v)
+        }
+      })
       const response = await handledResponse.response
       if (response) {
         return response
@@ -81,6 +93,3 @@ class TextEncoderStream {
     }
   }
 }
-
-// eslint-disable-next-line @typescript-eslint/no-extra-semi
-;(globalThis as any).TextEncoderStream = TextEncoderStream
