@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 0.2.2
+
+### Patch Changes
+
+- [#130](https://github.com/honojs/middleware/pull/130) [`de2e95a`](https://github.com/honojs/middleware/commit/de2e95a59e4c02b9e985f9e3f81792b7890c922d) Thanks [@yusukebe](https://github.com/yusukebe)! - fixed sentry options types
+
 ## 0.2.1
 
 ### Patch Changes
