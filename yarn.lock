@@ -11929,10 +11929,10 @@ vali-date@^1.0.0:
   resolved "https://registry.yarnpkg.com/vali-date/-/vali-date-1.0.0.tgz#1b904a59609fb328ef078138420934f6b86709a6"
   integrity sha512-sgECfZthyaCKW10N0fm27cg8HYTFK5qMWgypqkXMQ4Wbl/zZKx7xZICgcoxIIE+WFAP/MBL2EFwC/YvLxw3Zeg==
 
-valibot@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.12.0.tgz#3206191f4af551768bfddf041f40ad3b3d3037df"
-  integrity sha512-EGx/uDUpRa9wB9NkD7fsktc02rvXWlJzDTC/ihbE+NybhzAsMhns2OOdNv2R4BtdGnDvaCEGi/DbgR5RvgCS8A==
+valibot@^0.13.1:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.13.1.tgz#34196211c5b4293829a9e4e6b0cf29a9227f410b"
+  integrity sha512-SG2W1RHqE2LShl3p6tyERt6I+G6PQa9ZFVfkyNKXz01HBzL+tBeH5kXw/5AQeAzPJSjI3djVGBl1CyozA1kyBQ==
 
 valid-url@^1:
   version "1.0.9"
