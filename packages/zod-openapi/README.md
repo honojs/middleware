@@ -63,7 +63,7 @@ import { createRoute } from '@hono/zod-openapi'
 
 const route = createRoute({
   method: 'get',
-  path: '/users/:id',
+  path: '/users/{id}',
   request: {
     params: ParamsSchema,
   },
@@ -134,7 +134,7 @@ Then, add the error response:
 ```ts
 const route = createRoute({
   method: 'get',
-  path: '/users/:id',
+  path: '/users/{id}',
   request: {
     params: ParamsSchema,
   },
@@ -159,7 +159,7 @@ app.openapi(
   (c) => {
     const { id } = c.req.valid('param')
     return c.jsonT({
-      id: Number(id),
+      id,
       age: 20,
       name: 'Ultra-man',
     })
