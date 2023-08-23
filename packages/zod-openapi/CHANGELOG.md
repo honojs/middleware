@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.1.1
+
+### Patch Changes
+
+- [#132](https://github.com/honojs/middleware/pull/132) [`2dbc823`](https://github.com/honojs/middleware/commit/2dbc823b29a95e6c81bedc5416c08f15ac97288d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix path param format `:id` to `{id}`
+
 ## 0.1.0
 
 ### Minor Changes
