@@ -1,10 +1,10 @@
 import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { BaseSchema, Input, Output, ValiError } from 'valibot'
+import type { BaseSchema, Input, Output, SafeParseResult } from 'valibot'
 import { safeParse } from 'valibot'
 
-type Hook<T, E extends Env, P extends string> = (
-  result: { success: true; data: T } | { success: false; error: ValiError },
+type Hook<T extends BaseSchema, E extends Env, P extends string> = (
+  result: SafeParseResult<T>,
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void>
 
@@ -23,7 +23,7 @@ export const vValidator = <
 >(
   target: Target,
   schema: T,
-  hook?: Hook<Output<T>, E, P>
+  hook?: Hook<T, E, P>
 ): MiddlewareHandler<E, P, V> =>
   validator(target, (value, c) => {
     const result = safeParse(schema, value)
@@ -39,6 +39,6 @@ export const vValidator = <
       return c.json(result, 400)
     }
 
-    const data = result.data as Output<T>
+    const data = result.output as Output<T>
     return data
   })

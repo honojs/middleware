@@ -90,7 +90,7 @@ describe('With Hook', () => {
       if (!result.success) {
         return c.text('Invalid!', 400)
       }
-      const data = result.data
+      const data = result.output
       return c.text(`${data.id} is valid!`)
     }),
     (c) => {
