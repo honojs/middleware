@@ -22,8 +22,8 @@ describe('Basic - params', () => {
 
   const UserSchema = z
     .object({
-      id: z.number().openapi({
-        example: 123,
+      id: z.string().openapi({
+        example: '123',
       }),
       name: z.string().openapi({
         example: 'John Doe',
@@ -44,7 +44,7 @@ describe('Basic - params', () => {
 
   const route = createRoute({
     method: 'get',
-    path: '/users/:id',
+    path: '/users/{id}',
     request: {
       params: ParamsSchema,
     },
@@ -75,7 +75,7 @@ describe('Basic - params', () => {
     (c) => {
       const { id } = c.req.valid('param')
       return c.jsonT({
-        id: Number(id),
+        id,
         age: 20,
         name: 'Ultra-man',
       })
@@ -105,7 +105,7 @@ describe('Basic - params', () => {
     const res = await app.request('/users/123')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      id: 123,
+      id: '123',
       age: 20,
       name: 'Ultra-man',
     })
@@ -128,7 +128,7 @@ describe('Basic - params', () => {
           User: {
             type: 'object',
             properties: {
-              id: { type: 'number', example: 123 },
+              id: { type: 'string', example: '123' },
               name: { type: 'string', example: 'John Doe' },
               age: { type: 'number', example: 42 },
             },
@@ -143,7 +143,7 @@ describe('Basic - params', () => {
         parameters: {},
       },
       paths: {
-        '/users/:id': {
+        '/users/{id}': {
           get: {
             parameters: [
               {

@@ -129,6 +129,10 @@ type Hook<T, E extends Env, P extends string, O> = (
   c: Context<E, P>
 ) => TypedResponse<O> | Promise<TypedResponse<T>> | void
 
+type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}${infer _}`
+  ? `/:${Param}`
+  : T
+
 export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = '/'> extends Hono<
   E,
   S,
@@ -143,12 +147,13 @@ export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = 
 
   openapi = <
     R extends RouteConfig,
-    I extends Input = InputTypeParam<R> & InputTypeQuery<R> & InputTypeForm<R> & InputTypeJson<R>
+    I extends Input = InputTypeParam<R> & InputTypeQuery<R> & InputTypeForm<R> & InputTypeJson<R>,
+    P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: Handler<E, R['path'], I, OutputType<R>>,
-    hook?: Hook<I, E, R['path'], OutputType<R>>
-  ): Hono<E, Schema<R['method'], R['path'], I['in'], OutputType<R>>, BasePath> => {
+    handler: Handler<E, P, I, OutputType<R>>,
+    hook?: Hook<I, E, P, OutputType<R>>
+  ): Hono<E, Schema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.#registry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
@@ -187,7 +192,7 @@ export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = 
       }
     }
 
-    this.on([route.method], route.path, ...validators, handler)
+    this.on([route.method], route.path.replace(/\/{(.+)}/, '/:$1'), ...validators, handler)
     return this
   }
 
