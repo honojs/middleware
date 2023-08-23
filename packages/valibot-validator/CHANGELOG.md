@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.2.0
+
+### Minor Changes
+
+- [#135](https://github.com/honojs/middleware/pull/135) [`dd620f0`](https://github.com/honojs/middleware/commit/dd620f0dc72976a76952c9506babdef9c33ffd7b) Thanks [@ZerNico](https://github.com/ZerNico)! - update valibot version
+
 ## 0.1.2
 
 ### Patch Changes
