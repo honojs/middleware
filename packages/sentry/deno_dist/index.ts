@@ -1,5 +1,6 @@
 import type { Context, MiddlewareHandler } from 'https://deno.land/x/hono/mod.ts'
 import Toucan from 'https://cdn.skypack.dev/toucan-js@2.7.0'
+import type { Options as ToucanOptions } from 'https://cdn.skypack.dev/toucan-js@2.7.0'
 
 declare module 'https://deno.land/x/hono/mod.ts' {
   interface ContextVariableMap {
@@ -11,23 +12,13 @@ class MockContext implements ExecutionContext {
   passThroughOnException(): void {
     throw new Error('Method not implemented.')
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async waitUntil(promise: Promise<any>): Promise<void> {
     await promise
   }
 }
 
-export type Options = {
-  dsn?: string
-  allowedCookies?: string[] | RegExp
-  allowedHeaders?: string[] | RegExp
-  allowedSearchParams?: string[] | RegExp
-  attachStacktrace?: boolean
-  debug?: boolean
-  environment?: string
-  maxBreadcrumbs?: number
-  pkg?: Record<string, any>
-  release?: string
-}
+export type Options = Omit<ToucanOptions, 'request' | 'context'>
 
 export const sentry = (
   options?: Options,

@@ -6,6 +6,7 @@ class Context implements ExecutionContext {
   passThroughOnException(): void {
     throw new Error('Method not implemented.')
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async waitUntil(promise: Promise<any>): Promise<void> {
     await promise
   }
