@@ -21,7 +21,7 @@ import type {
   ToSchema,
   TypedResponse,
 } from 'hono'
-import type { AnyZodObject, ZodSchema, ZodError, ZodTypeAny } from 'zod'
+import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
 type RequestTypes = {
