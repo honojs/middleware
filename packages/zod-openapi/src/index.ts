@@ -11,8 +11,16 @@ import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import type { Context, Input, Schema, TypedResponse } from 'hono'
-import type { Env, Handler, MiddlewareHandler } from 'hono'
+import type {
+  Context,
+  Env,
+  Handler,
+  Input,
+  MiddlewareHandler,
+  Schema,
+  ToSchema,
+  TypedResponse,
+} from 'hono'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
@@ -133,11 +141,11 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
   ? `/:${Param}`
   : T
 
-export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = '/'> extends Hono<
-  E,
-  S,
-  BasePath
-> {
+export class OpenAPIHono<
+  E extends Env = Env,
+  S extends Schema = {},
+  BasePath extends string = '/'
+> extends Hono<E, S, BasePath> {
   #registry: OpenAPIRegistry
 
   constructor() {
@@ -153,7 +161,7 @@ export class OpenAPIHono<E extends Env = Env, S = {}, BasePath extends string = 
     route: R,
     handler: Handler<E, P, I, OutputType<R>>,
     hook?: Hook<I, E, P, OutputType<R>>
-  ): Hono<E, Schema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+  ): Hono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.#registry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []

@@ -1,9 +1,7 @@
 /* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Env } from 'hono'
-import type { Hono } from 'hono'
+import type { Hono, Env, ToSchema } from 'hono'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import type { Schema } from 'zod'
 import { OpenAPIHono, createRoute, z } from '../src'
 
 describe('Basic - params', () => {
@@ -435,22 +433,20 @@ describe('Types', () => {
   it('Should return correct types', () => {
     type H = Hono<
       Env,
-      Schema<{
-        '/posts': {
-          $post: {
-            input: {
-              json: {
-                title: string
-                id: number
-              }
-            }
-            output: {
-              id: number
-              message: string
-            }
+      ToSchema<
+        'post',
+        '/posts',
+        {
+          json: {
+            title: string
+            id: number
           }
+        },
+        {
+          id: number
+          message: string
         }
-      }>,
+      >,
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>
