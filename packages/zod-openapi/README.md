@@ -6,7 +6,6 @@ _Note: This is not standalone middleware but is hosted on the monorepo "[github.
 
 ## Limitations
 
-- Currently, it does not support validation of _headers_ and _cookies_.
 - An instance of Zod OpenAPI Hono cannot be used as a "subApp" in conjunction with `rootApp.route('/api', subApp)`.
 
 ## Usage

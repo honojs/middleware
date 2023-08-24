@@ -28,8 +28,8 @@ type RequestTypes = {
   body?: ZodRequestBody
   params?: AnyZodObject
   query?: AnyZodObject
-  cookies?: AnyZodObject // not support
-  headers?: AnyZodObject | ZodType<unknown>[] // not support
+  cookies?: AnyZodObject
+  headers?: AnyZodObject | ZodType<unknown>[]
 }
 
 type IsJson<T> = T extends string
@@ -111,6 +111,8 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
 
 type InputTypeParam<R extends RouteConfig> = InputTypeBase<R, 'params', 'param'>
 type InputTypeQuery<R extends RouteConfig> = InputTypeBase<R, 'query', 'query'>
+type InputTypeHeader<R extends RouteConfig> = InputTypeBase<R, 'headers', 'header'>
+type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cookie'>
 
 type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, infer C>
   ? C extends ResponseConfig
@@ -155,7 +157,12 @@ export class OpenAPIHono<
 
   openapi = <
     R extends RouteConfig,
-    I extends Input = InputTypeParam<R> & InputTypeQuery<R> & InputTypeForm<R> & InputTypeJson<R>,
+    I extends Input = InputTypeParam<R> &
+      InputTypeQuery<R> &
+      InputTypeHeader<R> &
+      InputTypeCookie<R> &
+      InputTypeForm<R> &
+      InputTypeJson<R>,
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
@@ -173,6 +180,16 @@ export class OpenAPIHono<
 
     if (route.request?.params) {
       const validator = zValidator('param', route.request.params as any, hook as any)
+      validators.push(validator as any)
+    }
+
+    if (route.request?.headers) {
+      const validator = zValidator('header', route.request.headers as any, hook as any)
+      validators.push(validator as any)
+    }
+
+    if (route.request?.cookies) {
+      const validator = zValidator('cookie', route.request.cookies as any, hook as any)
       validators.push(validator as any)
     }
 
