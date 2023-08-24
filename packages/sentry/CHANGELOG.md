@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 1.0.0
+
+### Major Changes
+
+- [#137](https://github.com/honojs/middleware/pull/137) [`c2093e1`](https://github.com/honojs/middleware/commit/c2093e17e0b3fa7d257692a8d33aaa1fedaf6897) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: bump up `toucan-js` to v3
+
 ## 0.2.2
 
 ### Patch Changes
