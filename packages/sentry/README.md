@@ -60,6 +60,22 @@ app.get('/', (c) => c.text('foo'))
 serve(app.fetch)
 ```
 
+### Accessing an instance of `Sentry`
+
+You can retrieve an instance of `Sentry` using `c.get('sentry')`.
+
+```ts
+app.onError((e, c) => {
+  c.get('sentry').setContext('character', {
+    name: 'Mighty Fighter',
+    age: 19,
+    attack_type: 'melee',
+  })
+  c.get('sentry').captureException(e)
+  return c.text('Internal Server Error', 500)
+})
+```
+
 ## Authors
 
 - Samuel Lippert - <https://github.com/sam-lippert>
