@@ -225,6 +225,130 @@ describe('Query', () => {
   })
 })
 
+describe('Header', () => {
+  const HeaderSchema = z.object({
+    'x-request-id': z.string().uuid(),
+  })
+
+  const PingSchema = z
+    .object({
+      'x-request-id': z.string().uuid(),
+    })
+    .openapi('Post')
+
+  const route = createRoute({
+    method: 'get',
+    path: '/ping',
+    request: {
+      headers: HeaderSchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PingSchema,
+          },
+        },
+        description: 'Ping',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const headerData = c.req.valid('header')
+    const xRequestId = headerData['x-request-id']
+    return c.jsonT({
+      'x-request-id': xRequestId,
+    })
+  })
+
+  it('Should return 200 response with correct contents', async () => {
+    const res = await app.request('/ping', {
+      headers: {
+        'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+    })
+  })
+
+  it('Should return 400 response with correct contents', async () => {
+    const res = await app.request('/ping', {
+      headers: {
+        'x-request-id': 'invalid-strings',
+      },
+    })
+    expect(res.status).toBe(400)
+  })
+})
+
+describe('Cookie', () => {
+  const CookieSchema = z.object({
+    debug: z.enum(['0', '1']),
+  })
+
+  const UserSchema = z
+    .object({
+      name: z.string(),
+      debug: z.enum(['0', '1']),
+    })
+    .openapi('User')
+
+  const route = createRoute({
+    method: 'get',
+    path: '/api/user',
+    request: {
+      cookies: CookieSchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: UserSchema,
+          },
+        },
+        description: 'Get a user',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const { debug } = c.req.valid('cookie')
+    return c.jsonT({
+      name: 'foo',
+      debug,
+    })
+  })
+
+  it('Should return 200 response with correct contents', async () => {
+    const res = await app.request('/api/user', {
+      headers: {
+        Cookie: 'debug=1',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      name: 'foo',
+      debug: '1',
+    })
+  })
+
+  it('Should return 400 response with correct contents', async () => {
+    const res = await app.request('/api/user', {
+      headers: {
+        Cookie: 'debug=2',
+      },
+    })
+    expect(res.status).toBe(400)
+  })
+})
+
 describe('JSON', () => {
   const RequestSchema = z.object({
     id: z.number().openapi({}),
