@@ -33,7 +33,7 @@ describe('Basic', () => {
           }
         }
         output: {
-          success: true
+          success: boolean
           message: string
         }
       }
