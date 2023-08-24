@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.1.2
+
+### Patch Changes
+
+- [#139](https://github.com/honojs/middleware/pull/139) [`991b859`](https://github.com/honojs/middleware/commit/991b85915a63d1fd15cda52078f6401c17d3879f) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump up Hono version
+
 ## 0.1.1
 
 ### Patch Changes
