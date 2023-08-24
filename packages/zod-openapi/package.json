@@ -31,13 +31,12 @@
     "zod": "3.*"
   },
   "devDependencies": {
-    "@hono/zod-validator": "^0.1.8",
     "hono": "^3.5.4",
     "zod": "^3.22.1"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^5.5.0",
-    "@hono/zod-validator": "^0.1.7"
+    "@hono/zod-validator": "^0.1.8"
   },
   "engines": {
     "node": ">=16.0.0"
