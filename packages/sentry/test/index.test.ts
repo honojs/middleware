@@ -14,7 +14,11 @@ class Context implements ExecutionContext {
 
 const captureException = jest.fn()
 const log = jest.fn()
-jest.mock('toucan-js', () => jest.fn().mockImplementation(() => ({ captureException, log })))
+
+jest.mock('toucan-js', () => ({
+  Toucan: jest.fn().mockImplementation(() => ({ captureException, log })),
+}))
+
 const callback = jest.fn()
 
 describe('Sentry middleware', () => {
@@ -23,7 +27,7 @@ describe('Sentry middleware', () => {
   app.use('/sentry/*', sentry(undefined, callback))
   app.get('/sentry/foo', (c) => c.text('foo'))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   app.get('/sentry/bar', (c) => getSentry(c).log('bar') || c.text('bar'))
   app.get('/sentry/error', () => {
     throw new Error('a catastrophic error')

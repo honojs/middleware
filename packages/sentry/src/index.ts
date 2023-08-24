@@ -1,6 +1,5 @@
 import type { Context, MiddlewareHandler } from 'hono'
-import Toucan from 'toucan-js'
-import type { Options as ToucanOptions } from 'toucan-js'
+import { Toucan, type Options as ToucanOptions } from 'toucan-js'
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -33,8 +32,10 @@ export const sentry = (
     }
     const sentry = new Toucan({
       dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
-      allowedHeaders: ['user-agent'],
-      allowedSearchParams: /(.*)/,
+      requestDataOptions: {
+        allowedHeaders: ['user-agent'],
+        allowedSearchParams: /(.*)/,
+      },
       request: c.req.raw,
       context: hasExecutionContext ? c.executionCtx : new MockContext(),
       ...options,

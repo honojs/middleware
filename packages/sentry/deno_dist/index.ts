@@ -1,6 +1,5 @@
 import type { Context, MiddlewareHandler } from 'https://deno.land/x/hono/mod.ts'
-import Toucan from 'https://cdn.skypack.dev/toucan-js@2.7.0'
-import type { Options as ToucanOptions } from 'https://cdn.skypack.dev/toucan-js@2.7.0'
+import { Toucan, type Options as ToucanOptions } from 'https://esm.sh/toucan-js@3.2.2'
 
 declare module 'https://deno.land/x/hono/mod.ts' {
   interface ContextVariableMap {
@@ -33,8 +32,10 @@ export const sentry = (
     }
     const sentry = new Toucan({
       dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
-      allowedHeaders: ['user-agent'],
-      allowedSearchParams: /(.*)/,
+      requestDataOptions: {
+        allowedHeaders: ['user-agent'],
+        allowedSearchParams: /(.*)/,
+      },
       request: c.req.raw,
       context: hasExecutionContext ? c.executionCtx : new MockContext(),
       ...options,
