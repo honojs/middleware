@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.2.0
+
+### Minor Changes
+
+- [#141](https://github.com/honojs/middleware/pull/141) [`f334e99`](https://github.com/honojs/middleware/commit/f334e99251cdabc8be9334eec7eb7d9a450d8e35) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support `headers` and `cookies`
+
 ## 0.1.2
 
 ### Patch Changes
