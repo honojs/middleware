@@ -7,7 +7,7 @@ makeThisModuleAnExecutableReplacer(async ({ parsedImportExportStatement, version
       ...parsedImportExportStatement,
       parsedArgument: {
         type: 'URL',
-        url: `https://cdn.skypack.dev/toucan-js@${version}`,
+        url: `https://esm.sh/toucan-js@${version}`,
       },
     })
   }
