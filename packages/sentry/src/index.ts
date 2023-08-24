@@ -1,5 +1,6 @@
 import type { Context, MiddlewareHandler } from 'hono'
-import { Toucan, type Options as ToucanOptions } from 'toucan-js'
+import { Toucan } from 'toucan-js'
+import type { Options as ToucanOptions } from 'toucan-js'
 
 declare module 'hono' {
   interface ContextVariableMap {
