@@ -5823,7 +5823,7 @@ hono@^3.0.0, hono@^3.0.3, hono@^3.1.0, hono@^3.1.2, hono@^3.2.6:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.2.6.tgz#b4927ed20b2edf165277f3e2b787a4e4948223f6"
   integrity sha512-jUf9SgkTW/H3Pd9oPwFgf3j05RXUbILWm96WlHll56t2Jkv8tVXyfLeBzYwdTzB7JE/hx+DWMXrVJ06UdfcKng==
 
-hono@^3.1.5, hono@^3.4.3:
+hono@^3.1.5:
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.4.3.tgz#ab1db8777fa80341daf389979b7888da0786e3db"
   integrity sha512-HbVxZh9yC3hV25+mFjUaM65t7g8ia2mXbhAGmVHA0r8+guizTJq1Cg4f2SmB5+JrviG0vaqOnWJ9U3O05aikbA==
@@ -5837,6 +5837,11 @@ hono@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.5.2.tgz#83776c4f076c40f59850105af835a6a5609b7d07"
   integrity sha512-HezADUIepgTpn+LSHNU2vZd4V2wcFDkObycShxhR37eXwQXgjev9FHsxBpDkvPqGQLn3YAPiC3GNVZVUsbcwFg==
+
+hono@^3.5.4:
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.5.4.tgz#66057d4c1ee127faafa087168af6d569ab25f5e7"
+  integrity sha512-GrRBIJhZ+tG+8RtoyPQjvqPGwppERmayyTiPKano4egmpkJf1XiptESUYK5vKHICNaJksAKB9jzy1CmOdQENPA==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"
