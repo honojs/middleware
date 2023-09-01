@@ -1,0 +1,31 @@
+{
+  "name": "file-upload",
+  "version": "1.0.0",
+  "description": "File upload middleware",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": "https://github.com/honojs/middleware.git",
+  "author": "krsbx",
+  "scripts": {
+    "build": "tsc",
+    "prerelease": "yarn build",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^11.1.1"
+  },
+  "peerDependencies": {
+    "hono": "3.*"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/supertest": "^2.0.12",
+    "aws-sdk": "^2.1449.0",
+    "firebase-admin": "^11.10.1",
+    "supertest": "^6.3.3"
+  }
+}
