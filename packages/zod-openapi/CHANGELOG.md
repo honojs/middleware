@@ -1,5 +1,15 @@
 # @hono/zod-openapi
 
+## 0.3.0
+
+### Minor Changes
+
+- [#150](https://github.com/honojs/middleware/pull/150) [`1006cbc`](https://github.com/honojs/middleware/commit/1006cbca6b6636340afe10f7680511bab2046b47) Thanks [@yusukebe](https://github.com/yusukebe)! - feat(zod-openapi): make `app.openAPIRegistry` public
+
+### Patch Changes
+
+- [#148](https://github.com/honojs/middleware/pull/148) [`1bfd648`](https://github.com/honojs/middleware/commit/1bfd648df8dfcd659c14514b977de945d3806b7d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-openapi): fix a type error
+
 ## 0.2.0
 
 ### Minor Changes
