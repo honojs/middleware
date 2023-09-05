@@ -150,11 +150,11 @@ export class OpenAPIHono<
   S extends Schema = {},
   BasePath extends string = '/'
 > extends Hono<E, S, BasePath> {
-  #registry: OpenAPIRegistry
+  openAPIRegistry: OpenAPIRegistry
 
   constructor() {
     super()
-    this.#registry = new OpenAPIRegistry()
+    this.openAPIRegistry = new OpenAPIRegistry()
   }
 
   openapi = <
@@ -171,7 +171,7 @@ export class OpenAPIHono<
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
     hook?: Hook<I, E, P, OutputType<R>>
   ): Hono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
-    this.#registry.registerPath(route)
+    this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
 
@@ -224,7 +224,7 @@ export class OpenAPIHono<
   }
 
   getOpenAPIDocument = (config: OpenAPIObjectConfig) => {
-    const generator = new OpenApiGeneratorV3(this.#registry.definitions)
+    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     return document
   }
