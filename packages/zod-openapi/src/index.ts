@@ -143,6 +143,8 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
   ? `/:${Param}`
   : T
 
+type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -166,7 +168,7 @@ export class OpenAPIHono<
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: Handler<E, P, I, OutputType<R>>,
+    handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
     hook?: Hook<I, E, P, OutputType<R>>
   ): Hono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.#registry.registerPath(route)

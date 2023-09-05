@@ -5838,10 +5838,10 @@ hono@^3.5.2:
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.5.2.tgz#83776c4f076c40f59850105af835a6a5609b7d07"
   integrity sha512-HezADUIepgTpn+LSHNU2vZd4V2wcFDkObycShxhR37eXwQXgjev9FHsxBpDkvPqGQLn3YAPiC3GNVZVUsbcwFg==
 
-hono@^3.5.4:
-  version "3.5.4"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-3.5.4.tgz#66057d4c1ee127faafa087168af6d569ab25f5e7"
-  integrity sha512-GrRBIJhZ+tG+8RtoyPQjvqPGwppERmayyTiPKano4egmpkJf1XiptESUYK5vKHICNaJksAKB9jzy1CmOdQENPA==
+hono@^3.5.8:
+  version "3.5.8"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.5.8.tgz#9bbc412f5a54183cf2a81a36a9b9ea56da10f785"
+  integrity sha512-ZipTmGfHm43q5QOEBGog2wyejyNUcicjPt0BLDQ8yz9xij/y9RYXRpR1YPxMpQqeyNM7isvpsIAe9Ems51Wq0Q==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"
