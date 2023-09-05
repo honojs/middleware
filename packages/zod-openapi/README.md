@@ -174,6 +174,14 @@ app.openapi(
 )
 ```
 
+### The Registry
+
+You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-openapi#the-registry) object via `app.openAPIRegistry`:
+
+```ts
+const registry = app.openAPIRegistry
+```
+
 ### Middleware
 
 Zod OpenAPI Hono is an extension of Hono, so you can use Hono's middleware in the same way:
