@@ -6,7 +6,7 @@ import type {
   ZodContentObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
-import { OpenApiGeneratorV3, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
+import { OpenApiGeneratorV3, OpenApiGeneratorV31, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
@@ -231,9 +231,22 @@ export class OpenAPIHono<
     return document
   }
 
+  getOpenAPI31Document = (config: OpenAPIObjectConfig) => {
+    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
+    const document = generator.generateDocument(config)
+    return document
+  }
+
   doc = (path: string, config: OpenAPIObjectConfig) => {
     this.get(path, (c) => {
       const document = this.getOpenAPIDocument(config)
+      return c.json(document)
+    })
+  }
+
+  doc31 = (path: string, config: OpenAPIObjectConfig) => {
+    this.get(path, (c) => {
+      const document = this.getOpenAPI31Document(config)
       return c.json(document)
     })
   }
