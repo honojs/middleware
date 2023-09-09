@@ -145,6 +145,8 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
+type HonoInit = ConstructorParameters<typeof Hono>[0];
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -152,8 +154,8 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
 
-  constructor() {
-    super()
+  constructor(init?: HonoInit) {
+    super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
   }
 

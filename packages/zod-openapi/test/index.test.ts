@@ -4,6 +4,19 @@ import type { Hono, Env, ToSchema } from 'hono'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
 
+describe('Constructor', () => {
+  it('Should not require init object', () => {
+    expect(() => new OpenAPIHono()).not.toThrow()
+  })
+
+  it('Should accept init object', () => {
+    const getPath = () => ''
+    const app = new OpenAPIHono({getPath})
+
+    expect(app.getPath).toBe(getPath)
+  })
+})
+
 describe('Basic - params', () => {
   const ParamsSchema = z.object({
     id: z
