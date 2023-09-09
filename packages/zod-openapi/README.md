@@ -223,44 +223,9 @@ const client = hc<typeof appRoutes>('http://localhost:8787/')
 
 ## Limitations
 
-An instance of Zod OpenAPI Hono cannot be used as a "subApp" in conjunction with `rootApp.route('/api', subApp)`.
-Use `app.mount('/api', subApp.fetch)` instead.
+Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
 
-```ts
-const api = OpenAPIHono()
-
-// ...
-
-// Set the `/api` as a base path in the document.
-api.get('/doc', (c) => {
-  const url = new URL(c.req.url)
-  url.pathname = '/api'
-  url.search = ''
-
-  return c.json(
-    // `api.getOpenAPIDocument()` will return a JSON object of the docs.
-    api.getOpenAPIDocument({
-      openapi: '3.0.0',
-      info: {
-        version: '1.0.0',
-        title: 'My API',
-      },
-      servers: [
-        {
-          url: `${url.toString()}`,
-        },
-      ],
-    })
-  )
-})
-
-const app = new Hono()
-
-// Mount the Open API app to `/api` in the main app.
-app.mount('/api', api.fetch)
-
-export default app
-```
+If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
 
 ## References
 

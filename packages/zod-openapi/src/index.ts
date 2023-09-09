@@ -21,6 +21,8 @@ import type {
   ToSchema,
   TypedResponse,
 } from 'hono'
+import type { MergePath, MergeSchemaPath } from 'hono/dist/types/types'
+import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
@@ -172,7 +174,7 @@ export class OpenAPIHono<
     route: R,
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
     hook?: Hook<I, E, P, OutputType<R>>
-  ): Hono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+  ): OpenAPIHono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
@@ -249,6 +251,75 @@ export class OpenAPIHono<
       const document = this.getOpenAPI31Document(config)
       return c.json(document)
     })
+  }
+
+  route<
+    SubPath extends string,
+    SubEnv extends Env,
+    SubSchema extends Schema,
+    SubBasePath extends string
+  >(
+    path: SubPath,
+    app: Hono<SubEnv, SubSchema, SubBasePath>
+  ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath>
+  route<SubPath extends string>(path: SubPath): Hono<E, RemoveBlankRecord<S>, BasePath>
+  route<
+    SubPath extends string,
+    SubEnv extends Env,
+    SubSchema extends Schema,
+    SubBasePath extends string
+  >(
+    path: SubPath,
+    app?: Hono<SubEnv, SubSchema, SubBasePath>
+  ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath> {
+    super.route(path, app as any)
+
+    if (!(app instanceof OpenAPIHono)) {
+      return this as any
+    }
+
+    app.openAPIRegistry.definitions.forEach((def) => {
+      switch (def.type) {
+        case 'component':
+          return this.openAPIRegistry.registerComponent(
+            def.componentType, 
+            def.name, 
+            def.component
+          )
+          
+        case 'route':
+          return this.openAPIRegistry.registerPath({
+            ...def.route,
+            path: `${path}${def.route.path}`
+          })
+
+        case 'webhook':
+          return this.openAPIRegistry.registerWebhook({
+            ...def.webhook,
+            path: `${path}${def.webhook.path}`
+          })
+
+        case 'schema':
+          return this.openAPIRegistry.register(
+            def.schema._def.openapi._internal.refId, 
+            def.schema
+          )
+
+        case 'parameter':
+          return this.openAPIRegistry.registerParameter(
+            def.schema._def.openapi._internal.refId, 
+            def.schema
+          )
+
+        default: {
+          const errorIfNotExhaustive: never = def
+          throw new Error(`Unknown registry type: ${errorIfNotExhaustive}`)
+        }
+      }
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this as any
   }
 }
 
