@@ -4,6 +4,19 @@ import type { Hono, Env, ToSchema } from 'hono'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
 
+describe('Constructor', () => {
+  it('Should not require init object', () => {
+    expect(() => new OpenAPIHono()).not.toThrow()
+  })
+
+  it('Should accept init object', () => {
+    const getPath = () => ''
+    const app = new OpenAPIHono({getPath})
+
+    expect(app.getPath).toBe(getPath)
+  })
+})
+
 describe('Basic - params', () => {
   const ParamsSchema = z.object({
     id: z
@@ -574,6 +587,78 @@ describe('Types', () => {
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>
+  })
+})
+
+describe('Routers', () => {
+  const RequestSchema = z.object({
+    id: z.number().openapi({}),
+  })
+
+  const PostSchema = z
+    .object({
+      id: z.number().openapi({}),
+    })
+    .openapi('Post')
+
+  const route = createRoute({
+    method: 'post',
+    path: '/posts',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: RequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PostSchema,
+          },
+        },
+        description: 'Post a post',
+      },
+    },
+  })
+  it('Should include definitions from nested routers', () => {
+    const router = new OpenAPIHono().openapi(route, (ctx) => {
+      return ctx.jsonT({id: 123})
+    })
+
+    router.openAPIRegistry.register('Id', z.number())
+
+    router.openAPIRegistry.registerParameter('Key', z.number().openapi({
+      param: {in: 'path'}
+    }))
+
+    router.openAPIRegistry.registerWebhook({
+      method: 'post',
+      path: '/postback',
+      responses: {
+        200: {
+          description: 'Receives a post back'
+        }
+      }
+    })
+
+    const app = new OpenAPIHono().route('/api', router)
+    const json = app.getOpenAPI31Document({
+      openapi: '3.1.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+    
+    expect(json.components?.schemas).toHaveProperty('Id')
+    expect(json.components?.schemas).toHaveProperty('Post')
+    expect(json.components?.parameters).toHaveProperty('Key')
+    expect(json.paths).toHaveProperty('/api/posts')
+    expect(json.webhooks).toHaveProperty('/api/postback')
   })
 })
 
