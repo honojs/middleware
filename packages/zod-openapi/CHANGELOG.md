@@ -1,5 +1,15 @@
 # @hono/zod-openapi
 
+## 0.4.0
+
+### Minor Changes
+
+- [#153](https://github.com/honojs/middleware/pull/153) [`430088e`](https://github.com/honojs/middleware/commit/430088e17569a12e354c80c1d6da67a9ecbfdffe) Thanks [@mikestopcontinues](https://github.com/mikestopcontinues)! - Merge subapps' spec definitions into main app
+
+- [#153](https://github.com/honojs/middleware/pull/153) [`430088e`](https://github.com/honojs/middleware/commit/430088e17569a12e354c80c1d6da67a9ecbfdffe) Thanks [@mikestopcontinues](https://github.com/mikestopcontinues)! - Support v3.1 spec output
+
+- [#153](https://github.com/honojs/middleware/pull/153) [`430088e`](https://github.com/honojs/middleware/commit/430088e17569a12e354c80c1d6da67a9ecbfdffe) Thanks [@mikestopcontinues](https://github.com/mikestopcontinues)! - OpenAPIHono constructor supports init object
+
 ## 0.3.1
 
 ### Patch Changes
