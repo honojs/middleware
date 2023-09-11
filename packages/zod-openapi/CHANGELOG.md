@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.3.1
+
+### Patch Changes
+
+- [#155](https://github.com/honojs/middleware/pull/155) [`804caac`](https://github.com/honojs/middleware/commit/804caac19123e0b6d9a3f33b686051f1f111ee1f) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-openapi): support multiple params
+
 ## 0.3.0
 
 ### Minor Changes

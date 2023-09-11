@@ -661,3 +661,43 @@ describe('Routers', () => {
     expect(json.webhooks).toHaveProperty('/api/postback')
   })
 })
+
+describe('Multi params', () => {
+  const ParamsSchema = z.object({
+    id: z.string(),
+    tagName: z.string(),
+  })
+
+  const route = createRoute({
+    method: 'get',
+    path: '/users/{id}/tags/{tagName}',
+    request: {
+      params: ParamsSchema,
+    },
+    responses: {
+      200: {
+        // eslint-disable-next-line quotes
+        description: "Get the user's tag",
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const { id, tagName } = c.req.valid('param')
+    return c.jsonT({
+      id,
+      tagName,
+    })
+  })
+
+  it('Should return 200 response with correct contents', async () => {
+    const res = await app.request('/users/123/tags/baseball')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      id: '123',
+      tagName: 'baseball',
+    })
+  })
+})
