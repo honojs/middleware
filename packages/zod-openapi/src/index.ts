@@ -219,7 +219,7 @@ export class OpenAPIHono<
       }
     }
 
-    this.on([route.method], route.path.replace(/\/{(.+)}/, '/:$1'), ...validators, handler)
+    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...validators, handler)
     return this
   }
 
