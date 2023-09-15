@@ -1,0 +1,39 @@
+{
+  "name": "@hono/typia-validator",
+  "version": "0.0.1",
+  "description": "Validator middleware using Typia",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate-test": "rimraf test-generated && typia generate --input test --output test-generated --project tsconfig.json",
+    "test": "npm run generate-test && jest",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "3.*",
+    "typia": "^5.0.4"
+  },
+  "devDependencies": {
+    "hono": "^3.5.8",
+    "typia": "^5.0.4"
+  }
+}
