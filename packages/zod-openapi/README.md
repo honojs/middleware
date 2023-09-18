@@ -203,6 +203,18 @@ import { prettyJSON } from 'hono/pretty-json'
 app.use('/doc/*', prettyJSON())
 ```
 
+### Configure middleware for each endpoint
+
+You can configure middleware for each endpoint from a route created by `createRoute` as follows.
+
+```ts
+import { prettyJSON } from 'hono/pretty-json'
+import { cache } from 'honoc/cache'
+
+app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: "my-cache" }))
+app.openapi(route, handler)
+```
+
 ### RPC Mode
 
 Zod OpenAPI Hono supports Hono's RPC mode. You can define types for the Hono Client as follows:
