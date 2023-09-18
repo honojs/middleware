@@ -323,9 +323,18 @@ export class OpenAPIHono<
   }
 }
 
+type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}` ? `${Head}/:${Param}${RoutingPath<Tail>}` : P
+
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => routeConfig
+) => {
+  return {
+    ...routeConfig,
+    getRoutingPath(): RoutingPath<R['path']> {
+      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
+    }
+  }
+}
 
 extendZodWithOpenApi(z)
 export { z }
