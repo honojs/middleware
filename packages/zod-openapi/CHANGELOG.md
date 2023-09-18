@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.5.0
+
+### Minor Changes
+
+- [#161](https://github.com/honojs/middleware/pull/161) [`05b8e9a`](https://github.com/honojs/middleware/commit/05b8e9a7511874f7e9dcb84b9dcfa97ca458ae4e) Thanks [@naporin0624](https://github.com/naporin0624)! - Add getRoutingPath to the return value of createRoute.
+
 ## 0.4.0
 
 ### Minor Changes
