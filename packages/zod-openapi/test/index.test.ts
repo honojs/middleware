@@ -11,8 +11,7 @@ describe('Constructor', () => {
 
   it('Should accept init object', () => {
     const getPath = () => ''
-    const app = new OpenAPIHono({getPath})
-
+    const app = new OpenAPIHono({ getPath })
     expect(app.getPath).toBe(getPath)
   })
 })
@@ -21,20 +20,31 @@ describe('Basic - params', () => {
   const ParamsSchema = z.object({
     id: z
       .string()
-      .min(3)
+      .transform((val, ctx) => {
+        const parsed = parseInt(val)
+        if (isNaN(parsed)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Not a number',
+          })
+          return z.NEVER
+        }
+        return parsed
+      })
       .openapi({
         param: {
           name: 'id',
           in: 'path',
         },
-        example: '1212121',
+        example: 123,
+        type: 'integer',
       }),
   })
 
   const UserSchema = z
     .object({
-      id: z.string().openapi({
-        example: '123',
+      id: z.number().openapi({
+        example: 123,
       }),
       name: z.string().openapi({
         example: 'John Doe',
@@ -116,14 +126,14 @@ describe('Basic - params', () => {
     const res = await app.request('/users/123')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      id: '123',
+      id: 123,
       age: 20,
       name: 'Ultra-man',
     })
   })
 
   it('Should return 400 response with correct contents', async () => {
-    const res = await app.request('/users/1')
+    const res = await app.request('/users/abc')
     expect(res.status).toBe(400)
     expect(await res.json()).toEqual({ ok: false })
   })
@@ -139,7 +149,7 @@ describe('Basic - params', () => {
           User: {
             type: 'object',
             properties: {
-              id: { type: 'string', example: '123' },
+              id: { type: 'number', example: 123 },
               name: { type: 'string', example: 'John Doe' },
               age: { type: 'number', example: 42 },
             },
@@ -158,7 +168,7 @@ describe('Basic - params', () => {
           get: {
             parameters: [
               {
-                schema: { type: 'string', minLength: 3, example: '1212121' },
+                schema: { type: 'integer', example: 123 },
                 required: true,
                 name: 'id',
                 in: 'path',
@@ -626,23 +636,26 @@ describe('Routers', () => {
   })
   it('Should include definitions from nested routers', () => {
     const router = new OpenAPIHono().openapi(route, (ctx) => {
-      return ctx.jsonT({id: 123})
+      return ctx.jsonT({ id: 123 })
     })
 
     router.openAPIRegistry.register('Id', z.number())
 
-    router.openAPIRegistry.registerParameter('Key', z.number().openapi({
-      param: {in: 'path'}
-    }))
+    router.openAPIRegistry.registerParameter(
+      'Key',
+      z.number().openapi({
+        param: { in: 'path' },
+      })
+    )
 
     router.openAPIRegistry.registerWebhook({
       method: 'post',
       path: '/postback',
       responses: {
         200: {
-          description: 'Receives a post back'
-        }
-      }
+          description: 'Receives a post back',
+        },
+      },
     })
 
     const app = new OpenAPIHono().route('/api', router)
@@ -653,7 +666,7 @@ describe('Routers', () => {
         version: '1.0.0',
       },
     })
-    
+
     expect(json.components?.schemas).toHaveProperty('Id')
     expect(json.components?.schemas).toHaveProperty('Post')
     expect(json.components?.parameters).toHaveProperty('Key')

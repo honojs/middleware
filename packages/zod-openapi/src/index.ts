@@ -6,7 +6,11 @@ import type {
   ZodContentObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
-import { OpenApiGeneratorV3, OpenApiGeneratorV31, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
+import {
+  OpenApiGeneratorV3,
+  OpenApiGeneratorV31,
+  OpenAPIRegistry,
+} from '@asteasolutions/zod-to-openapi'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
@@ -60,7 +64,7 @@ type InputTypeBase<
   ? RequestPart<R, Part> extends AnyZodObject
     ? {
         in: { [K in Type]: z.input<RequestPart<R, Part>> }
-        out: { [K in Type]: z.input<RequestPart<R, Part>> }
+        out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
   : {}
@@ -78,7 +82,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
               >
             }
             out: {
-              json: z.input<
+              json: z.output<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -101,7 +105,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
               >
             }
             out: {
-              form: z.input<
+              form: z.output<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -147,7 +151,7 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
-type HonoInit = ConstructorParameters<typeof Hono>[0];
+type HonoInit = ConstructorParameters<typeof Hono>[0]
 
 export class OpenAPIHono<
   E extends Env = Env,
@@ -281,33 +285,26 @@ export class OpenAPIHono<
     app.openAPIRegistry.definitions.forEach((def) => {
       switch (def.type) {
         case 'component':
-          return this.openAPIRegistry.registerComponent(
-            def.componentType, 
-            def.name, 
-            def.component
-          )
-          
+          return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
+
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: `${path}${def.route.path}`
+            path: `${path}${def.route.path}`,
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: `${path}${def.webhook.path}`
+            path: `${path}${def.webhook.path}`,
           })
 
         case 'schema':
-          return this.openAPIRegistry.register(
-            def.schema._def.openapi._internal.refId, 
-            def.schema
-          )
+          return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)
 
         case 'parameter':
           return this.openAPIRegistry.registerParameter(
-            def.schema._def.openapi._internal.refId, 
+            def.schema._def.openapi._internal.refId,
             def.schema
           )
 
@@ -323,7 +320,9 @@ export class OpenAPIHono<
   }
 }
 
-type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}` ? `${Head}/:${Param}${RoutingPath<Tail>}` : P
+type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`
+  ? `${Head}/:${Param}${RoutingPath<Tail>}`
+  : P
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
@@ -332,7 +331,7 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
       return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
-    }
+    },
   }
 }
 
