@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.5.1
+
+### Patch Changes
+
+- [#164](https://github.com/honojs/middleware/pull/164) [`62a97fd`](https://github.com/honojs/middleware/commit/62a97fda6a784f11549fff442978677642d2b218) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-openapi): use `z.output` for types after validation
+
 ## 0.5.0
 
 ### Minor Changes
