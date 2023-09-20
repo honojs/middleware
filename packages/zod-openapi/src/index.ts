@@ -153,6 +153,30 @@ type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
 type HonoInit = ConstructorParameters<typeof Hono>[0]
 
+export type RouteHandler<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+
+export type RouteHook<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Hook<I, E, P, OutputType<R>>
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -176,8 +200,8 @@ export class OpenAPIHono<
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
-    hook?: Hook<I, E, P, OutputType<R>>
+    handler: RouteHandler<R, E, I, P>,
+    hook?: RouteHook<R, E, I, P>
   ): OpenAPIHono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
