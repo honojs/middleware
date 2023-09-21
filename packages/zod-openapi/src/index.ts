@@ -29,6 +29,7 @@ import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
+import { SwaggerUI } from './swagger'
 
 type RequestTypes = {
   body?: ZodRequestBody
@@ -290,6 +291,14 @@ export class OpenAPIHono<
     })
   }
 
+  swagger = (path: string, config: OpenAPIObjectConfig) => {
+    const spec = this.getOpenAPIDocument(config)
+
+    this.get(path, (c) => {
+      return c.html(SwaggerUI({ spec }))
+    })
+  }
+
   route<
     SubPath extends string,
     SubEnv extends Env,
@@ -374,3 +383,4 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
+export { SwaggerUI }

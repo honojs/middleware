@@ -127,13 +127,15 @@ describe('Basic - params', () => {
     }
   )
 
-  app.doc('/doc', {
+  const config = {
     openapi: '3.0.0',
     info: {
       version: '1.0.0',
       title: 'My API',
     },
-  })
+  }
+  app.doc('/doc', config)
+  app.swagger('/swagger-ui', config)
 
   it('Should return 200 response with correct contents', async () => {
     const res = await app.request('/users/123')
@@ -201,6 +203,64 @@ describe('Basic - params', () => {
         },
       },
     })
+  })
+
+  it('Should return Swagger UI', async () => {
+    const res = await app.request('/swagger-ui')
+    expect(res.status).toBe(200)
+    const spec = {
+      openapi: '3.0.0',
+      info: { version: '1.0.0', title: 'My API' },
+      components: {
+        schemas: {
+          User: {
+            type: 'object',
+            properties: {
+              id: { type: 'number', example: 123 },
+              name: { type: 'string', example: 'John Doe' },
+              age: { type: 'number', example: 42 },
+            },
+            required: ['id', 'name', 'age'],
+          },
+          Error: {
+            type: 'object',
+            properties: { ok: { type: 'boolean', example: false } },
+            required: ['ok'],
+          },
+        },
+        parameters: {},
+      },
+      paths: {
+        '/users/{id}': {
+          get: {
+            parameters: [
+              {
+                schema: { type: 'integer', example: 123 },
+                required: true,
+                name: 'id',
+                in: 'path',
+              },
+            ],
+            responses: {
+              '200': {
+                description: 'Get the user',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/User' } } },
+              },
+              '400': {
+                description: 'Error!',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+              },
+            },
+          },
+        },
+      },
+    }
+    await expect(res.text()).resolves
+      .toBe(`<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="SwaggerUI"/><title>SwaggerUI</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css"/><script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="true"></script></head><body><div id="swagger-ui"></div><script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({"spec":${JSON.stringify(spec)},"dom_id":"#swagger-ui"});
+    };
+  </script></body></html>`)
   })
 })
 
