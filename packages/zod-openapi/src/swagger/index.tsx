@@ -1,5 +1,3 @@
-/** @jsxImportSource hono/jsx */
-
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import { buildUIScript } from './build-ui-script'
 import { remoteAssets } from './resource'
