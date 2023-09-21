@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.6.0
+
+### Minor Changes
+
+- [#167](https://github.com/honojs/middleware/pull/167) [`dbebf74`](https://github.com/honojs/middleware/commit/dbebf747c9c7ca94bf22259772d8b1e0623ce68d) Thanks [@exsjabe](https://github.com/exsjabe)! - Export types that allow for separate declaratins of route handlers and hooks
+
 ## 0.5.1
 
 ### Patch Changes
