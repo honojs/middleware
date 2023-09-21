@@ -211,8 +211,17 @@ The `SwaggerUI` component allows you to embed the Swagger UI interface in your a
 Here's a quick example:
 
 ```tsx
+const config = {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+}
+app.doc('/doc', config)
+
 app.get('/swagger-ui', async (c) => {
-  return c.html(<SwaggerUI openapi='/docs' />)
+  return c.html(<SwaggerUI url='/doc' />)
 })
 ```
 
