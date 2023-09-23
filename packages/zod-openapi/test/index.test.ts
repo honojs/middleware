@@ -543,7 +543,7 @@ describe('Types', () => {
     })
     .openapi('Post')
 
-  const route = createRoute({
+  const postRoute = createRoute({
     method: 'post',
     path: '/posts',
     request: {
@@ -562,20 +562,51 @@ describe('Types', () => {
             schema: PostSchema,
           },
         },
-        description: 'Post a post',
+        description: 'A post',
+      },
+    },
+  })
+  const bookRoute = createRoute({
+    method: 'post',
+    path: '/books',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: RequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PostSchema,
+          },
+        },
+        description: 'A book',
       },
     },
   })
 
   const app = new OpenAPIHono()
 
-  const appRoutes = app.openapi(route, (c) => {
-    const data = c.req.valid('json')
-    return c.jsonT({
-      id: data.id,
-      message: 'Success',
+  const appRoutes = app
+    .openapi(postRoute, (c) => {
+      const data = c.req.valid('json')
+      return c.jsonT({
+        id: data.id,
+        message: 'Success',
+      })
     })
-  })
+    .openapi(bookRoute, (c) => {
+      const data = c.req.valid('json')
+      return c.jsonT({
+        id: data.id,
+        message: 'Success',
+      })
+    })
 
   it('Should return correct types', () => {
     type H = Hono<
@@ -593,7 +624,21 @@ describe('Types', () => {
           id: number
           message: string
         }
-      >,
+      > &
+        ToSchema<
+          'post',
+          '/books',
+          {
+            json: {
+              title: string
+              id: number
+            }
+          },
+          {
+            id: number
+            message: string
+          }
+        >,
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>
