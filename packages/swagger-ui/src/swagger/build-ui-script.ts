@@ -1,15 +1,8 @@
-import type { OpenAPIObject } from 'openapi3-ts/oas30'
+import type { SwaggerOptions } from '..'
 
 type BuildUIConfig = {
   domId: string
-} & (
-  | {
-      url: string
-    }
-  | {
-      spec: OpenAPIObject
-    }
-)
+} & SwaggerOptions
 
 export const buildUIScript = (config: BuildUIConfig): string => {
   const { domId, ...rest } = config

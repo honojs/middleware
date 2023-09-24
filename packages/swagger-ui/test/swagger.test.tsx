@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 // eslint-disable-next-line node/no-extraneous-import
 import { describe, it, expect, beforeEach } from 'vitest'
-import { SwaggerUI } from '../src'
+import { swaggerUI } from '../src'
 import { buildUIScript } from '../src/swagger/build-ui-script'
 import { remoteAssets } from '../src/swagger/resource'
 
@@ -65,9 +65,13 @@ describe('SwaggerUI Component', () => {
     [{ ui: { version: '5.7.2' } }, 'with custom UI version'],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ])('should render correctly %s', async (props, _) => {
-    app.get('/', (c) => {
-      return c.html(<SwaggerUI url='https://petstore3.swagger.io/api/v3/openapi.json' {...props} />)
-    })
+    app.get(
+      '/',
+      swaggerUI({
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
+        ...props,
+      })
+    )
 
     const res = await app.request('/')
     const html = await res.text()

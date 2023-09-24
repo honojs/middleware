@@ -3,9 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals"]
   },
-  "include": [
-    "src/**/*.ts",
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
