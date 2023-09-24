@@ -3,7 +3,7 @@
 exports[`SwaggerUI Component > should render correctly { title: 'title' } 1`] = `
 "<html lang=\\"en\\"><head><meta charset=\\"utf-8\\"/><meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\"/><meta name=\\"description\\" content=\\"SwaggerUI\\"/><title>title</title><link rel=\\"stylesheet\\" href=\\"https://unpkg.com/swagger-ui-dist/swagger-ui.css\\"/><script src=\\"https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js\\" crossorigin=\\"true\\"></script></head><body><div id=\\"swagger-ui\\"></div><script>
     window.onload = () => {
-      window.ui = SwaggerUIBundle({\\"url\\":\\"https://petstore3.swagger.io/api/v3/openapi.json\\",\\"dom_id\\":\\"#swagger-ui\\"});
+      window.ui = SwaggerUIBundle({\\"url\\":\\"https://petstore3.swagger.io/api/v3/openapi.json\\",\\"title\\":\\"title\\",\\"dom_id\\":\\"#swagger-ui\\"});
     };
   </script></body></html>"
 `;
@@ -11,7 +11,7 @@ exports[`SwaggerUI Component > should render correctly { title: 'title' } 1`] = 
 exports[`SwaggerUI Component > should render correctly { ui: { version: '5.7.2' } } 1`] = `
 "<html lang=\\"en\\"><head><meta charset=\\"utf-8\\"/><meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1\\"/><meta name=\\"description\\" content=\\"SwaggerUI\\"/><title>SwaggerUI</title><link rel=\\"stylesheet\\" href=\\"https://unpkg.com/swagger-ui-dist@5.7.2/swagger-ui.css\\"/><script src=\\"https://unpkg.com/swagger-ui-dist@5.7.2/swagger-ui-bundle.js\\" crossorigin=\\"true\\"></script></head><body><div id=\\"swagger-ui\\"></div><script>
     window.onload = () => {
-      window.ui = SwaggerUIBundle({\\"url\\":\\"https://petstore3.swagger.io/api/v3/openapi.json\\",\\"dom_id\\":\\"#swagger-ui\\"});
+      window.ui = SwaggerUIBundle({\\"url\\":\\"https://petstore3.swagger.io/api/v3/openapi.json\\",\\"ui\\":{\\"version\\":\\"5.7.2\\"},\\"dom_id\\":\\"#swagger-ui\\"});
     };
   </script></body></html>"
 `;
