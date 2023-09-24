@@ -1,31 +1,25 @@
-name: ci-zod-openapi
+name: ci-swagger-ui
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/zod-openapi/**'
+      - 'packages/swagger-ui/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/zod-openapi/**'
+      - 'packages/swagger-ui/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/zod-openapi
+        working-directory: ./packages/swagger-ui
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 18.x
       - run: yarn install --frozen-lockfile
-      - name: Build zod-validator in root directory
-        run: yarn build:zod-validator
-        working-directory: .
-      - name: Build swagger-ui in root directory
-        run: yarn build:swagger-ui
-        working-directory: .
       - run: yarn build
       - run: yarn test

@@ -20,6 +20,7 @@
     "build:valibot-validator": "yarn workspace @hono/valibot-validator build",
     "build:zod-openapi": "yarn build:zod-validator && yarn workspace @hono/zod-openapi build",
     "build:typia-validator": "yarn workspace @hono/typia-validator build",
+    "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
     "build": "run-p build:*"
   },
   "license": "MIT",
