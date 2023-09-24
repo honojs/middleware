@@ -5,10 +5,10 @@ type BuildUIConfig = {
 } & SwaggerOptions
 
 export const buildUIScript = (config: BuildUIConfig): string => {
-  const { domId, ...rest } = config
   const params = {
-    ...rest,
-    dom_id: `#${domId}`,
+    ...('url' in config ? { url: config.url } : {}),
+    ...('spec' in config ? { spec: config.spec } : {}),
+    dom_id: `#${config.domId}`,
   }
 
   return `
