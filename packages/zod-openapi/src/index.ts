@@ -13,6 +13,7 @@ import {
 } from '@asteasolutions/zod-to-openapi'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
+import { SwaggerUI } from '@hono/swagger-ui'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import type {
@@ -29,7 +30,6 @@ import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
-import { SwaggerUI } from './swagger'
 
 type RequestTypes = {
   body?: ZodRequestBody
@@ -292,9 +292,8 @@ export class OpenAPIHono<
   }
 
   swagger = (path: string, config: OpenAPIObjectConfig) => {
-    const spec = this.getOpenAPIDocument(config)
-
     this.get(path, (c) => {
+      const spec = this.getOpenAPIDocument(config)
       return c.html(SwaggerUI({ spec }))
     })
   }
@@ -383,4 +382,3 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
-export { SwaggerUI }
