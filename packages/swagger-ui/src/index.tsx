@@ -16,10 +16,10 @@ type ResourceOptions = {
 
 type Options = SwaggerOptions & {
   title?: string
-  css?: string[]
-  cssUrl?: string[]
-  js?: string[]
-  jsUrl?: string[]
+  css?: string
+  js?: string
+  cssUrls?: string[]
+  jsUrls?: string[]
   ui?: ResourceOptions
 }
 
@@ -38,20 +38,20 @@ const SwaggerUI = (options: Options) => {
         {asset.css.map((url) => (
           <link rel='stylesheet' href={url} />
         ))}
-        {options?.css?.map((content) => (
-          <style dangerouslySetInnerHTML={{ __html: content }} />
-        ))}
-        {options?.cssUrl?.map((url) => (
+        {options?.css && (
+          <style dangerouslySetInnerHTML={{ __html: options.css }} />
+        )}
+        {options?.cssUrls?.map((url) => (
           <style rel='stylesheet' href={url} />
         ))}
 
         {asset.js.map((url) => (
           <script src={url} crossorigin />
         ))}
-        {options?.js?.map((content) => (
-          <script dangerouslySetInnerHTML={{ __html: content }} />
-        ))}
-        {options?.jsUrl?.map((url) => (
+        {options?.js && (
+          <script dangerouslySetInnerHTML={{ __html: options.js }} />
+        )}
+        {options?.jsUrls?.map((url) => (
           <script src={url} crossorigin />
         ))}
       </head>
@@ -65,8 +65,6 @@ const SwaggerUI = (options: Options) => {
 
 const middleware =
   <E extends Env>(options: Options): MiddlewareHandler<E> =>
-  async (c) => {
-    return c.html(<SwaggerUI {...options} />)
-  }
+  async (c) => c.html(<SwaggerUI {...options} />)
 
 export { middleware as swaggerUI, SwaggerUI }
