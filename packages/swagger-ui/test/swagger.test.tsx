@@ -1,8 +1,6 @@
 /** @jsxImportSource hono/jsx */
 import { Hono } from 'hono'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
-// eslint-disable-next-line node/no-extraneous-import
-import { describe, it, expect, beforeEach } from 'vitest'
 import { swaggerUI } from '../src'
 import { buildUIScript } from '../src/swagger/build-ui-script'
 import { remoteAssets } from '../src/swagger/resource'
@@ -63,6 +61,11 @@ describe('SwaggerUI Component', () => {
     [{}, 'with default props'],
     [{ title: 'title' }, 'with custom title'],
     [{ ui: { version: '5.7.2' } }, 'with custom UI version'],
+    [{ css: '.custom { color: red; }' }, 'with custom CSS'],
+    [{ js: 'console.log("custom script");' }, 'with custom JS'],
+    [{ cssUrls: ['https://example.com/custom.css'] }, 'with custom CSS URLs'],
+    [{ jsUrls: ['https://example.com/custom.js'] }, 'with custom JS URLs'],
+    [{ url: 'https://example.com/api.json' }, 'with custom URL'],
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ])('should render correctly %s', async (props, _) => {
     app.get(
