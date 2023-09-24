@@ -36,7 +36,8 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^5.5.0",
-    "@hono/zod-validator": "^0.1.8"
+    "@hono/zod-validator": "^0.1.8",
+    "@hono/swagger-ui": "*"
   },
   "engines": {
     "node": ">=16.0.0"
