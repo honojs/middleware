@@ -153,6 +153,30 @@ type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
 type HonoInit = ConstructorParameters<typeof Hono>[0]
 
+export type RouteHandler<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+
+export type RouteHook<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Hook<I, E, P, OutputType<R>>
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
