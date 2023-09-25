@@ -716,6 +716,39 @@ describe('Multi params', () => {
   })
 })
 
+describe('basePath()', () => {
+  const route = createRoute({
+    method: 'get',
+    path: '/message',
+    responses: {
+      200: {
+        description: 'Get message',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono().basePath('/api')
+  app.openapi(route, (c) => c.jsonT({ message: 'Hello' }))
+  app.doc('/doc', {
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'My API',
+    },
+  })
+
+  it('Should return 200 response without type errors - /api/message', async () => {
+    const res = await app.request('/api/message')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: 'Hello' })
+  })
+
+  it('Should return 200 response - /api/doc', async () => {
+    const res = await app.request('/api/doc')
+    expect(res.status).toBe(200)
+  })
+})
+
 describe('With hc', () => {
   describe('Multiple routes', () => {
     const app = new OpenAPIHono()

@@ -342,6 +342,10 @@ export class OpenAPIHono<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this as any
   }
+
+  basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
+    return new OpenAPIHono(super.basePath(path))
+  }
 }
 
 type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`
