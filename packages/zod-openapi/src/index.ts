@@ -200,9 +200,9 @@ export class OpenAPIHono<
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: RouteHandler<R, E, I, P>,
-    hook?: RouteHook<R, E, I, P>
-  ): OpenAPIHono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+    handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
+    hook?: Hook<I, E, P, OutputType<R>>
+  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []

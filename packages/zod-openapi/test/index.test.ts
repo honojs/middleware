@@ -1,6 +1,7 @@
 /* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Hono, Env, ToSchema } from 'hono'
+import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
 
@@ -711,6 +712,49 @@ describe('Multi params', () => {
     expect(await res.json()).toEqual({
       id: '123',
       tagName: 'baseball',
+    })
+  })
+})
+
+describe('With hc', () => {
+  describe('Multiple routes', () => {
+    const app = new OpenAPIHono()
+
+    const createPostRoute = createRoute({
+      method: 'post',
+      path: '/posts',
+      operationId: 'createPost',
+      responses: {
+        200: {
+          description: 'A post',
+        },
+      },
+    })
+
+    const createBookRoute = createRoute({
+      method: 'post',
+      path: '/books',
+      operationId: 'createBook',
+      responses: {
+        200: {
+          description: 'A book',
+        },
+      },
+    })
+
+    const routes = app
+      .openapi(createPostRoute, (c) => {
+        return c.jsonT(0)
+      })
+      .openapi(createBookRoute, (c) => {
+        return c.jsonT(0)
+      })
+
+    const client = hc<typeof routes>('http://localhost/')
+
+    it('Should return correct URL without type errors', () => {
+      expect(client.posts.$url().pathname).toBe('/posts')
+      expect(client.books.$url().pathname).toBe('/books')
     })
   })
 })
