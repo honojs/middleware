@@ -178,7 +178,7 @@ export class OpenAPIHono<
     route: R,
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
     hook?: Hook<I, E, P, OutputType<R>>
-  ): OpenAPIHono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
