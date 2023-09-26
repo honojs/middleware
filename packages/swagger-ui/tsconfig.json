@@ -1,8 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
     "types": ["vitest/globals"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
