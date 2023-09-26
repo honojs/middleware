@@ -1,5 +1,20 @@
 # @hono/zod-openapi
 
+## 0.7.0
+
+### Minor Changes
+
+- [#170](https://github.com/honojs/middleware/pull/170) [`9c45dbc`](https://github.com/honojs/middleware/commit/9c45dbc41d46ae4d04d9351757020d7ad528b400) Thanks [@msutkowski](https://github.com/msutkowski)! - Add defaultHook as an option for OpenAPIHono
+
+### Patch Changes
+
+- [#179](https://github.com/honojs/middleware/pull/179) [`047eca5`](https://github.com/honojs/middleware/commit/047eca5ca99085ee8c4f1581b17c8ebeae6afc82) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-openapi): enable `basePath()`
+
+- [#176](https://github.com/honojs/middleware/pull/176) [`fb63ef4`](https://github.com/honojs/middleware/commit/fb63ef413cb7b843aebe756a5322bdd10ba74500) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(zod-openapi): make multiple routes types correct for `hc`
+
+- Updated dependencies [[`a9123dd`](https://github.com/honojs/middleware/commit/a9123dd9e3e90d4d73f495d6b407ebacf9ea0ad8)]:
+  - @hono/zod-validator@0.1.9
+
 ## 0.6.0
 
 ### Minor Changes

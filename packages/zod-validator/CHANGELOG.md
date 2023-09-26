@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.9
+
+### Patch Changes
+
+- [#175](https://github.com/honojs/middleware/pull/175) [`a9123dd`](https://github.com/honojs/middleware/commit/a9123dd9e3e90d4d73f495d6b407ebacf9ea0ad8) Thanks [@WildEgo](https://github.com/WildEgo)! - add: Async zod support
+
 ## 0.1.8
 
 ### Patch Changes
