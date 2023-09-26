@@ -151,7 +151,10 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
-type HonoInit = ConstructorParameters<typeof Hono>[0]
+export type OpenAPIHonoOptions<E extends Env> = {
+  defaultHook?: Hook<any, E, any, any>
+}
+type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
 export type RouteHandler<
   R extends RouteConfig,
@@ -183,10 +186,12 @@ export class OpenAPIHono<
   BasePath extends string = '/'
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
+  defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
 
-  constructor(init?: HonoInit) {
+  constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
+    this.defaultHook = init?.defaultHook
   }
 
   openapi = <
@@ -201,7 +206,7 @@ export class OpenAPIHono<
   >(
     route: R,
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
-    hook?: Hook<I, E, P, OutputType<R>>
+    hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
   ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 

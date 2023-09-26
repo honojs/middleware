@@ -1,6 +1,7 @@
 /* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Hono, Env, ToSchema } from 'hono'
+import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
+import type { Hono, Env, ToSchema, Context } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
@@ -14,6 +15,17 @@ describe('Constructor', () => {
     const getPath = () => ''
     const app = new OpenAPIHono({ getPath })
     expect(app.getPath).toBe(getPath)
+  })
+
+  it('Should accept a defaultHook', () => {
+    type FakeEnv = { Variables: { fake: string }; Bindings: { other: number } }
+    const app = new OpenAPIHono<FakeEnv>({
+      defaultHook: (result, c) => {
+        // Make sure we're passing context types through
+        expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
+      },
+    })
+    expect(app.defaultHook).toBeDefined()
   })
 })
 
@@ -755,6 +767,145 @@ describe('With hc', () => {
     it('Should return correct URL without type errors', () => {
       expect(client.posts.$url().pathname).toBe('/posts')
       expect(client.books.$url().pathname).toBe('/books')
+    })
+  })
+
+  describe('defaultHook', () => {
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          const res = c.jsonT(
+            {
+              ok: false,
+              source: 'defaultHook',
+            },
+            400
+          )
+          return res
+        }
+      },
+    })
+
+    const TitleSchema = z.object({
+      title: z.string().openapi({}),
+    })
+
+    function errorResponse() {
+      return {
+        400: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                ok: z.boolean().openapi({}),
+                source: z.enum(['routeHook', 'defaultHook']).openapi({}),
+              }),
+            },
+          },
+          description: 'A validation error',
+        },
+      } satisfies RouteConfig['responses']
+    }
+
+    const createPostRoute = createRoute({
+      method: 'post',
+      path: '/posts',
+      operationId: 'createPost',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+          description: 'A post',
+        },
+        ...errorResponse(),
+      },
+    })
+    const createBookRoute = createRoute({
+      method: 'post',
+      path: '/books',
+      operationId: 'createBook',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+          description: 'A book',
+        },
+        ...errorResponse(),
+      },
+    })
+
+    // use the defaultHook
+    app.openapi(createPostRoute, (c) => {
+      const { title } = c.req.valid('json')
+      return c.jsonT({ title })
+    })
+
+    // use a routeHook
+    app.openapi(
+      createBookRoute,
+      (c) => {
+        const { title } = c.req.valid('json')
+        return c.jsonT({ title })
+      },
+      (result, c) => {
+        if (!result.success) {
+          const res = c.jsonT(
+            {
+              ok: false,
+              source: 'routeHook' as const,
+            },
+            400
+          )
+          return res
+        }
+      }
+    )
+
+    it('uses the defaultHook', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+        body: JSON.stringify({ bad: 'property' }),
+      })
+      expect(res.status).toBe(400)
+      expect(await res.json()).toEqual({
+        ok: false,
+        source: 'defaultHook',
+      })
+    })
+
+    it('it uses the route hook instead of the defaultHook', async () => {
+      const res = await app.request('/books', {
+        method: 'POST',
+        body: JSON.stringify({ bad: 'property' }),
+      })
+      expect(res.status).toBe(400)
+      expect(await res.json()).toEqual({
+        ok: false,
+        source: 'routeHook',
+      })
     })
   })
 })
