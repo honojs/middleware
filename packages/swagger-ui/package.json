@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "build": "tsup ./src/index.tsx --format esm,cjs --dts",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
   },

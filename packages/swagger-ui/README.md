@@ -1,4 +1,4 @@
-# Swagger UI Middleware for Hono
+# Swagger UI Middleware and Component for Hono
 
 This library, `@hono/swagger-ui`, provides a middleware and a component for integrating Swagger UI with Hono applications. Swagger UI is an interactive documentation interface for RESTful APIs, making it easier to understand and test API endpoints.
 
@@ -22,55 +22,53 @@ import { swaggerUI } from '@hono/swagger-ui'
 
 const app = new Hono()
 
-// Define your OpenAPI spec
-const openApiSpec = {
-  openapi: '3.0.3',
-  info: { version: '1.0.0', title: 'Sample API' },
-  servers: [{ url: '/api' }],
-  // ... other OpenAPI spec properties
-}
-
-// Use the middleware to serve Swagger UI at /swagger-ui
-app.use('/swagger-ui', swaggerUI({ spec: openApiSpec }))
+// Use the middleware to serve Swagger UI at /ui
+app.get('/ui', swaggerUI({ url: '/doc' }))
 
 export default app
 ```
 
 ### Component Usage
 
-If you are using `hono/jsx`, you can use the `SwaggerUI` component to render Swagger UI within your JSX/TSX components. Here's an example:
+If you are using `hono/utils/html`, you can use the `SwaggerUI` component to render Swagger UI within your custom HTML structure. Here's an example:
 
 ```ts
+import { Hono } from 'hono'
+import { html } from 'hono/html'
 import { SwaggerUI } from '@hono/swagger-ui'
 
-// In your component
-const MyComponent = () => {
-  return (
-    <SwaggerUI
-      url='/api/doc'
-      title='API Documentation'
-      css='body { background-color: #f9f9f9; }'
-      js="console.log('Swagger UI Loaded');"
-      cssUrls={['https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css']}
-      jsUrls={['https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js']}
-    />
-  )
-}
+const app = new Hono()
+
+app.get('/ui', (c) => {
+  return c.html(html`
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Custom Swagger" />
+        <title>Custom Swagger</title>
+        <script>
+          // custom script
+        </script>
+        <style>
+          /* custom style */
+        </style>
+      </head>
+      ${SwaggerUI({ url: '/doc' })}
+    </html>
+  `)
+})
+
+export default app
 ```
 
-In this example, the `SwaggerUI` component is used to render Swagger UI with a custom title, CSS, JavaScript, and a specific Swagger UI version.
+In this example, the `SwaggerUI` component is used to render Swagger UI within a custom HTML structure, allowing for additional customization such as adding custom scripts and styles.
 
 ## Options
 
 Both the middleware and the component accept an options object for customization. Here are the available options:
 
 - `url` (string): The URL to the OpenAPI specification.
-- `spec` (object): The OpenAPI specification object.
-- `title` (string, optional): The title for the Swagger UI page.
-- `css` (string, optional): A CSS string to be injected into the page.
-- `js` (string, optional): A JavaScript string to be injected into the page.
-- `cssUrls` (string[], optional): An array of URLs to external CSS files.
-- `jsUrls` (string[], optional): An array of URLs to external JavaScript files.
 - `ui` (object, optional): An object with additional Swagger UI configuration options.
   - `version` (string, optional): The version of Swagger UI to use.
 
