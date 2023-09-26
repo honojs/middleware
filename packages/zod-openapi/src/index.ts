@@ -13,7 +13,6 @@ import {
 } from '@asteasolutions/zod-to-openapi'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
-import { SwaggerUI } from '@hono/swagger-ui'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import type {
@@ -284,13 +283,6 @@ export class OpenAPIHono<
     this.get(path, (c) => {
       const document = this.getOpenAPI31Document(config)
       return c.json(document)
-    })
-  }
-
-  swagger = (path: string, config: OpenAPIObjectConfig) => {
-    this.get(path, (c) => {
-      const spec = this.getOpenAPIDocument(config)
-      return c.html(SwaggerUI({ spec }))
     })
   }
 

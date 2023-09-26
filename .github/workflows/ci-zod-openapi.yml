@@ -24,8 +24,5 @@ jobs:
       - name: Build zod-validator in root directory
         run: yarn build:zod-validator
         working-directory: .
-      - name: Build swagger-ui in root directory
-        run: yarn build:swagger-ui
-        working-directory: .
       - run: yarn build
       - run: yarn test

@@ -242,21 +242,6 @@ You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-
 const registry = app.openAPIRegistry
 ```
 
-### SwaggerUI
-
-The `swagger` method can be used to host swagger ui.
-
-```ts
-const config = {
-  openapi: '3.0.0',
-  info: {
-    version: '1.0.0',
-    title: 'My API',
-  },
-}
-app.swagger('/swagger-ui', config)
-```
-
 ### Middleware
 
 Zod OpenAPI Hono is an extension of Hono, so you can use Hono's middleware in the same way:
