@@ -12,7 +12,7 @@ npm i hono @hono/clerk-auth
 
 ## Configuration
 
-Before starting using the middleware you must set the following enviroment variables:
+Before starting using the middleware you must set the following environment variables:
 
 ```plain
 CLERK_SECRET_KEY=<You-secret-key>
