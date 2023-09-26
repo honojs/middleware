@@ -152,7 +152,34 @@ type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}$
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
-type HonoInit = ConstructorParameters<typeof Hono>[0]
+export type OpenAPIHonoOptions<E extends Env> = {
+  defaultHook?: Hook<any, E, any, any>
+}
+type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
+
+export type RouteHandler<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+
+export type RouteHook<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Hook<I, E, P, OutputType<R>>
 
 export class OpenAPIHono<
   E extends Env = Env,
@@ -160,10 +187,12 @@ export class OpenAPIHono<
   BasePath extends string = '/'
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
+  defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
 
-  constructor(init?: HonoInit) {
+  constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
+    this.defaultHook = init?.defaultHook
   }
 
   openapi = <
@@ -178,8 +207,8 @@ export class OpenAPIHono<
   >(
     route: R,
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
-    hook?: Hook<I, E, P, OutputType<R>>
-  ): OpenAPIHono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+    hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
+  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
@@ -325,6 +354,10 @@ export class OpenAPIHono<
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this as any
+  }
+
+  basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
+    return new OpenAPIHono(super.basePath(path))
   }
 }
 

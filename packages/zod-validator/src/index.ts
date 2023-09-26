@@ -24,8 +24,8 @@ export const zValidator = <
   schema: T,
   hook?: Hook<z.infer<T>, E, P>
 ): MiddlewareHandler<E, P, V> =>
-  validator(target, (value, c) => {
-    const result = schema.safeParse(value)
+  validator(target, async (value, c) => {
+    const result = await schema.safeParseAsync(value)
 
     if (hook) {
       const hookResult = hook({ data: value, ...result }, c)

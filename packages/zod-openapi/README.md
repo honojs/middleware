@@ -174,6 +174,57 @@ app.openapi(
 )
 ```
 
+### A DRY approach to handling validation errors
+
+In the case that you have a common error formatter, you can initialize the `OpenAPIHono` instance with a `defaultHook`.
+
+```ts
+const app = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      return c.jsonT(
+        {
+          ok: false,
+          errors: formatZodErrors(result),
+          source: 'custom_error_handler',
+        },
+        422
+      )
+    }
+  },
+})
+```
+
+You can still override the `defaultHook` by providing the hook at the call site when appropriate.
+
+```ts
+// uses the defaultHook
+app.openapi(createPostRoute, (c) => {
+  const { title } = c.req.valid('json')
+  return c.jsonT({ title })
+})
+
+// override the defaultHook by passing in a hook
+app.openapi(
+  createBookRoute,
+  (c) => {
+    const { title } = c.req.valid('json')
+    return c.jsonT({ title })
+  },
+  (result, c) => {
+    if (!result.success) {
+      return c.jsonT(
+        {
+          ok: false,
+          source: 'routeHook' as const,
+        },
+        400
+      )
+    }
+  }
+)
+```
+
 ### OpenAPI v3.1
 
 You can generate OpenAPI v3.1 spec using the following methods:
