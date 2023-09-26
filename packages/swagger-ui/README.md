@@ -45,7 +45,16 @@ import { SwaggerUI } from '@hono/swagger-ui'
 
 // In your component
 const MyComponent = () => {
-  return <SwaggerUI url='/api/doc' title='API Documentation' />
+  return (
+    <SwaggerUI
+      url='/api/doc'
+      title='API Documentation'
+      css='body { background-color: #f9f9f9; }'
+      js="console.log('Swagger UI Loaded');"
+      cssUrls={['https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css']}
+      jsUrls={['https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js']}
+    />
+  )
 }
 ```
 
@@ -58,10 +67,10 @@ Both the middleware and the component accept an options object for customization
 - `url` (string): The URL to the OpenAPI specification.
 - `spec` (object): The OpenAPI specification object.
 - `title` (string, optional): The title for the Swagger UI page.
-- `css` (string[], optional): An array of CSS strings to be injected into the page.
-- `cssUrl` (string[], optional): An array of URLs to external CSS files.
-- `js` (string[], optional): An array of JavaScript strings to be injected into the page.
-- `jsUrl` (string[], optional): An array of URLs to external JavaScript files.
+- `css` (string, optional): A CSS string to be injected into the page.
+- `js` (string, optional): A JavaScript string to be injected into the page.
+- `cssUrls` (string[], optional): An array of URLs to external CSS files.
+- `jsUrls` (string[], optional): An array of URLs to external JavaScript files.
 - `ui` (object, optional): An object with additional Swagger UI configuration options.
   - `version` (string, optional): The version of Swagger UI to use.
 
