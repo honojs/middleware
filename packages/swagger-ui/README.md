@@ -1,6 +1,6 @@
 # Swagger UI Middleware and Component for Hono
 
-This library, `@hono/swagger-ui`, provides a middleware and a component for integrating Swagger UI with Hono applications. Swagger UI is an interactive documentation interface for RESTful APIs, making it easier to understand and test API endpoints.
+This library, `@hono/swagger-ui`, provides a middleware and a component for integrating Swagger UI with Hono applications. Swagger UI is an interactive documentation interface for APIs compliant with the OpenAPI Specification, making it easier to understand and test API endpoints.
 
 ## Installation
 
@@ -30,7 +30,7 @@ export default app
 
 ### Component Usage
 
-If you are using `hono/utils/html`, you can use the `SwaggerUI` component to render Swagger UI within your custom HTML structure. Here's an example:
+If you are using `hono/html`, you can use the `SwaggerUI` component to render Swagger UI within your custom HTML structure. Here's an example:
 
 ```ts
 import { Hono } from 'hono'
