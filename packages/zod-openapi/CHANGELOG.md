@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.7.1
+
+### Patch Changes
+
+- [#182](https://github.com/honojs/middleware/pull/182) [`9aefddc`](https://github.com/honojs/middleware/commit/9aefddc45d048e5e51eb36d81cb878c62a72ba9f) Thanks [@ZerNico](https://github.com/ZerNico)! - properly convert openapi path type to hono
+
 ## 0.7.0
 
 ### Minor Changes
