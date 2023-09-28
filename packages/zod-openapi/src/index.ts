@@ -145,8 +145,8 @@ type Hook<T, E extends Env, P extends string, O> = (
   c: Context<E, P>
 ) => TypedResponse<O> | Promise<TypedResponse<T>> | void
 
-type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}${infer _}`
-  ? `/:${Param}`
+type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
+  ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
