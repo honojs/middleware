@@ -153,6 +153,7 @@ type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
+  validateResponse?: boolean
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
@@ -187,11 +188,13 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
+  validateResponse?: OpenAPIHonoOptions<E>['validateResponse']
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
+    this.validateResponse = init?.validateResponse
   }
 
   openapi = <
@@ -211,6 +214,38 @@ export class OpenAPIHono<
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
+
+    if (this.validateResponse) {
+      const responseZodSchemaObject: Record<string, ZodType<any>> = {}
+
+      const responseEntries = Object.entries(route.responses)
+      for (const [statusCode, response] of responseEntries) {
+        if (response.content) {
+          for (const mediaType of Object.keys(response.content)) {
+            const schema = response.content[mediaType]['schema']
+            if (schema instanceof ZodType) {
+              responseZodSchemaObject[statusCode] = schema
+            }
+          }
+        }
+      }
+
+      validators.push((async (c, next) => {
+        await next()
+
+        const schema = responseZodSchemaObject[c.res.status]
+        if (schema) {
+          const originalBody = await c.res.json()
+          const result = await schema.safeParseAsync(originalBody)
+          if (!result.success) {
+            throw result.error
+          }
+
+          const data = result.data as z.infer<typeof schema>
+          return data
+        }
+      }))
+    }
 
     if (route.request?.query) {
       const validator = zValidator('query', route.request.query as any, hook as any)
