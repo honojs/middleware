@@ -189,15 +189,15 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
-  strictResponseCode?: OpenAPIHonoOptions<E>['strictStatusCode']
-  strictResponseSchema?: OpenAPIHonoOptions<E>['strictResponse']
+  strictStatusCode?: OpenAPIHonoOptions<E>['strictStatusCode']
+  strictResponse?: OpenAPIHonoOptions<E>['strictResponse']
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
-    this.strictResponseCode = init?.strictStatusCode
-    this.strictResponseSchema = init?.strictResponse
+    this.strictStatusCode = init?.strictStatusCode
+    this.strictResponse = init?.strictResponse
   }
 
   openapi = <
@@ -262,7 +262,7 @@ export class OpenAPIHono<
       }
     }
 
-    if (this.strictResponseSchema) {
+    if (this.strictResponse) {
       const responseZodSchemaObject: Record<string, ZodType<any>> = {}
       for (const [statusCode, responseConfig] of Object.entries(route.responses)) {
         for (const mediaTypeObject of Object.values(responseConfig.content ?? {})) {
@@ -292,7 +292,7 @@ export class OpenAPIHono<
       }
     }
 
-    if (this.strictResponseCode) {
+    if (this.strictStatusCode) {
       validators.push(async (c, next) => {
         await next()
 
