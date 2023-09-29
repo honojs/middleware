@@ -1051,12 +1051,12 @@ describe('Validate response schema', () => {
     },
   })
 
-  const appWithStrictSchema = new OpenAPIHono({
+  const appWithStrictResponse = new OpenAPIHono({
     strictStatusCode: true,
     strictResponse: true,
   })
 
-  appWithStrictSchema.openapi(routeWithMultipleStatusCode, async (c) => {
+  appWithStrictResponse.openapi(routeWithMultipleStatusCode, async (c) => {
     const { returnCode } = c.req.valid('query')
     if (returnCode === '500') {
       c.status(500)
@@ -1079,7 +1079,7 @@ describe('Validate response schema', () => {
   })
 
   it('Should validate response based on status code (200)', async () => {
-    const res = await appWithStrictSchema.request('/multiple-status-code')
+    const res = await appWithStrictResponse.request('/multiple-status-code')
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toStrictEqual({
@@ -1089,14 +1089,14 @@ describe('Validate response schema', () => {
   })
 
   it('Should validate response based on status code (404)', async () => {
-    const res = await appWithStrictSchema.request('/multiple-status-code?returnCode=404')
+    const res = await appWithStrictResponse.request('/multiple-status-code?returnCode=404')
     const body = await res.json()
     expect(res.status).toBe(404)
     expect(body).toHaveProperty('not', 'found')
   })
 
   it('Should validate response based on status code (500)', async () => {
-    const res = await appWithStrictSchema.request('/multiple-status-code?returnCode=500')
+    const res = await appWithStrictResponse.request('/multiple-status-code?returnCode=500')
     const body = await res.json()
     expect(res.status).toBe(500)
     expect(body).toStrictEqual({
@@ -1104,7 +1104,7 @@ describe('Validate response schema', () => {
     })
   })
 
-  const routeWithBase = createRoute({
+  const routeWithPlainZodObject = createRoute({
     method: 'get',
     path: '/strip',
     responses: {
@@ -1121,7 +1121,7 @@ describe('Validate response schema', () => {
       },
     },
   })
-  appWithStrictSchema.openapi(routeWithBase, async (c) => {
+  appWithStrictResponse.openapi(routeWithPlainZodObject, async (c) => {
     return c.jsonT({
       name: 'John Doe',
       age: 20,
@@ -1130,7 +1130,7 @@ describe('Validate response schema', () => {
   })
 
   it('Should strip response from extra property keys when using plain Zod object schema', async () => {
-    const res = await appWithStrictSchema.request('/strip')
+    const res = await appWithStrictResponse.request('/strip')
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toStrictEqual({
@@ -1139,7 +1139,7 @@ describe('Validate response schema', () => {
     })
   })
 
-  const routeWithStrict = createRoute({
+  const routeWithStrictZodObject = createRoute({
     method: 'get',
     path: '/strict',
     responses: {
@@ -1158,7 +1158,7 @@ describe('Validate response schema', () => {
       },
     },
   })
-  appWithStrictSchema.openapi(routeWithStrict, async (c) => {
+  appWithStrictResponse.openapi(routeWithStrictZodObject, async (c) => {
     return c.jsonT({
       name: 'John Doe',
       age: 20,
@@ -1167,13 +1167,13 @@ describe('Validate response schema', () => {
   })
 
   it('Should throw error because of extra property keys when using Zod object schema with .strict()', async () => {
-    const res = await appWithStrictSchema.request('/strict')
+    const res = await appWithStrictResponse.request('/strict')
     const body = await res.json()
     expect(res.status).toBe(500)
     expect(body).toHaveProperty('name', 'ZodError')
   })
 
-  const routeWithPassthrough = createRoute({
+  const routeWithPassthroughZodObject = createRoute({
     method: 'get',
     path: '/passthrough',
     responses: {
@@ -1192,7 +1192,7 @@ describe('Validate response schema', () => {
       },
     },
   })
-  appWithStrictSchema.openapi(routeWithPassthrough, async (c) => {
+  appWithStrictResponse.openapi(routeWithPassthroughZodObject, async (c) => {
     return c.jsonT({
       name: 'John Doe',
       age: 20,
@@ -1201,7 +1201,7 @@ describe('Validate response schema', () => {
   })
 
   it('Should return extra property keys when using Zod object schema with .passthrough()', async () => {
-    const res = await appWithStrictSchema.request('/passthrough')
+    const res = await appWithStrictResponse.request('/passthrough')
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toHaveProperty('extra', 'property')
@@ -1243,7 +1243,7 @@ describe('Validate response schema', () => {
       },
     },
   })
-  appWithStrictSchema.openapi(routeWithVariousZodTypes, async (c) => {
+  appWithStrictResponse.openapi(routeWithVariousZodTypes, async (c) => {
     const { type } = c.req.valid('query')
     if (type === 'string') {
       c.status(200)
@@ -1258,21 +1258,21 @@ describe('Validate response schema', () => {
   })
 
   it('Should be able to parse and return string', async () => {
-    const res = await appWithStrictSchema.request('/zod-types?type=string')
+    const res = await appWithStrictResponse.request('/zod-types?type=string')
     const body = await res.json()
     expect(res.status).toBe(200)
     expect(body).toBe('string')
   })
 
   it('Should be able to parse and return number', async () => {
-    const res = await appWithStrictSchema.request('/zod-types?type=number')
+    const res = await appWithStrictResponse.request('/zod-types?type=number')
     const body = await res.json()
     expect(res.status).toBe(201)
     expect(body).toBe(123)
   })
 
   it('Should be able to parse and return boolean', async () => {
-    const res = await appWithStrictSchema.request('/zod-types?type=boolean')
+    const res = await appWithStrictResponse.request('/zod-types?type=boolean')
     const body = await res.json()
     expect(res.status).toBe(202)
     expect(body).toBe(true)
