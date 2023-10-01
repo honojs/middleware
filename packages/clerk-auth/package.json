@@ -25,12 +25,12 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "@clerk/backend": "0.30.*",
+    "hono": "3.*"
   },
   "devDependencies": {
-    "hono": "^2.7.2"
-  },
-  "dependencies": {
-    "@clerk/backend": "^0.28.1"
+    "@clerk/backend": "^0.30.1",
+    "hono": "^3.7.3",
+    "node-fetch-native": "^1.4.0"
   }
 }
