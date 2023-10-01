@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.2.1
+
+### Patch Changes
+
+- [#178](https://github.com/honojs/middleware/pull/178) [`7c6573d`](https://github.com/honojs/middleware/commit/7c6573da690dc002489b99c0a7a00285ebf011f4) Thanks [@melbourne2991](https://github.com/melbourne2991)! - fix(typebox): Update typebox dependency
+
 ## 0.2.0
 
 ### Minor Changes

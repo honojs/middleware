@@ -1,34 +1,38 @@
 import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse } from 'hono'
 import { validator } from 'hono/validator'
-import type { z, ZodSchema, ZodError } from 'zod'
+import { IValidation, Primitive } from 'typia'
 
 export type Hook<T, E extends Env, P extends string, O = {}> = (
-  result: { success: true; data: T } | { success: false; error: ZodError; data: T },
+  result: IValidation.ISuccess<T> | { success: false; errors: IValidation.IError[]; data: T },
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void> | TypedResponse<O>
 
-export const zValidator = <
-  T extends ZodSchema,
+export type Validation<O = any> = (input: unknown) => IValidation<O>
+export type OutputType<T> = T extends Validation<infer O> ? O : never
+
+export const typiaValidator = <
+  T extends Validation,
+  O extends OutputType<T>,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
   V extends {
-    in: { [K in Target]: z.input<T> }
-    out: { [K in Target]: z.output<T> }
+    in: { [K in Target]: O }
+    out: { [K in Target]: O }
   } = {
-    in: { [K in Target]: z.input<T> }
-    out: { [K in Target]: z.output<T> }
+    in: { [K in Target]: O }
+    out: { [K in Target]: O }
   }
 >(
   target: Target,
-  schema: T,
-  hook?: Hook<z.infer<T>, E, P>
+  validate: T,
+  hook?: Hook<O, E, P>
 ): MiddlewareHandler<E, P, V> =>
-  validator(target, async (value, c) => {
-    const result = await schema.safeParseAsync(value)
+  validator(target, (value, c) => {
+    const result = validate(value)
 
     if (hook) {
-      const hookResult = hook({ data: value, ...result }, c)
+      const hookResult = hook({ ...result, data: value }, c)
       if (hookResult) {
         if (hookResult instanceof Response || hookResult instanceof Promise) {
           return hookResult
@@ -40,9 +44,7 @@ export const zValidator = <
     }
 
     if (!result.success) {
-      return c.json(result, 400)
+      return c.json({ success: false, error: result.errors }, 400)
     }
-
-    const data = result.data as z.infer<T>
-    return data
+    return result.data
   })

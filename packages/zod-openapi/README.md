@@ -174,6 +174,66 @@ app.openapi(
 )
 ```
 
+### A DRY approach to handling validation errors
+
+In the case that you have a common error formatter, you can initialize the `OpenAPIHono` instance with a `defaultHook`.
+
+```ts
+const app = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      return c.jsonT(
+        {
+          ok: false,
+          errors: formatZodErrors(result),
+          source: 'custom_error_handler',
+        },
+        422
+      )
+    }
+  },
+})
+```
+
+You can still override the `defaultHook` by providing the hook at the call site when appropriate.
+
+```ts
+// uses the defaultHook
+app.openapi(createPostRoute, (c) => {
+  const { title } = c.req.valid('json')
+  return c.jsonT({ title })
+})
+
+// override the defaultHook by passing in a hook
+app.openapi(
+  createBookRoute,
+  (c) => {
+    const { title } = c.req.valid('json')
+    return c.jsonT({ title })
+  },
+  (result, c) => {
+    if (!result.success) {
+      return c.jsonT(
+        {
+          ok: false,
+          source: 'routeHook' as const,
+        },
+        400
+      )
+    }
+  }
+)
+```
+
+### OpenAPI v3.1
+
+You can generate OpenAPI v3.1 spec using the following methods:
+
+```ts
+app.doc31('/docs', {openapi: '3.1.0'}) // new endpoint
+app.getOpenAPI31Document(, {openapi: '3.1.0'}) // raw json
+```
+
 ### The Registry
 
 You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-openapi#the-registry) object via `app.openAPIRegistry`:
@@ -192,6 +252,18 @@ import { prettyJSON } from 'hono/pretty-json'
 //...
 
 app.use('/doc/*', prettyJSON())
+```
+
+### Configure middleware for each endpoint
+
+You can configure middleware for each endpoint from a route created by `createRoute` as follows.
+
+```ts
+import { prettyJSON } from 'hono/pretty-json'
+import { cache } from 'honoc/cache'
+
+app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
+app.openapi(route, handler)
 ```
 
 ### RPC Mode
@@ -214,44 +286,9 @@ const client = hc<typeof appRoutes>('http://localhost:8787/')
 
 ## Limitations
 
-An instance of Zod OpenAPI Hono cannot be used as a "subApp" in conjunction with `rootApp.route('/api', subApp)`.
-Use `app.mount('/api', subApp.fetch)` instead.
+Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
 
-```ts
-const api = OpenAPIHono()
-
-// ...
-
-// Set the `/api` as a base path in the document.
-api.get('/doc', (c) => {
-  const url = new URL(c.req.url)
-  url.pathname = '/api'
-  url.search = ''
-
-  return c.json(
-    // `api.getOpenAPIDocument()` will return a JSON object of the docs.
-    api.getOpenAPIDocument({
-      openapi: '3.0.0',
-      info: {
-        version: '1.0.0',
-        title: 'My API',
-      },
-      servers: [
-        {
-          url: `${url.toString()}`,
-        },
-      ],
-    })
-  )
-})
-
-const app = new Hono()
-
-// Mount the Open API app to `/api` in the main app.
-app.mount('/api', api.fetch)
-
-export default app
-```
+If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
 
 ## References
 

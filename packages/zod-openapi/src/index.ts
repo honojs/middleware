@@ -6,7 +6,11 @@ import type {
   ZodContentObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
-import { OpenApiGeneratorV3, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
+import {
+  OpenApiGeneratorV3,
+  OpenApiGeneratorV31,
+  OpenAPIRegistry,
+} from '@asteasolutions/zod-to-openapi'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
@@ -21,6 +25,8 @@ import type {
   ToSchema,
   TypedResponse,
 } from 'hono'
+import type { MergePath, MergeSchemaPath } from 'hono/dist/types/types'
+import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
@@ -58,7 +64,7 @@ type InputTypeBase<
   ? RequestPart<R, Part> extends AnyZodObject
     ? {
         in: { [K in Type]: z.input<RequestPart<R, Part>> }
-        out: { [K in Type]: z.input<RequestPart<R, Part>> }
+        out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
   : {}
@@ -76,7 +82,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
               >
             }
             out: {
-              json: z.input<
+              json: z.output<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -99,7 +105,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
               >
             }
             out: {
-              form: z.input<
+              form: z.output<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -139,11 +145,40 @@ type Hook<T, E extends Env, P extends string, O> = (
   c: Context<E, P>
 ) => TypedResponse<O> | Promise<TypedResponse<T>> | void
 
-type ConvertPathType<T extends string> = T extends `${infer _}/{${infer Param}}${infer _}`
-  ? `/:${Param}`
+type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
+  ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
 type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
+
+export type OpenAPIHonoOptions<E extends Env> = {
+  defaultHook?: Hook<any, E, any, any>
+}
+type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
+
+export type RouteHandler<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+
+export type RouteHook<
+  R extends RouteConfig,
+  E extends Env = Env,
+  I extends Input = InputTypeParam<R> &
+    InputTypeQuery<R> &
+    InputTypeHeader<R> &
+    InputTypeCookie<R> &
+    InputTypeForm<R> &
+    InputTypeJson<R>,
+  P extends string = ConvertPathType<R['path']>
+> = Hook<I, E, P, OutputType<R>>
 
 export class OpenAPIHono<
   E extends Env = Env,
@@ -151,10 +186,12 @@ export class OpenAPIHono<
   BasePath extends string = '/'
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
+  defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
 
-  constructor() {
-    super()
+  constructor(init?: HonoInit<E>) {
+    super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
+    this.defaultHook = init?.defaultHook
   }
 
   openapi = <
@@ -169,8 +206,8 @@ export class OpenAPIHono<
   >(
     route: R,
     handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
-    hook?: Hook<I, E, P, OutputType<R>>
-  ): Hono<E, ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+    hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
+  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
@@ -219,12 +256,18 @@ export class OpenAPIHono<
       }
     }
 
-    this.on([route.method], route.path.replace(/\/{(.+)}/, '/:$1'), ...validators, handler)
+    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...validators, handler)
     return this
   }
 
   getOpenAPIDocument = (config: OpenAPIObjectConfig) => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
+    const document = generator.generateDocument(config)
+    return document
+  }
+
+  getOpenAPI31Document = (config: OpenAPIObjectConfig) => {
+    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     return document
   }
@@ -235,11 +278,95 @@ export class OpenAPIHono<
       return c.json(document)
     })
   }
+
+  doc31 = (path: string, config: OpenAPIObjectConfig) => {
+    this.get(path, (c) => {
+      const document = this.getOpenAPI31Document(config)
+      return c.json(document)
+    })
+  }
+
+  route<
+    SubPath extends string,
+    SubEnv extends Env,
+    SubSchema extends Schema,
+    SubBasePath extends string
+  >(
+    path: SubPath,
+    app: Hono<SubEnv, SubSchema, SubBasePath>
+  ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath>
+  route<SubPath extends string>(path: SubPath): Hono<E, RemoveBlankRecord<S>, BasePath>
+  route<
+    SubPath extends string,
+    SubEnv extends Env,
+    SubSchema extends Schema,
+    SubBasePath extends string
+  >(
+    path: SubPath,
+    app?: Hono<SubEnv, SubSchema, SubBasePath>
+  ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath> {
+    super.route(path, app as any)
+
+    if (!(app instanceof OpenAPIHono)) {
+      return this as any
+    }
+
+    app.openAPIRegistry.definitions.forEach((def) => {
+      switch (def.type) {
+        case 'component':
+          return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
+
+        case 'route':
+          return this.openAPIRegistry.registerPath({
+            ...def.route,
+            path: `${path}${def.route.path}`,
+          })
+
+        case 'webhook':
+          return this.openAPIRegistry.registerWebhook({
+            ...def.webhook,
+            path: `${path}${def.webhook.path}`,
+          })
+
+        case 'schema':
+          return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)
+
+        case 'parameter':
+          return this.openAPIRegistry.registerParameter(
+            def.schema._def.openapi._internal.refId,
+            def.schema
+          )
+
+        default: {
+          const errorIfNotExhaustive: never = def
+          throw new Error(`Unknown registry type: ${errorIfNotExhaustive}`)
+        }
+      }
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this as any
+  }
+
+  basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
+    return new OpenAPIHono(super.basePath(path))
+  }
 }
+
+type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`
+  ? `${Head}/:${Param}${RoutingPath<Tail>}`
+  : P
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => routeConfig
+) => {
+  return {
+    ...routeConfig,
+    getRoutingPath(): RoutingPath<R['path']> {
+      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
+    },
+  }
+}
 
 extendZodWithOpenApi(z)
 export { z }

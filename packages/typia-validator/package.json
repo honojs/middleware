@@ -1,7 +1,7 @@
 {
-  "name": "@hono/typebox-validator",
-  "version": "0.2.1",
-  "description": "Validator middleware using TypeBox",
+  "name": "@hono/typia-validator",
+  "version": "0.0.2",
+  "description": "Validator middleware using Typia",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -9,7 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "generate-test": "rimraf test-generated && typia generate --input test --output test-generated --project tsconfig.json",
+    "test": "npm run generate-test && jest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
@@ -28,11 +29,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@sinclair/typebox": "^0.31.15",
-    "hono": "3.*"
+    "hono": "3.*",
+    "typia": "^5.0.4"
   },
   "devDependencies": {
-    "@sinclair/typebox": "^0.31.15",
-    "hono": "^3.1.2"
+    "hono": "^3.5.8",
+    "typia": "^5.0.4"
   }
 }

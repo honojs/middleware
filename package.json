@@ -20,6 +20,7 @@
     "build:medley-router": "yarn workspace @hono/medley-router build",
     "build:valibot-validator": "yarn workspace @hono/valibot-validator build",
     "build:zod-openapi": "yarn build:zod-validator && yarn workspace @hono/zod-openapi build",
+    "build:typia-validator": "yarn workspace @hono/typia-validator build",
     "build": "run-p build:*"
   },
   "license": "MIT",

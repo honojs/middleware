@@ -1,0 +1,25 @@
+name: ci-typia-validator
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/typia-validator/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/typia-validator/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/typia-validator
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

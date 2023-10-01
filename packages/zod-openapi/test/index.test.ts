@@ -1,27 +1,63 @@
 /* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Hono, Env, ToSchema } from 'hono'
+import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
+import type { Hono, Env, ToSchema, Context } from 'hono'
+import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
+
+describe('Constructor', () => {
+  it('Should not require init object', () => {
+    expect(() => new OpenAPIHono()).not.toThrow()
+  })
+
+  it('Should accept init object', () => {
+    const getPath = () => ''
+    const app = new OpenAPIHono({ getPath })
+    expect(app.getPath).toBe(getPath)
+  })
+
+  it('Should accept a defaultHook', () => {
+    type FakeEnv = { Variables: { fake: string }; Bindings: { other: number } }
+    const app = new OpenAPIHono<FakeEnv>({
+      defaultHook: (result, c) => {
+        // Make sure we're passing context types through
+        expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
+      },
+    })
+    expect(app.defaultHook).toBeDefined()
+  })
+})
 
 describe('Basic - params', () => {
   const ParamsSchema = z.object({
     id: z
       .string()
-      .min(3)
+      .transform((val, ctx) => {
+        const parsed = parseInt(val)
+        if (isNaN(parsed)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Not a number',
+          })
+          return z.NEVER
+        }
+        return parsed
+      })
       .openapi({
         param: {
           name: 'id',
           in: 'path',
         },
-        example: '1212121',
+        example: 123,
+        type: 'integer',
       }),
   })
 
   const UserSchema = z
     .object({
-      id: z.string().openapi({
-        example: '123',
+      id: z.number().openapi({
+        example: 123,
       }),
       name: z.string().openapi({
         example: 'John Doe',
@@ -103,14 +139,14 @@ describe('Basic - params', () => {
     const res = await app.request('/users/123')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      id: '123',
+      id: 123,
       age: 20,
       name: 'Ultra-man',
     })
   })
 
   it('Should return 400 response with correct contents', async () => {
-    const res = await app.request('/users/1')
+    const res = await app.request('/users/abc')
     expect(res.status).toBe(400)
     expect(await res.json()).toEqual({ ok: false })
   })
@@ -126,7 +162,7 @@ describe('Basic - params', () => {
           User: {
             type: 'object',
             properties: {
-              id: { type: 'string', example: '123' },
+              id: { type: 'number', example: 123 },
               name: { type: 'string', example: 'John Doe' },
               age: { type: 'number', example: 42 },
             },
@@ -145,7 +181,7 @@ describe('Basic - params', () => {
           get: {
             parameters: [
               {
-                schema: { type: 'string', minLength: 3, example: '1212121' },
+                schema: { type: 'integer', example: 123 },
                 required: true,
                 name: 'id',
                 in: 'path',
@@ -574,5 +610,335 @@ describe('Types', () => {
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>
+  })
+})
+
+describe('Routers', () => {
+  const RequestSchema = z.object({
+    id: z.number().openapi({}),
+  })
+
+  const PostSchema = z
+    .object({
+      id: z.number().openapi({}),
+    })
+    .openapi('Post')
+
+  const route = createRoute({
+    method: 'post',
+    path: '/posts',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: RequestSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PostSchema,
+          },
+        },
+        description: 'Post a post',
+      },
+    },
+  })
+  it('Should include definitions from nested routers', () => {
+    const router = new OpenAPIHono().openapi(route, (ctx) => {
+      return ctx.jsonT({ id: 123 })
+    })
+
+    router.openAPIRegistry.register('Id', z.number())
+
+    router.openAPIRegistry.registerParameter(
+      'Key',
+      z.number().openapi({
+        param: { in: 'path' },
+      })
+    )
+
+    router.openAPIRegistry.registerWebhook({
+      method: 'post',
+      path: '/postback',
+      responses: {
+        200: {
+          description: 'Receives a post back',
+        },
+      },
+    })
+
+    const app = new OpenAPIHono().route('/api', router)
+    const json = app.getOpenAPI31Document({
+      openapi: '3.1.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+
+    expect(json.components?.schemas).toHaveProperty('Id')
+    expect(json.components?.schemas).toHaveProperty('Post')
+    expect(json.components?.parameters).toHaveProperty('Key')
+    expect(json.paths).toHaveProperty('/api/posts')
+    expect(json.webhooks).toHaveProperty('/api/postback')
+  })
+})
+
+describe('Multi params', () => {
+  const ParamsSchema = z.object({
+    id: z.string(),
+    tagName: z.string(),
+  })
+
+  const route = createRoute({
+    method: 'get',
+    path: '/users/{id}/tags/{tagName}',
+    request: {
+      params: ParamsSchema,
+    },
+    responses: {
+      200: {
+        // eslint-disable-next-line quotes
+        description: "Get the user's tag",
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const { id, tagName } = c.req.valid('param')
+    return c.jsonT({
+      id,
+      tagName,
+    })
+  })
+
+  it('Should return 200 response with correct contents', async () => {
+    const res = await app.request('/users/123/tags/baseball')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      id: '123',
+      tagName: 'baseball',
+    })
+  })
+})
+
+describe('basePath()', () => {
+  const route = createRoute({
+    method: 'get',
+    path: '/message',
+    responses: {
+      200: {
+        description: 'Get message',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono().basePath('/api')
+  app.openapi(route, (c) => c.jsonT({ message: 'Hello' }))
+  app.doc('/doc', {
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'My API',
+    },
+  })
+
+  it('Should return 200 response without type errors - /api/message', async () => {
+    const res = await app.request('/api/message')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: 'Hello' })
+  })
+
+  it('Should return 200 response - /api/doc', async () => {
+    const res = await app.request('/api/doc')
+    expect(res.status).toBe(200)
+  })
+})
+
+describe('With hc', () => {
+  describe('Multiple routes', () => {
+    const app = new OpenAPIHono()
+
+    const createPostRoute = createRoute({
+      method: 'post',
+      path: '/posts',
+      operationId: 'createPost',
+      responses: {
+        200: {
+          description: 'A post',
+        },
+      },
+    })
+
+    const createBookRoute = createRoute({
+      method: 'post',
+      path: '/books',
+      operationId: 'createBook',
+      responses: {
+        200: {
+          description: 'A book',
+        },
+      },
+    })
+
+    const routes = app
+      .openapi(createPostRoute, (c) => {
+        return c.jsonT(0)
+      })
+      .openapi(createBookRoute, (c) => {
+        return c.jsonT(0)
+      })
+
+    const client = hc<typeof routes>('http://localhost/')
+
+    it('Should return correct URL without type errors', () => {
+      expect(client.posts.$url().pathname).toBe('/posts')
+      expect(client.books.$url().pathname).toBe('/books')
+    })
+  })
+
+  describe('defaultHook', () => {
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          const res = c.jsonT(
+            {
+              ok: false,
+              source: 'defaultHook',
+            },
+            400
+          )
+          return res
+        }
+      },
+    })
+
+    const TitleSchema = z.object({
+      title: z.string().openapi({}),
+    })
+
+    function errorResponse() {
+      return {
+        400: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                ok: z.boolean().openapi({}),
+                source: z.enum(['routeHook', 'defaultHook']).openapi({}),
+              }),
+            },
+          },
+          description: 'A validation error',
+        },
+      } satisfies RouteConfig['responses']
+    }
+
+    const createPostRoute = createRoute({
+      method: 'post',
+      path: '/posts',
+      operationId: 'createPost',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+          description: 'A post',
+        },
+        ...errorResponse(),
+      },
+    })
+    const createBookRoute = createRoute({
+      method: 'post',
+      path: '/books',
+      operationId: 'createBook',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: TitleSchema,
+            },
+          },
+          description: 'A book',
+        },
+        ...errorResponse(),
+      },
+    })
+
+    // use the defaultHook
+    app.openapi(createPostRoute, (c) => {
+      const { title } = c.req.valid('json')
+      return c.jsonT({ title })
+    })
+
+    // use a routeHook
+    app.openapi(
+      createBookRoute,
+      (c) => {
+        const { title } = c.req.valid('json')
+        return c.jsonT({ title })
+      },
+      (result, c) => {
+        if (!result.success) {
+          const res = c.jsonT(
+            {
+              ok: false,
+              source: 'routeHook' as const,
+            },
+            400
+          )
+          return res
+        }
+      }
+    )
+
+    it('uses the defaultHook', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+        body: JSON.stringify({ bad: 'property' }),
+      })
+      expect(res.status).toBe(400)
+      expect(await res.json()).toEqual({
+        ok: false,
+        source: 'defaultHook',
+      })
+    })
+
+    it('it uses the route hook instead of the defaultHook', async () => {
+      const res = await app.request('/books', {
+        method: 'POST',
+        body: JSON.stringify({ bad: 'property' }),
+      })
+      expect(res.status).toBe(400)
+      expect(await res.json()).toEqual({
+        ok: false,
+        source: 'routeHook',
+      })
+    })
   })
 })
