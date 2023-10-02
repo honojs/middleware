@@ -21,7 +21,8 @@ jest.mock('@clerk/backend', () => {
   }
 })
 
-describe('withClerkMiddleware(options)', () => {
+//
+describe('clerkMiddleware()', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.restoreAllMocks()
@@ -60,8 +61,146 @@ describe('withClerkMiddleware(options)', () => {
     expect(await response.json()).toEqual({ auth: 'mockedAuth' })
     expect(authenticateRequestMock).toBeCalledWith(
       expect.objectContaining({
-        secretKey: 'TEST_API_KEY',
-        publishableKey: 'TEST_API_KEY',
+        secretKey: EnvVariables.CLERK_SECRET_KEY,
+        publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
+        request: expect.any(Request),
+      }),
+    )
+  })
+
+  test('handles signin with cookie', async () => {
+    authenticateRequestMock.mockResolvedValue({
+      isUnknown: false,
+      isInterstitial: false,
+      isSignedIn: true,
+      toAuth: () => 'mockedAuth',
+    })
+    const app = new Hono()
+    app.use('*', clerkMiddleware())
+
+    app.get('/', (ctx) => {
+      const auth = getAuth(ctx)
+      return ctx.json({ auth })
+    })
+
+    const req = new Request('http://localhost/', {
+      headers: {
+        cookie: '_gcl_au=value1; ko_id=value2; __session=deadbeef; __client_uat=1675692233',
+        Origin: 'http://origin.com',
+        Host: 'host.com',
+        'X-Forwarded-Port': '1234',
+        'X-Forwarded-Host': 'forwarded-host.com',
+        Referer: 'referer.com',
+        'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+      },
+    })
+
+    const response = await app.request(req, {}, EnvVariables)
+
+    expect(response.status).toEqual(200)
+    expect(await response.json()).toEqual({ auth: 'mockedAuth' })
+    expect(authenticateRequestMock).toBeCalledWith(
+      expect.objectContaining({
+        secretKey: EnvVariables.CLERK_SECRET_KEY,
+        publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
+        request: expect.any(Request),
+      }),
+    )
+  })
+
+  test('handles unknown case by terminating the request with empty response and 401 http code', async () => {
+    authenticateRequestMock.mockResolvedValue({
+      isUnknown: true,
+      isInterstitial: false,
+      isSignedIn: false,
+      reason: 'auth-reason',
+      message: 'auth-message',
+      toAuth: () => 'mockedAuth',
+    })
+    const app = new Hono()
+    app.use('*', clerkMiddleware())
+
+    app.get('/', (ctx) => {
+      const auth = getAuth(ctx)
+      return ctx.json({ auth })
+    })
+
+    const req = new Request('http://localhost/', {
+      headers: {
+        cookie: '_gcl_au=value1; ko_id=value2; __session=deadbeef; __client_uat=1675692233',
+      },
+    })
+
+    const response = await app.request(req, {}, EnvVariables)
+
+    expect(response.status).toEqual(401)
+    expect(response.headers.get('x-clerk-auth-reason')).toEqual('auth-reason')
+    expect(response.headers.get('x-clerk-auth-message')).toEqual('auth-message')
+    expect(await response.text()).toEqual('')
+  })
+
+  test('handles interstitial case by terminating the request with interstitial html page and 401 http code', async () => {
+    authenticateRequestMock.mockResolvedValue({
+      isUnknown: false,
+      isInterstitial: true,
+      isSignedIn: false,
+      reason: 'auth-reason',
+      message: 'auth-message',
+      toAuth: () => 'mockedAuth',
+    })
+    localInterstitialMock.mockReturnValue('<html><body>Interstitial</body></html>')
+    const app = new Hono()
+    app.use('*', clerkMiddleware())
+
+    app.get('/', (ctx) => {
+      const auth = getAuth(ctx)
+      return ctx.json({ auth })
+    })
+
+    const req = new Request('http://localhost/', {
+      headers: {
+        cookie: '_gcl_au=value1; ko_id=value2; __session=deadbeef; __client_uat=1675692233',
+      },
+    })
+
+    const response = await app.request(req, {}, EnvVariables)
+
+    expect(response.status).toEqual(401)
+    expect(response.headers.get('content-type')).toMatch('text/html')
+    expect(response.headers.get('x-clerk-auth-reason')).toEqual('auth-reason')
+    expect(response.headers.get('x-clerk-auth-message')).toEqual('auth-message')
+    expect(await response.text()).toEqual('<html><body>Interstitial</body></html>')
+  })
+
+  test('handles signout case by populating the req.auth', async () => {
+    authenticateRequestMock.mockResolvedValue({
+      isUnknown: false,
+      isInterstitial: false,
+      isSignedIn: false,
+      toAuth: () => 'mockedAuth',
+    })
+    const app = new Hono()
+    app.use('*', clerkMiddleware())
+
+    app.get('/', (ctx) => {
+      const auth = getAuth(ctx)
+      return ctx.json({ auth })
+    })
+
+    const req = new Request('http://localhost/', {
+      headers: {
+        Authorization: 'Bearer deadbeef'
+      },
+    })
+
+    const response = await app.request(req, {}, EnvVariables)
+
+    expect(response.status).toEqual(200)
+    expect(await response.json()).toEqual({ auth: 'mockedAuth' })
+    expect(authenticateRequestMock).toBeCalledWith(
+      expect.objectContaining({
+        secretKey: EnvVariables.CLERK_SECRET_KEY,
+        publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
         request: expect.any(Request),
       }),
     )

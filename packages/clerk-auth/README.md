@@ -77,7 +77,3 @@ export default app
 ## Author
 
 Vaggelis Yfantis <https://github.com/octoper>
-
-## License
-
-MIT
