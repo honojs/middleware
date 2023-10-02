@@ -21,7 +21,7 @@ jest.mock('@clerk/backend', () => {
   }
 })
 
-//
+// Test are based on Clerk's test suite for Fastify plugin - https://github.com/clerkinc/javascript/blob/main/packages/fastify/src/withClerkMiddleware.test.ts
 describe('clerkMiddleware()', () => {
   beforeEach(() => {
     jest.clearAllMocks()
