@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.7.2
+
+### Patch Changes
+
+- [#189](https://github.com/honojs/middleware/pull/189) [`58167f3`](https://github.com/honojs/middleware/commit/58167f3b7f3c564334f5182529f0ddb29ace0af1) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: publish as cjs by default
+
 ## 0.7.1
 
 ### Patch Changes
