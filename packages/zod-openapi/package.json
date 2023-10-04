@@ -2,7 +2,6 @@
   "name": "@hono/zod-openapi",
   "version": "0.7.1",
   "description": "A wrapper class of Hono which supports OpenAPI.",
-  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,6 +13,13 @@
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "license": "MIT",
   "private": false,
