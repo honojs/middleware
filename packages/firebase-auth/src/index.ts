@@ -1,6 +1,7 @@
 import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { Context, MiddlewareHandler } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 
 export type VerifyFirebaseAuthEnv = {
   PUBLIC_JWK_CACHE_KEY?: string | undefined
@@ -61,9 +62,11 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
           err,
         })
       }
-      return new Response(null, {
+
+      const res = new Response('Unauthorized', {
         status: 401,
       })
+      throw new HTTPException(401, { res })
     }
     await next()
   }
