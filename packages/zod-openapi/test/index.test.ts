@@ -266,9 +266,21 @@ describe('Header', () => {
     'x-request-id': z.string().uuid(),
   })
 
+  const HeaderSchemaAuth = z.object({
+    authorization: z.string(),
+    'x-request-id': z.string().uuid(),
+  })
+
   const PingSchema = z
     .object({
       'x-request-id': z.string().uuid(),
+    })
+    .openapi('Post')
+
+  const PongSchema = z
+    .object({
+      'x-request-id': z.string().uuid(),
+      authorization: z.string(),
     })
     .openapi('Post')
 
@@ -290,15 +302,34 @@ describe('Header', () => {
     },
   })
 
+  const routeWithAuth = createRoute({
+    method: 'get',
+    path: '/pong',
+    request: {
+      headers: HeaderSchemaAuth,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: PongSchema,
+          },
+        },
+        description: 'Pong',
+      },
+    },
+  })
+
   const app = new OpenAPIHono()
 
-  app.openapi(route, (c) => {
+  const controller = (c) => {
     const headerData = c.req.valid('header')
-    const xRequestId = headerData['x-request-id']
-    return c.jsonT({
-      'x-request-id': xRequestId,
-    })
-  })
+    return c.jsonT(headerData)
+  }
+
+  app.openapi(route, controller)
+
+  app.openapi(routeWithAuth, controller)
 
   it('Should return 200 response with correct contents', async () => {
     const res = await app.request('/ping', {
@@ -310,6 +341,20 @@ describe('Header', () => {
     expect(await res.json()).toEqual({
       'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
     })
+  })
+
+  it('Should return 200 response for array of headers with Authorization included', async () => {
+    const res = await app.request('/pong', {
+      headers: {
+        Authorization: 'Bearer helloworld',
+        'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+      },
+    })
+    expect(await res.json()).toEqual({
+      'authorization': 'Bearer helloworld',
+      'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+    })
+    expect(res.status).toBe(200)
   })
 
   it('Should return 400 response with correct contents', async () => {
