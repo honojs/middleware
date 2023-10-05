@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.3.1
+
+### Patch Changes
+
+- [#191](https://github.com/honojs/middleware/pull/191) [`794f03c`](https://github.com/honojs/middleware/commit/794f03c3633abefce1b16fb1f4322d87f2568a8e) Thanks [@Code-Hex](https://github.com/Code-Hex)! - fixed to make HTTPException instead of reponse null
+
 ## 1.3.0
 
 ### Minor Changes
