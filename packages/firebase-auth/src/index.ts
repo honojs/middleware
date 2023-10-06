@@ -39,9 +39,10 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
   return async (c, next) => {
     const authorization = c.req.headers.get(config.AuthorizationHeaderKey)
     if (authorization === null) {
-      return new Response(null, {
+      const res = new Response('Bad Request', {
         status: 400,
       })
+      throw new HTTPException(400, { res })
     }
     const jwt = authorization.replace(/Bearer\s+/i, '')
     const auth = Auth.getOrInitialize(
