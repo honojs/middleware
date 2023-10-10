@@ -263,19 +263,9 @@ describe('Query', () => {
 
 describe('Header', () => {
   const HeaderSchema = z.object({
-    'x-request-id': z.string().uuid(),
-  })
-
-  const HeaderSchemaAuth = z.object({
     authorization: z.string(),
     'x-request-id': z.string().uuid(),
   })
-
-  const PingSchema = z
-    .object({
-      'x-request-id': z.string().uuid(),
-    })
-    .openapi('Post')
 
   const PongSchema = z
     .object({
@@ -286,27 +276,9 @@ describe('Header', () => {
 
   const route = createRoute({
     method: 'get',
-    path: '/ping',
-    request: {
-      headers: HeaderSchema,
-    },
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: PingSchema,
-          },
-        },
-        description: 'Ping',
-      },
-    },
-  })
-
-  const routeWithAuth = createRoute({
-    method: 'get',
     path: '/pong',
     request: {
-      headers: HeaderSchemaAuth,
+      headers: HeaderSchema,
     },
     responses: {
       200: {
@@ -329,38 +301,25 @@ describe('Header', () => {
 
   app.openapi(route, controller)
 
-  app.openapi(routeWithAuth, controller)
-
   it('Should return 200 response with correct contents', async () => {
-    const res = await app.request('/ping', {
-      headers: {
-        'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
-      },
-    })
-    expect(res.status).toBe(200)
-    expect(await res.json()).toEqual({
-      'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
-    })
-  })
-
-  it('Should return 200 response for array of headers with Authorization included', async () => {
     const res = await app.request('/pong', {
       headers: {
-        Authorization: 'Bearer helloworld',
         'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+        Authorization: 'Bearer helloworld',
       },
     })
-    expect(await res.json()).toEqual({
-      'authorization': 'Bearer helloworld',
-      'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
-    })
     expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+      'authorization': 'Bearer helloworld',
+    })
   })
 
   it('Should return 400 response with correct contents', async () => {
-    const res = await app.request('/ping', {
+    const res = await app.request('/pong', {
       headers: {
         'x-request-id': 'invalid-strings',
+        Authorization: 'Bearer helloworld',
       },
     })
     expect(res.status).toBe(400)
