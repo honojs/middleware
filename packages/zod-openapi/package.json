@@ -37,7 +37,6 @@
     "zod": "3.*"
   },
   "devDependencies": {
-    "@hono/zod-validator": "^0.1.9",
     "hono": "^3.7.2",
     "zod": "^3.22.1"
   },

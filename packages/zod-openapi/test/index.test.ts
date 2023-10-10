@@ -263,18 +263,20 @@ describe('Query', () => {
 
 describe('Header', () => {
   const HeaderSchema = z.object({
+    authorization: z.string(),
     'x-request-id': z.string().uuid(),
   })
 
-  const PingSchema = z
+  const PongSchema = z
     .object({
       'x-request-id': z.string().uuid(),
+      authorization: z.string(),
     })
     .openapi('Post')
 
   const route = createRoute({
     method: 'get',
-    path: '/ping',
+    path: '/pong',
     request: {
       headers: HeaderSchema,
     },
@@ -282,40 +284,42 @@ describe('Header', () => {
       200: {
         content: {
           'application/json': {
-            schema: PingSchema,
+            schema: PongSchema,
           },
         },
-        description: 'Ping',
+        description: 'Pong',
       },
     },
   })
 
   const app = new OpenAPIHono()
 
-  app.openapi(route, (c) => {
+  const controller = (c) => {
     const headerData = c.req.valid('header')
-    const xRequestId = headerData['x-request-id']
-    return c.jsonT({
-      'x-request-id': xRequestId,
-    })
-  })
+    return c.jsonT(headerData)
+  }
+
+  app.openapi(route, controller)
 
   it('Should return 200 response with correct contents', async () => {
-    const res = await app.request('/ping', {
+    const res = await app.request('/pong', {
       headers: {
         'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+        Authorization: 'Bearer helloworld',
       },
     })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
+      'authorization': 'Bearer helloworld',
     })
   })
 
   it('Should return 400 response with correct contents', async () => {
-    const res = await app.request('/ping', {
+    const res = await app.request('/pong', {
       headers: {
         'x-request-id': 'invalid-strings',
+        Authorization: 'Bearer helloworld',
       },
     })
     expect(res.status).toBe(400)
