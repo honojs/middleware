@@ -17,26 +17,36 @@ import type {
   GraphQLFormattedError,
 } from 'graphql'
 
-import type { Context } from 'hono'
+import type { Context, Env, Input } from 'hono'
 import { parseBody } from './parse-body'
 
-export type RootResolver = (ctx?: Context) => Promise<unknown> | unknown
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RootResolver<E extends Env = any, P extends string = any, I extends Input = {}> = (
+  // eslint-enable-next-line @typescript-eslint/no-explicit-any
+  ctx?: Context<E, P, I>
+) => Promise<unknown> | unknown
 
-type Options = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Options<E extends Env = any, P extends string = any, I extends Input = {}> = {
+  // eslint-enable-next-line @typescript-eslint/no-explicit-any
   schema: GraphQLSchema
-  rootResolver?: RootResolver
+  rootResolver?: RootResolver<E, P, I>
   pretty?: boolean
   validationRules?: ReadonlyArray<ValidationRule>
   // graphiql?: boolean
 }
 
-export const graphqlServer = (options: Options) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const graphqlServer = <E extends Env = any, P extends string = any, I extends Input = {}>(
+  // eslint-enable-next-line @typescript-eslint/no-explicit-any
+  options: Options<E, P, I>
+) => {
   const schema = options.schema
   const pretty = options.pretty ?? false
   const validationRules = options.validationRules ?? []
   // const showGraphiQL = options.graphiql ?? false
 
-  return async (c: Context) => {
+  return async (c: Context<E, P, I>) => {
     // GraphQL HTTP only supports GET and POST methods.
     if (c.req.method !== 'GET' && c.req.method !== 'POST') {
       return c.json(errorMessages(['GraphQL only supports GET and POST requests.']), 405, {
