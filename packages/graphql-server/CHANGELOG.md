@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.4.1
+
+### Patch Changes
+
+- [#201](https://github.com/honojs/middleware/pull/201) [`989d968`](https://github.com/honojs/middleware/commit/989d96879566a190c58804d01888e8356dbc762c) Thanks [@koralle](https://github.com/koralle)! - add type safety to RootResolvers and Options
+
 ## 0.4.0
 
 ### Minor Changes
