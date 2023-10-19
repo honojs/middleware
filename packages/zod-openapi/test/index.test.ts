@@ -946,3 +946,339 @@ describe('With hc', () => {
     })
   })
 })
+
+describe('Validate response status code', () => {
+  const routeWithA200StatusCode = createRoute({
+    method: 'get',
+    path: '/validate-status-code',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().min(3).max(10).openapi({}),
+              age: z.number().min(18),
+            }),
+          },
+        },
+        description: 'Response with 200 status code',
+      },
+    },
+  })
+
+  const appWithStrictStatusCode = new OpenAPIHono({
+    strictStatusCode: true,
+  })
+
+  appWithStrictStatusCode.openapi(routeWithA200StatusCode, async (c) => {
+    c.status(200)
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  it('Should return response as the status code is defined on the schema (200)', async () => {
+    const res = await appWithStrictStatusCode.request('/validate-status-code')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body).toStrictEqual({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  const appWithStrictStatusCodeUnmatched = new OpenAPIHono({
+    strictStatusCode: true,
+  })
+
+  appWithStrictStatusCodeUnmatched.openapi(routeWithA200StatusCode, async (c) => {
+    c.status(404)
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  it('Should throw an error when status code is not defined on the schema (404)', async () => {
+    const res = await appWithStrictStatusCodeUnmatched.request('/validate-status-code')
+    const body = await res.json()
+    expect(res.status).toBe(500)
+    expect(body).toStrictEqual({
+      error: 'Response code does not match any of the defined responses.',
+      success: false,
+    })
+  })
+})
+
+describe('Validate response schema', () => {
+  const routeWithMultipleStatusCode = createRoute({
+    method: 'get',
+    path: '/multiple-status-code',
+    request: {
+      query: z.object({
+        returnCode: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().min(3).max(10).openapi({}),
+              age: z.number().min(18),
+            }),
+          },
+        },
+        description: 'Get user',
+      },
+      404: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              not: z.literal('found')
+            }),
+          },
+        },
+        description: 'Get error',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              error: z.string(),
+            }),
+          },
+        },
+        description: 'Get error',
+      },
+    },
+  })
+
+  const appWithStrictResponse = new OpenAPIHono({
+    strictStatusCode: true,
+    strictResponse: true,
+  })
+
+  appWithStrictResponse.openapi(routeWithMultipleStatusCode, async (c) => {
+    const { returnCode } = c.req.valid('query')
+    if (returnCode === '500') {
+      c.status(500)
+      return c.jsonT({
+        error: returnCode,
+      })
+    }
+
+    if (returnCode === '404') {
+      c.status(404)
+      return c.jsonT({
+        not: 'found' as const,
+      })
+    }
+
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  it('Should validate response based on status code (200)', async () => {
+    const res = await appWithStrictResponse.request('/multiple-status-code')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body).toStrictEqual({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  it('Should validate response based on status code (404)', async () => {
+    const res = await appWithStrictResponse.request('/multiple-status-code?returnCode=404')
+    const body = await res.json()
+    expect(res.status).toBe(404)
+    expect(body).toHaveProperty('not', 'found')
+  })
+
+  it('Should validate response based on status code (500)', async () => {
+    const res = await appWithStrictResponse.request('/multiple-status-code?returnCode=500')
+    const body = await res.json()
+    expect(res.status).toBe(500)
+    expect(body).toStrictEqual({
+      error: '500',
+    })
+  })
+
+  const routeWithPlainZodObject = createRoute({
+    method: 'get',
+    path: '/strip',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              name: z.string().min(3).max(10).openapi({}),
+              age: z.number().min(18),
+            }),
+          },
+        },
+        description: 'Get user',
+      },
+    },
+  })
+  appWithStrictResponse.openapi(routeWithPlainZodObject, async (c) => {
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+      extra: 'property',
+    })
+  })
+
+  it('Should strip response from extra property keys when using plain Zod object schema', async () => {
+    const res = await appWithStrictResponse.request('/strip')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body).toStrictEqual({
+      name: 'John Doe',
+      age: 20,
+    })
+  })
+
+  const routeWithStrictZodObject = createRoute({
+    method: 'get',
+    path: '/strict',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z
+              .object({
+                name: z.string().min(3).max(10).openapi({}),
+                age: z.number().min(18),
+              })
+              .strict(),
+          },
+        },
+        description: 'Get user',
+      },
+    },
+  })
+  appWithStrictResponse.openapi(routeWithStrictZodObject, async (c) => {
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+      extra: 'property',
+    })
+  })
+
+  it('Should throw error because of extra property keys when using Zod object schema with .strict()', async () => {
+    const res = await appWithStrictResponse.request('/strict')
+    const body = await res.json()
+    expect(res.status).toBe(500)
+    expect(body).toHaveProperty('name', 'ZodError')
+  })
+
+  const routeWithPassthroughZodObject = createRoute({
+    method: 'get',
+    path: '/passthrough',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z
+              .object({
+                name: z.string().min(3).max(10).openapi({}),
+                age: z.number().min(18),
+              })
+              .passthrough(),
+          },
+        },
+        description: 'Get user',
+      },
+    },
+  })
+  appWithStrictResponse.openapi(routeWithPassthroughZodObject, async (c) => {
+    return c.jsonT({
+      name: 'John Doe',
+      age: 20,
+      extra: 'property',
+    })
+  })
+
+  it('Should return extra property keys when using Zod object schema with .passthrough()', async () => {
+    const res = await appWithStrictResponse.request('/passthrough')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body).toHaveProperty('extra', 'property')
+  })
+
+  const routeWithVariousZodTypes = createRoute({
+    method: 'get',
+    path: '/zod-types',
+    request: {
+      query: z.object({
+        type: z.enum(['string', 'number', 'boolean']),
+      }),
+    },
+    responses: {
+      // We use status codes as discriminator
+      200: {
+        content: {
+          'application/json': {
+            schema: z.string(),
+          },
+        },
+        description: 'When type=string',
+      },
+      201: {
+        content: {
+          'application/json': {
+            schema: z.number(),
+          },
+        },
+        description: 'When type=number',
+      },
+      202: {
+        content: {
+          'application/json': {
+            schema: z.boolean(),
+          },
+        },
+        description: 'When type=boolean',
+      },
+    },
+  })
+  appWithStrictResponse.openapi(routeWithVariousZodTypes, async (c) => {
+    const { type } = c.req.valid('query')
+    if (type === 'string') {
+      c.status(200)
+      return c.jsonT('string')
+    }
+    if (type === 'number') {
+      c.status(201)
+      return c.jsonT(123)
+    }
+    c.status(202)
+    return c.jsonT(true)
+  })
+
+  it('Should be able to parse and return string', async () => {
+    const res = await appWithStrictResponse.request('/zod-types?type=string')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body).toBe('string')
+  })
+
+  it('Should be able to parse and return number', async () => {
+    const res = await appWithStrictResponse.request('/zod-types?type=number')
+    const body = await res.json()
+    expect(res.status).toBe(201)
+    expect(body).toBe(123)
+  })
+
+  it('Should be able to parse and return boolean', async () => {
+    const res = await appWithStrictResponse.request('/zod-types?type=boolean')
+    const body = await res.json()
+    expect(res.status).toBe(202)
+    expect(body).toBe(true)
+  })
+})

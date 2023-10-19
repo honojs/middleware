@@ -153,6 +153,8 @@ type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
+  strictStatusCode?: boolean
+  strictResponse?: boolean
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
@@ -187,11 +189,15 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
+  strictStatusCode?: OpenAPIHonoOptions<E>['strictStatusCode']
+  strictResponse?: OpenAPIHonoOptions<E>['strictResponse']
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
+    this.strictStatusCode = init?.strictStatusCode
+    this.strictResponse = init?.strictResponse
   }
 
   openapi = <
@@ -254,6 +260,55 @@ export class OpenAPIHono<
           }
         }
       }
+    }
+
+    if (this.strictResponse) {
+      const responseZodSchemaObject: Record<string, ZodType<any>> = {}
+      for (const [statusCode, responseConfig] of Object.entries(route.responses)) {
+        for (const mediaTypeObject of Object.values(responseConfig.content ?? {})) {
+          if (mediaTypeObject.schema instanceof ZodType) {
+            responseZodSchemaObject[statusCode] = mediaTypeObject.schema
+          }
+        }
+      }
+
+      if (Object.keys(responseZodSchemaObject).length > 0) {
+        validators.push(async (c, next) => {
+          await next()
+
+          const schema = responseZodSchemaObject[c.res.status]
+          if (schema) {
+            const originalBody = await c.res.json()
+            const result = await schema.safeParseAsync(originalBody)
+            if (!result.success) {
+              c.res = c.json(result.error, {
+                status: 500,
+              })
+            } else {
+              c.res = c.json(result.data)
+            }
+          }
+        })
+      }
+    }
+
+    if (this.strictStatusCode) {
+      validators.push(async (c, next) => {
+        await next()
+
+        if (!route.responses[c.res.status]) {
+          c.res = c.json(
+            {
+              success: false,
+              error: 'Response code does not match any of the defined responses.',
+            },
+            {
+              status: 500,
+            }
+          )
+          return
+        }
+      })
     }
 
     this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...validators, handler)
