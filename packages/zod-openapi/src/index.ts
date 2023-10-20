@@ -143,13 +143,17 @@ type Hook<T, E extends Env, P extends string, O> = (
         error: ZodError
       },
   c: Context<E, P>
-) => TypedResponse<O> | Promise<TypedResponse<T>> | void
+) => TypedResponse<O> | Promise<TypedResponse<T>> | Response | Promise<Response> | void
 
 type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
-type HandlerResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
+type HandlerResponse<O> =
+  | TypedResponse<O>
+  | Promise<TypedResponse<O>>
+  | Response
+  | Promise<Response>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
