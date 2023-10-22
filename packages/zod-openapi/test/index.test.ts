@@ -946,3 +946,28 @@ describe('With hc', () => {
     })
   })
 })
+
+describe('It allows the response type to be Response', () => {
+  const app = new OpenAPIHono()
+
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/no-content',
+      responses: {
+        204: {
+          description: 'No Content',
+        },
+      },
+    }),
+    (c) => {
+      return c.body(null, 204)
+    }
+  )
+
+  it('should return a 204 response without a type error', async () => {
+    const res = await app.request('/no-content')
+    expect(res.status).toBe(204)
+    expect(res.body).toBe(null)
+  })
+})
