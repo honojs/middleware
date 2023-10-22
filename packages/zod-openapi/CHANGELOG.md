@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.0
+
+### Minor Changes
+
+- [#206](https://github.com/honojs/middleware/pull/206) [`2d2fdd0`](https://github.com/honojs/middleware/commit/2d2fdd0379a31320b06f6d1a9e4634bfe1b7c657) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: allows the response to be `Response` not just `TypedResponse`.
+
 ## 0.7.2
 
 ### Patch Changes
