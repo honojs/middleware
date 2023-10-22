@@ -7,17 +7,25 @@ export type Hook<T, E extends Env, P extends string, O = {}> = (
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void> | TypedResponse<O>
 
+type HasUndefined<T> = undefined extends T ? true : false
+
 export const zValidator = <
   T extends ZodSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
+  I = z.input<T>,
+  O = z.output<T>,
   V extends {
-    in: { [K in Target]: z.input<T> }
-    out: { [K in Target]: z.output<T> }
+    in: HasUndefined<I> extends true
+      ? { [K in Target]?: I }
+      : { [K in Target]: I };
+    out: { [K in Target]: O };
   } = {
-    in: { [K in Target]: z.input<T> }
-    out: { [K in Target]: z.output<T> }
+    in: HasUndefined<I> extends true
+      ? { [K in Target]?: I }
+      : { [K in Target]: I };
+    out: { [K in Target]: O };
   }
 >(
   target: Target,

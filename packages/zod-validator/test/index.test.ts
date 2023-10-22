@@ -9,16 +9,23 @@ type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 describe('Basic', () => {
   const app = new Hono()
 
-  const schema = z.object({
+  const jsonSchema = z.object({
     name: z.string(),
     age: z.number(),
   })
 
-  const route = app.post('/author', zValidator('json', schema), (c) => {
+  const querySchema = z.object({
+    name: z.string().optional()
+  }).optional()
+
+  const route = app.post('/author', zValidator('json', jsonSchema), zValidator('query', querySchema), (c) => {
     const data = c.req.valid('json')
+    const query = c.req.valid('query')
+
     return c.jsonT({
       success: true,
       message: `${data.name} is ${data.age}`,
+      queryName: query?.name,
     })
   })
 
@@ -31,10 +38,15 @@ describe('Basic', () => {
             name: string
             age: number
           }
+        } & {
+          query?: {
+            name?: string | undefined
+          } | undefined
         }
         output: {
           success: boolean
           message: string
+          queryName: string | undefined
         }
       }
     }
@@ -44,7 +56,7 @@ describe('Basic', () => {
   type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
-    const req = new Request('http://localhost/author', {
+    const req = new Request('http://localhost/author?name=Metallo', {
       body: JSON.stringify({
         name: 'Superman',
         age: 20,
@@ -57,6 +69,7 @@ describe('Basic', () => {
     expect(await res.json()).toEqual({
       success: true,
       message: 'Superman is 20',
+      queryName: 'Metallo'
     })
   })
 
