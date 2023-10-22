@@ -9,12 +9,16 @@ type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 describe('Basic', () => {
   const app = new Hono()
 
-  const schema = z.object({
+  const jsonSchema = z.object({
     name: z.string(),
     age: z.number(),
   })
 
-  const route = app.post('/author', zValidator('json', schema), (c) => {
+  const querySchema = z.object({
+    name: z.string().optional()
+  }).optional()
+
+  const route = app.post('/author', zValidator('json', jsonSchema), zValidator('query', querySchema), (c) => {
     const data = c.req.valid('json')
     return c.jsonT({
       success: true,
@@ -31,6 +35,10 @@ describe('Basic', () => {
             name: string
             age: number
           }
+        } & {
+          query?: {
+            name?: string | undefined
+          } | undefined
         }
         output: {
           success: boolean
