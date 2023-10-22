@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.10
+
+### Patch Changes
+
+- [#208](https://github.com/honojs/middleware/pull/208) [`46575b4`](https://github.com/honojs/middleware/commit/46575b4395011f4fdf8cd1dcf87f4a662e342cbe) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - fix(zod-validator): make validation input optional when schema is optional
+
 ## 0.1.9
 
 ### Patch Changes
