@@ -49,7 +49,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       request: createIsomorphicRequest((Request) => {
         return new Request(c.req.url, {
           method: c.req.method,
-          headers: c.req.headers,
+          headers: c.req.raw.headers,
         })
       }),
     })
