@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.1
+
+### Patch Changes
+
+- [#211](https://github.com/honojs/middleware/pull/211) [`6ca8e8d`](https://github.com/honojs/middleware/commit/6ca8e8d8de85dde7b9c25bfd5665aa32e233402e) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: relax input types
+
 ## 0.8.0
 
 ### Minor Changes
