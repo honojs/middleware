@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Hono } from 'hono'
 import { clerkMiddleware, getAuth } from '../src'
 
@@ -24,8 +25,14 @@ jest.mock('@clerk/backend', () => {
 // Test are based on Clerk's test suite for Fastify plugin - https://github.com/clerkinc/javascript/blob/main/packages/fastify/src/withClerkMiddleware.test.ts
 describe('clerkMiddleware()', () => {
   beforeEach(() => {
+    process.env.CLERK_SECRET_KEY = EnvVariables.CLERK_SECRET_KEY
+    process.env.CLERK_PUBLISHABLE_KEY = EnvVariables.CLERK_PUBLISHABLE_KEY
     jest.clearAllMocks()
     jest.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   test('handles signin with Authorization Bearer', async () => {
@@ -51,11 +58,12 @@ describe('clerkMiddleware()', () => {
         'X-Forwarded-Port': '1234',
         'X-Forwarded-Host': 'forwarded-host.com',
         Referer: 'referer.com',
-        'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+        'User-Agent':
+          'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
       },
     })
 
-    const response = await app.request(req, {}, EnvVariables)
+    const response = await app.request(req)
 
     expect(response.status).toEqual(200)
     expect(await response.json()).toEqual({ auth: 'mockedAuth' })
@@ -64,7 +72,7 @@ describe('clerkMiddleware()', () => {
         secretKey: EnvVariables.CLERK_SECRET_KEY,
         publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
         request: expect.any(Request),
-      }),
+      })
     )
   })
 
@@ -91,11 +99,12 @@ describe('clerkMiddleware()', () => {
         'X-Forwarded-Port': '1234',
         'X-Forwarded-Host': 'forwarded-host.com',
         Referer: 'referer.com',
-        'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+        'User-Agent':
+          'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
       },
     })
 
-    const response = await app.request(req, {}, EnvVariables)
+    const response = await app.request(req)
 
     expect(response.status).toEqual(200)
     expect(await response.json()).toEqual({ auth: 'mockedAuth' })
@@ -104,7 +113,7 @@ describe('clerkMiddleware()', () => {
         secretKey: EnvVariables.CLERK_SECRET_KEY,
         publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
         request: expect.any(Request),
-      }),
+      })
     )
   })
 
@@ -131,7 +140,7 @@ describe('clerkMiddleware()', () => {
       },
     })
 
-    const response = await app.request(req, {}, EnvVariables)
+    const response = await app.request(req)
 
     expect(response.status).toEqual(401)
     expect(response.headers.get('x-clerk-auth-reason')).toEqual('auth-reason')
@@ -163,7 +172,7 @@ describe('clerkMiddleware()', () => {
       },
     })
 
-    const response = await app.request(req, {}, EnvVariables)
+    const response = await app.request(req)
 
     expect(response.status).toEqual(401)
     expect(response.headers.get('content-type')).toMatch('text/html')
@@ -189,11 +198,11 @@ describe('clerkMiddleware()', () => {
 
     const req = new Request('http://localhost/', {
       headers: {
-        Authorization: 'Bearer deadbeef'
+        Authorization: 'Bearer deadbeef',
       },
     })
 
-    const response = await app.request(req, {}, EnvVariables)
+    const response = await app.request(req)
 
     expect(response.status).toEqual(200)
     expect(await response.json()).toEqual({ auth: 'mockedAuth' })
@@ -202,7 +211,7 @@ describe('clerkMiddleware()', () => {
         secretKey: EnvVariables.CLERK_SECRET_KEY,
         publishableKey: EnvVariables.CLERK_PUBLISHABLE_KEY,
         request: expect.any(Request),
-      }),
+      })
     )
   })
 })
