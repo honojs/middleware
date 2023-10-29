@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.2.1
+
+### Patch Changes
+
+- [#219](https://github.com/honojs/middleware/pull/219) [`b3d80a0`](https://github.com/honojs/middleware/commit/b3d80a0cca92db6b243d3a6e9761c20d931136a2) Thanks [@yusukebe](https://github.com/yusukebe)! - bump hono version of `peerDependencies`
+
 ## 0.2.0
 
 ### Minor Changes
