@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.1.11
+
+### Patch Changes
+
+- [#215](https://github.com/honojs/middleware/pull/215) [`ab2176b`](https://github.com/honojs/middleware/commit/ab2176bf6ef6cf93b6b4ee67d9614fd83e8d3fb0) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump Hono version of `peerDependencie`
+
 ## 0.1.10
 
 ### Patch Changes
