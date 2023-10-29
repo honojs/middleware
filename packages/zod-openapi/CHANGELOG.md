@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.2
+
+### Patch Changes
+
+- [#217](https://github.com/honojs/middleware/pull/217) [`a80c84b`](https://github.com/honojs/middleware/commit/a80c84ba07153f8521c1fc0286abef0623c99b5c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump Hono for `peerDependencies`
+
 ## 0.8.1
 
 ### Patch Changes
