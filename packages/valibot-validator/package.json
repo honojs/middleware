@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "3.*",
+    "hono": ">=3.9.0",
     "valibot": "^0.13.1"
   },
   "devDependencies": {
