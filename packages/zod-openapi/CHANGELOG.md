@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.3
+
+### Patch Changes
+
+- [#222](https://github.com/honojs/middleware/pull/222) [`73ab82a`](https://github.com/honojs/middleware/commit/73ab82a90253a0dbc536251787ff5713981a4075) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: import types correctly
+
 ## 0.8.2
 
 ### Patch Changes
