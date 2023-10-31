@@ -1,0 +1,36 @@
+{
+  "name": "@hono/typescript-transpiler",
+  "version": "0.1.0",
+  "description": "A Typescript transpiler Middleware for Hono (using SWC)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist && tsc",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "dependencies": {
+    "@swc/core": "^1.3.95"
+  },
+  "devDependencies": {
+    "hono": "^2.7.2"
+  }
+}
