@@ -25,7 +25,7 @@ import type {
   ToSchema,
   TypedResponse,
 } from 'hono'
-import type { MergePath, MergeSchemaPath } from 'hono/dist/types/types'
+import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
@@ -353,7 +353,7 @@ export class OpenAPIHono<
   }
 
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono(super.basePath(path))
+    return new OpenAPIHono(super.basePath(path) as any)
   }
 }
 
