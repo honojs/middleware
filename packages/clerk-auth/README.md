@@ -59,7 +59,7 @@ app.get('/', async (c) => {
   const clerk = c.get('clerk')
 
   try {
-    const user = await clerkClient.users.getUser('user_id_....')
+    const user = await clerk.users.getUser('user_id_....')
 
     return c.json({
       user,
