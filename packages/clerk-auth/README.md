@@ -56,7 +56,7 @@ const app = new Hono()
 
 app.use('*', clerkMiddleware())
 app.get('/', async (c) => {
-  const clerk = c.get('clerk')
+  const clerkClient = c.get('clerk')
 
   try {
     const user = await clerkClient.users.getUser('user_id_....')
