@@ -52,7 +52,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.5",
     "tsup": "^7.2.0",
-    "typescript": "^4.7.4",
+    "typescript": "^5.2.2",
     "vitest": "^0.34.2"
   }
 }
