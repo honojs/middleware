@@ -1,5 +1,11 @@
 # @honojs/hello
 
+## 0.1.0
+
+### Minor Changes
+
+- [#228](https://github.com/honojs/middleware/pull/228) [`b9baf4a`](https://github.com/honojs/middleware/commit/b9baf4a9902ddd2dd09dd65e00699088fcbac403) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: bump infer type correctly using `satisfies`
+
 ## 0.0.15
 
 ### Patch Changes
