@@ -28,6 +28,6 @@
     "hono": "*"
   },
   "devDependencies": {
-    "hono": "^2.7.2"
+    "hono": "^3.9.1"
   }
 }
