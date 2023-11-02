@@ -5919,11 +5919,6 @@ heap-js@^2.2.0:
   resolved "https://registry.yarnpkg.com/heap-js/-/heap-js-2.3.0.tgz#8eed2cede31ec312aa696eef1d4df0565841f183"
   integrity sha512-E5303mzwQ+4j/n2J0rDvEPBN7GKjhis10oHiYOgjxsmxYgqG++hz9NyLLOXttzH8as/DyiBHYpUrJTZWYaMo8Q==
 
-hono@^2.7.2:
-  version "2.7.8"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-2.7.8.tgz#5f6916c7f6838fe1f909f6046b30e6a0900f3128"
-  integrity sha512-LXLXw6LilE16QO0siFBDiNzmaRP6ca5ZyF0gDWcaiUqJJtE/d4lV/Hpst2O33AmJB5n0DQa5w53gZLUVf7uXNg==
-
 hono@^3.0.0, hono@^3.0.3, hono@^3.1.0, hono@^3.1.2, hono@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.2.6.tgz#b4927ed20b2edf165277f3e2b787a4e4948223f6"
