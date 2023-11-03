@@ -13,8 +13,7 @@ describe('SwaggerUI Rendering', () => {
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            url: '${url}',
-            dom_id: '#swagger-ui',
+            dom_id: '#swagger-ui',url: '${url}',
           })
         }
       </script>
@@ -23,7 +22,7 @@ describe('SwaggerUI Rendering', () => {
   })
 
   it('renders correctly with specified UI version', () => {
-    expect(SwaggerUI({ url, ui: { version: '5.0.0' } }).toString()).toEqual(`
+    expect(SwaggerUI({ url, version: '5.0.0' }).toString()).toEqual(`
     <div>
       <div id="swagger-ui"></div>
       <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.0.0/swagger-ui.css" />
@@ -31,8 +30,7 @@ describe('SwaggerUI Rendering', () => {
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            url: '${url}',
-            dom_id: '#swagger-ui',
+            dom_id: '#swagger-ui',url: '${url}',
           })
         }
       </script>
