@@ -37,6 +37,43 @@ describe('SwaggerUI Rendering', () => {
     </div>
   `)
   })
+
+  it('renders correctly with custom UI', () => {
+    expect(
+      SwaggerUI({
+        url,
+        manuallySwaggerUIHtml: (asset) => `
+        <div>
+          <div id="swagger-ui-manually"></div>
+          ${asset.css.map((url) => `<link rel="stylesheet" href="${url}" />`)}
+          ${asset.js.map((url) => `<script src="${url}" crossorigin="anonymous"></script>`)}
+          <script>
+            window.onload = () => {
+              window.ui = SwaggerUIBundle({
+                dom_id: '#swagger-ui-manually',
+                url: '${url}',
+              })
+            }
+          </script>
+        </div>
+      `.trim(),
+      }).toString()
+    ).toEqual(`
+        <div>
+          <div id="swagger-ui-manually"></div>
+          <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+          <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+          <script>
+            window.onload = () => {
+              window.ui = SwaggerUIBundle({
+                dom_id: '#swagger-ui-manually',
+                url: '${url}',
+              })
+            }
+          </script>
+        </div>
+    `.trim())
+  })
 })
 
 describe('SwaggerUI Middleware', () => {

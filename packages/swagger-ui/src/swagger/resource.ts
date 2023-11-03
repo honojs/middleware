@@ -1,4 +1,4 @@
-interface AssetURLs {
+export interface AssetURLs {
   css: string[]
   js: string[]
 }
