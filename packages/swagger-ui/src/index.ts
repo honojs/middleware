@@ -1,20 +1,22 @@
 import type { Env, MiddlewareHandler } from 'hono'
 import { html } from 'hono/html'
+import type { DistSwaggerUIOptions } from './swagger/renderer'
+import { renderSwaggerUIOptions } from './swagger/renderer'
 import { remoteAssets } from './swagger/resource'
 
-type ResourceOptions = {
+type OriginalSwaggerUIOptions = {
   version?: string
 }
 
-type SwaggerUIOptions = {
-  url: string
-  ui?: ResourceOptions
-}
+type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
 const SwaggerUI = (options: SwaggerUIOptions) => {
-  const asset = remoteAssets({ version: options?.ui?.version })
+  const asset = remoteAssets({ version: options?.version })
+  delete options.version
 
-  return html`
+  const optionsStrings = renderSwaggerUIOptions(options)
+
+  return `
     <div>
       <div id="swagger-ui"></div>
       ${asset.css.map((url) => html`<link rel="stylesheet" href="${url}" />`)}
@@ -22,8 +24,7 @@ const SwaggerUI = (options: SwaggerUIOptions) => {
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            url: '${options.url}',
-            dom_id: '#swagger-ui',
+            dom_id: '#swagger-ui',${optionsStrings},
           })
         }
       </script>
