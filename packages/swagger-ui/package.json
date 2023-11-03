@@ -42,6 +42,7 @@
     "hono": "*"
   },
   "devDependencies": {
+    "@types/swagger-ui-dist": "^3.30.3",
     "hono": "^3.7.2",
     "publint": "^0.2.2",
     "tsup": "^7.2.0",
