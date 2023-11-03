@@ -66,15 +66,27 @@ In this example, the `SwaggerUI` component is used to render Swagger UI within a
 
 ## Options
 
-Both the middleware and the component accept an options object for customization. Here are the available options:
+Both the middleware and the component accept an options object for customization.
 
-- `url` (string): The URL to the OpenAPI specification.
-- `ui` (object, optional): An object with additional Swagger UI configuration options.
-  - `version` (string, optional): The version of Swagger UI to use.
+The following options are available:
+
+- `version` (string, optional): The version of Swagger UI to use, defaults to `latest`.
+- `manuallySwaggerUIHtml` (string, optional): If you want to use your own custom HTML, you can specify it here. If this option is specified, the all options except `version` will be ignored.
+
+and most of options from [Swagger UI](
+  https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+) are supported as well.
+
+such as:
+- `url` (string, optional): The URL pointing to the OpenAPI definition (v2 or v3) that describes the API.
+- `urls` (array, optional): An array of OpenAPI definitions (v2 or v3) that describe the APIs. Each definition must have a `name` and `url`.
+- `presets` (array, optional): An array of presets to use for Swagger UI.
+- `plugins` (array, optional): An array of plugins to use for Swagger UI.
 
 ## Author
 
 naporitan <https://github.com/naporin0624>
+sor4chi <https://github.com/sor4chi>
 
 ## License
 
