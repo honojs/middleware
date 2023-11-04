@@ -1,0 +1,64 @@
+{
+  "name": "@hono/esbuild-transpiler",
+  "version": "0.0.0",
+  "description": "esbuild Transpiler Middleware for Hono",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsup ./src/*.ts ./src/transpilers/*.ts --format esm,cjs --dts --no-splitting --external esbuild-wasm,esbuild",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/transpilers/wasm.d.ts",
+      "import": "./dist/transpilers/wasm.js"
+    },
+    "./node": {
+      "types": "./dist/transpilers/node.d.ts",
+      "import": "./dist/transpilers/node.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "wasm": [
+        "./dist/transpilers/wasm"
+      ],
+      "node": [
+        "./dist/transpilers/node"
+      ]
+    }
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=3.9.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.5",
+    "esbuild-wasm": "^0.19.5",
+    "hono": "^3.9.2",
+    "vitest": "^0.34.6"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  }
+}
