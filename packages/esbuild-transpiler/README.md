@@ -85,7 +85,7 @@ serve(app)
 
 ## Notes
 
-- This middleware does not have a cache feature. If you want to cache the transpiled code, use Cache Middleware or your own custom middleware.
+- This middleware does not have a cache feature. If you want to cache the transpiled code, use [Cache Middleware](https://hono.dev/middleware/builtin/cache) or your own custom middleware.
 
 ## Authors
 
