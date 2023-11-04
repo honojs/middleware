@@ -42,7 +42,8 @@ describe('SwaggerUI Rendering', () => {
     expect(
       SwaggerUI({
         url,
-        manuallySwaggerUIHtml: (asset) => `
+        manuallySwaggerUIHtml: (asset) =>
+          `
         <div>
           <div id="swagger-ui-manually"></div>
           ${asset.css.map((url) => `<link rel="stylesheet" href="${url}" />`)}
@@ -58,7 +59,8 @@ describe('SwaggerUI Rendering', () => {
         </div>
       `.trim(),
       }).toString()
-    ).toEqual(`
+    ).toEqual(
+      `
         <div>
           <div id="swagger-ui-manually"></div>
           <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
@@ -72,7 +74,8 @@ describe('SwaggerUI Rendering', () => {
             }
           </script>
         </div>
-    `.trim())
+    `.trim()
+    )
   })
 })
 
@@ -88,5 +91,30 @@ describe('SwaggerUI Middleware', () => {
 
     const res = await app.request('/')
     expect(res.status).toBe(200)
+  })
+
+  it('collectly renders SwaggerUI with custom options', async () => {
+    app.get(
+      '/',
+      swaggerUI({
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
+        spec: {
+          info: {
+            title: 'Custom UI',
+            version: '1.0.0',
+          },
+        },
+        presets: ['SwaggerUIStandalonePreset', 'SwaggerUIBundle.presets.apis'],
+        operationsSorter: '(a, b) => a.get("path").localeCompare(b.get("path"))',
+      })
+    )
+    const res = await app.request('/')
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expect(html).toContain('https://petstore3.swagger.io/api/v3/openapi.json') // RENDER_TYPE.STRING
+    expect(html).toContain('[SwaggerUIStandalonePreset,SwaggerUIBundle.presets.apis]') // RENDER_TYPE.STRING_ARRAY
+    expect(html).toContain('(a, b) => a.get("path").localeCompare(b.get("path"))') // RENDER_TYPE.RAW
+    expect(html).toContain('{"info":{"title":"Custom UI","version":"1.0.0"}}') // RENDER_TYPE.JSON_STRING
+    expect(html).toContain('window.ui = SwaggerUIBundle({') // entry point of SwaggerUI
   })
 })

@@ -68,7 +68,7 @@ const SwaggerUI = (options: SwaggerUIOptions) => {
 const middleware =
   <E extends Env>(options: SwaggerUIOptions): MiddlewareHandler<E> =>
   async (c) => {
-    return c.html(html`
+    return c.html(/* html */ `
       <html lang="en">
         <head>
           <meta charset="utf-8" />
