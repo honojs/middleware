@@ -35,6 +35,12 @@ app.get('/static/*', serveStatic({ root: './' }))
 export default app
 ```
 
+`global.d.ts`:
+
+```ts
+declare module '*.wasm'
+```
+
 ### Deno / Deno Deploy
 
 #### Example
