@@ -57,12 +57,62 @@ app.get('/ui', (c) => {
       ${SwaggerUI({ url: '/doc' })}
     </html>
   `)
-})
-
 export default app
 ```
 
 In this example, the `SwaggerUI` component is used to render Swagger UI within a custom HTML structure, allowing for additional customization such as adding custom scripts and styles.
+
+### With `OpenAPIHono` Usage
+
+Hono's middleware has OpenAPI integration `@hono/zod-openapi`, so you can use it to create an OpenAPI document and serve it easily with Swagger UI.
+
+```ts
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
+import { swaggerUI } from '@hono/swagger-ui'
+
+const app = new OpenAPIHono()
+
+app.openapi(
+  createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+      200: {
+        description: 'Respond a message',
+        content: {
+          'application/json': {
+            schema: z.object({
+              message: z.string()
+            })
+          }
+        }
+      }
+    }
+  }),
+  (c) => {
+    return c.jsonT({
+      message: 'hello'
+    })
+  }
+)
+
+app.get(
+  '/ui',
+  swaggerUI({
+    url: '/doc'
+  })
+)
+
+app.doc('/doc', {
+  info: {
+    title: 'An API',
+    version: 'v1'
+  },
+  openapi: '3.1.0'
+})
+
+export default app
+```
 
 ## Options
 
@@ -83,10 +133,10 @@ such as:
 - `presets` (array, optional): An array of presets to use for Swagger UI.
 - `plugins` (array, optional): An array of plugins to use for Swagger UI.
 
-## Author
+## Authors
 
-naporitan <https://github.com/naporin0624>
-sor4chi <https://github.com/sor4chi>
+- naporitan <https://github.com/naporin0624>
+- sor4chi <https://github.com/sor4chi>
 
 ## License
 
