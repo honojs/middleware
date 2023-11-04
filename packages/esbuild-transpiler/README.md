@@ -92,6 +92,7 @@ serve(app)
 ## Notes
 
 - This middleware does not have a cache feature. If you want to cache the transpiled code, use [Cache Middleware](https://hono.dev/middleware/builtin/cache) or your own custom middleware.
+- `@hono/vite-dev-server` does not support Wasm, so you can't use this Middleware with it. However, Vite can transpile them, so you might not need to use this.
 
 ## Authors
 
