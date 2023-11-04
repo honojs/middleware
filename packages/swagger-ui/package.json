@@ -1,0 +1,52 @@
+{
+  "name": "@hono/swagger-ui",
+  "version": "0.0.0",
+  "description": "A middleware for using SwaggerUI in Hono",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "@types/swagger-ui-dist": "^3.30.3",
+    "hono": "^3.7.2",
+    "publint": "^0.2.2",
+    "tsup": "^7.2.0",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.5"
+  }
+}
