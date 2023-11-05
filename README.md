@@ -49,5 +49,5 @@ The Hono maintainers will merge it to release the package at the appropriate tim
 
 ## Author & License
 
-The Author of this repository is Yusuke Wada <<https://github.com/yusukebe>>. However, the code under the `packges/*` is in each Middleware author.
+The Author of this repository is Yusuke Wada <<https://github.com/yusukebe>>. However, the code under the `packages/*` is in each Middleware author.
 Basically, distributed under the MIT license.

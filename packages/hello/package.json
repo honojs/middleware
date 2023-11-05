@@ -3,15 +3,23 @@
   "version": "0.1.0",
   "description": "An example of third-party middleware for Hono",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "jest",
-    "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "license": "MIT",
   "private": false,
@@ -28,6 +36,6 @@
     "hono": "*"
   },
   "devDependencies": {
-    "hono": "^3.9.1"
+    "hono": "^3.9.2"
   }
 }
