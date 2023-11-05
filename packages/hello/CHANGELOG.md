@@ -1,5 +1,11 @@
 # @honojs/hello
 
+## 0.1.1
+
+### Patch Changes
+
+- [#235](https://github.com/honojs/middleware/pull/235) [`a3da3da`](https://github.com/honojs/middleware/commit/a3da3dac910e24075466932ac39bb4e529dfb483) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: tweak
+
 ## 0.1.0
 
 ### Minor Changes
