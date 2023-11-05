@@ -40,7 +40,7 @@ import { SwaggerUI } from '@hono/swagger-ui'
 const app = new Hono()
 
 app.get('/ui', (c) => {
-  return c.html(html`
+  return c.html(`
     <html lang="en">
       <head>
         <meta charset="utf-8" />
@@ -57,6 +57,7 @@ app.get('/ui', (c) => {
       ${SwaggerUI({ url: '/doc' })}
     </html>
   `)
+})
 export default app
 ```
 
