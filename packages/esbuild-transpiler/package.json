@@ -16,16 +16,18 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./wasm": {
       "types": "./dist/transpilers/wasm.d.ts",
-      "import": "./dist/transpilers/wasm.js"
+      "import": "./dist/transpilers/wasm.js",
+      "require": "./dist/transpilers/wasm.cjs"
     },
     "./node": {
       "types": "./dist/transpilers/node.d.ts",
-      "import": "./dist/transpilers/node.js"
+      "import": "./dist/transpilers/node.js",
+      "require": "./dist/transpilers/node.cjs"
     }
   },
   "typesVersions": {
