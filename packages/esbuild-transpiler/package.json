@@ -1,6 +1,6 @@
 {
   "name": "@hono/esbuild-transpiler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "esbuild Transpiler Middleware for Hono",
   "main": "dist/index.js",
   "type": "module",

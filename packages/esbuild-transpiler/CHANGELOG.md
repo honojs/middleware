@@ -1,5 +1,11 @@
 # @hono/esbuild-transpiler
 
+## 0.1.1
+
+### Patch Changes
+
+- [#241](https://github.com/honojs/middleware/pull/241) [`f79f40b`](https://github.com/honojs/middleware/commit/f79f40bd48f0bb63a627d774d6e08e422f9913e3) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: build correctly
+
 ## 0.1.0
 
 ### Minor Changes
