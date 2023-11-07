@@ -2,4 +2,4 @@
 '@hono/esbuild-transpiler': patch
 ---
 
-fix: build correctly
+fix: exports modules correctly
