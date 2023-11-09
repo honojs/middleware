@@ -16,8 +16,7 @@
   "exports": {
     "./google": "./dist/service/google/index.js",
     "./facebook": "./dist/service/facebook/index.js",
-    "./github": "./dist/service/github/index.js",
-    "./linkedIn": "./dist/service/linkedIn/index.js"
+    "./github": "./dist/service/github/index.js"
   },
   "typesVersions": {
     "*": {
@@ -29,10 +28,6 @@
       ],
       "google": [
         "./dist/service/google"
-      ],
-      "linkedin": [
-        "./dist/service/linkedIn",
-        "../../"
       ]
     }
   },
