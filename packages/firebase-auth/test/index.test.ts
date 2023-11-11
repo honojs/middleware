@@ -222,6 +222,35 @@ describe('verifyFirebaseAuth middleware', () => {
       expect(json.aud).toBe(validProjectId)
       expect(json.email).toBe('codehex@hono.js')
     })
+
+    it('invalid PUBLIC_JWK_CACHE_KV is undefined, should be 501', async () => {
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          disableErrorLog: true,
+        })
+      )
+      app.get('/hello', (c) => c.text('OK'))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Authorization: `Bearer ${user.idToken}`,
+        },
+      })
+
+      const env: VerifyFirebaseAuthEnv = {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+      }
+      const res = await app.fetch(req, env)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(501)
+    })
   })
 })
 

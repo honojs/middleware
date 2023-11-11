@@ -19,7 +19,13 @@ export interface VerifyFirebaseAuthConfig {
 }
 
 const defaultKVStoreJWKCacheKey = 'verify-firebase-auth-cached-public-key'
-const defaultKeyStoreInitializer = (c: Context): KeyStorer => {
+const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>): KeyStorer => {
+  if (c.env.PUBLIC_JWK_CACHE_KV === undefined) {
+    const res = new Response('Not Implemented', {
+      status: 501,
+    })
+    throw new HTTPException(501, { res })
+  }
   return WorkersKVStoreSingle.getOrInitialize(
     c.env.PUBLIC_JWK_CACHE_KEY ?? defaultKVStoreJWKCacheKey,
     c.env.PUBLIC_JWK_CACHE_KV
