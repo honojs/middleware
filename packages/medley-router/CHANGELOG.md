@@ -1,5 +1,11 @@
 # @hono/medley-router
 
+## 0.0.3
+
+### Patch Changes
+
+- [#249](https://github.com/honojs/middleware/pull/249) [`139504a`](https://github.com/honojs/middleware/commit/139504a145ac446e456c4f750d56134bea826e3c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support new path matching
+
 ## 0.0.2
 
 ### Patch Changes
