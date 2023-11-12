@@ -1,5 +1,12 @@
 # @hono/firebase-auth
 
+## 1.3.3
+
+### Patch Changes
+
+- [#248](https://github.com/honojs/middleware/pull/248) [`5459971`](https://github.com/honojs/middleware/commit/545997181f5ba77991e350ec9a873463082242c3) Thanks [@Code-Hex](https://github.com/Code-Hex)! - - update package deps and test
+  - responds 501 when PUBLIC_JWK_CACHE_KV is undefined in defaultKeyStoreInitializer function
+
 ## 1.3.2
 
 ### Patch Changes
