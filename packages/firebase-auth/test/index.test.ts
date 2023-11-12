@@ -1,6 +1,8 @@
 import type { KeyStorer } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import { Hono } from 'hono'
+import { Miniflare } from 'miniflare'
+import { describe, it, expect, beforeAll, vi } from 'vitest'
 import type { VerifyFirebaseAuthEnv } from '../src'
 import { verifyFirebaseAuth, getFirebaseToken } from '../src'
 
@@ -8,9 +10,12 @@ describe('verifyFirebaseAuth middleware', () => {
   const emulatorHost = '127.0.0.1:9099'
   const validProjectId = 'example-project12345' // see package.json
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { PUBLIC_JWK_CACHE_KV } = getMiniflareBindings()
+  const nullScript = 'export default { fetch: () => new Response(null, { status: 404 }) };'
+  const mf = new Miniflare({
+    modules: true,
+    script: nullScript,
+    kvNamespaces: ['PUBLIC_JWK_CACHE_KV'],
+  })
 
   let user: signUpResponse
 
@@ -26,13 +31,16 @@ describe('verifyFirebaseAuth middleware', () => {
   })
 
   describe('service worker syntax', () => {
-    test('valid case, should be 200', async () => {
+    it('valid case, should be 200', async () => {
       const app = new Hono()
 
       resetAuth()
 
       // This is assumed to be obtained from an environment variable.
       const PUBLIC_JWK_CACHE_KEY = 'testing-cache-key'
+      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
+        'PUBLIC_JWK_CACHE_KV'
+      )) as unknown as KVNamespace
 
       app.use(
         '*',
@@ -63,16 +71,11 @@ describe('verifyFirebaseAuth middleware', () => {
   })
 
   describe('module worker syntax', () => {
-    test.each([
+    it.each([
       [
         'valid case, should be 200',
         {
           headerKey: 'Authorization',
-          env: {
-            FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-            PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-            PUBLIC_JWK_CACHE_KV,
-          },
           config: {
             projectId: validProjectId,
           },
@@ -83,11 +86,6 @@ describe('verifyFirebaseAuth middleware', () => {
         'valid specified headerKey, should be 200',
         {
           headerKey: 'X-Authorization',
-          env: {
-            FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-            PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-            PUBLIC_JWK_CACHE_KV,
-          },
           config: {
             projectId: validProjectId,
             authorizationHeaderKey: 'X-Authorization',
@@ -99,11 +97,6 @@ describe('verifyFirebaseAuth middleware', () => {
         'invalid authorization header, should be 400',
         {
           headerKey: 'X-Authorization',
-          env: {
-            FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-            PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-            PUBLIC_JWK_CACHE_KV,
-          },
           config: {
             projectId: validProjectId, // see package.json
             // No specified header key.
@@ -115,21 +108,25 @@ describe('verifyFirebaseAuth middleware', () => {
         'invalid project ID, should be 401',
         {
           headerKey: 'Authorization',
-          env: {
-            FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-            PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-            PUBLIC_JWK_CACHE_KV,
-          },
           config: {
             projectId: 'invalid-projectId',
           },
           wantStatus: 401,
         },
       ],
-    ])('%s', async (_, { headerKey, env, config, wantStatus }) => {
+    ])('%s', async (_, { headerKey, config, wantStatus }) => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
       resetAuth()
+
+      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
+        'PUBLIC_JWK_CACHE_KV'
+      )) as unknown as KVNamespace
+      const env: VerifyFirebaseAuthEnv = {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
+        PUBLIC_JWK_CACHE_KV,
+      }
 
       app.use(
         '*',
@@ -152,12 +149,12 @@ describe('verifyFirebaseAuth middleware', () => {
       expect(res.status).toBe(wantStatus)
     })
 
-    test('specified keyStore is used', async () => {
+    it('specified keyStore is used', async () => {
       const testingJWT = generateDummyJWT()
 
       const nopKeyStore = new NopKeyStore()
-      const getSpy = jest.spyOn(nopKeyStore, 'get')
-      const putSpy = jest.spyOn(nopKeyStore, 'put')
+      const getSpy = vi.spyOn(nopKeyStore, 'get')
+      const putSpy = vi.spyOn(nopKeyStore, 'put')
 
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
@@ -190,7 +187,7 @@ describe('verifyFirebaseAuth middleware', () => {
       expect(putSpy).toHaveBeenCalled()
     })
 
-    test('usable id-token in main handler', async () => {
+    it('usable id-token in main handler', async () => {
       const testingJWT = generateDummyJWT()
 
       const nopKeyStore = new NopKeyStore()
@@ -224,6 +221,35 @@ describe('verifyFirebaseAuth middleware', () => {
       const json = await res.json<{ aud: string; email: string }>()
       expect(json.aud).toBe(validProjectId)
       expect(json.email).toBe('codehex@hono.js')
+    })
+
+    it('invalid PUBLIC_JWK_CACHE_KV is undefined, should be 501', async () => {
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          disableErrorLog: true,
+        })
+      )
+      app.get('/hello', (c) => c.text('OK'))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Authorization: `Bearer ${user.idToken}`,
+        },
+      })
+
+      const env: VerifyFirebaseAuthEnv = {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+      }
+      const res = await app.fetch(req, env)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(501)
     })
   })
 })
