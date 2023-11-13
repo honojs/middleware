@@ -17,16 +17,13 @@ export class MedleyRouter<T> implements Router<T> {
     store[method] = handler
   }
 
-  match(method: string, path: string): Result<T> | null {
+  match(method: string, path: string): Result<T> {
     const route = this.router.find(path)
 
     if (route) {
-      return {
-        handlers: [route['store'][method]],
-        params: route['params'],
-      }
+      return [[[route['store'][method]], route['params']]]
     }
 
-    return null
+    return [[], []]
   }
 }
