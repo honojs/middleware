@@ -311,7 +311,7 @@ describe('Header', () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
-      'authorization': 'Bearer helloworld',
+      authorization: 'Bearer helloworld',
     })
   })
 
@@ -925,6 +925,9 @@ describe('With hc', () => {
       const res = await app.request('/posts', {
         method: 'POST',
         body: JSON.stringify({ bad: 'property' }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
       expect(res.status).toBe(400)
       expect(await res.json()).toEqual({
@@ -937,6 +940,9 @@ describe('With hc', () => {
       const res = await app.request('/books', {
         method: 'POST',
         body: JSON.stringify({ bad: 'property' }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
       expect(res.status).toBe(400)
       expect(await res.json()).toEqual({
