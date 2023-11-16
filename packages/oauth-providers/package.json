@@ -1,0 +1,54 @@
+{
+  "name": "@hono/oauth-providers",
+  "version": "1.0.0",
+  "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
+  "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "build": "rimraf dist && tsc",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    "./google": "./dist/providers/google/index.js",
+    "./facebook": "./dist/providers/facebook/index.js",
+    "./github": "./dist/providers/github/index.js",
+    "./linkedIn": "./dist/providers/linkedIn/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "facebook": [
+        "./dist/providers/facebook"
+      ],
+      "github": [
+        "./dist/providers/github"
+      ],
+      "google": [
+        "./dist/providers/google"
+      ],
+      "linkedin": [
+        "./dist/providers/linkedIn"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "hono": "^3.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231025.0",
+    "@types/jest": "^29.5.7",
+    "hono": "^3.9.2",
+    "jest": "^29.7.0",
+    "jest-environment-miniflare": "^2.14.1",
+    "msw": "^2.0.4",
+    "patch-package": "^8.0.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.4.0"
+  }
+}
