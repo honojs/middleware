@@ -22,7 +22,13 @@ const config: VerifyFirebaseAuthConfig = {
   projectId: 'your-project-id',
 }
 
-// Or you can specify here the extended VerifyFirebaseAuthEnv type.
+// You can specify here the extended VerifyFirebaseAuthEnv type.
+//
+// If you do not specify `keyStore` in the configuration, you need to set
+// the variables `PUBLIC_JWK_CACHE_KEY` and `PUBLIC_JWK_CACHE_KV` in your
+// wrangler.toml. This is because `WorkersKVStoreSingle` is used by default.
+//
+// For more details, please refer to: https://github.com/Code-Hex/firebase-auth-cloudflare-workers
 const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
 // set middleware

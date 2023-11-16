@@ -1,5 +1,17 @@
 # @hono/zod-openapi
 
+## 0.8.5
+
+### Patch Changes
+
+- [#258](https://github.com/honojs/middleware/pull/258) [`368c352`](https://github.com/honojs/middleware/commit/368c3520fa8a15657e8e42313bbfde3d87b0183b) Thanks [@Karibash](https://github.com/Karibash)! - Fix a bug that slashes were duplicated when mounting a path using the route method
+
+## 0.8.4
+
+### Patch Changes
+
+- [#255](https://github.com/honojs/middleware/pull/255) [`129f468`](https://github.com/honojs/middleware/commit/129f4680a2c050ec49a0422d735e0d173d7b5faf) Thanks [@Karibash](https://github.com/Karibash)! - Fix incorrect specification of the exports field in package.json
+
 ## 0.8.3
 
 ### Patch Changes

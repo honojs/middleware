@@ -1,5 +1,11 @@
 # @hono/esbuild-transpiler
 
+## 0.1.2
+
+### Patch Changes
+
+- [#244](https://github.com/honojs/middleware/pull/244) [`007de80`](https://github.com/honojs/middleware/commit/007de80662c97a1eb25bd12376d3bfc75bc07d14) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: exports modules correctly
+
 ## 0.1.1
 
 ### Patch Changes

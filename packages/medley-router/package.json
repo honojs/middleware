@@ -1,6 +1,6 @@
 {
   "name": "@hono/medley-router",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Router using @medley/router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=3.8.0"
   },
   "devDependencies": {
-    "hono": "^3.2.6"
+    "hono": "^3.9.2"
   },
   "dependencies": {
     "@medley/router": "^0.2.1"

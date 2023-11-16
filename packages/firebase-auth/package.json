@@ -1,6 +1,6 @@
 {
   "name": "@hono/firebase-auth",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A third-party firebase auth middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
-    "test-with-emulator": "firebase emulators:exec --project example-project12345 'jest'",
-    "test": "jest",
+    "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
+    "test": "vitest run",
     "build": "tsc",
     "prerelease": "yarn build",
     "release": "yarn publish"
@@ -28,20 +28,18 @@
     "access": "public"
   },
   "dependencies": {
-    "firebase-auth-cloudflare-workers": "^1.0.1"
+    "firebase-auth-cloudflare-workers": "^1.1.0"
   },
   "peerDependencies": {
     "hono": "3.*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.14.1",
-    "@types/jest": "^28.1.4",
+    "@cloudflare/workers-types": "^4.20231025.0",
     "firebase-tools": "^11.4.0",
-    "hono": "^3.0.3",
-    "jest": "^28.1.2",
-    "jest-environment-miniflare": "^2.6.0",
+    "hono": "^3.9.2",
+    "miniflare": "^3.20231025.1",
     "prettier": "^2.7.1",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vitest": "^0.34.6"
   }
 }
