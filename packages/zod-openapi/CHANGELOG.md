@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.5
+
+### Patch Changes
+
+- [#258](https://github.com/honojs/middleware/pull/258) [`368c352`](https://github.com/honojs/middleware/commit/368c3520fa8a15657e8e42313bbfde3d87b0183b) Thanks [@Karibash](https://github.com/Karibash)! - Fix a bug that slashes were duplicated when mounting a path using the route method
+
 ## 0.8.4
 
 ### Patch Changes
