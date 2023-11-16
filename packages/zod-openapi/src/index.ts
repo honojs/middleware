@@ -30,6 +30,10 @@ import type { RemoveBlankRecord } from 'hono/utils/types'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
+const normalizePath = (path: string) => {
+  return `/${path.replaceAll(/^\/+|\/+$|(\/)+/g, '$1')}`
+}
+
 type RequestTypes = {
   body?: ZodRequestBody
   params?: AnyZodObject
@@ -323,13 +327,13 @@ export class OpenAPIHono<
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: `${path}${def.route.path}`,
+            path: normalizePath(`${path}${def.route.path}`),
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: `${path}${def.webhook.path}`,
+            path: normalizePath(`${path}${def.webhook.path}`),
           })
 
         case 'schema':

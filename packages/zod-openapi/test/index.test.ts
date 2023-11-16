@@ -977,3 +977,140 @@ describe('It allows the response type to be Response', () => {
     expect(res.body).toBe(null)
   })
 })
+
+describe('Path normalization', () => {
+  const createRootApp = () => {
+    const app = new OpenAPIHono()
+    app.doc('/doc', {
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'My API',
+      },
+    })
+    return app
+  }
+
+  const generateRoute = (path: string) => {
+    return createRoute({
+      path,
+      method: 'get',
+      responses: {
+        204: {
+          description: 'No Content',
+        },
+      },
+    })
+  }
+
+  const handler = (c) => c.body(null, 204)
+
+  describe('Duplicate slashes in the root path', () => {
+    const app = createRootApp()
+    const childApp = new OpenAPIHono()
+
+    childApp.openapi(generateRoute('/child'), handler)
+    app.route('/', childApp)
+
+    it('Should remove duplicate slashes', async () => {
+      const res = await app.request('/doc')
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'My API',
+        },
+        components: {
+          schemas: {},
+          parameters: {},
+        },
+        paths: {
+          '/child': {
+            get: {
+              responses: {
+                204: {
+                  description: 'No Content',
+                },
+              },
+            },
+          },
+        },
+      })
+    })
+  })
+
+  describe('Duplicate slashes in the child path', () => {
+    const app = createRootApp()
+    const childApp = new OpenAPIHono()
+    const grandchildApp = new OpenAPIHono()
+
+    grandchildApp.openapi(generateRoute('/granchild'), handler)
+    childApp.route('/', grandchildApp)
+    app.route('/api', childApp)
+
+    it('Should remove duplicate slashes', async () => {
+      const res = await app.request('/doc')
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'My API',
+        },
+        components: {
+          schemas: {},
+          parameters: {},
+        },
+        paths: {
+          '/api/granchild': {
+            get: {
+              responses: {
+                204: {
+                  description: 'No Content',
+                },
+              },
+            },
+          },
+        },
+      })
+    })
+  })
+
+  describe('Duplicate slashes in the trailing path', () => {
+    const app = createRootApp()
+    const childApp = new OpenAPIHono()
+    const grandchildApp = new OpenAPIHono()
+
+    grandchildApp.openapi(generateRoute('/'), handler)
+    childApp.route('/', grandchildApp)
+    app.route('/api', childApp)
+
+    it('Should remove duplicate slashes', async () => {
+      const res = await app.request('/doc')
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({
+        openapi: '3.0.0',
+        info: {
+          version: '1.0.0',
+          title: 'My API',
+        },
+        components: {
+          schemas: {},
+          parameters: {},
+        },
+        paths: {
+          '/api': {
+            get: {
+              responses: {
+                204: {
+                  description: 'No Content',
+                },
+              },
+            },
+          },
+        },
+      })
+    })
+  })
+})
