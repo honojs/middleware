@@ -27,6 +27,7 @@ import type {
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { RemoveBlankRecord } from 'hono/utils/types'
+import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
@@ -323,13 +324,13 @@ export class OpenAPIHono<
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: `${path}${def.route.path}`,
+            path: mergePath(path, def.route.path),
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: `${path}${def.webhook.path}`,
+            path: mergePath(path, def.webhook.path),
           })
 
         case 'schema':
