@@ -277,18 +277,24 @@ export class OpenAPIHono<
     return document
   }
 
-  doc = (path: string, config: OpenAPIObjectConfig) => {
-    this.get(path, (c) => {
+  doc = <P extends string>(
+    path: P,
+    config: OpenAPIObjectConfig
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+    return this.get(path, (c) => {
       const document = this.getOpenAPIDocument(config)
       return c.json(document)
-    })
+    }) as any
   }
 
-  doc31 = (path: string, config: OpenAPIObjectConfig) => {
-    this.get(path, (c) => {
+  doc31 = <P extends string>(
+    path: P,
+    config: OpenAPIObjectConfig
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+    return this.get(path, (c) => {
       const document = this.getOpenAPI31Document(config)
       return c.json(document)
-    })
+    }) as any
   }
 
   route<
