@@ -28,7 +28,6 @@ import type {
 import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
-import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
@@ -281,7 +280,7 @@ export class OpenAPIHono<
   doc = <P extends string>(
     path: P,
     config: OpenAPIObjectConfig
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, OpenAPIObject>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const document = this.getOpenAPIDocument(config)
       return c.json(document)
@@ -291,7 +290,7 @@ export class OpenAPIHono<
   doc31 = <P extends string>(
     path: P,
     config: OpenAPIObjectConfig
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, OpenAPIObject>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const document = this.getOpenAPI31Document(config)
       return c.json(document)
