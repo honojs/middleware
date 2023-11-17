@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.8.6
+
+### Patch Changes
+
+- [#260](https://github.com/honojs/middleware/pull/260) [`ba83a26`](https://github.com/honojs/middleware/commit/ba83a268e010a7b18172e7de01e3901b58a7ec62) Thanks [@Karibash](https://github.com/Karibash)! - Make it possible to do method chaining even for doc methods
+
 ## 0.8.5
 
 ### Patch Changes
