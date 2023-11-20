@@ -1,5 +1,5 @@
 ---
-'@hono/oauth-providers': major
+'@hono/oauth-providers': minor
 ---
 
 Add oauth-providers middleware
