@@ -3,6 +3,8 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Hono, Env, ToSchema, Context } from 'hono'
 import { hc } from 'hono/client'
+import { assertEquals } from 'https://deno.land/std@0.177.0/testing/asserts.ts'
+import { assertEquals } from 'https://deno.land/std@0.177.0/testing/asserts.ts'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src'
 
@@ -311,7 +313,7 @@ describe('Header', () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       'x-request-id': '6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b',
-      'authorization': 'Bearer helloworld',
+      authorization: 'Bearer helloworld',
     })
   })
 
@@ -945,6 +947,29 @@ describe('With hc', () => {
       })
     })
   })
+})
+
+it('Should subscribe custom components', () => {
+  const app = new OpenAPIHono({
+    components: {
+      securitySchemes: {
+        Bearer: {
+          type: 'http',
+          scheme: 'bearer',
+        },
+      },
+    },
+  })
+  const a = app.getOpenAPIDocument({
+    info: {
+      title: 'My API',
+      version: '1.0.0',
+    },
+    openapi: '3.0.0',
+  })
+
+  expect(a.components?.securitySchemes).toHaveProperty('Bearer')
+  expect(a.components?.schemas).toBeUndefined()
 })
 
 describe('It allows the response type to be Response', () => {
