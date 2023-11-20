@@ -1,6 +1,14 @@
-# Open Auth Middleware
+# OAuth Providers Middleware
 
 Authentication middleware for [Hono](https://github.com/honojs/hono). This package offers a straightforward API for social login with platforms such as Facebook, GitHub, Google, and LinkedIn.
+
+## Installation
+
+You can install `hono` and `@hono/oauth-providers` via npm.
+
+```txt
+npm i hono @hono/oauth-providers
+```
 
 ## Usage
 
@@ -22,10 +30,7 @@ app.use(
   googleAuth({
     client_id: Bun.env.GOOGLE_ID,
     client_secret: Bun.env.GOOGLE_SECRET,
-    response_type: 'code',
     scope: ['openid', 'email', 'profile'],
-    include_granted_scopes: true,
-    state: 'sdygz76x-sd3gds2',
   })
 )
 
@@ -52,10 +57,7 @@ app.get(
   googleAuth({
     client_id: Bun.env.GOOGLE_ID,
     client_secret: Bun.env.GOOGLE_SECRET,
-    response_type: 'code',
     scope: ['openid', 'email', 'profile'],
-    include_granted_scopes: true,
-    state: 'sdygz76x-sd3gds2',
   }),
   (c) => {
     const token = c.get('token')
@@ -73,24 +75,20 @@ app.get(
 export default app
 ```
 
-### googleAuth
+### Google
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { googleAuth } from '@hono/open-auth/google'
+import { googleAuth } from '@hono/oauth-providers/google'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/google',
   googleAuth({
     client_id: Bun.env.GOOGLE_ID,
     client_secret: Bun.env.GOOGLE_SECRET,
-    response_type: 'code',
     scope: ['openid', 'email', 'profile'],
-    include_granted_scopes: true,
-    state: 'sdygz76x-sd3gds2',
   })
 )
 
@@ -113,16 +111,6 @@ export default app
   - `Required`.
   - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Google offers for utilizing their API on the [OAuth 2.0 Scopes page](https://developers.google.com/identity/protocols/oauth2/scopes).
     > If your app is not **verified** by Google, the accessible scopes for your app are significantly **limited**.
-- `response_type`:
-  - Type: `string`.
-  - `Required`.
-  - Choose the **OAuth flow** for the authentication process. The available options are:
-    - `code` for a more secure flow, applicable when the app's authentication flow is managed by the **server side**.
-    - `token` for quick access to the token, suitable when the app's authentication flow will be managed by the **client side**.
-- `include_granted_scopes`:
-  - Type: `boolean`.
-  - `Optional`.
-  - To obtain the scopes for which the user has **granted permission**, set this value to `true`. This will allow you to implement a flow in cases where your app cannot access crucial permissions and needs to request them again, among other use cases. Value `false` by default.
 - `login_hint`:
   - Type: `string`.
   - `Optional`.
@@ -134,10 +122,6 @@ export default app
     - `none`: Do not display any authentication or consent screens. Must not be specified with other values.
     - `consent`: Prompt the user for consent.
     - `select_account`: Prompt the user to select an account.
-- `state`:
-  - Type: `string`.
-  - `Optional`.
-  - A unique string value of your choice that is hard to guess. Used to prevent [CSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery).
 
 #### Authentication Flow
 
@@ -203,21 +187,19 @@ app.post('/remove-user', async (c, next) => {
 })
 ```
 
-### facebookAuth
+### Facebook
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { facebookAuth } from '@hono/open-auth/facebook'
+import { facebookAuth } from '@hono/oauth-providers/facebook'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/facebook',
   facebookAuth({
     client_id: Bun.env.FACEBOOK_ID,
     client_secret: Bun.env.FACEBOOK_SECRET,
-    response_type: ['token'],
     scope: ['email', 'public_profile'],
     fields: [
       'email',
@@ -229,7 +211,6 @@ app.use(
       'picture',
       'short_name',
     ],
-    include_granted_scopes: true,
   })
 )
 
@@ -252,24 +233,9 @@ export default app
   - `Required`.
   - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Facebook offers for utilizing their API on the [Permissions page](https://developers.facebook.com/docs/permissions/).
     > If your app is not **verified** by Facebook, the accessible scopes for your app are significantly **limited**.
-- `response_type`:
-  - Type: `string[]`.
-  - `Required`.
-  - Choose the **OAuth flow** for the authentication process. The available options are:
-    - `code` for a more secure flow, applicable when the app's authentication flow is managed by the **server side**.
-    - `token` for quick access to the token, suitable when the app's authentication flow will be managed by the **client side**.
-    - `code%20token`: A combination of both the code and access token received as parameters on the url.
-- `include_granted_scopes`:
-  - Type: `boolean`.
-  - `Optional`.
-  - To obtain the scopes for which the user has **granted permission**, set this value to `true`. This will allow you to implement a flow in cases where your app cannot access crucial permissions and needs to request them again, among other use cases. Value `false` by default.
 - `fields`:
   - Type: `string[]`.
   - Fields you request from the Facebook API to be sent once the user has logged in. You can find a comprehensive reference for all the fields you can request on the [Facebook User Reference page](https://developers.facebook.com/docs/graph-api/reference/user/#fields).
-- `state`:
-  - Type: `string`.
-  - `Optional`.
-  - A unique string value of your choice that is hard to guess. Used to prevent [CSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery).
 
 #### Authentication Flow
 
@@ -327,7 +293,7 @@ app.get('/facebook', (c) => {
 })
 ```
 
-### githubAuth
+### GitHub
 
 GitHub provides two types of Apps to utilize its API: the `GitHub App` and the `OAuth App`. To understand the differences between these apps, you can read this [article](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/deciding-when-to-build-a-github-app) from GitHub, helping you determine the type of App you should select.
 
@@ -437,10 +403,9 @@ After the completion of the Github Auth flow, essential data has been prepared f
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { githubAuth } from '@hono/open-auth/github'
+import { githubAuth } from '@hono/oauth-providers/github'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/github',
@@ -467,10 +432,9 @@ export default app
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { githubAuth } from '@hono/open-auth/github'
+import { githubAuth } from '@hono/oauth-providers/github'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/github',
@@ -497,7 +461,7 @@ app.get('/github', (c) => {
 export default app
 ```
 
-### linkedInAuth
+### LinkedIn
 
 LinkedIn provides two types of Authorization to utilize its API: the `Member Authotization` and the `Application Authorization`. To understand the differences between these authorization methods, you can read this [article](https://learn.microsoft.com/en-us/linkedin/shared/authentication/authentication?context=linkedin%2Fcontext) from LinkedIn, helping you determine the type of Authorization your app should use.
 
@@ -519,18 +483,14 @@ LinkedIn provides two types of Authorization to utilize its API: the `Member Aut
   - `Required`.
   - `Member Authorization`.
   - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes LinkedIn offers for utilizing their API on the [Getting Access docs page](https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access).
-- `state`:
-  - Type: `string`.
-  - `Required`.
-  - A unique string value of your choice that is hard to guess. Used to prevent [CSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery).
-- `AppAuth`: - Type: `boolean`. - `Required`. - `Application Authorization`. - Set this value to `true` if your App uses the App Authorization method. Defaults to `false`.
+- `appAuth`: - Type: `boolean`. - `Required`. - `Application Authorization`. - Set this value to `true` if your App uses the App Authorization method. Defaults to `false`.
   > To access the Application Authorization method you have to ask LinkedIn for It. Apparently you have to verify your app then ask for access.
 
 #### Authentication Flow
 
 After the completion of the LinkedIn Auth flow, essential data has been prepared for use in the subsequent steps that your app needs to take.
 
-`linkedInAuth` method provides 4 set key data:
+`linkedinAuth` method provides 4 set key data:
 
 - `token`:
   - Access token to make requests to the LinkedIn API for retrieving user information and performing actions on their behalf.
@@ -576,18 +536,16 @@ After the completion of the LinkedIn Auth flow, essential data has been prepared
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { linkedInAuth } from '@hono/open-auth/linkedIn'
+import { linkedinAuth } from '@hono/oauth-providers/linkedIn'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/linkedin',
-  linkedInAuth({
+  linkedinAuth({
     client_id: Bun.env.LINKEDIN_ID,
     client_secret: Bun.env.LINKEDIN_SECRET,
     scope: ['email', 'openid', 'profile'],
-    state: 'blabla',
   })
 )
 
@@ -608,16 +566,16 @@ export default app
 
 ```ts
 import { Hono } from 'hono'
-import { OpenAuthVariables } from '@hono/open-auth'
-import { linkedInAuth } from '@hono/open-auth/linkedin'
+import { linkedinAuth } from '@hono/oauth-providers/linkedin'
 
-const app = new Hono<{ Variables: OpenAuthVariables }>()
+const app = new Hono()
 
 app.use(
   '/linkedin',
-  linkedInAuth({
+  linkedinAuth({
     client_id: Bun.env.LINKEDIN_ID,
     client_secret: Bun.env.LINKEDIN_SECRET,
+    appAuth: true,
   })
 )
 
@@ -649,7 +607,7 @@ In certain use cases, you may need to programmatically revoke a user's access to
   - `string`.
 
 ```ts
-import { linkedInAuth, refreshToken } from 'open-auth/linkedin'
+import { linkedinAuth, refreshToken } from 'open-auth/linkedin'
 
 app.post('linkedin/refresh-token', async (c, next) => {
   const token = await refreshToken(LINKEDIN_ID, LINKEDIN_SECRET, USER_REFRESH_TOKEN)

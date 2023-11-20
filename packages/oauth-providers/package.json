@@ -1,14 +1,15 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "main": "dist/index.js",
   "files": [
-    "/dist"
+    "./dist"
   ],
   "scripts": {
     "test": "jest",
     "build": "tsup && publint",
+    "watch": "tsup --watch",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
   },
