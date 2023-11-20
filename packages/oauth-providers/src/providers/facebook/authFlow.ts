@@ -2,7 +2,14 @@ import { HTTPException } from 'hono/http-exception'
 
 import type { Token } from '../../types'
 import { toQueryParams } from '../../utils/objectToQuery'
-import type { FacebookErrorResponse, FacebookMeResponse, FacebookTokenResponse, FacebookUser, Fields, Permissions } from './types'
+import type {
+  FacebookErrorResponse,
+  FacebookMeResponse,
+  FacebookTokenResponse,
+  FacebookUser,
+  Fields,
+  Permissions,
+} from './types'
 
 type FacebookAuthFlow = {
   client_id: string
@@ -27,8 +34,14 @@ export class AuthFlow {
   user: Partial<FacebookUser> | undefined
 
   constructor({
-    client_id, client_secret, redirect_uri,
-    scope,state, fields, code, token
+    client_id,
+    client_secret,
+    redirect_uri,
+    scope,
+    state,
+    fields,
+    code,
+    token,
   }: FacebookAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -47,7 +60,7 @@ export class AuthFlow {
       redirect_uri: this.redirect_uri,
       response_type: ['code', 'granted_scopes'],
       scope: this.scope,
-      state: this.state
+      state: this.state,
     })
     return `https://www.facebook.com/v18.0/dialog/oauth?${parsedOptions}`
   }
@@ -57,26 +70,28 @@ export class AuthFlow {
       client_id: this.client_id,
       redirect_uri: this.redirect_uri,
       client_secret: this.client_secret,
-      code: this.code
+      code: this.code,
     })
     const url = `https://graph.facebook.com/v18.0/oauth/access_token?${parsedOptions}`
 
-    const response = await fetch(url)
-      .then(res => res.json()) as FacebookTokenResponse | FacebookErrorResponse
+    const response = (await fetch(url).then((res) => res.json())) as
+      | FacebookTokenResponse
+      | FacebookErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
 
     if ('access_token' in response) {
       this.token = {
         token: response.access_token,
-        expires_in: response.expires_in
+        expires_in: response.expires_in,
       }
     }
   }
 
   private async getUserId() {
-    const response = await fetch(`https://graph.facebook.com/v18.0/me?access_token=${this.token?.token}`)
-      .then(res => res.json()) as FacebookMeResponse | FacebookErrorResponse
+    const response = (await fetch(
+      `https://graph.facebook.com/v18.0/me?access_token=${this.token?.token}`
+    ).then((res) => res.json())) as FacebookMeResponse | FacebookErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
 
@@ -88,8 +103,9 @@ export class AuthFlow {
 
     await this.getUserId()
     const parsedFields = this.fields.join()
-    const response = await fetch(`https://graph.facebook.com/${this.user?.id}?fields=${parsedFields}&access_token=${this.token?.token}`)
-      .then(res => res.json()) as FacebookUser | FacebookErrorResponse
+    const response = (await fetch(
+      `https://graph.facebook.com/${this.user?.id}?fields=${parsedFields}&access_token=${this.token?.token}`
+    ).then((res) => res.json())) as FacebookUser | FacebookErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
 

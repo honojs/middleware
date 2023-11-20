@@ -1,10 +1,29 @@
 import { Hono } from 'hono'
 import { setupServer } from 'msw/node'
-
-import type { FacebookUser, GithubUser, GoogleUser, LinkedInUser, OAuthVariables} from '../src'
-import { facebookAuth, githubAuth, googleAuth, linkedinAuth } from '../src'
-import type { Token } from '../src/types'
-import { dummyToken, googleUser, handlers, facebookUser, githubUser, dummyCode, googleCodeError, facebookCodeError, githubToken, githubCodeError, linkedInCodeError, linkedInUser, linkedInToken } from './handlers'
+import { facebookAuth } from '../src/providers/facebook'
+import type { FacebookUser } from '../src/providers/facebook'
+import { githubAuth } from '../src/providers/github'
+import type { GitHubUser } from '../src/providers/github'
+import { googleAuth } from '../src/providers/google'
+import type { GoogleUser } from '../src/providers/google'
+import { linkedinAuth } from '../src/providers/linkedin'
+import type { LinkedInUser } from '../src/providers/linkedin'
+import type { Token, OAuthVariables } from '../src/types'
+import {
+  dummyToken,
+  googleUser,
+  handlers,
+  facebookUser,
+  githubUser,
+  dummyCode,
+  googleCodeError,
+  facebookCodeError,
+  githubToken,
+  githubCodeError,
+  linkedInCodeError,
+  linkedInUser,
+  linkedInToken,
+} from './handlers'
 
 const server = setupServer(...handlers)
 server.listen()
@@ -15,11 +34,14 @@ const client_secret = 'SDJS943hS_jj45dummysecret'
 describe('OAuth Middleware', () => {
   const app = new Hono<{ Variables: OAuthVariables }>()
 
-  app.use('/google', googleAuth({
-    client_id,
-    client_secret,
-    scope: ['openid', 'email', 'profile'],
-  }))
+  app.use(
+    '/google',
+    googleAuth({
+      client_id,
+      client_secret,
+      scope: ['openid', 'email', 'profile'],
+    })
+  )
   app.get('/google', (c) => {
     const user = c.get('user-google')
     const token = c.get('token')
@@ -28,16 +50,28 @@ describe('OAuth Middleware', () => {
     return c.json({
       user,
       token,
-      grantedScopes
+      grantedScopes,
     })
   })
 
-  app.use('/facebook', facebookAuth({
-    client_id,
-    client_secret,
-    scope: ['email', 'public_profile'],
-    fields: ['email', 'id', 'first_name', 'last_name', 'middle_name', 'name', 'picture', 'short_name'],
-  }))
+  app.use(
+    '/facebook',
+    facebookAuth({
+      client_id,
+      client_secret,
+      scope: ['email', 'public_profile'],
+      fields: [
+        'email',
+        'id',
+        'first_name',
+        'last_name',
+        'middle_name',
+        'name',
+        'picture',
+        'short_name',
+      ],
+    })
+  )
   app.get('/facebook', (c) => {
     const user = c.get('user-facebook')
     const token = c.get('token')
@@ -46,14 +80,17 @@ describe('OAuth Middleware', () => {
     return c.json({
       user,
       token,
-      grantedScopes
+      grantedScopes,
     })
   })
 
-  app.use('/github/app', githubAuth({
-    client_id,
-    client_secret
-  }))
+  app.use(
+    '/github/app',
+    githubAuth({
+      client_id,
+      client_secret,
+    })
+  )
   app.get('/github/app', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
@@ -64,15 +101,18 @@ describe('OAuth Middleware', () => {
       token,
       refreshToken,
       user,
-      grantedScopes
+      grantedScopes,
     })
   })
-  app.use('/github/oauth-app', githubAuth({
-    client_id,
-    client_secret,
-    scope: ['public_repo', 'read:user', 'user', 'user:email', 'user:follow'],
-    oauthApp: true
-  }))
+  app.use(
+    '/github/oauth-app',
+    githubAuth({
+      client_id,
+      client_secret,
+      scope: ['public_repo', 'read:user', 'user', 'user:email', 'user:follow'],
+      oauthApp: true,
+    })
+  )
   app.get('/github/oauth-app', (c) => {
     const token = c.get('token')
     const user = c.get('user-github')
@@ -81,15 +121,18 @@ describe('OAuth Middleware', () => {
     return c.json({
       user,
       token,
-      grantedScopes
+      grantedScopes,
     })
   })
 
-  app.use('linkedin', linkedinAuth({
-    client_id,
-    client_secret,
-    scope: ['email', 'openid', 'profile'],
-  }))
+  app.use(
+    'linkedin',
+    linkedinAuth({
+      client_id,
+      client_secret,
+      scope: ['email', 'openid', 'profile'],
+    })
+  )
   app.get('linkedin', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
@@ -100,13 +143,19 @@ describe('OAuth Middleware', () => {
       token,
       refreshToken,
       grantedScopes,
-      user
+      user,
     })
   })
 
-  beforeAll(() => { server.listen() })
-  afterEach(() => { server.resetHandlers() })
-  afterAll(() => { server.close() })
+  beforeAll(() => {
+    server.listen()
+  })
+  afterEach(() => {
+    server.resetHandlers()
+  })
+  afterAll(() => {
+    server.close()
+  })
 
   describe('googleAuth middleware', () => {
     it('Should redirect', async () => {
@@ -133,7 +182,11 @@ describe('OAuth Middleware', () => {
 
     it('Should work with received code', async () => {
       const res = await app.request(`/google?code=${dummyCode}`)
-      const response = await res.json() as { token: Token, user: GoogleUser, grantedScopes: string[] }
+      const response = (await res.json()) as {
+        token: Token
+        user: GoogleUser
+        grantedScopes: string[]
+      }
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(200)
@@ -141,7 +194,7 @@ describe('OAuth Middleware', () => {
       expect(response.grantedScopes).toEqual(dummyToken.scope.split(' '))
       expect(response.token).toEqual({
         token: dummyToken.access_token,
-        expires_in: dummyToken.expires_in
+        expires_in: dummyToken.expires_in,
       })
     })
   })
@@ -169,8 +222,14 @@ describe('OAuth Middleware', () => {
     })
 
     it('Should work with received code', async () => {
-      const res = await app.request(`/facebook?code=${dummyCode}&granted_scopes=email%2Cpublic_profile`)
-      const response = await res.json() as { token: Token, user: FacebookUser, grantedScopes: string[] }
+      const res = await app.request(
+        `/facebook?code=${dummyCode}&granted_scopes=email%2Cpublic_profile`
+      )
+      const response = (await res.json()) as {
+        token: Token
+        user: FacebookUser
+        grantedScopes: string[]
+      }
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(200)
@@ -178,7 +237,7 @@ describe('OAuth Middleware', () => {
       expect(response.grantedScopes).toEqual(['email', 'public_profile'])
       expect(response.token).toEqual({
         token: dummyToken.access_token,
-        expires_in: dummyToken.expires_in
+        expires_in: dummyToken.expires_in,
       })
     })
   })
@@ -202,7 +261,12 @@ describe('OAuth Middleware', () => {
 
       it('Should work with received code', async () => {
         const res = await app.request(`/github/app?code=${dummyCode}`)
-        const response = await res.json() as { token: Token, refreshToken: Token, user: GithubUser, grantedScopes: string[] }
+        const response = (await res.json()) as {
+          token: Token
+          refreshToken: Token
+          user: GitHubUser
+          grantedScopes: string[]
+        }
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(200)
@@ -210,11 +274,11 @@ describe('OAuth Middleware', () => {
         expect(response.grantedScopes).toEqual(['public_repo', 'user'])
         expect(response.token).toEqual({
           token: githubToken.access_token,
-          expires_in: githubToken.expires_in
+          expires_in: githubToken.expires_in,
         })
         expect(response.refreshToken).toEqual({
           token: githubToken.refresh_token,
-          expires_in: githubToken.refresh_token_expires_in
+          expires_in: githubToken.refresh_token_expires_in,
         })
       })
     })
@@ -237,7 +301,11 @@ describe('OAuth Middleware', () => {
 
       it('Should work with received code', async () => {
         const res = await app.request(`/github/oauth-app?code=${dummyCode}`)
-        const response = await res.json() as { token: Token, user: GithubUser, grantedScopes: string[] }
+        const response = (await res.json()) as {
+          token: Token
+          user: GitHubUser
+          grantedScopes: string[]
+        }
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(200)
@@ -245,7 +313,7 @@ describe('OAuth Middleware', () => {
         expect(response.grantedScopes).toEqual(['public_repo', 'user'])
         expect(response.token).toEqual({
           token: githubToken.access_token,
-          expires_in: githubToken.expires_in
+          expires_in: githubToken.expires_in,
         })
       })
     })
@@ -269,7 +337,12 @@ describe('OAuth Middleware', () => {
 
     it('Should work with received code', async () => {
       const res = await app.request(`/linkedin?code=${dummyCode}`)
-      const response = await res.json() as { token: Token, refreshToken: Token, user: LinkedInUser, grantedScopes: string[] }
+      const response = (await res.json()) as {
+        token: Token
+        refreshToken: Token
+        user: LinkedInUser
+        grantedScopes: string[]
+      }
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(200)
@@ -277,11 +350,11 @@ describe('OAuth Middleware', () => {
       expect(response.grantedScopes).toEqual(['email', 'openid', 'profile'])
       expect(response.token).toEqual({
         token: linkedInToken.access_token,
-        expires_in: linkedInToken.expires_in
+        expires_in: linkedInToken.expires_in,
       })
       expect(response.refreshToken).toEqual({
         token: linkedInToken.refresh_token,
-        expires_in: linkedInToken.refresh_token_expires_in
+        expires_in: linkedInToken.refresh_token_expires_in,
       })
     })
   })

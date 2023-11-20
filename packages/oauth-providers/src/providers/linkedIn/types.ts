@@ -1,12 +1,29 @@
 export type LinkedInScope =
-  'profile' | 'email' | 'openid' | 'w_member_social' | 'rw_organization_admin' | 'r_organization_admin' |
-  'w_organization_social' | 'r_organization_social' | 'w_member_social' | 'rw_ads' | 'r_ads' |
-  'r_ads_reporting' | 'r_1st_connections_size' | 'r_basicprofile' | 'r_marketing_leadgen_automation' |
-  'rw_dmp_segments' | 'r_sales_nav_analytics' | 'r_sales_nav_display' | 'r_sales_nav_validation' |
-  'r_sales_nav_profiles' | 'r_compliance' | 'w_compliance'
+  | 'profile'
+  | 'email'
+  | 'openid'
+  | 'w_member_social'
+  | 'rw_organization_admin'
+  | 'r_organization_admin'
+  | 'w_organization_social'
+  | 'r_organization_social'
+  | 'w_member_social'
+  | 'rw_ads'
+  | 'r_ads'
+  | 'r_ads_reporting'
+  | 'r_1st_connections_size'
+  | 'r_basicprofile'
+  | 'r_marketing_leadgen_automation'
+  | 'rw_dmp_segments'
+  | 'r_sales_nav_analytics'
+  | 'r_sales_nav_display'
+  | 'r_sales_nav_validation'
+  | 'r_sales_nav_profiles'
+  | 'r_compliance'
+  | 'w_compliance'
 
 export type LinkedInErrorResponse = {
-  error: string,
+  error: string
   error_description: string
   message: string
 }
@@ -26,7 +43,7 @@ export type LinkedInUser = {
   locale: {
     country: string
     language: string
-  },
+  }
   given_name: string
   family_name: string
   email: string

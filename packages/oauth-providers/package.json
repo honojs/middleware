@@ -8,29 +8,75 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "rimraf dist && tsc",
+    "build": "tsup && publint",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
   },
   "exports": {
-    "./google": "./dist/providers/google/index.js",
-    "./facebook": "./dist/providers/facebook/index.js",
-    "./github": "./dist/providers/github/index.js",
-    "./linkedIn": "./dist/providers/linkedIn/index.js"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./google": {
+      "import": {
+        "types": "./dist/providers/google/index.d.mts",
+        "default": "./dist/providers/google/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/google/index.d.ts",
+        "default": "./dist/providers/google/index.js"
+      }
+    },
+    "./facebook": {
+      "import": {
+        "types": "./dist/providers/facebook/index.d.mts",
+        "default": "./dist/providers/facebook/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/facebook/index.d.ts",
+        "default": "./dist/providers/facebook/index.js"
+      }
+    },
+    "./github": {
+      "import": {
+        "types": "./dist/providers/github/index.d.mts",
+        "default": "./dist/providers/github/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/github/index.d.ts",
+        "default": "./dist/providers/github/index.js"
+      }
+    },
+    "./linkedin": {
+      "import": {
+        "types": "./dist/providers/linkedin/index.d.mts",
+        "default": "./dist/providers/linkedin/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/linkedin/index.d.ts",
+        "default": "./dist/providers/linkedin/index.js"
+      }
+    }
   },
   "typesVersions": {
     "*": {
       "facebook": [
-        "./dist/providers/facebook"
+        "./dist/providers/facebook/index.d.ts"
       ],
       "github": [
-        "./dist/providers/github"
+        "./dist/providers/github/index.d.ts"
       ],
       "google": [
-        "./dist/providers/google"
+        "./dist/providers/google/index.d.ts"
       ],
       "linkedin": [
-        "./dist/providers/linkedIn"
+        "./dist/providers/linkedin/index.d.ts"
       ]
     }
   },
@@ -46,6 +92,7 @@
     "msw": "^2.0.4",
     "patch-package": "^8.0.0",
     "ts-jest": "^29.1.1",
+    "tsup": "^8.0.0",
     "typescript": "^5.2.2"
   },
   "engines": {

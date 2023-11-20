@@ -30,8 +30,15 @@ export class AuthFlow {
   granted_scopes: string[] | undefined
 
   constructor({
-    client_id, client_secret, redirect_uri,
-    login_hint, prompt, scope, state, code, token
+    client_id,
+    client_secret,
+    redirect_uri,
+    login_hint,
+    prompt,
+    scope,
+    state,
+    code,
+    token,
   }: GoogleAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -46,10 +53,13 @@ export class AuthFlow {
     this.granted_scopes = undefined
 
     if (
-      this.client_id === undefined || this.client_secret === undefined ||
+      this.client_id === undefined ||
+      this.client_secret === undefined ||
       this.scope === undefined
     ) {
-      throw new HTTPException(400, { message: 'Required parameters were not found. Please provide them to proceed.' })
+      throw new HTTPException(400, {
+        message: 'Required parameters were not found. Please provide them to proceed.',
+      })
     }
   }
 
@@ -60,13 +70,13 @@ export class AuthFlow {
       client_id: this.client_id,
       include_granted_scopes: true,
       scope: this.scope.join(' '),
-      state: this.state
+      state: this.state,
     })
     return `https://accounts.google.com/o/oauth2/v2/auth?${parsedOptions}`
   }
 
   async getTokenFromCode() {
-    const response = await fetch('https://oauth2.googleapis.com/token', {
+    const response = (await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -79,17 +89,16 @@ export class AuthFlow {
         code: this.code,
         grant_type: 'authorization_code',
       }),
-    })
-      .then(res => res.json()) as GoogleTokenResponse | GoogleErrorResponse
+    }).then((res) => res.json())) as GoogleTokenResponse | GoogleErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error_description })
 
     if ('access_token' in response) {
       this.token = {
         token: response.access_token,
-        expires_in: response.expires_in
+        expires_in: response.expires_in,
       }
-  
+
       this.granted_scopes = response.scope.split(' ')
     }
   }
@@ -97,15 +106,11 @@ export class AuthFlow {
   async getUserData() {
     await this.getTokenFromCode()
 
-    const response = await fetch(
-      'https://www.googleapis.com/oauth2/v2/userinfo',
-      {
-        headers: {
-          authorization: `Bearer ${this.token?.token}`
-        }
-      }
-    )
-      .then(res => res.json()) as GoogleUser | GoogleErrorResponse
+    const response = (await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        authorization: `Bearer ${this.token?.token}`,
+      },
+    }).then((res) => res.json())) as GoogleUser | GoogleErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
 

@@ -1,19 +1,46 @@
-export type GithubScope =
-  'repo' | 'repo:status' | 'repo_deployment' | 'public_repo' | 'repo:invite' | 'security_events' | 
-  'admin:repo_hook' | 'write:repo_hook' | 'read:repo_hook' | 'admin:org' | 'write:org' | 'read:org' |
-  'admin:public_key' | 'write:public_key' | 'read:public_key' | 'admin:org_hook' | 'gist' |
-  'notifications' | 'user' | 'read:user' | 'user:email' | 'user:follow' | 'project' | 'read:project' |
-  'delete_repo' | 'write:packages' | 'read:packages' | 'delete:packages' | 'admin:gpg_key' |
-  'write:gpg_key' | 'read:gpg_key' | 'codespace' | 'workflow'
+export type GitHubScope =
+  | 'repo'
+  | 'repo:status'
+  | 'repo_deployment'
+  | 'public_repo'
+  | 'repo:invite'
+  | 'security_events'
+  | 'admin:repo_hook'
+  | 'write:repo_hook'
+  | 'read:repo_hook'
+  | 'admin:org'
+  | 'write:org'
+  | 'read:org'
+  | 'admin:public_key'
+  | 'write:public_key'
+  | 'read:public_key'
+  | 'admin:org_hook'
+  | 'gist'
+  | 'notifications'
+  | 'user'
+  | 'read:user'
+  | 'user:email'
+  | 'user:follow'
+  | 'project'
+  | 'read:project'
+  | 'delete_repo'
+  | 'write:packages'
+  | 'read:packages'
+  | 'delete:packages'
+  | 'admin:gpg_key'
+  | 'write:gpg_key'
+  | 'read:gpg_key'
+  | 'codespace'
+  | 'workflow'
 
-export type GithubErrorResponse = {
+export type GitHubErrorResponse = {
   error: string
   error_description: string
   message: string
   documentation_url: string
 }
 
-export type GithubTokenResponse = {
+export type GitHubTokenResponse = {
   access_token: string
   expires_in?: number
   refresh_token?: string
@@ -22,7 +49,7 @@ export type GithubTokenResponse = {
   scope: string
 }
 
-export type GithubUser = {
+export type GitHubUser = {
   login: string
   id: number
   node_id: string
@@ -55,16 +82,16 @@ export type GithubUser = {
   following: number
   created_at: string
   updated_at: string
-  private_gists: number,
-  total_private_repos: number,
-  owned_private_repos: number,
-  disk_usage: number,
-  collaborators: number,
-  two_factor_authentication: boolean,
+  private_gists: number
+  total_private_repos: number
+  owned_private_repos: number
+  disk_usage: number
+  collaborators: number
+  two_factor_authentication: boolean
   plan: {
-    name: string,
-    space: number,
-    collaborators: number,
+    name: string
+    space: number
+    collaborators: number
     private_repos: number
   }
 }

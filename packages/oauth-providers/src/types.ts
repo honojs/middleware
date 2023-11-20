@@ -1,7 +1,7 @@
 import type { FacebookUser } from './providers/facebook'
-import type { GithubUser } from './providers/github'
+import type { GitHubUser } from './providers/github'
 import type { GoogleUser } from './providers/google'
-import type { LinkedInUser } from './providers/linkedIn'
+import type { LinkedInUser } from './providers/linkedin'
 
 export type OAuthVariables = {
   token: Token | undefined
@@ -9,7 +9,7 @@ export type OAuthVariables = {
   'granted-scopes': string[] | undefined
   'user-facebook': Partial<FacebookUser> | undefined
   'user-google': Partial<GoogleUser> | undefined
-  'user-github': Partial<GithubUser> | undefined
+  'user-github': Partial<GitHubUser> | undefined
   'user-linkedin': Partial<LinkedInUser> | undefined
 }
 

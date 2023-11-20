@@ -16,13 +16,13 @@ export function linkedinAuth(options: {
     const newState = getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || c.env?.LINKEDIN_ID as string,
-      client_secret: options.client_secret || c.env?.LINKEDIN_SECRET as string,
+      client_id: options.client_id || (c.env?.LINKEDIN_ID as string),
+      client_secret: options.client_secret || (c.env?.LINKEDIN_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
       appAuth: options.appAuth || false,
-      code: c.req.query('code')
+      code: c.req.query('code'),
     })
 
     // Avoid CSRF attack by checking state

@@ -2,7 +2,7 @@
 export function toQueryParams(params: { [key: string]: any }): string {
   const elements = Object.keys(params)
 
-  elements.forEach(element => {
+  elements.forEach((element) => {
     if (params[element] === undefined) {
       delete params[element]
     }

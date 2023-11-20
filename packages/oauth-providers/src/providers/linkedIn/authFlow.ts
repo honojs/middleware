@@ -2,7 +2,12 @@ import { HTTPException } from 'hono/http-exception'
 
 import type { Token } from '../../types'
 import { toQueryParams } from '../../utils/objectToQuery'
-import type { LinkedInErrorResponse, LinkedInTokenResponse, LinkedInUser, LinkedInScope } from './types'
+import type {
+  LinkedInErrorResponse,
+  LinkedInTokenResponse,
+  LinkedInUser,
+  LinkedInScope,
+} from './types'
 
 export type LinkedInAuthFlow = {
   client_id: string
@@ -26,11 +31,18 @@ export class AuthFlow {
   user: Partial<LinkedInUser> | undefined
   granted_scopes: string[] | undefined
 
-  constructor({ client_id, client_secret, redirect_uri, scope, state, appAuth, code }: LinkedInAuthFlow) {
+  constructor({
+    client_id,
+    client_secret,
+    redirect_uri,
+    scope,
+    state,
+    appAuth,
+    code,
+  }: LinkedInAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
-    this.redirect_uri = redirect_uri,
-    this.scope = scope
+    ;(this.redirect_uri = redirect_uri), (this.scope = scope)
     this.state = state
     this.code = appAuth ? '' : code
     this.token = undefined
@@ -57,32 +69,28 @@ export class AuthFlow {
       code: this.code,
       client_id: this.client_id,
       client_secret: this.client_secret,
-      redirect_uri: this.redirect_uri
+      redirect_uri: this.redirect_uri,
     })
 
-    const response = await fetch(
-      `https://www.linkedin.com/oauth/v2/accessToken?${params}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      }
-    )
-      .then(res => res.json()) as LinkedInTokenResponse | LinkedInErrorResponse
+    const response = (await fetch(`https://www.linkedin.com/oauth/v2/accessToken?${params}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }).then((res) => res.json())) as LinkedInTokenResponse | LinkedInErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error_description })
 
     if ('access_token' in response) {
       this.token = {
         token: response.access_token,
-        expires_in: response.expires_in
+        expires_in: response.expires_in,
       }
       this.refresh_token = {
         token: response.refresh_token,
-        expires_in: response.refresh_token_expires_in
+        expires_in: response.refresh_token_expires_in,
       }
-  
+
       this.granted_scopes = response.scope?.split(',')
     }
   }
@@ -92,15 +100,11 @@ export class AuthFlow {
       await this.getTokenFromCode()
     }
 
-    const response = await fetch(
-      'https://api.linkedin.com/v2/userinfo',
-      {
-        headers: {
-          Authorization: `Bearer ${this.token?.token}`,
-        }
-      }
-    )
-      .then(res => res.json()) as LinkedInUser | LinkedInErrorResponse
+    const response = (await fetch('https://api.linkedin.com/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${this.token?.token}`,
+      },
+    }).then((res) => res.json())) as LinkedInUser | LinkedInErrorResponse
 
     if ('message' in response) throw new HTTPException(400, { message: response.message })
 
@@ -110,21 +114,22 @@ export class AuthFlow {
   async getAppToken() {
     const params = toQueryParams({
       grant_type: 'client_credentials',
-      client_id: this.client_id+ 'kkk',
-      client_secret: this.client_secret
+      client_id: this.client_id + 'kkk',
+      client_secret: this.client_secret,
     })
-    
-    const response = await fetch(`https://www.linkedin.com/oauth/v2/accessToken?${params}`)
-      .then(res => res.json()) as LinkedInTokenResponse | LinkedInErrorResponse
+
+    const response = (await fetch(`https://www.linkedin.com/oauth/v2/accessToken?${params}`).then(
+      (res) => res.json()
+    )) as LinkedInTokenResponse | LinkedInErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error_description })
 
     if ('access_token' in response) {
       this.token = {
         token: response.access_token,
-        expires_in: response.expires_in
+        expires_in: response.expires_in,
       }
-  
+
       this.granted_scopes = response.scope?.split(',')
     }
   }

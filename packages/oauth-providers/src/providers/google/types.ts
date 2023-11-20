@@ -27,7 +27,7 @@ export type GoogleTokenInfoResponse = {
 }
 
 export type GoogleUser = {
-  id: string,
+  id: string
   email: string
   verified_email: boolean
   name: string

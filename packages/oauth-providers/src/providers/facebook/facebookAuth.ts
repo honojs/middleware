@@ -16,8 +16,8 @@ export function facebookAuth(options: {
     const newState = getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || c.env?.FACEBOOK_ID as string,
-      client_secret: options.client_secret || c.env?.FACEBOOK_SECRET as string,
+      client_id: options.client_id || (c.env?.FACEBOOK_ID as string),
+      client_secret: options.client_secret || (c.env?.FACEBOOK_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,
@@ -25,8 +25,8 @@ export function facebookAuth(options: {
       code: c.req.query('code'),
       token: {
         token: c.req.query('access_token') as string,
-        expires_in: Number(c.req.query('expires_in'))
-      }
+        expires_in: Number(c.req.query('expires_in')),
+      },
     })
 
     // Avoid CSRF attack by checking state

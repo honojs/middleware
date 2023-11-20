@@ -4,24 +4,24 @@ import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
 import { AuthFlow } from './authFlow'
-import type { GithubScope } from './types'
+import type { GitHubScope } from './types'
 
 export function githubAuth(options: {
   client_id?: string
   client_secret?: string
-  scope?: GithubScope[]
+  scope?: GitHubScope[]
   oauthApp?: boolean
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || c.env?.GITHUB_ID as string,
-      client_secret: options.client_secret || c.env?.GITHUB_SECRET as string,
+      client_id: options.client_id || (c.env?.GITHUB_ID as string),
+      client_secret: options.client_secret || (c.env?.GITHUB_SECRET as string),
       scope: options.scope,
       state: newState,
       oauthApp: options.oauthApp || false,
-      code: c.req.query('code')
+      code: c.req.query('code'),
     })
 
     // Avoid CSRF attack by checking state
