@@ -14,6 +14,7 @@ export type DistSwaggerUIOptions = {
   operationsSorter?: string
   requestInterceptor?: string
   responseInterceptor?: string
+  persistAuthorization?: boolean
 }
 
 const RENDER_TYPE = {
@@ -37,6 +38,7 @@ const RENDER_TYPE_MAP = {
   operationsSorter: RENDER_TYPE.RAW,
   requestInterceptor: RENDER_TYPE.RAW,
   responseInterceptor: RENDER_TYPE.RAW,
+  persistAuthorization: RENDER_TYPE.RAW,
 } as const satisfies Record<
   keyof DistSwaggerUIOptions,
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]
