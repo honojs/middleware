@@ -298,7 +298,7 @@ Header keys that you define in your schema must be in lowercase.
 
 ```ts
 const HeadersSchema = z.object({
-  // Header keys must be in lowercase, `Authorization` is NG.
+  // Header keys must be in lowercase, `Authorization` is not allowed.
   authorization: z.string().openapi({
     example: 'Bearer SECRET',
   }),
