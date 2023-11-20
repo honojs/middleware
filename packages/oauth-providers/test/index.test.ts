@@ -8,7 +8,7 @@ import { googleAuth } from '../src/providers/google'
 import type { GoogleUser } from '../src/providers/google'
 import { linkedinAuth } from '../src/providers/linkedin'
 import type { LinkedInUser } from '../src/providers/linkedin'
-import type { Token, OAuthVariables } from '../src/types'
+import type { Token } from '../src/types'
 import {
   dummyToken,
   googleUser,
@@ -32,7 +32,7 @@ const client_id = '1jsdsldjkssd-4343dsasdsd34ghhn4-dummyid'
 const client_secret = 'SDJS943hS_jj45dummysecret'
 
 describe('OAuth Middleware', () => {
-  const app = new Hono<{ Variables: OAuthVariables }>()
+  const app = new Hono()
 
   app.use(
     '/google',
