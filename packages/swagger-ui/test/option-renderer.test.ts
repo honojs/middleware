@@ -124,4 +124,12 @@ describe('SwaggerUIOption Rendering', () => {
       })
     ).toEqual('responseInterceptor: (res) => res')
   })
+
+  it('renders correctly with persistAuthorization', () => {
+    expect(
+      renderSwaggerUIOptions({
+        persistAuthorization: true,
+      })
+    ).toEqual('persistAuthorization: true')
+  })
 })
