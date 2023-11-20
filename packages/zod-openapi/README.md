@@ -286,9 +286,24 @@ const client = hc<typeof appRoutes>('http://localhost:8787/')
 
 ## Limitations
 
+### Combining with `Hono`
+
 Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
 
 If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
+
+### Header keys
+
+Header keys that you define in your schema must be in lowercase.
+
+```ts
+const HeadersSchema = z.object({
+  // Header keys must be in lowercase, `Authorization` is not allowed.
+  authorization: z.string().openapi({
+    example: 'Bearer SECRET',
+  }),
+})
+```
 
 ## References
 
