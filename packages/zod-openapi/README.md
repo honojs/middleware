@@ -284,6 +284,50 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+## Tips
+
+### How to register components
+
+You can register components to the registry as follows:
+
+```ts
+app.openAPIRegistry.registerComponent('schemas', {
+  User: UserSchema,
+})
+```
+
+About this feature, please refer to [the "Zod to OpenAPI" resource / Defining Custom Components](https://github.com/asteasolutions/zod-to-openapi#defining-custom-components)
+
+### How to setup authorization
+
+You can setup authorization as follows:
+
+eg. Bearer Auth
+
+Register the security scheme:
+
+```ts
+app.openAPIRegistry.registerComponent('securitySchema', {
+  Bearer: {
+    type: 'http',
+    scheme: 'bearer',
+  },
+}
+```
+
+And setup the security scheme for specific routes:
+
+```ts
+const route = createRoute({
+  // ...
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+})
+```
+
 ## Limitations
 
 ### Combining with `Hono`
