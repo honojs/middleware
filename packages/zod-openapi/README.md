@@ -296,6 +296,8 @@ app.openAPIRegistry.registerComponent('schemas', {
 })
 ```
 
+About this feature, please refer to [the "Zod to OpenAPI" resource / Defining Custom Components](https://github.com/asteasolutions/zod-to-openapi#defining-custom-components)
+
 ### How to setup authorization
 
 You can setup authorization as follows:
