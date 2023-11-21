@@ -284,6 +284,48 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+## Tips
+
+### How to register components
+
+You can register components to the registry as follows:
+
+```ts
+app.openAPIRegistry.registerComponent('schemas', {
+  User: UserSchema,
+})
+```
+
+### How to setup authorization
+
+You can setup authorization as follows:
+
+eg. Bearer Auth
+
+Register the security scheme:
+
+```ts
+app.openAPIRegistry.registerComponent('securitySchema', {
+  Bearer: {
+    type: 'http',
+    scheme: 'bearer',
+  },
+}
+```
+
+And setup the security scheme for specific routes:
+
+```ts
+const route = createRoute({
+  // ...
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+})
+```
+
 ## Limitations
 
 Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
