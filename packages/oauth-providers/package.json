@@ -56,12 +56,12 @@
     },
     "./linkedin": {
       "import": {
-        "types": "./dist/providers/linkedin/index.d.mts",
-        "default": "./dist/providers/linkedin/index.mjs"
+        "types": "./dist/providers/linkedIn/index.d.mts",
+        "default": "./dist/providers/linkedIn/index.mjs"
       },
       "require": {
-        "types": "./dist/providers/linkedin/index.d.ts",
-        "default": "./dist/providers/linkedin/index.js"
+        "types": "./dist/providers/linkedIn/index.d.ts",
+        "default": "./dist/providers/linkedIn/index.js"
       }
     }
   },
@@ -77,7 +77,7 @@
         "./dist/providers/google/index.d.ts"
       ],
       "linkedin": [
-        "./dist/providers/linkedin/index.d.ts"
+        "./dist/providers/linkedIn/index.d.ts"
       ]
     }
   },

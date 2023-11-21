@@ -114,7 +114,7 @@ export class AuthFlow {
   async getAppToken() {
     const params = toQueryParams({
       grant_type: 'client_credentials',
-      client_id: this.client_id + 'kkk',
+      client_id: this.client_id,
       client_secret: this.client_secret,
     })
 
