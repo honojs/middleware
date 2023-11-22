@@ -1121,3 +1121,57 @@ describe('Path normalization', () => {
     })
   })
 })
+
+describe('Context can be accessible in the doc route', () => {
+  const app = new OpenAPIHono<{ Bindings: { TITLE: string } }>()
+
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/no-content',
+      responses: {
+        204: {
+          description: 'No Content',
+        },
+      },
+    }),
+    (c) => {
+      return c.body(null, 204)
+    }
+  )
+
+  app.doc('/doc', context => ({
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: context.env.TITLE,
+    },
+  }))
+
+  it('Should return with the title set as specified in env', async () => {
+    const res = await app.request('/doc', null, { TITLE: 'My API' })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'My API',
+      },
+      components: {
+        schemas: {},
+        parameters: {},
+      },
+      paths: {
+        '/no-content': {
+          get: {
+            responses: {
+              204: {
+                description: 'No Content',
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+})
