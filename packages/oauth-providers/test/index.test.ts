@@ -6,8 +6,8 @@ import { githubAuth } from '../src/providers/github'
 import type { GitHubUser } from '../src/providers/github'
 import { googleAuth } from '../src/providers/google'
 import type { GoogleUser } from '../src/providers/google'
-import { linkedinAuth } from '../src/providers/linkedIn'
-import type { LinkedInUser } from '../src/providers/linkedIn'
+import { linkedinAuth } from '../src/providers/linkedin'
+import type { LinkedInUser } from '../src/providers/linkedin'
 import type { Token } from '../src/types'
 import {
   dummyToken,

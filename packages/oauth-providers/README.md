@@ -536,7 +536,7 @@ After the completion of the LinkedIn Auth flow, essential data has been prepared
 
 ```ts
 import { Hono } from 'hono'
-import { linkedinAuth } from '@hono/oauth-providers/linkedIn'
+import { linkedinAuth } from '@hono/oauth-providers/linkedin'
 
 const app = new Hono()
 

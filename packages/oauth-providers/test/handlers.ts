@@ -12,7 +12,7 @@ import type {
   GoogleTokenResponse,
   GoogleUser,
 } from '../src/providers/google/types'
-import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedIn'
+import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
 
 export const handlers = [
   // Google
