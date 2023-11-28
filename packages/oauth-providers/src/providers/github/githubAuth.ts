@@ -40,7 +40,11 @@ export function githubAuth(options: {
         path: '/',
         // secure: true,
       })
-      return c.redirect(auth.redirect())
+
+      // OAuth apps can't have multiple callback URLs, but GitHub Apps can.
+      // As such, we want to make sure we call back to the same location
+      // for GitHub apps and not the first configured callbackURL in the app config.
+      return c.redirect(auth.redirect().concat(options.oauthApp ? '' : `&redirect_uri=${c.req.url}`))
     }
 
     // Retrieve user data from github
