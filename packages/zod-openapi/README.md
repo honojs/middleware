@@ -231,7 +231,7 @@ You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
 app.doc31('/docs', {openapi: '3.1.0'}) // new endpoint
-app.getOpenAPI31Document(, {openapi: '3.1.0'}) // raw json
+app.getOpenAPI31Document({openapi: '3.1.0'}) // raw json
 ```
 
 ### The Registry
@@ -312,7 +312,7 @@ app.openAPIRegistry.registerComponent('securitySchema', {
     type: 'http',
     scheme: 'bearer',
   },
-}
+})
 ```
 
 And setup the security scheme for specific routes:
