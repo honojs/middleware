@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.0
+
+### Minor Changes
+
+- [#272](https://github.com/honojs/middleware/pull/272) [`d4aa8ec`](https://github.com/honojs/middleware/commit/d4aa8ec5ad38942c1606642dc4676a92a7c006a8) Thanks [@Karibash](https://github.com/Karibash)! - Make context accessible in the doc route
+
 ## 0.8.6
 
 ### Patch Changes
