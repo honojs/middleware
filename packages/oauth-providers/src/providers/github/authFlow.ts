@@ -43,15 +43,15 @@ export class AuthFlow {
   redirect() {
     const url = 'https://github.com/login/oauth/authorize?'
 
-    if (this.oauthApp) {
-      const parsedScope = toQueryParams({
-        scope: this.scope,
-        state: this.state,
-      })
-      return `${url}${parsedScope}&client_id=${this.client_id}`
-    }
+    const queryParams = toQueryParams({
+      client_id: this.client_id,
+      state: this.state,
+      // For GitHub apps, the scope is configured during the app setup / creation.
+      // For OAuth apps, we need to provide the scope.
+      ...(this.oauthApp && { scope: this.scope }),
+    })
 
-    return `${url}client_id=${this.client_id}`
+    return url.concat(queryParams);
   }
 
   private async getTokenFromCode() {
