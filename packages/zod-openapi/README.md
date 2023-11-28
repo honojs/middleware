@@ -328,6 +328,26 @@ const route = createRoute({
 })
 ```
 
+### How to access context in app.doc
+
+You can access the context in `app.doc` as follows:
+
+```ts
+app.doc('/doc', c => ({
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+  servers: [
+    {
+      url: new URL(c.req.url).hostname,
+      description: 'Current environment',
+    },
+  ],
+}))
+```
+
 ## Limitations
 
 ### Combining with `Hono`
