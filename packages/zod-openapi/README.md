@@ -231,7 +231,7 @@ You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
 app.doc31('/docs', {openapi: '3.1.0'}) // new endpoint
-app.getOpenAPI31Document(, {openapi: '3.1.0'}) // raw json
+app.getOpenAPI31Document({openapi: '3.1.0'}) // raw json
 ```
 
 ### The Registry
@@ -284,11 +284,90 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+## Tips
+
+### How to register components
+
+You can register components to the registry as follows:
+
+```ts
+app.openAPIRegistry.registerComponent('schemas', {
+  User: UserSchema,
+})
+```
+
+About this feature, please refer to [the "Zod to OpenAPI" resource / Defining Custom Components](https://github.com/asteasolutions/zod-to-openapi#defining-custom-components)
+
+### How to setup authorization
+
+You can setup authorization as follows:
+
+eg. Bearer Auth
+
+Register the security scheme:
+
+```ts
+app.openAPIRegistry.registerComponent('securitySchema', {
+  Bearer: {
+    type: 'http',
+    scheme: 'bearer',
+  },
+})
+```
+
+And setup the security scheme for specific routes:
+
+```ts
+const route = createRoute({
+  // ...
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+})
+```
+
+### How to access context in app.doc
+
+You can access the context in `app.doc` as follows:
+
+```ts
+app.doc('/doc', c => ({
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+  servers: [
+    {
+      url: new URL(c.req.url).hostname,
+      description: 'Current environment',
+    },
+  ],
+}))
+```
+
 ## Limitations
+
+### Combining with `Hono`
 
 Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
 
 If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
+
+### Header keys
+
+Header keys that you define in your schema must be in lowercase.
+
+```ts
+const HeadersSchema = z.object({
+  // Header keys must be in lowercase, `Authorization` is not allowed.
+  authorization: z.string().openapi({
+    example: 'Bearer SECRET',
+  }),
+})
+```
 
 ## References
 

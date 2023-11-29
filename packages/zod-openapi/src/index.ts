@@ -185,6 +185,10 @@ export type RouteHook<
   P extends string = ConvertPathType<R['path']>
 > = Hook<I, E, P, OutputType<R>>
 
+export type OpenAPIObjectConfigure<E extends Env, P extends string> =
+  OpenAPIObjectConfig |
+  ((context: Context<E, P>) => OpenAPIObjectConfig)
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -277,18 +281,26 @@ export class OpenAPIHono<
     return document
   }
 
-  doc = (path: string, config: OpenAPIObjectConfig) => {
-    this.get(path, (c) => {
+  doc = <P extends string>(
+    path: P,
+    configure: OpenAPIObjectConfigure<E, P>
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+    return this.get(path, (c) => {
+      const config = typeof configure === 'function' ? configure(c) : configure
       const document = this.getOpenAPIDocument(config)
       return c.json(document)
-    })
+    }) as any
   }
 
-  doc31 = (path: string, config: OpenAPIObjectConfig) => {
-    this.get(path, (c) => {
+  doc31 = <P extends string>(
+    path: P,
+    configure: OpenAPIObjectConfigure<E, P>
+  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+    return this.get(path, (c) => {
+      const config = typeof configure === 'function' ? configure(c) : configure
       const document = this.getOpenAPI31Document(config)
       return c.json(document)
-    })
+    }) as any
   }
 
   route<
