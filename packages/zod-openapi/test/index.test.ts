@@ -1,10 +1,8 @@
-/* eslint-disable node/no-extraneous-import */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Hono, Env, ToSchema, Context } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { OpenAPIHono, createRoute, z } from '../src'
+import { OpenAPIHono, createRoute, z } from '../src/index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -20,7 +18,7 @@ describe('Constructor', () => {
   it('Should accept a defaultHook', () => {
     type FakeEnv = { Variables: { fake: string }; Bindings: { other: number } }
     const app = new OpenAPIHono<FakeEnv>({
-      defaultHook: (result, c) => {
+      defaultHook: (_result, c) => {
         // Make sure we're passing context types through
         expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
       },
@@ -301,12 +299,10 @@ describe('Header', () => {
 
   const app = new OpenAPIHono()
 
-  const controller = (c) => {
+  app.openapi(route, (c) => {
     const headerData = c.req.valid('header')
     return c.jsonT(headerData)
-  }
-
-  app.openapi(route, controller)
+  })
 
   it('Should return 200 response with correct contents', async () => {
     const res = await app.request('/pong', {
@@ -1010,7 +1006,7 @@ describe('Path normalization', () => {
     })
   }
 
-  const handler = (c) => c.body(null, 204)
+  const handler = (c: Context) => c.body(null, 204)
 
   describe('Duplicate slashes in the root path', () => {
     const app = createRootApp()
@@ -1149,7 +1145,7 @@ describe('Context can be accessible in the doc route', () => {
   }))
 
   it('Should return with the title set as specified in env', async () => {
-    const res = await app.request('/doc', null, { TITLE: 'My API' })
+    const res = await app.request('/doc', undefined, { TITLE: 'My API' })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       openapi: '3.0.0',

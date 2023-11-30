@@ -1,13 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "types": [
+      "vitest/globals",
+    ],
   },
   "include": [
     "src/",
+    "test/"
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
 }
