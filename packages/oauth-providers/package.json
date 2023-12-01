@@ -63,6 +63,16 @@
         "types": "./dist/providers/linkedin/index.d.ts",
         "default": "./dist/providers/linkedin/index.js"
       }
+    },
+    "./x": {
+      "import": {
+        "types": "./dist/providers/x/index.d.mts",
+        "default": "./dist/providers/x/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/x/index.d.ts",
+        "default": "./dist/providers/x/index.js"
+      }
     }
   },
   "typesVersions": {
@@ -78,6 +88,9 @@
       ],
       "linkedin": [
         "./dist/providers/linkedin/index.d.ts"
+      ],
+      "x": [
+        "./dist/providers/x/index.d.ts"
       ]
     }
   },
@@ -95,6 +108,10 @@
     "ts-jest": "^29.1.1",
     "tsup": "^8.0.0",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.1",
+    "crypto-js": "^4.2.0"
   },
   "engines": {
     "node": ">=18.4.0"

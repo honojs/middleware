@@ -8,6 +8,8 @@ import { googleAuth } from '../src/providers/google'
 import type { GoogleUser } from '../src/providers/google'
 import { linkedinAuth } from '../src/providers/linkedin'
 import type { LinkedInUser } from '../src/providers/linkedin'
+import type { XUser} from '../src/providers/x'
+import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
 import type { Token } from '../src/types'
 import {
   dummyToken,
@@ -23,6 +25,12 @@ import {
   linkedInCodeError,
   linkedInUser,
   linkedInToken,
+  xCodeError,
+  xUser,
+  xToken,
+  xRefreshToken,
+  xRefreshTokenError,
+  xRevokeTokenError,
 } from './handlers'
 
 const server = setupServer(...handlers)
@@ -126,14 +134,14 @@ describe('OAuth Middleware', () => {
   })
 
   app.use(
-    'linkedin',
+    '/linkedin',
     linkedinAuth({
       client_id,
       client_secret,
       scope: ['email', 'openid', 'profile'],
     })
   )
-  app.get('linkedin', (c) => {
+  app.get('/linkedin', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
     const user = c.get('user-linkedin')
@@ -145,6 +153,59 @@ describe('OAuth Middleware', () => {
       grantedScopes,
       user,
     })
+  })
+
+  app.use(
+    '/x',
+    xAuth({
+      client_id,
+      client_secret,
+      scope: ['tweet.read', 'users.read', 'follows.read', 'follows.write', 'offline.access'],
+      fields: [
+        'created_at',
+        'description',
+        'entities',
+        'location',
+        'most_recent_tweet_id',
+        'pinned_tweet_id',
+        'profile_image_url',
+        'protected',
+        'public_metrics',
+        'url',
+        'verified',
+        'verified_type',
+        'withheld'
+      ]
+    })
+  )
+  app.get('/x', (c) => {
+    const token = c.get('token')
+    const refreshToken = c.get('refresh-token')
+    const user = c.get('user-x')
+    const grantedScopes = c.get('granted-scopes')
+
+    return c.json({
+      token,
+      refreshToken,
+      grantedScopes,
+      user,
+    })
+  })
+  app.get('x/refresh', async (c) => {
+    const response = await refreshToken(client_id, client_secret, 'MzJvY0QyNmNzWUtBU3BUelpOU1NLdXFOd05qdGROZFhtR3o3QkpPNHZpQ2xrOjE3MDEyOTU0ODkxMzM6MTowOnJ0OjE')
+    return c.json(response)
+  })
+  app.get('x/refresh/error', async (c) => {
+    const response = await refreshToken(client_id, client_secret, 'wrong-refresh-token')
+    return c.json(response)
+  })
+  app.get('/x/revoke', async (c) => {
+    const response = await revokeToken(client_id, client_secret, 'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE')
+    return c.json(response)
+  })
+  app.get('x/revoke/error', async (c) => {
+    const response = await revokeToken(client_id, client_secret, 'wrong-token')
+    return c.json(response)
   })
 
   beforeAll(() => {
@@ -355,6 +416,90 @@ describe('OAuth Middleware', () => {
       expect(response.refreshToken).toEqual({
         token: linkedInToken.refresh_token,
         expires_in: linkedInToken.refresh_token_expires_in,
+      })
+    })
+  })
+
+  describe('xAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should redirect', async () => {
+        const res = await app.request('/x')
+  
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+      })
+  
+      it('Prevent CSRF attack', async () => {
+        const res = await app.request(`/x?code=${dummyCode}&state=malware-state`)
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+  
+      it('Should throw error for invalid code', async () => {
+        const res = await app.request('/x?code=9348ffdsd-sdsdbad-code')
+  
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(xCodeError.error_description)
+      })
+  
+      it('Should work with received code', async () => {
+        const res = await app.request(
+          `/x?code=${dummyCode}`
+        )
+        const response = (await res.json()) as {
+          token: Token
+          refreshToken: Token
+          user: XUser
+          grantedScopes: string[]
+        }
+  
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(response.user).toEqual(xUser.data)
+        expect(response.grantedScopes).toEqual(['tweet.read', 'users.read', 'follows.read', 'follows.write', 'offline.access'])
+        expect(response.token).toEqual({
+          token: xToken.access_token,
+          expires_in: xToken.expires_in,
+        })
+        expect(response.refreshToken).toEqual({
+          token: xToken.refresh_token,
+          expires_in: 0,
+        })
+      })
+    })
+
+    describe('Refresh Token', () => { 
+      it('Should refresh token', async () => {
+        const res = await app.request('/x/refresh')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(xRefreshToken)
+      })
+
+      it('Should return error for refresh', async () => {
+        const res = await app.request('/x/refresh/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(xRefreshTokenError.error_description)
+      })
+    })
+
+    describe('Revoke Token', () => { 
+      it('Should revoke token', async () => {
+        const res = await app.request('/x/revoke')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(true)
+      })
+
+      it('Should return error for revoke', async () => {
+        const res = await app.request('/x/revoke/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(xRevokeTokenError.error_description)
       })
     })
   })
