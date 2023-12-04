@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.1
+
+### Patch Changes
+
+- [#287](https://github.com/honojs/middleware/pull/287) [`1568b92`](https://github.com/honojs/middleware/commit/1568b920de1e45b963d1812c32932fad01dbe2fe) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: Strict type checking of return values
+
 ## 0.9.0
 
 ### Minor Changes
