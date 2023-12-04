@@ -6935,10 +6935,15 @@ heap-js@^2.2.0:
   resolved "https://registry.yarnpkg.com/heap-js/-/heap-js-2.3.0.tgz#8eed2cede31ec312aa696eef1d4df0565841f183"
   integrity sha512-E5303mzwQ+4j/n2J0rDvEPBN7GKjhis10oHiYOgjxsmxYgqG++hz9NyLLOXttzH8as/DyiBHYpUrJTZWYaMo8Q==
 
-hono@^3.0.0, hono@^3.1.0, hono@^3.1.2, hono@^3.1.5, hono@^3.5.1, hono@^3.5.2, hono@^3.5.8, hono@^3.7.2, hono@^3.7.3, hono@^3.9.1, hono@^3.9.2:
+hono@^3.0.0, hono@^3.1.0, hono@^3.1.2, hono@^3.1.5, hono@^3.5.1, hono@^3.5.2, hono@^3.5.8, hono@^3.7.2, hono@^3.7.3, hono@^3.9.2:
   version "3.9.2"
   resolved "https://registry.yarnpkg.com/hono/-/hono-3.9.2.tgz#db31a6ce733131ee16bce0c9bd031a0708ebe052"
   integrity sha512-180NOiMadqU3lGmN6ajPDZvZPWus3a9mtVaAUR9uG0SImngBwRLA8vbnV0oUfUAgFT4nX55sGV9dVA06OuikHA==
+
+hono@^3.11.1:
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.11.1.tgz#2f5893ae02baf55e1c5ad1e5b3a75936e3942c88"
+  integrity sha512-8FNUh8p/dkw8qYFxy8IJA500iW9NSeuvuwRfLw0FGkE/blCxtqWqxWTB+NaLSK3qGpaudzKur6s40Q0kpO0E+w==
 
 hosted-git-info@^2.1.4:
   version "2.8.9"

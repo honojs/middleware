@@ -4,6 +4,7 @@ import type {
   ResponseConfig,
   RouteConfig,
   ZodContentObject,
+  ZodMediaTypeObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
 import {
@@ -150,11 +151,12 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
-type HandlerResponse<O> =
-  | TypedResponse<O>
-  | Promise<TypedResponse<O>>
+type HandlerTypedResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
+type HandlerAllResponse<O> =
   | Response
   | Promise<Response>
+  | TypedResponse<O>
+  | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
@@ -171,7 +173,23 @@ export type RouteHandler<
     InputTypeForm<R> &
     InputTypeJson<R>,
   P extends string = ConvertPathType<R['path']>
-> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+> = Handler<
+  E,
+  P,
+  I,
+  // If response type is defined, only TypedResponse is allowed.
+  R extends {
+    responses: {
+      [statusCode: string]: {
+        content: {
+          [mediaType: string]: ZodMediaTypeObject
+        }
+      }
+    }
+  }
+    ? HandlerTypedResponse<OutputType<R>>
+    : HandlerAllResponse<OutputType<R>>
+>
 
 export type RouteHook<
   R extends RouteConfig,
@@ -186,8 +204,8 @@ export type RouteHook<
 > = Hook<I, E, P, OutputType<R>>
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
-  OpenAPIObjectConfig |
-  ((context: Context<E, P>) => OpenAPIObjectConfig)
+  | OpenAPIObjectConfig
+  | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
 export class OpenAPIHono<
   E extends Env = Env,
@@ -214,7 +232,23 @@ export class OpenAPIHono<
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
+    handler: Handler<
+      E,
+      P,
+      I,
+      // If response type is defined, only TypedResponse is allowed.
+      R extends {
+        responses: {
+          [statusCode: string]: {
+            content: {
+              [mediaType: string]: ZodMediaTypeObject
+            }
+          }
+        }
+      }
+        ? HandlerTypedResponse<OutputType<R>>
+        : HandlerAllResponse<OutputType<R>>
+    >,
     hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
   ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
