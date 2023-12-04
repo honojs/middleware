@@ -64,7 +64,7 @@ type InputTypeBase<
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends AnyZodObject
     ? {
-        in: { [K in Type]: z.infer<RequestPart<R, Part>> }
+        in: { [K in Type]: z.input<RequestPart<R, Part>> }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
@@ -78,7 +78,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             in: {
-              json: z.infer<
+              json: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -101,7 +101,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             in: {
-              form: z.infer<
+              form: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
