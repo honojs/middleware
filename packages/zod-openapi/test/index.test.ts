@@ -622,6 +622,14 @@ describe('Types', () => {
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>
   })
+
+  // @ts-expect-error it should throw an error if the types are wrong
+  app.openapi(route, (c) => {
+    return c.jsonT({
+      id: '123', // should be number
+      message: 'Success',
+    })
+  })
 })
 
 describe('Routers', () => {
@@ -1140,7 +1148,7 @@ describe('Context can be accessible in the doc route', () => {
     }
   )
 
-  app.doc('/doc', context => ({
+  app.doc('/doc', (context) => ({
     openapi: '3.0.0',
     info: {
       version: '1.0.0',
@@ -1149,7 +1157,7 @@ describe('Context can be accessible in the doc route', () => {
   }))
 
   it('Should return with the title set as specified in env', async () => {
-    const res = await app.request('/doc', null, { TITLE: 'My API' })
+    const res = await app.request('/doc', {}, { TITLE: 'My API' })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       openapi: '3.0.0',
