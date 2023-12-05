@@ -1,10 +1,8 @@
-/* eslint-disable node/no-extraneous-import */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Hono, Env, ToSchema, Context } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { OpenAPIHono, createRoute, z } from '../src'
+import { OpenAPIHono, createRoute, z } from '../src/index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -20,7 +18,7 @@ describe('Constructor', () => {
   it('Should accept a defaultHook', () => {
     type FakeEnv = { Variables: { fake: string }; Bindings: { other: number } }
     const app = new OpenAPIHono<FakeEnv>({
-      defaultHook: (result, c) => {
+      defaultHook: (_result, c) => {
         // Make sure we're passing context types through
         expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
       },
@@ -301,12 +299,10 @@ describe('Header', () => {
 
   const app = new OpenAPIHono()
 
-  const controller = (c) => {
+  app.openapi(route, (c) => {
     const headerData = c.req.valid('header')
     return c.jsonT(headerData)
-  }
-
-  app.openapi(route, controller)
+  })
 
   it('Should return 200 response with correct contents', async () => {
     const res = await app.request('/pong', {
@@ -554,27 +550,58 @@ describe('Form', () => {
   })
 })
 
-describe('Types', () => {
-  const RequestSchema = z.object({
-    id: z.number().openapi({}),
-    title: z.string().openapi({}),
+describe('Input types', () => {
+  const ParamsSchema = z.object({
+    id: z.string().transform(Number).openapi({
+      param: {
+        name: 'id',
+        in: 'path',
+      },
+      example: 123,
+    }),
   })
 
-  const PostSchema = z
+  const QuerySchema = z.object({
+    age: z.string().transform(Number).openapi({
+      param: {
+        name: 'age',
+        in: 'query',
+      },
+      example: 42
+    }),
+  })
+
+  const BodySchema = z.object({
+    sex: z.enum(['male', 'female']).openapi({})
+  }).openapi('User')
+
+  const UserSchema = z
     .object({
-      id: z.number().openapi({}),
-      message: z.string().openapi({}),
+      id: z.number().openapi({
+        example: 123,
+      }),
+      name: z.string().openapi({
+        example: 'John Doe',
+      }),
+      age: z.number().openapi({
+        example: 42,
+      }),
+      sex: z.enum(['male', 'female']).openapi({
+        example: 'male',
+      })
     })
-    .openapi('Post')
+    .openapi('User')
 
   const route = createRoute({
-    method: 'post',
-    path: '/posts',
+    method: 'patch',
+    path: '/users/{id}',
     request: {
+      params: ParamsSchema,
+      query: QuerySchema,
       body: {
         content: {
           'application/json': {
-            schema: RequestSchema,
+            schema: BodySchema,
           },
         },
       },
@@ -583,44 +610,44 @@ describe('Types', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostSchema,
+            schema: UserSchema,
           },
         },
-        description: 'Post a post',
+        description: 'Update a user',
       },
     },
   })
 
   const app = new OpenAPIHono()
 
-  const appRoutes = app.openapi(route, (c) => {
-    const data = c.req.valid('json')
+  app.openapi(route, (c) => {
+    const { id } = c.req.valid('param')
+    const { age } = c.req.valid('query')
+    const { sex } = c.req.valid('json')
+
     return c.jsonT({
-      id: data.id,
-      message: 'Success',
+      id,
+      age,
+      sex,
+      name: 'Ultra-man',
     })
   })
 
-  it('Should return correct types', () => {
-    type H = Hono<
-      Env,
-      ToSchema<
-        'post',
-        '/posts',
-        {
-          json: {
-            title: string
-            id: number
-          }
-        },
-        {
-          id: number
-          message: string
-        }
-      >,
-      '/'
-    >
-    expectTypeOf(appRoutes).toMatchTypeOf<H>
+  it('Should return 200 response with correct typed contents', async () => {
+    const res = await app.request('/users/123?age=42', {
+      method: 'PATCH',
+      body: JSON.stringify({ sex: 'male' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      id: 123,
+      age: 42,
+      sex: 'male',
+      name: 'Ultra-man'
+    })
   })
 
   // @ts-expect-error it should throw an error if the types are wrong
@@ -1018,7 +1045,7 @@ describe('Path normalization', () => {
     })
   }
 
-  const handler = (c) => c.body(null, 204)
+  const handler = (c: Context) => c.body(null, 204)
 
   describe('Duplicate slashes in the root path', () => {
     const app = createRootApp()
@@ -1157,7 +1184,7 @@ describe('Context can be accessible in the doc route', () => {
   }))
 
   it('Should return with the title set as specified in env', async () => {
-    const res = await app.request('/doc', {}, { TITLE: 'My API' })
+    const res = await app.request('/doc', undefined, { TITLE: 'My API' })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       openapi: '3.0.0',
