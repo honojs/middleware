@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.2
+
+### Patch Changes
+
+- [#286](https://github.com/honojs/middleware/pull/286) [`8178ba0`](https://github.com/honojs/middleware/commit/8178ba094f9bcc289b57f017a79fb075b08566cb) Thanks [@fahchen](https://github.com/fahchen)! - use z.input to infer input types of the request
+
 ## 0.9.1
 
 ### Patch Changes
