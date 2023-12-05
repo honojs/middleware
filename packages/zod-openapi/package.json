@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -38,12 +38,12 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=3.9.0",
+    "hono": ">=3.11.1",
     "zod": "3.*"
   },
   "devDependencies": {
     "@hono/zod-validator": "^0.1.11",
-    "hono": "^3.9.1",
+    "hono": "^3.11.1",
     "zod": "^3.22.1"
   },
   "dependencies": {

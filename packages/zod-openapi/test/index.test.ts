@@ -649,6 +649,14 @@ describe('Input types', () => {
       name: 'Ultra-man'
     })
   })
+
+  // @ts-expect-error it should throw an error if the types are wrong
+  app.openapi(route, (c) => {
+    return c.jsonT({
+      id: '123', // should be number
+      message: 'Success',
+    })
+  })
 })
 
 describe('Routers', () => {
@@ -1167,7 +1175,7 @@ describe('Context can be accessible in the doc route', () => {
     }
   )
 
-  app.doc('/doc', context => ({
+  app.doc('/doc', (context) => ({
     openapi: '3.0.0',
     info: {
       version: '1.0.0',
