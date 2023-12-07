@@ -51,6 +51,10 @@ const UserSchema = z
   .openapi('User')
 ```
 
+> [!TIP]
+> `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
+> If you want to register the schema as referenced components, use `.opanapi()` method.
+
 Next, create a route:
 
 ```ts
