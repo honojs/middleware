@@ -1,5 +1,5 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { Hono, Env, ToSchema, Context } from 'hono'
+import type { Context } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src/index'
@@ -103,7 +103,7 @@ describe('Basic - params', () => {
     route,
     (c) => {
       const { id } = c.req.valid('param')
-      return c.jsonT({
+      return c.json({
         id,
         age: 20,
         name: 'Ultra-man',
@@ -111,7 +111,7 @@ describe('Basic - params', () => {
     },
     (result, c) => {
       if (!result.success) {
-        const res = c.jsonT(
+        const res = c.json(
           {
             ok: false,
           },
@@ -245,7 +245,7 @@ describe('Query', () => {
 
   app.openapi(route, (c) => {
     const { page } = c.req.valid('query')
-    return c.jsonT({
+    return c.json({
       titles: ['Good title'],
       page: Number(page),
     })
@@ -301,7 +301,7 @@ describe('Header', () => {
 
   app.openapi(route, (c) => {
     const headerData = c.req.valid('header')
-    return c.jsonT(headerData)
+    return c.json(headerData)
   })
 
   it('Should return 200 response with correct contents', async () => {
@@ -363,7 +363,7 @@ describe('Cookie', () => {
 
   app.openapi(route, (c) => {
     const { debug } = c.req.valid('cookie')
-    return c.jsonT({
+    return c.json({
       name: 'foo',
       debug,
     })
@@ -433,7 +433,7 @@ describe('JSON', () => {
 
   app.openapi(route, (c) => {
     const { id, title } = c.req.valid('json')
-    return c.jsonT({
+    return c.json({
       id,
       title,
     })
@@ -514,7 +514,7 @@ describe('Form', () => {
 
   app.openapi(route, (c) => {
     const { id, title } = c.req.valid('form')
-    return c.jsonT({
+    return c.json({
       id: Number(id),
       title,
     })
@@ -552,28 +552,36 @@ describe('Form', () => {
 
 describe('Input types', () => {
   const ParamsSchema = z.object({
-    id: z.string().transform(Number).openapi({
-      param: {
-        name: 'id',
-        in: 'path',
-      },
-      example: 123,
-    }),
+    id: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'id',
+          in: 'path',
+        },
+        example: 123,
+      }),
   })
 
   const QuerySchema = z.object({
-    age: z.string().transform(Number).openapi({
-      param: {
-        name: 'age',
-        in: 'query',
-      },
-      example: 42
-    }),
+    age: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'age',
+          in: 'query',
+        },
+        example: 42,
+      }),
   })
 
-  const BodySchema = z.object({
-    sex: z.enum(['male', 'female']).openapi({})
-  }).openapi('User')
+  const BodySchema = z
+    .object({
+      sex: z.enum(['male', 'female']).openapi({}),
+    })
+    .openapi('User')
 
   const UserSchema = z
     .object({
@@ -588,7 +596,7 @@ describe('Input types', () => {
       }),
       sex: z.enum(['male', 'female']).openapi({
         example: 'male',
-      })
+      }),
     })
     .openapi('User')
 
@@ -625,7 +633,7 @@ describe('Input types', () => {
     const { age } = c.req.valid('query')
     const { sex } = c.req.valid('json')
 
-    return c.jsonT({
+    return c.json({
       id,
       age,
       sex,
@@ -646,13 +654,13 @@ describe('Input types', () => {
       id: 123,
       age: 42,
       sex: 'male',
-      name: 'Ultra-man'
+      name: 'Ultra-man',
     })
   })
 
   // @ts-expect-error it should throw an error if the types are wrong
   app.openapi(route, (c) => {
-    return c.jsonT({
+    return c.json({
       id: '123', // should be number
       message: 'Success',
     })
@@ -693,7 +701,7 @@ describe('Routers', () => {
       },
     },
   })
-  it('Should include definitions from nested routers', () => {
+  it('Should include definitions from nested routers', async () => {
     const router = new OpenAPIHono().openapi(route, (ctx) => {
       return ctx.jsonT({ id: 123 })
     })
@@ -731,6 +739,15 @@ describe('Routers', () => {
     expect(json.components?.parameters).toHaveProperty('Key')
     expect(json.paths).toHaveProperty('/api/posts')
     expect(json.webhooks).toHaveProperty('/api/postback')
+
+    const res = await app.request('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(200)
   })
 })
 
@@ -758,7 +775,7 @@ describe('Multi params', () => {
 
   app.openapi(route, (c) => {
     const { id, tagName } = c.req.valid('param')
-    return c.jsonT({
+    return c.json({
       id,
       tagName,
     })
@@ -786,7 +803,7 @@ describe('basePath()', () => {
   })
 
   const app = new OpenAPIHono().basePath('/api')
-  app.openapi(route, (c) => c.jsonT({ message: 'Hello' }))
+  app.openapi(route, (c) => c.json({ message: 'Hello' }))
   app.doc('/doc', {
     openapi: '3.0.0',
     info: {
@@ -835,10 +852,10 @@ describe('With hc', () => {
 
     const routes = app
       .openapi(createPostRoute, (c) => {
-        return c.jsonT(0)
+        return c.json(0)
       })
       .openapi(createBookRoute, (c) => {
-        return c.jsonT(0)
+        return c.json(0)
       })
 
     const client = hc<typeof routes>('http://localhost/')
@@ -853,7 +870,7 @@ describe('With hc', () => {
     const app = new OpenAPIHono({
       defaultHook: (result, c) => {
         if (!result.success) {
-          const res = c.jsonT(
+          const res = c.json(
             {
               ok: false,
               source: 'defaultHook',
@@ -939,7 +956,7 @@ describe('With hc', () => {
     // use the defaultHook
     app.openapi(createPostRoute, (c) => {
       const { title } = c.req.valid('json')
-      return c.jsonT({ title })
+      return c.json({ title })
     })
 
     // use a routeHook
@@ -947,11 +964,11 @@ describe('With hc', () => {
       createBookRoute,
       (c) => {
         const { title } = c.req.valid('json')
-        return c.jsonT({ title })
+        return c.json({ title })
       },
       (result, c) => {
         if (!result.success) {
-          const res = c.jsonT(
+          const res = c.json(
             {
               ok: false,
               source: 'routeHook' as const,

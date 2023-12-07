@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest run && vitest typecheck --run --passWithNoTests",
+    "test": "vitest run && vitest --typecheck --run --passWithNoTests",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
@@ -38,12 +38,13 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=3.11.1",
+    "hono": ">=3.11.3",
     "zod": "3.*"
   },
   "devDependencies": {
     "@hono/zod-validator": "^0.1.11",
-    "hono": "^3.11.1",
+    "hono": "^3.11.3",
+    "vitest": "^1.0.1",
     "zod": "^3.22.1"
   },
   "dependencies": {
