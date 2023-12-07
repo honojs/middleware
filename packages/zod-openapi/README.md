@@ -341,7 +341,7 @@ app.doc('/doc', c => ({
   },
   servers: [
     {
-      url: new URL(c.req.url).hostname,
+      url: new URL(c.req.url).origin,
       description: 'Current environment',
     },
   ],
