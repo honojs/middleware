@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.3
+
+### Patch Changes
+
+- [#292](https://github.com/honojs/middleware/pull/292) [`7ded22a`](https://github.com/honojs/middleware/commit/7ded22a57edba4d30144fd7641d9502eecefc1ac) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump Hono for peerDependencies and add tests
+
 ## 0.9.2
 
 ### Patch Changes
