@@ -109,10 +109,6 @@
     "tsup": "^8.0.0",
     "typescript": "^5.2.2"
   },
-  "dependencies": {
-    "@types/crypto-js": "^4.2.1",
-    "crypto-js": "^4.2.0"
-  },
   "engines": {
     "node": ">=18.4.0"
   }
