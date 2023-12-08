@@ -43,11 +43,7 @@ export class AuthFlow {
     codeChallenge,
     code,
   }: XAuthFlow) {
-    if (
-      client_id === undefined ||
-      client_secret === undefined ||
-      scope === undefined
-    ) {
+    if (client_id === undefined || client_secret === undefined || scope === undefined) {
       throw new HTTPException(400, {
         message: 'Required parameters were not found. Please provide them to proceed.',
       })
@@ -87,14 +83,14 @@ export class AuthFlow {
       grant_type: 'authorization_code',
       client_id: this.client_id,
       redirect_uri: this.redirect_uri,
-      code_verifier: this.code_verifier
+      code_verifier: this.code_verifier,
     })
     const response = (await fetch(`https://api.twitter.com/2/oauth2/token?${parsedOptions}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${this.authToken}`
-      }
+        Authorization: `Basic ${this.authToken}`,
+      },
     }).then((res) => res.json())) as XTokenResponse | XErrorResponse
 
     if ('error' in response) throw new HTTPException(400, { message: response.error_description })
@@ -107,7 +103,9 @@ export class AuthFlow {
 
       this.granted_scopes = response.scope.split(' ')
 
-      this.refresh_token = response.refresh_token ? { token: response.refresh_token, expires_in: 0 } : undefined
+      this.refresh_token = response.refresh_token
+        ? { token: response.refresh_token, expires_in: 0 }
+        : undefined
     }
   }
 
@@ -115,7 +113,7 @@ export class AuthFlow {
     await this.getTokenFromCode()
 
     const parsedOptions = toQueryParams({
-      'user.fields': this.fields
+      'user.fields': this.fields,
     })
 
     const response = (await fetch(`https://api.twitter.com/2/users/me?${parsedOptions}`, {
@@ -124,9 +122,9 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as XMeResponse | XErrorResponse
 
-    
-    if ('error_description' in response) throw new HTTPException(400, { message: response.error_description })
-    
+    if ('error_description' in response)
+      throw new HTTPException(400, { message: response.error_description })
+
     if ('data' in response) this.user = response.data
   }
 }

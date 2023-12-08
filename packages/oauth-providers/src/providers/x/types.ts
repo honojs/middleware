@@ -1,42 +1,40 @@
 export type XScopes =
-| 'tweet.read'
-| 'tweet.write'
-| 'tweet.moderate.write'
-| 'users.read'
-| 'follows.read'
-| 'follows.write'
-| 'offline.access'
-| 'space.read'
-| 'mute.read'
-| 'mute.write'
-| 'like.read'
-| 'like.write'
-| 'list.read'
-| 'list.write'
-| 'block.read'
-| 'block.write'
-| 'bookmark.read'
-| 'bookmark.write'
+  | 'tweet.read'
+  | 'tweet.write'
+  | 'tweet.moderate.write'
+  | 'users.read'
+  | 'follows.read'
+  | 'follows.write'
+  | 'offline.access'
+  | 'space.read'
+  | 'mute.read'
+  | 'mute.write'
+  | 'like.read'
+  | 'like.write'
+  | 'list.read'
+  | 'list.write'
+  | 'block.read'
+  | 'block.write'
+  | 'bookmark.read'
+  | 'bookmark.write'
 
 export type XFields =
-| 'created_at'
-| 'description'
-| 'entities'
-| 'id'
-| 'location'
-| 'most_recent_tweet_id'
-| 'name'
-| 'pinned_tweet_id'
-| 'profile_image_url'
-| 'protected'
-| 'public_metrics'
-| 'url'
-| 'username'
-| 'verified'
-| 'verified_type'
-| 'withheld'
-
-
+  | 'created_at'
+  | 'description'
+  | 'entities'
+  | 'id'
+  | 'location'
+  | 'most_recent_tweet_id'
+  | 'name'
+  | 'pinned_tweet_id'
+  | 'profile_image_url'
+  | 'protected'
+  | 'public_metrics'
+  | 'url'
+  | 'username'
+  | 'verified'
+  | 'verified_type'
+  | 'withheld'
 
 export type XErrorResponse = {
   error: string
@@ -72,7 +70,7 @@ export type XUser = {
         display_url: string
       }
     }
-  } 
+  }
   id: string
   location: string
   most_recent_tweet_id: string

@@ -17,11 +17,12 @@ export async function refreshToken(
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${authToken}`
+      Authorization: `Basic ${authToken}`,
     },
   }).then((res) => res.json())) as XTokenResponse | XErrorResponse
 
-  if ('error_description' in response) throw new HTTPException(400, { message: response.error_description })
+  if ('error_description' in response)
+    throw new HTTPException(400, { message: response.error_description })
 
   return response
 }

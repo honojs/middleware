@@ -16,7 +16,7 @@ export function xAuth(options: {
   return async (c, next) => {
     // Generate encoded "keys"
     const newState = getRandomState()
-    const challenge = getCodeChallenge()
+    const challenge = await getCodeChallenge()
 
     const auth = new AuthFlow({
       client_id: options.client_id || (c.env?.X_ID as string),

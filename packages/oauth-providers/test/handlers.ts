@@ -97,9 +97,7 @@ export const handlers = [
   // X
   http.post(
     'https://api.twitter.com/2/oauth2/token',
-    async ({
-      request
-    }): Promise<StrictResponse<Partial<XTokenResponse> | XErrorResponse>> => {
+    async ({ request }): Promise<StrictResponse<Partial<XTokenResponse> | XErrorResponse>> => {
       const code = new URLSearchParams(request.url.split('?')[1]).get('code')
       const grant_type = new URLSearchParams(request.url.split('?')[1]).get('grant_type')
       if (grant_type === 'refresh_token') {
@@ -118,9 +116,7 @@ export const handlers = [
   http.get('https://api.twitter.com/2/users/me', () => HttpResponse.json(xUser)),
   http.post(
     'https://api.twitter.com/2/oauth2/revoke',
-    async ({
-      request
-    }): Promise<StrictResponse<XRevokeResponse | XErrorResponse>> => {
+    async ({ request }): Promise<StrictResponse<XRevokeResponse | XErrorResponse>> => {
       const token = new URLSearchParams(request.url.split('?')[1]).get('token')
       if (token === 'wrong-token') {
         return HttpResponse.json(xRevokeTokenError)
@@ -128,7 +124,7 @@ export const handlers = [
 
       return HttpResponse.json({ revoked: true })
     }
-  )
+  ),
 ]
 
 export const dummyCode = '4/0AfJohXl9tS46EmTA6u9x3pJQiyCNyahx4DLJaeJelzJ0E5KkT4qJmCtjq9n3FxBvO40ofg'
@@ -302,16 +298,18 @@ export const linkedInUser = {
 export const xToken = {
   token_type: 'bearer',
   expires_in: 7200,
-  access_token: 'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE',
+  access_token:
+    'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE',
   scope: 'tweet.read users.read follows.read follows.write offline.access',
-  refresh_token: 'R0d4OW1raGIwOVZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnA4M1J0VmFTOWI3OjE3MDEyOTYyMTY1NjM6MToxOnJ0OjE'
+  refresh_token:
+    'R0d4OW1raGIwOVZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnA4M1J0VmFTOWI3OjE3MDEyOTYyMTY1NjM6MToxOnJ0OjE',
 }
 export const xRefreshToken = {
   token_type: 'bearer',
   expires_in: 7200,
   access_token: 'isdFho34isdX6hd3vODOFFNubUEBosihjcXifjdC34dsdsd349Djs9cgSA2',
   scope: 'tweet.read users.read follows.read follows.write offline.access',
-  refresh_token: 'VZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnTYyMTY1NjM6MToxOnJ0Ojsdsd562x'
+  refresh_token: 'VZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnTYyMTY1NjM6MToxOnJ0Ojsdsd562x',
 }
 export const xCodeError = {
   error: 'The Code you send is invalid.',
@@ -335,10 +333,10 @@ export const xUser = {
             end: 23,
             url: 'https://t.co/J2mwejW4cB',
             expanded_url: 'https://monoald.github.io/',
-            display_url: 'monoald.github.io'
-          }
-        ]
-      }
+            display_url: 'monoald.github.io',
+          },
+        ],
+      },
     },
     url: 'https://t.co/J2mwejW4cB',
     description: '💻 Front-end Developer',
@@ -358,6 +356,6 @@ export const xUser = {
     id: '123456',
     profile_image_url: 'https://www.severnedgevets.co.uk/sites/default/files/guides/kitten.png',
     created_at: '1018-12-01T13:53:50.000Z',
-    name: 'Carlos Aldazosa'
-  }
+    name: 'Carlos Aldazosa',
+  },
 }
