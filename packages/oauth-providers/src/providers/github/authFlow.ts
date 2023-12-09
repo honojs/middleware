@@ -51,7 +51,7 @@ export class AuthFlow {
       ...(this.oauthApp && { scope: this.scope }),
     })
 
-    return url.concat(queryParams);
+    return url.concat(queryParams)
   }
 
   private async getTokenFromCode() {

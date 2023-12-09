@@ -1,6 +1,6 @@
 # OAuth Providers Middleware
 
-Authentication middleware for [Hono](https://github.com/honojs/hono). This package offers a straightforward API for social login with platforms such as Facebook, GitHub, Google, and LinkedIn.
+Authentication middleware for [Hono](https://github.com/honojs/hono). This package offers a straightforward API for social login with platforms such as Facebook, GitHub, Google, LinkedIn and X(Twitter).
 
 ## Installation
 
@@ -178,7 +178,7 @@ app.get('/google', (c) => {
 In certain use cases, you may need to programmatically revoke a user's access token. In such scenarios, you can utilize the `revokeToken` method, which accepts the `token` to be revoked as its unique parameter.
 
 ```ts
-import { googleAuth, revokeToken } from 'open-auth/google'
+import { googleAuth, revokeToken } from '@hono/oauth-providers/google'
 
 app.post('/remove-user', async (c, next) => {
   await revokeToken(USER_TOKEN)
@@ -607,10 +607,170 @@ In certain use cases, you may need to programmatically revoke a user's access to
   - `string`.
 
 ```ts
-import { linkedinAuth, refreshToken } from 'open-auth/linkedin'
+import { linkedinAuth, refreshToken } from '@hono/oauth-providers/linkedin'
 
 app.post('linkedin/refresh-token', async (c, next) => {
   const token = await refreshToken(LINKEDIN_ID, LINKEDIN_SECRET, USER_REFRESH_TOKEN)
+
+  // ...
+})
+```
+
+### X (Twitter)
+
+```ts
+import { Hono } from 'hono'
+import { xAuth } from '@hono/oauth-providers/x'
+
+const app = new Hono()
+
+app.use(
+  '/x',
+  xAuth({
+    client_id: Bun.env.X_ID,
+    client_secret: Bun.env.X_SECRET,
+    scope: ['tweet.read', 'users.read', 'offline.access'],
+		fields: [
+			'profile_image_url',
+			'url',
+		]
+  })
+)
+
+export default app
+```
+
+#### Parameters
+
+- `client_id`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client ID. You can find this value in the [Developer Portal](https://developer.twitter.com/en/portal/dashboard). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `X_ID=`.
+- `client_secret`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client secret. You can find this value in the [Developer Portal](https://console.developers.google.com/apis/credentials). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `X_SECRET=`.
+    > Do not share your client secret to ensure the security of your app.
+- `scope`:
+  - Type: `string[]`.
+  - `Required`.
+  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes X(Twitter) offers for utilizing their API on the [Documentation](https://developer.twitter.com/en/docs/authentication/oauth-2-0/authorization-code). <br />If not sent the default fields x set are `id`, `name` and `username.`
+- `fields`:
+	- Type: `string[]`.
+	- `Optional`.
+	- Set of **fields** of the user information that can be retreived from X. Check All the fields available on the [get user me reference](https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-me).
+
+#### Authentication Flow
+
+After the completion of the X OAuth flow, essential data has been prepared for use in the subsequent steps that your app needs to take.
+
+`xAuth` method provides 4 set key data:
+
+- `token`:
+  - Access token to make requests to the x API for retrieving user information and performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `refresh-token`:
+  - You can refresh new tokens using this token. The duration of this token is not specified on the X docs.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `granted-scopes`:
+  - Scopes for which the user has granted permissions.
+  - Type: `string[]`.
+- `user-x`:
+  - User basic info retrieved from Google
+  - Type:
+    ```
+    {
+      created_at: string
+			description: string
+			entities: {
+				url: {
+					urls: {
+						start: number
+						end: number
+						url: string
+						expanded_url: string
+						display_url: string
+					}
+				}
+			} 
+			id: string
+			location: string
+			most_recent_tweet_id: string
+			name: string
+			profile_image_url: string
+			protected: boolean
+			public_metrics: {
+				followers_count: number
+				following_count: number
+				tweet_count: number
+				listed_count: number
+				like_count: number
+			}
+			url: string
+			username: string
+			verified_type: string
+			verified: boolean
+    }
+    ```
+
+> If you want to receive the **refresh token** you must add the `offline.access` in the scopes parameter.
+To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request handler.
+
+```ts
+app.get('/x', (c) => {
+  const token = c.get('token')
+  const refreshToken = c.get('refresh-token')
+  const grantedScopes = c.get('granted-scopes')
+  const user = c.get('user-x')
+
+  return c.json({
+    token,
+		refreshToken
+    grantedScopes,
+    user,
+  })
+})
+```
+
+#### Refresh Token
+
+Once the user token expires you can refresh their token wihtout the need to prompt the user again for access. In such scenario, you can utilize the `refreshToken` method, which accepts the `client_id`, `client_secret` and `refresh_token` as parameters.
+
+> The `refresh_token` can be used once. Once the token is refreshed X gives you a new `refresh_token` along with the new token.
+
+```ts
+import { xAuth, refreshToken } from '@hono/oauth-providers/x'
+
+app.post('/x/refresh', async (c, next) => {
+  await refreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
+
+  // ...
+})
+```
+
+#### Revoke Token
+
+In certain use cases, you may need to programmatically revoke a user's access token. In such scenarios, you can utilize the `revokeToken` method, the `client_id`, `client_secret` and the `token` to be revoked as parameters.
+
+It returns a `boolean` to tell whether the token was revoked or not.
+
+```ts
+import { xAuth, revokeToken } from '@hono/oauth-providers/x'
+
+app.post('/remove-user', async (c, next) => {
+  await revokeToken(CLIENT_ID, CLIENT_SECRET, USER_TOKEN)
 
   // ...
 })
