@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.2.0
+
+### Minor Changes
+
+- [#283](https://github.com/honojs/middleware/pull/283) [`aa9527b`](https://github.com/honojs/middleware/commit/aa9527b9e7291095f08f0e9df204b0eb6ba1a0db) Thanks [@monoald](https://github.com/monoald)! - Add X (Twitter) provider
+
 ## 0.1.2
 
 ### Patch Changes

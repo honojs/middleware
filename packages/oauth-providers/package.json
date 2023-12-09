@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "main": "dist/index.js",
   "files": [
