@@ -1,12 +1,13 @@
 import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse } from 'hono'
 import { validator } from 'hono/validator'
-import { IValidation, Primitive } from 'typia'
+import type { IValidation } from 'typia'
 
 export type Hook<T, E extends Env, P extends string, O = {}> = (
   result: IValidation.ISuccess<T> | { success: false; errors: IValidation.IError[]; data: T },
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void> | TypedResponse<O>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Validation<O = any> = (input: unknown) => IValidation<O>
 export type OutputType<T> = T extends Validation<infer O> ? O : never
 

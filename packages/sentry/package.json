@@ -10,15 +10,9 @@
   ],
   "scripts": {
     "test": "jest",
-    "test:deno": "deno test deno_test",
-    "test:all": "yarn test && yarn test:deno",
-    "denoify": "rimraf deno_dist && denoify",
     "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn denoify && yarn test:all",
+    "prerelease": "yarn build && yarn test:all",
     "release": "np"
-  },
-  "denoify": {
-    "replacer": "dist/replacer.js"
   },
   "license": "MIT",
   "repository": {
@@ -42,7 +36,6 @@
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
-    "denoify": "^1.4.5",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.6.0",
