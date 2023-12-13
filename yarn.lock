@@ -1833,6 +1833,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/react-renderer@workspace:packages/react-renderer":
+  version: 0.0.0-use.local
+  resolution: "@hono/react-renderer@workspace:packages/react-renderer"
+  dependencies:
+    "@types/react": "npm:^18"
+    "@types/react-dom": "npm:^18.2.17"
+    hono: "npm:^3.11.6"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    tsup: "npm:^8.0.1"
+    vitest: "npm:^1.0.4"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@hono/sentry@workspace:packages/sentry"
@@ -4287,7 +4303,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18":
+"@types/react-dom@npm:^18.2.17":
+  version: 18.2.17
+  resolution: "@types/react-dom@npm:18.2.17"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 33b53078ed7e9e0cfc4dc691e938f7db1cc06353bc345947b41b581c3efe2b980c9e4eb6460dbf5ddc521dd91959194c970221a2bd4bfad9d23ebce338e12938
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*, @types/react@npm:^18":
   version: 18.2.45
   resolution: "@types/react@npm:18.2.45"
   dependencies:
@@ -10323,6 +10348,13 @@ __metadata:
   version: 3.11.5
   resolution: "hono@npm:3.11.5"
   checksum: 89a98b43ed379dc59f6b50b5289f39265358f2a78dc4dda688dacdb5ae04a39f041810ea7adfb6bcbbbb9ecf1d2d2b91a6dd7f0b4815d5d9d6aebe718fe885dc
+  languageName: node
+  linkType: hard
+
+"hono@npm:^3.11.6":
+  version: 3.11.6
+  resolution: "hono@npm:3.11.6"
+  checksum: fb8308711860972792f0b09e953dac0102beca3e5b6149a4ee51fa1cc67307c06ea0f02facf3f1851cb3d59530318ff7805f75759ca16a1e1d1b11ee4653b454
   languageName: node
   linkType: hard
 
@@ -16720,6 +16752,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react-dom@npm:18.2.0"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.0"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -17452,6 +17496,15 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 7e3c8b2e88a1841c9671094bbaeebd94448111dd90a81a1f606f3f67708a6ec57763b3b47f06da09fc6054193e0e6709e77325415dc8422b04497a8070fa02d4
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "scheduler@npm:0.23.0"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: b777f7ca0115e6d93e126ac490dbd82642d14983b3079f58f35519d992fa46260be7d6e6cede433a92db70306310c6f5f06e144f0e40c484199e09c1f7be53dd
   languageName: node
   linkType: hard
 
