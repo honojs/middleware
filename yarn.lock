@@ -1734,6 +1734,7 @@ __metadata:
   dependencies:
     "@medley/router": "npm:^0.2.1"
     hono: "npm:^3.9.2"
+    jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
   peerDependencies:
     hono: ">=3.8.0"
