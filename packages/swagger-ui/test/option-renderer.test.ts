@@ -6,7 +6,7 @@ describe('SwaggerUIOption Rendering', () => {
       renderSwaggerUIOptions({
         configUrl: 'https://petstore3.swagger.io/api/v3/openapi.json',
       })
-    ).toEqual("configUrl: 'https://petstore3.swagger.io/api/v3/openapi.json'")
+    ).toEqual('configUrl: \'https://petstore3.swagger.io/api/v3/openapi.json\'')
   })
 
   it('renders correctly with presets', () => {
@@ -59,7 +59,7 @@ describe('SwaggerUIOption Rendering', () => {
       renderSwaggerUIOptions({
         url: 'https://petstore3.swagger.io/api/v3/openapi.json',
       })
-    ).toEqual("url: 'https://petstore3.swagger.io/api/v3/openapi.json'")
+    ).toEqual('url: \'https://petstore3.swagger.io/api/v3/openapi.json\'')
   })
 
   it('renders correctly with urls', () => {
@@ -82,7 +82,7 @@ describe('SwaggerUIOption Rendering', () => {
       renderSwaggerUIOptions({
         layout: 'StandaloneLayout',
       })
-    ).toEqual("layout: 'StandaloneLayout'")
+    ).toEqual('layout: \'StandaloneLayout\'')
   })
 
   it('renders correctly with docExpansion', () => {
@@ -90,7 +90,7 @@ describe('SwaggerUIOption Rendering', () => {
       renderSwaggerUIOptions({
         docExpansion: 'list',
       })
-    ).toEqual("docExpansion: 'list'")
+    ).toEqual('docExpansion: \'list\'')
   })
 
   it('renders correctly with maxDisplayedTags', () => {
