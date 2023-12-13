@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 0.0.3
+
+### Patch Changes
+
+- [#306](https://github.com/honojs/middleware/pull/306) [`165a415`](https://github.com/honojs/middleware/commit/165a415ec3cb7f1f66b243ddd69bff7556d3493d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: `no-unused-vars` as `warn`
+
 ## 0.0.2
 
 ### Patch Changes
