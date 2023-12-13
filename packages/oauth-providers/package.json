@@ -92,6 +92,7 @@
     "jest-environment-miniflare": "^2.14.1",
     "msw": "^2.0.4",
     "patch-package": "^8.0.0",
+    "publint": "^0.2.6",
     "ts-jest": "^29.1.1",
     "tsup": "^8.0.0",
     "typescript": "^5.2.2"
