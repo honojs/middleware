@@ -26,7 +26,9 @@
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
-    "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'"
+    "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
+    "format": "prettier --check 'packages/**/*.{ts,tsx}'",
+    "format:fix": "prettier --write 'packages/**/*.{ts,tsx}'"
   },
   "license": "MIT",
   "private": true,
