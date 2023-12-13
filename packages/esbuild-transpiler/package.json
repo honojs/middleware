@@ -57,6 +57,7 @@
     "esbuild": "^0.19.9",
     "esbuild-wasm": "^0.19.5",
     "hono": "^3.9.2",
+    "tsup": "^8.0.1",
     "vitest": "^0.34.6"
   },
   "engines": {

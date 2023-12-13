@@ -1647,6 +1647,7 @@ __metadata:
     jest: "npm:^29.7.0"
     node-fetch-native: "npm:^1.4.0"
     react: "npm:^18.2.0"
+    rimraf: "npm:^5.0.5"
   peerDependencies:
     "@clerk/backend": 0.30.*
     hono: 3.*
@@ -1660,6 +1661,7 @@ __metadata:
     esbuild: "npm:^0.19.9"
     esbuild-wasm: "npm:^0.19.5"
     hono: "npm:^3.9.2"
+    tsup: "npm:^8.0.1"
     vitest: "npm:^0.34.6"
   peerDependencies:
     hono: ">=3.9.2"
@@ -1719,6 +1721,7 @@ __metadata:
   resolution: "@hono/hello@workspace:packages/hello"
   dependencies:
     hono: "npm:^3.9.2"
+    tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
   peerDependencies:
     hono: "*"
@@ -1731,6 +1734,7 @@ __metadata:
   dependencies:
     "@medley/router": "npm:^0.2.1"
     hono: "npm:^3.9.2"
+    rimraf: "npm:^5.0.5"
   peerDependencies:
     hono: ">=3.8.0"
   languageName: unknown
@@ -1762,6 +1766,7 @@ __metadata:
     "@builder.io/qwik": "npm:^1.2.0"
     "@builder.io/qwik-city": "npm:^1.2.0"
     hono: "npm:^3.1.5"
+    rimraf: "npm:^5.0.5"
   peerDependencies:
     "@builder.io/qwik": ^1.2.0
     "@builder.io/qwik-city": ^1.2.0
@@ -1822,6 +1827,7 @@ __metadata:
     "@trpc/server": "npm:^10.10.0"
     hono: "npm:^3.0.0"
     jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
     zod: "npm:^3.20.2"
   peerDependencies:
     "@trpc/server": ^10.10.0
@@ -1836,6 +1842,7 @@ __metadata:
     "@sinclair/typebox": "npm:^0.31.15"
     hono: "npm:^3.1.2"
     jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
   peerDependencies:
     "@sinclair/typebox": ^0.31.15
     hono: ">=3.9.0"
@@ -1848,6 +1855,7 @@ __metadata:
   dependencies:
     hono: "npm:^3.5.8"
     jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
     typia: "npm:^5.0.4"
   peerDependencies:
     hono: ">=3.9.0"
@@ -1861,6 +1869,7 @@ __metadata:
   dependencies:
     hono: "npm:^3.11.5"
     jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
     valibot: "npm:^0.24.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -1877,6 +1886,7 @@ __metadata:
     hono: "npm:^3.11.3"
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
+    tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.1"
     zod: "npm:^3.22.1"
   peerDependencies:
@@ -1891,6 +1901,7 @@ __metadata:
   dependencies:
     hono: "npm:^3.5.2"
     jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
     zod: "npm:3.19.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -9487,7 +9498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.3.10":
+"glob@npm:^10.3.10, glob@npm:^10.3.7":
   version: 10.3.10
   resolution: "glob@npm:10.3.10"
   dependencies:
@@ -16794,6 +16805,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rimraf@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "rimraf@npm:5.0.5"
+  dependencies:
+    glob: "npm:^10.3.7"
+  bin:
+    rimraf: dist/esm/bin.mjs
+  checksum: d50dbe724f33835decd88395b25ed35995077c60a50ae78ded06e0185418914e555817aad1b4243edbff2254548c2f6ad6f70cc850040bebb4da9e8cc016f586
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^3.2.5, rollup@npm:^3.27.1":
   version: 3.28.0
   resolution: "rollup@npm:3.28.0"
@@ -18619,6 +18641,45 @@ __metadata:
     tsup: dist/cli-default.js
     tsup-node: dist/cli-node.js
   checksum: a282cdb1dc9401d9e7b63e325c3a7dfe59c838b31c9c399363eac76232ac41fc98bffe75b1bdf9c7cb6c73606f03b3aceec890808dc251191c2a2f0ee862066a
+  languageName: node
+  linkType: hard
+
+"tsup@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "tsup@npm:8.0.1"
+  dependencies:
+    bundle-require: "npm:^4.0.0"
+    cac: "npm:^6.7.12"
+    chokidar: "npm:^3.5.1"
+    debug: "npm:^4.3.1"
+    esbuild: "npm:^0.19.2"
+    execa: "npm:^5.0.0"
+    globby: "npm:^11.0.3"
+    joycon: "npm:^3.0.1"
+    postcss-load-config: "npm:^4.0.1"
+    resolve-from: "npm:^5.0.0"
+    rollup: "npm:^4.0.2"
+    source-map: "npm:0.8.0-beta.0"
+    sucrase: "npm:^3.20.3"
+    tree-kill: "npm:^1.2.2"
+  peerDependencies:
+    "@microsoft/api-extractor": ^7.36.0
+    "@swc/core": ^1
+    postcss: ^8.4.12
+    typescript: ">=4.5.0"
+  peerDependenciesMeta:
+    "@microsoft/api-extractor":
+      optional: true
+    "@swc/core":
+      optional: true
+    postcss:
+      optional: true
+    typescript:
+      optional: true
+  bin:
+    tsup: dist/cli-default.js
+    tsup-node: dist/cli-node.js
+  checksum: 2869187881fd30ce883d2069a1948b80946fc09a1bedb2ceb5ec20ea29602a897177dc3d19617c489b0811b86a902f5c52f51cc0b2d7e1892cb5328c3a197bfe
   languageName: node
   linkType: hard
 
