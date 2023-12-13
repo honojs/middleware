@@ -75,28 +75,36 @@ describe('Types', () => {
 
 describe('Input types', () => {
   const ParamsSchema = z.object({
-    id: z.string().transform(Number).openapi({
-      param: {
-        name: 'id',
-        in: 'path',
-      },
-      example: 123,
-    }),
+    id: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'id',
+          in: 'path',
+        },
+        example: 123,
+      }),
   })
 
   const QuerySchema = z.object({
-    age: z.string().transform(Number).openapi({
-      param: {
-        name: 'age',
-        in: 'query',
-      },
-      example: 42
-    }),
+    age: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'age',
+          in: 'query',
+        },
+        example: 42,
+      }),
   })
 
-  const BodySchema = z.object({
-    sex: z.enum(['male', 'female']).openapi({})
-  }).openapi('User')
+  const BodySchema = z
+    .object({
+      sex: z.enum(['male', 'female']).openapi({}),
+    })
+    .openapi('User')
 
   const UserSchema = z
     .object({
@@ -111,7 +119,7 @@ describe('Input types', () => {
       }),
       sex: z.enum(['male', 'female']).openapi({
         example: 'male',
-      })
+      }),
     })
     .openapi('User')
 
@@ -140,7 +148,6 @@ describe('Input types', () => {
       },
     },
   })
-
 
   it('Should return correct types', () => {
     const app = new OpenAPIHono()

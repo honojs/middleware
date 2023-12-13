@@ -17,15 +17,11 @@ export const zValidator = <
   I = z.input<T>,
   O = z.output<T>,
   V extends {
-    in: HasUndefined<I> extends true
-      ? { [K in Target]?: I }
-      : { [K in Target]: I };
-    out: { [K in Target]: O };
+    in: HasUndefined<I> extends true ? { [K in Target]?: I } : { [K in Target]: I }
+    out: { [K in Target]: O }
   } = {
-    in: HasUndefined<I> extends true
-      ? { [K in Target]?: I }
-      : { [K in Target]: I };
-    out: { [K in Target]: O };
+    in: HasUndefined<I> extends true ? { [K in Target]?: I } : { [K in Target]: I }
+    out: { [K in Target]: O }
   }
 >(
   target: Target,
