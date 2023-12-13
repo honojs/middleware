@@ -14,20 +14,27 @@ describe('Basic', () => {
     age: z.number(),
   })
 
-  const querySchema = z.object({
-    name: z.string().optional()
-  }).optional()
-
-  const route = app.post('/author', zValidator('json', jsonSchema), zValidator('query', querySchema), (c) => {
-    const data = c.req.valid('json')
-    const query = c.req.valid('query')
-
-    return c.jsonT({
-      success: true,
-      message: `${data.name} is ${data.age}`,
-      queryName: query?.name,
+  const querySchema = z
+    .object({
+      name: z.string().optional(),
     })
-  })
+    .optional()
+
+  const route = app.post(
+    '/author',
+    zValidator('json', jsonSchema),
+    zValidator('query', querySchema),
+    (c) => {
+      const data = c.req.valid('json')
+      const query = c.req.valid('query')
+
+      return c.jsonT({
+        success: true,
+        message: `${data.name} is ${data.age}`,
+        queryName: query?.name,
+      })
+    }
+  )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
@@ -39,9 +46,11 @@ describe('Basic', () => {
             age: number
           }
         } & {
-          query?: {
-            name?: string | undefined
-          } | undefined
+          query?:
+            | {
+                name?: string | undefined
+              }
+            | undefined
         }
         output: {
           success: boolean
@@ -62,6 +71,9 @@ describe('Basic', () => {
         age: 20,
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -69,7 +81,7 @@ describe('Basic', () => {
     expect(await res.json()).toEqual({
       success: true,
       message: 'Superman is 20',
-      queryName: 'Metallo'
+      queryName: 'Metallo',
     })
   })
 
@@ -122,6 +134,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -136,6 +151,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()

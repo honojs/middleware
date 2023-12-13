@@ -16,7 +16,6 @@
     "release": "yarn publish"
   },
   "license": "MIT",
-  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"

@@ -33,7 +33,7 @@ describe('Basic', () => {
           }
         }
         output: {
-          success: true
+          success: boolean
           message: string
         }
       }
@@ -50,6 +50,9 @@ describe('Basic', () => {
         age: 20,
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -67,6 +70,9 @@ describe('Basic', () => {
         age: '20',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -109,6 +115,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -123,6 +132,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()

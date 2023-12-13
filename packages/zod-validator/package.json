@@ -17,7 +17,6 @@
     "release": "yarn publish"
   },
   "license": "MIT",
-  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -33,6 +32,7 @@
   },
   "devDependencies": {
     "hono": "^3.5.2",
+    "jest": "^29.7.0",
     "zod": "3.19.1"
   }
 }

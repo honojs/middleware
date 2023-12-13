@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import typia, { tags } from 'typia'
+import type { tags } from 'typia'
+import typia from 'typia'
 import { typiaValidator } from '../src'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,6 +50,9 @@ describe('Basic', () => {
         age: 30,
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -66,6 +70,9 @@ describe('Basic', () => {
         age: 18,
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -110,6 +117,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
@@ -124,6 +134,9 @@ describe('With Hook', () => {
         title: 'Hello',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
