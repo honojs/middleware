@@ -5,6 +5,7 @@ import OriginalRouter from '@medley/router'
 import type { Result, Router } from 'hono/dist/types/router'
 
 export class MedleyRouter<T> implements Router<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   router: any
   name: string = 'MedleyRouter'
 

@@ -20,6 +20,7 @@ describe('Constructor', () => {
     const app = new OpenAPIHono<FakeEnv>({
       defaultHook: (_result, c) => {
         // Make sure we're passing context types through
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
       },
     })
