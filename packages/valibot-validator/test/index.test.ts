@@ -33,7 +33,7 @@ describe('Basic', () => {
           }
         }
         output: {
-          success: true
+          success: boolean
           message: string
         }
       }
@@ -49,6 +49,9 @@ describe('Basic', () => {
         name: 'Superman',
         age: 20,
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -66,6 +69,9 @@ describe('Basic', () => {
         name: 'Superman',
         age: '20',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -108,6 +114,9 @@ describe('With Hook', () => {
         id: 123,
         title: 'Hello',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -122,6 +131,9 @@ describe('With Hook', () => {
         id: '123',
         title: 'Hello',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)

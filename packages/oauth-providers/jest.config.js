@@ -3,5 +3,5 @@ module.exports = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
-  modulePathIgnorePatterns: ['handlers']
+  modulePathIgnorePatterns: ['handlers'],
 }

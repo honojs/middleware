@@ -24,7 +24,7 @@
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",
-    "build": "run-p build:*"
+    "build": "run-p 'build:*'"
   },
   "license": "MIT",
   "private": true,
@@ -57,5 +57,6 @@
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.2"
-  }
+  },
+  "packageManager": "yarn@4.0.2"
 }

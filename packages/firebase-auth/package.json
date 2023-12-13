@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "codehex",
-  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
