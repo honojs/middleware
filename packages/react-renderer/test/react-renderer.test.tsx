@@ -1,12 +1,6 @@
 import { Hono } from 'hono'
 import { reactRenderer, useRequestContext } from '../src/react-renderer'
 
-declare module '../src/react-renderer' {
-  interface Props {
-    title: string
-  }
-}
-
 const RequestUrl = () => {
   const c = useRequestContext()
   return <>{c.req.url}</>
@@ -15,6 +9,7 @@ const RequestUrl = () => {
 describe('Basic', () => {
   const app = new Hono()
   app.use(
+    // @ts-expect-error - `title` is not defined
     reactRenderer(({ children, title }) => {
       return (
         <html>

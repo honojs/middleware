@@ -1839,7 +1839,7 @@ __metadata:
   dependencies:
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18.2.17"
-    hono: "npm:^3.11.6"
+    hono: "npm:^3.11.7"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tsup: "npm:^8.0.1"
@@ -10351,10 +10351,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^3.11.6":
-  version: 3.11.6
-  resolution: "hono@npm:3.11.6"
-  checksum: fb8308711860972792f0b09e953dac0102beca3e5b6149a4ee51fa1cc67307c06ea0f02facf3f1851cb3d59530318ff7805f75759ca16a1e1d1b11ee4653b454
+"hono@npm:^3.11.7":
+  version: 3.11.7
+  resolution: "hono@npm:3.11.7"
+  checksum: 6665e26801cb4c4334e09dbb42453bf40e1daae9a44bf9a1ed22815f6cb701c0d9ac1a4452624234f36093996c8afff0a41d2d5b52a77f4f460178be48e022bf
   languageName: node
   linkType: hard
 

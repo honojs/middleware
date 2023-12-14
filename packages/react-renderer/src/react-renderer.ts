@@ -1,14 +1,9 @@
-import type { Context, Env, MiddlewareHandler } from 'hono'
+import type { Context } from 'hono'
+import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
 import { renderToString, renderToReadableStream } from 'react-dom/server'
 
-export interface Props {}
-
-declare module 'hono' {
-  interface ContextRenderer {
-    (children: React.ReactElement, props?: Props): Response | Promise<Response>
-  }
-}
+export type Props = {}
 
 type RendererOptions = {
   docType?: boolean | string
