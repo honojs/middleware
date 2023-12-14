@@ -41,7 +41,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "hono": "^3.0.0",
+    "hono": "^3.11.7",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "np": "^7.6.2",

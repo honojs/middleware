@@ -32,7 +32,7 @@
     "typia": "^5.0.4"
   },
   "devDependencies": {
-    "hono": "^3.5.8",
+    "hono": "^3.11.7",
     "jest": "^29.7.0",
     "rimraf": "^5.0.5",
     "typia": "^5.0.4"
