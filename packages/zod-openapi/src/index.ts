@@ -134,7 +134,7 @@ type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, 
     : {}
   : {}
 
-type Hook<T, E extends Env, P extends string, O> = (
+export type Hook<T, E extends Env, P extends string, O> = (
   result:
     | {
         success: true
