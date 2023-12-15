@@ -2,8 +2,7 @@ import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
 import { renderToString, renderToReadableStream } from 'react-dom/server'
-
-export type Props = {}
+import type { Props } from '.'
 
 type RendererOptions = {
   docType?: boolean | string
