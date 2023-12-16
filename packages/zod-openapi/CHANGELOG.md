@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.5
+
+### Patch Changes
+
+- [#316](https://github.com/honojs/middleware/pull/316) [`5eeb555`](https://github.com/honojs/middleware/commit/5eeb555c8958fb890e80262e3dbf532f3c8c1e55) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: supports named params in nested routes
+
 ## 0.9.4
 
 ### Patch Changes
