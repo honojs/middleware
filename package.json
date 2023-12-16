@@ -24,6 +24,7 @@
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",
+    "build:react-renderer": "yarn workspace @hono/react-renderer build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
