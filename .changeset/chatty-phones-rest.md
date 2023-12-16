@@ -3,5 +3,3 @@
 ---
 
 fix: supports named params in nested routes
-
-abc
