@@ -356,6 +356,7 @@ export class OpenAPIHono<
     path: SubPath,
     app?: Hono<SubEnv, SubSchema, SubBasePath>
   ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath> {
+    const pathForOpenAPI = path.replaceAll(/:([^\/]+)/g, '{$1}')
     super.route(path, app as any)
 
     if (!(app instanceof OpenAPIHono)) {
@@ -370,13 +371,13 @@ export class OpenAPIHono<
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: mergePath(path, def.route.path),
+            path: mergePath(pathForOpenAPI, def.route.path),
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: mergePath(path, def.webhook.path),
+            path: mergePath(pathForOpenAPI, def.webhook.path),
           })
 
         case 'schema':
