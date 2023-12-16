@@ -1228,3 +1228,49 @@ describe('Context can be accessible in the doc route', () => {
     })
   })
 })
+
+describe('Named params in nested routes', () => {
+  const root = new OpenAPIHono()
+  root.doc('/doc', () => ({
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  const sub = new OpenAPIHono()
+  sub.openapi(
+    createRoute({
+      method: 'get',
+      path: '/sub/{subId}',
+      responses: {
+        200: {
+          description: 'Nested response',
+        },
+      },
+    }),
+    (c) => c.json({ params: c.req.param() })
+  )
+
+  root.route('/root/:rootId', sub)
+
+  it('Should return a correct content', async () => {
+    const res = await root.request('/root/123/sub/456')
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data).toEqual({
+      params: {
+        subId: '456',
+        rootId: '123',
+      },
+    })
+  })
+
+  it('Should return a correct path', async () => {
+    const res = await root.request('/doc')
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(Object.keys(data['paths'])[0]).toBe('/root/{rootId}/sub/{subId}')
+  })
+})
