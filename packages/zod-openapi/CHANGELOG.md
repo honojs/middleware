@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.4
+
+### Patch Changes
+
+- [#313](https://github.com/honojs/middleware/pull/313) [`b8219d9`](https://github.com/honojs/middleware/commit/b8219d9b68e6aba7466705d0787dbdd15b808b06) Thanks [@WildEgo](https://github.com/WildEgo)! - change: Export Hook in @hono/zod-openapi
+
 ## 0.9.3
 
 ### Patch Changes
