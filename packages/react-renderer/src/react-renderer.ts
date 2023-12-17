@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
-import { renderToString, renderToReadableStream } from 'react-dom/server'
+import { renderToString } from 'react-dom/server'
 import type { Props } from '.'
 
 type RendererOptions = {
@@ -24,6 +24,7 @@ const createRenderer =
     const node = component ? component({ children, c, ...props }) : children
 
     if (options?.stream) {
+      const { renderToReadableStream } = await import('react-dom/server')
       const stream = await renderToReadableStream(
         React.createElement(RequestContext.Provider, { value: c }, node)
       )
