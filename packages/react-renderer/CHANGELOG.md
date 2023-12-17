@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 0.0.2
+
+### Patch Changes
+
+- [#318](https://github.com/honojs/middleware/pull/318) [`0c2dbee`](https://github.com/honojs/middleware/commit/0c2dbee52a5deb1d5022c4964a229fd83c0da394) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: dynamic import `renderToReadableStream`
+
 ## 0.0.1
 
 ### Patch Changes
