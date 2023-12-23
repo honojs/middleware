@@ -1,0 +1,25 @@
+name: ci-next-auth
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/next-auth/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/next-auth/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/next-auth
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test
