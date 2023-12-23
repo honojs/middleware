@@ -1,6 +1,6 @@
 {
   "name": "@hono/arktype-validator",
-  "version": "0.1.11",
+  "version": "0.1.0",
   "description": "ArkType validator middleware",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
