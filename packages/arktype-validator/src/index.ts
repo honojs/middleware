@@ -3,7 +3,7 @@ import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse 
 import { validator } from 'hono/validator'
 
 export type Hook<T, E extends Env, P extends string, O = {}> = (
-  result: { success: false, data: unknown, problems: Problems } | { success: true, data: T },
+  result: { success: false; data: unknown; problems: Problems } | { success: true; data: T },
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void> | TypedResponse<O>
 
@@ -33,7 +33,10 @@ export const arktypeValidator = <
     const { data, problems } = schema(value)
 
     if (hook) {
-      const hookResult = hook(problems ? { success: false, data: value, problems } :  { success: true, data }, c)
+      const hookResult = hook(
+        problems ? { success: false, data: value, problems } : { success: true, data },
+        c
+      )
       if (hookResult) {
         if (hookResult instanceof Response || hookResult instanceof Promise) {
           return hookResult
@@ -45,10 +48,13 @@ export const arktypeValidator = <
     }
 
     if (problems) {
-      return c.json({
-        success: false,
-        problems: problems.map(problem => ({...problem, message: problem.toString() }))
-      }, 400)
+      return c.json(
+        {
+          success: false,
+          problems: problems.map((problem) => ({ ...problem, message: problem.toString() })),
+        },
+        400
+      )
     }
 
     return data

@@ -11,11 +11,11 @@ describe('Basic', () => {
 
   const jsonSchema = type({
     name: 'string',
-    age: 'number'
+    age: 'number',
   })
 
   const querySchema = type({
-    'name?': 'string'
+    'name?': 'string',
   })
 
   const route = app.post(
@@ -44,10 +44,9 @@ describe('Basic', () => {
             age: number
           }
         } & {
-          query:
-             {
-                name?: string | undefined
-              }
+          query: {
+            name?: string | undefined
+          }
         }
         output: {
           success: boolean
@@ -103,7 +102,7 @@ describe('With Hook', () => {
 
   const schema = type({
     id: 'number',
-    title: 'string'
+    title: 'string',
   })
 
   app.post(
