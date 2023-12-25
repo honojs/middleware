@@ -27,13 +27,12 @@ import { authHandler, initAuthConfig, verifyAuth, AuthConfig } from "@hono/next-
 
 const app = new Hono()
 
-app.use("/api/*", initAuthConfig(getAuthConfig))
+app.use("*", initAuthConfig(getAuthConfig))
 
 app.use("/api/auth/*", authHandler())
 
-
 // This middleware will return with 401 status if auth is invalid
-app.use('/api/protected', verifyAuth())
+app.use('/api/*', verifyAuth())
 
 //If auth is valid
 app.get('/api/protected', (c) => {
@@ -48,10 +47,7 @@ function getAuthConfig(c: Context): AuthConfig {
     providers: [
       GitHub({
         clientId: c.env.GITHUB_ID,
-        clientSecret: c.env.GITHUB_SECRET,
-        authorization: {
-          params: { scope: "read:user user:email repo" },
-        },
+        clientSecret: c.env.GITHUB_SECRET
       }),
     ],
     callbacks: {

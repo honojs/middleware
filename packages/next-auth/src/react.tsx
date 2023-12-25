@@ -34,8 +34,8 @@ export { SessionProviderProps }
 // 2. When invoked server side the value is picked up from an environment
 //    variable and defaults to 'http://localhost:3000'.
 const __NEXTAUTH: AuthClientConfig = {
-  baseUrl: parseUrl(process.env.VITE_AUTH_URL ?? window.location.origin).origin,
-  basePath: parseUrl(process.env.VITE_AUTH_URL ?? window.location.origin).path,
+  baseUrl: parseUrl(window.location.origin).origin,
+  basePath: parseUrl(window.location.origin).path,
   _lastSync: 0,
   _session: undefined,
   _getSession: () => {},

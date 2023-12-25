@@ -25,6 +25,13 @@
       }
     }
   },
+  "typesVersions": {
+    "*": {
+      "react": [
+        "./dist/react.d.mts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
