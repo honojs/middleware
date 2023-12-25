@@ -3,53 +3,45 @@ import { Auth } from '@auth/core'
 import type { AdapterUser } from '@auth/core/adapters'
 import type { JWT } from '@auth/core/jwt'
 import type { Session } from '@auth/core/types'
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, HonoRequest, MiddlewareHandler } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 
 declare module 'hono' {
   interface ContextVariableMap {
-    nextAuthUser: NextAuthUser
-    nextAuthConfig: AuthConfig
+    authUser: AuthUser
+    authConfig: AuthConfig
   }
 }
 
-export type NextEnv = {
+export type AuthEnv = {
   AUTH_SECRET: string
-  AUTH_URL: string
-  AUTH_TRUST_HOST?: string
   AUTH_REDIRECT_PROXY_URL?: string
   [key: string]: string | undefined
 }
 
-export type NextAuthUser = {
+export type AuthUser = {
   session: Session
   token?: JWT
   user?: AdapterUser
 }
 
 export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {
-  authUrl?: string
+
 }
 
 export type ConfigHandler = (c: Context) => AuthConfig
 
-function reqWithEnvUrl(req: Request, authUrl?: string): Request {
-  return authUrl ? new Request(new URL(req.url, authUrl).href, req) : req
-}
+function detectOrigin(req:HonoRequest): URL {
 
-function detectOrigin(headers: Headers, authUrl?: string): URL {
-  if (authUrl) return new URL(authUrl)
-
-  const host = headers.get('x-forwarded-host') ?? headers.get('host')
-  const protocol = headers.get('x-forwarded-proto') === 'http' ? 'http' : 'https'
+  const host = req.header('x-forwarded-host') ?? req.header('host')
+  const protocol = req.header('x-forwarded-proto') === 'http' ? 'http' : 'https'
 
   return new URL(`${protocol}://${host}`)
 }
 
-function setEnvDefaults(env: NextEnv, config: AuthConfig) {
-  config.authUrl ??= env.AUTH_URL
+function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   config.secret ??= env.AUTH_SECRET
-  config.trustHost ??= !!(config.authUrl ?? env.AUTH_TRUST_HOST)
+  config.trustHost =  true
   config.redirectProxyUrl ??= env.AUTH_REDIRECT_PROXY_URL
   config.providers = config.providers.map((p) => {
     const finalProvider = typeof p === 'function' ? p({}) : p
@@ -65,17 +57,16 @@ function setEnvDefaults(env: NextEnv, config: AuthConfig) {
   })
 }
 
-export async function getAuthUser(c: Context): Promise<NextAuthUser | null> {
-  const config = c.get('nextAuthConfig')
-  const headers = c.req.raw.headers
-  const origin = detectOrigin(headers, config.authUrl)
+export async function getAuthUser(c: Context): Promise<AuthUser | null> {
+  const config = c.get('authConfig')
+  const origin = detectOrigin(c.req)
   const request = new Request(`${origin}/session`, {
-    headers: { cookie: headers.get('cookie') ?? '' },
+    headers: { cookie: c.req.header('cookie') ?? '' },
   })
 
   setEnvDefaults(c.env, config)
 
-  let authUser: NextAuthUser = {} as NextAuthUser
+  let authUser: AuthUser = {} as AuthUser
 
   const response = (await Auth(request, {
     ...config,
@@ -92,7 +83,7 @@ export async function getAuthUser(c: Context): Promise<NextAuthUser | null> {
   })) as Response
 
   const session = (await response.json()) as Session | null
-
+  
   return session && session.user ? authUser : null
 }
 
@@ -105,7 +96,7 @@ export function verifyAuth(): MiddlewareHandler {
         status: 401,
       })
       throw new HTTPException(401, { res })
-    } else c.set('nextAuthUser', authUser)
+    } else c.set('authUser', authUser)
 
     await next()
   }
@@ -114,26 +105,22 @@ export function verifyAuth(): MiddlewareHandler {
 export function initAuthConfig(cb: ConfigHandler): MiddlewareHandler {
   return async (c, next) => {
     const config = cb(c)
-    c.set('nextAuthConfig', config)
+    c.set('authConfig', config)
     await next()
   }
 }
 
 export function authHandler(): MiddlewareHandler {
   return async (c) => {
-    const config = c.get('nextAuthConfig')
+    const config = c.get('authConfig')
 
     setEnvDefaults(c.env, config)
 
-    if (!config.authUrl) {
-      throw new Error('Missing AUTH_URL')
-    }
-
     if (!config.secret) {
-      throw new Error('Missing AUTH_SECRET')
+      throw new HTTPException(500, {message:'Missing AUTH_SECRET'})
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, config.authUrl), config)
+    const res = await Auth(c.req.raw,config)
     return new Response(res.body, res)
   }
 }

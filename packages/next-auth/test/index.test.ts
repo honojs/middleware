@@ -1,51 +1,81 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {webcrypto} from 'node:crypto'
-import type {  MiddlewareHandler, Next } from 'hono'
-import { HTTPException } from 'hono/http-exception'
-import { describe, expect, it, vi } from 'vitest'
+import { Hono } from 'hono'
+import { describe, expect, it } from 'vitest'
+import { initAuthConfig} from '../src/index'
 import { authHandler, verifyAuth } from '../src/index'
 
-// @ts-expect-error - global crypto
-global.crypto =  webcrypto
 
-describe('next auth', () => {
-  let c: any
-  let req: any
-  let next: Next
+describe('Auth.js Adapter Middleware', () => {
+  it('Should return 500 if AUTH_SECRET is missing', async () => {
+    const app = new Hono()
 
-  beforeEach(() => {
-    req = {
-      raw: new Request('http://localhost:3000/api/auth/signin'),
-    }
-    ;(c = {
-      env: {},
-      req: req,
-    }),
-    (next = vi.fn())
+    app.use('/*', (c, next) => {
+      c.env = {}
+      return next()
+    })
+
+    app.use(
+      '/*',
+      initAuthConfig((c) => {
+        return {
+          providers: [],
+        }
+      })
+    )
+
+    app.use('/api/auth/*', authHandler())
+    const req = new Request('http://localhost/api/auth/error')
+    const res = await app.request(req)
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('Missing AUTH_SECRET')
   })
 
-  it('should throw an error if NEXTAUTH_URL is missing', async () => {
-    c.get = vi.fn().mockReturnValue({providers:[] })
-    const handler: MiddlewareHandler = authHandler()
-    await expect(handler(c, next)).rejects.toThrow('Missing AUTH_URL')
+  it('Should return 200 auth  initial config is correct', async () => {
+    const app = new Hono()
+
+    app.use('/*', (c, next) => {
+      c.env = {'AUTH_SECRET':'secret'}
+      return next()
+    })
+
+    app.use(
+      '/*',
+      initAuthConfig(() => {
+        return {
+          providers: [],
+        }
+      })
+    )
+
+    app.use('/api/auth/*', authHandler())
+    const req = new Request('http://localhost/api/auth/error')
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
   })
 
-  it('should throw an error if NEXTAUTH_SECRET is missing', async () => {
-    c.get = vi.fn().mockReturnValue({ providers:[] ,authUrl:'http://localhost'})
-    const handler: MiddlewareHandler = authHandler()
-    await expect(handler(c, next)).rejects.toThrow('Missing AUTH_SECRET')
-  })
+  it('Should return 401 is if auth cookie is invalid or missing', async () => {
+    const app = new Hono()
 
-  it('should return an instance of Response if NEXTAUTH_URL and NEXTAUTH_SECRET are present', async () => {
-    c.get = vi.fn().mockReturnValue({authUrl:'http://localhost:3000', secret: 'secret',providers:[] })
-    const handler: MiddlewareHandler = authHandler()
-    const result = await handler(c, next)
-    expect(result).toBeInstanceOf(Response)
-  })
+    app.use('/*', (c, next) => {
+      c.env = {'AUTH_SECRET':'secret'}
+      return next()
+    })
 
-  it('should throw an error if auth cookie is missing', async () => {
-    c.get = vi.fn().mockReturnValue({authUrl:'http://localhost:3000', secret: 'secret',providers:[] })
-    const handler: MiddlewareHandler = verifyAuth()
-    expect(handler(c, next)).rejects.toBeInstanceOf(HTTPException)
+    app.use(
+      '/*',
+      initAuthConfig(() => {
+        return {
+          providers: [],
+        }
+      })
+    )
+
+    app.use('/api/*', verifyAuth())
+
+    app.use('/api/auth/*', authHandler())
+
+    app.get('/api/protected', (c)=> c.text('protected'))
+    const req = new Request('http://localhost/api/protected')
+    const res = await app.request(req)
+    expect(res.status).toBe(401)
   })
 })

@@ -15,8 +15,7 @@ npm i hono @hono/next-auth @auth/core
 Before starting using the middleware you must set the following environment variables:
 
 ```plain
-AUTH_URL=Same as NEXT_URL
-AUTH_SECRET= Same as NEXT_AUTH_SECRET
+AUTH_SECRET=#required
 ```
 
 ## How to Use
@@ -31,19 +30,16 @@ app.use("*", initAuthConfig(getAuthConfig))
 
 app.use("/api/auth/*", authHandler())
 
-// This middleware will return with 401 status if auth is invalid
 app.use('/api/*', verifyAuth())
 
-//If auth is valid
 app.get('/api/protected', (c) => {
-  const auth = c.get("nextAuthUser")
+  const auth = c.get("authUser")
   return c.json(auth)
 })
 
 function getAuthConfig(c: Context): AuthConfig {
   return {
     secret: c.env.AUTH_SECRET,
-    authUrl: c.env.AUTH_URL,
     providers: [
       GitHub({
         clientId: c.env.GITHUB_ID,
@@ -64,7 +60,7 @@ function getAuthConfig(c: Context): AuthConfig {
 
 export default app
 ```
-**For React just import Next auth function from @hono/next-auth/react**
+**For React just import Next auth functions from @hono/next-auth/react**
 ## Author
 
 Divyam <https://github.com/divyam234>
