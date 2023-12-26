@@ -70,8 +70,7 @@ export default  function App() {
 Default `/api/auth` path can be changed to something else but that will also require you to change path in react app.
 
 ```tsx
-import {SessionProvider,authConfigManager } from "@hono/auth-js/react"
-import Layout from "./layout"
+import {SessionProvider,authConfigManager,useSession } from "@hono/auth-js/react"
 
 authConfigManager.setConfig({
   baseUrl: '', //needed only when hono app is on diff domain.
@@ -82,13 +81,39 @@ authConfigManager.setConfig({
 export default  function App() {
   return (
     <SessionProvider>
-      <Layout>
-      </Layout>
+      <Children />
     </SessionProvider>
   )
 }
 
+function Children() {
+  const { data: session, status } = useSession()
+  return (
+    <div >
+     I am {session?.user}
+    </div>
+  )
+}
+
 ```
+You don't need to use SessionProvider at all if you are using react query which you must be using if using react
+```ts
+const useSession = ()=>{
+  const { data ,status } = useQuery({
+  queryKey: ["session"],
+  queryFn: async () => {
+    const res = await fetch("/api/auth/session")
+    return res.json();
+  },
+  staleTime: 5 * (60 * 1000),
+  gcTime: 10 * (60 * 1000),
+  refetchOnWindowFocus: true,
+})
+ return { session:data, status }
+}
+```
+You can't use event updates which SessionProvider provides and session will not be in  sync across tabs if you use react query wrapper but in  RQ5 you can enable this using Broadcast channel (see RQ docs).
+
 Working example repo https://github.com/divyam234/next-auth-hono-react
 
 ## Author
