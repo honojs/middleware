@@ -80,9 +80,9 @@ Default `/api/auth` path can be changed to something else but that will also req
 import {SessionProvider,authConfigManager,useSession } from "@hono/auth-js/react"
 
 authConfigManager.setConfig({
-  baseUrl: '', //needed cross domain setup.
+  baseUrl: '', //needed  for cross domain setup.
   basePath: '/custom', // if auth route is diff from /api/auth
-  credentials:'same-origin' //needed cross domain setup
+  credentials:'same-origin' //needed  for cross domain setup
 });
 
 export default  function App() {
