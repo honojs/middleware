@@ -1,4 +1,4 @@
-# Next Auth middleware for Hono
+# Auth js middleware for Hono
 
 This is a [Auth js](https://next-auth.js.org) third-party middleware for [Hono](https://github.com/honojs/hono).
 
