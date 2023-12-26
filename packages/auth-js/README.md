@@ -21,7 +21,7 @@ AUTH_SECRET=#required
 ## How to Use
 
 ```ts
-import { Hono ,Context} from 'hono'
+import { Hono,Context } from 'hono'
 import { authHandler, initAuthConfig, verifyAuth, AuthConfig } from "@hono/auth-js"
 
 const app = new Hono()
@@ -54,16 +54,23 @@ export default app
 
 React component
 ```tsx
-import { SessionProvider} from "@hono/auth-js/react"
-import Layout from "./layout"
+import { SessionProvider } from "@hono/auth-js/react"
 
 export default  function App() {
 
   return (
     <SessionProvider>
-      <Layout>
-      </Layout>
+       <Children />
     </SessionProvider>
+  )
+}
+
+function Children() {
+  const { data: session, status } = useSession()
+  return (
+    <div >
+     I am {session?.user}
+    </div>
   )
 }
 ```
@@ -73,9 +80,9 @@ Default `/api/auth` path can be changed to something else but that will also req
 import {SessionProvider,authConfigManager,useSession } from "@hono/auth-js/react"
 
 authConfigManager.setConfig({
-  baseUrl: '', //needed only when hono app is on diff domain.
+  baseUrl: '', //needed cross domain setup.
   basePath: '/custom', // if auth route is diff from /api/auth
-  credentials:'same-origin' // Set to 'include' if hono is on diff domain otherwise cookies are restricted to 'same-origin'
+  credentials:'same-origin' //needed cross domain setup
 });
 
 export default  function App() {
@@ -94,9 +101,22 @@ function Children() {
     </div>
   )
 }
-
 ```
-You don't need to use SessionProvider at all if you are using react query which you must be using if using react
+For cross domain setup as mentioned above you need to set these cors headers in hono along with change in same site cookie attribute.[Read More Here](https://next-auth.js.org/configuration/options#cookies)
+``` ts
+app.use(
+  "*",
+  cors({
+    origin: (origin) => origin,
+    allowHeaders: ["Content-Type"],
+    credentials: true,
+  })
+)
+```
+
+
+SessionProvider is not needed with react query.This wrapper is enough
+
 ```ts
 const useSession = ()=>{
   const { data ,status } = useQuery({
@@ -112,7 +132,8 @@ const useSession = ()=>{
  return { session:data, status }
 }
 ```
-You can't use event updates which SessionProvider provides and session will not be in  sync across tabs if you use react query wrapper but in  RQ5 you can enable this using Broadcast channel (see RQ docs).
+> [!WARNING]
+> You can't use event updates which SessionProvider provides and session will not be in  sync across tabs if you use react query wrapper but in  RQ5 you can enable this using Broadcast channel (see RQ docs).
 
 Working example repo https://github.com/divyam234/next-auth-hono-react
 
