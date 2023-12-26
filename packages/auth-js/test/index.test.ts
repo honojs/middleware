@@ -1,8 +1,12 @@
+import {webcrypto} from 'node:crypto'
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
-import { initAuthConfig} from '../src/index'
-import { authHandler, verifyAuth } from '../src/index'
+import { authHandler, verifyAuth,initAuthConfig} from '../src'
 
+
+// @ts-expect-error - global crypto
+//needed for node 18 and below but should work in node 20 and above
+global.crypto =  webcrypto
 
 describe('Auth.js Adapter Middleware', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {
@@ -15,7 +19,7 @@ describe('Auth.js Adapter Middleware', () => {
 
     app.use(
       '/*',
-      initAuthConfig((c) => {
+      initAuthConfig(() => {
         return {
           providers: [],
         }

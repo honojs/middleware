@@ -1,13 +1,13 @@
 # Next Auth middleware for Hono
 
-This is a [Next Auth](https://next-auth.js.org) third-party middleware for [Hono](https://github.com/honojs/hono).
+This is a [Auth js](https://next-auth.js.org) third-party middleware for [Hono](https://github.com/honojs/hono).
 
-This middleware can be used to inject the Next Auth session into the request context.
+This middleware can be used to inject the Auth js session into the request context.
 
 ## Installation
 
 ```plain
-npm i hono @hono/next-auth @auth/core
+npm i hono @hono/auth-js @auth/core
 ```
 
 ## Configuration
@@ -22,7 +22,7 @@ AUTH_SECRET=#required
 
 ```ts
 import { Hono ,Context} from 'hono'
-import { authHandler, initAuthConfig, verifyAuth, AuthConfig } from "@hono/next-auth"
+import { authHandler, initAuthConfig, verifyAuth, AuthConfig } from "@hono/auth-js"
 
 const app = new Hono()
 
@@ -60,7 +60,7 @@ function getAuthConfig(c: Context): AuthConfig {
 
 export default app
 ```
-**For React just import Next auth functions from @hono/next-auth/react**
+**For React just import client utils from @hono/auth-js/react**
 ## Author
 
 Divyam <https://github.com/divyam234>

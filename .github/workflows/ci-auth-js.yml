@@ -1,20 +1,20 @@
-name: ci-next-auth
+name: ci-auth-js
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/next-auth/**'
+      - 'packages/auth-js/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/next-auth/**'
+      - 'packages/auth-js/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/next-auth
+        working-directory: ./packages/auth-js
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2

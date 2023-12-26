@@ -1,7 +1,7 @@
 {
-  "name": "@hono/next-auth",
+  "name": "@hono/auth-js",
   "version": "1.0.0",
-  "description": "A third-party Next auth middleware for Hono",
+  "description": "A third-party Auth js middleware for Hono",
   "main": "dist/index.js",
   "exports": {
     ".": {
