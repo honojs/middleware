@@ -13,6 +13,7 @@ export class ClientSessionError extends AuthError {}
 export interface AuthClientConfig {
   baseUrl: string
   basePath: string
+  credentials?: RequestCredentials,
   /** Stores last session response */
   _session?: Session | null | undefined
   /** Used for timestamp since last sycned (in seconds) */
@@ -113,29 +114,20 @@ export interface SessionProviderProps {
   refetchWhenOffline?: false
 }
 
-// ------------------------ Internal ------------------------
-
-/**
- * If passed 'appContext' via getInitialProps() in _app.js
- * then get the req object from ctx and use that for the
- * req value to allow `fetchData` to
- * work seemlessly in getInitialProps() on server side
- * pages *and* in _app.js.
- * @internal
- */
 export async function fetchData<T = any>(
   path: string,
-  __NEXTAUTH: AuthClientConfig,
+  config: AuthClientConfig,
   logger: LoggerInstance,
   req: any = {}
 ): Promise<T | null> {
-  const url = `${apiBaseUrl(__NEXTAUTH)}/${path}`
+  const url = `${config.baseUrl}${config.basePath}/${path}`
   try {
     const options: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
         ...(req?.headers?.cookie ? { cookie: req.headers.cookie } : {}),
       },
+      credentials: config.credentials,
     }
 
     if (req?.body) {
@@ -151,13 +143,6 @@ export async function fetchData<T = any>(
     logger.error(new ClientFetchError((error as Error).message, error as any))
     return null
   }
-}
-
-/** @internal */
-export function apiBaseUrl(__NEXTAUTH: AuthClientConfig) {
-
-    
-  return __NEXTAUTH.basePath
 }
 
 /** @internal  */

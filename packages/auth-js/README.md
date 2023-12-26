@@ -45,24 +45,52 @@ function getAuthConfig(c: Context): AuthConfig {
         clientId: c.env.GITHUB_ID,
         clientSecret: c.env.GITHUB_SECRET
       }),
-    ],
-    callbacks: {
-      jwt({ token, account, profile }) {
-       
-      },
-      async signIn({ user, account, profile, email, credentials }) {
-      
-        return true
-      },
-    }
+    ]
   }
 }
 
 export default app
 ```
+
+React component
+```tsx
+import { SessionProvider} from "@hono/auth-js/react"
+import Layout from "./layout"
+
+export default  function App() {
+
+  return (
+    <SessionProvider>
+      <Layout>
+      </Layout>
+    </SessionProvider>
+  )
+}
+```
+Default `/api/auth` path can be changed to something else but that will also require you to change path in react app.
+
+```tsx
+import {SessionProvider,authConfigManager } from "@hono/auth-js/react"
+import Layout from "./layout"
+
+authConfigManager.setConfig({
+  baseUrl: '', //needed only when hono app is on diff domain.
+  basePath: '/custom', // if auth route is diff from /api/auth
+  credentials:'same-origin' // Set to 'include' if hono is on diff domain otherwise cookies are restricted to 'same-origin'
+});
+
+export default  function App() {
+  return (
+    <SessionProvider>
+      <Layout>
+      </Layout>
+    </SessionProvider>
+  )
+}
+
+```
 Working example repo https://github.com/divyam234/next-auth-hono-react
 
-**For React just import client utils from @hono/auth-js/react**
 ## Author
 
 Divyam <https://github.com/divyam234>
