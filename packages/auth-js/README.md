@@ -60,6 +60,8 @@ function getAuthConfig(c: Context): AuthConfig {
 
 export default app
 ```
+Working example repo https://github.com/divyam234/next-auth-hono-react
+
 **For React just import client utils from @hono/auth-js/react**
 ## Author
 
