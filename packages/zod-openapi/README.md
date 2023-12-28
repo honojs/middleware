@@ -88,7 +88,7 @@ const app = new OpenAPIHono()
 
 app.openapi(route, (c) => {
   const { id } = c.req.valid('param')
-  return c.jsonT({
+  return c.json({
     id,
     age: 20,
     name: 'Ultra-man',
@@ -157,7 +157,7 @@ app.openapi(
   route,
   (c) => {
     const { id } = c.req.valid('param')
-    return c.jsonT({
+    return c.json({
       id,
       age: 20,
       name: 'Ultra-man',
@@ -166,7 +166,7 @@ app.openapi(
   // Hook
   (result, c) => {
     if (!result.success) {
-      return c.jsonT(
+      return c.json(
         {
           code: 400,
           message: 'Validation Error',
@@ -186,7 +186,7 @@ In the case that you have a common error formatter, you can initialize the `Open
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
     if (!result.success) {
-      return c.jsonT(
+      return c.json(
         {
           ok: false,
           errors: formatZodErrors(result),
@@ -205,7 +205,7 @@ You can still override the `defaultHook` by providing the hook at the call site 
 // uses the defaultHook
 app.openapi(createPostRoute, (c) => {
   const { title } = c.req.valid('json')
-  return c.jsonT({ title })
+  return c.json({ title })
 })
 
 // override the defaultHook by passing in a hook
@@ -213,11 +213,11 @@ app.openapi(
   createBookRoute,
   (c) => {
     const { title } = c.req.valid('json')
-    return c.jsonT({ title })
+    return c.json({ title })
   },
   (result, c) => {
     if (!result.success) {
-      return c.jsonT(
+      return c.json(
         {
           ok: false,
           source: 'routeHook' as const,
@@ -279,7 +279,7 @@ import { hc } from 'hono/client'
 
 const appRoutes = app.openapi(route, (c) => {
   const data = c.req.valid('json')
-  return c.jsonT({
+  return c.json({
     id: data.id,
     message: 'Success',
   })
