@@ -1361,6 +1361,7 @@ __metadata:
   peerDependencies:
     "@auth/core": 0.*
     hono: 3.*
+    react: ">=18"
   languageName: unknown
   linkType: soft
 
