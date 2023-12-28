@@ -31,8 +31,8 @@ export { SessionProviderProps }
 class AuthConfigManager {
   private static instance: AuthConfigManager | null = null
   _config: AuthClientConfig = {
-    baseUrl: parseUrl(window.location.href).origin,
-    basePath: parseUrl(window.location.href).path,
+    baseUrl: parseUrl(window.location.origin).origin,
+    basePath: parseUrl(window.location.origin).path,
     credentials:'same-origin',
     _lastSync: 0,
     _session: undefined,

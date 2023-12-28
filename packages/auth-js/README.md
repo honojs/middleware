@@ -1,8 +1,8 @@
-# Auth js middleware for Hono
+# Auth.js middleware for Hono
 
-This is a [Auth js](https://next-auth.js.org) third-party middleware for [Hono](https://github.com/honojs/hono).
+This is a [Auth.js](https://authjs.dev) third-party middleware for [Hono](https://github.com/honojs/hono).
 
-This middleware can be used to inject the Auth js session into the request context.
+This middleware can be used to inject the Auth.js session into the request context.
 
 ## Installation
 
@@ -16,6 +16,7 @@ Before starting using the middleware you must set the following environment vari
 
 ```plain
 AUTH_SECRET=#required
+AUTH_URL=#optional
 ```
 
 ## How to Use
