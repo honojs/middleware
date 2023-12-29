@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.2.1
+
+### Patch Changes
+
+- [#329](https://github.com/honojs/middleware/pull/329) [`5b17228c0b3f7694f1b41bf9b55957f0eb5ee456`](https://github.com/honojs/middleware/commit/5b17228c0b3f7694f1b41bf9b55957f0eb5ee456) Thanks [@sor4chi](https://github.com/sor4chi)! - improve SwaggerUI middleware option's type support
+
 ## 0.2.0
 
 ### Minor Changes
