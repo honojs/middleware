@@ -1,6 +1,6 @@
 {
   "name": "@hono/qwik-city",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Qwik City middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

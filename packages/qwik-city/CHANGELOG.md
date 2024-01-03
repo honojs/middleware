@@ -1,5 +1,11 @@
 # @hono/qwik-city
 
+## 0.0.5
+
+### Patch Changes
+
+- [#321](https://github.com/honojs/middleware/pull/321) [`616afbcd03928dbec40089cec638e15eea3e2030`](https://github.com/honojs/middleware/commit/616afbcd03928dbec40089cec638e15eea3e2030) Thanks [@tleperou](https://github.com/tleperou)! - expose qwik city throughout all the request methods instead of only the get
+
 ## 0.0.4
 
 ### Patch Changes

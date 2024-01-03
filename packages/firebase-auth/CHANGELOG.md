@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.3.4
+
+### Patch Changes
+
+- [#337](https://github.com/honojs/middleware/pull/337) [`75841d6b485a7b1e237be55d5ceb16500119afda`](https://github.com/honojs/middleware/commit/75841d6b485a7b1e237be55d5ceb16500119afda) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: export esm
+
 ## 1.3.3
 
 ### Patch Changes
