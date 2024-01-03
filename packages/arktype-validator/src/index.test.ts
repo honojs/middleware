@@ -26,7 +26,7 @@ describe('Basic', () => {
       const data = c.req.valid('json')
       const query = c.req.valid('query')
 
-      return c.jsonT({
+      return c.json({
         success: true,
         message: `${data.name} is ${data.age}`,
         queryName: query.name,
