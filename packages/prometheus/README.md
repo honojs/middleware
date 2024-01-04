@@ -19,6 +19,52 @@ app.get('/', (c) => c.text('foo'))
 export default app
 ```
 
+Making a GET request to `/metrics` returns the string representation of the metrics:
+
+```
+# HELP http_request_duration_seconds Duration of HTTP requests in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{le="0.005",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.01",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.025",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.05",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.075",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.1",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.25",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.5",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.75",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="1",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="2.5",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="5",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="7.5",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="10",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="+Inf",method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_sum{method="GET",route="/",status="200",ok="true"} 0.000251125
+http_request_duration_seconds_count{method="GET",route="/",status="200",ok="true"} 2
+http_request_duration_seconds_bucket{le="0.005",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.01",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.025",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.05",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.075",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.1",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.25",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.5",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="0.75",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="1",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="2.5",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="5",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="7.5",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="10",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_bucket{le="+Inf",method="GET",route="/user/:id",status="200",ok="true"} 3
+http_request_duration_seconds_sum{method="GET",route="/user/:id",status="200",ok="true"} 0.000391333
+http_request_duration_seconds_count{method="GET",route="/user/:id",status="200",ok="true"} 3
+
+# HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET",route="/",status="200",ok="true"} 2
+http_requests_total{method="GET",route="/user/:id",status="200",ok="true"} 3
+```
+
 ## Options
 
 An options object can be passed in the `prometheus()` middleware factory to configure the metrics:
@@ -45,12 +91,17 @@ There are some default metrics recommended by prom-client, like event loop delay
 
 To enable these metrics, set this option to `true`. To configure the default metrics, pass an object with the [configuration options](https://www.npmjs.com/package/prom-client#default-metrics).
 
-
 ### `metricOptions`
 
 Type: *object (see below)*
 
 Modify the standard metrics (*requestDuration* and *requestsTotal*) with any of the [Counter](https://www.npmjs.com/package/prom-client#counter) / [Histogram](https://www.npmjs.com/package/prom-client#histogram) metric options, including:
+
+#### `disabled`
+
+Type: *boolean*
+
+Disables the metric.
 
 #### `customLabels`
 
@@ -65,11 +116,45 @@ app.use('*', prometheus({
   metricOptions: {
     requestsTotal: {
       customLabels: {
-        contentType: (c) => c.res.headers.get('content-type'),
+        content_type: (c) => c.res.headers.get('content-type'),
       }
     },
   }
 }))
+```
+
+## Examples
+
+### Adding custom metrics
+
+If you want to expose custom metrics on the `/metrics` endpoint, you can create a [Registry](https://www.npmjs.com/package/prom-client#registry) instance and pass it to the `prometheus()` factory function using the `registry` property:
+
+```ts
+import { prometheus } from '@hono/prometheus'
+import { Hono } from 'hono'
+import { Counter, Registry } from 'prom-client'
+
+const registry = new Registry()
+const customCounter = new Counter({
+  name: 'custom_counter',
+  help: 'A custom counter',
+  registers: [registry],
+})
+
+const app = new Hono()
+
+const { printMetrics, registerMetrics } = prometheus({
+  registry,
+})
+
+app.use('*', registerMetrics)
+app.get('/metrics', printMetrics)
+app.get('/', (c) => c.text('foo'))
+
+export default app
+
+// Somewhere in your application you can increment the custom counter:
+customCounter.inc()
 ```
 
 ## Author
