@@ -135,4 +135,33 @@ describe('Prometheus middleware', () => {
       })
     })
   })
+
+  describe('metrics endpoint', () => {
+    it('returns the metrics in the prometheus string format on the /metrics endpoint', async () => {
+      const app = new Hono()
+      const registry = new Registry()
+
+      app.use('*', prometheus({
+        registry,
+        metricOptions: {
+          requestDuration: {
+            disabled: true, // Disable duration metrics to make the test result more predictable
+          }
+        }
+      }))
+
+      app.get('/', (c) => c.text('hello'))
+
+      await app.request('http://localhost/')
+
+      const response = await app.request('http://localhost/metrics')
+
+      expect(await response.text()).toMatchInlineSnapshot(`
+        "# HELP http_requests_total Total number of HTTP requests
+        # TYPE http_requests_total counter
+        http_requests_total{method="GET",route="/",status="200",ok="true"} 1
+        "
+      `)
+    })
+  })
 })

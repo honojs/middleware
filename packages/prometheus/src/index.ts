@@ -47,23 +47,17 @@ export const prometheus = (options?: PrometheusOptions) => {
     registry,
     customOptions: metricOptions,
   })
-  
-
-  const metricsEndpointMiddleware = createMiddleware(async (c, next) => {
-    c.body(await registry.metrics())
-
-    await next()
-  })
 
   return createMiddleware(async (c, next) => {
     const timer = metrics.requestDuration?.startTimer()
 
     if (c.req.path === metricsPath) {
-      await metricsEndpointMiddleware(c, next)
+      return c.text(await registry.metrics())
     }
   
     try {
       await next()
+
     } finally {
       const commonLabels = {
         method: c.req.method,
