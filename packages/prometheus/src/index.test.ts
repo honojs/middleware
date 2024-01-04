@@ -9,7 +9,7 @@ describe('Prometheus middleware', () => {
 
   app.use('*', prometheus({
     registry,
-  }))
+  }).registerMetrics)
 
   app.get('/', (c) => c.text('hello'))
   app.get('/user/:id', (c) => c.text(c.req.param('id')))
@@ -24,7 +24,7 @@ describe('Prometheus middleware', () => {
       app.use('*', prometheus({
         registry,
         prefix: 'myprefix_',
-      }))
+      }).registerMetrics)
 
       expect(await registry.metrics()).toMatchInlineSnapshot(`
         "# HELP myprefix_http_request_duration_seconds Duration of HTTP requests in seconds
@@ -50,7 +50,7 @@ describe('Prometheus middleware', () => {
             }
           },
         }
-      }))
+      }).registerMetrics)
 
       app.get('/', (c) => c.text('hello'))
 
@@ -141,16 +141,18 @@ describe('Prometheus middleware', () => {
       const app = new Hono()
       const registry = new Registry()
 
-      app.use('*', prometheus({
+      const { printMetrics, registerMetrics } = prometheus({
         registry,
         metricOptions: {
           requestDuration: {
             disabled: true, // Disable duration metrics to make the test result more predictable
           }
         }
-      }))
+      })
 
+      app.use('*', registerMetrics)
       app.get('/', (c) => c.text('hello'))
+      app.get('/metrics', printMetrics)
 
       await app.request('http://localhost/')
 

@@ -6,7 +6,6 @@ import { type MetricOptions, type CustomMetricsOptions, createStandardMetrics } 
 
 interface PrometheusOptions {
   registry?: Registry;
-  metricsPath?: string;
   collectDefaultMetrics?: boolean | DefaultMetricsCollectorConfiguration<RegistryContentType>;
   prefix?: string;
   metricOptions?: Omit<CustomMetricsOptions, 'prefix' | 'register'>;
@@ -28,7 +27,6 @@ const evaluateCustomLabels = (
 export const prometheus = (options?: PrometheusOptions) => {
   const {
     registry = new Registry(),
-    metricsPath = '/metrics',
     collectDefaultMetrics = false,
     prefix = '',
     metricOptions,
@@ -48,33 +46,32 @@ export const prometheus = (options?: PrometheusOptions) => {
     customOptions: metricOptions,
   })
 
-  return createMiddleware(async (c, next) => {
-    const timer = metrics.requestDuration?.startTimer()
+  return {
+    printMetrics: async (c: Context) => c.text(await registry.metrics()),
+    registerMetrics: createMiddleware(async (c, next) => {
+      const timer = metrics.requestDuration?.startTimer()
+    
+      try {
+        await next()
 
-    if (c.req.path === metricsPath) {
-      return c.text(await registry.metrics())
-    }
-  
-    try {
-      await next()
+      } finally {
+        const commonLabels = {
+          method: c.req.method,
+          route: c.req.routePath,
+          status: c.res.status.toString(),
+          ok: String(c.res.ok),
+        }
 
-    } finally {
-      const commonLabels = {
-        method: c.req.method,
-        route: c.req.routePath,
-        status: c.res.status.toString(),
-        ok: String(c.res.ok),
+        timer?.({
+          ...commonLabels,
+          ...evaluateCustomLabels(metricOptions?.requestDuration?.customLabels, c)
+        })
+    
+        metrics.requestsTotal?.inc({
+          ...commonLabels,
+          ...evaluateCustomLabels(metricOptions?.requestsTotal?.customLabels, c)
+        })
       }
-
-      timer?.({
-        ...commonLabels,
-        ...evaluateCustomLabels(metricOptions?.requestDuration?.customLabels, c)
-      })
-  
-      metrics.requestsTotal?.inc({
-        ...commonLabels,
-        ...evaluateCustomLabels(metricOptions?.requestsTotal?.customLabels, c)
-      })
-    }
-  })
+    })
+  }
 }

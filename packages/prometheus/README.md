@@ -10,7 +10,10 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', prometheus())
+const { printMetrics, registerMetrics } = prometheus()
+
+app.use('*', registerMetrics)
+app.get('/metrics', printMetrics)
 app.get('/', (c) => c.text('foo'))
 
 export default app
@@ -18,13 +21,7 @@ export default app
 
 ## Options
 
-An options object can be passed in the `prometheus()` middleware to configure the metrics:
-
-### `metricsPath`
-
-Type: *string*
-
-The path where the metrics will be exposed for Prometheus to scrape. Defaults to `/metrics`.
+An options object can be passed in the `prometheus()` middleware factory to configure the metrics:
 
 ### `prefix`
 
