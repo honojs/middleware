@@ -1346,6 +1346,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/arktype-validator@workspace:packages/arktype-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/arktype-validator@workspace:packages/arktype-validator"
+  dependencies:
+    arktype: "npm:^1.0.28-alpha"
+    hono: "npm:^3.11.7"
+    tsup: "npm:^8.0.1"
+    vitest: "npm:^1.0.4"
+  peerDependencies:
+    arktype: ^1.0.28-alpha
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/auth-js@workspace:packages/auth-js":
   version: 0.0.0-use.local
   resolution: "@hono/auth-js@workspace:packages/auth-js"
@@ -4398,6 +4412,13 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: c5640c2d89045371c7cedd6a70212a04e360fd34d6edeae32f6952c63949e3525ea77dbec0289d8213a99bbaeab5abfa860b5c12cf88a2e6cf8106e90dd27a7e
+  languageName: node
+  linkType: hard
+
+"arktype@npm:^1.0.28-alpha":
+  version: 1.0.28-alpha
+  resolution: "arktype@npm:1.0.28-alpha"
+  checksum: cf5a7a6303dcd42d54f10f83119c90ac382a0b75074716c4b6fcca6e6326ea070b6a8b1ae7a4da576e93e80b312d0d01368937e695074ddd3a53a0dc30fb98b2
   languageName: node
   linkType: hard
 

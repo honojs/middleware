@@ -1,0 +1,43 @@
+{
+  "name": "@hono/arktype-validator",
+  "version": "0.1.0",
+  "description": "ArkType validator middleware",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "release": "yarn build && yarn test && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "arktype": "^1.0.28-alpha",
+    "hono": "*"
+  },
+  "devDependencies": {
+    "arktype": "^1.0.28-alpha",
+    "hono": "^3.11.7",
+    "tsup": "^8.0.1",
+    "vitest": "^1.0.4"
+  }
+}
