@@ -31,7 +31,19 @@ import {
   xRefreshToken,
   xRefreshTokenError,
   xRevokeTokenError,
+  discordCodeError,
+  discordUser,
+  discordToken,
+  discordRefreshToken,
+  discordRefreshTokenError,
 } from './handlers'
+
+import {
+  refreshToken as discordRefresh,
+  revokeToken as discordRevoke,
+  discordAuth,
+  DiscordUser,
+} from '../src/providers/discord'
 
 const server = setupServer(...handlers)
 server.listen()
@@ -42,6 +54,7 @@ const client_secret = 'SDJS943hS_jj45dummysecret'
 describe('OAuth Middleware', () => {
   const app = new Hono()
 
+  // Google
   app.use(
     '/google',
     googleAuth({
@@ -62,6 +75,7 @@ describe('OAuth Middleware', () => {
     })
   })
 
+  // Facebook
   app.use(
     '/facebook',
     facebookAuth({
@@ -92,6 +106,7 @@ describe('OAuth Middleware', () => {
     })
   })
 
+  // Github
   app.use(
     '/github/app',
     githubAuth({
@@ -133,6 +148,7 @@ describe('OAuth Middleware', () => {
     })
   })
 
+  // LinkedIn
   app.use(
     '/linkedin',
     linkedinAuth({
@@ -155,6 +171,7 @@ describe('OAuth Middleware', () => {
     })
   })
 
+  // X
   app.use(
     '/x',
     xAuth({
@@ -213,6 +230,53 @@ describe('OAuth Middleware', () => {
   })
   app.get('x/revoke/error', async (c) => {
     const response = await revokeToken(client_id, client_secret, 'wrong-token')
+    return c.json(response)
+  })
+
+  // Discord
+  app.use(
+    '/discord',
+    discordAuth({
+      client_id,
+      client_secret,
+      scope: ['identify', 'email'],
+    })
+  )
+  app.get('/discord', (c) => {
+    const token = c.get('token')
+    const refreshToken = c.get('refresh-token')
+    const user = c.get('user-discord')
+    const grantedScopes = c.get('granted-scopes')
+
+    return c.json({
+      token,
+      refreshToken,
+      grantedScopes,
+      user,
+    })
+  })
+  app.get('/discord/refresh', async (c) => {
+    const response = await discordRefresh(
+      client_id,
+      client_secret,
+      'MzJvY0QyNmNzWUtBU3BUelpOU1NLdXFOd05qdGROZFhtR3o3QkpPNHZpQ2xrOjE3MDEyOTU0ODkxMzM6MTowOnJ0OjE'
+    )
+    return c.json(response)
+  })
+  app.get('/discord/refresh/error', async (c) => {
+    const response = await discordRefresh(client_id, client_secret, 'wrong-refresh-token')
+    return c.json(response)
+  })
+  app.get('/discord/revoke', async (c) => {
+    const response = await discordRevoke(
+      client_id,
+      client_secret,
+      'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE'
+    )
+    return c.json(response)
+  })
+  app.get('/discord/revoke/error', async (c) => {
+    const response = await discordRevoke(client_id, client_secret, 'wrong-token')
     return c.json(response)
   })
 
@@ -512,6 +576,71 @@ describe('OAuth Middleware', () => {
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(xRevokeTokenError.error_description)
+      })
+    })
+  })
+
+  describe('discordAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should redirect', async () => {
+        const res = await app.request('/discord')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+      })
+
+      it('Prevent CSRF attack', async () => {
+        const res = await app.request(`/discord?code=${dummyCode}&state=malware-state`)
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
+      it('Should throw error for invalid code', async () => {
+        const res = await app.request('/discord?code=9348ffdsd-sdsdbad-code')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(discordCodeError.error)
+      })
+
+      it('Should work with received code', async () => {
+        const res = await app.request(`/discord?code=${dummyCode}`)
+        const response = (await res.json()) as {
+          token: Token
+          refreshToken: Token
+          user: DiscordUser
+          grantedScopes: string[]
+        }
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(response.user).toEqual(discordUser.user)
+        expect(response.grantedScopes).toEqual(['identify', 'email'])
+        expect(response.token).toEqual({
+          token: discordToken.access_token,
+          expires_in: discordToken.expires_in,
+        })
+        expect(response.refreshToken).toEqual({
+          token: discordToken.refresh_token,
+          expires_in: 0,
+        })
+      })
+    })
+
+    describe('Refresh Token', () => {
+      it('Should refresh token', async () => {
+        const res = await app.request('/discord/refresh')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(discordRefreshToken)
+      })
+
+      it('Should return error for refresh', async () => {
+        const res = await app.request('/discord/refresh/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(discordRefreshTokenError.error)
       })
     })
   })

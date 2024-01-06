@@ -73,6 +73,16 @@
         "types": "./dist/providers/x/index.d.ts",
         "default": "./dist/providers/x/index.js"
       }
+    },
+    "./discord": {
+      "import": {
+        "types": "./dist/providers/discord/index.d.mts",
+        "default": "./dist/providers/discord/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/discord/index.d.ts",
+        "default": "./dist/providers/discord/index.js"
+      }
     }
   },
   "typesVersions": {
@@ -91,6 +101,9 @@
       ],
       "x": [
         "./dist/providers/x/index.d.ts"
+      ],
+      "discord": [
+        "./dist/providers/discord/index.d.ts"
       ]
     }
   },
