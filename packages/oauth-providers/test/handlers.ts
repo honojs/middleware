@@ -14,6 +14,7 @@ import type {
 } from '../src/providers/google/types'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
+import { DiscordErrorResponse, DiscordTokenResponse } from '../src/providers/discord'
 
 export const handlers = [
   // Google
@@ -125,6 +126,29 @@ export const handlers = [
       return HttpResponse.json({ revoked: true })
     }
   ),
+  // Discord
+  http.post(
+    'https://discord.com/api/oauth2/token',
+    async ({
+      request,
+    }): Promise<StrictResponse<Partial<DiscordTokenResponse> | DiscordErrorResponse>> => {
+      const params = new URLSearchParams(await request.text())
+      const code = params.get('code')
+      const grant_type = params.get('grant_type')
+      if (grant_type === 'refresh_token') {
+        const refresh_token = params.get('refresh_token')
+        if (refresh_token === 'wrong-refresh-token') {
+          return HttpResponse.json(discordRefreshTokenError)
+        }
+        return HttpResponse.json(discordRefreshToken)
+      }
+      if (code === dummyCode) {
+        return HttpResponse.json(discordToken)
+      }
+      return HttpResponse.json(discordCodeError)
+    }
+  ),
+  http.get('https://discord.com/api/oauth2/@me', () => HttpResponse.json(discordUser)),
 ]
 
 export const dummyCode = '4/0AfJohXl9tS46EmTA6u9x3pJQiyCNyahx4DLJaeJelzJ0E5KkT4qJmCtjq9n3FxBvO40ofg'
@@ -358,4 +382,43 @@ export const xUser = {
     created_at: '1018-12-01T13:53:50.000Z',
     name: 'Carlos Aldazosa',
   },
+}
+
+export const discordToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token:
+    'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE',
+  scope: 'identify email',
+  refresh_token:
+    'R0d4OW1raGIwOVZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnA4M1J0VmFTOWI3OjE3MDEyOTYyMTY1NjM6MToxOnJ0OjE',
+}
+export const discordCodeError = {
+  error: 'The Code you send is invalid.',
+}
+export const discordUser = {
+  user: {
+    id: '5869901058880055',
+    username: 'monoald',
+    avatar: 'e578fa5518c158ff',
+    discriminator: '0',
+    public_flags: 0,
+    premium_type: 0,
+    flags: 0,
+    banner: null,
+    accent_color: null,
+    global_name: 'monoald',
+    avatar_decoration_data: null,
+    banner_color: null,
+  },
+}
+export const discordRefreshToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token: 'isdFho34isdX6hd3vODOFFNubUEBosihjcXifjdC34dsdsd349Djs9cgSA2',
+  scope: 'tweet.read users.read follows.read follows.write offline.access',
+  refresh_token: 'VZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnTYyMTY1NjM6MToxOnJ0Ojsdsd562x',
+}
+export const discordRefreshTokenError = {
+  error: 'Invalid Refresh Token.',
 }
