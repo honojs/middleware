@@ -1,0 +1,42 @@
+{
+  "name": "@hono/bun-transpiler",
+  "version": "0.1.1",
+  "description": "Bun Transpiler Middleware for Hono",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "hono": "^3.11.7",
+    "tsup": "^8.0.1",
+    "vitest": "^1.0.4"
+  }
+}
