@@ -1,0 +1,23 @@
+name: ci-bun-transpiler
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/bun-transpiler/**'
+    pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/bun-transpiler/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/bun-transpiler
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test
