@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "bun test",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts --external bun",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
   },
