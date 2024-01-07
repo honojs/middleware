@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.3.0
+
+### Minor Changes
+
+- [#342](https://github.com/honojs/middleware/pull/342) [`8841b6427d23046e069e8ec6010d6624ed8e68e4`](https://github.com/honojs/middleware/commit/8841b6427d23046e069e8ec6010d6624ed8e68e4) Thanks [@monoald](https://github.com/monoald)! - Add Discord provider
+
 ## 0.2.0
 
 ### Minor Changes
