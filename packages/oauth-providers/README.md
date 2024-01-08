@@ -105,6 +105,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the API Console [Credentials page](https://console.developers.google.com/apis/credentials). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `GOOGLE_SECRET=`.
+    > [!CAUTION]
     > Do not share your client secret to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
@@ -227,6 +228,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the App Dashboard [Dashboard page](https://developers.facebook.com/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `FACEBOOK_SECRET=`.
+    > [!CAUTION]
     > Do not share your client secret to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
@@ -309,6 +311,7 @@ GitHub provides two types of Apps to utilize its API: the `GitHub App` and the `
   - `Required`.
   - `Github App` and `Oauth App`.
   - Your app client secret. You can find this value in the [GitHub App settings](https://github.com/settings/apps) or the [OAuth App settings](https://github.com/settings/developers) based on your App type. <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `GITHUB_SECRET=`.
+    > [!CAUTION]
     > Do not share your client secret to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
@@ -477,6 +480,7 @@ LinkedIn provides two types of Authorization to utilize its API: the `Member Aut
   - `Required`.
   - `Member` and `Application` authorization.
   - Your app client secret. You can find this value in the [LinkedIn Developer Portal](https://www.linkedin.com/developers/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `LINKEDIN_SECRET=`.
+    > [!CAUTION]
     > Do not share your client secret to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
@@ -630,10 +634,7 @@ app.use(
     client_id: Bun.env.X_ID,
     client_secret: Bun.env.X_SECRET,
     scope: ['tweet.read', 'users.read', 'offline.access'],
-		fields: [
-			'profile_image_url',
-			'url',
-		]
+    fields: ['profile_image_url', 'url'],
   })
 )
 
@@ -649,16 +650,17 @@ export default app
 - `client_secret`:
   - Type: `string`.
   - `Required`.
-  - Your app client secret. You can find this value in the [Developer Portal](https://console.developers.google.com/apis/credentials). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `X_SECRET=`.
+  - Your app client secret. You can find this value in the [Developer Portal](https://developer.twitter.com/en/portal/dashboard). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `X_SECRET=`.
+    > [!CAUTION]
     > Do not share your client secret to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
   - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes X(Twitter) offers for utilizing their API on the [Documentation](https://developer.twitter.com/en/docs/authentication/oauth-2-0/authorization-code). <br />If not sent the default fields x set are `id`, `name` and `username.`
 - `fields`:
-	- Type: `string[]`.
-	- `Optional`.
-	- Set of **fields** of the user information that can be retreived from X. Check All the fields available on the [get user me reference](https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-me).
+  - Type: `string[]`.
+  - `Optional`.
+  - Set of **fields** of the user information that can be retreived from X. Check All the fields available on the [get user me reference](https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-me).
 
 #### Authentication Flow
 
@@ -688,45 +690,45 @@ After the completion of the X OAuth flow, essential data has been prepared for u
   - Scopes for which the user has granted permissions.
   - Type: `string[]`.
 - `user-x`:
-  - User basic info retrieved from Google
+  - User basic info retrieved from X
   - Type:
     ```
     {
       created_at: string
-			description: string
-			entities: {
-				url: {
-					urls: {
-						start: number
-						end: number
-						url: string
-						expanded_url: string
-						display_url: string
-					}
-				}
-			} 
-			id: string
-			location: string
-			most_recent_tweet_id: string
-			name: string
-			profile_image_url: string
-			protected: boolean
-			public_metrics: {
-				followers_count: number
-				following_count: number
-				tweet_count: number
-				listed_count: number
-				like_count: number
-			}
-			url: string
-			username: string
-			verified_type: string
-			verified: boolean
+    	description: string
+    	entities: {
+    		url: {
+    			urls: {
+    				start: number
+    				end: number
+    				url: string
+    				expanded_url: string
+    				display_url: string
+    			}
+    		}
+    	}
+    	id: string
+    	location: string
+    	most_recent_tweet_id: string
+    	name: string
+    	profile_image_url: string
+    	protected: boolean
+    	public_metrics: {
+    		followers_count: number
+    		following_count: number
+    		tweet_count: number
+    		listed_count: number
+    		like_count: number
+    	}
+    	url: string
+    	username: string
+    	verified_type: string
+    	verified: boolean
     }
     ```
 
 > If you want to receive the **refresh token** you must add the `offline.access` in the scopes parameter.
-To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request handler.
+> To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request handler.
 
 ```ts
 app.get('/x', (c) => {
@@ -772,6 +774,152 @@ import { xAuth, revokeToken } from '@hono/oauth-providers/x'
 app.post('/remove-user', async (c, next) => {
   await revokeToken(CLIENT_ID, CLIENT_SECRET, USER_TOKEN)
 
+  // ...
+})
+```
+
+### Discord
+
+```ts
+import { Hono } from 'hono'
+import { discordAuth } from '@hono/oauth-providers/discord'
+
+const app = new Hono()
+
+app.use(
+  '/discord',
+  discordAuth({
+    client_id: Bun.env.DISCORD_ID,
+    client_secret: Bun.env.DISCORD_SECRET,
+    scope: ['identify', 'email'],
+  })
+)
+
+export default app
+```
+
+#### Parameters
+
+- `client_id`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client ID. You can find this value in the [Developer Portal](https://discord.com/developers/applications). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `DISCORD_ID=`.
+- `client_secret`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client secret. You can find this value in the [Developer Portal](https://discord.com/developers/applications). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `DISCORD_SECRET=`.
+    > [!CAUTION]
+    > Do not share your client secret to ensure the security of your app.
+- `scope`:
+  - Type: `string[]`.
+  - `Required`.
+  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Discord offers for utilizing their API on the [Documentation](https://discord.com/developers/docs/reference#api-reference).
+
+#### Authentication Flow
+
+After the completion of the Discord OAuth flow, essential data has been prepared for use in the subsequent steps that your app needs to take.
+
+`discordAuth` method provides 4 set key data:
+
+- `token`:
+  - Access token to make requests to the Discord API for retrieving user information and performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `refresh-token`:
+  - You can refresh new tokens using this token. The duration of this token is not specified on the Discord docs.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+        > [!NOTE]
+        > The refresh token Discord retrieves no implicit expiration
+- `granted-scopes`:
+  - Scopes for which the user has granted permissions.
+  - Type: `string[]`.
+- `user-discord`:
+  - User basic info retrieved from Discord
+  - Type:
+    ```
+    {
+    	id: string
+    	username: string
+    	avatar: string
+    	discriminator: string
+    	public_flags: number
+    	premium_type: number
+    	flags: number
+    	banner: string | null
+    	accent_color: string | null
+    	global_name: string
+    	avatar_decoration_data: string | null
+    	banner_color: string | null
+    }
+    ```
+
+> [!NOTE]
+> To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request handler.
+
+```ts
+app.get('/discord', (c) => {
+  const token = c.get('token')
+  const refreshToken = c.get('refresh-token')
+  const grantedScopes = c.get('granted-scopes')
+  const user = c.get('user-discord')
+
+  return c.json({
+    token,
+		refreshToken
+    grantedScopes,
+    user,
+  })
+})
+```
+
+#### Refresh Token
+
+Once the user token expires you can refresh their token wihtout the need to prompt the user again for access. In such scenario, you can utilize the `refreshToken` method, which accepts the `client_id`, `client_secret` and `refresh_token` as parameters.
+
+> [!NOTE]
+> The `refresh_token` can be used once. Once the token is refreshed Discord gives you a new `refresh_token` along with the new token.
+
+```ts
+import { discordAuth, refreshToken } from '@hono/oauth-providers/discord'
+
+app.post('/discord/refresh', async (c, next) => {
+  const newTokens = await refreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
+
+  // newTokenes = {
+  //   token_type: 'bear',
+  //   access_token: 'skbjbfhj3b4348wdvbwje239'
+  //   expires_in: 60000
+  //   refresh_token: 'sfcb0dwd0hdeh29db'
+  //   scope: "identify email"
+  // }
+  // ...
+})
+```
+
+#### Revoke Token
+
+In certain use cases, you may need to programmatically revoke a user's access token. In such scenarios, you can utilize the `revokeToken` method, the `client_id`, `client_secret` and the `token` to be revoked as parameters.
+
+It returns a `boolean` to tell whether the token was revoked or not.
+
+```ts
+import { discordAuth, revokeToken } from '@hono/oauth-providers/discord'
+
+app.post('/remove-user', async (c, next) => {
+  const revoked = await revokeToken(CLIENT_ID, CLIENT_SECRET, USER_TOKEN)
+
+  // revoked = true | false
   // ...
 })
 ```

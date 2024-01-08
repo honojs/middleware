@@ -1379,6 +1379,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/bun-transpiler@workspace:packages/bun-transpiler":
+  version: 0.0.0-use.local
+  resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
+  dependencies:
+    "@types/bun": "npm:^1.0.0"
+    hono: "npm:^3.11.7"
+    tsup: "npm:^8.0.1"
+    vitest: "npm:^1.0.4"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/clerk-auth@workspace:packages/clerk-auth":
   version: 0.0.0-use.local
   resolution: "@hono/clerk-auth@workspace:packages/clerk-auth"
@@ -3298,6 +3311,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bun@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/bun@npm:1.0.0"
+  dependencies:
+    bun-types: "npm:1.0.18"
+  checksum: 01784df20c982da2a5e41f4e84733436472e6d897bdb01c5b4154cf8bc38ff102718ce2d66d6e34ca2217683499c5a3767e542147efbdf510baaf4b72a854008
+  languageName: node
+  linkType: hard
+
 "@types/cacheable-request@npm:^6.0.1":
   version: 6.0.3
   resolution: "@types/cacheable-request@npm:6.0.3"
@@ -5073,6 +5095,13 @@ __metadata:
   dependencies:
     semver: "npm:^7.0.0"
   checksum: 9390a51a9abbc0233dac79c66715f927508b9d0c62cb7a42448fe8c52def60c707e6e9eb2cc4c9b7aba11601899935bca4e4064ae5e19c04c7e1bb9309e69134
+  languageName: node
+  linkType: hard
+
+"bun-types@npm:1.0.18":
+  version: 1.0.18
+  resolution: "bun-types@npm:1.0.18"
+  checksum: 62fca2f8ee86b32def4065bf0490720c0e3bd3afe8b4fd70177dccda08e799dfe6317279c791ade502376ead3197ed7627ec6b8fa103466d398e968f70f05178
   languageName: node
   linkType: hard
 
