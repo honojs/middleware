@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory'
 
 type BunTranspilerOptions = {
   extensions: string[]
-  headers: HeadersInit
+  headers: Record<string, string | string[]>
   transpilerOptions: Bun.TranspilerOptions
 }
 
@@ -31,7 +31,7 @@ export const bunTranspiler = (
         ...transpilerOptions,
       })
       const transpiledCode = await transpiler.transformSync(await c.res.text())
-      c.res = c.newResponse(transpiledCode, { headers })
+      c.res = c.newResponse(transpiledCode, 200, headers)
     } catch (error) {
       console.warn(`Error transpiling ${url.pathname}: ${error}`)
       const errorHeaders = {
@@ -39,15 +39,9 @@ export const bunTranspiler = (
         'content-type': 'text/plain',
       }
       if (error instanceof Error) {
-        c.res = c.newResponse(error.message, {
-          status: 500,
-          headers: errorHeaders,
-        })
+        c.res = c.newResponse(error.message,500, errorHeaders) 
       } else {
-        c.res = c.newResponse('Malformed Input', {
-          status: 500,
-          headers: errorHeaders,
-        })
+        c.res = c.newResponse('Malformed Input', 500, errorHeaders) 
       }
     }
   })
