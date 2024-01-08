@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { serveStatic } from 'hono/bun'
 import { bunTranspiler } from '.'
 
 const HOST = 'http://localhost'
@@ -19,6 +20,9 @@ describe('Bun Transpiler middleware', () => {
   app.get('/script.ts', (c) => c.text(TS))
   app.get('/script.tsx', (c) => c.text(TSX))
   app.get('/bad.ts', (c) => c.text(BAD))
+
+  // serve plugin script to test compliance with serveStatic
+  app.get('/index.ts', serveStatic({ root: './src' }))
 
   it('Should ignore non typescript content paths', async () => {
     const res = await app.request(`${HOST}/script.js`)
@@ -49,5 +53,12 @@ describe('Bun Transpiler middleware', () => {
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Parse error')
     expect(res.headers.get('content-type')).toBe('text/plain')
+  })
+
+  it('Should apply headers when serveStatic is used', async () => {
+    const res = await app.request(`${HOST}/index.ts`)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('application/javascript')
   })
 })
