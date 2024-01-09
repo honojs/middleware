@@ -7,7 +7,7 @@ type BunTranspilerOptions = {
   transpilerOptions?: Bun.TranspilerOptions
 }
 
-const DEFAULT_OPTIONS: BunTranspilerOptions = {
+export const defaultOptions: BunTranspilerOptions = {
   extensions: ['.ts', '.tsx'],
   headers: { 'content-type': 'application/javascript' },
   transpilerOptions: {
@@ -20,14 +20,14 @@ export const bunTranspiler = (options?: BunTranspilerOptions) => {
   return createMiddleware(async (c, next) => {
     await next()
     const url = new URL(c.req.url)
-    const extensions = options?.extensions ?? DEFAULT_OPTIONS.extensions
-    const headers = options?.headers ?? DEFAULT_OPTIONS.headers
+    const extensions = options?.extensions ?? defaultOptions.extensions
+    const headers = options?.headers ?? defaultOptions.headers
 
     if (extensions?.every((ext) => !url.pathname.endsWith(ext))) return
 
     try {
       const loader = url.pathname.split('.').pop() as Bun.TranspilerOptions['loader']
-      const transpilerOptions = options?.transpilerOptions ?? DEFAULT_OPTIONS.transpilerOptions
+      const transpilerOptions = options?.transpilerOptions ?? defaultOptions.transpilerOptions
       const transpiler = new Bun.Transpiler({
         loader,
         ...transpilerOptions,
