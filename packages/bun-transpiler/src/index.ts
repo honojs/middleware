@@ -7,7 +7,7 @@ type BunTranspilerOptions = {
   transpilerOptions?: Bun.TranspilerOptions
 }
 
-export const defaultOptions: BunTranspilerOptions = {
+export const defaultOptions: Required<BunTranspilerOptions> = {
   extensions: ['.ts', '.tsx'],
   headers: { 'content-type': 'application/javascript' },
   transpilerOptions: {
