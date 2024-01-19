@@ -1540,7 +1540,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/prometheus@workspace:packages/prometheus"
   dependencies:
-    hono: "npm:^3.9.2"
+    hono: "npm:^3.12.0"
     prom-client: "npm:^15.0.0"
     tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
@@ -8871,10 +8871,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^3.9.2":
-  version: 3.12.0
-  resolution: "hono@npm:3.12.0"
-  checksum: e10dd70e5eda44c76e8e5dae807963841475449fbb4100421ec2e5e680734644006f6133e8a8edf66ac8d47aad114a704db52b53cab2f292a8d17f02342fcff1
+"hono@npm:^3.12.0":
+  version: 3.12.6
+  resolution: "hono@npm:3.12.6"
+  checksum: 74475dc0519f064a6c25b4d588a65ad06b9e3217c914e1d60aad9f3fc7516786dbda44e5bab527a6e6b8a10fdf30c37d25c2d20bab03681325d65edd6909a913
   languageName: node
   linkType: hard
 
