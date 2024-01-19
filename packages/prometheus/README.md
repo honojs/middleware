@@ -2,6 +2,16 @@
 
 This middleware adds basic [RED metrics](https://www.weave.works/blog/the-red-method-key-metrics-for-microservices-architecture/) to your Hono application, and exposes them on the `/metrics` endpoint for Prometheus to scrape.
 
+## Installation
+
+This package depends on `prom-client`, so you need to install that as well:
+
+```bash
+npm install -S @hono/prometheus prom-client
+# or
+yarn add @hono/prometheus prom-client
+```
+
 ## Usage
 
 ```ts

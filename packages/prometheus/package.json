@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "^3.9.2",
+    "hono": "^3.12.0",
     "prom-client": "^15.0.0"
   },
   "devDependencies": {
