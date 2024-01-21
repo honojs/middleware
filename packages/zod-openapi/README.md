@@ -311,11 +311,9 @@ eg. Bearer Auth
 Register the security scheme:
 
 ```ts
-app.openAPIRegistry.registerComponent('securitySchema', {
-  Bearer: {
-    type: 'http',
-    scheme: 'bearer',
-  },
+app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
+  type: "http",
+  scheme: "bearer",
 })
 ```
 
