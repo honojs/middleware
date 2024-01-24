@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.6
+
+### Patch Changes
+
+- [#356](https://github.com/honojs/middleware/pull/356) [`168a0a6d684a0750ab95802d6316e562061f786c`](https://github.com/honojs/middleware/commit/168a0a6d684a0750ab95802d6316e562061f786c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: handle `Conflicting names for parameter`
+
 ## 0.9.5
 
 ### Patch Changes
