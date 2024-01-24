@@ -590,7 +590,7 @@ __metadata:
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:^5.3.0"
     vitest: "npm:^1.0.1"
     zod: "npm:^3.22.1"
   peerDependencies:
@@ -4510,7 +4510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.3.3":
+"typescript@npm:^5.3.0":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -4520,7 +4520,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.3.0#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:
