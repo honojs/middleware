@@ -1274,3 +1274,71 @@ describe('Named params in nested routes', () => {
     expect(Object.keys(data['paths'])[0]).toBe('/root/{rootId}/sub/{subId}')
   })
 })
+
+describe('Handle "Conflicting names for parameter"', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/posts/{foo}', // should be `id`
+      request: {
+        params: z.object({
+          id: z.string().openapi({
+            param: {
+              name: 'foo',
+              in: 'path',
+            },
+          }),
+        }),
+      },
+      responses: {
+        200: {
+          description: 'response',
+        },
+      },
+    }),
+    (c) => c.text('foo')
+  )
+
+  app.doc('/doc', () => ({
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  app.doc31('/doc31', () => ({
+    openapi: '3.1.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  it('Should return a 500 response correctly - /doc', async () => {
+    const res = await app.request('/doc')
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data).toEqual({
+      data: {
+        key: 'name',
+        values: ['id', 'foo'],
+      },
+      message: 'Conflicting names for parameter',
+    })
+  })
+
+  it('Should return a 500 response correctly - /doc31', async () => {
+    const res = await app.request('/doc31')
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data).toEqual({
+      data: {
+        key: 'name',
+        values: ['id', 'foo'],
+      },
+      message: 'Conflicting names for parameter',
+    })
+  })
+})
