@@ -45,9 +45,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth/core@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@auth/core@npm:0.19.0"
+"@auth/core@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@auth/core@npm:0.24.0"
   dependencies:
     "@panva/hkdf": "npm:^1.1.1"
     "@types/cookie": "npm:0.6.0"
@@ -61,7 +61,7 @@ __metadata:
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 27fc81a2e4348fb6a44ded8137001908c4dfbe0fd0375b1479f50d9ea5be73b5fad20f4338c0e3df1eac4200b3831a7a57cfb79fdcad5a2ce1ce04ff76ad9190
+  checksum: b8d8c66bc35d18a6ffa80e21b122747cb0c40826f68eb8c22a1b4dda01aba62c2050a1d5e4997e92a6756edad4103faafe8d9a49c7278d991e690c3ebbdb6035
   languageName: node
   linkType: hard
 
@@ -1364,7 +1364,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/auth-js@workspace:packages/auth-js"
   dependencies:
-    "@auth/core": "npm:^0.19.0"
+    "@auth/core": "npm:^0.24.0"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
