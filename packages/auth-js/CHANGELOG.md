@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.2
+
+### Patch Changes
+
+- [#359](https://github.com/honojs/middleware/pull/359) [`4ccda19d3176d9148310bcdb33baf48986433342`](https://github.com/honojs/middleware/commit/4ccda19d3176d9148310bcdb33baf48986433342) Thanks [@divyam234](https://github.com/divyam234)! - Update @auth/core version and set default basePath
+
 ## 1.0.1
 
 ### Patch Changes
