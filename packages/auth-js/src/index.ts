@@ -35,6 +35,7 @@ function reqWithEnvUrl(req: Request, authUrl?: string): Request {
 
 function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   config.secret ??= env.AUTH_SECRET
+  config.basePath ??= '/api/auth'
   config.trustHost = true
   config.redirectProxyUrl ??= env.AUTH_REDIRECT_PROXY_URL
   config.providers = config.providers.map((p) => {
@@ -53,12 +54,11 @@ function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
+  setEnvDefaults(c.env, config)
   const origin = new URL(c.req.url, c.env.AUTH_URL).origin
-  const request = new Request(`${origin}/session`, {
+  const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
   })
-
-  setEnvDefaults(c.env, config)
 
   let authUser: AuthUser = {} as AuthUser
 
@@ -70,7 +70,6 @@ export async function getAuthUser(c: Context): Promise<AuthUser | null> {
         authUser = args[0]
         const session =
           (await config.callbacks?.session?.(...args)) ?? args[0].session
-        // @ts-expect-error either user or token will be defined
         const user = args[0].user ?? args[0].token
         return { user, ...session } satisfies Session
       },
