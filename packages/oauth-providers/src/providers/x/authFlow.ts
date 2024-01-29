@@ -93,7 +93,9 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as XTokenResponse | XErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error_description })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error_description })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -122,9 +124,12 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as XMeResponse | XErrorResponse
 
-    if ('error_description' in response)
+    if ('error_description' in response) {
       throw new HTTPException(400, { message: response.error_description })
+    }
 
-    if ('data' in response) this.user = response.data
+    if ('data' in response) {
+      this.user = response.data
+    }
   }
 }

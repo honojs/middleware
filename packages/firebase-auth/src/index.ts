@@ -85,6 +85,8 @@ const setFirebaseToken = (c: Context, idToken: FirebaseIdToken) => c.set(idToken
 
 export const getFirebaseToken = (c: Context): FirebaseIdToken | null => {
   const idToken = c.get(idTokenContextKey)
-  if (!idToken) return null
+  if (!idToken) {
+    return null
+  }
   return idToken
 }

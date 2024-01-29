@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { Histogram} from 'prom-client'
+import type { Histogram } from 'prom-client'
 import { Registry } from 'prom-client'
 import { prometheus } from './index'
 
@@ -7,9 +7,12 @@ describe('Prometheus middleware', () => {
   const app = new Hono()
   const registry = new Registry()
 
-  app.use('*', prometheus({
-    registry,
-  }).registerMetrics)
+  app.use(
+    '*',
+    prometheus({
+      registry,
+    }).registerMetrics
+  )
 
   app.get('/', (c) => c.text('hello'))
   app.get('/user/:id', (c) => c.text(c.req.param('id')))
@@ -21,10 +24,13 @@ describe('Prometheus middleware', () => {
       const app = new Hono()
       const registry = new Registry()
 
-      app.use('*', prometheus({
-        registry,
-        prefix: 'myprefix_',
-      }).registerMetrics)
+      app.use(
+        '*',
+        prometheus({
+          registry,
+          prefix: 'myprefix_',
+        }).registerMetrics
+      )
 
       expect(await registry.metrics()).toMatchInlineSnapshot(`
         "# HELP myprefix_http_request_duration_seconds Duration of HTTP requests in seconds
@@ -40,17 +46,20 @@ describe('Prometheus middleware', () => {
       const app = new Hono()
       const registry = new Registry()
 
-      app.use('*', prometheus({
-        registry,
-        metricOptions: {
-          requestsTotal: {
-            customLabels: {
-              id: (c) => c.req.query('id') ?? 'unknown',
-              contentType: (c) => c.res.headers.get('content-type') ?? 'unknown',
-            }
+      app.use(
+        '*',
+        prometheus({
+          registry,
+          metricOptions: {
+            requestsTotal: {
+              customLabels: {
+                id: (c) => c.req.query('id') ?? 'unknown',
+                contentType: (c) => c.res.headers.get('content-type') ?? 'unknown',
+              },
+            },
           },
-        }
-      }).registerMetrics)
+        }).registerMetrics
+      )
 
       app.get('/', (c) => c.text('hello'))
 
@@ -68,9 +77,9 @@ describe('Prometheus middleware', () => {
     describe('http_requests_total', () => {
       it('increments the http_requests_total metric with the correct labels on successful responses', async () => {
         await app.request('http://localhost/')
-    
+
         const { values } = await registry.getSingleMetric('http_requests_total')!.get()!
-    
+
         expect(values).toEqual([
           {
             labels: {
@@ -80,15 +89,15 @@ describe('Prometheus middleware', () => {
               ok: 'true',
             },
             value: 1,
-          }
+          },
         ])
       })
-  
+
       it('increments the http_requests_total metric with the correct labels on errors', async () => {
         await app.request('http://localhost/notfound')
-  
+
         const { values } = await registry.getSingleMetric('http_requests_total')!.get()!
-    
+
         expect(values).toEqual([
           {
             labels: {
@@ -98,19 +107,22 @@ describe('Prometheus middleware', () => {
               ok: 'false',
             },
             value: 1,
-          }
+          },
         ])
       })
     })
-  
+
     describe('http_requests_duration', () => {
       it('updates the http_requests_duration metric with the correct labels on successful responses', async () => {
         await app.request('http://localhost/')
-    
-        const { values } = await (registry.getSingleMetric('http_request_duration_seconds') as Histogram)!.get()!
-  
+
+        const { values } = await (registry.getSingleMetric(
+          'http_request_duration_seconds'
+        ) as Histogram)!.get()!
+
         const countMetric = values.find(
-          (v) => v.metricName === 'http_request_duration_seconds_count' &&
+          (v) =>
+            v.metricName === 'http_request_duration_seconds_count' &&
             v.labels.method === 'GET' &&
             v.labels.route === '/' &&
             v.labels.status === '200'
@@ -118,19 +130,22 @@ describe('Prometheus middleware', () => {
 
         expect(countMetric?.value).toBe(1)
       })
-  
+
       it('updates the http_requests_duration metric with the correct labels on errors', async () => {
         await app.request('http://localhost/notfound')
-    
-        const { values } = await (registry.getSingleMetric('http_request_duration_seconds') as Histogram)!.get()!
-  
+
+        const { values } = await (registry.getSingleMetric(
+          'http_request_duration_seconds'
+        ) as Histogram)!.get()!
+
         const countMetric = values.find(
-          (v) => v.metricName === 'http_request_duration_seconds_count' &&
+          (v) =>
+            v.metricName === 'http_request_duration_seconds_count' &&
             v.labels.method === 'GET' &&
             v.labels.route === '/*' &&
             v.labels.status === '404'
         )
-  
+
         expect(countMetric?.value).toBe(1)
       })
     })
@@ -146,8 +161,8 @@ describe('Prometheus middleware', () => {
         metricOptions: {
           requestDuration: {
             disabled: true, // Disable duration metrics to make the test result more predictable
-          }
-        }
+          },
+        },
       })
 
       app.use('*', registerMetrics)

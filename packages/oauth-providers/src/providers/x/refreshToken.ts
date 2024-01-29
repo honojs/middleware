@@ -21,8 +21,9 @@ export async function refreshToken(
     },
   }).then((res) => res.json())) as XTokenResponse | XErrorResponse
 
-  if ('error_description' in response)
+  if ('error_description' in response) {
     throw new HTTPException(400, { message: response.error_description })
+  }
 
   return response
 }

@@ -1,6 +1,7 @@
 import type { DefaultBodyType, StrictResponse } from 'msw'
 import { HttpResponse, http } from 'msw'
 
+import type { DiscordErrorResponse, DiscordTokenResponse } from '../src/providers/discord'
 import type {
   FacebookErrorResponse,
   FacebookTokenResponse,
@@ -14,7 +15,6 @@ import type {
 } from '../src/providers/google/types'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
-import { DiscordErrorResponse, DiscordTokenResponse } from '../src/providers/discord'
 
 export const handlers = [
   // Google

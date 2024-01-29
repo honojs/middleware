@@ -23,7 +23,9 @@ export const bunTranspiler = (options?: BunTranspilerOptions) => {
     const extensions = options?.extensions ?? defaultOptions.extensions
     const headers = options?.headers ?? defaultOptions.headers
 
-    if (extensions?.every((ext) => !url.pathname.endsWith(ext))) return
+    if (extensions?.every((ext) => !url.pathname.endsWith(ext))) {
+      return
+    }
 
     try {
       const loader = url.pathname.split('.').pop() as Bun.TranspilerOptions['loader']

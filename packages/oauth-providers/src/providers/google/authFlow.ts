@@ -91,7 +91,9 @@ export class AuthFlow {
       }),
     }).then((res) => res.json())) as GoogleTokenResponse | GoogleErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error_description })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error_description })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -112,8 +114,12 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as GoogleUser | GoogleErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error?.message })
+    }
 
-    if ('id' in response) this.user = response
+    if ('id' in response) {
+      this.user = response
+    }
   }
 }

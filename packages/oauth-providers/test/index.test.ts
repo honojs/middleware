@@ -1,5 +1,11 @@
 import { Hono } from 'hono'
 import { setupServer } from 'msw/node'
+import type { DiscordUser } from '../src/providers/discord'
+import {
+  refreshToken as discordRefresh,
+  revokeToken as discordRevoke,
+  discordAuth,
+} from '../src/providers/discord'
 import { facebookAuth } from '../src/providers/facebook'
 import type { FacebookUser } from '../src/providers/facebook'
 import { githubAuth } from '../src/providers/github'
@@ -37,13 +43,6 @@ import {
   discordRefreshToken,
   discordRefreshTokenError,
 } from './handlers'
-
-import {
-  refreshToken as discordRefresh,
-  revokeToken as discordRevoke,
-  discordAuth,
-  DiscordUser,
-} from '../src/providers/discord'
 
 const server = setupServer(...handlers)
 server.listen()

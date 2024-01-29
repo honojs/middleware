@@ -1,12 +1,11 @@
-import {webcrypto} from 'node:crypto'
+import { webcrypto } from 'node:crypto'
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
-import { authHandler, verifyAuth,initAuthConfig} from '../src'
-
+import { authHandler, verifyAuth, initAuthConfig } from '../src'
 
 // @ts-expect-error - global crypto
 //needed for node 18 and below but should work in node 20 and above
-global.crypto =  webcrypto
+global.crypto = webcrypto
 
 describe('Auth.js Adapter Middleware', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {
@@ -37,7 +36,7 @@ describe('Auth.js Adapter Middleware', () => {
     const app = new Hono()
 
     app.use('/*', (c, next) => {
-      c.env = {'AUTH_SECRET':'secret'}
+      c.env = { AUTH_SECRET: 'secret' }
       return next()
     })
 
@@ -60,7 +59,7 @@ describe('Auth.js Adapter Middleware', () => {
     const app = new Hono()
 
     app.use('/*', (c, next) => {
-      c.env = {'AUTH_SECRET':'secret'}
+      c.env = { AUTH_SECRET: 'secret' }
       return next()
     })
 
@@ -77,7 +76,7 @@ describe('Auth.js Adapter Middleware', () => {
 
     app.use('/api/auth/*', authHandler())
 
-    app.get('/api/protected', (c)=> c.text('protected'))
+    app.get('/api/protected', (c) => c.text('protected'))
     const req = new Request('http://localhost/api/protected')
     const res = await app.request(req)
     expect(res.status).toBe(401)
