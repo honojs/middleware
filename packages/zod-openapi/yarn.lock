@@ -419,6 +419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/workers-types@npm:^4.20240117.0":
+  version: 4.20240117.0
+  resolution: "@cloudflare/workers-types@npm:4.20240117.0"
+  checksum: 900b796af2ae97257e1f6171b9c37d718c5f8ae064cea8f8d1c48e52ccde01492c5cfa61716fc703d05a6bd92e50a55f7d9e525d2c91919db76e42458c3e8e76
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.19.12":
   version: 0.19.12
   resolution: "@esbuild/aix-ppc64@npm:0.19.12"
@@ -585,6 +592,7 @@ __metadata:
   resolution: "@hono/zod-openapi@workspace:."
   dependencies:
     "@asteasolutions/zod-to-openapi": "npm:^5.5.0"
+    "@cloudflare/workers-types": "npm:^4.20240117.0"
     "@hono/zod-validator": "npm:0.1.11"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
