@@ -21,6 +21,7 @@ module.exports = defineConfig({
     addEventListener: false,
   },
   rules: {
+    curly: ['error', 'all'],
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
     'no-debugger': ['error'],
