@@ -21,8 +21,5 @@ jobs:
         with:
           node-version: 18.x
       - run: yarn install --frozen-lockfile
-      - name: Build zod-validator in root directory
-        run: yarn build:zod-validator
-        working-directory: .
       - run: yarn build
       - run: yarn test
