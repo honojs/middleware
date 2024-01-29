@@ -2,19 +2,20 @@ import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client'
 import { Registry, collectDefaultMetrics as promCollectDefaultMetrics } from 'prom-client'
-import { type MetricOptions, type CustomMetricsOptions, createStandardMetrics } from './standardMetrics'
+import {
+  type MetricOptions,
+  type CustomMetricsOptions,
+  createStandardMetrics,
+} from './standardMetrics'
 
 interface PrometheusOptions {
-  registry?: Registry;
-  collectDefaultMetrics?: boolean | DefaultMetricsCollectorConfiguration<RegistryContentType>;
-  prefix?: string;
-  metricOptions?: Omit<CustomMetricsOptions, 'prefix' | 'register'>;
+  registry?: Registry
+  collectDefaultMetrics?: boolean | DefaultMetricsCollectorConfiguration<RegistryContentType>
+  prefix?: string
+  metricOptions?: Omit<CustomMetricsOptions, 'prefix' | 'register'>
 }
 
-const evaluateCustomLabels = (
-  customLabels: MetricOptions['customLabels'],
-  context: Context,
-) => {
+const evaluateCustomLabels = (customLabels: MetricOptions['customLabels'], context: Context) => {
   const labels: Record<string, string> = {}
 
   for (const [key, fn] of Object.entries(customLabels ?? {})) {
@@ -36,7 +37,7 @@ export const prometheus = (options?: PrometheusOptions) => {
     promCollectDefaultMetrics({
       prefix,
       register: registry,
-      ...(typeof collectDefaultMetrics === 'object' && collectDefaultMetrics)
+      ...(typeof collectDefaultMetrics === 'object' && collectDefaultMetrics),
     })
   }
 
@@ -50,10 +51,9 @@ export const prometheus = (options?: PrometheusOptions) => {
     printMetrics: async (c: Context) => c.text(await registry.metrics()),
     registerMetrics: createMiddleware(async (c, next) => {
       const timer = metrics.requestDuration?.startTimer()
-    
+
       try {
         await next()
-
       } finally {
         const commonLabels = {
           method: c.req.method,
@@ -64,14 +64,14 @@ export const prometheus = (options?: PrometheusOptions) => {
 
         timer?.({
           ...commonLabels,
-          ...evaluateCustomLabels(metricOptions?.requestDuration?.customLabels, c)
+          ...evaluateCustomLabels(metricOptions?.requestDuration?.customLabels, c),
         })
-    
+
         metrics.requestsTotal?.inc({
           ...commonLabels,
-          ...evaluateCustomLabels(metricOptions?.requestsTotal?.customLabels, c)
+          ...evaluateCustomLabels(metricOptions?.requestsTotal?.customLabels, c),
         })
       }
-    })
+    }),
   }
 }

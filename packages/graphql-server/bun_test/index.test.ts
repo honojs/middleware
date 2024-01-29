@@ -96,7 +96,9 @@ const TestSchema = new GraphQLSchema({
 
 const urlString = (query?: Record<string, string>): string => {
   const base = 'http://localhost/graphql'
-  if (!query) return base
+  if (!query) {
+    return base
+  }
   const queryString = new URLSearchParams(query).toString()
   return `${base}?${queryString}`
 }

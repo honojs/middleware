@@ -21,7 +21,9 @@ export async function revokeToken(
     body: params,
   })
 
-  if (response.status !== 200) throw new HTTPException(400, { message: 'Something went wrong' })
+  if (response.status !== 200) {
+    throw new HTTPException(400, { message: 'Something went wrong' })
+  }
 
   return true
 }

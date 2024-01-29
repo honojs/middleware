@@ -13,7 +13,7 @@ export class ClientSessionError extends AuthError {}
 export interface AuthClientConfig {
   baseUrl: string
   basePath: string
-  credentials?: RequestCredentials,
+  credentials?: RequestCredentials
   /** Stores last session response */
   _session?: Session | null | undefined
   /** Used for timestamp since last sycned (in seconds) */
@@ -33,9 +33,7 @@ export interface UseSessionOptions<R extends boolean> {
 
 // Util type that matches some strings literally, but allows any other string as well.
 // @source https://github.com/microsoft/TypeScript/issues/29729#issuecomment-832522611
-export type LiteralUnion<T extends U, U = string> =
-  | T
-  | (U & Record<never, never>)
+export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
 
 export interface ClientSafeProvider {
   id: LiteralUnion<BuiltInProviderType>
@@ -137,7 +135,9 @@ export async function fetchData<T = any>(
 
     const res = await fetch(url, options)
     const data = await res.json()
-    if (!res.ok) throw data
+    if (!res.ok) {
+      throw data
+    }
     return data as T
   } catch (error) {
     logger.error(new ClientFetchError((error as Error).message, error as any))

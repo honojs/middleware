@@ -68,8 +68,7 @@ export async function getAuthUser(c: Context): Promise<AuthUser | null> {
       ...config.callbacks,
       async session(...args) {
         authUser = args[0]
-        const session =
-          (await config.callbacks?.session?.(...args)) ?? args[0].session
+        const session = (await config.callbacks?.session?.(...args)) ?? args[0].session
         const user = args[0].user ?? args[0].token
         return { user, ...session } satisfies Session
       },
@@ -90,7 +89,9 @@ export function verifyAuth(): MiddlewareHandler {
         status: 401,
       })
       throw new HTTPException(401, { res })
-    } else c.set('authUser', authUser)
+    } else {
+      c.set('authUser', authUser)
+    }
 
     await next()
   }
