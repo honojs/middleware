@@ -1,4 +1,4 @@
-# @honojs/hello
+# @hono/hello
 
 ## 0.1.1
 
