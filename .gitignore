@@ -2,6 +2,7 @@ dist
 
 node_modules
 *.tgz
+coverage
 
 .yarn/*
 !.yarn/cache
