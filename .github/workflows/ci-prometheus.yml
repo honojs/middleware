@@ -1,20 +1,20 @@
-name: ci-zod-openapi
+name: ci-prometheus
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/zod-openapi/**'
+      - 'packages/prometheus/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/zod-openapi/**'
+      - 'packages/prometheus/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/zod-openapi
+        working-directory: ./packages/prometheus
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2

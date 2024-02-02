@@ -25,7 +25,9 @@ export const esbuildTranspiler = (options?: EsbuildTranspilerOptions) => {
       const url = new URL(c.req.url)
       const extensions = options?.extensions ?? ['.ts', '.tsx']
 
-      if (extensions.every((ext) => !url.pathname.endsWith(ext))) return
+      if (extensions.every((ext) => !url.pathname.endsWith(ext))) {
+        return
+      }
 
       const headers = { 'content-type': options?.contentType ?? 'text/javascript' }
       const script = await c.res.text()

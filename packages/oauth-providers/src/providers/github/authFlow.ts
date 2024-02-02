@@ -65,8 +65,9 @@ export class AuthFlow {
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
     }).then((res) => res.json())) as GitHubTokenResponse | GitHubErrorResponse
 
-    if ('error_description' in response)
+    if ('error_description' in response) {
       throw new HTTPException(400, { message: response.error_description })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -85,7 +86,9 @@ export class AuthFlow {
   }
 
   async getUserData() {
-    if (!this.token?.token) await this.getTokenFromCode()
+    if (!this.token?.token) {
+      await this.getTokenFromCode()
+    }
 
     const response = (await fetch('https://api.github.com/user', {
       headers: {
@@ -96,7 +99,9 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as GitHubUser | GitHubErrorResponse
 
-    if ('message' in response) throw new HTTPException(400, { message: response.message })
+    if ('message' in response) {
+      throw new HTTPException(400, { message: response.message })
+    }
 
     if ('id' in response) {
       this.user = response

@@ -58,7 +58,9 @@ export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions) => {
         return `${key}: '${v}'`
       }
       if (RENDER_TYPE_MAP[key] === RENDER_TYPE.STRING_ARRAY) {
-        if (!Array.isArray(v)) return ''
+        if (!Array.isArray(v)) {
+          return ''
+        }
         return `${key}: [${v.map((ve) => `${ve}`).join(',')}]`
       }
       if (RENDER_TYPE_MAP[key] === RENDER_TYPE.JSON_STRING) {

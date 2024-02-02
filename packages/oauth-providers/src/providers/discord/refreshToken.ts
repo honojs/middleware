@@ -22,7 +22,9 @@ export async function refreshToken(
     body: params,
   }).then((res) => res.json())) as DiscordTokenResponse | { error: string }
 
-  if ('error' in response) throw new HTTPException(400, { message: response.error })
+  if ('error' in response) {
+    throw new HTTPException(400, { message: response.error })
+  }
 
   return response
 }

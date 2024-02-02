@@ -79,7 +79,9 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as LinkedInTokenResponse | LinkedInErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error_description })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error_description })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -106,9 +108,13 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as LinkedInUser | LinkedInErrorResponse
 
-    if ('message' in response) throw new HTTPException(400, { message: response.message })
+    if ('message' in response) {
+      throw new HTTPException(400, { message: response.message })
+    }
 
-    if ('sub' in response) this.user = response
+    if ('sub' in response) {
+      this.user = response
+    }
   }
 
   async getAppToken() {
@@ -122,7 +128,9 @@ export class AuthFlow {
       (res) => res.json()
     )) as LinkedInTokenResponse | LinkedInErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error_description })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error_description })
+    }
 
     if ('access_token' in response) {
       this.token = {

@@ -33,7 +33,7 @@ class AuthConfigManager {
   _config: AuthClientConfig = {
     baseUrl: parseUrl(window.location.origin).origin,
     basePath: parseUrl(window.location.origin).path,
-    credentials:'same-origin',
+    credentials: 'same-origin',
     _lastSync: 0,
     _session: undefined,
     _getSession: () => {},
@@ -112,8 +112,11 @@ export function useSession<R extends boolean>(
         error: 'SessionRequired',
         callbackUrl: window.location.href,
       })}`
-      if (onUnauthenticated) onUnauthenticated()
-      else window.location.href = url
+      if (onUnauthenticated) {
+        onUnauthenticated()
+      } else {
+        window.location.href = url
+      }
     }
   }, [requiredAndNotLoading, onUnauthenticated])
 
@@ -153,7 +156,11 @@ export async function getSession(params?: GetSessionParams) {
  * @internal
  */
 export async function getCsrfToken() {
-  const response = await fetchData<{ csrfToken: string }>('csrf', authConfigManager.getConfig(), logger)
+  const response = await fetchData<{ csrfToken: string }>(
+    'csrf',
+    authConfigManager.getConfig(),
+    logger
+  )
   return response?.csrfToken ?? ''
 }
 
@@ -215,7 +222,9 @@ export async function signIn<P extends RedirectableProviderType | undefined = un
     const url = (data as any).url ?? callbackUrl
     window.location.href = url
     // If url contains a hash, the browser does not reload the page. We reload manually
-    if (url.includes('#')) window.location.reload()
+    if (url.includes('#')) {
+      window.location.reload()
+    }
     return
   }
 
@@ -261,7 +270,9 @@ export async function signOut<R extends boolean = true>(
     const url = (data as any).url ?? callbackUrl
     window.location.href = url
     // If url contains a hash, the browser does not reload the page. We reload manually
-    if (url.includes('#')) window.location.reload()
+    if (url.includes('#')) {
+      window.location.reload()
+    }
     // @ts-expect-error TODO: Fix this
     return
   }
@@ -285,10 +296,11 @@ export function SessionProvider(props: SessionProviderProps) {
   __AUTHJS._lastSync = hasInitialSession ? now() : 0
 
   const [session, setSession] = React.useState(() => {
-    if (hasInitialSession) __AUTHJS._session = props.session
+    if (hasInitialSession) {
+      __AUTHJS._session = props.session
+    }
     return props.session
   })
-
 
   const [loading, setLoading] = React.useState(!hasInitialSession)
 
@@ -296,7 +308,7 @@ export function SessionProvider(props: SessionProviderProps) {
     __AUTHJS._getSession = async ({ event } = {}) => {
       try {
         const storageEvent = event === 'storage'
-        
+
         if (storageEvent || __AUTHJS._session === undefined) {
           __AUTHJS._lastSync = now()
           __AUTHJS._session = await getSession({
@@ -363,8 +375,9 @@ export function SessionProvider(props: SessionProviderProps) {
     // and makes our tab visible again, re-fetch the session, but only if
     // this feature is not disabled.
     const visibilityHandler = () => {
-      if (refetchOnWindowFocus && document.visibilityState === 'visible')
+      if (refetchOnWindowFocus && document.visibilityState === 'visible') {
         __AUTHJS._getSession({ event: 'visibilitychange' })
+      }
     }
     document.addEventListener('visibilitychange', visibilityHandler, false)
     return () => document.removeEventListener('visibilitychange', visibilityHandler, false)
@@ -390,7 +403,9 @@ export function SessionProvider(props: SessionProviderProps) {
       data: session,
       status: loading ? 'loading' : session ? 'authenticated' : 'unauthenticated',
       async update(data: any) {
-        if (loading || !session) return
+        if (loading || !session) {
+          return
+        }
         setLoading(true)
         const newSession = await fetchData<Session>(
           'session',

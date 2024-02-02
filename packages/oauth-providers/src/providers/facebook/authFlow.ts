@@ -78,7 +78,9 @@ export class AuthFlow {
       | FacebookTokenResponse
       | FacebookErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error?.message })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -93,9 +95,13 @@ export class AuthFlow {
       `https://graph.facebook.com/v18.0/me?access_token=${this.token?.token}`
     ).then((res) => res.json())) as FacebookMeResponse | FacebookErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error?.message })
+    }
 
-    if ('id' in response) this.user = response
+    if ('id' in response) {
+      this.user = response
+    }
   }
 
   async getUserData() {
@@ -107,8 +113,12 @@ export class AuthFlow {
       `https://graph.facebook.com/${this.user?.id}?fields=${parsedFields}&access_token=${this.token?.token}`
     ).then((res) => res.json())) as FacebookUser | FacebookErrorResponse
 
-    if ('error' in response) throw new HTTPException(400, { message: response.error?.message })
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error?.message })
+    }
 
-    if ('id' in response) this.user = response
+    if ('id' in response) {
+      this.user = response
+    }
   }
 }

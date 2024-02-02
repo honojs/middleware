@@ -84,10 +84,15 @@ export class AuthFlow {
       body: parsedOptions,
     }).then((res) => res.json())) as DiscordTokenResponse | DiscordErrorResponse
 
-    if ('error_description' in response)
+    if ('error_description' in response) {
       throw new HTTPException(400, { message: response.error_description })
-    if ('error' in response) throw new HTTPException(400, { message: response.error })
-    if ('message' in response) throw new HTTPException(400, { message: response.message })
+    }
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error })
+    }
+    if ('message' in response) {
+      throw new HTTPException(400, { message: response.message })
+    }
 
     if ('access_token' in response) {
       this.token = {
@@ -103,7 +108,9 @@ export class AuthFlow {
       }
     }
 
-    if ('scope' in response) this.granted_scopes = response.scope.split(' ')
+    if ('scope' in response) {
+      this.granted_scopes = response.scope.split(' ')
+    }
   }
 
   async getUserData() {
@@ -114,11 +121,18 @@ export class AuthFlow {
       },
     }).then((res) => res.json())) as DiscordMeResponse | DiscordErrorResponse
 
-    if ('error_description' in response)
+    if ('error_description' in response) {
       throw new HTTPException(400, { message: response.error_description })
-    if ('error' in response) throw new HTTPException(400, { message: response.error })
-    if ('message' in response) throw new HTTPException(400, { message: response.message })
+    }
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error })
+    }
+    if ('message' in response) {
+      throw new HTTPException(400, { message: response.message })
+    }
 
-    if ('user' in response) this.user = response.user
+    if ('user' in response) {
+      this.user = response.user
+    }
   }
 }

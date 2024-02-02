@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 0.0.4
+
+### Patch Changes
+
+- [#365](https://github.com/honojs/middleware/pull/365) [`716bd4d0a72efb1be3c454c0323917069ca0f7ee`](https://github.com/honojs/middleware/commit/716bd4d0a72efb1be3c454c0323917069ca0f7ee) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: set `curly` rule as `all`
+
 ## 0.0.3
 
 ### Patch Changes

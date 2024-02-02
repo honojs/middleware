@@ -45,9 +45,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth/core@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@auth/core@npm:0.19.0"
+"@auth/core@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@auth/core@npm:0.24.0"
   dependencies:
     "@panva/hkdf": "npm:^1.1.1"
     "@types/cookie": "npm:0.6.0"
@@ -61,7 +61,7 @@ __metadata:
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 27fc81a2e4348fb6a44ded8137001908c4dfbe0fd0375b1479f50d9ea5be73b5fad20f4338c0e3df1eac4200b3831a7a57cfb79fdcad5a2ce1ce04ff76ad9190
+  checksum: b8d8c66bc35d18a6ffa80e21b122747cb0c40826f68eb8c22a1b4dda01aba62c2050a1d5e4997e92a6756edad4103faafe8d9a49c7278d991e690c3ebbdb6035
   languageName: node
   linkType: hard
 
@@ -876,6 +876,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/workers-types@npm:^4.20240117.0":
+  version: 4.20240117.0
+  resolution: "@cloudflare/workers-types@npm:4.20240117.0"
+  checksum: 900b796af2ae97257e1f6171b9c37d718c5f8ae064cea8f8d1c48e52ccde01492c5cfa61716fc703d05a6bd92e50a55f7d9e525d2c91919db76e42458c3e8e76
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -1364,7 +1371,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/auth-js@workspace:packages/auth-js"
   dependencies:
-    "@auth/core": "npm:^0.19.0"
+    "@auth/core": "npm:^0.24.0"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
@@ -1692,11 +1699,13 @@ __metadata:
   resolution: "@hono/zod-openapi@workspace:packages/zod-openapi"
   dependencies:
     "@asteasolutions/zod-to-openapi": "npm:^5.5.0"
-    "@hono/zod-validator": "npm:^0.1.11"
+    "@cloudflare/workers-types": "npm:^4.20240117.0"
+    "@hono/zod-validator": "npm:0.1.11"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
+    typescript: "npm:^5.3.3"
     vitest: "npm:^1.0.1"
     zod: "npm:^3.22.1"
   peerDependencies:
@@ -1705,13 +1714,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/zod-validator@npm:^0.1.11, @hono/zod-validator@workspace:packages/zod-validator":
+"@hono/zod-validator@npm:0.1.11, @hono/zod-validator@workspace:packages/zod-validator":
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
+    typescript: "npm:^5.3.3"
     zod: "npm:3.19.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -2819,7 +2829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/api@npm:^1.6.0":
+"@opentelemetry/api@npm:^1.4.0, @opentelemetry/api@npm:^1.6.0":
   version: 1.7.0
   resolution: "@opentelemetry/api@npm:1.7.0"
   checksum: b5468115d1cec45dd2b86b39210fdc03620a93b9f07c3d20b14081f75e2f7c9b37ceceeb60d5f35c6d4f9819ae07eee0b4874e53e7362376db21db1e00f483f8
@@ -4904,6 +4914,13 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: d73d8b897238a2d3ffa5f59c0241870043aa7471335e89ea5e1ff48edb7c2d0bb471517a3e4c5c3f4c043615caa2717b5f80a5e61e07503d51dc85cb848e665d
+  languageName: node
+  linkType: hard
+
+"bintrees@npm:1.0.2":
+  version: 1.0.2
+  resolution: "bintrees@npm:1.0.2"
+  checksum: 132944b20c93c1a8f97bf8aa25980a76c6eb4291b7f2df2dbcd01cb5b417c287d3ee0847c7260c9f05f3d5a4233aaa03dec95114e97f308abe9cc3f72bed4a44
   languageName: node
   linkType: hard
 
@@ -14220,6 +14237,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prom-client@npm:^15.0.0":
+  version: 15.1.0
+  resolution: "prom-client@npm:15.1.0"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.4.0"
+    tdigest: "npm:^0.1.1"
+  checksum: c10781adbf49225298e44da5396a51a0bd4d0cddc3c7e237ba50e888e12ead26a8f98261f362a442f1bbcdaddd6e7302d5675b37beac67ea9b6f82e4d39fb3cc
+  languageName: node
+  linkType: hard
+
 "promise-breaker@npm:^6.0.0":
   version: 6.0.0
   resolution: "promise-breaker@npm:6.0.0"
@@ -16283,6 +16310,15 @@ __metadata:
     debug: "npm:4.3.1"
     is2: "npm:^2.0.6"
   checksum: a5fb29e35f1e452f1064e3671d02b6d65e7d9bffad98d8da688270b6ffdaa9a8351fe8321aedf131f3904af70b569d9c5f6d9fe75d57dda19c466abac2bc025a
+  languageName: node
+  linkType: hard
+
+"tdigest@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "tdigest@npm:0.1.2"
+  dependencies:
+    bintrees: "npm:1.0.2"
+  checksum: 10187b8144b112fcdfd3a5e4e9068efa42c990b1e30cd0d4f35ee8f58f16d1b41bc587e668fa7a6f6ca31308961cbd06cd5d4a4ae1dc388335902ae04f7d57df
   languageName: node
   linkType: hard
 

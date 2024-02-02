@@ -321,8 +321,12 @@ export class OpenAPIHono<
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const config = typeof configure === 'function' ? configure(c) : configure
-      const document = this.getOpenAPIDocument(config)
-      return c.json(document)
+      try {
+        const document = this.getOpenAPIDocument(config)
+        return c.json(document)
+      } catch (e) {
+        return c.json(e, 500)
+      }
     }) as any
   }
 
@@ -332,8 +336,12 @@ export class OpenAPIHono<
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const config = typeof configure === 'function' ? configure(c) : configure
-      const document = this.getOpenAPI31Document(config)
-      return c.json(document)
+      try {
+        const document = this.getOpenAPI31Document(config)
+        return c.json(document)
+      } catch (e) {
+        return c.json(e, 500)
+      }
     }) as any
   }
 
