@@ -1536,6 +1536,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/oidc-auth@workspace:packages/oidc-auth":
+  version: 0.0.0-use.local
+  resolution: "@hono/oidc-auth@workspace:packages/oidc-auth"
+  dependencies:
+    "@types/jest": "npm:^29.5.11"
+    "@types/jsonwebtoken": "npm:^9.0.5"
+    hono: "npm:^3.12.0"
+    jest: "npm:^29.7.0"
+    jsonwebtoken: "npm:^9.0.2"
+    oauth4webapi: "npm:^2.6.0"
+    ts-jest: "npm:^29.1.1"
+    tsup: "npm:^8.0.1"
+    typescript: "npm:^5.3.3"
+  peerDependencies:
+    hono: ^3.12.0
+  languageName: unknown
+  linkType: soft
+
 "@hono/qwik-city@workspace:packages/qwik-city":
   version: 0.0.0-use.local
   resolution: "@hono/qwik-city@workspace:packages/qwik-city"
@@ -3490,6 +3508,15 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: 6bf5337bc447b706bb5b4431d37686aa2ea6d07cfd6f79cc31de80170d6ff9b1c7384a9c0ccbc45b3f512bae9e9f75c2e12109806a15331dc94e8a8db6dbb4ac
+  languageName: node
+  linkType: hard
+
+"@types/jsonwebtoken@npm:^9.0.5":
+  version: 9.0.5
+  resolution: "@types/jsonwebtoken@npm:9.0.5"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: c582b8420586f3b9550f7e34992cb32be300bc953636f3b087ed9c180ce7ea5c2e4b35090be2d57f0d3168cc3ca1074932907caa2afe09f4e9c84cf5c0daefa8
   languageName: node
   linkType: hard
 
@@ -8850,6 +8877,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^3.12.0":
+  version: 3.12.10
+  resolution: "hono@npm:3.12.10"
+  checksum: 43ad255e54bc5dd47154ad057565f41f2fda3dc866416f9a25fa2022e86c552b42109972f8c75101ed1da704c2b967d8bd474869db094878ab9438650379663c
+  languageName: node
+  linkType: hard
+
 "hosted-git-info@npm:^2.1.4":
   version: 2.8.9
   resolution: "hosted-git-info@npm:2.8.9"
@@ -11065,7 +11099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.0":
+"jsonwebtoken@npm:^9.0.0, jsonwebtoken@npm:^9.0.2":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:
@@ -13238,6 +13272,13 @@ __metadata:
   version: 2.4.0
   resolution: "oauth4webapi@npm:2.4.0"
   checksum: da9fae4b6c116a1d80e2e0408e70530703691bb3a5dd6ca2e59a212e8f3b9b04a2a3bf68400f949e627e97af7c7de07b7975bd374629e4f7f4ef9906d5afad10
+  languageName: node
+  linkType: hard
+
+"oauth4webapi@npm:^2.6.0":
+  version: 2.9.0
+  resolution: "oauth4webapi@npm:2.9.0"
+  checksum: 7bbd2ab446c0621c71f6855c695b900d6ba1f56474b105751134112abf5cff9fbe2fe715d2ae0f57f0ed1adc600c37ae6bf007669af9f760dc982aaeaeb0968f
   languageName: node
   linkType: hard
 
