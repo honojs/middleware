@@ -8,9 +8,9 @@ const MOCK_ISSUER = 'https://accounts.google.com'
 const MOCK_CLIENT_ID = 'CLIENT_ID_001'
 const MOCK_SUBJECT = 'USER_ID_001'
 const MOCK_EMAIL = 'user001@example.com'
-const MOCK_STATE= crypto.randomBytes(16).toString('hex')
-const MOCK_NONCE = crypto.randomBytes(16).toString('hex')
-const MOCK_SESSION_SECRET = crypto.randomBytes(32).toString('hex')
+const MOCK_STATE= crypto.randomBytes(16).toString('hex') // 32 bytes
+const MOCK_NONCE = crypto.randomBytes(16).toString('hex') // 32 bytes
+const MOCK_SESSION_SECRET = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_ID_TOKEN = jwt.sign({
   iss: MOCK_ISSUER,
   aud: MOCK_CLIENT_ID,
@@ -66,7 +66,14 @@ const MOCK_JWT_EXPIRED_SESSION = jwt.sign({
   rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
   ssnexp: Math.floor(Date.now() / 1000) - 1, // expired
 }, MOCK_SESSION_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
-const MOCK_JWT_INVALID_SESSION = jwt.sign({
+const MOCK_JWT_INCORRECT_SECRET = jwt.sign({
+  sub: MOCK_SUBJECT,
+  email: MOCK_EMAIL,
+  rtk: 'DUMMY_REFRESH_TOKEN',
+  rtkexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
+  ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
+}, 'incorrect-secret', { algorithm: 'HS256', expiresIn: '1h' })
+const MOCK_JWT_INVALID_ALGORITHM = jwt.sign({
   sub: MOCK_SUBJECT,
   email: MOCK_EMAIL,
   rtk: 'DUMMY_REFRESH_TOKEN',
@@ -113,16 +120,16 @@ jest.unstable_mockModule('oauth4webapi', () => {
   }
 })
 
-const {oidcAuthMiddleware, getAuth, revokeSession} = await import("../src");
+const { configureOidcAuth, oidcAuthMiddleware, getAuth, revokeSession } = await import("../src");
 
-const MOCK_ENV = {
-  OIDC_ISSUER: MOCK_ISSUER,
-  OIDC_CLIENT_ID: MOCK_CLIENT_ID,
-  OIDC_CLIENT_SECRET: 'DUUMMY_CLIENT_SECRET',
-  OIDC_REDIRECT_URI: 'http://localhost/callback',
-  OIDC_SESSION_SECRET: MOCK_SESSION_SECRET,
-  OIDC_SESSION_EXPIRES: 3600,
-}
+configureOidcAuth({
+  issuer: MOCK_ISSUER,
+  clientId: MOCK_CLIENT_ID,
+  clientSecret: 'DUUMMY_CLIENT_SECRET',
+  redirectUri: 'http://localhost/callback',
+  sessionSecret: MOCK_SESSION_SECRET,
+  sessionExpires: 3600,
+})
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -139,9 +146,9 @@ describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
     const req = new Request('http://localhost/', {
       method: 'GET',
-      headers: { cookie: `oidc-session=${MOCK_JWT_ACTIVE_SESSION}` },
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(`Hello ${MOCK_EMAIL}! Refresh token: DUMMY_REFRESH_TOKEN`)
@@ -149,9 +156,9 @@ describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK with renewed refresh token', async () => {
     const req = new Request('http://localhost/', {
       method: 'GET',
-      headers: { cookie: `oidc-session=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(`Hello ${MOCK_EMAIL}! Refresh token: DUUMMY_REFRESH_TOKEN_RENEWED`)
@@ -159,9 +166,9 @@ describe('oidcAuthMiddleware()', () => {
   test('Should redirect to authorization endpoint if session is expired', async () => {
     const req = new Request('http://localhost/', {
       method: 'GET',
-      headers: { cookie: `oidc-session=${MOCK_JWT_EXPIRED_SESSION}` },
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toMatch(/scope=openid(%20|\+)email&/)
@@ -171,15 +178,33 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
   })
-  test('Should return an error and delete session if session JWT is invalid', async () => {
+  test('Should redirect to authorization endpoint if no session cookie is found', async () => {
     const req = new Request('http://localhost/', {
       method: 'GET',
-      headers: { cookie: `oidc-session=${MOCK_JWT_INVALID_SESSION}` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
-    expect(res.status).toBe(500)
-    expect(res.headers.get('set-cookie')).toMatch('oidc-session=;')
+    expect(res.status).toBe(302)
+  })
+  test('Should delete session and redirect to authorization endpoint if the key of the session JWT is icorrect', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_INCORRECT_SECRET}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
+  })
+  test('Should delete session and redirect to authorization endpoint if the algorithm of the session JWT is invalid', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_INVALID_ALGORITHM}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
   })
 });
 describe('processOAuthCallback()', () => {
@@ -188,7 +213,7 @@ describe('processOAuthCallback()', () => {
       method: 'GET',
       headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
@@ -198,7 +223,7 @@ describe('processOAuthCallback()', () => {
       method: 'GET',
       headers: { cookie: `state=abcd; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
   })
@@ -207,7 +232,7 @@ describe('processOAuthCallback()', () => {
       method: 'GET',
       headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
   })
@@ -216,7 +241,7 @@ describe('processOAuthCallback()', () => {
       method: 'GET',
       headers: { cookie: 'state=1234; nonce=1234; code_verifier=1234' },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
   })
@@ -225,11 +250,11 @@ describe('RevokeSession()', () => {
   test('Should successfully revoke the session', async () => {
     const req = new Request('http://localhost/logout', {
       method: 'GET',
-      headers: { cookie: `oidc-session=${MOCK_JWT_ACTIVE_SESSION}` },
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
     })
-    const res = await app.request(req, {}, MOCK_ENV)
+    const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(res.headers.get('set-cookie')).toMatch('oidc-session=;')
+    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
   })
 });

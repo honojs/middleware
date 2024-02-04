@@ -6,10 +6,12 @@ import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { sign, verify } from 'hono/jwt'
+import { HTTPException } from 'hono/http-exception'
 import * as oauth2 from 'oauth4webapi'
 
 declare module 'hono' {
   interface ContextVariableMap {
+    oidcAuthConfiguration: OidcAuthConfigration
     oidcAuthorizationServer : Promise<oauth2.AuthorizationServer>
     oidcClient: oauth2.Client
     oidcAuth: OidcAuth| null
@@ -25,18 +27,61 @@ export type OidcAuth = {
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
 }
 
-const oidcSessionCookieName = 'oidc-session'
+const oidcAuthSessionCookieName = 'oidc-auth'
 const defaultRefreshInterval = 15 * 60 // 15 minutes
 const defaultExpirationInterval = 60 * 60 * 24 // 1 day
+
+export type OidcAuthConfigration = {
+  sessionSecret: string,
+  sessionRefreshInterval?: number,
+  sessionExpires?: number,
+  issuer: string,
+  clientId: string,
+  clientSecret: string,
+  redirectUri: string,
+}
+
+let oidcAuthConfiguration: OidcAuthConfigration | null = null
+
+/**
+ * Configures the OIDC authentication middleware.
+ * @param config - The OIDC-auth configuration.
+ */
+export const configureOidcAuth = (config: OidcAuthConfigration) => {
+  oidcAuthConfiguration = config
+}
+
+/**
+ * Returns the OIDC-auth configuration.
+ */
+export const getConfiguration = (c: Context): OidcAuthConfigration => {
+  let config = c.get('oidcAuthConfiguration')
+  if (config === undefined) {
+    if (oidcAuthConfiguration === null) {
+      throw new HTTPException(500, { message: 'OIDC configuration is not set' })
+    }
+    config = oidcAuthConfiguration
+    if (config.sessionSecret.length < 32) {
+      // RFC7518 requires the key to be at least 32 characters long for HS256
+      // see: https://datatracker.ietf.org/doc/html/rfc7518#section-3.2
+      throw new HTTPException(500, { message: 'The session secret must be at least 32 characters long' })
+    }
+    config.sessionRefreshInterval = config.sessionRefreshInterval || defaultRefreshInterval
+    config.sessionExpires = config.sessionExpires || defaultExpirationInterval
+    c.set('oidcAuthConfiguration', config)
+  }
+  return config
+}
 
 /**
  * Returns the OAuth2 authorization server metadata.
  * If the metadata is not cached, it will be retrieved from the discovery endpoint.
  */
 export const getAuthorizationServer = async (c: Context) : Promise<oauth2.AuthorizationServer> => {
+  const config = getConfiguration(c)
   let as = await c.get('oidcAuthorizationServer')
   if (as === undefined) {
-    const issuer = new URL(c.env.OIDC_ISSUER)
+    const issuer = new URL(config.issuer)
     const response = await oauth2.discoveryRequest(issuer)
     as = await oauth2.processDiscoveryResponse(issuer, response)
     c.set('oidcAuthorizationServer', as)
@@ -48,11 +93,12 @@ export const getAuthorizationServer = async (c: Context) : Promise<oauth2.Author
  * Returns the OAuth2 client metadata.
  */
 export const getClient = (c: Context) : oauth2.Client => {
+  const config = getConfiguration(c)
   let client = c.get('oidcClient')
   if (client === undefined) {
     client = {
-      client_id: c.env.OIDC_CLIENT_ID,
-      client_secret: c.env.OIDC_CLIENT_SECRET,
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
       token_endpoint_auth_method: 'client_secret_basic',
     }
     c.set('oidcClient', client)
@@ -65,15 +111,21 @@ export const getClient = (c: Context) : oauth2.Client => {
  * If the session is invalid or expired, revokes the session and returns null.
  */
 export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
+  const config = getConfiguration(c)
   let auth = c.get('oidcAuth')
   if (auth === undefined) {
-    const session_jwt = getCookie(c, oidcSessionCookieName)
+    const session_jwt = getCookie(c, oidcAuthSessionCookieName)
     if (session_jwt === undefined) {
       return null
     }
-    auth = await verify(session_jwt, c.env.OIDC_SESSION_SECRET)
+    try {
+      auth = await verify(session_jwt, config.sessionSecret)
+    } catch (e) {
+      deleteCookie(c, oidcAuthSessionCookieName)
+      return null
+    }
     if (auth === null || auth.rtkexp === undefined || auth.ssnexp === undefined) {
-      throw new Error('Invalid session')
+      throw new HTTPException(500, { message: 'Invalid session' })
     }
     const now = Math.floor(Date.now() / 1000);
     // Revoke the session if it has expired
@@ -84,7 +136,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     if (auth.rtkexp < now) {
       // Refresh the token if it has expired
       if (auth.rtk === undefined || auth.rtk === "") {
-        deleteCookie(c, oidcSessionCookieName)
+        deleteCookie(c, oidcAuthSessionCookieName)
         return null
       }
       const as = await getAuthorizationServer(c)
@@ -93,7 +145,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       const result = await oauth2.processRefreshTokenResponse(as, client, response)
       if (oauth2.isOAuth2Error(result)) {
         // The refresh_token might be expired or revoked
-        deleteCookie(c, oidcSessionCookieName)
+        deleteCookie(c, oidcAuthSessionCookieName)
         return null
       }
       auth = await updateAuth(c, auth, result)
@@ -114,18 +166,17 @@ const setAuth = async (c: Context, response: oauth2.OpenIDTokenEndpointResponse)
  * Updates the session JWT and sets the new session cookie.
  */
 const updateAuth = async (c: Context, orig: OidcAuth | undefined, response: oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse): Promise<OidcAuth> => {
+  const config = getConfiguration(c)
   const claims = oauth2.getValidatedIdTokenClaims(response)
-  const session_refresh_interval = parseInt(c.env.OIDC_SESSION_REFRESH_INTERVAL) || defaultRefreshInterval
-  const session_expires = parseInt(c.env.OIDC_SESSION_EXPIRES) || defaultExpirationInterval
   const updated: OidcAuth = {
     sub: claims?.sub || orig?.sub || '',
     email: claims?.email as string || orig?.email || '',
     rtk: response.refresh_token || orig?.rtk || '',
-    rtkexp: Math.floor(Date.now() / 1000) + session_refresh_interval,
-    ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + session_expires,
+    rtkexp: Math.floor(Date.now() / 1000) + config.sessionRefreshInterval!,
+    ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + config.sessionExpires!,
   }
-  const session_jwt = await sign(updated, c.env.OIDC_SESSION_SECRET)
-  setCookie(c, oidcSessionCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
+  const session_jwt = await sign(updated, config.sessionSecret)
+  setCookie(c, oidcAuthSessionCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
   c.set('oidcSessionCookie', session_jwt)
   return updated
 }
@@ -134,19 +185,20 @@ const updateAuth = async (c: Context, orig: OidcAuth | undefined, response: oaut
  * Revokes the refresh token of the current session and deletes the session cookie
  */
 export const revokeSession = async (c: Context): Promise<void> => {
-  const session_jwt = getCookie(c, oidcSessionCookieName)
+  const config = getConfiguration(c)
+  const session_jwt = getCookie(c, oidcAuthSessionCookieName)
   if (session_jwt !== undefined) {
-    deleteCookie(c, oidcSessionCookieName)
-    const payload: OidcAuth = await verify(session_jwt, c.env.OIDC_SESSION_SECRET)
-    if (payload.rtk !== undefined && payload.rtk !== "") {
+    deleteCookie(c, oidcAuthSessionCookieName)
+    const auth: OidcAuth = await verify(session_jwt, config.sessionSecret)
+    if (auth.rtk !== undefined && auth.rtk !== "") {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
       const client = getClient(c)
       if (as.revocation_endpoint !== undefined) {
-        const response = await oauth2.revocationRequest(as, client, payload.rtk)
+        const response = await oauth2.revocationRequest(as, client, auth.rtk)
         const result = await oauth2.processRevocationResponse(response)
         if (oauth2.isOAuth2Error(result)) {
-          throw new Error(`OAuth2Error: [${result.error}] ${result.error_description}`)
+          throw new HTTPException(500, { message: `OAuth2Error: [${result.error}] ${result.error_description}` })
         }
       }
     }
@@ -164,16 +216,17 @@ export const revokeSession = async (c: Context): Promise<void> => {
  * @throws Error if OpenID Connect or email scopes are not supported by the authorization server.
  */
 const generateAuthorizationRequestUrl = async (c: Context, state: string, nonce: string, code_challenge: string) => {
+  const config = getConfiguration(c)
   const as = await getAuthorizationServer(c)
   const client = getClient(c)
   const authorizationRequestUrl = new URL(as.authorization_endpoint!)
   authorizationRequestUrl.searchParams.set('client_id', client.client_id)
-  authorizationRequestUrl.searchParams.set('redirect_uri', c.env.OIDC_REDIRECT_URI)
+  authorizationRequestUrl.searchParams.set('redirect_uri', config.redirectUri)
   authorizationRequestUrl.searchParams.set('response_type', 'code')
   if (as.scopes_supported === undefined || as.scopes_supported.length === 0) {
-    throw new Error('The supported scopes information is not provided by the IdP')
+    throw new HTTPException(500, { message: 'The supported scopes information is not provided by the IdP' })
   } else if (as.scopes_supported.indexOf('email') === -1) {
-    throw new Error('The "email" scope is not supported by the IdP')
+    throw new HTTPException(500, { message: 'The "email" scope is not supported by the IdP' })
   } else if (as.scopes_supported.indexOf('offline_access') === -1) {
     authorizationRequestUrl.searchParams.set('scope', 'openid email')
   } else {
@@ -195,6 +248,7 @@ const generateAuthorizationRequestUrl = async (c: Context, state: string, nonce:
  * Processes the OAuth2 callback request.
  */
 export const processOAuthCallback = async (c: Context) => {
+  const config = getConfiguration(c)
   const as = await getAuthorizationServer(c)
   const client = getClient(c)
 
@@ -204,7 +258,7 @@ export const processOAuthCallback = async (c: Context) => {
   const currentUrl: URL = new URL(c.req.url)
   const params = oauth2.validateAuthResponse(as, client, currentUrl, state)
   if (oauth2.isOAuth2Error(params)) {
-    throw new Error(`OAuth2Error: [${params.error}] ${params.error_description}`)
+    throw new HTTPException(500, { message: `OAuth2Error: [${params.error}] ${params.error_description}` })
   }
 
   // Exchanges the authorization code for a refresh token
@@ -216,9 +270,9 @@ export const processOAuthCallback = async (c: Context) => {
   const continue_url = getCookie(c, 'continue')
   deleteCookie(c, 'continue')
   if (code === undefined || nonce === undefined || code_verifier === undefined) {
-    throw new Error('Missing required parameters / cookies')
+    throw new HTTPException(500, { message: 'Missing required parameters / cookies' })
   }
-  const result = await exchangeAuthorizationCode(as, client, params, c.env.OIDC_REDIRECT_URI, nonce, code_verifier)
+  const result = await exchangeAuthorizationCode(as, client, params, config.redirectUri, nonce, code_verifier)
   await setAuth(c, result)
   return c.redirect(continue_url || '/')
 }
@@ -237,14 +291,11 @@ const exchangeAuthorizationCode = async (as: oauth2.AuthorizationServer, client:
   // Handle www-authenticate challenges
   const challenges = oauth2.parseWwwAuthenticateChallenges(response)
   if (challenges !== undefined) {
-    for (const challenge of challenges) {
-      console.log('challenge: ', challenge)
-    }
-    throw new Error()
+    throw new HTTPException(500, { message: `www-authenticate error: ${JSON.stringify(challenges)}` })
   }
   const result = await oauth2.processAuthorizationCodeOpenIDResponse(as, client, response, nonce)
   if (oauth2.isOAuth2Error(result)) {
-    throw new Error(`OAuth2Error: [${result.error}] ${result.error_description}`)
+    throw new HTTPException(500, { message: `OAuth2Error: [${result.error}] ${result.error_description}` })
   }
   return result
 }
@@ -254,8 +305,9 @@ const exchangeAuthorizationCode = async (as: oauth2.AuthorizationServer, client:
  */
 export const oidcAuthMiddleware = ()  => {
   return createMiddleware(async (c, next) => {
+    const config = getConfiguration(c)
     const uri = c.req.url.split('?')[0]
-    if (uri === c.env.OIDC_REDIRECT_URI) {
+    if (uri === config.redirectUri) {
       return processOAuthCallback(c)
     }
     try {
@@ -275,15 +327,15 @@ export const oidcAuthMiddleware = ()  => {
       }
     } catch (e) {
       console.log(e)
-      deleteCookie(c, oidcSessionCookieName)
-      throw new Error('Invalid session')
+      deleteCookie(c, oidcAuthSessionCookieName)
+      throw new HTTPException(500, { message: 'Invalid session' })
     }
     await next()
     c.res.headers.set('Cache-Control', 'private, no-cache')
     // Workaround to set the session cookie when the response is returned by the origin server
     const sessionCookie = c.get('oidcSessionCookie')
     if (sessionCookie !== undefined) {
-      setCookie(c, oidcSessionCookieName, sessionCookie, { path: '/', httpOnly: true, secure: true })
+      setCookie(c, oidcAuthSessionCookieName, sessionCookie, { path: '/', httpOnly: true, secure: true })
     }
   })
 }

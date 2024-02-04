@@ -39,24 +39,33 @@ npm i hono @hono/oidc-auth
 
 ## Configuration
 
-Before starting using the middleware you must set the following environment variables:
+The OIDC authentication middleware requires the following configuration:
 
-| Environment Variable | Description | Default Value |
+| Key | Description | Default Value |
 | ---- | ---- | ---- |
-| OIDC_SESSION_SECRET           | The secret key used for signing the session JWT. It is used to verify the JWT in the cookie and prevent tampering. | None, must be provided |
-| OIDC_SESSION_REFRESH_INTERVAL | The interval (in seconds) at which the session should be implicitly refreshed. | 15 * 60 (15 minutes) |
-| OIDC_SESSION_EXPIRES          | The interval (in seconds) after which the session should be considered expired. Once expired, the user will be redirected to the IdP for re-authentication. | 60 * 60 * 24 (1 day) |
-| OIDC_ISSUER                   | The issuer URL of the OpenID Connect (OIDC) discovery. This URL is used to retrieve the OIDC provider's configuration. | None, must be provided |
-| OIDC_CLIENT_ID                | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider. | None, must be provided |
-| OIDC_CLIENT_SECRET            | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider. | None, must be provided |
-| OIDC_REDIRECT_URI             | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider. | None, must be provided |
+| sessionSecret          | The secret key used for signing the session JWT. It is used to verify the JWT in the cookie and prevent tampering. | None, must be provided |
+| sessionRefreshInterval | The interval (in seconds) at which the session should be implicitly refreshed. | 15 * 60 (15 minutes) |
+| sessionExpires         | The interval (in seconds) after which the session should be considered expired. Once expired, the user will be redirected to the IdP for re-authentication. | 60 * 60 * 24 (1 day) |
+| issuer                 | The issuer URL of the OpenID Connect (OIDC) discovery. This URL is used to retrieve the OIDC provider's configuration. | None, must be provided |
+| clientId               | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider. | None, must be provided |
+| clientSecret           | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider. | None, must be provided |
+| redirectUri            | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider. | None, must be provided |
+
+These parameters can be set using the `configureOidcAuth()` function.
 
 ## How to Use
 
-```ts
+```typescript
 import { Hono } from 'hono'
-import { requireOidcAuthMiddleware, getAuth, revokeSession, processOAuthCallback } from '@hono/oidc-auth';
+import { configureOidcAuth, oidcAuthMiddleware, getAuth, revokeSession, processOAuthCallback } from '@hono/oidc-auth';
 
+configureOidcAuth({
+  issuer: 'https://openid-issuer-url.example.com',
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  redirectUri: 'https://example.com/callback',
+  sessionSecret: 'StringThatMustBeAtLeast32Characters',
+})
 const app = new Hono()
 
 app.get('/logout', async (c) => {
@@ -77,14 +86,21 @@ export default app
 
 ## Another example: Cloudflare Pages with OpenID connect login
 
-```ts
+```typescript
 import { Hono } from 'hono'
-import { requireOidcAuthMiddleware, getAuth } from '@hono/oidc-auth';
+import { configureOidcAuth, oidcAuthMiddleware, getAuth } from '@hono/oidc-auth';
 
+configureOidcAuth({
+  issuer: 'https://openid-issuer-url.example.com',
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  redirectUri: 'https://example.com/callback',
+  sessionSecret: 'StringThatMustBeAtLeast32Characters',
+})
 const app = new Hono()
 
 app.use('*', oidcAuthMiddleware())
-app.get("*", async (c) => {
+app.get('*', async (c) => {
   const auth = await getAuth(c)
   if (!auth?.email.endsWith('@example.com')) {
     return c.text('Unauthorized', 401)
@@ -100,7 +116,7 @@ export default app
 
 Note:
 If explicit logout is not required, the logout handler can be omitted.
-If URL conversion is not performed during the network communication (i.e. never use reverse proxy or something), the callback handler can also be omitted.
+If the middleware is applied to the callback URL, the default callback handling in the middleware can be used, so the explicit callback handling is not required.
 
 ## Author
 
