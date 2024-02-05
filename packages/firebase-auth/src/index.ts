@@ -1,6 +1,7 @@
 import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { Context, MiddlewareHandler } from 'hono'
+import { getCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 export type VerifyFirebaseAuthEnv = {
@@ -12,6 +13,8 @@ export type VerifyFirebaseAuthEnv = {
 export interface VerifyFirebaseAuthConfig {
   projectId: string
   authorizationHeaderKey?: string
+  useCookie: boolean
+  cookieName?: string
   keyStore?: KeyStorer
   keyStoreInitializer?: (c: Context) => KeyStorer
   disableErrorLog?: boolean
@@ -36,6 +39,8 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
   const config = {
     projectId: userConfig.projectId,
     AuthorizationHeaderKey: userConfig.authorizationHeaderKey ?? 'Authorization',
+    useCookie: userConfig.useCookie,
+    cookieName: userConfig.cookieName ?? 'authorization',
     KeyStore: userConfig.keyStore,
     keyStoreInitializer: userConfig.keyStoreInitializer ?? defaultKeyStoreInitializer,
     disableErrorLog: userConfig.disableErrorLog,
@@ -43,14 +48,14 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
   }
 
   return async (c, next) => {
-    const authorization = c.req.headers.get(config.AuthorizationHeaderKey)
-    if (authorization === null) {
+    const authorization = config.useCookie ? getCookie(c, config.cookieName) : c.req.headers.get(config.AuthorizationHeaderKey)
+    if (authorization === null || authorization === undefined) {
       const res = new Response('Bad Request', {
         status: 400,
       })
       throw new HTTPException(400, { res })
     }
-    const jwt = authorization.replace(/Bearer\s+/i, '')
+    const jwt = config.useCookie ? authorization : authorization.replace(/Bearer\s+/i, '')
     const auth = Auth.getOrInitialize(
       config.projectId,
       config.KeyStore ?? config.keyStoreInitializer(c)

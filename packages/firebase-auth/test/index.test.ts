@@ -31,7 +31,7 @@ describe('verifyFirebaseAuth middleware', () => {
   })
 
   describe('service worker syntax', () => {
-    it('valid case, should be 200', async () => {
+    it('valid case, should be 200 when using headers', async () => {
       const app = new Hono()
 
       resetAuth()
@@ -49,6 +49,7 @@ describe('verifyFirebaseAuth middleware', () => {
           keyStore: WorkersKVStoreSingle.getOrInitialize(PUBLIC_JWK_CACHE_KEY, PUBLIC_JWK_CACHE_KV),
           disableErrorLog: true,
           firebaseEmulatorHost: emulatorHost,
+          useCookie: false,
         })
       )
       app.get('/hello', (c) => c.json(getFirebaseToken(c)))
@@ -56,6 +57,44 @@ describe('verifyFirebaseAuth middleware', () => {
       const req = new Request('http://localhost/hello', {
         headers: {
           Authorization: `Bearer ${user.idToken}`,
+        },
+      })
+
+      const res = await app.request(req)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(200)
+
+      const json = await res.json<{ aud: string; email: string }>()
+      expect(json.aud).toBe(validProjectId)
+      expect(json.email).toBe('codehex@hono.js')
+    })
+    it('valid case, should be 200 when using cookies', async () => {
+      const app = new Hono()
+
+      resetAuth()
+
+      // This is assumed to be obtained from an environment variable.
+      const PUBLIC_JWK_CACHE_KEY = 'testing-cache-key'
+      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
+        'PUBLIC_JWK_CACHE_KV'
+      )) as unknown as KVNamespace
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          keyStore: WorkersKVStoreSingle.getOrInitialize(PUBLIC_JWK_CACHE_KEY, PUBLIC_JWK_CACHE_KV),
+          disableErrorLog: true,
+          firebaseEmulatorHost: emulatorHost,
+          useCookie: true,
+        })
+      )
+      app.get('/hello', (c) => c.json(getFirebaseToken(c)))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Cookie: `authorization=${user.idToken}`,
         },
       })
 
@@ -78,6 +117,7 @@ describe('verifyFirebaseAuth middleware', () => {
           headerKey: 'Authorization',
           config: {
             projectId: validProjectId,
+            useCookie: false,
           },
           wantStatus: 200,
         },
@@ -89,6 +129,7 @@ describe('verifyFirebaseAuth middleware', () => {
           config: {
             projectId: validProjectId,
             authorizationHeaderKey: 'X-Authorization',
+            useCookie: false,
           },
           wantStatus: 200,
         },
@@ -100,6 +141,7 @@ describe('verifyFirebaseAuth middleware', () => {
           config: {
             projectId: validProjectId, // see package.json
             // No specified header key.
+            useCookie: false,
           },
           wantStatus: 400,
         },
@@ -110,10 +152,11 @@ describe('verifyFirebaseAuth middleware', () => {
           headerKey: 'Authorization',
           config: {
             projectId: 'invalid-projectId',
+            useCookie: false,
           },
           wantStatus: 401,
         },
-      ],
+      ]
     ])('%s', async (_, { headerKey, config, wantStatus }) => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
@@ -133,6 +176,7 @@ describe('verifyFirebaseAuth middleware', () => {
         verifyFirebaseAuth({
           ...config,
           disableErrorLog: true,
+          useCookie: false
         })
       )
       app.get('/hello', (c) => c.text('OK'))
@@ -166,6 +210,7 @@ describe('verifyFirebaseAuth middleware', () => {
           projectId: validProjectId,
           keyStore: nopKeyStore,
           disableErrorLog: true,
+          useCookie: false
         })
       )
       app.get('/hello', (c) => c.text('OK'))
@@ -201,6 +246,7 @@ describe('verifyFirebaseAuth middleware', () => {
           projectId: validProjectId,
           keyStore: nopKeyStore,
           disableErrorLog: true,
+          useCookie: false
         })
       )
       app.get('/hello', (c) => c.json(getFirebaseToken(c)))
@@ -233,6 +279,7 @@ describe('verifyFirebaseAuth middleware', () => {
         verifyFirebaseAuth({
           projectId: validProjectId,
           disableErrorLog: true,
+          useCookie: false
         })
       )
       app.get('/hello', (c) => c.text('OK'))
@@ -240,6 +287,196 @@ describe('verifyFirebaseAuth middleware', () => {
       const req = new Request('http://localhost/hello', {
         headers: {
           Authorization: `Bearer ${user.idToken}`,
+        },
+      })
+
+      const env: VerifyFirebaseAuthEnv = {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+      }
+      const res = await app.fetch(req, env)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(501)
+    })
+  })
+
+  describe('module worker syntax with cookies', () => {
+    it.each([
+      [
+        'valid case, should be 200',
+        {
+          cookieName: 'authorization',
+          config: {
+            projectId: validProjectId,
+            useCookie: true,
+          },
+          wantStatus: 200,
+        },
+      ],
+      [
+        'valid specified cookieName, should be 200',
+        {
+          cookieName: 'X-Authorization',
+          config: {
+            projectId: validProjectId,
+            cookieName: 'X-Authorization',
+            useCookie: true,
+          },
+          wantStatus: 200,
+        },
+      ],
+      [
+        'invalid authorization cookie, should be 400',
+        {
+          cookieName: 'X-Authorization',
+          config: {
+            projectId: validProjectId, // see package.json
+            // No specified header key.
+            useCookie: true,
+          },
+          wantStatus: 400,
+        },
+      ],
+      [
+        'invalid project ID, should be 401',
+        {
+          cookieName: 'authorization',
+          config: {
+            projectId: 'invalid-projectId',
+            useCookie: true,
+          },
+          wantStatus: 401,
+        },
+      ]
+    ])('%s', async (_, { cookieName, config, wantStatus }) => {
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
+        'PUBLIC_JWK_CACHE_KV'
+      )) as unknown as KVNamespace
+      const env: VerifyFirebaseAuthEnv = {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
+        PUBLIC_JWK_CACHE_KV,
+      }
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          ...config,
+          disableErrorLog: true,
+        })
+      )
+      app.get('/hello', (c) => c.text('OK'))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Cookie: `${cookieName}=${user.idToken}`,
+        },
+      })
+
+      const res = await app.fetch(req, env)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(wantStatus)
+    })
+
+    it('specified keyStore is used', async () => {
+      const testingJWT = generateDummyJWT()
+
+      const nopKeyStore = new NopKeyStore()
+      const getSpy = vi.spyOn(nopKeyStore, 'get')
+      const putSpy = vi.spyOn(nopKeyStore, 'put')
+
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          keyStore: nopKeyStore,
+          disableErrorLog: true,
+          useCookie: true
+        })
+      )
+      app.get('/hello', (c) => c.text('OK'))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Cookie: `authorization=${testingJWT}`,
+        },
+      })
+
+      // not use firebase emulator to check using key store
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: undefined,
+      })
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(401)
+      expect(getSpy).toHaveBeenCalled()
+      expect(putSpy).toHaveBeenCalled()
+    })
+
+    it('usable id-token in main handler', async () => {
+      const testingJWT = generateDummyJWT()
+
+      const nopKeyStore = new NopKeyStore()
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          keyStore: nopKeyStore,
+          disableErrorLog: true,
+          useCookie: true
+        })
+      )
+      app.get('/hello', (c) => c.json(getFirebaseToken(c)))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Cookie: `authorization=${testingJWT}`,
+        },
+      })
+
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+      })
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(200)
+
+      const json = await res.json<{ aud: string; email: string }>()
+      expect(json.aud).toBe(validProjectId)
+      expect(json.email).toBe('codehex@hono.js')
+    })
+
+    it('invalid PUBLIC_JWK_CACHE_KV is undefined, should be 501', async () => {
+      const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
+
+      resetAuth()
+
+      app.use(
+        '*',
+        verifyFirebaseAuth({
+          projectId: validProjectId,
+          disableErrorLog: true,
+          useCookie: true
+        })
+      )
+      app.get('/hello', (c) => c.text('OK'))
+
+      const req = new Request('http://localhost/hello', {
+        headers: {
+          Cookie: `authorization=${user.idToken}`,
         },
       })
 
