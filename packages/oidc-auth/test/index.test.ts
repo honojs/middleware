@@ -6,11 +6,14 @@ import * as oauth2 from 'oauth4webapi'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
 const MOCK_CLIENT_ID = 'CLIENT_ID_001'
+const MOCK_CLIENT_SECRET = 'CLIENT_SECRET_001'
+const MOCK_REDIRECT_URI = 'http://localhost/callback'
 const MOCK_SUBJECT = 'USER_ID_001'
 const MOCK_EMAIL = 'user001@example.com'
 const MOCK_STATE= crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_NONCE = crypto.randomBytes(16).toString('hex') // 32 bytes
-const MOCK_SESSION_SECRET = crypto.randomBytes(16).toString('hex') // 32 bytes
+const MOCK_AUTH_SECRET = crypto.randomBytes(16).toString('hex') // 32 bytes
+const MOCK_AUTH_EXPIRES = '3600'
 const MOCK_ID_TOKEN = jwt.sign({
   iss: MOCK_ISSUER,
   aud: MOCK_CLIENT_ID,
@@ -51,21 +54,21 @@ const MOCK_JWT_ACTIVE_SESSION = jwt.sign({
   rtk: 'DUMMY_REFRESH_TOKEN',
   rtkexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
   ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, MOCK_SESSION_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
+}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
 const MOCK_JWT_TOKEN_EXPIRED_SESSION = jwt.sign({
   sub: MOCK_SUBJECT,
   email: MOCK_EMAIL,
   rtk: 'DUMMY_REFRESH_TOKEN',
   rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
   ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, MOCK_SESSION_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
+}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
 const MOCK_JWT_EXPIRED_SESSION = jwt.sign({
   sub: MOCK_SUBJECT,
   email: MOCK_EMAIL,
   rtk: 'DUMMY_REFRESH_TOKEN',
   rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
   ssnexp: Math.floor(Date.now() / 1000) - 1, // expired
-}, MOCK_SESSION_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
+}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
 const MOCK_JWT_INCORRECT_SECRET = jwt.sign({
   sub: MOCK_SUBJECT,
   email: MOCK_EMAIL,
@@ -120,16 +123,7 @@ jest.unstable_mockModule('oauth4webapi', () => {
   }
 })
 
-const { configureOidcAuth, oidcAuthMiddleware, getAuth, revokeSession } = await import("../src");
-
-configureOidcAuth({
-  issuer: MOCK_ISSUER,
-  clientId: MOCK_CLIENT_ID,
-  clientSecret: 'DUUMMY_CLIENT_SECRET',
-  redirectUri: 'http://localhost/callback',
-  sessionSecret: MOCK_SESSION_SECRET,
-  sessionExpires: 3600,
-})
+const { oidcAuthMiddleware, getAuth, revokeSession } = await import("../src");
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -142,6 +136,14 @@ app.all('/*', async (c) => {
   return c.text(`Hello ${auth?.email}! Refresh token: ${auth?.rtk}`)
 })
 
+beforeEach(() => {
+  process.env.OIDC_ISSUER = MOCK_ISSUER
+  process.env.OIDC_CLIENT_ID = MOCK_CLIENT_ID,
+  process.env.OIDC_CLIENT_SECRET = MOCK_CLIENT_SECRET,
+  process.env.OIDC_REDIRECT_URI = MOCK_REDIRECT_URI
+  process.env.OIDC_AUTH_SECRET = MOCK_AUTH_SECRET
+  process.env.OIDC_AUTH_EXPIRES = MOCK_AUTH_EXPIRES
+});
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
     const req = new Request('http://localhost/', {
@@ -209,7 +211,7 @@ describe('oidcAuthMiddleware()', () => {
 });
 describe('processOAuthCallback()', () => {
   test('Should successfully process the OAuth2.0 callback and redirect to the continue URL', async () => {
-    const req = new Request(`http://localhost/callback?code=1234&state=${MOCK_STATE}`, {
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
       headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
@@ -219,7 +221,7 @@ describe('processOAuthCallback()', () => {
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
   test('Should return an error if the state parameter does not match', async () => {
-    const req = new Request(`http://localhost/callback?code=1234&state=${MOCK_STATE}`, {
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
       headers: { cookie: `state=abcd; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
@@ -228,7 +230,7 @@ describe('processOAuthCallback()', () => {
     expect(res.status).toBe(500)
   })
   test('Should return an error if the code parameter is missing', async () => {
-    const req = new Request(`http://localhost/callback?state=${MOCK_STATE}`, {
+    const req = new Request(`${MOCK_REDIRECT_URI}?state=${MOCK_STATE}`, {
       method: 'GET',
       headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
     })
@@ -237,7 +239,7 @@ describe('processOAuthCallback()', () => {
     expect(res.status).toBe(500)
   })
   test('Should return an error if received OAuth2.0 error', async () => {
-    const req = new Request('http://localhost/callback?error=invalid_grant&error_description=Bad+Request&state=1234', {
+    const req = new Request(`${MOCK_REDIRECT_URI}?error=invalid_grant&error_description=Bad+Request&state=1234`, {
       method: 'GET',
       headers: { cookie: 'state=1234; nonce=1234; code_verifier=1234' },
     })
