@@ -1381,7 +1381,7 @@ __metadata:
     vitest: "npm:^1.0.4"
   peerDependencies:
     "@auth/core": 0.*
-    hono: 3.*
+    hono: ">=3.*"
     react: ">=18"
   languageName: unknown
   linkType: soft
@@ -1412,7 +1412,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
   peerDependencies:
     "@clerk/backend": 0.30.*
-    hono: 3.*
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 
@@ -1464,7 +1464,7 @@ __metadata:
     typescript: "npm:^4.7.4"
     vitest: "npm:^0.34.6"
   peerDependencies:
-    hono: 3.*
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 
@@ -1614,7 +1614,7 @@ __metadata:
     ts-jest: "npm:^28.0.5"
     typescript: "npm:^4.7.4"
   peerDependencies:
-    hono: 3.*
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 
@@ -1644,7 +1644,7 @@ __metadata:
     zod: "npm:^3.20.2"
   peerDependencies:
     "@trpc/server": ^10.10.0
-    hono: 3.*
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 

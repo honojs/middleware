@@ -25,7 +25,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "@clerk/backend": "0.30.*",
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@clerk/backend": "^0.30.1",
