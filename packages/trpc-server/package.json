@@ -28,7 +28,7 @@
   "homepage": "https://honojs.dev",
   "peerDependencies": {
     "@trpc/server": "^10.10.0",
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@trpc/server": "^10.10.0",

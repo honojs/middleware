@@ -45,7 +45,7 @@
     "firebase-auth-cloudflare-workers": "^1.1.0"
   },
   "peerDependencies": {
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231025.0",
