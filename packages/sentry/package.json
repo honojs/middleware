@@ -26,7 +26,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "dependencies": {
     "toucan-js": "^3.2.2"
