@@ -14,19 +14,26 @@ describe('Basic', () => {
     age: number(),
   })
 
-  const querySchema = optional(object({
-    search: optional(string())
-  }))
-
-  const route = app.post('/author', vValidator('json', schema), vValidator('query', querySchema), (c) => {
-    const data = c.req.valid('json')
-    const query = c.req.valid('query')
-
-    return c.json({
-      success: true,
-      message: `${data.name} is ${data.age}, search is ${query?.search}`,
+  const querySchema = optional(
+    object({
+      search: optional(string()),
     })
-  })
+  )
+
+  const route = app.post(
+    '/author',
+    vValidator('json', schema),
+    vValidator('query', querySchema),
+    (c) => {
+      const data = c.req.valid('json')
+      const query = c.req.valid('query')
+
+      return c.json({
+        success: true,
+        message: `${data.name} is ${data.age}, search is ${query?.search}`,
+      })
+    }
+  )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
@@ -38,9 +45,11 @@ describe('Basic', () => {
             age: number
           }
         } & {
-          query?: {
-            search?: string | undefined
-          } | undefined
+          query?:
+            | {
+                search?: string | undefined
+              }
+            | undefined
         }
         output: {
           success: boolean

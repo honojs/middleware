@@ -16,10 +16,14 @@ export const vValidator = <
   E extends Env,
   P extends string,
   V extends {
-    in: HasUndefined<Input<T>> extends true ? { [K in Target]?: Input<T> } : { [K in Target]: Input<T> }
+    in: HasUndefined<Input<T>> extends true
+      ? { [K in Target]?: Input<T> }
+      : { [K in Target]: Input<T> }
     out: { [K in Target]: Output<T> }
   } = {
-    in: HasUndefined<Input<T>> extends true ? { [K in Target]?: Input<T> } : { [K in Target]: Input<T> }
+    in: HasUndefined<Input<T>> extends true
+      ? { [K in Target]?: Input<T> }
+      : { [K in Target]: Input<T> }
     out: { [K in Target]: Output<T> }
   }
 >(
