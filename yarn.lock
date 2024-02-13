@@ -1549,7 +1549,7 @@ __metadata:
   dependencies:
     "@types/jest": "npm:^29.5.11"
     "@types/jsonwebtoken": "npm:^9.0.5"
-    hono: "npm:^3.12.0"
+    hono: "npm:^4.0.1"
     jest: "npm:^29.7.0"
     jsonwebtoken: "npm:^9.0.2"
     oauth4webapi: "npm:^2.6.0"
@@ -1557,7 +1557,7 @@ __metadata:
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.3.3"
   peerDependencies:
-    hono: ^3.12.0
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 
@@ -8912,6 +8912,13 @@ __metadata:
   version: 3.12.10
   resolution: "hono@npm:3.12.10"
   checksum: 43ad255e54bc5dd47154ad057565f41f2fda3dc866416f9a25fa2022e86c552b42109972f8c75101ed1da704c2b967d8bd474869db094878ab9438650379663c
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "hono@npm:4.0.1"
+  checksum: 0f4fe93d376ce4063d42ccc35eee445756f17ca4044ef1f59e276b4737dacc5e76334e230a59101a4092aa88a066f7585303da7631ca4a46325384d55db48df3
   languageName: node
   linkType: hard
 
