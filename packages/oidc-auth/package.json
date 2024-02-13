@@ -4,22 +4,22 @@
   "description": "OpenID Connect Authentication middleware for Hono",
   "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --coverage",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "build": "tsup ./src/index.ts --format esm --dts",
     "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "release": "yarn prerelease && yarn npm publish"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
   "license": "MIT",
