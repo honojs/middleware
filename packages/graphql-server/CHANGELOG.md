@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.4.3
+
+### Patch Changes
+
+- [#390](https://github.com/honojs/middleware/pull/390) [`c789dab697687249eb3d94068ae8e27f7b5a7e5d`](https://github.com/honojs/middleware/commit/c789dab697687249eb3d94068ae8e27f7b5a7e5d) Thanks [@a-skua](https://github.com/a-skua)! - fix: change peer dependency to support v4.0.0
+
 ## 0.4.2
 
 ### Patch Changes
