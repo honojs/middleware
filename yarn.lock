@@ -1485,7 +1485,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.26.0"
     eslint-plugin-node: "npm:^11.1.0"
     graphql: "npm:^16.5.0"
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.0.2"
     jest: "npm:^28.1.2"
     jest-environment-miniflare: "npm:^2.6.0"
     np: "npm:^7.6.2"
@@ -1494,7 +1494,7 @@ __metadata:
     ts-jest: "npm:^28.0.5"
     typescript: "npm:^4.7.4"
   peerDependencies:
-    hono: ^3.0.0
+    hono: ">=3.0.0"
   languageName: unknown
   linkType: soft
 
@@ -8919,6 +8919,13 @@ __metadata:
   version: 4.0.1
   resolution: "hono@npm:4.0.1"
   checksum: 0f4fe93d376ce4063d42ccc35eee445756f17ca4044ef1f59e276b4737dacc5e76334e230a59101a4092aa88a066f7585303da7631ca4a46325384d55db48df3
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "hono@npm:4.0.2"
+  checksum: c0806a912c1be094aa7e34050e8391c41f2623fae683239d9d1f1680f8646602ebf91a8e1c58bf75de510a6d0fe70189e57f629c0e48f8abb5ab873ba844a481
   languageName: node
   linkType: hard
 
