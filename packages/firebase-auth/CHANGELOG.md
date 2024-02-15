@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.3.6
+
+### Patch Changes
+
+- [#393](https://github.com/honojs/middleware/pull/393) [`7e36ecc3f62612f7850c3e5c17698c617d68cf7a`](https://github.com/honojs/middleware/commit/7e36ecc3f62612f7850c3e5c17698c617d68cf7a) Thanks [@Code-Hex](https://github.com/Code-Hex)! - - supported v4 to get header values
+
 ## 1.3.5
 
 ### Patch Changes
