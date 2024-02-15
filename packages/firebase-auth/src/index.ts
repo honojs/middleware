@@ -43,7 +43,7 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
   }
 
   return async (c, next) => {
-    const authorization = c.req.headers.get(config.AuthorizationHeaderKey)
+    const authorization = c.req.raw.headers.get(config.AuthorizationHeaderKey)
     if (authorization === null) {
       const res = new Response('Bad Request', {
         status: 400,
