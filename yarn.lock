@@ -1539,7 +1539,7 @@ __metadata:
     tsup: "npm:^8.0.0"
     typescript: "npm:^5.2.2"
   peerDependencies:
-    hono: ^3.0.0
+    hono: ">=3.*"
   languageName: unknown
   linkType: soft
 

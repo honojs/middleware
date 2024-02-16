@@ -108,7 +108,7 @@
     }
   },
   "peerDependencies": {
-    "hono": "^3.0.0"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231025.0",
