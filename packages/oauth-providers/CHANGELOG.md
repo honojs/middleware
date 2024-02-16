@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.3.1
+
+### Patch Changes
+
+- [#396](https://github.com/honojs/middleware/pull/396) [`98cffb0ae9c069e8f08433016e3908fa715c76b7`](https://github.com/honojs/middleware/commit/98cffb0ae9c069e8f08433016e3908fa715c76b7) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: update `peerDependencies`
+
 ## 0.3.0
 
 ### Minor Changes
