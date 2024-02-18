@@ -105,8 +105,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the API Console [Credentials page](https://console.developers.google.com/apis/credentials). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `GOOGLE_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > 🚫 Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
