@@ -1,3 +1,4 @@
+import { getCookie } from 'hono/cookie'
 import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { Context, MiddlewareHandler } from 'hono'
@@ -24,7 +25,7 @@ const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv
     const res = new Response('Not Implemented', {
       status: 501,
     })
-    throw new HTTPException(501, { res })
+    throw new HTTPException(res.status, { res })
   }
   return WorkersKVStoreSingle.getOrInitialize(
     c.env.PUBLIC_JWK_CACHE_KEY ?? defaultKVStoreJWKCacheKey,
@@ -95,4 +96,58 @@ export const getFirebaseToken = (c: Context): FirebaseIdToken | null => {
     return null
   }
   return idToken
+}
+
+export interface VerifySessionCookieFirebaseAuthConfig {
+  projectId: string
+  cookieName?: string
+  keyStore?: KeyStorer
+  keyStoreInitializer?: (c: Context) => KeyStorer
+  firebaseEmulatorHost?: string
+  redirects: {
+    signIn: string
+  }
+}
+
+export const verifySessionCookieFirebaseAuth = (
+  userConfig: VerifySessionCookieFirebaseAuthConfig
+): MiddlewareHandler => {
+  const config = {
+    projectId: userConfig.projectId,
+    cookieName: userConfig.cookieName ?? 'session',
+    keyStore: userConfig.keyStore,
+    keyStoreInitializer: userConfig.keyStoreInitializer ?? defaultKeyStoreInitializer,
+    firebaseEmulatorHost: userConfig.firebaseEmulatorHost,
+    redirects: userConfig.redirects,
+  } satisfies VerifySessionCookieFirebaseAuthConfig
+
+  // TODO(codehex): will be supported
+  const checkRevoked = false
+
+  return async (c, next) => {
+    const auth = Auth.getOrInitialize(
+      config.projectId,
+      config.keyStore ?? config.keyStoreInitializer(c)
+    )
+    const session = getCookie(c, config.cookieName)
+    if (session === undefined) {
+      const res = c.redirect(config.redirects.signIn)
+      throw new HTTPException(res.status, { res, message: 'session is empty' })
+    }
+
+    try {
+      const idToken = await auth.verifySessionCookie(session, checkRevoked, {
+        FIREBASE_AUTH_EMULATOR_HOST:
+          config.firebaseEmulatorHost ?? c.env.FIREBASE_AUTH_EMULATOR_HOST,
+      })
+      setFirebaseToken(c, idToken)
+    } catch (err) {
+      const res = c.redirect(config.redirects.signIn)
+      throw new HTTPException(res.status, {
+        res,
+        message: `failed to verify the requested firebase token: ${String(err)}`,
+      })
+    }
+    await next()
+  }
 }
