@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.4.0
+
+### Minor Changes
+
+- [#402](https://github.com/honojs/middleware/pull/402) [`c9f110d4e0d0f6079870fd8c91010832451cf0c8`](https://github.com/honojs/middleware/commit/c9f110d4e0d0f6079870fd8c91010832451cf0c8) Thanks [@Code-Hex](https://github.com/Code-Hex)! - added a new `verifySessionCookieFirebaseAuth` middleware to verify w/ session cookie.
+
 ## 1.3.6
 
 ### Patch Changes
