@@ -3,11 +3,12 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
+    "types": [
+      "node",
+      "@cloudflare/workers-types"
+    ]
   },
   "include": [
     "src/**/*.ts"
-  ],
-  "types": [
-    "@cloudflare/workers-types"
   ],
 }

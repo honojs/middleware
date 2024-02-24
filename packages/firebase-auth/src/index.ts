@@ -35,29 +35,32 @@ const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv
 export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): MiddlewareHandler => {
   const config = {
     projectId: userConfig.projectId,
-    AuthorizationHeaderKey: userConfig.authorizationHeaderKey ?? 'Authorization',
-    KeyStore: userConfig.keyStore,
+    authorizationHeaderKey: userConfig.authorizationHeaderKey ?? 'Authorization',
+    keyStore: userConfig.keyStore,
     keyStoreInitializer: userConfig.keyStoreInitializer ?? defaultKeyStoreInitializer,
     disableErrorLog: userConfig.disableErrorLog,
     firebaseEmulatorHost: userConfig.firebaseEmulatorHost,
-  }
+  } satisfies VerifyFirebaseAuthConfig
+
+  // TODO(codehex): will be supported
+  const checkRevoked = false
 
   return async (c, next) => {
-    const authorization = c.req.raw.headers.get(config.AuthorizationHeaderKey)
+    const authorization = c.req.raw.headers.get(config.authorizationHeaderKey)
     if (authorization === null) {
       const res = new Response('Bad Request', {
         status: 400,
       })
-      throw new HTTPException(400, { res })
+      throw new HTTPException(res.status, { res, message: 'authorization header is empty' })
     }
     const jwt = authorization.replace(/Bearer\s+/i, '')
     const auth = Auth.getOrInitialize(
       config.projectId,
-      config.KeyStore ?? config.keyStoreInitializer(c)
+      config.keyStore ?? config.keyStoreInitializer(c)
     )
 
     try {
-      const idToken = await auth.verifyIdToken(jwt, {
+      const idToken = await auth.verifyIdToken(jwt, checkRevoked, {
         FIREBASE_AUTH_EMULATOR_HOST:
           config.firebaseEmulatorHost ?? c.env.FIREBASE_AUTH_EMULATOR_HOST,
       })
@@ -73,7 +76,10 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
       const res = new Response('Unauthorized', {
         status: 401,
       })
-      throw new HTTPException(401, { res })
+      throw new HTTPException(res.status, {
+        res,
+        message: `failed to verify the requested firebase token: ${String(err)}`,
+      })
     }
     await next()
   }
