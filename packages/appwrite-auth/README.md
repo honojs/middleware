@@ -66,7 +66,7 @@ Appwrite has support for a wide variety of OAuth2 providers,
 you can see the full list [here](https://appwrite.io/docs/references/cloud/client-web/account#createOAuth2Session). a hint? it's big.
 
 ```ts
-import { appwriteEmailLogin, initAppwrite } from '@hono/appwrite-auth'
+import { appwriteAuth2Save, appwriteAuth2, initAppwrite } from '@hono/appwrite-auth'
 import { OAuthProvider } from 'node-appwrite'
 
 
@@ -79,7 +79,7 @@ const failureUrl = 'https://your.website.com//auth2/google/success'
  * Create the OAuth2, this helper will redirect the user
  * to the OAuth2 provider login URL.
  */
-app.post('/auth2/google', appwriteAuth2(OAuthProvider.Google))
+app.post('/auth2/google', appwriteAuth2(OAuthProvider.Google,successUrl,failureUrl))
 
 // Success and failure URLs
 app.get('/auth2/google/success', appwriteAuth2Save()) // user is logged in and added to the context, optional redirect URL can be sent to the function
