@@ -17,7 +17,6 @@ npm i hono @hono/appwrite-auth node-appwrite
 3. Get the user object anywhere using the `getAuth` function.
 
 ```ts
-import { hello } from '@hono/hello'
 import { Hono } from 'hono'
 import { getAuth, appwriteMiddleware, initAppwrite } from '@hono/appwrite-auth'
 
