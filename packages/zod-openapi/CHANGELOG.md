@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.7
+
+### Patch Changes
+
+- [#408](https://github.com/honojs/middleware/pull/408) [`d4ca1ce98f33ae67100986613144e9d12fb933b3`](https://github.com/honojs/middleware/commit/d4ca1ce98f33ae67100986613144e9d12fb933b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - fix: Fix basePath method disregarding defaultHook
+
 ## 0.9.6
 
 ### Patch Changes
