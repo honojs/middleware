@@ -1,7 +1,7 @@
 import { stringify as yamlStringify } from 'yaml'
 import type { OpenAPIHono } from './index'
 
-export interface ExportOptions {
+export interface ToDocOptions {
   outDir?: string
   format?: 'json' | 'yaml'
   extension?: string
@@ -12,30 +12,30 @@ export interface FileSystem {
   mkdir(path: string, options: { recursive: boolean }): Promise<void | string>
 }
 
-export interface ExportResult {
+export interface ToDocResult {
   success: boolean
   outDir: string
   files: string[]
   error?: Error
 }
 
-export const exportDoc = async (
+export const ToDoc = async (
   app: OpenAPIHono,
   fs: FileSystem,
-  options: ExportOptions = {}
-): Promise<ExportResult> => {
+  options: ToDocOptions = {}
+): Promise<ToDocResult> => {
   const { outDir = './dist', format = 'json', extension } = options
 
   try {
     await fs.mkdir(outDir, { recursive: true })
 
-    const openApiJson = app.getOpenAPIDocument({
-      info: {
-        title: 'API Document',
-        version: '1.0.0',
-      },
-      openapi: '',
-    })
+    const docEndpoint = findDocEndpoint(app)
+    if (!docEndpoint) {
+      throw new Error('OpenAPI document endpoint not found')
+    }
+
+    const response = await app.request(`http://localhost${docEndpoint.path}`)
+    const openApiJson = await response.json()
 
     const ext = getExtension(format, extension)
     const filePath = `${outDir}/openapi${ext}`
@@ -43,7 +43,7 @@ export const exportDoc = async (
 
     await fs.writeFile(filePath, content)
 
-    const result: ExportResult = {
+    const result: ToDocResult = {
       success: true,
       outDir,
       files: [filePath],
@@ -60,10 +60,31 @@ export const exportDoc = async (
   }
 }
 const getExtension = (format?: string, extension?: string): string => {
-  if (extension) {return extension}
-  if (format === 'yaml') {return '.yaml'}
+  if (extension) {
+    return extension
+  }
+  if (format === 'yaml') {
+    return '.yaml'
+  }
   return '.json'
 }
 
 const getContent = (openApiJson: unknown, format: string): string =>
   format === 'yaml' ? yamlStringify(openApiJson) : JSON.stringify(openApiJson, null, 2)
+
+const docEndpointConditions = ['getOpenAPIDocument', 'getOpenAPI31Document']
+
+const findDocEndpoint = (app: OpenAPIHono) => {
+  const docEndpoints = app.routes.filter((route) => {
+    const configure = route.handler.toString()
+    return docEndpointConditions.some((condition) => configure.includes(condition))
+  })
+
+  if (docEndpoints.length === 0) {
+    return null
+  }
+
+  return {
+    path: docEndpoints[0].path,
+  }
+}
