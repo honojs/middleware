@@ -19,7 +19,7 @@ export interface ToDocResult {
   error?: Error
 }
 
-export const ToDoc = async (
+export const toDoc = async (
   app: OpenAPIHono,
   fs: FileSystem,
   options: ToDocOptions = {}
