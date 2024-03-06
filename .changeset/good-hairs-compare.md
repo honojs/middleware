@@ -1,5 +1,5 @@
 ---
-'@hono/react-renderer': patch
+'@hono/react-renderer': minor
 ---
 
 Support renderToReadableStream options.
