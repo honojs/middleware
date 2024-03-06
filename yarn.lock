@@ -1748,11 +1748,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.0.10"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.3.3"
-    zod: "npm:3.19.1"
+    zod: "npm:^3.22.4"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.19.1
@@ -8914,6 +8914,13 @@ __metadata:
   version: 4.0.1
   resolution: "hono@npm:4.0.1"
   checksum: 0f4fe93d376ce4063d42ccc35eee445756f17ca4044ef1f59e276b4737dacc5e76334e230a59101a4092aa88a066f7585303da7631ca4a46325384d55db48df3
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "hono@npm:4.0.10"
+  checksum: a68deed2a216dd956e6012a834312a09ffcf18a8e61b851ec6b168ad5cf13d9696f7fa3dce25286b4b2e92f6ea7102ece8f097f423ff385236f7b83c3a68032c
   languageName: node
   linkType: hard
 
@@ -18213,13 +18220,6 @@ __metadata:
     compress-commons: "npm:^4.1.2"
     readable-stream: "npm:^3.6.0"
   checksum: 38f91ca116a38561cf184c29e035e9453b12c30eaf574e0993107a4a5331882b58c9a7f7b97f63910664028089fbde3296d0b3682d1ccb2ad96929e68f1b2b89
-  languageName: node
-  linkType: hard
-
-"zod@npm:3.19.1":
-  version: 3.19.1
-  resolution: "zod@npm:3.19.1"
-  checksum: e08197793f26916f8abea40687fc968b2de0471049b29b7ff25825a9f28ba24205d1c5b8ad26df17538b051928192f9ef8f9ef3132aece9cb56f0830a7450c26
   languageName: node
   linkType: hard
 

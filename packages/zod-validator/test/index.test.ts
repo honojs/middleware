@@ -28,7 +28,7 @@ describe('Basic', () => {
       const data = c.req.valid('json')
       const query = c.req.valid('query')
 
-      return c.jsonT({
+      return c.json({
         success: true,
         message: `${data.name} is ${data.age}`,
         queryName: query?.name,
@@ -48,7 +48,7 @@ describe('Basic', () => {
         } & {
           query?:
             | {
-                name?: string | undefined
+                name?: string | string[] | undefined
               }
             | undefined
         }
@@ -92,12 +92,56 @@ describe('Basic', () => {
         age: '20',
       }),
       method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
     const data = (await res.json()) as { success: boolean }
     expect(data['success']).toBe(false)
+  })
+})
+
+describe('coerce', () => {
+  const app = new Hono()
+
+  const querySchema = z.object({
+    page: z.coerce.number(),
+  })
+
+  const route = app.get('/page', zValidator('query', querySchema), (c) => {
+    const { page } = c.req.valid('query')
+    return c.json({ page })
+  })
+
+  type Actual = ExtractSchema<typeof route>
+  type Expected = {
+    '/page': {
+      $get: {
+        input: {
+          query: {
+            page: string | string[]
+          }
+        }
+        output: {
+          page: number
+        }
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type verify = Expect<Equal<Expected, Actual>>
+
+  it('Should return 200 response', async () => {
+    const res = await app.request('/page?page=123')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      page: 123,
+    })
   })
 })
 
