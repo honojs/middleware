@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.2.0
+
+### Minor Changes
+
+- [#411](https://github.com/honojs/middleware/pull/411) [`4875e1c53146d2c67846b8159d3630d465c2a310`](https://github.com/honojs/middleware/commit/4875e1c53146d2c67846b8159d3630d465c2a310) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support coerce
+
 ## 0.1.11
 
 ### Patch Changes
