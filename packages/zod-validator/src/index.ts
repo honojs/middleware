@@ -17,10 +17,38 @@ export const zValidator = <
   I = z.input<T>,
   O = z.output<T>,
   V extends {
-    in: HasUndefined<I> extends true ? { [K in Target]?: I } : { [K in Target]: I }
+    in: HasUndefined<I> extends true
+      ? {
+          [K in Target]?: K extends 'json'
+            ? I
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof I]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof I]: ValidationTargets[K][K2] }
+        }
+      : {
+          [K in Target]: K extends 'json'
+            ? I
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof I]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof I]: ValidationTargets[K][K2] }
+        }
     out: { [K in Target]: O }
   } = {
-    in: HasUndefined<I> extends true ? { [K in Target]?: I } : { [K in Target]: I }
+    in: HasUndefined<I> extends true
+      ? {
+          [K in Target]?: K extends 'json'
+            ? I
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof I]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof I]: ValidationTargets[K][K2] }
+        }
+      : {
+          [K in Target]: K extends 'json'
+            ? I
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof I]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof I]: ValidationTargets[K][K2] }
+        }
     out: { [K in Target]: O }
   }
 >(
@@ -28,6 +56,7 @@ export const zValidator = <
   schema: T,
   hook?: Hook<z.infer<T>, E, P>
 ): MiddlewareHandler<E, P, V> =>
+  // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = await schema.safeParseAsync(value)
 
