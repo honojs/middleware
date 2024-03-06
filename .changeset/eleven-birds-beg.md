@@ -1,5 +1,5 @@
 ---
-'@hono/zod-validator': patch
+'@hono/zod-validator': minor
 ---
 
-fix: support coerce
+feat: support coerce
