@@ -350,6 +350,25 @@ app.doc('/doc', c => ({
 }))
 ```
 
+### Exporting OpenAPI Specification
+
+You can export the OpenAPI specification of your Hono application using the `toDoc` function. 
+
+```ts
+import { OpenAPIHono, toDoc } from '@hono/zod-openapi'
+import fs from 'fs/promises'
+
+const app = new OpenAPIHono()
+
+// Define your routes and schemas...
+
+await toDoc(app, fs, {
+  outDir: './docs',
+  format: 'yaml',    // default 'json'
+  extension: '.yml',
+})
+```
+
 ## Limitations
 
 ### Combining with `Hono`
