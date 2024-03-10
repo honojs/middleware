@@ -1,5 +1,18 @@
 # @hono/zod-openapi
 
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies [[`4875e1c53146d2c67846b8159d3630d465c2a310`](https://github.com/honojs/middleware/commit/4875e1c53146d2c67846b8159d3630d465c2a310)]:
+  - @hono/zod-validator@0.2.0
+
+## 0.9.7
+
+### Patch Changes
+
+- [#408](https://github.com/honojs/middleware/pull/408) [`d4ca1ce98f33ae67100986613144e9d12fb933b3`](https://github.com/honojs/middleware/commit/d4ca1ce98f33ae67100986613144e9d12fb933b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - fix: Fix basePath method disregarding defaultHook
+
 ## 0.9.6
 
 ### Patch Changes

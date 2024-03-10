@@ -823,6 +823,15 @@ describe('basePath()', () => {
     const res = await app.request('/api/doc')
     expect(res.status).toBe(200)
   })
+
+  it('Should retain defaultHook of the parent app', async () => {
+    const defaultHook = () => {}
+    const app = new OpenAPIHono({
+      defaultHook
+    }).basePath('/api')
+    expect(app.defaultHook).toBeDefined()
+    expect(app.defaultHook).toBe(defaultHook)
+  })
 })
 
 describe('With hc', () => {

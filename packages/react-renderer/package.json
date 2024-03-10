@@ -1,6 +1,6 @@
 {
   "name": "@hono/react-renderer",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "React Renderer Middleware for Hono",
   "type": "module",
   "main": "dist/index.js",
