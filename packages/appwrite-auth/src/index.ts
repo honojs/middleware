@@ -13,9 +13,6 @@ export interface AppwriteAuthConfig {
 
 }
 
-const badResponse = new Response('Unauthorized', {
-  status: 401,
-})
 
 export const initAppwrite = (config: AppwriteAuthConfig) => {
   return createMiddleware(async (c, next) => {
@@ -36,7 +33,7 @@ export const initAppwrite = (config: AppwriteAuthConfig) => {
   })
 }
 
-export const getAuth = (c: Context) => {
+export const getAuth = (c: Context): Models.User<Models.Preferences> => {
   return c.get('appwriteUser')
 }
 
@@ -47,7 +44,11 @@ export const appwriteMiddleware = () => {
     const session = getCookie(c, config.cookieName)
 
     if (!session) {
-      throw new HTTPException(401, { res: badResponse })
+      throw new HTTPException(401, {
+        res: new Response('Unauthorized', {
+          status: 401,
+        }),
+      })
     }
 
     const sessionClient = c.get('sessionClient')
@@ -62,7 +63,11 @@ export const appwriteMiddleware = () => {
       await next()
 
     } catch (e) {
-      throw new HTTPException(401, { res: badResponse })
+      throw new HTTPException(403, {
+        res: new Response('Forbidden', {
+          status: 403,
+        }),
+      })
     }
   })
 }
@@ -85,12 +90,16 @@ export const appwriteEmailLogin = () => {
 
       return c.json({ success: true })
     } catch (e) {
-      throw new HTTPException(401, { res: badResponse })
+      throw new HTTPException(401, {
+        res: new Response('Unauthorized', {
+          status: 401,
+        }),
+      })
     }
   }
 }
 
-export const appwriteAuth2 = (provider: string, success: string, failure: string) => {
+export const appwriteOAuth2 = (provider: string, success: string, failure: string) => {
   return async (c: Context) => {
     const adminClient = c.get('adminClient')
 
@@ -101,12 +110,16 @@ export const appwriteAuth2 = (provider: string, success: string, failure: string
 
       return c.redirect(redirectUrl)
     } catch (e) {
-      throw new HTTPException(401, { res: badResponse })
+      throw new HTTPException(401, {
+        res: new Response('Unauthorized', {
+          status: 401,
+        }),
+      })
     }
   }
 }
 
-export const appwriteAuth2Save = (redirect?: string) => {
+export const appwriteOAuth2Save = (redirect?: string) => {
   return async (c: Context) => {
     const adminClient = c.get('adminClient')
     const config      = c.get('appwriteConfig')
@@ -123,7 +136,11 @@ export const appwriteAuth2Save = (redirect?: string) => {
 
       return c.json({ success: true })
     } catch (e) {
-      throw new HTTPException(401, { res: badResponse })
+      throw new HTTPException(401, {
+        res: new Response('Unauthorized', {
+          status: 401,
+        }),
+      })
     }
   }
 }

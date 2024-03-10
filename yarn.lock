@@ -1376,7 +1376,7 @@ __metadata:
     "@hono/node-server": "npm:^1.8.2"
     "@types/node": "npm:^20.11.17"
     hono: "npm:^3.11.7"
-    node-appwrite: ../../../sdk-for-node
+    node-appwrite: "npm:^12.0.0"
     tsup: "npm:^8.0.1"
     tsx: "npm:^3.12.2"
     vitest: "npm:^1.0.4"
@@ -13033,12 +13033,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-appwrite@file:../../../sdk-for-node::locator=%40hono%2Fappwrite-auth%40workspace%3Apackages%2Fappwrite-auth":
-  version: 12.0.0-rc.6
-  resolution: "node-appwrite@file:../../../sdk-for-node#../../../sdk-for-node::hash=1789d2&locator=%40hono%2Fappwrite-auth%40workspace%3Apackages%2Fappwrite-auth"
+"node-appwrite@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "node-appwrite@npm:12.0.0"
   dependencies:
     undici: "npm:^5.28.2"
-  checksum: 658b70a62ae2aebc833cd9bfbd2b8d3ff1b837543c129e4827ba55557386c174d30f248fde8f23e2acb334d55841d072ccd696a71d6758a51bb2a13c1a2ce9d5
+  checksum: f3d76528d2d3839f5f25dc40bfa26c689dbfecffea8cb23cc3a9782ca6fcbec676917cfdec1f46dbb4e382666e89626af8a3f81e8ff5ce19488b56c8b168999b
   languageName: node
   linkType: hard
 

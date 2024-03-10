@@ -39,7 +39,7 @@
     "@hono/node-server": "^1.8.2",
     "@types/node": "^20.11.17",
     "hono": "^3.11.7",
-    "node-appwrite": "../../../sdk-for-node",
+    "node-appwrite": "^12.0.0",
     "tsup": "^8.0.1",
     "tsx": "^3.12.2",
     "vitest": "^1.0.4"

@@ -33,7 +33,7 @@ app.use('*', initAppwrite(appwriteConfig))
 
 app.get('/', (c) => c.text('No auth required'))
 
-app.use('/api/', appwriteMiddleware())
+app.use('/api/*', appwriteMiddleware())
 
 app.get('/api/user/prefs', (c) => {
   const user = getAuth(c)
