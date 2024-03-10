@@ -1369,6 +1369,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/appwrite-auth@workspace:packages/appwrite-auth":
+  version: 0.0.0-use.local
+  resolution: "@hono/appwrite-auth@workspace:packages/appwrite-auth"
+  dependencies:
+    "@hono/node-server": "npm:^1.8.2"
+    "@types/node": "npm:^20.11.17"
+    hono: "npm:^3.11.7"
+    node-appwrite: "npm:^12.0.0"
+    tsup: "npm:^8.0.1"
+    tsx: "npm:^3.12.2"
+    vitest: "npm:^1.0.4"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/arktype-validator@workspace:packages/arktype-validator":
   version: 0.0.0-use.local
   resolution: "@hono/arktype-validator@workspace:packages/arktype-validator"
@@ -1538,6 +1554,13 @@ __metadata:
     hono: ">=3.8.0"
   languageName: unknown
   linkType: soft
+
+"@hono/node-server@npm:^1.8.2":
+  version: 1.8.2
+  resolution: "@hono/node-server@npm:1.8.2"
+  checksum: 17028ba797d8f735ba5dbf745e577bbee208a5ffb739e15645bf3cfb1ceb9bfa9800668e03b14472fa43271d8549141d0621cdcc4d0e3665cb4e0c58826d533d
+  languageName: node
+  linkType: hard
 
 "@hono/oauth-providers@workspace:packages/oauth-providers":
   version: 0.0.0-use.local
@@ -3684,6 +3707,15 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: 3b190bb0410047d489c49bbaab592d2e6630de6a50f00ba3d7d513d59401d279972a8f5a598b5bb8ddc1702f8a2f4ec57a65d93852f9c329639738e7053637d1
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.11.17":
+  version: 20.11.21
+  resolution: "@types/node@npm:20.11.21"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 52b1cdfe8b14a67ab98c01b2e9621994b34a2537368e108fb925121a9d5958eb7344a2fb81ff36964932d5e5a093de8897f021bded10cad3536fd31e932b3000
   languageName: node
   linkType: hard
 
@@ -6899,7 +6931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.18.10, esbuild@npm:^0.18.2":
+"esbuild@npm:^0.18.10, esbuild@npm:^0.18.2, esbuild@npm:~0.18.20":
   version: 0.18.20
   resolution: "esbuild@npm:0.18.20"
   dependencies:
@@ -8366,7 +8398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.5.0":
+"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.2":
   version: 4.7.2
   resolution: "get-tsconfig@npm:4.7.2"
   dependencies:
@@ -13001,6 +13033,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-appwrite@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "node-appwrite@npm:12.0.0"
+  dependencies:
+    undici: "npm:^5.28.2"
+  checksum: f3d76528d2d3839f5f25dc40bfa26c689dbfecffea8cb23cc3a9782ca6fcbec676917cfdec1f46dbb4e382666e89626af8a3f81e8ff5ce19488b56c8b168999b
+  languageName: node
+  linkType: hard
+
 "node-emoji@npm:^1.11.0":
   version: 1.11.0
   resolution: "node-emoji@npm:1.11.0"
@@ -15595,6 +15636,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map-support@npm:^0.5.21":
+  version: 0.5.21
+  resolution: "source-map-support@npm:0.5.21"
+  dependencies:
+    buffer-from: "npm:^1.0.0"
+    source-map: "npm:^0.6.0"
+  checksum: 9ee09942f415e0f721d6daad3917ec1516af746a8120bba7bb56278707a37f1eb8642bde456e98454b8a885023af81a16e646869975f06afc1a711fb90484e7d
+  languageName: node
+  linkType: hard
+
 "source-map@npm:0.7.4, source-map@npm:^0.7.0":
   version: 0.7.4
   resolution: "source-map@npm:0.7.4"
@@ -16727,6 +16778,23 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
+  languageName: node
+  linkType: hard
+
+"tsx@npm:^3.12.2":
+  version: 3.14.0
+  resolution: "tsx@npm:3.14.0"
+  dependencies:
+    esbuild: "npm:~0.18.20"
+    fsevents: "npm:~2.3.3"
+    get-tsconfig: "npm:^4.7.2"
+    source-map-support: "npm:^0.5.21"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: b6c938bdae9c656aef2aa0130ee6aa8f3487b5d411d5f7934b705c28ff44ab268db3dde123cf5237b4e5e2ab4441a0bad4b1a39e3ff2170d138538e44082f05d
   languageName: node
   linkType: hard
 

@@ -30,6 +30,7 @@
     "build:bun-transpiler": "yarn workspace @hono/bun-transpiler build",
     "build:prometheus": "yarn workspace @hono/prometheus build",
     "build:oidc-auth": "yarn workspace @hono/oidc-auth build",
+    "build:appwrite-auth": "yarn workspace @hono/appwrite-auth build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
