@@ -81,6 +81,7 @@ export const handlers = [
     }
   ),
   http.get('https://api.github.com/user', () => HttpResponse.json(githubUser)),
+  http.get('https://api.github.com/user/emails', () => HttpResponse.json(githubEmails)),
   // LinkedIn
   http.post(
     'https://www.linkedin.com/oauth/v2/accessToken',
@@ -265,7 +266,7 @@ export const githubUser = {
   company: '@rvesoftware',
   blog: 'https://monoald.github.io/',
   location: 'Knowhere',
-  email: null,
+  email: 'test@email.com',
   hireable: null,
   bio: 'BIO description',
   twitter_username: 'monoald',
@@ -288,6 +289,20 @@ export const githubUser = {
     private_repos: 10000,
   },
 }
+export const githubEmails = [
+  {
+    email: 'test@email.com',
+    primary: true,
+    verified: true,
+    visibility: 'public',
+  },
+  {
+    email: '671450+test@users.noreply.github.com',
+    primary: false,
+    verified: true,
+    visibility: null,
+  },
+]
 export const githubCodeError = {
   error_description: 'Invalid Code.',
 }

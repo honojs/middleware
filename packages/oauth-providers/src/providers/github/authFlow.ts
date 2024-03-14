@@ -1,7 +1,13 @@
 import { HTTPException } from 'hono/http-exception'
 
 import { toQueryParams } from '../../utils/objectToQuery'
-import type { GitHubErrorResponse, GitHubTokenResponse, GitHubUser, GitHubScope } from './types'
+import type {
+  GitHubErrorResponse,
+  GitHubTokenResponse,
+  GitHubUser,
+  GitHubScope,
+  GitHubEmailResponse,
+} from './types'
 
 type GithubAuthFlow = {
   client_id: string
@@ -101,6 +107,26 @@ export class AuthFlow {
 
     if ('message' in response) {
       throw new HTTPException(400, { message: response.message })
+    }
+
+    if (!this.oauthApp) {
+      const emails = (await fetch('https://api.github.com/user/emails', {
+        headers: {
+          Authorization: `Bearer ${this.token?.token}`,
+          'User-Agent': 'Hono-Auth-App',
+        },
+      }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
+
+      if ('message' in emails) {
+        throw new HTTPException(400, { message: emails.message })
+      }
+
+      let email = emails.find((emails) => emails.primary === true)?.email
+      if (email === undefined) {
+        email = emails.find((emails) => !emails.email.includes('@users.noreply.github.com'))?.email
+      }
+
+      response.email = email as string
     }
 
     if ('id' in response) {
