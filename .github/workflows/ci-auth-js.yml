@@ -1,0 +1,25 @@
+name: ci-auth-js
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/auth-js/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/auth-js/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/auth-js
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

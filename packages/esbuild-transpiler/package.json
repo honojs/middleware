@@ -41,7 +41,6 @@
     }
   },
   "license": "MIT",
-  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -55,9 +54,10 @@
     "hono": ">=3.9.2"
   },
   "devDependencies": {
-    "esbuild": "^0.19.5",
+    "esbuild": "^0.19.9",
     "esbuild-wasm": "^0.19.5",
-    "hono": "^3.9.2",
+    "hono": "^3.11.7",
+    "tsup": "^8.0.1",
     "vitest": "^0.34.6"
   },
   "engines": {

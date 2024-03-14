@@ -1,13 +1,16 @@
 import type { SwaggerConfigs } from 'swagger-ui-dist'
 
+type RequireOne<T, K extends keyof T = keyof T> = K extends keyof T ? PartialRequire<T, K> : never
+type PartialRequire<O, K extends keyof O> = {
+  [P in K]-?: O[P]
+} & O
+
 export type DistSwaggerUIOptions = {
   configUrl?: SwaggerConfigs['configUrl']
   deepLinking?: SwaggerConfigs['deepLinking']
   presets?: string[]
   plugins?: string[]
   spec?: SwaggerConfigs['spec']
-  url?: SwaggerConfigs['url']
-  urls?: SwaggerConfigs['urls']
   layout?: SwaggerConfigs['layout']
   docExpansion?: SwaggerConfigs['docExpansion']
   maxDisplayedTags?: SwaggerConfigs['maxDisplayedTags']
@@ -15,7 +18,10 @@ export type DistSwaggerUIOptions = {
   requestInterceptor?: string
   responseInterceptor?: string
   persistAuthorization?: boolean
-}
+} & RequireOne<{
+  url?: SwaggerConfigs['url']
+  urls?: SwaggerConfigs['urls']
+}> // least one of `url` or `urls` is required because the output html will be broken if both are missing
 
 const RENDER_TYPE = {
   STRING_ARRAY: 'string_array',
@@ -52,7 +58,9 @@ export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions) => {
         return `${key}: '${v}'`
       }
       if (RENDER_TYPE_MAP[key] === RENDER_TYPE.STRING_ARRAY) {
-        if (!Array.isArray(v)) return ''
+        if (!Array.isArray(v)) {
+          return ''
+        }
         return `${key}: [${v.map((ve) => `${ve}`).join(',')}]`
       }
       if (RENDER_TYPE_MAP[key] === RENDER_TYPE.JSON_STRING) {

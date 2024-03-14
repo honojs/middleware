@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 1.0.1
+
+### Patch Changes
+
+- [#388](https://github.com/honojs/middleware/pull/388) [`e0d94dfa1a86e47765fb5bdcd410400fa4aa3ccd`](https://github.com/honojs/middleware/commit/e0d94dfa1a86e47765fb5bdcd410400fa4aa3ccd) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: change peer dependency to support v4.x
+
 ## 1.0.0
 
 ### Major Changes

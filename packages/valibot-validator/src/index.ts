@@ -8,16 +8,22 @@ type Hook<T extends BaseSchema, E extends Env, P extends string> = (
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void>
 
+type HasUndefined<T> = undefined extends T ? true : false
+
 export const vValidator = <
   T extends BaseSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
   V extends {
-    in: { [K in Target]: Input<T> }
+    in: HasUndefined<Input<T>> extends true
+      ? { [K in Target]?: Input<T> }
+      : { [K in Target]: Input<T> }
     out: { [K in Target]: Output<T> }
   } = {
-    in: { [K in Target]: Input<T> }
+    in: HasUndefined<Input<T>> extends true
+      ? { [K in Target]?: Input<T> }
+      : { [K in Target]: Input<T> }
     out: { [K in Target]: Output<T> }
   }
 >(

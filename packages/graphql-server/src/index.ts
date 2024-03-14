@@ -133,6 +133,7 @@ export const graphqlServer = <E extends Env = any, P extends string = any, I ext
         schema,
         document: documentAST,
         rootValue: rootResolver ? await rootResolver(c) : null,
+        contextValue: c,
         variableValues: variables,
         operationName: operationName,
       })

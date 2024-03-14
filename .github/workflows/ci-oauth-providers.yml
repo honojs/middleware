@@ -1,0 +1,25 @@
+name: ci-oauth-providers
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/oauth-providers/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/oauth-providers/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/oauth-providers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

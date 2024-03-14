@@ -1,6 +1,7 @@
 import type { DefaultBodyType, StrictResponse } from 'msw'
 import { HttpResponse, http } from 'msw'
 
+import type { DiscordErrorResponse, DiscordTokenResponse } from '../src/providers/discord'
 import type {
   FacebookErrorResponse,
   FacebookTokenResponse,
@@ -13,6 +14,7 @@ import type {
   GoogleUser,
 } from '../src/providers/google/types'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
+import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
 
 export const handlers = [
   // Google
@@ -93,6 +95,60 @@ export const handlers = [
     }
   ),
   http.get('https://api.linkedin.com/v2/userinfo', () => HttpResponse.json(linkedInUser)),
+  // X
+  http.post(
+    'https://api.twitter.com/2/oauth2/token',
+    async ({ request }): Promise<StrictResponse<Partial<XTokenResponse> | XErrorResponse>> => {
+      const code = new URLSearchParams(request.url.split('?')[1]).get('code')
+      const grant_type = new URLSearchParams(request.url.split('?')[1]).get('grant_type')
+      if (grant_type === 'refresh_token') {
+        const refresh_token = new URLSearchParams(request.url.split('?')[1]).get('refresh_token')
+        if (refresh_token === 'wrong-refresh-token') {
+          return HttpResponse.json(xRefreshTokenError)
+        }
+        return HttpResponse.json(xRefreshToken)
+      }
+      if (code === dummyCode) {
+        return HttpResponse.json(xToken)
+      }
+      return HttpResponse.json(xCodeError)
+    }
+  ),
+  http.get('https://api.twitter.com/2/users/me', () => HttpResponse.json(xUser)),
+  http.post(
+    'https://api.twitter.com/2/oauth2/revoke',
+    async ({ request }): Promise<StrictResponse<XRevokeResponse | XErrorResponse>> => {
+      const token = new URLSearchParams(request.url.split('?')[1]).get('token')
+      if (token === 'wrong-token') {
+        return HttpResponse.json(xRevokeTokenError)
+      }
+
+      return HttpResponse.json({ revoked: true })
+    }
+  ),
+  // Discord
+  http.post(
+    'https://discord.com/api/oauth2/token',
+    async ({
+      request,
+    }): Promise<StrictResponse<Partial<DiscordTokenResponse> | DiscordErrorResponse>> => {
+      const params = new URLSearchParams(await request.text())
+      const code = params.get('code')
+      const grant_type = params.get('grant_type')
+      if (grant_type === 'refresh_token') {
+        const refresh_token = params.get('refresh_token')
+        if (refresh_token === 'wrong-refresh-token') {
+          return HttpResponse.json(discordRefreshTokenError)
+        }
+        return HttpResponse.json(discordRefreshToken)
+      }
+      if (code === dummyCode) {
+        return HttpResponse.json(discordToken)
+      }
+      return HttpResponse.json(discordCodeError)
+    }
+  ),
+  http.get('https://discord.com/api/oauth2/@me', () => HttpResponse.json(discordUser)),
 ]
 
 export const dummyCode = '4/0AfJohXl9tS46EmTA6u9x3pJQiyCNyahx4DLJaeJelzJ0E5KkT4qJmCtjq9n3FxBvO40ofg'
@@ -261,4 +317,108 @@ export const linkedInUser = {
   family_name: 'Aldazosa',
   email: 'example@email.com',
   picture: 'https://www.severnedgevets.co.uk/sites/default/files/guides/kitten.png',
+}
+
+export const xToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token:
+    'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE',
+  scope: 'tweet.read users.read follows.read follows.write offline.access',
+  refresh_token:
+    'R0d4OW1raGIwOVZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnA4M1J0VmFTOWI3OjE3MDEyOTYyMTY1NjM6MToxOnJ0OjE',
+}
+export const xRefreshToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token: 'isdFho34isdX6hd3vODOFFNubUEBosihjcXifjdC34dsdsd349Djs9cgSA2',
+  scope: 'tweet.read users.read follows.read follows.write offline.access',
+  refresh_token: 'VZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnTYyMTY1NjM6MToxOnJ0Ojsdsd562x',
+}
+export const xCodeError = {
+  error: 'The Code you send is invalid.',
+  error_description: 'The Code you send is invalid.',
+}
+export const xRefreshTokenError = {
+  error: 'Invalid.',
+  error_description: 'Invalid Refresh Token.',
+}
+export const xRevokeTokenError = {
+  error: 'Something went wrong.',
+  error_description: 'Unable to invalid token.',
+}
+export const xUser = {
+  data: {
+    entities: {
+      url: {
+        urls: [
+          {
+            start: 0,
+            end: 23,
+            url: 'https://t.co/J2mwejW4cB',
+            expanded_url: 'https://monoald.github.io/',
+            display_url: 'monoald.github.io',
+          },
+        ],
+      },
+    },
+    url: 'https://t.co/J2mwejW4cB',
+    description: '💻 Front-end Developer',
+    username: 'monoald',
+    protected: true,
+    verified: true,
+    public_metrics: {
+      followers_count: 1,
+      following_count: 2,
+      tweet_count: 3,
+      listed_count: 4,
+      like_count: 5,
+    },
+    location: 'La Paz - Bolivia',
+    most_recent_tweet_id: '123456987465',
+    verified_type: 'none',
+    id: '123456',
+    profile_image_url: 'https://www.severnedgevets.co.uk/sites/default/files/guides/kitten.png',
+    created_at: '1018-12-01T13:53:50.000Z',
+    name: 'Carlos Aldazosa',
+  },
+}
+
+export const discordToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token:
+    'RkNwZzE4X0EtRmNkWTktN1hoYmdWSFQ4RjBPTzhvNGZod01lZmIxSjY0Xy1pOjE3MDEyOTYyMTY1NjM6MToxOmF0OjE',
+  scope: 'identify email',
+  refresh_token:
+    'R0d4OW1raGIwOVZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnA4M1J0VmFTOWI3OjE3MDEyOTYyMTY1NjM6MToxOnJ0OjE',
+}
+export const discordCodeError = {
+  error: 'The Code you send is invalid.',
+}
+export const discordUser = {
+  user: {
+    id: '5869901058880055',
+    username: 'monoald',
+    avatar: 'e578fa5518c158ff',
+    discriminator: '0',
+    public_flags: 0,
+    premium_type: 0,
+    flags: 0,
+    banner: null,
+    accent_color: null,
+    global_name: 'monoald',
+    avatar_decoration_data: null,
+    banner_color: null,
+  },
+}
+export const discordRefreshToken = {
+  token_type: 'bearer',
+  expires_in: 7200,
+  access_token: 'isdFho34isdX6hd3vODOFFNubUEBosihjcXifjdC34dsdsd349Djs9cgSA2',
+  scope: 'tweet.read users.read follows.read follows.write offline.access',
+  refresh_token: 'VZGekZJWjZBbUhqOUZkb0k2UzJ1MkNEVnTYyMTY1NjM6MToxOnJ0Ojsdsd562x',
+}
+export const discordRefreshTokenError = {
+  error: 'Invalid Refresh Token.',
 }

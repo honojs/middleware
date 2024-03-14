@@ -4,6 +4,7 @@ import type {
   ResponseConfig,
   RouteConfig,
   ZodContentObject,
+  ZodMediaTypeObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
 import {
@@ -64,7 +65,7 @@ type InputTypeBase<
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends AnyZodObject
     ? {
-        in: { [K in Type]: z.infer<RequestPart<R, Part>> }
+        in: { [K in Type]: z.input<RequestPart<R, Part>> }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
@@ -78,7 +79,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             in: {
-              json: z.infer<
+              json: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -101,7 +102,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
         ? {
             in: {
-              form: z.infer<
+              form: z.input<
                 R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
               >
             }
@@ -133,7 +134,7 @@ type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, 
     : {}
   : {}
 
-type Hook<T, E extends Env, P extends string, O> = (
+export type Hook<T, E extends Env, P extends string, O> = (
   result:
     | {
         success: true
@@ -150,11 +151,12 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
-type HandlerResponse<O> =
-  | TypedResponse<O>
-  | Promise<TypedResponse<O>>
+type HandlerTypedResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
+type HandlerAllResponse<O> =
   | Response
   | Promise<Response>
+  | TypedResponse<O>
+  | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
@@ -171,7 +173,23 @@ export type RouteHandler<
     InputTypeForm<R> &
     InputTypeJson<R>,
   P extends string = ConvertPathType<R['path']>
-> = Handler<E, P, I, HandlerResponse<OutputType<R>>>
+> = Handler<
+  E,
+  P,
+  I,
+  // If response type is defined, only TypedResponse is allowed.
+  R extends {
+    responses: {
+      [statusCode: string]: {
+        content: {
+          [mediaType: string]: ZodMediaTypeObject
+        }
+      }
+    }
+  }
+    ? HandlerTypedResponse<OutputType<R>>
+    : HandlerAllResponse<OutputType<R>>
+>
 
 export type RouteHook<
   R extends RouteConfig,
@@ -186,8 +204,8 @@ export type RouteHook<
 > = Hook<I, E, P, OutputType<R>>
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
-  OpenAPIObjectConfig |
-  ((context: Context<E, P>) => OpenAPIObjectConfig)
+  | OpenAPIObjectConfig
+  | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
 export class OpenAPIHono<
   E extends Env = Env,
@@ -214,7 +232,23 @@ export class OpenAPIHono<
     P extends string = ConvertPathType<R['path']>
   >(
     route: R,
-    handler: Handler<E, P, I, HandlerResponse<OutputType<R>>>,
+    handler: Handler<
+      E,
+      P,
+      I,
+      // If response type is defined, only TypedResponse is allowed.
+      R extends {
+        responses: {
+          [statusCode: string]: {
+            content: {
+              [mediaType: string]: ZodMediaTypeObject
+            }
+          }
+        }
+      }
+        ? HandlerTypedResponse<OutputType<R>>
+        : HandlerAllResponse<OutputType<R>>
+    >,
     hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
   ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
@@ -287,8 +321,12 @@ export class OpenAPIHono<
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const config = typeof configure === 'function' ? configure(c) : configure
-      const document = this.getOpenAPIDocument(config)
-      return c.json(document)
+      try {
+        const document = this.getOpenAPIDocument(config)
+        return c.json(document)
+      } catch (e) {
+        return c.json(e, 500)
+      }
     }) as any
   }
 
@@ -298,8 +336,12 @@ export class OpenAPIHono<
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const config = typeof configure === 'function' ? configure(c) : configure
-      const document = this.getOpenAPI31Document(config)
-      return c.json(document)
+      try {
+        const document = this.getOpenAPI31Document(config)
+        return c.json(document)
+      } catch (e) {
+        return c.json(e, 500)
+      }
     }) as any
   }
 
@@ -322,6 +364,7 @@ export class OpenAPIHono<
     path: SubPath,
     app?: Hono<SubEnv, SubSchema, SubBasePath>
   ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath> {
+    const pathForOpenAPI = path.replaceAll(/:([^\/]+)/g, '{$1}')
     super.route(path, app as any)
 
     if (!(app instanceof OpenAPIHono)) {
@@ -336,13 +379,13 @@ export class OpenAPIHono<
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: mergePath(path, def.route.path),
+            path: mergePath(pathForOpenAPI, def.route.path),
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: mergePath(path, def.webhook.path),
+            path: mergePath(pathForOpenAPI, def.webhook.path),
           })
 
         case 'schema':
@@ -366,7 +409,7 @@ export class OpenAPIHono<
   }
 
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono(super.basePath(path) as any)
+    return new OpenAPIHono({...super.basePath(path) as any, defaultHook: this.defaultHook})
   }
 }
 

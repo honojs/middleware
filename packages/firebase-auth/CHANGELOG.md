@@ -1,5 +1,29 @@
 # @hono/firebase-auth
 
+## 1.4.0
+
+### Minor Changes
+
+- [#402](https://github.com/honojs/middleware/pull/402) [`c9f110d4e0d0f6079870fd8c91010832451cf0c8`](https://github.com/honojs/middleware/commit/c9f110d4e0d0f6079870fd8c91010832451cf0c8) Thanks [@Code-Hex](https://github.com/Code-Hex)! - added a new `verifySessionCookieFirebaseAuth` middleware to verify w/ session cookie.
+
+## 1.3.6
+
+### Patch Changes
+
+- [#393](https://github.com/honojs/middleware/pull/393) [`7e36ecc3f62612f7850c3e5c17698c617d68cf7a`](https://github.com/honojs/middleware/commit/7e36ecc3f62612f7850c3e5c17698c617d68cf7a) Thanks [@Code-Hex](https://github.com/Code-Hex)! - - supported v4 to get header values
+
+## 1.3.5
+
+### Patch Changes
+
+- [#380](https://github.com/honojs/middleware/pull/380) [`ea19f6bdeb14216da0880baf5dd5885395c0f008`](https://github.com/honojs/middleware/commit/ea19f6bdeb14216da0880baf5dd5885395c0f008) Thanks [@CarlosZiegler](https://github.com/CarlosZiegler)! - fix: change peer dependency to support v4.0.0
+
+## 1.3.4
+
+### Patch Changes
+
+- [#337](https://github.com/honojs/middleware/pull/337) [`75841d6b485a7b1e237be55d5ceb16500119afda`](https://github.com/honojs/middleware/commit/75841d6b485a7b1e237be55d5ceb16500119afda) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: export esm
+
 ## 1.3.3
 
 ### Patch Changes

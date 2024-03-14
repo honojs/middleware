@@ -1,0 +1,44 @@
+{
+  "name": "@hono/prometheus",
+  "version": "1.0.0",
+  "description": "Prometheus metrics middleware for Hono",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "^3.12.0",
+    "prom-client": "^15.0.0"
+  },
+  "devDependencies": {
+    "hono": "^3.12.0",
+    "prom-client": "^15.0.0",
+    "tsup": "^8.0.1",
+    "vitest": "^1.0.4"
+  }
+}

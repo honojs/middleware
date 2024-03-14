@@ -1,5 +1,54 @@
 # @hono/zod-openapi
 
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies [[`4875e1c53146d2c67846b8159d3630d465c2a310`](https://github.com/honojs/middleware/commit/4875e1c53146d2c67846b8159d3630d465c2a310)]:
+  - @hono/zod-validator@0.2.0
+
+## 0.9.7
+
+### Patch Changes
+
+- [#408](https://github.com/honojs/middleware/pull/408) [`d4ca1ce98f33ae67100986613144e9d12fb933b3`](https://github.com/honojs/middleware/commit/d4ca1ce98f33ae67100986613144e9d12fb933b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - fix: Fix basePath method disregarding defaultHook
+
+## 0.9.6
+
+### Patch Changes
+
+- [#356](https://github.com/honojs/middleware/pull/356) [`168a0a6d684a0750ab95802d6316e562061f786c`](https://github.com/honojs/middleware/commit/168a0a6d684a0750ab95802d6316e562061f786c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: handle `Conflicting names for parameter`
+
+## 0.9.5
+
+### Patch Changes
+
+- [#316](https://github.com/honojs/middleware/pull/316) [`5eeb555`](https://github.com/honojs/middleware/commit/5eeb555c8958fb890e80262e3dbf532f3c8c1e55) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: supports named params in nested routes
+
+## 0.9.4
+
+### Patch Changes
+
+- [#313](https://github.com/honojs/middleware/pull/313) [`b8219d9`](https://github.com/honojs/middleware/commit/b8219d9b68e6aba7466705d0787dbdd15b808b06) Thanks [@WildEgo](https://github.com/WildEgo)! - change: Export Hook in @hono/zod-openapi
+
+## 0.9.3
+
+### Patch Changes
+
+- [#292](https://github.com/honojs/middleware/pull/292) [`7ded22a`](https://github.com/honojs/middleware/commit/7ded22a57edba4d30144fd7641d9502eecefc1ac) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump Hono for peerDependencies and add tests
+
+## 0.9.2
+
+### Patch Changes
+
+- [#286](https://github.com/honojs/middleware/pull/286) [`8178ba0`](https://github.com/honojs/middleware/commit/8178ba094f9bcc289b57f017a79fb075b08566cb) Thanks [@fahchen](https://github.com/fahchen)! - use z.input to infer input types of the request
+
+## 0.9.1
+
+### Patch Changes
+
+- [#287](https://github.com/honojs/middleware/pull/287) [`1568b92`](https://github.com/honojs/middleware/commit/1568b920de1e45b963d1812c32932fad01dbe2fe) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: Strict type checking of return values
+
 ## 0.9.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@hono/graphql-server",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "repository": "git@github.com:honojs/middleware.git",
   "author": "Minghe Huang <h.minghe@gmail.com>",
   "main": "dist/index.js",
@@ -9,25 +9,21 @@
     "dist"
   ],
   "license": "MIT",
-  "private": false,
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "test": "jest",
-    "test:deno": "deno test deno_test",
-    "test:bun": "bun wiptest bun_test/index.test.ts",
-    "test:all": "yarn test && yarn test:deno && yarn test:bun",
-    "denoify": "rimraf deno_dist && denoify && rimraf 'deno_dist/**/*.test.ts'",
+    "test:all": "yarn test",
     "build": "rimraf dist && tsc",
     "lint": "eslint --ext js,ts src .eslintrc.js",
     "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
-    "prerelease": "yarn build && yarn denoify && yarn test:all",
+    "prerelease": "yarn build && yarn test",
     "release": "np"
   },
   "peerDependencies": {
-    "hono": "^3.0.0"
+    "hono": ">=3.0.0"
   },
   "dependencies": {
     "graphql": "^16.5.0"
@@ -37,7 +33,6 @@
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
-    "denoify": "^1.4.9",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.4.0",
@@ -46,7 +41,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "hono": "^3.0.0",
+    "hono": "^4.0.2",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "np": "^7.6.2",

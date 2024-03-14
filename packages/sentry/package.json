@@ -1,6 +1,6 @@
 {
   "name": "@hono/sentry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sentry Middleware for Hono",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,18 +10,11 @@
   ],
   "scripts": {
     "test": "jest",
-    "test:deno": "deno test deno_test",
-    "test:all": "yarn test && yarn test:deno",
-    "denoify": "rimraf deno_dist && denoify",
     "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn denoify && yarn test:all",
+    "prerelease": "yarn build && yarn test:all",
     "release": "np"
   },
-  "denoify": {
-    "replacer": "dist/replacer.js"
-  },
   "license": "MIT",
-  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/honojs/middleware.git"
@@ -33,7 +26,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "dependencies": {
     "toucan-js": "^3.2.2"
@@ -43,7 +36,6 @@
     "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
-    "denoify": "^1.4.5",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.6.0",
@@ -52,7 +44,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "hono": "^3.5.1",
+    "hono": "^3.11.7",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
     "np": "^7.6.2",

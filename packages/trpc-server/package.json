@@ -1,6 +1,6 @@
 {
   "name": "@hono/trpc-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "tRPC Server Middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -17,7 +17,6 @@
     "release": "yarn publish"
   },
   "license": "MIT",
-  "private": false,
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
@@ -29,11 +28,13 @@
   "homepage": "https://honojs.dev",
   "peerDependencies": {
     "@trpc/server": "^10.10.0",
-    "hono": "3.*"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@trpc/server": "^10.10.0",
-    "hono": "^3.0.0",
+    "hono": "^3.11.7",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
     "zod": "^3.20.2"
   },
   "engines": {

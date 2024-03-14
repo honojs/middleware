@@ -42,7 +42,9 @@ export const sentry = (
       ...options,
     })
     c.set('sentry', sentry)
-    if (callback) callback(sentry)
+    if (callback) {
+      callback(sentry)
+    }
 
     await next()
     if (c.error) {

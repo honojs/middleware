@@ -1,6 +1,5 @@
-/* eslint-disable node/no-extraneous-import */
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { createRoute, z } from '../src'
+import { createRoute, z } from '../src/index'
 
 describe('createRoute', () => {
   it.each([

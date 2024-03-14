@@ -12,7 +12,7 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.get('*', qwikMiddleware({ render, qwikCityPlan }))
+app.all('*', qwikMiddleware({ render, qwikCityPlan }))
 
 export default app
 ```

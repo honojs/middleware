@@ -1,10 +1,8 @@
-/* eslint-disable node/no-extraneous-import */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { Hono, Env, ToSchema, Context } from 'hono'
+import type { Context } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { OpenAPIHono, createRoute, z } from '../src'
+import { OpenAPIHono, createRoute, z } from '../src/index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -20,8 +18,9 @@ describe('Constructor', () => {
   it('Should accept a defaultHook', () => {
     type FakeEnv = { Variables: { fake: string }; Bindings: { other: number } }
     const app = new OpenAPIHono<FakeEnv>({
-      defaultHook: (result, c) => {
+      defaultHook: (_result, c) => {
         // Make sure we're passing context types through
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
       },
     })
@@ -105,7 +104,7 @@ describe('Basic - params', () => {
     route,
     (c) => {
       const { id } = c.req.valid('param')
-      return c.jsonT({
+      return c.json({
         id,
         age: 20,
         name: 'Ultra-man',
@@ -113,7 +112,7 @@ describe('Basic - params', () => {
     },
     (result, c) => {
       if (!result.success) {
-        const res = c.jsonT(
+        const res = c.json(
           {
             ok: false,
           },
@@ -247,7 +246,7 @@ describe('Query', () => {
 
   app.openapi(route, (c) => {
     const { page } = c.req.valid('query')
-    return c.jsonT({
+    return c.json({
       titles: ['Good title'],
       page: Number(page),
     })
@@ -301,12 +300,10 @@ describe('Header', () => {
 
   const app = new OpenAPIHono()
 
-  const controller = (c) => {
+  app.openapi(route, (c) => {
     const headerData = c.req.valid('header')
-    return c.jsonT(headerData)
-  }
-
-  app.openapi(route, controller)
+    return c.json(headerData)
+  })
 
   it('Should return 200 response with correct contents', async () => {
     const res = await app.request('/pong', {
@@ -367,7 +364,7 @@ describe('Cookie', () => {
 
   app.openapi(route, (c) => {
     const { debug } = c.req.valid('cookie')
-    return c.jsonT({
+    return c.json({
       name: 'foo',
       debug,
     })
@@ -437,7 +434,7 @@ describe('JSON', () => {
 
   app.openapi(route, (c) => {
     const { id, title } = c.req.valid('json')
-    return c.jsonT({
+    return c.json({
       id,
       title,
     })
@@ -518,7 +515,7 @@ describe('Form', () => {
 
   app.openapi(route, (c) => {
     const { id, title } = c.req.valid('form')
-    return c.jsonT({
+    return c.json({
       id: Number(id),
       title,
     })
@@ -554,27 +551,66 @@ describe('Form', () => {
   })
 })
 
-describe('Types', () => {
-  const RequestSchema = z.object({
-    id: z.number().openapi({}),
-    title: z.string().openapi({}),
+describe('Input types', () => {
+  const ParamsSchema = z.object({
+    id: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'id',
+          in: 'path',
+        },
+        example: 123,
+      }),
   })
 
-  const PostSchema = z
+  const QuerySchema = z.object({
+    age: z
+      .string()
+      .transform(Number)
+      .openapi({
+        param: {
+          name: 'age',
+          in: 'query',
+        },
+        example: 42,
+      }),
+  })
+
+  const BodySchema = z
     .object({
-      id: z.number().openapi({}),
-      message: z.string().openapi({}),
+      sex: z.enum(['male', 'female']).openapi({}),
     })
-    .openapi('Post')
+    .openapi('User')
+
+  const UserSchema = z
+    .object({
+      id: z.number().openapi({
+        example: 123,
+      }),
+      name: z.string().openapi({
+        example: 'John Doe',
+      }),
+      age: z.number().openapi({
+        example: 42,
+      }),
+      sex: z.enum(['male', 'female']).openapi({
+        example: 'male',
+      }),
+    })
+    .openapi('User')
 
   const route = createRoute({
-    method: 'post',
-    path: '/posts',
+    method: 'patch',
+    path: '/users/{id}',
     request: {
+      params: ParamsSchema,
+      query: QuerySchema,
       body: {
         content: {
           'application/json': {
-            schema: RequestSchema,
+            schema: BodySchema,
           },
         },
       },
@@ -583,44 +619,52 @@ describe('Types', () => {
       200: {
         content: {
           'application/json': {
-            schema: PostSchema,
+            schema: UserSchema,
           },
         },
-        description: 'Post a post',
+        description: 'Update a user',
       },
     },
   })
 
   const app = new OpenAPIHono()
 
-  const appRoutes = app.openapi(route, (c) => {
-    const data = c.req.valid('json')
-    return c.jsonT({
-      id: data.id,
-      message: 'Success',
+  app.openapi(route, (c) => {
+    const { id } = c.req.valid('param')
+    const { age } = c.req.valid('query')
+    const { sex } = c.req.valid('json')
+
+    return c.json({
+      id,
+      age,
+      sex,
+      name: 'Ultra-man',
     })
   })
 
-  it('Should return correct types', () => {
-    type H = Hono<
-      Env,
-      ToSchema<
-        'post',
-        '/posts',
-        {
-          json: {
-            title: string
-            id: number
-          }
-        },
-        {
-          id: number
-          message: string
-        }
-      >,
-      '/'
-    >
-    expectTypeOf(appRoutes).toMatchTypeOf<H>
+  it('Should return 200 response with correct typed contents', async () => {
+    const res = await app.request('/users/123?age=42', {
+      method: 'PATCH',
+      body: JSON.stringify({ sex: 'male' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      id: 123,
+      age: 42,
+      sex: 'male',
+      name: 'Ultra-man',
+    })
+  })
+
+  // @ts-expect-error it should throw an error if the types are wrong
+  app.openapi(route, (c) => {
+    return c.json({
+      id: '123', // should be number
+      message: 'Success',
+    })
   })
 })
 
@@ -658,7 +702,7 @@ describe('Routers', () => {
       },
     },
   })
-  it('Should include definitions from nested routers', () => {
+  it('Should include definitions from nested routers', async () => {
     const router = new OpenAPIHono().openapi(route, (ctx) => {
       return ctx.jsonT({ id: 123 })
     })
@@ -696,6 +740,15 @@ describe('Routers', () => {
     expect(json.components?.parameters).toHaveProperty('Key')
     expect(json.paths).toHaveProperty('/api/posts')
     expect(json.webhooks).toHaveProperty('/api/postback')
+
+    const res = await app.request('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(200)
   })
 })
 
@@ -723,7 +776,7 @@ describe('Multi params', () => {
 
   app.openapi(route, (c) => {
     const { id, tagName } = c.req.valid('param')
-    return c.jsonT({
+    return c.json({
       id,
       tagName,
     })
@@ -751,7 +804,7 @@ describe('basePath()', () => {
   })
 
   const app = new OpenAPIHono().basePath('/api')
-  app.openapi(route, (c) => c.jsonT({ message: 'Hello' }))
+  app.openapi(route, (c) => c.json({ message: 'Hello' }))
   app.doc('/doc', {
     openapi: '3.0.0',
     info: {
@@ -769,6 +822,15 @@ describe('basePath()', () => {
   it('Should return 200 response - /api/doc', async () => {
     const res = await app.request('/api/doc')
     expect(res.status).toBe(200)
+  })
+
+  it('Should retain defaultHook of the parent app', async () => {
+    const defaultHook = () => {}
+    const app = new OpenAPIHono({
+      defaultHook
+    }).basePath('/api')
+    expect(app.defaultHook).toBeDefined()
+    expect(app.defaultHook).toBe(defaultHook)
   })
 })
 
@@ -800,10 +862,10 @@ describe('With hc', () => {
 
     const routes = app
       .openapi(createPostRoute, (c) => {
-        return c.jsonT(0)
+        return c.json(0)
       })
       .openapi(createBookRoute, (c) => {
-        return c.jsonT(0)
+        return c.json(0)
       })
 
     const client = hc<typeof routes>('http://localhost/')
@@ -818,7 +880,7 @@ describe('With hc', () => {
     const app = new OpenAPIHono({
       defaultHook: (result, c) => {
         if (!result.success) {
-          const res = c.jsonT(
+          const res = c.json(
             {
               ok: false,
               source: 'defaultHook',
@@ -904,7 +966,7 @@ describe('With hc', () => {
     // use the defaultHook
     app.openapi(createPostRoute, (c) => {
       const { title } = c.req.valid('json')
-      return c.jsonT({ title })
+      return c.json({ title })
     })
 
     // use a routeHook
@@ -912,11 +974,11 @@ describe('With hc', () => {
       createBookRoute,
       (c) => {
         const { title } = c.req.valid('json')
-        return c.jsonT({ title })
+        return c.json({ title })
       },
       (result, c) => {
         if (!result.success) {
-          const res = c.jsonT(
+          const res = c.json(
             {
               ok: false,
               source: 'routeHook' as const,
@@ -1010,7 +1072,7 @@ describe('Path normalization', () => {
     })
   }
 
-  const handler = (c) => c.body(null, 204)
+  const handler = (c: Context) => c.body(null, 204)
 
   describe('Duplicate slashes in the root path', () => {
     const app = createRootApp()
@@ -1140,7 +1202,7 @@ describe('Context can be accessible in the doc route', () => {
     }
   )
 
-  app.doc('/doc', context => ({
+  app.doc('/doc', (context) => ({
     openapi: '3.0.0',
     info: {
       version: '1.0.0',
@@ -1149,7 +1211,7 @@ describe('Context can be accessible in the doc route', () => {
   }))
 
   it('Should return with the title set as specified in env', async () => {
-    const res = await app.request('/doc', null, { TITLE: 'My API' })
+    const res = await app.request('/doc', undefined, { TITLE: 'My API' })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       openapi: '3.0.0',
@@ -1172,6 +1234,120 @@ describe('Context can be accessible in the doc route', () => {
           },
         },
       },
+    })
+  })
+})
+
+describe('Named params in nested routes', () => {
+  const root = new OpenAPIHono()
+  root.doc('/doc', () => ({
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  const sub = new OpenAPIHono()
+  sub.openapi(
+    createRoute({
+      method: 'get',
+      path: '/sub/{subId}',
+      responses: {
+        200: {
+          description: 'Nested response',
+        },
+      },
+    }),
+    (c) => c.json({ params: c.req.param() })
+  )
+
+  root.route('/root/:rootId', sub)
+
+  it('Should return a correct content', async () => {
+    const res = await root.request('/root/123/sub/456')
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data).toEqual({
+      params: {
+        subId: '456',
+        rootId: '123',
+      },
+    })
+  })
+
+  it('Should return a correct path', async () => {
+    const res = await root.request('/doc')
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(Object.keys(data['paths'])[0]).toBe('/root/{rootId}/sub/{subId}')
+  })
+})
+
+describe('Handle "Conflicting names for parameter"', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/posts/{foo}', // should be `id`
+      request: {
+        params: z.object({
+          id: z.string().openapi({
+            param: {
+              name: 'foo',
+              in: 'path',
+            },
+          }),
+        }),
+      },
+      responses: {
+        200: {
+          description: 'response',
+        },
+      },
+    }),
+    (c) => c.text('foo')
+  )
+
+  app.doc('/doc', () => ({
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  app.doc31('/doc31', () => ({
+    openapi: '3.1.0',
+    info: {
+      version: '1.0.0',
+      title: 'my API',
+    },
+  }))
+
+  it('Should return a 500 response correctly - /doc', async () => {
+    const res = await app.request('/doc')
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data).toEqual({
+      data: {
+        key: 'name',
+        values: ['id', 'foo'],
+      },
+      message: 'Conflicting names for parameter',
+    })
+  })
+
+  it('Should return a 500 response correctly - /doc31', async () => {
+    const res = await app.request('/doc31')
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data).toEqual({
+      data: {
+        key: 'name',
+        values: ['id', 'foo'],
+      },
+      message: 'Conflicting names for parameter',
     })
   })
 })

@@ -1,5 +1,23 @@
 # @hono/oauth-providers
 
+## 0.3.1
+
+### Patch Changes
+
+- [#396](https://github.com/honojs/middleware/pull/396) [`98cffb0ae9c069e8f08433016e3908fa715c76b7`](https://github.com/honojs/middleware/commit/98cffb0ae9c069e8f08433016e3908fa715c76b7) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: update `peerDependencies`
+
+## 0.3.0
+
+### Minor Changes
+
+- [#342](https://github.com/honojs/middleware/pull/342) [`8841b6427d23046e069e8ec6010d6624ed8e68e4`](https://github.com/honojs/middleware/commit/8841b6427d23046e069e8ec6010d6624ed8e68e4) Thanks [@monoald](https://github.com/monoald)! - Add Discord provider
+
+## 0.2.0
+
+### Minor Changes
+
+- [#283](https://github.com/honojs/middleware/pull/283) [`aa9527b`](https://github.com/honojs/middleware/commit/aa9527b9e7291095f08f0e9df204b0eb6ba1a0db) Thanks [@monoald](https://github.com/monoald)! - Add X (Twitter) provider
+
 ## 0.1.2
 
 ### Patch Changes

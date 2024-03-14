@@ -38,6 +38,32 @@ describe('SwaggerUI Rendering', () => {
   `)
   })
 
+  it('use urls for configuration', () => {
+    expect(
+      SwaggerUI({
+        urls: [
+          {
+            name: 'Petstore',
+            url,
+          },
+        ],
+      }).toString()
+    ).toEqual(`
+    <div>
+      <div id="swagger-ui"></div>
+      <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+      <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <script>
+        window.onload = () => {
+          window.ui = SwaggerUIBundle({
+            dom_id: '#swagger-ui',urls: [{"name":"Petstore","url":"${url}"}],
+          })
+        }
+      </script>
+    </div>
+  `)
+  })
+
   it('renders correctly with custom UI', () => {
     expect(
       SwaggerUI({

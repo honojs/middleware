@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import { number, object, string } from 'valibot'
+import { number, object, string, optional } from 'valibot'
 import { vValidator } from '../src'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -14,13 +14,26 @@ describe('Basic', () => {
     age: number(),
   })
 
-  const route = app.post('/author', vValidator('json', schema), (c) => {
-    const data = c.req.valid('json')
-    return c.jsonT({
-      success: true,
-      message: `${data.name} is ${data.age}`,
+  const querySchema = optional(
+    object({
+      search: optional(string()),
     })
-  })
+  )
+
+  const route = app.post(
+    '/author',
+    vValidator('json', schema),
+    vValidator('query', querySchema),
+    (c) => {
+      const data = c.req.valid('json')
+      const query = c.req.valid('query')
+
+      return c.json({
+        success: true,
+        message: `${data.name} is ${data.age}, search is ${query?.search}`,
+      })
+    }
+  )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
@@ -31,9 +44,15 @@ describe('Basic', () => {
             name: string
             age: number
           }
+        } & {
+          query?:
+            | {
+                search?: string | undefined
+              }
+            | undefined
         }
         output: {
-          success: true
+          success: boolean
           message: string
         }
       }
@@ -44,11 +63,14 @@ describe('Basic', () => {
   type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
-    const req = new Request('http://localhost/author', {
+    const req = new Request('http://localhost/author?search=hello', {
       body: JSON.stringify({
         name: 'Superman',
         age: 20,
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -56,7 +78,7 @@ describe('Basic', () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
       success: true,
-      message: 'Superman is 20',
+      message: 'Superman is 20, search is hello',
     })
   })
 
@@ -66,6 +88,9 @@ describe('Basic', () => {
         name: 'Superman',
         age: '20',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -108,6 +133,9 @@ describe('With Hook', () => {
         id: 123,
         title: 'Hello',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
@@ -122,6 +150,9 @@ describe('With Hook', () => {
         id: '123',
         title: 'Hello',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
     })
     const res = await app.request(req)
