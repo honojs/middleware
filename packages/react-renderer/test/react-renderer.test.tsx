@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+
 import { reactRenderer, useRequestContext } from '../src/react-renderer'
 
 const RequestUrl = () => {
@@ -107,5 +108,27 @@ describe('Basic', () => {
 })
 
 describe('Streaming', () => {
-  it.skip('Vitest does not support Streaming')
+  it('Should return a stream response', async () => {
+    const app = new Hono()
+    app.use(
+      '*',
+      reactRenderer(
+        ({ children }) => {
+          return (
+            <html>
+              <body>{children}</body>
+            </html>
+          )
+        },
+        { stream: true }
+      )
+    )
+    app.get('/', (c) => c.render(<h1>Hello</h1>, { title: 'Title' }))
+    const res = await app.request('/')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Transfer-Encoding')).toBe('chunked')
+    expect(res.headers.get('Content-Type')).toBe('text/html; charset=UTF-8')
+    expect(await res.text()).toBe('<!DOCTYPE html><html><body><h1>Hello</h1></body></html>')
+  })
 })

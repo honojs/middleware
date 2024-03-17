@@ -3,13 +3,14 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "rootDir": "./",
     "outDir": "./dist",
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
   "include": [
+    "vitest.config.ts",
     "src/**/*.ts",
     "test/**/*.tsx",
   ],
