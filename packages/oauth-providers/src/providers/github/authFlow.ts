@@ -21,6 +21,9 @@ type Token = {
   token: string
   expires_in?: number
 }
+
+const userAgent = 'Hono-Auth-App'
+
 export class AuthFlow {
   client_id: string
   client_secret: string
@@ -101,7 +104,7 @@ export class AuthFlow {
         Authorization: `Bearer ${this.token?.token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'User-Agent': 'Hono-Auth-App',
+        'User-Agent': userAgent,
       },
     }).then((res) => res.json())) as GitHubUser | GitHubErrorResponse
 
@@ -113,7 +116,7 @@ export class AuthFlow {
       const emails = (await fetch('https://api.github.com/user/emails', {
         headers: {
           Authorization: `Bearer ${this.token?.token}`,
-          'User-Agent': 'Hono-Auth-App',
+          'User-Agent': userAgent,
         },
       }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
 
