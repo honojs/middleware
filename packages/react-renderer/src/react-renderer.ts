@@ -30,15 +30,15 @@ const createRenderer =
         React.createElement(RequestContext.Provider, { value: c }, node),
         options.readableStreamOptions
       )
-      return c.body(stream, {
-        headers:
-          options.stream === true
-            ? {
-                'Transfer-Encoding': 'chunked',
-                'Content-Type': 'text/html; charset=UTF-8',
-              }
-            : options.stream,
-      })
+      if (options.stream === true) {
+        c.header('Transfer-Encoding', 'chunked')
+        c.header('Content-Type', 'text/html; charset=UTF-8')
+      } else {
+        for (const [key, value] of Object.entries(options.stream)) {
+          c.header(key, value)
+        }
+      }
+      return c.body(stream)
     } else {
       const docType =
         typeof options?.docType === 'string'
