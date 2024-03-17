@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 0.1.1
+
+### Patch Changes
+
+- [#419](https://github.com/honojs/middleware/pull/419) [`6eaf2a14cd3bdc1456903e3f9b34ca3964063f79`](https://github.com/honojs/middleware/commit/6eaf2a14cd3bdc1456903e3f9b34ca3964063f79) Thanks [@yoshikouki](https://github.com/yoshikouki)! - fix: overwriting headers when stream is enabled
+
 ## 0.1.0
 
 ### Minor Changes
