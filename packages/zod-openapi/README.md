@@ -362,7 +362,8 @@ const app = new OpenAPIHono()
 
 // Define your routes and schemas...
 
-await toDoc(app, fs, {
+const paths: string[] = ['/doc']
+await toDoc(app, fs, paths, {
   outDir: './docs',
   format: 'yaml',    // default 'json'
   extension: '.yml',

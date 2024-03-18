@@ -27,7 +27,8 @@ describe('toFiles', () => {
       },
     }))
 
-    const result = await toFiles(app, fs, { paths:['/api-docs'] })
+    const paths: string[] = ['/api-docs']
+    const result = await toFiles(app, fs, paths)
 
     expect(result.success).toBe(true)
     expect(result.outDir).toBe('./dist')
@@ -49,7 +50,8 @@ describe('toFiles', () => {
       },
     }))
 
-    const result = await toFiles(app, fs, { format: 'yaml', paths: ['/api-docs'] })
+    const paths: string[] = ['/api-docs']
+    const result = await toFiles(app, fs, paths, { format: 'yaml'})
     const expectedYAMLContent = `openapi: 3.0.0
 info:
   title: Test API
@@ -86,7 +88,8 @@ paths: {}
       },
     }))
 
-    const result = await toFiles(app, fs, { format: 'yaml', paths: ['/api-docs', '/api-docs31'] })
+    const paths: string[] = ['/api-docs', '/api-docs31'] 
+    const result = await toFiles(app, fs, paths, { format: 'yaml'})
     const expectedYAMLContent = `openapi: 3.0.0
 info:
   title: Test API
@@ -131,7 +134,7 @@ webhooks: {}
       },
     }))
 
-    const result = await toFiles(app, fs)
+    const result = await toFiles(app, fs, [])
 
     expect(result.success).toBe(false)
     expect(result.outDir).toBe('./dist')
@@ -141,7 +144,7 @@ webhooks: {}
   })
 
   it('should throw error if OpenAPI document endpoint not found', async () => {
-    const result = await toFiles(app, fs)
+    const result = await toFiles(app, fs, [])
 
     expect(result.success).toBe(false)
     expect(result.outDir).toBe('./dist')
