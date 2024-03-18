@@ -20,56 +20,52 @@ export interface ToFilesResult {
   error?: Error
 }
 
-export const ToFiles = async (
+const generateFilePath = (basePath: string, docEndpointPath: string, format: string, extension?: string): string => {
+  const ext = extension || (format === 'yaml' ? '.yaml' : '.json')
+  const sanitizedPath = docEndpointPath.replace(/\//g, '-').replace(/^-*|-*$/g, '')
+  return `${basePath}/openapi-${sanitizedPath}${ext}`
+}
+
+const fetchAndSaveOpenAPIDocument = async (app: OpenAPIHono, fs: FileSystem, docEndpointPath: string, filePath: string, format: string): Promise<string> => {
+  const response = await app.request(`http://localhost${docEndpointPath}`)
+  const openApiJson = await response.json()
+  const content = getContent(openApiJson, format)
+  await fs.writeFile(filePath, content)
+  return filePath
+}
+
+export const toFiles = async (
   app: OpenAPIHono,
   fs: FileSystem,
   options: ToFilesOptions = {}
 ): Promise<ToFilesResult> => {
   const { routes, outDir = './dist', format = 'json', extension } = options
-  const filePaths: string[] = []
-
-  try {
-    await fs.mkdir(outDir, { recursive: true })
-
-    if (!routes || routes.length === 0) {
-      throw new Error('OpenAPI document endpoints are not specified')
-    }
-
-    await Promise.all(routes.map(async (docEndpointPath) => {
-      const response = await app.request(`http://localhost${docEndpointPath}`)
-      const openApiJson = await response.json()
-  
-      const ext = getExtension(format, extension)
-      const filePath = `${outDir}/openapi-${docEndpointPath.replace(/\//g, '-')}${ext}`
-      const content = getContent(openApiJson, format)
-  
-      await fs.writeFile(filePath, content)
-      filePaths.push(filePath)
-    }))
-
-    return {
-      success: true,
-      outDir,
-      files: filePaths,
-    }
-  } catch (error) {
-    return {
-      success: false,
-      outDir,
-      files: [],
-      error: error as Error,
-    };
+  if (!routes || routes.length === 0) {
+    return { success: false, outDir, files: [], error: new Error('OpenAPI document endpoints are not specified') }
   }
-};
 
-const getExtension = (format?: string, extension?: string): string => {
-  if (extension) {
-    return extension
+  await fs.mkdir(outDir, { recursive: true })
+
+  const tasks = routes.map(docEndpointPath => {
+    const filePath = generateFilePath(outDir, docEndpointPath, format, extension)
+    return fetchAndSaveOpenAPIDocument(app, fs, docEndpointPath, filePath, format)
+      .catch(error => ({ error, docEndpointPath })) // エラーハンドリング
+  })
+
+  const results = await Promise.all(tasks)
+  const filePaths = results.filter(result => typeof result === 'string')
+  const errors = results.filter(result => typeof result !== 'string')
+
+  if (errors.length > 0) {
+    console.error('Errors occurred:', errors)
   }
-  if (format === 'yaml') {
-    return '.yaml'
+
+  return {
+    success: errors.length === 0,
+    outDir,
+    files: filePaths as string[],
+    error: errors.length > 0 ? new Error('Some documents could not be fetched') : undefined
   }
-  return '.json'
 }
 
 const getContent = (openApiJson: unknown, format: string): string =>
