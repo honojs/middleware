@@ -2,6 +2,7 @@ import { stringify as yamlStringify } from 'yaml'
 import type { OpenAPIHono } from './index'
 
 export interface ToFilesOptions {
+  routes?: string[]
   outDir?: string
   format?: 'json' | 'yaml'
   extension?: string
@@ -24,41 +25,43 @@ export const ToFiles = async (
   fs: FileSystem,
   options: ToFilesOptions = {}
 ): Promise<ToFilesResult> => {
-  const { outDir = './dist', format = 'json', extension } = options
+  const { routes, outDir = './dist', format = 'json', extension } = options
+  const filePaths: string[] = []
 
   try {
     await fs.mkdir(outDir, { recursive: true })
 
-    const docEndpoint = findDocEndpoint(app)
-    if (!docEndpoint) {
-      throw new Error('OpenAPI document endpoint not found')
+    if (!routes || routes.length === 0) {
+      throw new Error('OpenAPI document endpoints are not specified')
     }
 
-    const response = await app.request(`http://localhost${docEndpoint.path}`)
-    const openApiJson = await response.json()
+    await Promise.all(routes.map(async (docEndpointPath) => {
+      const response = await app.request(`http://localhost${docEndpointPath}`)
+      const openApiJson = await response.json()
+  
+      const ext = getExtension(format, extension)
+      const filePath = `${outDir}/openapi-${docEndpointPath.replace(/\//g, '-')}${ext}`
+      const content = getContent(openApiJson, format)
+  
+      await fs.writeFile(filePath, content)
+      filePaths.push(filePath)
+    }))
 
-    const ext = getExtension(format, extension)
-    const filePath = `${outDir}/openapi${ext}`
-    const content = getContent(openApiJson, format)
-
-    await fs.writeFile(filePath, content)
-
-    const result: ToFilesResult = {
+    return {
       success: true,
       outDir,
-      files: [filePath],
+      files: filePaths,
     }
-
-    return result
   } catch (error) {
     return {
       success: false,
       outDir,
       files: [],
       error: error as Error,
-    }
+    };
   }
-}
+};
+
 const getExtension = (format?: string, extension?: string): string => {
   if (extension) {
     return extension
@@ -71,20 +74,3 @@ const getExtension = (format?: string, extension?: string): string => {
 
 const getContent = (openApiJson: unknown, format: string): string =>
   format === 'yaml' ? yamlStringify(openApiJson) : JSON.stringify(openApiJson, null, 2)
-
-const docEndpointConditions = ['getOpenAPIDocument', 'getOpenAPI31Document']
-
-const findDocEndpoint = (app: OpenAPIHono) => {
-  const docEndpoints = app.routes.filter((route) => {
-    const configure = route.handler.toString()
-    return docEndpointConditions.some((condition) => configure.includes(condition))
-  })
-
-  if (docEndpoints.length === 0) {
-    return null
-  }
-
-  return {
-    path: docEndpoints[0].path,
-  }
-}
