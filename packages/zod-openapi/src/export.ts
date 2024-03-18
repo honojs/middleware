@@ -1,7 +1,7 @@
 import { stringify as yamlStringify } from 'yaml'
 import type { OpenAPIHono } from './index'
 
-export interface ToDocOptions {
+export interface ToFilesOptions {
   outDir?: string
   format?: 'json' | 'yaml'
   extension?: string
@@ -12,18 +12,18 @@ export interface FileSystem {
   mkdir(path: string, options: { recursive: boolean }): Promise<void | string>
 }
 
-export interface ToDocResult {
+export interface ToFilesResult {
   success: boolean
   outDir: string
   files: string[]
   error?: Error
 }
 
-export const toDoc = async (
+export const ToFiles = async (
   app: OpenAPIHono,
   fs: FileSystem,
-  options: ToDocOptions = {}
-): Promise<ToDocResult> => {
+  options: ToFilesOptions = {}
+): Promise<ToFilesResult> => {
   const { outDir = './dist', format = 'json', extension } = options
 
   try {
@@ -43,7 +43,7 @@ export const toDoc = async (
 
     await fs.writeFile(filePath, content)
 
-    const result: ToDocResult = {
+    const result: ToFilesResult = {
       success: true,
       outDir,
       files: [filePath],
