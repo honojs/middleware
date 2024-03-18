@@ -1,12 +1,13 @@
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
-import { renderToString } from 'react-dom/server'
+import { renderToString, type RenderToReadableStreamOptions } from 'react-dom/server'
 import type { Props } from '.'
 
 type RendererOptions = {
   docType?: boolean | string
   stream?: boolean | Record<string, string>
+  readableStreamOptions?: RenderToReadableStreamOptions
 }
 
 type BaseProps = {
@@ -26,17 +27,18 @@ const createRenderer =
     if (options?.stream) {
       const { renderToReadableStream } = await import('react-dom/server')
       const stream = await renderToReadableStream(
-        React.createElement(RequestContext.Provider, { value: c }, node)
+        React.createElement(RequestContext.Provider, { value: c }, node),
+        options.readableStreamOptions
       )
-      return c.body(stream, {
-        headers:
-          options.stream === true
-            ? {
-                'Transfer-Encoding': 'chunked',
-                'Content-Type': 'text/html; charset=UTF-8',
-              }
-            : options.stream,
-      })
+      if (options.stream === true) {
+        c.header('Transfer-Encoding', 'chunked')
+        c.header('Content-Type', 'text/html; charset=UTF-8')
+      } else {
+        for (const [key, value] of Object.entries(options.stream)) {
+          c.header(key, value)
+        }
+      }
+      return c.body(stream)
     } else {
       const docType =
         typeof options?.docType === 'string'

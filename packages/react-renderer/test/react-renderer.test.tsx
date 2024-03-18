@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+
 import { reactRenderer, useRequestContext } from '../src/react-renderer'
 
 const RequestUrl = () => {
@@ -104,8 +105,47 @@ describe('Basic', () => {
       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html><body><h1>Hello</h1></body></html>'
     )
   })
+
+  it('Should return as streaming content with headers added in a handler', async () => {
+    const app = new Hono()
+    app.use(reactRenderer(({ children }) => <>{children}</>, { stream: true }))
+    app.get('/', (c) => {
+      c.header('X-Message-Set', 'Hello')
+      c.header('X-Message-Append', 'Hello', { append: true })
+      return c.render(<h1>Hi</h1>, { title: 'Hi' })
+    })
+    const res = await app.request('/')
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Transfer-Encoding')).toBe('chunked')
+    expect(res.headers.get('Content-Type')).toBe('text/html; charset=UTF-8')
+    expect(res.headers.get('X-Message-Set')).toBe('Hello')
+    expect(res.headers.get('X-Message-Append')).toBe('Hello')
+    expect(await res.text()).toBe('<h1>Hi</h1>')
+  })
 })
 
 describe('Streaming', () => {
-  it.skip('Vitest does not support Streaming')
+  it('Should return a stream response', async () => {
+    const app = new Hono()
+    app.use(
+      '*',
+      reactRenderer(
+        ({ children }) => {
+          return (
+            <html>
+              <body>{children}</body>
+            </html>
+          )
+        },
+        { stream: true }
+      )
+    )
+    app.get('/', (c) => c.render(<h1>Hello</h1>, { title: 'Title' }))
+    const res = await app.request('/')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Transfer-Encoding')).toBe('chunked')
+    expect(res.headers.get('Content-Type')).toBe('text/html; charset=UTF-8')
+    expect(await res.text()).toBe('<!DOCTYPE html><html><body><h1>Hello</h1></body></html>')
+  })
 })
