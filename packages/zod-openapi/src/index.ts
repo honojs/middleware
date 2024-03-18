@@ -430,4 +430,4 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
-export { toDoc } from './export'
+export { toFiles, ToFilesOptions, ToFilesResult } from './export'

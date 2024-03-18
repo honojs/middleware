@@ -2,7 +2,7 @@ import { stringify as yamlStringify } from 'yaml'
 import type { OpenAPIHono } from './index'
 
 export interface ToFilesOptions {
-  routes?: string[]
+  paths?: string[]
   outDir?: string
   format?: 'json' | 'yaml'
   extension?: string
@@ -39,17 +39,17 @@ export const toFiles = async (
   fs: FileSystem,
   options: ToFilesOptions = {}
 ): Promise<ToFilesResult> => {
-  const { routes, outDir = './dist', format = 'json', extension } = options
-  if (!routes || routes.length === 0) {
+  const { paths, outDir = './dist', format = 'json', extension } = options
+  if (!paths || paths.length === 0) {
     return { success: false, outDir, files: [], error: new Error('OpenAPI document endpoints are not specified') }
   }
 
   await fs.mkdir(outDir, { recursive: true })
 
-  const tasks = routes.map(docEndpointPath => {
-    const filePath = generateFilePath(outDir, docEndpointPath, format, extension)
-    return fetchAndSaveOpenAPIDocument(app, fs, docEndpointPath, filePath, format)
-      .catch(error => ({ error, docEndpointPath })) // エラーハンドリング
+  const tasks = paths.map(path => {
+    const filePath = generateFilePath(outDir, path, format, extension)
+    return fetchAndSaveOpenAPIDocument(app, fs, path, filePath, format)
+      .catch(error => ({ error, path }))
   })
 
   const results = await Promise.all(tasks)
