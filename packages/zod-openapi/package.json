@@ -38,7 +38,8 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.11.3",
-    "zod": "3.*"
+    "zod": "3.*",
+    "yaml": "^2.4.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",
@@ -52,8 +53,7 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^5.5.0",
-    "@hono/zod-validator": "0.1.11",
-    "yaml": "^2.4.0"
+    "@hono/zod-validator": "0.1.11"
   },
   "engines": {
     "node": ">=16.0.0"
