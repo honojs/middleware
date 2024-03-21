@@ -5,14 +5,23 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "test": "jest",
+    "copy:package.cjs.json": "cp ./package.cjs.json ./dist/cjs/package.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
+    "build2": "rimraf dist && yarn build:cjs && yarn build:esm && yarn copy:package.cjs.json",
     "prerelease": "yarn build && yarn test",
     "release": "yarn publish"
   },
