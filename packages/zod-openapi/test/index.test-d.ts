@@ -44,7 +44,7 @@ describe('Types', () => {
   const appRoutes = app.openapi(route, (c) => {
     const data = c.req.valid('json')
     assertType<number>(data.id)
-    return c.jsonT({
+    return c.json({
       id: data.id,
       message: 'Success',
     })
@@ -70,7 +70,7 @@ describe('Types', () => {
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>()
-  })
+  });
 })
 
 describe('Input types', () => {

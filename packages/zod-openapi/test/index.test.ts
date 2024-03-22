@@ -832,6 +832,16 @@ describe('basePath()', () => {
     expect(app.defaultHook).toBeDefined()
     expect(app.defaultHook).toBe(defaultHook)
   })
+
+  it('Should include base path in typings', () => {
+    const routes = new OpenAPIHono()
+      .basePath('/api')
+      .openapi(route, (c) => c.json({ message: 'Hello' }))
+
+    const client = hc<typeof routes>('http://localhost/')
+
+    expect(client.api.message.$url().pathname).toBe('/api/message')
+  })
 })
 
 describe('With hc', () => {

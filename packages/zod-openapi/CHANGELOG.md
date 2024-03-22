@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.9
+
+### Patch Changes
+
+- [#429](https://github.com/honojs/middleware/pull/429) [`b1f8a5325c3ad5eaa029ca5a82e7ef7adc7e6660`](https://github.com/honojs/middleware/commit/b1f8a5325c3ad5eaa029ca5a82e7ef7adc7e6660) Thanks [@hmnd](https://github.com/hmnd)! - fix: base path not included in client types
+
 ## 0.9.8
 
 ### Patch Changes
