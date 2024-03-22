@@ -250,7 +250,7 @@ export class OpenAPIHono<
         : HandlerAllResponse<OutputType<R>>
     >,
     hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
-  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<R['method'], MergePath<BasePath, P>, I['in'], OutputType<R>>, BasePath> => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
