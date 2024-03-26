@@ -827,7 +827,7 @@ describe('basePath()', () => {
   it('Should retain defaultHook of the parent app', async () => {
     const defaultHook = () => {}
     const app = new OpenAPIHono({
-      defaultHook
+      defaultHook,
     }).basePath('/api')
     expect(app.defaultHook).toBeDefined()
     expect(app.defaultHook).toBe(defaultHook)

@@ -600,6 +600,7 @@ __metadata:
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.3.3"
     vitest: "npm:^1.0.1"
+    yaml: "npm:^2.4.0"
     zod: "npm:^3.22.1"
   peerDependencies:
     hono: ">=3.11.3"
@@ -4826,6 +4827,15 @@ __metadata:
   version: 2.3.4
   resolution: "yaml@npm:2.3.4"
   checksum: cf03b68f8fef5e8516b0f0b54edaf2459f1648317fc6210391cf606d247e678b449382f4bd01f77392538429e306c7cba8ff46ff6b37cac4de9a76aff33bd9e1
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "yaml@npm:2.4.0"
+  bin:
+    yaml: bin.mjs
+  checksum: 97ab0b5a0714c92e4dd75120a6a63e470b0adc282afae0a701bf38f8c42cbf6429fcd6aca883e3a63c68936ab841862e6c69e2d66d355c3e4fc7cfd346af2108
   languageName: node
   linkType: hard
 

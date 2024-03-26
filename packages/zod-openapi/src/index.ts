@@ -409,7 +409,7 @@ export class OpenAPIHono<
   }
 
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono({...super.basePath(path) as any, defaultHook: this.defaultHook})
+    return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
 }
 
@@ -430,3 +430,4 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
+export { toFiles, ToFilesOptions, ToFilesResult } from './export'
