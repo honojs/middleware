@@ -429,4 +429,4 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 }
 
 extendZodWithOpenApi(z)
-export { z }
+export { z, RouteConfig }
