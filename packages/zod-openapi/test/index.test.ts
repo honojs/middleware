@@ -1361,3 +1361,29 @@ describe('Handle "Conflicting names for parameter"', () => {
     })
   })
 })
+
+describe('Middlewares', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/books',
+      middlewares: [(c, next) => {
+        c.header('x-foo', 'bar')
+        return next()
+      }],
+      responses: {
+        200: {
+          description: 'response',
+        },
+      },
+    }),
+    (c) => c.text('foo')
+  )
+
+  it('Should have the header set by the middleware', async () => {
+    const res = await app.request('/books')
+    expect(res.status).toBe(200)
+    expect(res.headers.get('x-foo')).toBe('bar')
+  })
+})
