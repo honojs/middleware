@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.9.10
+
+### Patch Changes
+
+- [#437](https://github.com/honojs/middleware/pull/437) [`9fc8591960ca547cb26a8d32d8f1e2c2f3568b95`](https://github.com/honojs/middleware/commit/9fc8591960ca547cb26a8d32d8f1e2c2f3568b95) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@hono/zod-validator`
+
 ## 0.9.9
 
 ### Patch Changes
