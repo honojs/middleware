@@ -2131,7 +2131,7 @@ __metadata:
   dependencies:
     "@asteasolutions/zod-to-openapi": "npm:^5.5.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
-    "@hono/zod-validator": "npm:0.1.11"
+    "@hono/zod-validator": "npm:0.2.1"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
@@ -2145,17 +2145,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/zod-validator@npm:0.1.11":
-  version: 0.1.11
-  resolution: "@hono/zod-validator@npm:0.1.11"
-  peerDependencies:
-    hono: ">=3.9.0"
-    zod: ^3.19.1
-  checksum: 72bac0d5579c2e19d5cf92476fd3980ccafc7d6d6bd6ad878c7935143424677a866befe4e08a493abfa8cc983131137937b3c5f6a092b475701e38876ef4e3d8
-  languageName: node
-  linkType: hard
-
-"@hono/zod-validator@workspace:packages/zod-validator":
+"@hono/zod-validator@npm:0.2.1, @hono/zod-validator@workspace:packages/zod-validator":
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
