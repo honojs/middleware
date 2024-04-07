@@ -34,14 +34,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asteasolutions/zod-to-openapi@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "@asteasolutions/zod-to-openapi@npm:5.5.0"
+"@asteasolutions/zod-to-openapi@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@asteasolutions/zod-to-openapi@npm:7.0.0"
   dependencies:
     openapi3-ts: "npm:^4.1.2"
   peerDependencies:
     zod: ^3.20.2
-  checksum: 3cac318d4bf2efe88175002d0ee66a299207c29dbb3dd5f353b1fcf46bb7117e9f203c6ae7093d740182c94fd625703bf2ac1d721a6c1d64adfc977d0f00d909
+  checksum: 120499b6d997bd3fa21b4e6600f42d6b9201e2a85a7656b722a02c712d6a9fd7c474bf62ad31f76646fbd129d75331408ad3ed5c350c1436856ef306966a33e1
   languageName: node
   linkType: hard
 
@@ -2129,15 +2129,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/zod-openapi@workspace:packages/zod-openapi"
   dependencies:
-    "@asteasolutions/zod-to-openapi": "npm:^5.5.0"
+    "@asteasolutions/zod-to-openapi": "npm:^7.0.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
     "@hono/zod-validator": "npm:0.2.1"
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.2.2"
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
-    typescript: "npm:^5.3.3"
-    vitest: "npm:^1.0.1"
+    typescript: "npm:^5.4.4"
+    vitest: "npm:^1.4.0"
     zod: "npm:^3.22.1"
   peerDependencies:
     hono: ">=3.11.3"
@@ -9651,6 +9651,13 @@ __metadata:
   version: 4.0.2
   resolution: "hono@npm:4.0.2"
   checksum: c0806a912c1be094aa7e34050e8391c41f2623fae683239d9d1f1680f8646602ebf91a8e1c58bf75de510a6d0fe70189e57f629c0e48f8abb5ab873ba844a481
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "hono@npm:4.2.2"
+  checksum: 4f423ff808c105341d2802192abe9070c5f6fc4a45da51842a5f5f2111b4c333ef4aea2720a585e16996944cc0cedf68657c57df1d150f1382f21fc18e814b42
   languageName: node
   linkType: hard
 
@@ -17727,6 +17734,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.4.4":
+  version: 5.4.4
+  resolution: "typescript@npm:5.4.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 4d8de0291204ed61ca97ad0cba2ce064e09c4988ca1c451c787e4653ba76296ba35177a52694e8a00cf4ef899d0ee83338663b926d8b7d55167ff0ba81549999
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A^4.7.4#optional!builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
@@ -17744,6 +17761,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 1d0a5f4ce496c42caa9a30e659c467c5686eae15d54b027ee7866744952547f1be1262f2d40de911618c242b510029d51d43ff605dba8fb740ec85ca2d3f9500
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.4.4#optional!builtin<compat/typescript>":
+  version: 5.4.4
+  resolution: "typescript@patch:typescript@npm%3A5.4.4#optional!builtin<compat/typescript>::version=5.4.4&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 413a0714a2b554bef8d39a386e5d25df22c625dd677d7260c1a08625016e46ce5f79dae0812641a22ab37c905370b407dc6838e11d4f10845821127d42221876
   languageName: node
   linkType: hard
 
@@ -18519,7 +18546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^1.0.1, vitest@npm:^1.0.4":
+"vitest@npm:^1.0.4":
   version: 1.0.4
   resolution: "vitest@npm:1.0.4"
   dependencies:
