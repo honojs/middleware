@@ -70,7 +70,7 @@ describe('Types', () => {
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>()
-  });
+  })
 })
 
 describe('Input types', () => {
@@ -83,7 +83,7 @@ describe('Input types', () => {
           name: 'id',
           in: 'path',
         },
-        example: 123,
+        example: '123',
       }),
   })
 
@@ -96,7 +96,7 @@ describe('Input types', () => {
           name: 'age',
           in: 'query',
         },
-        example: 42,
+        example: '42',
       }),
   })
 
@@ -162,7 +162,7 @@ describe('Input types', () => {
       const { sex } = c.req.valid('json')
       assertType<'male' | 'female'>(sex)
 
-      return c.jsonT({
+      return c.json({
         id,
         age,
         sex,
