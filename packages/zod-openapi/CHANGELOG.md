@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.10.0
+
+### Minor Changes
+
+- [#443](https://github.com/honojs/middleware/pull/443) [`1e0d857ef9f756d1217eaccf37a028be7a107d78`](https://github.com/honojs/middleware/commit/1e0d857ef9f756d1217eaccf37a028be7a107d78) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: bump `zod-to-openapi` supports ESM
+
 ## 0.9.10
 
 ### Patch Changes
