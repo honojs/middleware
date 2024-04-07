@@ -561,7 +561,7 @@ describe('Input types', () => {
           name: 'id',
           in: 'path',
         },
-        example: 123,
+        example: '123',
       }),
   })
 
@@ -574,7 +574,7 @@ describe('Input types', () => {
           name: 'age',
           in: 'query',
         },
-        example: 42,
+        example: '42',
       }),
   })
 
@@ -704,7 +704,7 @@ describe('Routers', () => {
   })
   it('Should include definitions from nested routers', async () => {
     const router = new OpenAPIHono().openapi(route, (ctx) => {
-      return ctx.jsonT({ id: 123 })
+      return ctx.json({ id: 123 })
     })
 
     router.openAPIRegistry.register('Id', z.number())
@@ -827,7 +827,7 @@ describe('basePath()', () => {
   it('Should retain defaultHook of the parent app', async () => {
     const defaultHook = () => {}
     const app = new OpenAPIHono({
-      defaultHook
+      defaultHook,
     }).basePath('/api')
     expect(app.defaultHook).toBeDefined()
     expect(app.defaultHook).toBe(defaultHook)
