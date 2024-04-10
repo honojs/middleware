@@ -50,11 +50,7 @@ describe('createRoute', () => {
       },
     } as const
     const route = createRoute(config)
-
-    expect(route).toEqual({
-      ...config,
-      getRoutingPath: expect.any(Function),
-    })
+    expect(route).toEqual(config)
     expect(route.getRoutingPath()).toBe(expected)
     expectTypeOf(route.getRoutingPath()).toEqualTypeOf<typeof expected>()
   })
