@@ -431,12 +431,13 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
 ) => {
-  return {
+  const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
       return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
     },
   }
+  return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
 }
 
 extendZodWithOpenApi(z)
