@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.11.0
+
+### Minor Changes
+
+- [#435](https://github.com/honojs/middleware/pull/435) [`4660092b9ae446e3a6da32628e1bead361769e8a`](https://github.com/honojs/middleware/commit/4660092b9ae446e3a6da32628e1bead361769e8a) Thanks [@RomanNabukhotnyi](https://github.com/RomanNabukhotnyi)! - Add 'middleware' property for route
+
 ## 0.10.1
 
 ### Patch Changes
