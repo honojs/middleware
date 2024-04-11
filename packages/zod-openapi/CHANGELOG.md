@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.10.1
+
+### Patch Changes
+
+- [#445](https://github.com/honojs/middleware/pull/445) [`110e27246015cac60c8a07cd078c3245b7ddbeeb`](https://github.com/honojs/middleware/commit/110e27246015cac60c8a07cd078c3245b7ddbeeb) Thanks [@fumieval](https://github.com/fumieval)! - Make getRoutingPath property of a RouteConfig non-enumerable
+
 ## 0.10.0
 
 ### Minor Changes
