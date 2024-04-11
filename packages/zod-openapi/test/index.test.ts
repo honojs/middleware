@@ -1362,13 +1362,13 @@ describe('Handle "Conflicting names for parameter"', () => {
   })
 })
 
-describe('Middlewares', () => {
+describe('Middleware', () => {
   const app = new OpenAPIHono()
   app.openapi(
     createRoute({
       method: 'get',
       path: '/books',
-      middlewares: [(c, next) => {
+      middleware: [(c, next) => {
         c.header('x-foo', 'bar')
         return next()
       }],

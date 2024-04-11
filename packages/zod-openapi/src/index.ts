@@ -33,7 +33,7 @@ import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
 
 type RouteConfig = RouteConfigBase & {
-  middlewares?: MiddlewareHandler[]
+  middleware?: MiddlewareHandler | MiddlewareHandler[]
 }
 
 type RequestTypes = {
@@ -303,9 +303,9 @@ export class OpenAPIHono<
       }
     }
 
-    const middlewares = route.middlewares || []
+    const middleware = route.middleware ? (Array.isArray(route.middleware) ? route.middleware : [route.middleware]) : []
 
-    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middlewares, ...validators, handler)
+    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middleware, ...validators, handler)
     return this
   }
 

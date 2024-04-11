@@ -70,7 +70,7 @@ describe('Types', () => {
       '/'
     >
     expectTypeOf(appRoutes).toMatchTypeOf<H>()
-  });
+  })
 })
 
 describe('Input types', () => {

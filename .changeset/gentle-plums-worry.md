@@ -2,4 +2,4 @@
 '@hono/zod-openapi': patch
 ---
 
-Add 'middlewares' property for route
+Add 'middleware' property for route
