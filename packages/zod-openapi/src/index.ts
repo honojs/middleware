@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   ResponseConfig,
-  RouteConfig,
+  RouteConfig as RouteConfigBase,
   ZodContentObject,
   ZodMediaTypeObject,
   ZodRequestBody,
@@ -31,6 +31,10 @@ import type { RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
+
+type RouteConfig = RouteConfigBase & {
+  middleware?: MiddlewareHandler | MiddlewareHandler[]
+}
 
 type RequestTypes = {
   body?: ZodRequestBody
@@ -310,7 +314,9 @@ export class OpenAPIHono<
       }
     }
 
-    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...validators, handler)
+    const middleware = route.middleware ? (Array.isArray(route.middleware) ? route.middleware : [route.middleware]) : []
+
+    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middleware, ...validators, handler)
     return this
   }
 
