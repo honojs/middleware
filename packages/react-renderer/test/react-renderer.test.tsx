@@ -57,6 +57,69 @@ describe('Basic', () => {
     expect(await res.text()).toBe('<h1>http://localhost/</h1>')
   })
 
+  it('nested layout with Layout', async () => {
+    const app = new Hono()
+    app.use(
+      '*',
+      // @ts-expect-error - `title` is not defined
+      reactRenderer(({ children, title, Layout }) => {
+        return (
+          <Layout>
+            <html>
+              <head>{title}</head>
+              <body>{children}</body>
+            </html>
+          </Layout>
+        )
+      })
+    )
+
+    const app2 = new Hono()
+    app2.use(
+      '*',
+      // @ts-expect-error - `title` is not defined
+      reactRenderer(({ children, Layout, title }) => {
+        return (
+          <Layout title={title}>
+            <div className='nested'>{children}</div>
+          </Layout>
+        )
+      })
+    )
+    app2.get('/', (c) => c.render(<h1>http://localhost/nested</h1>, { title: 'Nested' }))
+
+    const app3 = new Hono()
+    app3.use(
+      '*',
+      // @ts-expect-error - `title` is not defined
+      reactRenderer(({ children, Layout, title }) => {
+        return (
+          <Layout title={title}>
+            <div className='nested2'>{children}</div>
+          </Layout>
+        )
+      })
+    )
+    app3.get('/', (c) => c.render(<h1>http://localhost/nested</h1>, { title: 'Nested2' }))
+    app2.route('/nested2', app3)
+
+    app.route('/nested', app2)
+
+    let res = await app.request('http://localhost/nested')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(
+      '<html><head>Nested</head><body><div class="nested"><h1>http://localhost/nested</h1></div></body></html>'
+    )
+
+    res = await app.request('http://localhost/nested/nested2')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(
+      '<html><head>Nested2</head><body><div class="nested"><div class="nested2"><h1>http://localhost/nested</h1></div></div></body></html>'
+    )
+  })
+
   it('Should return a default doctype', async () => {
     const app = new Hono()
     app.use(
