@@ -15,37 +15,61 @@ function nw(code: string) {
 
 describe('esbuild Transpiler middleware', () => {
   const app = new Hono()
-  app.use('*', esbuildTranspiler())
-  app.get('/file.ts', (c) => c.text(TS))
-  app.get('/file.js', (c) => c.text(TS))
-  app.get('/bad.ts', (c) => c.text(BAD))
-  app.get('/file.tsx', (c) => c.text(TSX))
+
+  app.use('/static/*', esbuildTranspiler())
+  app.get('/static/file.ts', (c) =>
+    c.text(TS, 200, {
+      // Set a dummy content-type since Serve Static Middleware may set a unexpected content-type.
+      'content-type': 'x-content-type',
+    })
+  )
+  app.get('/static/file.js', (c) => c.text(TS))
+  app.get('/static/bad.ts', (c) => c.text(BAD))
+  app.get('/static/file.tsx', (c) => c.text(TSX))
+
+  app.get(
+    '/static-custom-content-type.ts',
+    esbuildTranspiler({
+      contentType: 'x-text/javascript',
+    }),
+    (c) => c.text(TS)
+  )
 
   it('Should transpile typescript', async () => {
     // Request a Typescript page
-    const res = await app.request('http://localhost/file.ts')
+    const res = await app.request('http://localhost/static/file.ts')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/javascript')
     expect(nw(await res.text())).toBe('function add(a, b) { return a + b; }')
+  })
+
+  it('Should transpile typescript with a custom content-type', async () => {
+    // Request a Typescript page
+    const res = await app.request('http://localhost/static-custom-content-type.ts')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('x-text/javascript')
   })
 
   it('Should not touch non TS content paths', async () => {
     // Request a Typescript page
-    const res = await app.request('http://localhost/file.js')
+    const res = await app.request('http://localhost/static/file.js')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(nw(await res.text())).toBe(TS)
   })
 
   it('Should not meddle with with badly formed TS', async () => {
-    const res = await app.request('http://localhost/bad.ts')
+    const res = await app.request('http://localhost/static/bad.ts')
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
+    expect(res.headers.get('content-type')).toBe('text/javascript')
     expect(nw(await res.text())).toBe(BAD)
   })
 
   it('Should transpile TSX', async () => {
-    const res = await app.request('http://localhost/file.tsx')
+    const res = await app.request('http://localhost/static/file.tsx')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(nw(await res.text())).toBe('/* @__PURE__ */ React.createElement("h1", null, "Hello");')
