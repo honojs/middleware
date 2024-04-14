@@ -15,40 +15,26 @@ type BaseProps = {
   children: React.ReactElement
 }
 
-type LayoutProps = {
+type ComponentProps = Props &
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Layout: React.FC<Record<string, any> & { children: React.ReactElement }>
-}
-
-type ComponentProps = Props & BaseProps & LayoutProps
+  BaseProps & { Layout: React.FC<Record<string, any> & { children: React.ReactElement }> }
 
 const RequestContext = React.createContext<Context | null>(null)
 
-const createRenderer = (
-  c: Context,
-  Layout: React.FC<{ children: React.ReactElement }>,
-  component?: React.FC<ComponentProps>,
-  options?: RendererOptions
-) => {
-  return async (children: React.ReactElement, props?: Props) => {
-    const renderNode = (node: React.ReactElement) =>
-      React.createElement(RequestContext.Provider, { value: c }, node)
-
-    const docType =
-      typeof options?.docType === 'string'
-        ? options.docType
-        : options?.docType === true
-        ? '<!DOCTYPE html>'
-        : ''
-
-    const layoutElement = component
-      ? React.createElement(component, { ...props, Layout, children, c }, children)
-      : React.createElement(Layout, { children })
+const createRenderer =
+  (
+    c: Context,
+    Layout: React.FC<{ children: React.ReactElement }>,
+    component?: React.FC<ComponentProps>,
+    options?: RendererOptions
+  ) =>
+  async (children: React.ReactElement, props?: Props) => {
+    const node = component ? component({ children, Layout, c, ...props }) : children
 
     if (options?.stream) {
       const { renderToReadableStream } = await import('react-dom/server')
       const stream = await renderToReadableStream(
-        renderNode(layoutElement),
+        React.createElement(RequestContext.Provider, { value: c }, node),
         options.readableStreamOptions
       )
       if (options.stream === true) {
@@ -61,17 +47,23 @@ const createRenderer = (
       }
       return c.body(stream)
     } else {
-      const body = docType + renderToString(renderNode(layoutElement))
+      const docType =
+        typeof options?.docType === 'string'
+          ? options.docType
+          : options?.docType === true
+          ? '<!DOCTYPE html>'
+          : ''
+      const body =
+        docType + renderToString(React.createElement(RequestContext.Provider, { value: c }, node))
       return c.html(body)
     }
   }
-}
 
 export const reactRenderer = (
   component?: React.FC<ComponentProps>,
   options?: RendererOptions
-): MiddlewareHandler => {
-  return function reactRenderer(c, next) {
+): MiddlewareHandler =>
+  function reactRenderer(c, next) {
     const Layout = (c.getLayout() ?? React.Fragment) as React.FC<{
       children: React.ReactElement
     }>
@@ -84,7 +76,6 @@ export const reactRenderer = (
     c.setRenderer(createRenderer(c, Layout, component, options))
     return next()
   }
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useRequestContext = <E extends Env = any>(): Context<E> => {
