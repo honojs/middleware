@@ -29,9 +29,7 @@ export const esbuildTranspiler = (options?: EsbuildTranspilerOptions) => {
         return
       }
 
-      const headers = { 'content-type': options?.contentType ?? 'text/javascript' }
       const script = await c.res.text()
-
       const transformOptions: TransformOptions = options?.transformOptions ?? {}
 
       try {
@@ -39,13 +37,15 @@ export const esbuildTranspiler = (options?: EsbuildTranspilerOptions) => {
           loader: 'tsx',
           ...transformOptions,
         })
-        c.res = c.body(code, {
-          headers,
-        })
+        c.res = c.body(code)
+        c.res.headers.set('content-type', options?.contentType ?? 'text/javascript')
         c.res.headers.delete('content-length')
       } catch (ex) {
         console.warn('Error transpiling ' + url.pathname + ': ' + ex)
-        c.res = new Response(script, { status: 500, headers })
+        c.res = new Response(script, {
+          status: 500,
+          headers: { 'content-type': options?.contentType ?? 'text/javascript' },
+        })
       }
     }
   })
