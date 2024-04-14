@@ -11,6 +11,7 @@ export function googleAuth(options: {
   prompt?: 'none' | 'consent' | 'select_account'
   client_id?: string
   client_secret?: string
+  state?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -22,7 +23,7 @@ export function googleAuth(options: {
       login_hint: options.login_hint,
       prompt: options.prompt,
       scope: options.scope,
-      state: newState,
+      state: (options.state as string) || newState,
       code: c.req.query('code'),
       token: {
         token: c.req.query('access_token') as string,
