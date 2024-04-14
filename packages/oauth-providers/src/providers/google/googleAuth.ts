@@ -23,7 +23,7 @@ export function googleAuth(options: {
       login_hint: options.login_hint,
       prompt: options.prompt,
       scope: options.scope,
-      state: (options.state as string) || newState,
+      state: options.state || newState,
       code: c.req.query('code'),
       token: {
         token: c.req.query('access_token') as string,
