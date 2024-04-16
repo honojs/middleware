@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 0.2.0
+
+### Minor Changes
+
+- [#449](https://github.com/honojs/middleware/pull/449) [`284904357fd147c5974a8ba3721985e21b2e4f97`](https://github.com/honojs/middleware/commit/284904357fd147c5974a8ba3721985e21b2e4f97) Thanks [@yossydev](https://github.com/yossydev)! - nested layout support for react-renderer
+
 ## 0.1.1
 
 ### Patch Changes
