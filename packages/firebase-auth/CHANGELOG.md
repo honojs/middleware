@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.4.1
+
+### Patch Changes
+
+- [#456](https://github.com/honojs/middleware/pull/456) [`2d7af647caf45b032df75ce8e4fc8be9737bcea0`](https://github.com/honojs/middleware/commit/2d7af647caf45b032df75ce8e4fc8be9737bcea0) Thanks [@Code-Hex](https://github.com/Code-Hex)! - fixed error handling to wrap root errors
+
 ## 1.4.0
 
 ### Minor Changes
