@@ -14,7 +14,7 @@ export function googleAuth(options: {
   state?: string
 }): MiddlewareHandler {
   return async (c, next) => {
-    const newState = getRandomState()
+    const newState = options.state || getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
       client_id: options.client_id || (c.env?.GOOGLE_ID as string),
@@ -23,7 +23,7 @@ export function googleAuth(options: {
       login_hint: options.login_hint,
       prompt: options.prompt,
       scope: options.scope,
-      state: options.state || newState,
+      state: newState,
       code: c.req.query('code'),
       token: {
         token: c.req.query('access_token') as string,
