@@ -1,12 +1,13 @@
 import type { Credential, KeyStorer } from 'firebase-auth-cloudflare-workers'
 import { AdminAuthApiClient, Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
+import type { GoogleOAuthAccessToken } from 'firebase-auth-cloudflare-workers/dist/main/credential'
 import { Hono } from 'hono'
+import { setCookie } from 'hono/cookie'
+import { HTTPException } from 'hono/http-exception'
 import { Miniflare } from 'miniflare'
 import { describe, it, expect, beforeAll, vi } from 'vitest'
 import type { VerifyFirebaseAuthEnv } from '../src'
 import { verifyFirebaseAuth, getFirebaseToken, verifySessionCookieFirebaseAuth } from '../src'
-import { GoogleOAuthAccessToken } from 'firebase-auth-cloudflare-workers/dist/main/credential'
-import { setCookie } from 'hono/cookie'
 
 describe('verifyFirebaseAuth middleware', () => {
   const emulatorHost = '127.0.0.1:9099'
@@ -230,8 +231,13 @@ describe('verifyFirebaseAuth middleware', () => {
 
       resetAuth()
 
+      let gotError: Error | undefined
       app.use(
         '*',
+        async (c, next) => {
+          await next()
+          gotError = c.error
+        },
         verifyFirebaseAuth({
           projectId: validProjectId,
           disableErrorLog: true,
@@ -251,6 +257,7 @@ describe('verifyFirebaseAuth middleware', () => {
       }
       const res = await app.fetch(req, env)
 
+      expect(gotError instanceof HTTPException).toBeTruthy()
       expect(res).not.toBeNull()
       expect(res.status).toBe(501)
     })
@@ -421,8 +428,13 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
         PUBLIC_JWK_CACHE_KV,
       }
 
+      let gotError: Error | undefined
       app.use(
         '*',
+        async (c, next) => {
+          await next()
+          gotError = c.error
+        },
         verifySessionCookieFirebaseAuth({
           ...config,
           redirects: {
@@ -445,6 +457,7 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
       expect(res).not.toBeNull()
       expect(res.status).toBe(wantStatus)
       if (wantStatus === 302) {
+        expect(gotError instanceof HTTPException).toBeTruthy()
         expect(res.headers.get('location')).toBe(signInPath)
       }
     })
@@ -537,8 +550,13 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
 
       resetAuth()
 
+      let gotError: Error | undefined
       app.use(
         '*',
+        async (c, next) => {
+          await next()
+          gotError = c.error
+        },
         verifySessionCookieFirebaseAuth({
           projectId: validProjectId,
           redirects: {
@@ -561,6 +579,7 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
         PUBLIC_JWK_CACHE_KV: undefined,
       })
 
+      expect(gotError instanceof HTTPException).toBeTruthy()
       expect(res).not.toBeNull()
       expect(res.status).toBe(501)
     })
