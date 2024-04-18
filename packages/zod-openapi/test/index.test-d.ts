@@ -44,7 +44,7 @@ describe('Types', () => {
   const appRoutes = app.openapi(route, (c) => {
     const data = c.req.valid('json')
     assertType<number>(data.id)
-    return c.jsonT({
+    return c.json({
       id: data.id,
       message: 'Success',
     })
@@ -83,7 +83,7 @@ describe('Input types', () => {
           name: 'id',
           in: 'path',
         },
-        example: 123,
+        example: '123',
       }),
   })
 
@@ -96,7 +96,7 @@ describe('Input types', () => {
           name: 'age',
           in: 'query',
         },
-        example: 42,
+        example: '42',
       }),
   })
 
@@ -162,7 +162,7 @@ describe('Input types', () => {
       const { sex } = c.req.valid('json')
       assertType<'male' | 'female'>(sex)
 
-      return c.jsonT({
+      return c.json({
         id,
         age,
         sex,

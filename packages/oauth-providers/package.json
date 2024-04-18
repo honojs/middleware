@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "main": "dist/index.js",
   "files": [
@@ -108,7 +108,7 @@
     }
   },
   "peerDependencies": {
-    "hono": "^3.0.0"
+    "hono": ">=3.*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231025.0",

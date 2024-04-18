@@ -1,25 +1,25 @@
-name: ci-medley-router
+name: ci-oidc-auth
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/medley-router/**'
+      - 'packages/oidc-auth/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/medley-router/**'
+      - 'packages/oidc-auth/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/medley-router
+        working-directory: ./packages/oidc-auth
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn test

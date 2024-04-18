@@ -1,5 +1,11 @@
 # @hono/esbuild-transpiler
 
+## 0.1.3
+
+### Patch Changes
+
+- [#451](https://github.com/honojs/middleware/pull/451) [`db390602b4d7897975da294ab02a5b4300b6fb8f`](https://github.com/honojs/middleware/commit/db390602b4d7897975da294ab02a5b4300b6fb8f) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: set a content-type correctly
+
 ## 0.1.2
 
 ### Patch Changes

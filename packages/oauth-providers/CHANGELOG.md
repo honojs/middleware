@@ -1,5 +1,17 @@
 # @hono/oauth-providers
 
+## 0.3.2
+
+### Patch Changes
+
+- [#421](https://github.com/honojs/middleware/pull/421) [`cef4be898a31854870c333433b1f64d7d6c44c73`](https://github.com/honojs/middleware/commit/cef4be898a31854870c333433b1f64d7d6c44c73) Thanks [@monoald](https://github.com/monoald)! - Github App user email problem
+
+## 0.3.1
+
+### Patch Changes
+
+- [#396](https://github.com/honojs/middleware/pull/396) [`98cffb0ae9c069e8f08433016e3908fa715c76b7`](https://github.com/honojs/middleware/commit/98cffb0ae9c069e8f08433016e3908fa715c76b7) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: update `peerDependencies`
+
 ## 0.3.0
 
 ### Minor Changes

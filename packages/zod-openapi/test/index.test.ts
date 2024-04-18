@@ -561,7 +561,7 @@ describe('Input types', () => {
           name: 'id',
           in: 'path',
         },
-        example: 123,
+        example: '123',
       }),
   })
 
@@ -574,7 +574,7 @@ describe('Input types', () => {
           name: 'age',
           in: 'query',
         },
-        example: 42,
+        example: '42',
       }),
   })
 
@@ -704,7 +704,7 @@ describe('Routers', () => {
   })
   it('Should include definitions from nested routers', async () => {
     const router = new OpenAPIHono().openapi(route, (ctx) => {
-      return ctx.jsonT({ id: 123 })
+      return ctx.json({ id: 123 })
     })
 
     router.openAPIRegistry.register('Id', z.number())
@@ -822,6 +822,25 @@ describe('basePath()', () => {
   it('Should return 200 response - /api/doc', async () => {
     const res = await app.request('/api/doc')
     expect(res.status).toBe(200)
+  })
+
+  it('Should retain defaultHook of the parent app', async () => {
+    const defaultHook = () => {}
+    const app = new OpenAPIHono({
+      defaultHook,
+    }).basePath('/api')
+    expect(app.defaultHook).toBeDefined()
+    expect(app.defaultHook).toBe(defaultHook)
+  })
+
+  it('Should include base path in typings', () => {
+    const routes = new OpenAPIHono()
+      .basePath('/api')
+      .openapi(route, (c) => c.json({ message: 'Hello' }))
+
+    const client = hc<typeof routes>('http://localhost/')
+
+    expect(client.api.message.$url().pathname).toBe('/api/message')
   })
 })
 
@@ -1340,5 +1359,31 @@ describe('Handle "Conflicting names for parameter"', () => {
       },
       message: 'Conflicting names for parameter',
     })
+  })
+})
+
+describe('Middleware', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/books',
+      middleware: [(c, next) => {
+        c.header('x-foo', 'bar')
+        return next()
+      }],
+      responses: {
+        200: {
+          description: 'response',
+        },
+      },
+    }),
+    (c) => c.text('foo')
+  )
+
+  it('Should have the header set by the middleware', async () => {
+    const res = await app.request('/books')
+    expect(res.status).toBe(200)
+    expect(res.headers.get('x-foo')).toBe('bar')
   })
 })

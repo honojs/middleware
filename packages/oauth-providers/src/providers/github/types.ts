@@ -95,3 +95,10 @@ export type GitHubUser = {
     private_repos: number
   }
 }
+
+export type GitHubEmailResponse = {
+  email: string
+  primary: boolean
+  vrified: boolean
+  visibility: string
+}

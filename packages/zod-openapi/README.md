@@ -270,6 +270,32 @@ app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
 app.openapi(route, handler)
 ```
 
+Or you can use the `middleware` property in the route definition.
+
+```ts
+const route = createRoute({
+  method: 'get',
+  path: '/users/{id}',
+  request: {
+    params: ParamsSchema,
+  },
+  middleware: [
+    prettyJSON(),
+    cache({ cacheName: 'my-cache' })
+  ],
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: UserSchema,
+        },
+      },
+      description: 'Retrieve the user',
+    },
+  },
+})
+```
+
 ### RPC Mode
 
 Zod OpenAPI Hono supports Hono's RPC mode. You can define types for the Hono Client as follows:

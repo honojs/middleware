@@ -105,8 +105,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the API Console [Credentials page](https://console.developers.google.com/apis/credentials). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `GOOGLE_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
@@ -228,8 +227,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the App Dashboard [Dashboard page](https://developers.facebook.com/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `FACEBOOK_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
@@ -311,8 +309,7 @@ GitHub provides two types of Apps to utilize its API: the `GitHub App` and the `
   - `Required`.
   - `Github App` and `Oauth App`.
   - Your app client secret. You can find this value in the [GitHub App settings](https://github.com/settings/apps) or the [OAuth App settings](https://github.com/settings/developers) based on your App type. <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `GITHUB_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
@@ -480,8 +477,7 @@ LinkedIn provides two types of Authorization to utilize its API: the `Member Aut
   - `Required`.
   - `Member` and `Application` authorization.
   - Your app client secret. You can find this value in the [LinkedIn Developer Portal](https://www.linkedin.com/developers/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `LINKEDIN_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
@@ -651,8 +647,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the [Developer Portal](https://developer.twitter.com/en/portal/dashboard). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `X_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.
@@ -808,8 +803,7 @@ export default app
   - Type: `string`.
   - `Required`.
   - Your app client secret. You can find this value in the [Developer Portal](https://discord.com/developers/applications). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `DISCORD_SECRET=`.
-    > [!CAUTION]
-    > Do not share your client secret to ensure the security of your app.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
 - `scope`:
   - Type: `string[]`.
   - `Required`.

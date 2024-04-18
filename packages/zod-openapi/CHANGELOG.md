@@ -1,5 +1,48 @@
 # @hono/zod-openapi
 
+## 0.11.0
+
+### Minor Changes
+
+- [#435](https://github.com/honojs/middleware/pull/435) [`4660092b9ae446e3a6da32628e1bead361769e8a`](https://github.com/honojs/middleware/commit/4660092b9ae446e3a6da32628e1bead361769e8a) Thanks [@RomanNabukhotnyi](https://github.com/RomanNabukhotnyi)! - Add 'middleware' property for route
+
+## 0.10.1
+
+### Patch Changes
+
+- [#445](https://github.com/honojs/middleware/pull/445) [`110e27246015cac60c8a07cd078c3245b7ddbeeb`](https://github.com/honojs/middleware/commit/110e27246015cac60c8a07cd078c3245b7ddbeeb) Thanks [@fumieval](https://github.com/fumieval)! - Make getRoutingPath property of a RouteConfig non-enumerable
+
+## 0.10.0
+
+### Minor Changes
+
+- [#443](https://github.com/honojs/middleware/pull/443) [`1e0d857ef9f756d1217eaccf37a028be7a107d78`](https://github.com/honojs/middleware/commit/1e0d857ef9f756d1217eaccf37a028be7a107d78) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: bump `zod-to-openapi` supports ESM
+
+## 0.9.10
+
+### Patch Changes
+
+- [#437](https://github.com/honojs/middleware/pull/437) [`9fc8591960ca547cb26a8d32d8f1e2c2f3568b95`](https://github.com/honojs/middleware/commit/9fc8591960ca547cb26a8d32d8f1e2c2f3568b95) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@hono/zod-validator`
+
+## 0.9.9
+
+### Patch Changes
+
+- [#429](https://github.com/honojs/middleware/pull/429) [`b1f8a5325c3ad5eaa029ca5a82e7ef7adc7e6660`](https://github.com/honojs/middleware/commit/b1f8a5325c3ad5eaa029ca5a82e7ef7adc7e6660) Thanks [@hmnd](https://github.com/hmnd)! - fix: base path not included in client types
+
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies [[`4875e1c53146d2c67846b8159d3630d465c2a310`](https://github.com/honojs/middleware/commit/4875e1c53146d2c67846b8159d3630d465c2a310)]:
+  - @hono/zod-validator@0.2.0
+
+## 0.9.7
+
+### Patch Changes
+
+- [#408](https://github.com/honojs/middleware/pull/408) [`d4ca1ce98f33ae67100986613144e9d12fb933b3`](https://github.com/honojs/middleware/commit/d4ca1ce98f33ae67100986613144e9d12fb933b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - fix: Fix basePath method disregarding defaultHook
+
 ## 0.9.6
 
 ### Patch Changes

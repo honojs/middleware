@@ -1,5 +1,17 @@
 # @hono/zod-validator
 
+## 0.2.1
+
+### Patch Changes
+
+- [#431](https://github.com/honojs/middleware/pull/431) [`c721d14d4b90b9702936ad64f54d15bfd7ecfc88`](https://github.com/honojs/middleware/commit/c721d14d4b90b9702936ad64f54d15bfd7ecfc88) Thanks [@MAKS11060](https://github.com/MAKS11060)! - fix export esm module
+
+## 0.2.0
+
+### Minor Changes
+
+- [#411](https://github.com/honojs/middleware/pull/411) [`4875e1c53146d2c67846b8159d3630d465c2a310`](https://github.com/honojs/middleware/commit/4875e1c53146d2c67846b8159d3630d465c2a310) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support coerce
+
 ## 0.1.11
 
 ### Patch Changes

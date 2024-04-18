@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   ResponseConfig,
-  RouteConfig,
+  RouteConfig as RouteConfigBase,
   ZodContentObject,
   ZodMediaTypeObject,
   ZodRequestBody,
@@ -31,6 +31,10 @@ import type { RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
+
+type RouteConfig = RouteConfigBase & {
+  middleware?: MiddlewareHandler | MiddlewareHandler[]
+}
 
 type RequestTypes = {
   body?: ZodRequestBody
@@ -76,7 +80,10 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
     ? R['request']['body']['content'] extends ZodContentObject
       ? IsJson<keyof R['request']['body']['content']> extends never
         ? {}
-        : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
+        : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
+            'schema',
+            ZodSchema<any>
+          >
         ? {
             in: {
               json: z.input<
@@ -99,7 +106,10 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
     ? R['request']['body']['content'] extends ZodContentObject
       ? IsForm<keyof R['request']['body']['content']> extends never
         ? {}
-        : R['request']['body']['content'][keyof R['request']['body']['content']]['schema'] extends ZodSchema<any>
+        : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
+            'schema',
+            ZodSchema<any>
+          >
         ? {
             in: {
               form: z.input<
@@ -127,7 +137,7 @@ type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, 
     ? C['content'] extends ZodContentObject
       ? IsJson<keyof C['content']> extends never
         ? {}
-        : C['content'][keyof C['content']]['schema'] extends ZodSchema
+        : C['content'][keyof C['content']] extends Record<'schema', ZodSchema>
         ? z.infer<C['content'][keyof C['content']]['schema']>
         : {}
       : {}
@@ -250,7 +260,11 @@ export class OpenAPIHono<
         : HandlerAllResponse<OutputType<R>>
     >,
     hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
-  ): OpenAPIHono<E, S & ToSchema<R['method'], P, I['in'], OutputType<R>>, BasePath> => {
+  ): OpenAPIHono<
+    E,
+    S & ToSchema<R['method'], MergePath<BasePath, P>, I['in'], OutputType<R>>,
+    BasePath
+  > => {
     this.openAPIRegistry.registerPath(route)
 
     const validators: MiddlewareHandler[] = []
@@ -279,27 +293,30 @@ export class OpenAPIHono<
 
     if (bodyContent) {
       for (const mediaType of Object.keys(bodyContent)) {
+        if (!bodyContent[mediaType]) {
+          continue
+        }
+        const schema = (bodyContent[mediaType] as ZodMediaTypeObject)['schema']
+        if (!(schema instanceof ZodType)) {
+          continue
+        }
         if (mediaType.startsWith('application/json')) {
-          const schema = bodyContent[mediaType]['schema']
-          if (schema instanceof ZodType) {
-            const validator = zValidator('json', schema as any, hook as any)
-            validators.push(validator as any)
-          }
+          const validator = zValidator('json', schema, hook as any)
+          validators.push(validator as any)
         }
         if (
           mediaType.startsWith('multipart/form-data') ||
           mediaType.startsWith('application/x-www-form-urlencoded')
         ) {
-          const schema = bodyContent[mediaType]['schema']
-          if (schema instanceof ZodType) {
-            const validator = zValidator('form', schema as any, hook as any)
-            validators.push(validator as any)
-          }
+          const validator = zValidator('form', schema, hook as any)
+          validators.push(validator as any)
         }
       }
     }
 
-    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...validators, handler)
+    const middleware = route.middleware ? (Array.isArray(route.middleware) ? route.middleware : [route.middleware]) : []
+
+    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middleware, ...validators, handler)
     return this
   }
 
@@ -409,7 +426,7 @@ export class OpenAPIHono<
   }
 
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono(super.basePath(path) as any)
+    return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
 }
 
@@ -420,12 +437,13 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
 ) => {
-  return {
+  const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
       return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
     },
   }
+  return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
 }
 
 extendZodWithOpenApi(z)

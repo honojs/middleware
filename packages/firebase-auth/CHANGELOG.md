@@ -1,5 +1,23 @@
 # @hono/firebase-auth
 
+## 1.4.1
+
+### Patch Changes
+
+- [#456](https://github.com/honojs/middleware/pull/456) [`2d7af647caf45b032df75ce8e4fc8be9737bcea0`](https://github.com/honojs/middleware/commit/2d7af647caf45b032df75ce8e4fc8be9737bcea0) Thanks [@Code-Hex](https://github.com/Code-Hex)! - fixed error handling to wrap root errors
+
+## 1.4.0
+
+### Minor Changes
+
+- [#402](https://github.com/honojs/middleware/pull/402) [`c9f110d4e0d0f6079870fd8c91010832451cf0c8`](https://github.com/honojs/middleware/commit/c9f110d4e0d0f6079870fd8c91010832451cf0c8) Thanks [@Code-Hex](https://github.com/Code-Hex)! - added a new `verifySessionCookieFirebaseAuth` middleware to verify w/ session cookie.
+
+## 1.3.6
+
+### Patch Changes
+
+- [#393](https://github.com/honojs/middleware/pull/393) [`7e36ecc3f62612f7850c3e5c17698c617d68cf7a`](https://github.com/honojs/middleware/commit/7e36ecc3f62612f7850c3e5c17698c617d68cf7a) Thanks [@Code-Hex](https://github.com/Code-Hex)! - - supported v4 to get header values
+
 ## 1.3.5
 
 ### Patch Changes
