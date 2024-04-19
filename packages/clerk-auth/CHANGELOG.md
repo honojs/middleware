@@ -1,5 +1,11 @@
 # @hono/clerk-auth
 
+## 1.0.2
+
+### Patch Changes
+
+- [#460](https://github.com/honojs/middleware/pull/460) [`6497f5772f84027a07ef2c728cb10b2f8a172dda`](https://github.com/honojs/middleware/commit/6497f5772f84027a07ef2c728cb10b2f8a172dda) Thanks [@hadeeb](https://github.com/hadeeb)! - fix: export esm
+
 ## 1.0.1
 
 ### Patch Changes
