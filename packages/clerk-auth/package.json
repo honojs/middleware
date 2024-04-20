@@ -1,6 +1,6 @@
 {
   "name": "@hono/clerk-auth",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A third-party Clerk auth middleware for Hono",
   "type": "module",
   "main": "dist/index.cjs",
