@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@sinclair/typebox": "^0.31.15",
+    "@sinclair/typebox": ">=0.31.15 <1",
     "hono": ">=3.9.0"
   },
   "devDependencies": {
