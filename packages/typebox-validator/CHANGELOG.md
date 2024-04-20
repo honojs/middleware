@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.2.3
+
+### Patch Changes
+
+- [#463](https://github.com/honojs/middleware/pull/463) [`892ea7da85fb2c799eacc4d29651e1fa45a6aec0`](https://github.com/honojs/middleware/commit/892ea7da85fb2c799eacc4d29651e1fa45a6aec0) Thanks [@yudai-nkt](https://github.com/yudai-nkt)! - Update peer dependencies so that newer validators can be installed.
+
 ## 0.2.2
 
 ### Patch Changes
