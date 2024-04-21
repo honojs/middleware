@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.4.0
+
+### Minor Changes
+
+- [#454](https://github.com/honojs/middleware/pull/454) [`65418948ab4e977102dabe6373246890a337e5e9`](https://github.com/honojs/middleware/commit/65418948ab4e977102dabe6373246890a337e5e9) Thanks [@aaronware](https://github.com/aaronware)! - Allow for an optional state arg to be passed to Google Auth middleware
+
 ## 0.3.2
 
 ### Patch Changes
