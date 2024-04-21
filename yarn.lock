@@ -1818,7 +1818,6 @@ __metadata:
     jest: "npm:^29.7.0"
     node-fetch-native: "npm:^1.4.0"
     react: "npm:^18.2.0"
-    rimraf: "npm:^5.0.5"
     tsup: "npm:^8.0.1"
   peerDependencies:
     "@clerk/backend": 1
