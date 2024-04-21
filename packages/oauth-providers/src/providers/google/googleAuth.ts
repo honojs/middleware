@@ -11,9 +11,10 @@ export function googleAuth(options: {
   prompt?: 'none' | 'consent' | 'select_account'
   client_id?: string
   client_secret?: string
+  state?: string
 }): MiddlewareHandler {
   return async (c, next) => {
-    const newState = getRandomState()
+    const newState = options.state || getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
       client_id: options.client_id || (c.env?.GOOGLE_ID as string),
