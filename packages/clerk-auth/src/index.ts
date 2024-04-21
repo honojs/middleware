@@ -54,20 +54,16 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       publishableKey,
     })
 
-    // Append headers from clerk
     if (requestState.headers) {
-      requestState.headers.forEach((value, key) => c.header(key, value, { append: true }))
-    }
+      requestState.headers.forEach((value, key) => c.res.headers.append(key, value))
 
-    // Interstitial case
-    if (requestState.status === 'handshake') {
-      // Throw an error if state is handshake without a redirect (see https://github.com/clerk/javascript/blob/83ec173b08bdf18fda805e0d68e0034dbae0eb24/packages/sdk-node/src/authenticateRequest.ts#L72)
-      const hasLocationHeader = requestState.headers.get('location')
-      if (!hasLocationHeader) {
+      const locationHeader = requestState.headers.get('location')
+      
+      if (locationHeader) {
+        return c.redirect(locationHeader, 307)
+      } else if (requestState.status === 'handshake') {
         throw new Error('Clerk: unexpected handshake without redirect')
       }
-
-      return c.body(null, 307)
     }
 
     c.set('clerkAuth', requestState.toAuth())
