@@ -1,13 +1,14 @@
 import { type ClerkClient, type ClerkOptions, createClerkClient } from '@clerk/backend'
-import type { RequestState } from '@clerk/backend/dist/tokens/authStatus'
 import { PROD_API_URL } from '@clerk/shared'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 
+type ClerkAuth = ReturnType<Awaited<ReturnType<ClerkClient['authenticateRequest']>>['toAuth']>
+
 declare module 'hono' {
   interface ContextVariableMap {
     clerk: ClerkClient
-    clerkAuth: ReturnType<RequestState['toAuth']>
+    clerkAuth: ClerkAuth
   }
 }
 
