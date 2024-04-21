@@ -43,8 +43,8 @@
     "hono": ">=3.*"
   },
   "devDependencies": {
-    "@clerk/backend": "1",
-    "@clerk/shared": "2",
+    "@clerk/backend": "^1.0.0",
+    "@clerk/shared": "^2.0.0",
     "@types/react": "^18",
     "hono": "^3.11.7",
     "jest": "^29.7.0",
