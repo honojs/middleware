@@ -11,7 +11,7 @@ npm i -D @types/react @types/react-dom @vitejs/plugin-react
 
 ## Settings
 
-add `react()` plugin to `vite.config.ts` and `ssr` config:
+Add `react()` plugin to `vite.config.ts` and `ssr` config:
 
 ```typescript
 import react from '@vitejs/plugin-react'
@@ -25,7 +25,7 @@ export default defineConfig({
     external: ['react', 'react-dom'] // <== add
   },
   plugins: [
-    react(),
+    react(), // <== add
     build(),
     devServer({
       adapter,
