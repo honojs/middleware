@@ -11,7 +11,7 @@ npm i -D @types/react @types/react-dom
 
 ## Settings
 
-Add `react()` plugin to `vite.config.ts` and `ssr` config:
+Add `ssr external` config to `vite.config.ts`:
 
 ```typescript
 import build from '@hono/vite-cloudflare-pages'
