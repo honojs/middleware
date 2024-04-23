@@ -6,7 +6,7 @@ React Renderer Middleware allows for the easy creation of a renderer based on Re
 
 ```txt
 npm i @hono/react-renderer react react-dom hono
-npm i -D @types/react @types/react-dom @vitejs/plugin-react
+npm i -D @types/react @types/react-dom
 ```
 
 ## Settings
@@ -14,7 +14,6 @@ npm i -D @types/react @types/react-dom @vitejs/plugin-react
 Add `react()` plugin to `vite.config.ts` and `ssr` config:
 
 ```typescript
-import react from '@vitejs/plugin-react'
 import build from '@hono/vite-cloudflare-pages'
 import devServer from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
@@ -25,7 +24,6 @@ export default defineConfig({
     external: ['react', 'react-dom'] // <== add
   },
   plugins: [
-    react(), // <== add
     build(),
     devServer({
       adapter,
