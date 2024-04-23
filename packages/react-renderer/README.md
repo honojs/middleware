@@ -22,6 +22,28 @@ npm i -D @types/react @types/react-dom
 }
 ```
 
+If you are using Vite, add `ssr external` config to `vite.config.ts`:
+
+```typescript
+import build from '@hono/vite-cloudflare-pages'
+import devServer from '@hono/vite-dev-server'
+import adapter from '@hono/vite-dev-server/cloudflare'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  ssr: {
+    external: ['react', 'react-dom'], // <== add
+  },
+  plugins: [
+    build(),
+    devServer({
+      adapter,
+      entry: 'src/index.tsx',
+    }),
+  ],
+})
+```
+
 ## Usage
 
 ### Basic
