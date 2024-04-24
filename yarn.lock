@@ -1820,8 +1820,8 @@ __metadata:
     react: "npm:^18.2.0"
     tsup: "npm:^8.0.1"
   peerDependencies:
-    "@clerk/backend": 1
-    "@clerk/shared": 2
+    "@clerk/backend": ^1.0.0
+    "@clerk/shared": ^2.0.0
     hono: ">=3.*"
   languageName: unknown
   linkType: soft
