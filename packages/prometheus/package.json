@@ -1,6 +1,6 @@
 {
   "name": "@hono/prometheus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Prometheus metrics middleware for Hono",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
