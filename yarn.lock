@@ -1973,12 +1973,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/prometheus@workspace:packages/prometheus"
   dependencies:
-    hono: "npm:^3.12.0"
+    hono: "npm:^4.2.7"
     prom-client: "npm:^15.0.0"
     tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
   peerDependencies:
-    hono: ^3.12.0
+    hono: ">=3.*"
     prom-client: ^15.0.0
   languageName: unknown
   linkType: soft
@@ -9547,13 +9547,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^3.12.0":
-  version: 3.12.10
-  resolution: "hono@npm:3.12.10"
-  checksum: 43ad255e54bc5dd47154ad057565f41f2fda3dc866416f9a25fa2022e86c552b42109972f8c75101ed1da704c2b967d8bd474869db094878ab9438650379663c
-  languageName: node
-  linkType: hard
-
 "hono@npm:^4.0.1":
   version: 4.0.1
   resolution: "hono@npm:4.0.1"
@@ -9593,6 +9586,13 @@ __metadata:
   version: 4.2.4
   resolution: "hono@npm:4.2.4"
   checksum: f6e7d21ebd152beb6e91d5d36d0bef66f9126873dc2b652745ab1fb2429ba8dff09c1b07982d0e29c3ca2b6ff2038fd947cb948e8bf27a7f2a9f429a1728c8fe
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.2.7":
+  version: 4.2.7
+  resolution: "hono@npm:4.2.7"
+  checksum: 186d79ecedd4d9091eae4f2f32462f7e44530d1ea545de2cba594fd3f1e733f6f1d4367f12a6c85d188610ce1913bedadd1a83724b533700c0b12f5dcbb24f97
   languageName: node
   linkType: hard
 
