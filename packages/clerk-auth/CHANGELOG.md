@@ -1,5 +1,11 @@
 # @hono/clerk-auth
 
+## 2.0.0
+
+### Major Changes
+
+- [#465](https://github.com/honojs/middleware/pull/465) [`1823a2862744628143ee78bf06c0df3a99d22209`](https://github.com/honojs/middleware/commit/1823a2862744628143ee78bf06c0df3a99d22209) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - Migrate to Clerk Core v2
+
 ## 1.0.3
 
 ### Patch Changes
