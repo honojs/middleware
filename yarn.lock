@@ -800,7 +800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clerk/shared@npm:2.0.0, @clerk/shared@npm:^2.0.0":
+"@clerk/shared@npm:2.0.0":
   version: 2.0.0
   resolution: "@clerk/shared@npm:2.0.0"
   dependencies:
@@ -1812,7 +1812,6 @@ __metadata:
   resolution: "@hono/clerk-auth@workspace:packages/clerk-auth"
   dependencies:
     "@clerk/backend": "npm:^1.0.0"
-    "@clerk/shared": "npm:^2.0.0"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
@@ -1821,7 +1820,6 @@ __metadata:
     tsup: "npm:^8.0.1"
   peerDependencies:
     "@clerk/backend": ^1.0.0
-    "@clerk/shared": ^2.0.0
     hono: ">=3.*"
   languageName: unknown
   linkType: soft

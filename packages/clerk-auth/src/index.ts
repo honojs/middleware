@@ -1,5 +1,4 @@
 import { type ClerkClient, type ClerkOptions, createClerkClient } from '@clerk/backend'
-import { PROD_API_URL } from '@clerk/shared'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 
@@ -29,8 +28,8 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
     const { secretKey, publishableKey, apiUrl, apiVersion, ...rest } = options || {
       secretKey: clerkEnv.CLERK_SECRET_KEY || '',
       publishableKey: clerkEnv.CLERK_PUBLISHABLE_KEY || '',
-      apiUrl: clerkEnv.CLERK_API_URL || PROD_API_URL,
-      apiVersion: clerkEnv.CLERK_API_VERSION || 'v1',
+      apiUrl: clerkEnv.CLERK_API_URL,
+      apiVersion: clerkEnv.CLERK_API_VERSION,
     }
     if (!secretKey) {
       throw new Error('Missing Clerk Secret key')
