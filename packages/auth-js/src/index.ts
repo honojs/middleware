@@ -29,8 +29,16 @@ export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {}
 
 export type ConfigHandler = (c: Context) => AuthConfig
 
-function reqWithEnvUrl(req: Request, authUrl?: string): Request {
-  return authUrl ? new Request(new URL(req.url, authUrl).href, req) : req
+export function reqWithEnvUrl(req: Request, authUrl?: string): Request {
+  if (authUrl) {
+    const reqUrlObj = new URL(req.url)
+    const authUrlObj = new URL(authUrl)
+    const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
+    props.forEach(prop => reqUrlObj[prop] = authUrlObj[prop])
+    return new Request(reqUrlObj.href, req);
+  } else {
+    return req;
+  }
 }
 
 function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
