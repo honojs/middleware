@@ -29,7 +29,7 @@ export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {}
 
 export type ConfigHandler = (c: Context) => AuthConfig
 
-function reqWithEnvUrl(req: Request, authUrl?: string): Request {
+export function reqWithEnvUrl(req: Request, authUrl?: string): Request {
   if (authUrl) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)

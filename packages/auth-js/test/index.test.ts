@@ -1,7 +1,7 @@
 import { webcrypto } from 'node:crypto'
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
-import { authHandler, verifyAuth, initAuthConfig } from '../src'
+import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
 
 // @ts-expect-error - global crypto
 //needed for node 18 and below but should work in node 20 and above
@@ -80,5 +80,13 @@ describe('Auth.js Adapter Middleware', () => {
     const req = new Request('http://localhost/api/protected')
     const res = await app.request(req)
     expect(res.status).toBe(401)
+  })
+})
+
+describe('reqWithEnvUrl()', () => {
+  const req = new Request('http://request-base/request-path')
+  const newReq = reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
+  it('Should rewrite the base path', () => {
+    expect(newReq.url.toString()).toBe('https://auth-url-base/request-path')
   })
 })
