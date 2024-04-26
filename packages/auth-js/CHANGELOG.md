@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.4
+
+### Patch Changes
+
+- [#478](https://github.com/honojs/middleware/pull/478) [`5004ca9c5b6f75c1fca001c26fc70b927c154589`](https://github.com/honojs/middleware/commit/5004ca9c5b6f75c1fca001c26fc70b927c154589) Thanks [@DIYgod](https://github.com/DIYgod)! - fix env AUTH_URL not working
+
 ## 1.0.3
 
 ### Patch Changes
