@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.2.0
+
+### Minor Changes
+
+- [#458](https://github.com/honojs/middleware/pull/458) [`2526e1e6854709b1c9630ff2aac7bf218fec7d57`](https://github.com/honojs/middleware/commit/2526e1e6854709b1c9630ff2aac7bf218fec7d57) Thanks [@benjamine](https://github.com/benjamine)! - access hono context from trpc procedures
+
 ## 0.1.1
 
 ### Patch Changes
