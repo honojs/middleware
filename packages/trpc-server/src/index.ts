@@ -5,14 +5,14 @@ import type { Context, MiddlewareHandler } from 'hono'
 
 type tRPCOptions = Omit<FetchHandlerRequestOptions<AnyRouter>, 'req' | 'endpoint' | 'createContext'> &
   Partial<Pick<FetchHandlerRequestOptions<AnyRouter>, 'endpoint'>> &
-  { createContext? (opts: FetchCreateContextFnOptions, c: Context): Record<string, unknown> }
+  { createContext? (opts: FetchCreateContextFnOptions, c: Context): Record<string, unknown> | Promise<Record<string, unknown>> }
 
 export const trpcServer = ({ endpoint = '/trpc', createContext, ...rest }: tRPCOptions): MiddlewareHandler => {
   return async (c) => {
     const res = fetchRequestHandler({
       ...rest,
-      createContext: (opts) => ({
-        ...createContext ? createContext(opts, c) : {},
+      createContext: async (opts) => ({
+        ...createContext ? await createContext(opts, c) : {},
         // propagate env by default
         env: c.env,
       }),
