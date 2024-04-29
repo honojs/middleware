@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.5
+
+### Patch Changes
+
+- [#481](https://github.com/honojs/middleware/pull/481) [`b8fb9a06c13c3d5988b21e1b286c2a0b5ba99d80`](https://github.com/honojs/middleware/commit/b8fb9a06c13c3d5988b21e1b286c2a0b5ba99d80) Thanks [@DIYgod](https://github.com/DIYgod)! - fix AUTH_URL not working in getAuthUser
+
 ## 1.0.4
 
 ### Patch Changes
