@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.3.0
+
+### Minor Changes
+
+- [#482](https://github.com/honojs/middleware/pull/482) [`4446eeeb9f556e595be6ef8f9d6afa45770a2b67`](https://github.com/honojs/middleware/commit/4446eeeb9f556e595be6ef8f9d6afa45770a2b67) Thanks [@jikyu](https://github.com/jikyu)! - Support asynchronous context creation for trpc server middleware
+
 ## 0.2.0
 
 ### Minor Changes
