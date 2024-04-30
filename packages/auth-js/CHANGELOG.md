@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.6
+
+### Patch Changes
+
+- [#486](https://github.com/honojs/middleware/pull/486) [`18959557f45851a0109a63de3e865329c30d4fcc`](https://github.com/honojs/middleware/commit/18959557f45851a0109a63de3e865329c30d4fcc) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use `env` in `hono/adapter` and add tests
+
 ## 1.0.5
 
 ### Patch Changes
