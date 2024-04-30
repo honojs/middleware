@@ -1,5 +1,11 @@
 # @hono/typia-validator
 
+## 0.0.4
+
+### Patch Changes
+
+- [#488](https://github.com/honojs/middleware/pull/488) [`1cc5e0a5b07a14723c5d21ceea33ad9caef33025`](https://github.com/honojs/middleware/commit/1cc5e0a5b07a14723c5d21ceea33ad9caef33025) Thanks [@Frog-kt](https://github.com/Frog-kt)! - Fixed a part of deprecated response json method in hono since v4.
+
 ## 0.0.3
 
 ### Patch Changes
