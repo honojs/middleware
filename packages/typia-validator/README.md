@@ -17,7 +17,7 @@ interface Author {
 
   const route = app.post('/author', typiaValidator('json', validate), (c) => {
     const data = c.req.valid('json')
-    return c.jsonT({
+    return c.json({
       success: true,
       message: `${data.name} is ${data.age}`,
     })
