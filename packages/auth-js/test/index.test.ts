@@ -1,3 +1,4 @@
+import { webcrypto } from 'node:crypto'
 import { skipCSRFCheck } from '@auth/core'
 import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
@@ -5,6 +6,10 @@ import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
 import type { AuthConfig } from '../src'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
+
+// @ts-expect-error - global crypto
+//needed for node 18 and below but should work in node 20 and above
+global.crypto = webcrypto
 
 describe('Config', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {
