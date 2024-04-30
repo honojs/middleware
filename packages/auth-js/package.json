@@ -1,6 +1,6 @@
 {
   "name": "@hono/auth-js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A third-party Auth js middleware for Hono",
   "main": "dist/index.js",
   "exports": {

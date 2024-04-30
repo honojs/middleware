@@ -64,7 +64,7 @@ function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
   setEnvDefaults(env(c), config)
-  const origin = new URL(c.req.url, env(c)['AUTH_URL']).origin
+  const origin = env(c)['AUTH_URL'] ? new URL(env(c)['AUTH_URL']).origin : new URL(c.req.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
   })
