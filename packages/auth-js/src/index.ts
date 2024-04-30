@@ -4,6 +4,7 @@ import type { AdapterUser } from '@auth/core/adapters'
 import type { JWT } from '@auth/core/jwt'
 import type { Session } from '@auth/core/types'
 import type { Context, MiddlewareHandler } from 'hono'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 declare module 'hono' {
@@ -34,10 +35,10 @@ export function reqWithEnvUrl(req: Request, authUrl?: string): Request {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)
     const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
-    props.forEach(prop => reqUrlObj[prop] = authUrlObj[prop])
-    return new Request(reqUrlObj.href, req);
+    props.forEach((prop) => (reqUrlObj[prop] = authUrlObj[prop]))
+    return new Request(reqUrlObj.href, req)
   } else {
-    return req;
+    return req
   }
 }
 
@@ -62,8 +63,8 @@ function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
-  setEnvDefaults(c.env, config)
-  const origin = c.env.AUTH_URL ? new URL(c.env.AUTH_URL).origin : new URL(c.req.url).origin
+  setEnvDefaults(env(c), config)
+  const origin = env(c)['AUTH_URL'] ? new URL(env(c)['AUTH_URL']).origin : new URL(c.req.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
   })
@@ -117,13 +118,13 @@ export function authHandler(): MiddlewareHandler {
   return async (c) => {
     const config = c.get('authConfig')
 
-    setEnvDefaults(c.env, config)
+    setEnvDefaults(env(c), config)
 
     if (!config.secret) {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, c.env.AUTH_URL), config)
+    const res = await Auth(reqWithEnvUrl(c.req.raw, env(c)['AUTH_URL']), config)
     return new Response(res.body, res)
   }
 }
