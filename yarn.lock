@@ -45,9 +45,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth/core@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "@auth/core@npm:0.24.0"
+"@auth/core@npm:^0.30.0":
+  version: 0.30.0
+  resolution: "@auth/core@npm:0.30.0"
   dependencies:
     "@panva/hkdf": "npm:^1.1.1"
     "@types/cookie": "npm:0.6.0"
@@ -57,11 +57,17 @@ __metadata:
     preact: "npm:10.11.3"
     preact-render-to-string: "npm:5.2.3"
   peerDependencies:
+    "@simplewebauthn/browser": ^9.0.1
+    "@simplewebauthn/server": ^9.0.2
     nodemailer: ^6.8.0
   peerDependenciesMeta:
+    "@simplewebauthn/browser":
+      optional: true
+    "@simplewebauthn/server":
+      optional: true
     nodemailer:
       optional: true
-  checksum: b8d8c66bc35d18a6ffa80e21b122747cb0c40826f68eb8c22a1b4dda01aba62c2050a1d5e4997e92a6756edad4103faafe8d9a49c7278d991e690c3ebbdb6035
+  checksum: caa94cc9b42c354fef57e337a844bca0c0770ac809ba1cf00b30d7fc2e383d1d42dafeb3e39b9dde92b85a9eb821cde905b662638bfe98d8e2439c6d3e64c8cd
   languageName: node
   linkType: hard
 
@@ -1779,7 +1785,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/auth-js@workspace:packages/auth-js"
   dependencies:
-    "@auth/core": "npm:^0.24.0"
+    "@auth/core": "npm:^0.30.0"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
