@@ -1368,10 +1368,12 @@ describe('Middleware', () => {
     createRoute({
       method: 'get',
       path: '/books',
-      middleware: [(c, next) => {
-        c.header('x-foo', 'bar')
-        return next()
-      }],
+      middleware: [
+        (c, next) => {
+          c.header('x-foo', 'bar')
+          return next()
+        },
+      ],
       responses: {
         200: {
           description: 'response',
