@@ -15,6 +15,7 @@ declare module 'hono' {
 }
 
 export type AuthEnv = {
+  AUTH_URL?: string
   AUTH_SECRET: string
   AUTH_REDIRECT_PROXY_URL?: string
   [key: string]: string | undefined
@@ -63,8 +64,9 @@ function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
-  setEnvDefaults(env(c), config)
-  const origin = env(c)['AUTH_URL'] ? new URL(env(c)['AUTH_URL']).origin : new URL(c.req.url).origin
+  let ctxEnv = env(c) as AuthEnv
+  setEnvDefaults(ctxEnv, config)
+  const origin = ctxEnv.AUTH_URL ? new URL(ctxEnv.AUTH_URL).origin : new URL(c.req.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
   })
@@ -117,14 +119,15 @@ export function initAuthConfig(cb: ConfigHandler): MiddlewareHandler {
 export function authHandler(): MiddlewareHandler {
   return async (c) => {
     const config = c.get('authConfig')
+    let ctxEnv = env(c) as AuthEnv
 
-    setEnvDefaults(env(c), config)
+    setEnvDefaults(ctxEnv, config)
 
     if (!config.secret) {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, env(c)['AUTH_URL']), config)
+    const res = await Auth(reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
     return new Response(res.body, res)
   }
 }
