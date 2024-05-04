@@ -2041,11 +2041,11 @@ __metadata:
     hono: "npm:^3.11.7"
     jest: "npm:^28.1.2"
     jest-environment-miniflare: "npm:^2.6.0"
-    np: "npm:^7.6.2"
     prettier: "npm:^2.7.1"
-    rimraf: "npm:^3.0.2"
-    toucan-js: "npm:^3.2.2"
+    publint: "npm:^0.2.7"
+    toucan-js: "npm:^3.4.0"
     ts-jest: "npm:^28.0.5"
+    tsup: "npm:^8.0.2"
     typescript: "npm:^4.7.4"
   peerDependencies:
     hono: ">=3.*"
@@ -3526,41 +3526,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.76.0":
-  version: 7.76.0
-  resolution: "@sentry/core@npm:7.76.0"
+"@sentry/core@npm:7.112.2":
+  version: 7.112.2
+  resolution: "@sentry/core@npm:7.112.2"
   dependencies:
-    "@sentry/types": "npm:7.76.0"
-    "@sentry/utils": "npm:7.76.0"
-  checksum: cb8cfbf5b550678b030258e88bd62432144cd962bc3929d31dfc1627ee4773f3cfe367961c4f4d501b653d5da9df1501d6c1cbe30bd831eabcc49a7eba6404f4
+    "@sentry/types": "npm:7.112.2"
+    "@sentry/utils": "npm:7.112.2"
+  checksum: 560e9566f410610c2adc1fb2617bc57f85cede9849daf7caef01ef1c49281e2be159215261aa9570aa5c94fcb1a12068670b75ae68aa62467537088bf817d125
   languageName: node
   linkType: hard
 
-"@sentry/integrations@npm:7.76.0":
-  version: 7.76.0
-  resolution: "@sentry/integrations@npm:7.76.0"
+"@sentry/integrations@npm:7.112.2":
+  version: 7.112.2
+  resolution: "@sentry/integrations@npm:7.112.2"
   dependencies:
-    "@sentry/core": "npm:7.76.0"
-    "@sentry/types": "npm:7.76.0"
-    "@sentry/utils": "npm:7.76.0"
+    "@sentry/core": "npm:7.112.2"
+    "@sentry/types": "npm:7.112.2"
+    "@sentry/utils": "npm:7.112.2"
     localforage: "npm:^1.8.1"
-  checksum: cc272df4bc8035128ffd56eee45e6716c3f45ec2521618bd8176cbfbc8e16cf755c410eb1dd55380fb178fd768a5a7d776abe8df29bc9f0e39fbc67c6b6e35aa
+  checksum: fa1b92eb16c748d0b1635bff1e172888f1f39c6d8e239382a702a36c79d2580f30c73e9899cddc27cecb2f015b6e9a2e2c3a76d8626b4af758145cc672de0759
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.76.0":
-  version: 7.76.0
-  resolution: "@sentry/types@npm:7.76.0"
-  checksum: 2f46831de3fcfc449b37c8abed8eb007680e1b239a515df7324cfd49e2ab91aec6851507b802aad2131577c483909dd635575f9bcd9dc8fa086448bc243adc21
+"@sentry/types@npm:7.112.2":
+  version: 7.112.2
+  resolution: "@sentry/types@npm:7.112.2"
+  checksum: 2f3a49113b4bcabaa6108f77c752adbe9bf964754e83ea435ba312fd974cc26cd020d8e9f42f98e8051bb1e0ffe383d445afb1f4fb4c074005ee0020a5b5ef48
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.76.0":
-  version: 7.76.0
-  resolution: "@sentry/utils@npm:7.76.0"
+"@sentry/utils@npm:7.112.2":
+  version: 7.112.2
+  resolution: "@sentry/utils@npm:7.112.2"
   dependencies:
-    "@sentry/types": "npm:7.76.0"
-  checksum: 07f54644b07ba5c5bee7ca6cf789572bbc94e098c4dee218bc872e261d431e3e3cb68304d34fda2001c6fd688ea793022f07dca27d2c65fea16d7f38ea9769ae
+    "@sentry/types": "npm:7.112.2"
+  checksum: 63cca80cef62d6251325a5e61fb1f7cecf3a4726cc88a41d0aedd2a56d6c132ec49d952cc303a3a37c5114b9967380c43185cac1685dfcebe4aae313a57f6152
   languageName: node
   linkType: hard
 
@@ -15120,6 +15120,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"publint@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "publint@npm:0.2.7"
+  dependencies:
+    npm-packlist: "npm:^5.1.3"
+    picocolors: "npm:^1.0.0"
+    sade: "npm:^1.8.1"
+  bin:
+    publint: lib/cli.js
+  checksum: dfa476c77c2644de6986ef94616780cc44398bbfe6f56a790aadbfa0ec9d41a136c8a0c5a0a999ceb8bcee0d5736c3e93a5f28662c515c47ad6eba03244edea0
+  languageName: node
+  linkType: hard
+
 "pump@npm:^3.0.0":
   version: 3.0.0
   resolution: "pump@npm:3.0.0"
@@ -17154,15 +17167,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"toucan-js@npm:^3.2.2":
-  version: 3.3.1
-  resolution: "toucan-js@npm:3.3.1"
+"toucan-js@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "toucan-js@npm:3.4.0"
   dependencies:
-    "@sentry/core": "npm:7.76.0"
-    "@sentry/integrations": "npm:7.76.0"
-    "@sentry/types": "npm:7.76.0"
-    "@sentry/utils": "npm:7.76.0"
-  checksum: bcb73b4b98da44bc57396a51151fde04a1d9e31db848f0e95cde8f111b49ace0cbdf4830b7b13b29823c96460b4c282dec1e6ac9eb6af70659b64cea77b8139d
+    "@sentry/core": "npm:7.112.2"
+    "@sentry/integrations": "npm:7.112.2"
+    "@sentry/types": "npm:7.112.2"
+    "@sentry/utils": "npm:7.112.2"
+  checksum: 2870b443ca726b83b6791d889fb93c5399a295858caf4d6938210c7faf1c11f7107cec3974f3a5ce2b01a2ec1b862b11826cb0a1412f7c8f839584e4ac2f16a1
   languageName: node
   linkType: hard
 
