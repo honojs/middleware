@@ -1,6 +1,6 @@
-import { Hono } from 'hono'
-import { jest } from '@jest/globals'
 import crypto from 'node:crypto'
+import { jest } from '@jest/globals'
+import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
 import * as oauth2 from 'oauth4webapi'
 
@@ -10,17 +10,19 @@ const MOCK_CLIENT_SECRET = 'CLIENT_SECRET_001'
 const MOCK_REDIRECT_URI = 'http://localhost/callback'
 const MOCK_SUBJECT = 'USER_ID_001'
 const MOCK_EMAIL = 'user001@example.com'
-const MOCK_STATE= crypto.randomBytes(16).toString('hex') // 32 bytes
+const MOCK_STATE = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_NONCE = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_AUTH_SECRET = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_AUTH_EXPIRES = '3600'
-const MOCK_ID_TOKEN = jwt.sign({
-  iss: MOCK_ISSUER,
-  aud: MOCK_CLIENT_ID,
-  sub: MOCK_SUBJECT,
-  exp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-  nonce: MOCK_NONCE,
-}, `-----BEGIN PRIVATE KEY-----
+const MOCK_ID_TOKEN = jwt.sign(
+  {
+    iss: MOCK_ISSUER,
+    aud: MOCK_CLIENT_ID,
+    sub: MOCK_SUBJECT,
+    exp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+    nonce: MOCK_NONCE,
+  },
+  `-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDDp5RtVoTDMre1
 HZrPhMr3ic1fQPqRWnKs6f27DoBxA8JOsaHE15ApnLBlDLWKnoLoCNrHCuYGoh/+
 WQuxS5LtyZb7Goe1DXjdoEohLjZS1kW0+PgDRCpzon1XHdjo5LdPV+ImhxSxeIFd
@@ -47,75 +49,103 @@ DFMoveJg19CWtjT80yFqMUSRVl92MuDSnTSr47NtAoGBAJGu7TU6+qRGN6Bp38+A
 jc1vz90U86BT9PnNbCzmVP3xdRfLLGZm6JWCVYNt1mm3/KAyK8bkviw4bHilcIMj
 HfRCXKFdIfHsYcxAhUkKDpNguFv06xjbrlP6vPkqkp/4Td4sGQ8dAVmrcwpdv56o
 UlMwcdSLCKw3qpSJOA08k7pz
------END PRIVATE KEY-----`, { algorithm: 'RS256' });
-const MOCK_JWT_ACTIVE_SESSION = jwt.sign({
-  sub: MOCK_SUBJECT,
-  email: MOCK_EMAIL,
-  rtk: 'DUMMY_REFRESH_TOKEN',
-  rtkexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-  ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
-const MOCK_JWT_TOKEN_EXPIRED_SESSION = jwt.sign({
-  sub: MOCK_SUBJECT,
-  email: MOCK_EMAIL,
-  rtk: 'DUMMY_REFRESH_TOKEN',
-  rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
-  ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
-const MOCK_JWT_EXPIRED_SESSION = jwt.sign({
-  sub: MOCK_SUBJECT,
-  email: MOCK_EMAIL,
-  rtk: 'DUMMY_REFRESH_TOKEN',
-  rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
-  ssnexp: Math.floor(Date.now() / 1000) - 1, // expired
-}, MOCK_AUTH_SECRET, { algorithm: 'HS256', expiresIn: '1h' })
-const MOCK_JWT_INCORRECT_SECRET = jwt.sign({
-  sub: MOCK_SUBJECT,
-  email: MOCK_EMAIL,
-  rtk: 'DUMMY_REFRESH_TOKEN',
-  rtkexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-  ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, 'incorrect-secret', { algorithm: 'HS256', expiresIn: '1h' })
-const MOCK_JWT_INVALID_ALGORITHM = jwt.sign({
-  sub: MOCK_SUBJECT,
-  email: MOCK_EMAIL,
-  rtk: 'DUMMY_REFRESH_TOKEN',
-  rtkexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-  ssnexp: Math.floor(Date.now() / 1000) + (10 * 60), // 10 minutes
-}, null, { algorithm: 'none', expiresIn: '1h' })
+-----END PRIVATE KEY-----`,
+  { algorithm: 'RS256' }
+)
+const MOCK_JWT_ACTIVE_SESSION = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+    ssnexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+  },
+  MOCK_AUTH_SECRET,
+  { algorithm: 'HS256', expiresIn: '1h' }
+)
+const MOCK_JWT_TOKEN_EXPIRED_SESSION = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
+    ssnexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+  },
+  MOCK_AUTH_SECRET,
+  { algorithm: 'HS256', expiresIn: '1h' }
+)
+const MOCK_JWT_EXPIRED_SESSION = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) - 1, // expired
+    ssnexp: Math.floor(Date.now() / 1000) - 1, // expired
+  },
+  MOCK_AUTH_SECRET,
+  { algorithm: 'HS256', expiresIn: '1h' }
+)
+const MOCK_JWT_INCORRECT_SECRET = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+    ssnexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+  },
+  'incorrect-secret',
+  { algorithm: 'HS256', expiresIn: '1h' }
+)
+const MOCK_JWT_INVALID_ALGORITHM = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+    ssnexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+  },
+  null,
+  { algorithm: 'none', expiresIn: '1h' }
+)
 jest.unstable_mockModule('oauth4webapi', () => {
   return {
     ...oauth2,
     discoveryRequest: jest.fn(async () => {
-      return new Response(JSON.stringify({
-        issuer: MOCK_ISSUER,
-        authorization_endpoint: `${MOCK_ISSUER}/auth`,
-        token_endpoint: `${MOCK_ISSUER}/token`,
-        revocation_endpoint: `${MOCK_ISSUER}/revoke`,
-        scopes_supported: ['openid', 'email', 'profile'],
-      }))
+      return new Response(
+        JSON.stringify({
+          issuer: MOCK_ISSUER,
+          authorization_endpoint: `${MOCK_ISSUER}/auth`,
+          token_endpoint: `${MOCK_ISSUER}/token`,
+          revocation_endpoint: `${MOCK_ISSUER}/revoke`,
+          scopes_supported: ['openid', 'email', 'profile'],
+        })
+      )
     }),
     generateRandomState: jest.fn(() => MOCK_STATE),
     generateRandomNonce: jest.fn(() => MOCK_NONCE),
     authorizationCodeGrantRequest: jest.fn(async () => {
-      return new Response(JSON.stringify({
-        access_token: 'DUMMY_ACCESS_TOKEN',
-        expires_in: 3599,
-        refresh_token: 'DUUMMY_REFRESH_TOKEN',
-        scope: "https://www.googleapis.com/auth/userinfo.email openid",
-        token_type: "Bearer",
-        id_token: MOCK_ID_TOKEN,
-      }))
+      return new Response(
+        JSON.stringify({
+          access_token: 'DUMMY_ACCESS_TOKEN',
+          expires_in: 3599,
+          refresh_token: 'DUUMMY_REFRESH_TOKEN',
+          scope: 'https://www.googleapis.com/auth/userinfo.email openid',
+          token_type: 'Bearer',
+          id_token: MOCK_ID_TOKEN,
+        })
+      )
     }),
     refreshTokenGrantRequest: jest.fn(async () => {
-      return new Response(JSON.stringify({
-        access_token: 'DUMMY_ACCESS_TOKEN',
-        expires_in: 3599,
-        refresh_token: 'DUUMMY_REFRESH_TOKEN_RENEWED',
-        scope: "https://www.googleapis.com/auth/userinfo.email openid",
-        token_type: "Bearer",
-        id_token: MOCK_ID_TOKEN,
-      }))
+      return new Response(
+        JSON.stringify({
+          access_token: 'DUMMY_ACCESS_TOKEN',
+          expires_in: 3599,
+          refresh_token: 'DUUMMY_REFRESH_TOKEN_RENEWED',
+          scope: 'https://www.googleapis.com/auth/userinfo.email openid',
+          token_type: 'Bearer',
+          id_token: MOCK_ID_TOKEN,
+        })
+      )
     }),
     revocationRequest: jest.fn(async () => {
       return new Response(JSON.stringify({}))
@@ -123,7 +153,7 @@ jest.unstable_mockModule('oauth4webapi', () => {
   }
 })
 
-const { oidcAuthMiddleware, getAuth, revokeSession } = await import("../src");
+const { oidcAuthMiddleware, getAuth, revokeSession } = await import('../src')
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -138,12 +168,12 @@ app.all('/*', async (c) => {
 
 beforeEach(() => {
   process.env.OIDC_ISSUER = MOCK_ISSUER
-  process.env.OIDC_CLIENT_ID = MOCK_CLIENT_ID,
-  process.env.OIDC_CLIENT_SECRET = MOCK_CLIENT_SECRET,
-  process.env.OIDC_REDIRECT_URI = MOCK_REDIRECT_URI
+  ;(process.env.OIDC_CLIENT_ID = MOCK_CLIENT_ID),
+    (process.env.OIDC_CLIENT_SECRET = MOCK_CLIENT_SECRET),
+    (process.env.OIDC_REDIRECT_URI = MOCK_REDIRECT_URI)
   process.env.OIDC_AUTH_SECRET = MOCK_AUTH_SECRET
   process.env.OIDC_AUTH_EXPIRES = MOCK_AUTH_EXPIRES
-});
+})
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
     const req = new Request('http://localhost/', {
@@ -163,7 +193,9 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe(`Hello ${MOCK_EMAIL}! Refresh token: DUUMMY_REFRESH_TOKEN_RENEWED`)
+    expect(await res.text()).toBe(
+      `Hello ${MOCK_EMAIL}! Refresh token: DUUMMY_REFRESH_TOKEN_RENEWED`
+    )
   })
   test('Should redirect to authorization endpoint if session is expired', async () => {
     const req = new Request('http://localhost/', {
@@ -208,12 +240,14 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
   })
-});
+})
 describe('processOAuthCallback()', () => {
   test('Should successfully process the OAuth2.0 callback and redirect to the continue URL', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
-      headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
     })
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
@@ -223,7 +257,9 @@ describe('processOAuthCallback()', () => {
   test('Should return an error if the state parameter does not match', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
-      headers: { cookie: `state=abcd; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
+      headers: {
+        cookie: `state=abcd; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
     })
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
@@ -232,22 +268,27 @@ describe('processOAuthCallback()', () => {
   test('Should return an error if the code parameter is missing', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}?state=${MOCK_STATE}`, {
       method: 'GET',
-      headers: { cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234` },
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
     })
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
   })
   test('Should return an error if received OAuth2.0 error', async () => {
-    const req = new Request(`${MOCK_REDIRECT_URI}?error=invalid_grant&error_description=Bad+Request&state=1234`, {
-      method: 'GET',
-      headers: { cookie: 'state=1234; nonce=1234; code_verifier=1234' },
-    })
+    const req = new Request(
+      `${MOCK_REDIRECT_URI}?error=invalid_grant&error_description=Bad+Request&state=1234`,
+      {
+        method: 'GET',
+        headers: { cookie: 'state=1234; nonce=1234; code_verifier=1234' },
+      }
+    )
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
   })
-});
+})
 describe('RevokeSession()', () => {
   test('Should successfully revoke the session', async () => {
     const req = new Request('http://localhost/logout', {
@@ -259,4 +300,4 @@ describe('RevokeSession()', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
   })
-});
+})

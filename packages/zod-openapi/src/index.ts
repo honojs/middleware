@@ -314,9 +314,19 @@ export class OpenAPIHono<
       }
     }
 
-    const middleware = route.middleware ? (Array.isArray(route.middleware) ? route.middleware : [route.middleware]) : []
+    const middleware = route.middleware
+      ? Array.isArray(route.middleware)
+        ? route.middleware
+        : [route.middleware]
+      : []
 
-    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middleware, ...validators, handler)
+    this.on(
+      [route.method],
+      route.path.replaceAll(/\/{(.+?)}/g, '/:$1'),
+      ...middleware,
+      ...validators,
+      handler
+    )
     return this
   }
 

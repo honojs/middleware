@@ -57,7 +57,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       requestState.headers.forEach((value, key) => c.res.headers.append(key, value))
 
       const locationHeader = requestState.headers.get('location')
-      
+
       if (locationHeader) {
         return c.redirect(locationHeader, 307)
       } else if (requestState.status === 'handshake') {
