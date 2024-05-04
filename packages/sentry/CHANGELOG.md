@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 1.1.0
+
+### Minor Changes
+
+- [#499](https://github.com/honojs/middleware/pull/499) [`e44314fdd38a71ed835458cb26181374a6b087f6`](https://github.com/honojs/middleware/commit/e44314fdd38a71ed835458cb26181374a6b087f6) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support ESM
+
 ## 1.0.1
 
 ### Patch Changes
