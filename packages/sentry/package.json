@@ -2,8 +2,9 @@
   "name": "@hono/sentry",
   "version": "1.0.1",
   "description": "Sentry Middleware for Hono",
-  "type": "module",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
