@@ -67,7 +67,7 @@ describe('clerkMiddleware()', () => {
       expect.any(Request),
       expect.objectContaining({
         secretKey: EnvVariables.CLERK_SECRET_KEY,
-      }),
+      })
     )
   })
 
@@ -105,7 +105,7 @@ describe('clerkMiddleware()', () => {
       expect.any(Request),
       expect.objectContaining({
         secretKey: EnvVariables.CLERK_SECRET_KEY,
-      }),
+      })
     )
   })
 
@@ -174,7 +174,7 @@ describe('clerkMiddleware()', () => {
       expect.any(Request),
       expect.objectContaining({
         secretKey: EnvVariables.CLERK_SECRET_KEY,
-      }),
+      })
     )
   })
 })

@@ -4,29 +4,29 @@ import { trpcServer } from '../src'
 
 describe('tRPC Adapter Middleware passing synchronous Context', () => {
   type Env = {
-    NAME: string;
+    NAME: string
   }
   type HonoContext = {
-    env: Env,
-    batch: string;
-  };
+    env: Env
+    batch: string
+  }
 
   const t = initTRPC.context<HonoContext>().create()
 
   const publicProcedure = t.procedure.use(
-		t.middleware((opts) => {
-			return opts.next({
-				ctx: {
+    t.middleware((opts) => {
+      return opts.next({
+        ctx: {
           // add .env into context, simulating a middleware as cloudflare pages
-          env: { 
+          env: {
             DB: {
-              getName: () => 'World'
+              getName: () => 'World',
             },
-          }
-				},
-			})
-		}),
-	)
+          },
+        },
+      })
+    })
+  )
   const router = t.router
 
   const appRouter = router({
@@ -44,7 +44,7 @@ describe('tRPC Adapter Middleware passing synchronous Context', () => {
       // optional createContext, additional `c` arg with the hono context
       createContext: (_opts, c) => ({
         batch: c.req.query('batch'),
-      })
+      }),
     })
   )
 
@@ -66,15 +66,14 @@ describe('tRPC Adapter Middleware passing synchronous Context', () => {
   })
 })
 
-
 describe('tRPC Adapter Middleware passing asynchronous Context', () => {
   type Env = {
-    NAME: string;
+    NAME: string
   }
   type HonoContext = {
-    env: Env,
-    batch: string;
-  };
+    env: Env
+    batch: string
+  }
 
   const t = initTRPC.context<HonoContext>().create()
 
@@ -85,12 +84,12 @@ describe('tRPC Adapter Middleware passing asynchronous Context', () => {
           // add .env into context, simulating a middleware as cloudflare pages
           env: {
             DB: {
-              getName: () => 'World'
+              getName: () => 'World',
             },
-          }
+          },
         },
       })
-    }),
+    })
   )
   const router = t.router
 
@@ -109,7 +108,7 @@ describe('tRPC Adapter Middleware passing asynchronous Context', () => {
       // optional createContext, additional `c` arg with the hono context
       createContext: async (_opts, c) => ({
         batch: c.req.query('batch'),
-      })
+      }),
     })
   )
 
