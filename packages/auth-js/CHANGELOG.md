@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.7
+
+### Patch Changes
+
+- [#494](https://github.com/honojs/middleware/pull/494) [`300ef2f8bf4761b7b005e0c4ee7cb6ccf3ef810b`](https://github.com/honojs/middleware/commit/300ef2f8bf4761b7b005e0c4ee7cb6ccf3ef810b) Thanks [@divyam234](https://github.com/divyam234)! - fix for ssr
+
 ## 1.0.6
 
 ### Patch Changes
