@@ -2114,7 +2114,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
   dependencies:
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.0.10"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
     valibot: "npm:^0.24.1"
