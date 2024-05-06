@@ -1,4 +1,4 @@
-import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
+import type { Context, MiddlewareHandler, Env, ValidationTargets, Input as HonoInput } from 'hono'
 import { validator } from 'hono/validator'
 import type { BaseSchema, Input, Output, SafeParseResult } from 'valibot'
 import { safeParse } from 'valibot'
@@ -15,22 +15,33 @@ export const vValidator = <
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
-  V extends {
-    in: HasUndefined<Input<T>> extends true
-      ? { [K in Target]?: Input<T> }
-      : { [K in Target]: Input<T> }
-    out: { [K in Target]: Output<T> }
-  } = {
-    in: HasUndefined<Input<T>> extends true
-      ? { [K in Target]?: Input<T> }
-      : { [K in Target]: Input<T> }
-    out: { [K in Target]: Output<T> }
-  }
+  In = Input<T>,
+  Out = Output<T>,
+  I extends HonoInput = {
+    in: HasUndefined<In> extends true
+      ? {
+          [K in Target]?: K extends 'json'
+            ? In
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+        }
+      : {
+          [K in Target]: K extends 'json'
+            ? In
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+        }
+    out: { [K in Target]: Out }
+  },
+  V extends I = I
 >(
   target: Target,
   schema: T,
   hook?: Hook<T, E, P>
 ): MiddlewareHandler<E, P, V> =>
+  // @ts-expect-error not typed well
   validator(target, (value, c) => {
     const result = safeParse(schema, value)
 

@@ -17,6 +17,7 @@ describe('Basic', () => {
   const querySchema = optional(
     object({
       search: optional(string()),
+      page: optional(number()),
     })
   )
 
@@ -47,7 +48,8 @@ describe('Basic', () => {
         } & {
           query?:
             | {
-                search?: string | undefined
+                search?: string | string[] | undefined
+                page?: string | string[] | undefined
               }
             | undefined
         }
