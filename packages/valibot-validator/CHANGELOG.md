@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.2.4
+
+### Patch Changes
+
+- [#502](https://github.com/honojs/middleware/pull/502) [`d703577b551c82506e94c4a9c2ae9e7d933fb695`](https://github.com/honojs/middleware/commit/d703577b551c82506e94c4a9c2ae9e7d933fb695) Thanks [@y-hiraoka](https://github.com/y-hiraoka)! - improved vvalidator to infer route types with number queries
+
 ## 0.2.3
 
 ### Patch Changes
