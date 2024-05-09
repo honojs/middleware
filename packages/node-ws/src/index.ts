@@ -58,7 +58,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
       })
     },
     upgradeWebSocket: (createEvents) =>
-      createMiddleware(async (c, next) => {
+      async function upgradeWebSocket(c, next) {
         if (c.req.header('upgrade') !== 'websocket') {
           // Not websocket
           await next()
@@ -110,6 +110,6 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           })
         })
         return new WSResponse(wss)
-      }),
+      },
   }
 }
