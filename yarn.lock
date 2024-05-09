@@ -1937,10 +1937,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/node-server@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@hono/node-server@npm:1.11.1"
+  checksum: 87ad10b0e79c5434935cd83172d1923eb04c7ac1853e79b60303cae983876fc3c736e1826b824b34adae7a3e7289c99d764ecefe13b650f81b1f9d5baea3ed4a
+  languageName: node
+  linkType: hard
+
 "@hono/node-ws@workspace:packages/node-ws":
   version: 0.0.0-use.local
   resolution: "@hono/node-ws@workspace:packages/node-ws"
   dependencies:
+    "@hono/node-server": "npm:^1.11.1"
     "@types/ws": "npm:^8"
     hono: "npm:^4.2.9"
     tsup: "npm:^8.0.1"
