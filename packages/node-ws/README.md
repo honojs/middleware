@@ -11,14 +11,14 @@ import { serve } from '@hono/node-server'
 
 const app = new Hono()
 
-const { injectServer, upgradeWebSocket } = createNodeWebSocket({ app })
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app })
 
 app.get('/ws', upgradeWebSocket((c) => ({
   // https://hono.dev/helpers/websocket
 })))
 
 const server = serve(app)
-injectServer(server)
+injectWebSocket(server)
 ```
 
 ## Author
