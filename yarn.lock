@@ -1937,6 +1937,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/node-server@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@hono/node-server@npm:1.11.1"
+  checksum: 87ad10b0e79c5434935cd83172d1923eb04c7ac1853e79b60303cae983876fc3c736e1826b824b34adae7a3e7289c99d764ecefe13b650f81b1f9d5baea3ed4a
+  languageName: node
+  linkType: hard
+
+"@hono/node-ws@workspace:packages/node-ws":
+  version: 0.0.0-use.local
+  resolution: "@hono/node-ws@workspace:packages/node-ws"
+  dependencies:
+    "@hono/node-server": "npm:^1.11.1"
+    "@types/ws": "npm:^8"
+    hono: "npm:^4.2.9"
+    tsup: "npm:^8.0.1"
+    vitest: "npm:^1.0.4"
+    ws: "npm:^8.17.0"
+  peerDependencies:
+    "@hono/node-server": ^1.11.1
+  languageName: unknown
+  linkType: soft
+
 "@hono/oauth-providers@workspace:packages/oauth-providers":
   version: 0.0.0-use.local
   resolution: "@hono/oauth-providers@workspace:packages/oauth-providers"
@@ -4167,6 +4189,15 @@ __metadata:
   version: 3.0.2
   resolution: "@types/unist@npm:3.0.2"
   checksum: 39f220ce184a773c55c18a127062bfc4d0d30c987250cd59bab544d97be6cfec93717a49ef96e81f024b575718f798d4d329eb81c452fc57d6d051af8b043ebf
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8":
+  version: 8.5.10
+  resolution: "@types/ws@npm:8.5.10"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: e9af279b984c4a04ab53295a40aa95c3e9685f04888df5c6920860d1dd073fcc57c7bd33578a04b285b2c655a0b52258d34bee0a20569dca8defb8393e1e5d29
   languageName: node
   linkType: hard
 
@@ -9599,6 +9630,13 @@ __metadata:
   version: 4.2.7
   resolution: "hono@npm:4.2.7"
   checksum: 186d79ecedd4d9091eae4f2f32462f7e44530d1ea545de2cba594fd3f1e733f6f1d4367f12a6c85d188610ce1913bedadd1a83724b533700c0b12f5dcbb24f97
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.2.9":
+  version: 4.3.3
+  resolution: "hono@npm:4.3.3"
+  checksum: 2e02a563ab8461a56a97b59b1c31fd002179999a0323b3a44cbf8b69b92ad35cc8f38ba26a88b64caa71e2c1c39a1454d84473ed0c69f4e9573e7b3b064e0f58
   languageName: node
   linkType: hard
 
@@ -19021,6 +19059,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 9964360dd5ab35c7376bd7c4295a3c8bd44ea0838c9413742548a6fb3ec371fc6c18552d5b8e76bdc21536db1909765612815bae072674b5ec69971605395a96
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.17.0":
+  version: 8.17.0
+  resolution: "ws@npm:8.17.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 55241ec93a66fdfc4bf4f8bc66c8eb038fda2c7a4ee8f6f157f2ca7dc7aa76aea0c0da0bf3adb2af390074a70a0e45456a2eaf80e581e630b75df10a64b0a990
   languageName: node
   linkType: hard
 
