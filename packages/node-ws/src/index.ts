@@ -1,10 +1,10 @@
+import { Buffer } from 'buffer'
+import type { Server } from 'node:http'
+import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
-import type { Server } from 'node:http'
-import type { Http2SecureServer, Http2Server } from 'node:http2'
 import { WebSocketServer } from 'ws'
-import { Buffer } from 'buffer'
 
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket

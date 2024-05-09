@@ -43,5 +43,8 @@
   },
   "peerDependencies": {
     "@hono/node-server": "^1.11.1"
+  },
+  "engines": {
+    "node": ">=18.14.1"
   }
 }

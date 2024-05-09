@@ -1,8 +1,8 @@
-import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
-import { createNodeWebSocket } from '.'
-import { ServerType } from '@hono/node-server/dist/types'
+import type { ServerType } from '@hono/node-server/dist/types'
+import { Hono } from 'hono'
 import { WebSocket } from 'ws'
+import { createNodeWebSocket } from '.'
 
 describe('WebSocket helper', () => {
   const app = new Hono()
