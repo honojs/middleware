@@ -155,7 +155,13 @@ export type Hook<T, E extends Env, P extends string, O> = (
         error: ZodError
       },
   c: Context<E, P>
-) => TypedResponse<O> | Promise<TypedResponse<T>> | Response | Promise<Response> | void
+) =>
+  | TypedResponse<O>
+  | Promise<TypedResponse<T>>
+  | Response
+  | Promise<Response>
+  | void
+  | Promise<void>
 
 type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
