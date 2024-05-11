@@ -24,7 +24,7 @@ AUTH_URL=#optional
 ```ts
 import { Hono, Context } from 'hono'
 import { authHandler, initAuthConfig, verifyAuth, type AuthConfig } from "@hono/auth-js"
-import Google from "@auth/core/providers/google"
+import GitHub from "@auth/core/providers/github"
 
 const app = new Hono()
 
