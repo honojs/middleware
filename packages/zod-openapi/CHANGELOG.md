@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.11.1
+
+### Patch Changes
+
+- [#510](https://github.com/honojs/middleware/pull/510) [`88113fae8b5bd5d0a7662a1cca426f522da109b7`](https://github.com/honojs/middleware/commit/88113fae8b5bd5d0a7662a1cca426f522da109b7) Thanks [@taku-hatano](https://github.com/taku-hatano)! - Add Promise<void> to Hook
+
 ## 0.11.0
 
 ### Minor Changes
