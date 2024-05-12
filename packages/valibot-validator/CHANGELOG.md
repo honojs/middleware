@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.2.5
+
+### Patch Changes
+
+- [#515](https://github.com/honojs/middleware/pull/515) [`f59edfe89c95a145cb75ef4c5c41b730f535d32e`](https://github.com/honojs/middleware/commit/f59edfe89c95a145cb75ef4c5c41b730f535d32e) Thanks [@mizno-hito](https://github.com/mizno-hito)! - Add supports async validation
+
 ## 0.2.4
 
 ### Patch Changes
