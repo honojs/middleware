@@ -1,9 +1,9 @@
 import type { Context, MiddlewareHandler, Env, ValidationTargets, Input as HonoInput } from 'hono'
 import { validator } from 'hono/validator'
-import type { BaseSchema, Input, Output, SafeParseResult } from 'valibot'
-import { safeParse } from 'valibot'
+import type { BaseSchema, BaseSchemaAsync, Input, Output, SafeParseResult } from 'valibot'
+import { safeParseAsync } from 'valibot'
 
-type Hook<T extends BaseSchema, E extends Env, P extends string> = (
+type Hook<T extends BaseSchema | BaseSchemaAsync, E extends Env, P extends string> = (
   result: SafeParseResult<T>,
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void>
@@ -11,7 +11,7 @@ type Hook<T extends BaseSchema, E extends Env, P extends string> = (
 type HasUndefined<T> = undefined extends T ? true : false
 
 export const vValidator = <
-  T extends BaseSchema,
+  T extends BaseSchema | BaseSchemaAsync,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
@@ -42,8 +42,8 @@ export const vValidator = <
   hook?: Hook<T, E, P>
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
-  validator(target, (value, c) => {
-    const result = safeParse(schema, value)
+  validator(target, async (value, c) => {
+    const result = await safeParseAsync(schema, value)
 
     if (hook) {
       const hookResult = hook(result, c)
