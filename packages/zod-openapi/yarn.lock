@@ -594,7 +594,7 @@ __metadata:
     "@asteasolutions/zod-to-openapi": "npm:^7.0.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
     "@hono/zod-validator": "npm:0.2.1"
-    hono: "npm:^4.2.2"
+    hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
     openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
@@ -2379,10 +2379,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "hono@npm:4.2.2"
-  checksum: 4f423ff808c105341d2802192abe9070c5f6fc4a45da51842a5f5f2111b4c333ef4aea2720a585e16996944cc0cedf68657c57df1d150f1382f21fc18e814b42
+"hono@npm:^4.3.6":
+  version: 4.3.6
+  resolution: "hono@npm:4.3.6"
+  checksum: 2e27eb1e90b392a5884af573179d29e3f717f5e803c2b90f1383488f42bc986810e8e714d5bb1205935fda1d3e9944b3262aed88e852ea44d0e13d799474fa5b
   languageName: node
   linkType: hard
 
