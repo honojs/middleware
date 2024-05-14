@@ -602,7 +602,7 @@ __metadata:
     vitest: "npm:^1.4.0"
     zod: "npm:^3.22.1"
   peerDependencies:
-    hono: ">=3.11.3"
+    hono: ">=4.3.6"
     zod: 3.*
   languageName: unknown
   linkType: soft
