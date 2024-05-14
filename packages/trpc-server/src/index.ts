@@ -32,7 +32,7 @@ export const trpcServer = ({
       }),
       endpoint,
       req: c.req.raw,
-    })
+    }).then((res) => c.body(res.body, res))
     return res
   }
 }
