@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.12.0
+
+### Minor Changes
+
+- [#519](https://github.com/honojs/middleware/pull/519) [`b03484ba056215f0506894f9156cb1e2963cb450`](https://github.com/honojs/middleware/commit/b03484ba056215f0506894f9156cb1e2963cb450) Thanks [@yusukebe](https://github.com/yusukebe)! - feat(zod-openapi): support "status code"
+
 ## 0.11.1
 
 ### Patch Changes
