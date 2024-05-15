@@ -27,11 +27,13 @@ import type {
   TypedResponse,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import { StatusCode } from 'hono/utils/http-status'
+import type { StatusCode } from 'hono/utils/http-status'
 import type { Prettify, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
+
+type MaybePromise<T> = Promise<T> | T
 
 type RouteConfig = RouteConfigBase & {
   middleware?: MiddlewareHandler | MiddlewareHandler[]
@@ -290,8 +292,8 @@ export class OpenAPIHono<
           }
         }
       }
-        ? RouteConfigToTypedResponse<R>
-        : RouteConfigToTypedResponse<R> | Response | Promise<Response>
+        ? MaybePromise<RouteConfigToTypedResponse<R>>
+        : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
     >,
     hook:
       | Hook<
