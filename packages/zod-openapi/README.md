@@ -51,8 +51,7 @@ const UserSchema = z
   .openapi('User')
 ```
 
-> [!TIP]
-> `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
+> [!TIP] > `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
 > If you want to register the schema as referenced components, use `.openapi()` method.
 
 Next, create a route:
@@ -88,11 +87,14 @@ const app = new OpenAPIHono()
 
 app.openapi(route, (c) => {
   const { id } = c.req.valid('param')
-  return c.json({
-    id,
-    age: 20,
-    name: 'Ultra-man',
-  })
+  return c.json(
+    {
+      id,
+      age: 20,
+      name: 'Ultra-man',
+    },
+    200 // You should specify the status code even if it is 200.
+  )
 })
 
 // The OpenAPI documentation will be available at /doc
@@ -157,11 +159,14 @@ app.openapi(
   route,
   (c) => {
     const { id } = c.req.valid('param')
-    return c.json({
-      id,
-      age: 20,
-      name: 'Ultra-man',
-    })
+    return c.json(
+      {
+        id,
+        age: 20,
+        name: 'Ultra-man',
+      },
+      200
+    )
   },
   // Hook
   (result, c) => {
@@ -213,7 +218,7 @@ app.openapi(
   createBookRoute,
   (c) => {
     const { title } = c.req.valid('json')
-    return c.json({ title })
+    return c.json({ title }, 200)
   },
   (result, c) => {
     if (!result.success) {
@@ -234,8 +239,8 @@ app.openapi(
 You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
-app.doc31('/docs', {openapi: '3.1.0'}) // new endpoint
-app.getOpenAPI31Document({openapi: '3.1.0'}) // raw json
+app.doc31('/docs', { openapi: '3.1.0' }) // new endpoint
+app.getOpenAPI31Document({ openapi: '3.1.0' }) // raw json
 ```
 
 ### The Registry
@@ -279,10 +284,7 @@ const route = createRoute({
   request: {
     params: ParamsSchema,
   },
-  middleware: [
-    prettyJSON(),
-    cache({ cacheName: 'my-cache' })
-  ],
+  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })],
   responses: {
     200: {
       content: {
@@ -305,10 +307,13 @@ import { hc } from 'hono/client'
 
 const appRoutes = app.openapi(route, (c) => {
   const data = c.req.valid('json')
-  return c.json({
-    id: data.id,
-    message: 'Success',
-  })
+  return c.json(
+    {
+      id: data.id,
+      message: 'Success',
+    },
+    200
+  )
 })
 
 const client = hc<typeof appRoutes>('http://localhost:8787/')
@@ -337,9 +342,9 @@ eg. Bearer Auth
 Register the security scheme:
 
 ```ts
-app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
-  type: "http",
-  scheme: "bearer",
+app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
+  type: 'http',
+  scheme: 'bearer',
 })
 ```
 
@@ -361,7 +366,7 @@ const route = createRoute({
 You can access the context in `app.doc` as follows:
 
 ```ts
-app.doc('/doc', c => ({
+app.doc('/doc', (c) => ({
   openapi: '3.0.0',
   info: {
     version: '1.0.0',

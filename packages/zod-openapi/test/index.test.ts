@@ -1,8 +1,9 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { Context } from 'hono'
+import type { Context, TypedResponse } from 'hono'
 import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { OpenAPIHono, createRoute, z } from '../src/index'
+import { OpenAPIHono, createRoute, z, RouteConfigToTypedResponse } from '../src/index'
+import { Expect, Equal } from 'hono/utils/types'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -104,11 +105,14 @@ describe('Basic - params', () => {
     route,
     (c) => {
       const { id } = c.req.valid('param')
-      return c.json({
-        id,
-        age: 20,
-        name: 'Ultra-man',
-      })
+      return c.json(
+        {
+          id,
+          age: 20,
+          name: 'Ultra-man',
+        },
+        200 // You should specify the status code even if it's 200.
+      )
     },
     (result, c) => {
       if (!result.success) {
@@ -663,8 +667,23 @@ describe('Input types', () => {
   app.openapi(route, (c) => {
     return c.json({
       id: '123', // should be number
-      message: 'Success',
+      age: 42,
+      sex: 'male' as const,
+      name: 'Success',
     })
+  })
+
+  // @ts-expect-error it should throw an error if the status code is wrong
+  app.openapi(route, (c) => {
+    return c.json(
+      {
+        id: 123,
+        age: 42,
+        sex: 'male' as const,
+        name: 'Success',
+      },
+      404
+    )
   })
 })
 
@@ -976,7 +995,7 @@ describe('With hc', () => {
     // use the defaultHook
     app.openapi(createPostRoute, (c) => {
       const { title } = c.req.valid('json')
-      return c.json({ title })
+      return c.json({ title }, 200)
     })
 
     // use a routeHook
@@ -984,7 +1003,7 @@ describe('With hc', () => {
       createBookRoute,
       (c) => {
         const { title } = c.req.valid('json')
-        return c.json({ title })
+        return c.json({ title }, 200)
       },
       (result, c) => {
         if (!result.success) {
@@ -1387,5 +1406,86 @@ describe('Middleware', () => {
     const res = await app.request('/books')
     expect(res.status).toBe(200)
     expect(res.headers.get('x-foo')).toBe('bar')
+  })
+})
+
+describe('RouteConfigToTypedResponse', () => {
+  const ParamsSchema = z.object({
+    id: z
+      .string()
+      .min(4)
+      .openapi({
+        param: {
+          name: 'id',
+          in: 'path',
+        },
+        example: '12345',
+      }),
+  })
+  const UserSchema = z
+    .object({
+      name: z.string().openapi({
+        example: 'John Doe',
+      }),
+      age: z.number().openapi({
+        example: 42,
+      }),
+    })
+    .openapi('User')
+
+  const ErrorSchema = z
+    .object({
+      ok: z.boolean().openapi({
+        example: false,
+      }),
+    })
+    .openapi('Error')
+
+  it('Should return types correctly', () => {
+    const route = {
+      method: 'post' as any,
+      path: '/users/{id}',
+      request: {
+        params: ParamsSchema,
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: UserSchema,
+            },
+          },
+          description: 'Get the user',
+        },
+        400: {
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
+          description: 'Error!',
+        },
+      },
+    }
+
+    type Actual = RouteConfigToTypedResponse<typeof route>
+
+    type Expected =
+      | TypedResponse<
+          {
+            name: string
+            age: number
+          },
+          200,
+          'json'
+        >
+      | TypedResponse<
+          {
+            ok: boolean
+          },
+          400,
+          'json'
+        >
+    type verify = Expect<Equal<Expected, Actual>>
   })
 })

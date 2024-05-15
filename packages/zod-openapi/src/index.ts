@@ -27,7 +27,8 @@ import type {
   TypedResponse,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { RemoveBlankRecord } from 'hono/utils/types'
+import { StatusCode } from 'hono/utils/http-status'
+import type { Prettify, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
@@ -132,19 +133,23 @@ type InputTypeQuery<R extends RouteConfig> = InputTypeBase<R, 'query', 'query'>
 type InputTypeHeader<R extends RouteConfig> = InputTypeBase<R, 'headers', 'header'>
 type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cookie'>
 
-type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, infer C>
-  ? C extends ResponseConfig
-    ? C['content'] extends ZodContentObject
-      ? IsJson<keyof C['content']> extends never
-        ? {}
-        : C['content'][keyof C['content']] extends Record<'schema', ZodSchema>
-        ? z.infer<C['content'][keyof C['content']]['schema']>
-        : {}
-      : {}
-    : {}
-  : {}
+type ExtractContent<T> = T extends {
+  [K in keyof T]: infer A
+}
+  ? A extends Record<'schema', ZodSchema>
+    ? z.infer<A['schema']>
+    : never
+  : never
 
-export type Hook<T, E extends Env, P extends string, O> = (
+export type RouteConfigToTypedResponse<R extends RouteConfig> = {
+  [Status in keyof R['responses'] & StatusCode]: IsJson<
+    keyof R['responses'][Status]['content']
+  > extends never
+    ? TypedResponse<{}, Status, string>
+    : TypedResponse<ExtractContent<R['responses'][Status]['content']>, Status, 'json'>
+}[keyof R['responses'] & StatusCode]
+
+export type Hook<T, E extends Env, P extends string, R> = (
   result:
     | {
         success: true
@@ -155,24 +160,11 @@ export type Hook<T, E extends Env, P extends string, O> = (
         error: ZodError
       },
   c: Context<E, P>
-) =>
-  | TypedResponse<O>
-  | Promise<TypedResponse<T>>
-  | Response
-  | Promise<Response>
-  | void
-  | Promise<void>
+) => R
 
 type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
-
-type HandlerTypedResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
-type HandlerAllResponse<O> =
-  | Response
-  | Promise<Response>
-  | TypedResponse<O>
-  | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
@@ -196,15 +188,15 @@ export type RouteHandler<
   // If response type is defined, only TypedResponse is allowed.
   R extends {
     responses: {
-      [statusCode: string]: {
+      [statusCode: number]: {
         content: {
           [mediaType: string]: ZodMediaTypeObject
         }
       }
     }
   }
-    ? HandlerTypedResponse<OutputType<R>>
-    : HandlerAllResponse<OutputType<R>>
+    ? RouteConfigToTypedResponse<R>
+    : RouteConfigToTypedResponse<R> | Response | Promise<Response>
 >
 
 export type RouteHook<
@@ -217,7 +209,12 @@ export type RouteHook<
     InputTypeForm<R> &
     InputTypeJson<R>,
   P extends string = ConvertPathType<R['path']>
-> = Hook<I, E, P, OutputType<R>>
+> = Hook<
+  I,
+  E,
+  P,
+  RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+>
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
@@ -237,6 +234,37 @@ export class OpenAPIHono<
     this.defaultHook = init?.defaultHook
   }
 
+  /**
+   *
+   * @param {RouteConfig} route - The route definition which you create with `createRoute()`.
+   * @param {Handler} handler - The handler. If you want to return a JSON object, you should specify the status code with `c.json()`.
+   * @param {Hook} hook - Optional. The hook method defines what it should do after validation.
+   * @example
+   * app.openapi(
+   *   route,
+   *   (c) => {
+   *     // ...
+   *     return c.json(
+   *       {
+   *         age: 20,
+   *         name: 'Young man',
+   *       },
+   *       200 // You should specify the status code even if it's 200.
+   *     )
+   *   },
+   *  (result, c) => {
+   *    if (!result.success) {
+   *      return c.json(
+   *        {
+   *          code: 400,
+   *          message: 'Custom Message',
+   *        },
+   *        400
+   *      )
+   *    }
+   *  }
+   *)
+   */
   openapi = <
     R extends RouteConfig,
     I extends Input = InputTypeParam<R> &
@@ -255,20 +283,27 @@ export class OpenAPIHono<
       // If response type is defined, only TypedResponse is allowed.
       R extends {
         responses: {
-          [statusCode: string]: {
+          [statusCode: number]: {
             content: {
               [mediaType: string]: ZodMediaTypeObject
             }
           }
         }
       }
-        ? HandlerTypedResponse<OutputType<R>>
-        : HandlerAllResponse<OutputType<R>>
+        ? RouteConfigToTypedResponse<R>
+        : RouteConfigToTypedResponse<R> | Response | Promise<Response>
     >,
-    hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
+    hook:
+      | Hook<
+          I,
+          E,
+          P,
+          RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+        >
+      | undefined = this.defaultHook
   ): OpenAPIHono<
     E,
-    S & ToSchema<R['method'], MergePath<BasePath, P>, I['in'], OutputType<R>>,
+    S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
     BasePath
   > => {
     this.openAPIRegistry.registerPath(route)
@@ -357,7 +392,7 @@ export class OpenAPIHono<
       try {
         const document = this.getOpenAPIDocument(config)
         return c.json(document)
-      } catch (e) {
+      } catch (e: any) {
         return c.json(e, 500)
       }
     }) as any
@@ -372,7 +407,7 @@ export class OpenAPIHono<
       try {
         const document = this.getOpenAPI31Document(config)
         return c.json(document)
-      } catch (e) {
+      } catch (e: any) {
         return c.json(e, 500)
       }
     }) as any
