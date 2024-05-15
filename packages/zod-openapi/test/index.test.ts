@@ -1,9 +1,10 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Context, TypedResponse } from 'hono'
 import { hc } from 'hono/client'
+import type { Expect, Equal } from 'hono/utils/types'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { OpenAPIHono, createRoute, z, RouteConfigToTypedResponse } from '../src/index'
-import { Expect, Equal } from 'hono/utils/types'
+import type { RouteConfigToTypedResponse } from '../src/index'
+import { OpenAPIHono, createRoute, z } from '../src/index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
