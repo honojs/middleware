@@ -3,8 +3,8 @@ import type { Context, TypedResponse } from 'hono'
 import { hc } from 'hono/client'
 import type { Expect, Equal } from 'hono/utils/types'
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import type { RouteConfigToTypedResponse } from '../src/index'
-import { OpenAPIHono, createRoute, z } from '../src/index'
+import { OpenAPIHono, createRoute, z, RouteConfigToTypedResponse } from '../src/index'
+import { Expect, Equal } from 'hono/utils/types'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
