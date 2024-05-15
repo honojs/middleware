@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.12.1
+
+### Patch Changes
+
+- [#522](https://github.com/honojs/middleware/pull/522) [`2d5ef8255861482cd62deee3d6616a2e21016d53`](https://github.com/honojs/middleware/commit/2d5ef8255861482cd62deee3d6616a2e21016d53) Thanks [@alexzhang1030](https://github.com/alexzhang1030)! - fix(zod-openapi): return type of handler should be MaybePromise
+
 ## 0.12.0
 
 ### Minor Changes
