@@ -2094,13 +2094,13 @@ __metadata:
   resolution: "@hono/trpc-server@workspace:packages/trpc-server"
   dependencies:
     "@trpc/server": "npm:^10.10.0"
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
     zod: "npm:^3.20.2"
   peerDependencies:
     "@trpc/server": ^10.10.0
-    hono: ">=3.*"
+    hono: ">=4.*"
   languageName: unknown
   linkType: soft
 
