@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.3.1
+
+### Patch Changes
+
+- [#517](https://github.com/honojs/middleware/pull/517) [`8f669cd338013569e413641f5455f44dd1b8d19c`](https://github.com/honojs/middleware/commit/8f669cd338013569e413641f5455f44dd1b8d19c) Thanks [@BlankParticle](https://github.com/BlankParticle)! - use `c.body` to create response to avoid header loss
+
 ## 0.3.0
 
 ### Minor Changes
