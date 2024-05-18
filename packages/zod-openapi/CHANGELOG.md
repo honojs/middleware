@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.12.2
+
+### Patch Changes
+
+- [#529](https://github.com/honojs/middleware/pull/529) [`0a43d2c562f5adb12009f6bdd0e7fb7c06a625e6`](https://github.com/honojs/middleware/commit/0a43d2c562f5adb12009f6bdd0e7fb7c06a625e6) Thanks [@akineko](https://github.com/akineko)! - fix(zod-openapi): update RouteHandler type to support MaybePromise
+
 ## 0.12.1
 
 ### Patch Changes
