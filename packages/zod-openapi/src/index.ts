@@ -197,8 +197,8 @@ export type RouteHandler<
       }
     }
   }
-    ? RouteConfigToTypedResponse<R>
-    : RouteConfigToTypedResponse<R> | Response | Promise<Response>
+    ? MaybePromise<RouteConfigToTypedResponse<R>>
+    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
 >
 
 export type RouteHook<

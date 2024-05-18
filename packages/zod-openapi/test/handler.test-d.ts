@@ -1,8 +1,7 @@
+import type { RouteHandler } from '../src'
 import { OpenAPIHono, createRoute, z } from '../src'
 
-test('supports async handler', () => {
-  const hono = new OpenAPIHono()
-
+describe('supports async handler', () => {
   const route = createRoute({
     method: 'get',
     path: '/users',
@@ -20,15 +19,37 @@ test('supports async handler', () => {
     },
   })
 
-  hono.openapi(route, (c) => {
-    return c.json({
-      id: '123',
+  test('argument of openapi method', () => {
+    const hono = new OpenAPIHono()
+
+    hono.openapi(route, (c) => {
+      return c.json({
+        id: '123',
+      })
+    })
+
+    hono.openapi(route, async (c) => {
+      return c.json({
+        id: '123',
+      })
     })
   })
 
-  hono.openapi(route, async (c) => {
-    return c.json({
-      id: '123',
-    })
+  test('RouteHandler type', () => {
+    const handler: RouteHandler<typeof route> = (c) => {
+      return c.json({
+        id: '123',
+      })
+    }
+
+    const asyncHandler: RouteHandler<typeof route> = async (c) => {
+      return c.json({
+        id: '123',
+      })
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+    hono.openapi(route, asyncHandler)
   })
 })
