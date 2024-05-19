@@ -35,7 +35,7 @@ import { z, ZodType } from 'zod'
 
 type MaybePromise<T> = Promise<T> | T
 
-type RouteConfig = RouteConfigBase & {
+export type RouteConfig = RouteConfigBase & {
   middleware?: MiddlewareHandler | MiddlewareHandler[]
 }
 
