@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.13.0
+
+### Minor Changes
+
+- [#532](https://github.com/honojs/middleware/pull/532) [`eeccd4fc2fd63c9d79d7a4911f80fa94d1680983`](https://github.com/honojs/middleware/commit/eeccd4fc2fd63c9d79d7a4911f80fa94d1680983) Thanks [@akineko](https://github.com/akineko)! - feat(zod-openapi): export RouteConfig type
+
 ## 0.12.2
 
 ### Patch Changes
