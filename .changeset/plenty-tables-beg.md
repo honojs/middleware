@@ -1,5 +1,5 @@
 ---
-'@hono/zod-openapi': patch
+'@hono/zod-openapi': minor
 ---
 
 extract range definitions to StatusCode
