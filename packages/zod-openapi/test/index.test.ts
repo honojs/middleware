@@ -4,6 +4,7 @@ import { hc } from 'hono/client'
 import { describe, it, expect, expectTypeOf } from 'vitest'
 import { OpenAPIHono, createRoute, z, RouteConfigToTypedResponse } from '../src/index'
 import { Expect, Equal } from 'hono/utils/types'
+import { ServerErrorStatusCode } from 'hono/utils/http-status'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -200,11 +201,19 @@ describe('Basic - params', () => {
             responses: {
               '200': {
                 description: 'Get the user',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/User' } } },
+                content: {
+                  'application/json': {
+                    schema: { $ref: '#/components/schemas/User' },
+                  },
+                },
               },
               '400': {
                 description: 'Error!',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+                content: {
+                  'application/json': {
+                    schema: { $ref: '#/components/schemas/Error' },
+                  },
+                },
               },
             },
           },
@@ -1465,6 +1474,14 @@ describe('RouteConfigToTypedResponse', () => {
           },
           description: 'Error!',
         },
+        '5XX': {
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
+          description: 'Server Error!',
+        },
       },
     }
 
@@ -1484,6 +1501,13 @@ describe('RouteConfigToTypedResponse', () => {
             ok: boolean
           },
           400,
+          'json'
+        >
+      | TypedResponse<
+          {
+            ok: boolean
+          },
+          ServerErrorStatusCode,
           'json'
         >
     type verify = Expect<Equal<Expected, Actual>>

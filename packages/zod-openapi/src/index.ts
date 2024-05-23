@@ -27,7 +27,14 @@ import type {
   TypedResponse,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { StatusCode } from 'hono/utils/http-status'
+import type {
+  ClientErrorStatusCode,
+  InfoStatusCode,
+  RedirectStatusCode,
+  ServerErrorStatusCode,
+  StatusCode,
+  SuccessStatusCode,
+} from 'hono/utils/http-status'
 import type { Prettify, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
@@ -143,13 +150,28 @@ type ExtractContent<T> = T extends {
     : never
   : never
 
+type StatusCodeRangeDefinitions = {
+  '1XX': InfoStatusCode
+  '2XX': SuccessStatusCode
+  '3XX': RedirectStatusCode
+  '4XX': ClientErrorStatusCode
+  '5XX': ServerErrorStatusCode
+}
+type RouteConfigStatusCode = keyof StatusCodeRangeDefinitions | StatusCode
+type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof StatusCodeRangeDefinitions
+  ? StatusCodeRangeDefinitions[T]
+  : T
 export type RouteConfigToTypedResponse<R extends RouteConfig> = {
-  [Status in keyof R['responses'] & StatusCode]: IsJson<
+  [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
     keyof R['responses'][Status]['content']
   > extends never
-    ? TypedResponse<{}, Status, string>
-    : TypedResponse<ExtractContent<R['responses'][Status]['content']>, Status, 'json'>
-}[keyof R['responses'] & StatusCode]
+    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+    : TypedResponse<
+        ExtractContent<R['responses'][Status]['content']>,
+        ExtractStatusCode<Status>,
+        'json'
+      >
+}[keyof R['responses'] & RouteConfigStatusCode]
 
 export type Hook<T, E extends Env, P extends string, R> = (
   result:
