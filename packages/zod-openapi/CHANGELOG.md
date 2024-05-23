@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.0
+
+### Minor Changes
+
+- [#535](https://github.com/honojs/middleware/pull/535) [`a595e4e260040decd871e271c60c5a07c6db4086`](https://github.com/honojs/middleware/commit/a595e4e260040decd871e271c60c5a07c6db4086) Thanks [@taku-hatano](https://github.com/taku-hatano)! - extract range definitions to StatusCode
+
 ## 0.13.0
 
 ### Minor Changes
