@@ -112,6 +112,28 @@ app.use(
   })
 )
 ```
+## Custom Endpoints
+
+To set up custom endpoints ensure the endpoint parameter matches the middleware's path. This alignment allows `@trpc/server` to accurately extract your procedure paths.
+
+```ts
+import { Hono } from 'hono'
+import { trpcServer } from '@hono/trpc-server'
+import { appRouter } from './router'
+
+const app = new Hono()
+
+// Custom endpoint configuration
+app.use(
+  '/api/trpc/*',
+  trpcServer({
+    endpoint: '/api/trpc',
+    router: appRouter,
+  })
+)
+
+export default app
+```
 
 ## Author
 
