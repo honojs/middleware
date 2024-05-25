@@ -25,7 +25,6 @@ module.exports = defineConfig({
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
     'no-debugger': ['error'],
-    'no-duplicate-imports': 'error',
     'no-empty': ['warn', { allowEmptyCatch: true }],
     'no-process-exit': 'off',
     'no-useless-escape': 'off',
@@ -46,6 +45,7 @@ module.exports = defineConfig({
     ],
 
     'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+    'import/no-duplicates': 'error',
 
     'node/no-missing-import': 'off',
     'node/no-missing-require': 'off',
