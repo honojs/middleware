@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 0.0.6
+
+### Patch Changes
+
+- [#545](https://github.com/honojs/middleware/pull/545) [`6fe211ba1f1c4b7b73e98dc87d585a08c3da2cd6`](https://github.com/honojs/middleware/commit/6fe211ba1f1c4b7b73e98dc87d585a08c3da2cd6) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use `import/no-duplicates`
+
 ## 0.0.5
 
 ### Patch Changes
