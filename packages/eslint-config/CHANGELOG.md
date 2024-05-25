@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 0.0.5
+
+### Patch Changes
+
+- [#543](https://github.com/honojs/middleware/pull/543) [`ee6569d62b4225e2cade3d715c0043a364a37449`](https://github.com/honojs/middleware/commit/ee6569d62b4225e2cade3d715c0043a364a37449) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: update rules
+
 ## 0.0.4
 
 ### Patch Changes
