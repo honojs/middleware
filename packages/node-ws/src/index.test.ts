@@ -32,7 +32,7 @@ describe('WebSocket helper', () => {
       )
     })
     injectWebSocket(server)
-    const ws = new WebSocket('ws://localhost:3030/')
+    new WebSocket('ws://localhost:3030/')
 
     expect(await mainPromise).toBe(true)
   })

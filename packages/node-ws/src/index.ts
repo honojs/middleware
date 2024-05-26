@@ -2,7 +2,6 @@ import { Buffer } from 'buffer'
 import type { Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
-import { createMiddleware } from 'hono/factory'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import { WebSocketServer } from 'ws'
 
@@ -16,26 +15,16 @@ export interface NodeWebSocketInit {
 }
 
 /**
- * Extended for telling WebSocket
- * @internal
- */
-class WSResponse extends Response {
-  readonly wss: WebSocketServer
-  constructor(wss: WebSocketServer) {
-    super()
-    this.wss = wss
-  }
-}
-
-/**
  * Create WebSockets for Node.js
  * @param init Options
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
+  const wss = new WebSocketServer({noServer: true})
+
   return {
     injectWebSocket(server) {
-      ;(server as Server).on('upgrade', async (request, socket, head) => {
+      server.on('upgrade', async (request, socket, head) => {
         const url = new URL(request.url ?? '/', init.baseUrl ?? 'http://localhost')
         const headers = new Headers()
         for (const key in request.headers) {
@@ -45,15 +34,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           }
           headers.append(key, Array.isArray(value) ? value[0] : value)
         }
-        const res = (await init.app.request(url, {
+        await init.app.request(url, {
           headers: headers,
-        })) as Response | WSResponse
-        if (!(res instanceof WSResponse)) {
-          socket.destroy()
-          return
-        }
-        res.wss.handleUpgrade(request, socket, head, (ws) => {
-          res.wss.emit('connection', ws, request)
+        })
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          wss.emit('connection', ws, request)
         })
       })
     },
@@ -64,7 +49,6 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           await next()
           return
         }
-        const wss = new WebSocketServer({ noServer: true })
         const events = await createEvents(c)
         wss.on('connection', (ws) => {
           const ctx: WSContext = {
@@ -109,7 +93,8 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
             )
           })
         })
-        return new WSResponse(wss)
+
+        return new Response()
       },
   }
 }
