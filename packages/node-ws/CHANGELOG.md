@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.1
+
+### Patch Changes
+
+- [#539](https://github.com/honojs/middleware/pull/539) [`ec6ec4ec02f8db46e3151e7334535e562dfc47e3`](https://github.com/honojs/middleware/commit/ec6ec4ec02f8db46e3151e7334535e562dfc47e3) Thanks [@mikestopcontinues](https://github.com/mikestopcontinues)! - create only one WebSocketServer instead of per websocket request
+
 ## 1.0.0
 
 ### Major Changes
