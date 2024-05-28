@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.8
+
+### Patch Changes
+
+- [#549](https://github.com/honojs/middleware/pull/549) [`d5ebee9c70b5c6e9ecdcadd39805a6a7c481c0ee`](https://github.com/honojs/middleware/commit/d5ebee9c70b5c6e9ecdcadd39805a6a7c481c0ee) Thanks [@divyam234](https://github.com/divyam234)! - handle x-forwarded headers to detect auth url
+
 ## 1.0.7
 
 ### Patch Changes
