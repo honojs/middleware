@@ -75,7 +75,6 @@ const logger: LoggerInstance = {
   warn: console.warn,
 }
 
-/** @todo Document */
 export type UpdateSession = (data?: any) => Promise<Session | null>
 
 export type SessionContextValue<R extends boolean = false> = R extends true
