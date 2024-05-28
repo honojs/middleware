@@ -16,11 +16,6 @@ describe('Config', () => {
     globalThis.process.env = { AUTH_SECRET: '' }
     const app = new Hono()
 
-    app.use('/*', (c, next) => {
-      c.env = {}
-      return next()
-    })
-
     app.use(
       '/*',
       initAuthConfig(() => {
@@ -29,9 +24,8 @@ describe('Config', () => {
         }
       })
     )
-
     app.use('/api/auth/*', authHandler())
-    const req = new Request('http://localhost/api/auth/error')
+    const req = new Request('http://localhost/api/auth/signin')
     const res = await app.request(req)
     expect(res.status).toBe(500)
     expect(await res.text()).toBe('Missing AUTH_SECRET')
@@ -51,7 +45,7 @@ describe('Config', () => {
     )
 
     app.use('/api/auth/*', authHandler())
-    const req = new Request('http://localhost/api/auth/error')
+    const req = new Request('http://localhost/api/auth/signin')
     const res = await app.request(req)
     expect(res.status).toBe(200)
   })
@@ -144,6 +138,7 @@ describe('Credentials Provider', () => {
       secret: 'secret',
       providers: [credentials],
       adapter: mockAdapter,
+      basePath: '/api/auth',
       skipCSRFCheck,
       callbacks: {
         jwt: ({ token, user }) => {
@@ -193,5 +188,16 @@ describe('Credentials Provider', () => {
     const obj = await res.json()
     expect(obj['token']['name']).toBe(user.name)
     expect(obj['token']['email']).toBe(user.email)
+  })
+
+  it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
+    const headers = new Headers()
+    headers.append('x-forwarded-proto', "https")
+    headers.append('x-forwarded-host', "example.com")
+    const res = await app.request('http://localhost/api/auth/signin', {
+      headers,
+    })
+    let html = await res.text()
+    expect(html).toContain('action="https://example.com/api/auth/callback/credentials"')
   })
 })
