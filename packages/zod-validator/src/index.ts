@@ -47,7 +47,7 @@ export const zValidator = <
     if (hook) {
       const hookResult = await hook({ data: value, ...result }, c)
       if (hookResult) {
-        if (hookResult instanceof Response || hookResult instanceof Promise) {
+        if (hookResult instanceof Response) {
           return hookResult
         }
         if ('response' in hookResult) {
@@ -60,6 +60,5 @@ export const zValidator = <
       return c.json(result, 400)
     }
 
-    const data = result.data as z.infer<T>
-    return data
+    return result.data as z.infer<T>
   })
