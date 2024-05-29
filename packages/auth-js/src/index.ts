@@ -118,7 +118,7 @@ export function authHandler(): MiddlewareHandler {
   return async (c) => {
     const config = c.get('authConfig')
     let ctxEnv = env(c) as AuthEnv
-    
+
     setEnvDefaults(ctxEnv, config)
 
     if (!config.secret || config.secret.length === 0) {

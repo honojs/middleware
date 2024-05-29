@@ -192,8 +192,8 @@ describe('Credentials Provider', () => {
 
   it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
     const headers = new Headers()
-    headers.append('x-forwarded-proto', "https")
-    headers.append('x-forwarded-host', "example.com")
+    headers.append('x-forwarded-proto', 'https')
+    headers.append('x-forwarded-host', 'example.com')
     const res = await app.request('http://localhost/api/auth/signin', {
       headers,
     })
