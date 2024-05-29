@@ -5,7 +5,7 @@ import type { z, ZodSchema, ZodError } from 'zod'
 export type Hook<T, E extends Env, P extends string, O = {}> = (
   result: { success: true; data: T } | { success: false; error: ZodError; data: T },
   c: Context<E, P>
-) => Response | Promise<Response> | void | Promise<void> | TypedResponse<O> | Promise<TypedResponse<O>>
+) => Response | void | TypedResponse<O> | Promise<Response | void | TypedResponse<O>>
 
 type HasUndefined<T> = undefined extends T ? true : false
 
@@ -50,6 +50,7 @@ export const zValidator = <
         if (hookResult instanceof Response) {
           return hookResult
         }
+
         if ('response' in hookResult) {
           return hookResult.response
         }
