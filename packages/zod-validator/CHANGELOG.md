@@ -1,14 +1,8 @@
 # @hono/zod-validator
 
-## 0.3.0
-
-### Minor Changes
-
-- feat: support async hook
-
 ### Patch Changes
 
-- feat: support async hook
+- patch: support async hook
 
 ## 0.2.1
 
