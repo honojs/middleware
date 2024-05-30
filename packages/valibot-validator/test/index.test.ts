@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import { number, object, string, optional, numberAsync, objectAsync, stringAsync, optionalAsync } from 'valibot'
+import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
 import { vValidator } from '../src'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -167,14 +167,14 @@ describe('Async', () => {
   const app = new Hono()
 
   const schemaAsync = objectAsync({
-    name: stringAsync(),
-    age: numberAsync(),
+    name: string(),
+    age: number(),
   })
 
   const querySchemaAsync = optionalAsync(
     objectAsync({
-      search: optionalAsync(stringAsync()),
-      page: optionalAsync(numberAsync()),
+      search: optionalAsync(string()),
+      page: optionalAsync(number()),
     })
   )
 
@@ -264,8 +264,8 @@ describe('With Hook Async', () => {
   const app = new Hono()
 
   const schemaAsync = objectAsync({
-    id: numberAsync(),
-    title: stringAsync(),
+    id: number(),
+    title: string(),
   })
 
   app.post(
