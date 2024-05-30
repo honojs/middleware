@@ -1,15 +1,6 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import {
-  number,
-  object,
-  string,
-  optional,
-  numberAsync,
-  objectAsync,
-  stringAsync,
-  optionalAsync,
-} from 'valibot'
+import { number, object, string, optional, numberAsync, objectAsync, stringAsync, optionalAsync } from 'valibot'
 import { vValidator } from '../src'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

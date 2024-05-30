@@ -20,7 +20,7 @@ export interface NodeWebSocketInit {
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
-  const wss = new WebSocketServer({ noServer: true })
+  const wss = new WebSocketServer({noServer: true})
 
   return {
     injectWebSocket(server) {

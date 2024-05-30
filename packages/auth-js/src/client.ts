@@ -66,6 +66,7 @@ export interface SignOutParams<R extends boolean = true> {
   redirect?: R
 }
 
+
 export interface SessionProviderProps {
   children: React.ReactNode
   session?: Session | null
@@ -135,11 +136,11 @@ export function now() {
 }
 
 export function parseUrl(url?: string) {
-  const defaultUrl = 'http://localhost:3000/api/auth'
-  const parsedUrl = new URL(url?.startsWith('http') ? url : `https://${url}` || defaultUrl)
+  const defaultUrl = 'http://localhost:3000/api/auth';
+  const parsedUrl = new URL(url?.startsWith('http') ? url : `https://${url}` || defaultUrl);
 
-  const path = parsedUrl.pathname === '/' ? '/api/auth' : parsedUrl.pathname.replace(/\/$/, '')
-  const base = `${parsedUrl.origin}${path}`
+  const path = parsedUrl.pathname === '/' ? '/api/auth' : parsedUrl.pathname.replace(/\/$/, '');
+  const base = `${parsedUrl.origin}${path}`;
 
   return {
     origin: parsedUrl.origin,
@@ -147,5 +148,5 @@ export function parseUrl(url?: string) {
     path,
     base,
     toString: () => base,
-  }
+  };
 }
