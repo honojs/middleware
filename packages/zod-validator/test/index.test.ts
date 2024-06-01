@@ -159,15 +159,66 @@ describe('With Hook', () => {
       if (!result.success) {
         return c.text(`${result.data.id} is invalid!`, 400)
       }
-      const data = result.data
-      return c.text(`${data.id} is valid!`)
     }),
     (c) => {
       const data = c.req.valid('json')
-      return c.json({
-        success: true,
-        message: `${data.id} is ${data.title}`,
-      })
+      return c.text(`${data.id} is valid!`)
+    }
+  )
+
+  it('Should return 200 response', async () => {
+    const req = new Request('http://localhost/post', {
+      body: JSON.stringify({
+        id: 123,
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('123 is valid!')
+  })
+
+  it('Should return 400 response', async () => {
+    const req = new Request('http://localhost/post', {
+      body: JSON.stringify({
+        id: '123',
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    expect(await res.text()).toBe('123 is invalid!')
+  })
+})
+
+describe('With Async Hook', () => {
+  const app = new Hono()
+
+  const schema = z.object({
+    id: z.number(),
+    title: z.string(),
+  })
+
+  app.post(
+    '/post',
+    zValidator('json', schema, async (result, c) => {
+      if (!result.success) {
+        return c.text(`${result.data.id} is invalid!`, 400)
+      }
+    }),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.text(`${data.id} is valid!`)
     }
   )
 
