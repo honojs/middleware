@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.2.2
+
+### Patch Changes
+
+- [#552](https://github.com/honojs/middleware/pull/552) [`aa055494974eb911ec784e6462691aafefd98125`](https://github.com/honojs/middleware/commit/aa055494974eb911ec784e6462691aafefd98125) Thanks [@EdamAme-x](https://github.com/EdamAme-x)! - fix: support async hook
+
 ## 0.2.1
 
 ### Patch Changes
