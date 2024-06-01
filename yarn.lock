@@ -2182,7 +2182,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/zod-validator@npm:0.2.1, @hono/zod-validator@workspace:packages/zod-validator":
+"@hono/zod-validator@npm:0.2.1":
+  version: 0.2.1
+  resolution: "@hono/zod-validator@npm:0.2.1"
+  peerDependencies:
+    hono: ">=3.9.0"
+    zod: ^3.19.1
+  checksum: de399abc8ab26552111c745ae0ecad714af549e79b0412c2285d057bde72b434b09b8f9b65940d3a4b2dd82dcfb52e1601ac505effb410e4439e9c8835a99d7d
+  languageName: node
+  linkType: hard
+
+"@hono/zod-validator@workspace:packages/zod-validator":
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
