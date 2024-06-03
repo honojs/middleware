@@ -299,7 +299,7 @@ export class OpenAPIHono<
       InputTypeJson<R>,
     P extends string = ConvertPathType<R['path']>
   >(
-    route: R,
+    {middleware: routeMiddleware, ...route}: R,
     handler: Handler<
       E,
       P,
@@ -379,10 +379,10 @@ export class OpenAPIHono<
       }
     }
 
-    const middleware = route.middleware
-      ? Array.isArray(route.middleware)
-        ? route.middleware
-        : [route.middleware]
+    const middleware = routeMiddleware
+      ? Array.isArray(routeMiddleware)
+        ? routeMiddleware
+        : [routeMiddleware]
       : []
 
     this.on(
