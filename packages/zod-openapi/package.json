@@ -48,11 +48,12 @@
     "tsup": "^8.0.1",
     "typescript": "^5.4.4",
     "vitest": "^1.4.0",
+    "yaml": "^2.4.3",
     "zod": "^3.22.1"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.0.0",
-    "@hono/zod-validator": "0.2.1"
+    "@hono/zod-validator": "0.2.2"
   },
   "engines": {
     "node": ">=16.0.0"
