@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.2
+
+### Patch Changes
+
+- [#557](https://github.com/honojs/middleware/pull/557) [`69e53644647c156e5f6df0d981eabcd490c4e60b`](https://github.com/honojs/middleware/commit/69e53644647c156e5f6df0d981eabcd490c4e60b) Thanks [@arjunyel](https://github.com/arjunyel)! - Fix OpenAPI yaml with route middleware
+
 ## 0.14.1
 
 ### Patch Changes
