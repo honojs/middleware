@@ -12,7 +12,7 @@
     "test": "vitest run",
     "build": "tsup ./src/*.ts ./src/transpilers/*.ts --format esm,cjs --dts --no-splitting --external esbuild-wasm,esbuild",
     "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "release": "bun run build && bun run test && bun run publint && bun run publish"
   },
   "exports": {
     ".": {

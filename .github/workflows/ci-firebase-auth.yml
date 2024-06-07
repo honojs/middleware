@@ -20,6 +20,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test-with-emulator
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run test-with-emulator
