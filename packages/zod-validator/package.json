@@ -21,7 +21,7 @@
     "copy:package.cjs.json": "cp ./package.cjs.json ./dist/cjs/package.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && bun run build:cjs && bun run build:esm && bun copy:package.cjs.json",
+    "build": "rimraf dist && bun run build:cjs && bun run build:esm && bun run copy:package.cjs.json",
     "prerelease": "bun run build && bun run test",
     "release": "bun run publish"
   },
