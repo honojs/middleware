@@ -35,7 +35,7 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
-import type { Prettify, RemoveBlankRecord } from 'hono/utils/types'
+import type { Simplify, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
 import { z, ZodType } from 'zod'
