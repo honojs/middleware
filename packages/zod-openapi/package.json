@@ -12,7 +12,7 @@
     "test": "vitest run && vitest --typecheck --run --passWithNoTests",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "release": "bun run build && bun run test && bun run publint && bun run publish"
   },
   "exports": {
     ".": {
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.0.0",
-    "@hono/zod-validator": "0.2.2"
+    "@hono/zod-validator": "^0.2.2"
   },
   "engines": {
     "node": ">=16.0.0"

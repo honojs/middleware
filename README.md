@@ -41,7 +41,7 @@ We use [changesets](https://github.com/changesets/changesets) to manage releases
 Run the following command at the top level to describe any changes.
 
 ```
-yarn changeset
+bun changeset
 ```
 
 When merged into the main, a pull request for release is created.

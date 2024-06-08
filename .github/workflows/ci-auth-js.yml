@@ -20,6 +20,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run build
+      - run: bun run test
