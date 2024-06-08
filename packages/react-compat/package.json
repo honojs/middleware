@@ -1,0 +1,33 @@
+{
+  "name": "@hono/react-compat",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Alias of hono/jsx for replacement of React",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup ./src --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.mts",
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.js"
+    }
+  },
+  "peerDependencies": {
+    "hono": ">=4.5.*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1"
+  }
+}
