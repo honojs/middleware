@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#553](https://github.com/honojs/middleware/pull/553) [`7375c096b51b3e050cc808c29f5d122c028e4291`](https://github.com/honojs/middleware/commit/7375c096b51b3e050cc808c29f5d122c028e4291) Thanks [@chimame](https://github.com/chimame)! - changed supported version of valibot to 0.31.0 or later
+
 ## 0.2.5
 
 ### Patch Changes
