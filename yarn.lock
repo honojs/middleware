@@ -2155,10 +2155,10 @@ __metadata:
     hono: "npm:^4.0.10"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
-    valibot: "npm:0.31.0-rc.6"
+    valibot: "npm:^0.31.0"
   peerDependencies:
     hono: ">=3.9.0"
-    valibot: ">=0.13.1 <1"
+    valibot: ">=0.31.0 <1"
   languageName: unknown
   linkType: soft
 
@@ -18180,10 +18180,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valibot@npm:0.31.0-rc.6":
-  version: 0.31.0-rc.6
-  resolution: "valibot@npm:0.31.0-rc.6"
-  checksum: bdd0671cc84cfd4cdb07a12f997ee57def9fdfd4b5e0b2ad5bca604e171bd54baf730db821283d0a4c11ebd96cd8f7b8c08a35e426a413d3ad2a887014346d5e
+"valibot@npm:^0.31.0":
+  version: 0.31.1
+  resolution: "valibot@npm:0.31.1"
+  checksum: 666abefeffe1b92e324bc1f35e9052929365d9646f324197d21a506ada07e605958853e04144996b698c866cc327be78138712a5b79e1dbe98caf52229b49fc0
   languageName: node
   linkType: hard
 
