@@ -1,7 +1,7 @@
 {
   "name": "@hono/react-compat",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Alias of hono/jsx for replacement of React",
   "license": "MIT",
   "main": "dist/index.js",
