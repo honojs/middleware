@@ -2042,6 +2042,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/react-compat@workspace:packages/react-compat":
+  version: 0.0.0-use.local
+  resolution: "@hono/react-compat@workspace:packages/react-compat"
+  dependencies:
+    hono: "npm:4.5.0-rc.1"
+    tsup: "npm:^8.0.1"
+  peerDependencies:
+    hono: ">=4.5.*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/react-renderer@workspace:packages/react-renderer":
   version: 0.0.0-use.local
   resolution: "@hono/react-renderer@workspace:packages/react-renderer"
@@ -9596,6 +9607,13 @@ __metadata:
     typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
+
+"hono@npm:4.5.0-rc.1":
+  version: 4.5.0-rc.1
+  resolution: "hono@npm:4.5.0-rc.1"
+  checksum: aaba4187da6dfb697b63772fd3f05466697a01eb2cc8a0c189a0bc464d49f6cedc1caa107b390488634e72544551ed8b34d906b9ef5c5780f1860a68666d56de
+  languageName: node
+  linkType: hard
 
 "hono@npm:^3.11.7":
   version: 3.11.7

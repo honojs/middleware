@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "description": "Alias of hono/jsx for replacement of React",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup ./src --format esm,cjs --dts",
@@ -14,20 +13,21 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./*": {
-      "types": "./dist/*.d.mts",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.js"
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
     }
   },
   "peerDependencies": {
     "hono": ">=4.5.*"
   },
   "devDependencies": {
+    "hono": "4.5.0-rc.1",
     "tsup": "^8.0.1"
   }
 }
