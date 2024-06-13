@@ -1,5 +1,11 @@
 # @hono/typia-validator
 
+## 0.0.5
+
+### Patch Changes
+
+- [#570](https://github.com/honojs/middleware/pull/570) [`66366075d4f268ad0190a30f1c77ca433cacf0b3`](https://github.com/honojs/middleware/commit/66366075d4f268ad0190a30f1c77ca433cacf0b3) Thanks [@ryoppippi](https://github.com/ryoppippi)! - PeerDependency of Typia is updated from v5 to v6
+
 ## 0.0.4
 
 ### Patch Changes
