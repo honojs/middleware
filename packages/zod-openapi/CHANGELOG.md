@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.3
+
+### Patch Changes
+
+- [#574](https://github.com/honojs/middleware/pull/574) [`ef9f45ab692c81e1474cfb054f55a2c9fc39bdf8`](https://github.com/honojs/middleware/commit/ef9f45ab692c81e1474cfb054f55a2c9fc39bdf8) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: relax types to support `.refine()` for an object
+
 ## 0.14.2
 
 ### Patch Changes
