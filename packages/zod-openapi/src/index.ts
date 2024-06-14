@@ -8,11 +8,11 @@ import type {
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
 import {
+  OpenAPIRegistry,
   OpenApiGeneratorV3,
   OpenApiGeneratorV31,
-  OpenAPIRegistry,
+  extendZodWithOpenApi,
 } from '@asteasolutions/zod-to-openapi'
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
@@ -35,10 +35,10 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
-import type { Prettify, RemoveBlankRecord } from 'hono/utils/types'
+import type { RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
-import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
-import { z, ZodType } from 'zod'
+import type { AnyZodObject, ZodError, ZodSchema } from 'zod'
+import { ZodType, z } from 'zod'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -48,10 +48,10 @@ export type RouteConfig = RouteConfigBase & {
 
 type RequestTypes = {
   body?: ZodRequestBody
-  params?: AnyZodObject
-  query?: AnyZodObject
-  cookies?: AnyZodObject
-  headers?: AnyZodObject | ZodType<unknown>[]
+  params?: ZodType
+  query?: ZodType
+  cookies?: ZodType
+  headers?: ZodType | ZodType[]
 }
 
 type IsJson<T> = T extends string
@@ -77,7 +77,7 @@ type InputTypeBase<
   Part extends string,
   Type extends string
 > = R['request'] extends RequestTypes
-  ? RequestPart<R, Part> extends AnyZodObject
+  ? RequestPart<R, Part> extends ZodType
     ? {
         in: { [K in Type]: z.input<RequestPart<R, Part>> }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
@@ -299,7 +299,7 @@ export class OpenAPIHono<
       InputTypeJson<R>,
     P extends string = ConvertPathType<R['path']>
   >(
-    {middleware: routeMiddleware, ...route}: R,
+    { middleware: routeMiddleware, ...route }: R,
     handler: Handler<
       E,
       P,

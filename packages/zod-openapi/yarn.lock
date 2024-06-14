@@ -596,7 +596,6 @@ __metadata:
     "@hono/zod-validator": "npm:0.2.2"
     hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
-    openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
     vitest: "npm:^1.4.0"
@@ -2381,9 +2380,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.3.6":
-  version: 4.3.6
-  resolution: "hono@npm:4.3.6"
-  checksum: 2e27eb1e90b392a5884af573179d29e3f717f5e803c2b90f1383488f42bc986810e8e714d5bb1205935fda1d3e9944b3262aed88e852ea44d0e13d799474fa5b
+  version: 4.4.6
+  resolution: "hono@npm:4.4.6"
+  checksum: 065318f3fe021320b59f3daddacf7d74bfc3303de55f415a999b6967a9f09714e136528bc86cc880a45633cd85dec5428e41e902b5e3a3809f3cd17204302668
   languageName: node
   linkType: hard
 
