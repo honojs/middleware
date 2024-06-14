@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.4
+
+### Patch Changes
+
+- [#576](https://github.com/honojs/middleware/pull/576) [`9a9de504942358be5a77236231e20f5016b6d1a9`](https://github.com/honojs/middleware/commit/9a9de504942358be5a77236231e20f5016b6d1a9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use `JSONParsed` for creating a response type
+
 ## 0.14.3
 
 ### Patch Changes
