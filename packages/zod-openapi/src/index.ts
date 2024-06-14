@@ -27,6 +27,7 @@ import type {
   TypedResponse,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
+import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -35,7 +36,6 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
-import type { RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { AnyZodObject, ZodError, ZodSchema } from 'zod'
 import { ZodType, z } from 'zod'
@@ -167,7 +167,7 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> = {
   > extends never
     ? TypedResponse<{}, ExtractStatusCode<Status>, string>
     : TypedResponse<
-        ExtractContent<R['responses'][Status]['content']>,
+        JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
         ExtractStatusCode<Status>,
         'json'
       >

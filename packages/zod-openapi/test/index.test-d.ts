@@ -1,5 +1,5 @@
-import type { Hono, Env, ToSchema } from 'hono'
-import { describe, it, expectTypeOf, assertType } from 'vitest'
+import type { Env, Hono, ToSchema } from 'hono'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src/index'
 
 describe('Types', () => {
@@ -169,5 +169,32 @@ describe('Input types', () => {
         name: 'Ultra-man',
       })
     })
+  })
+})
+
+describe('Response schema includes a Date type', () => {
+  it('Should not throw a type error', () => {
+    new OpenAPIHono().openapi(
+      createRoute({
+        method: 'get',
+        path: '/example',
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  updatedAt: z.date(),
+                }),
+              },
+            },
+            description: '',
+          },
+        },
+      }),
+      async (ctx) => {
+        // Don't throw an error:
+        return ctx.json({ updatedAt: new Date() }, 200)
+      }
+    )
   })
 })
