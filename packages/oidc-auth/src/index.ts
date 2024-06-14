@@ -243,10 +243,10 @@ const generateAuthorizationRequestUrl = async (
 
   const scopes = ['openid'];  
   if (as.scopes_supported?.includes('email')) {
-    scopes.push('email');
+    scopes.push('email')
   }
   if (as.scopes_supported?.includes('offline_access')) {
-    scopes.push('offline_access');
+    scopes.push('offline_access')
   }
   authorizationRequestUrl.searchParams.set('scope', scopes.join(' '))
   
