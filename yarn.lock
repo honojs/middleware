@@ -2182,7 +2182,6 @@ __metadata:
     "@hono/zod-validator": "npm:0.2.2"
     hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
-    openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
     vitest: "npm:^1.4.0"
