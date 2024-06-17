@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.5
+
+### Patch Changes
+
+- [#582](https://github.com/honojs/middleware/pull/582) [`053a85c722833b1f670fe667fb80b3cbe88f9a4d`](https://github.com/honojs/middleware/commit/053a85c722833b1f670fe667fb80b3cbe88f9a4d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@asteasolutions/zod-to-openapi`
+
 ## 0.14.4
 
 ### Patch Changes
