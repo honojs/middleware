@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- [#585](https://github.com/honojs/middleware/pull/585) [`414715b0d35f05c050377cb9d6b58dfa8bf8dba3`](https://github.com/honojs/middleware/commit/414715b0d35f05c050377cb9d6b58dfa8bf8dba3) Thanks [@gitblit](https://github.com/gitblit)! - Added support for `defaultModelsExpandDepth`, `defaultModelExpandDepth`, `defaultModelRendering`, `displayRequestDuration`, `filter`, `showExtensions`, and `showCommonExtensions` configuration options
+
 ## 0.2.2
 
 ### Patch Changes
