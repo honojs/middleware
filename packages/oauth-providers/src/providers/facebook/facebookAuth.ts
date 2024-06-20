@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { setCookie, getCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -16,8 +17,8 @@ export function facebookAuth(options: {
     const newState = getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || (c.env?.FACEBOOK_ID as string),
-      client_secret: options.client_secret || (c.env?.FACEBOOK_SECRET as string),
+      client_id: options.client_id || (env(c).FACEBOOK_ID as string),
+      client_secret: options.client_secret || (env(c).FACEBOOK_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,

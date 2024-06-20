@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { setCookie, getCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -17,8 +18,8 @@ export function discordAuth(options: {
 
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || (c.env?.DISCORD_ID as string),
-      client_secret: options.client_secret || (c.env?.DISCORD_SECRET as string),
+      client_id: options.client_id || (env(c).DISCORD_ID as string),
+      client_secret: options.client_secret || (env(c).DISCORD_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
