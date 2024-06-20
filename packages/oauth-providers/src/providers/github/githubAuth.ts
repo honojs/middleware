@@ -12,6 +12,7 @@ export function githubAuth(options: {
   client_secret?: string
   scope?: GitHubScope[]
   oauthApp?: boolean
+  // TODO: support redirect_uri . see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()

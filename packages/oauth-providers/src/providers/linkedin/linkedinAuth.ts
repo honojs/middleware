@@ -12,6 +12,7 @@ export function linkedinAuth(options: {
   client_secret?: string
   scope?: LinkedInScope[]
   appAuth?: boolean
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -19,7 +20,7 @@ export function linkedinAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).LINKEDIN_ID as string),
       client_secret: options.client_secret || (env(c).LINKEDIN_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
       appAuth: options.appAuth || false,

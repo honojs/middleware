@@ -12,6 +12,7 @@ export function facebookAuth(options: {
   fields: Fields[]
   client_id?: string
   client_secret?: string
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -19,7 +20,7 @@ export function facebookAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).FACEBOOK_ID as string),
       client_secret: options.client_secret || (env(c).FACEBOOK_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,
       state: newState,

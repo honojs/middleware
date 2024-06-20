@@ -11,6 +11,7 @@ export function discordAuth(options: {
   scope: Scopes[]
   client_id?: string
   client_secret?: string
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     // Generate encoded "keys"
@@ -20,7 +21,7 @@ export function discordAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).DISCORD_ID as string),
       client_secret: options.client_secret || (env(c).DISCORD_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
       code: c.req.query('code'),
