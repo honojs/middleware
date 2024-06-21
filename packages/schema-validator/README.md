@@ -1,7 +1,16 @@
-# Effect Schema validator middleware for Hono
-The validator middleware using [Effect Schema](https://github.com/Effect-TS/effect/blob/main/packages/schema/README.md) for Hono applications.
+# Effect Schema Validator Middleware for Hono
 
-This middleware provides a robust way to define schemas and validate data with full type safety and functional error handling.
+This package provides a validator middleware using [Effect Schema](https://github.com/Effect-TS/effect/blob/main/packages/schema/README.md) for [Hono](https://honojs.dev) applications. With this middleware, you can define schemas using Effect Schema and validate incoming data in your Hono routes.
+
+## Why Effect Schema?
+
+Effect Schema offers several advantages over other validation libraries:
+
+1. Bidirectional transformations: Effect Schema can both decode and encode data.
+2. Integration with Effect: It inherits benefits from the Effect ecosystem, such as dependency tracking in transformations.
+3. Highly customizable: Users can attach meta-information through annotations.
+4. Functional programming style: Uses combinators and transformations for schema definition.
+
 
 ## Usage
 
@@ -10,56 +19,38 @@ import { Schema as S } from "@effect/schema"
 import { schemaValidator } from "@hono/schema-validator"
 import { Effect } from "effect"
 
+const app = new Hono()
+
 const User = S.Struct({
   name: S.String,
   age: S.Number,
 })
 
-const UserType = S.Schema.Type<typeof User>
-
-const validate = schemaValidator('json', user)
-
-app.post('/user', validate, (c) => {
-  return Effect.gen(function* () {
-    const { name, age } = yield* c.valid<SchemaType>()
-
-    // Return a response using Hono's context
-    return c.json({
-      success: true,
-      message: `${name} is ${age} years old.`,
-    })
-  }).catchError((error) => {
-    // Handle errors using Effect's error handling
-    return c.text(`Error: ${error.message}`, 400)
-  })
-})
-
-app.post('/author', schemaValidator('json', schema), (c) => {
-  const data = c.valid<S.Schema.Type<typeof schema>>()
-  return c.json({
-    success: true,
-    message: `${data.name} is ${data.age}`,
-  })
-})
-```
-
-Hook:
-
-```ts
 app.post(
-  '/post',
-  schemaValidator('json', schema, (result, c) => {
-    if (Either.isLeft(result)) {
-      return c.text('Invalid!', 400)
+    '/user',
+    schemaValidator('json', User),
+    (c) => {
+      const user = c.req.valid('json') as S.Schema.Type<typeof User>
+
+      return c.json({
+        success: true,
+        message: `${user.name} is ${user.age}`
+      })
     }
-  })
-  //...
-)
+  )
 ```
+
+## API
+
+### `schemaValidator(target, schema)`
+
+- `target`: The target of validation ('json', 'form', 'query', etc.)
+- `schema`: An Effect Schema schema
+
 
 ## Author
 
-Gunther Brunner <https://github.com/gunta>
+Günther Brunner <https://github.com/gunta>
 
 ## License
 
