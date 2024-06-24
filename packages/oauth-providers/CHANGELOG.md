@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.5.1
+
+### Patch Changes
+
+- [#588](https://github.com/honojs/middleware/pull/588) [`69eca66e4de153fa46a6298314a1688fd4efbe4c`](https://github.com/honojs/middleware/commit/69eca66e4de153fa46a6298314a1688fd4efbe4c) Thanks [@jokester](https://github.com/jokester)! - load env.SECRET with hono/adapter, to support non-worker
+
 ## 0.5.0
 
 ### Minor Changes
