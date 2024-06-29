@@ -115,7 +115,7 @@ describe('tRPC Adapter Middleware passing asynchronous Context', () => {
   it.only('Should return 200 response', async () => {
     const searchParams = new URLSearchParams({
       input: JSON.stringify({ '0': 'Hono' }),
-      batch: '2',
+      batch: '1',
     })
     const req = new Request(`http://localhost/trpc/hello?${searchParams.toString()}`)
     const res = await app.request(req)
@@ -123,7 +123,7 @@ describe('tRPC Adapter Middleware passing asynchronous Context', () => {
     expect(await res.json()).toEqual([
       {
         result: {
-          data: 'Hello World, batch is 2',
+          data: 'Hello World, batch is 1',
         },
       },
     ])

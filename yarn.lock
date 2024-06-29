@@ -2120,13 +2120,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/trpc-server@workspace:packages/trpc-server"
   dependencies:
-    "@trpc/server": "npm:^10.10.0"
+    "@trpc/server": "npm:^10.10.0 || >11.0.0-rc"
     hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
     zod: "npm:^3.20.2"
   peerDependencies:
-    "@trpc/server": ^10.10.0
+    "@trpc/server": ^10.10.0 || >11.0.0-rc
     hono: ">=4.*"
   languageName: unknown
   linkType: soft
@@ -3716,10 +3716,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^10.10.0":
-  version: 10.44.1
-  resolution: "@trpc/server@npm:10.44.1"
-  checksum: 838fb12286b91c4f1fe22479b426d6c1100700d253980c54b3417358008abc5e7c3f7a78f8ac0526d7693fcf70276bf42ce5fd6d25b6db2b6e3fdbe16c087dca
+"@trpc/server@npm:^10.10.0 || >11.0.0-rc":
+  version: 11.0.0-rc.433
+  resolution: "@trpc/server@npm:11.0.0-rc.433"
+  checksum: feb96e58b049566ab4b10ab563130db360ddd80f211a0048e92f5cbbefa0bf174befe776a7fbd8dd799eece61578b3a8d7ce4eca122e1257e49b99f2bd467cd3
   languageName: node
   linkType: hard
 
