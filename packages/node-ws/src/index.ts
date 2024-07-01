@@ -3,7 +3,9 @@ import type { Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
+import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
+import type { IncomingMessage } from 'http'
 
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket
@@ -20,7 +22,22 @@ export interface NodeWebSocketInit {
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
-  const wss = new WebSocketServer({noServer: true})
+  const wss = new WebSocketServer({ noServer: true })
+  const waiter = new Map<IncomingMessage, (ws: WebSocket) => void>()
+
+  wss.on('connection', (ws, request) => {
+    const waiterFn = waiter.get(request)
+    if (waiterFn) {
+      waiterFn(ws)
+      waiter.delete(request)
+    }
+  })
+
+  const nodeUpgradeWebSocket = (request: IncomingMessage) => {
+    return new Promise<WebSocket>((resolve) => {
+      waiter.set(request, resolve)
+    })
+  }
 
   return {
     injectWebSocket(server) {
@@ -34,9 +51,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           }
           headers.append(key, Array.isArray(value) ? value[0] : value)
         }
-        await init.app.request(url, {
-          headers: headers,
-        })
+        await init.app.request(
+          url,
+          { headers: headers },
+          { incoming: request, outgoing: undefined }
+        )
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit('connection', ws, request)
         })
@@ -49,8 +68,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           await next()
           return
         }
-        const events = await createEvents(c)
-        wss.on('connection', (ws) => {
+
+        ;(async () => {
+          const events = await createEvents(c)
+          const ws = await nodeUpgradeWebSocket(c.env.incoming)
+
           const ctx: WSContext = {
             binaryType: 'arraybuffer',
             close(code, reason) {
@@ -92,7 +114,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
               ctx
             )
           })
-        })
+        })()
 
         return new Response()
       },
