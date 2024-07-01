@@ -8,11 +8,7 @@ import type {
   FacebookUser,
 } from '../src/providers/facebook'
 import type { GitHubErrorResponse, GitHubTokenResponse } from '../src/providers/github'
-import type {
-  GoogleErrorResponse,
-  GoogleTokenResponse,
-  GoogleUser,
-} from '../src/providers/google'
+import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from '../src/providers/google'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
 
