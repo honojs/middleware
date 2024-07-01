@@ -2,9 +2,9 @@ import { Hono } from 'hono'
 import { setupServer } from 'msw/node'
 import type { DiscordUser } from '../src/providers/discord'
 import {
+  discordAuth,
   refreshToken as discordRefresh,
   revokeToken as discordRevoke,
-  discordAuth,
 } from '../src/providers/discord'
 import { facebookAuth } from '../src/providers/facebook'
 import type { FacebookUser } from '../src/providers/facebook'
@@ -18,30 +18,30 @@ import type { XUser } from '../src/providers/x'
 import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
 import type { Token } from '../src/types'
 import {
+  discordCodeError,
+  discordRefreshToken,
+  discordRefreshTokenError,
+  discordToken,
+  discordUser,
+  dummyCode,
   dummyToken,
+  facebookCodeError,
+  facebookUser,
+  githubCodeError,
+  githubToken,
+  githubUser,
+  googleCodeError,
   googleUser,
   handlers,
-  facebookUser,
-  githubUser,
-  dummyCode,
-  googleCodeError,
-  facebookCodeError,
-  githubToken,
-  githubCodeError,
   linkedInCodeError,
-  linkedInUser,
   linkedInToken,
+  linkedInUser,
   xCodeError,
-  xUser,
-  xToken,
   xRefreshToken,
   xRefreshTokenError,
   xRevokeTokenError,
-  discordCodeError,
-  discordUser,
-  discordToken,
-  discordRefreshToken,
-  discordRefreshTokenError,
+  xToken,
+  xUser,
 } from './handlers'
 
 const server = setupServer(...handlers)
