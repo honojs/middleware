@@ -928,6 +928,7 @@ This parameters can be useful if
 
 1. `hono` process cannot infer correct redirect_uri from the request. For example, when the server runs behind a reverse proxy and have no access to its internet hostname.
 2. Or, in need to start oauth flow from a different route.
+3. Or, in need to encode more info into `redirect_uri`.
 
 ```ts
 const app = new Hono();
