@@ -322,7 +322,17 @@ export class OpenAPIHono<
           I,
           E,
           P,
-          RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+          R extends {
+            responses: {
+              [statusCode: number]: {
+                content: {
+                  [mediaType: string]: ZodMediaTypeObject
+                }
+              }
+            }
+          }
+            ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
+            : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
         >
       | undefined = this.defaultHook
   ): OpenAPIHono<
