@@ -379,7 +379,8 @@ describe('OAuth Middleware', () => {
         grantedScopes: string[]
       }
 
-      expect(res?.status).toBe(200)
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(200)
       expect(response.user).toEqual(googleUser)
       expect(response.grantedScopes).toEqual(dummyToken.scope.split(' '))
       expect(response.token).toEqual({
