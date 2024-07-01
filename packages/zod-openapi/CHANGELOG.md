@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.6
+
+### Patch Changes
+
+- [#607](https://github.com/honojs/middleware/pull/607) [`375c98b145560c855f9000c523734bb2d31990c9`](https://github.com/honojs/middleware/commit/375c98b145560c855f9000c523734bb2d31990c9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: remove the type error for the hook
+
 ## 0.14.5
 
 ### Patch Changes
