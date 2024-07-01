@@ -3,7 +3,7 @@ import { skipCSRFCheck } from '@auth/core'
 import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from "vitest"
 import type { AuthConfig } from '../src'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
 
@@ -78,9 +78,9 @@ describe('Config', () => {
   })
 })
 
-describe('reqWithEnvUrl()', () => {
+describe('reqWithEnvUrl()', async() => {
   const req = new Request('http://request-base/request-path')
-  const newReq = reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
+  const newReq = await reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
   it('Should rewrite the base path', () => {
     expect(newReq.url.toString()).toBe('https://auth-url-base/request-path')
   })
@@ -126,6 +126,7 @@ describe('Credentials Provider', () => {
       password: {},
     },
     authorize: (credentials) => {
+
       if (credentials.password === 'password') {
         return user
       }
