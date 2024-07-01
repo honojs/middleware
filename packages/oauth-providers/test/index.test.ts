@@ -62,6 +62,17 @@ describe('OAuth Middleware', () => {
       scope: ['openid', 'email', 'profile'],
     })
   )
+  app.use(
+    '/google-custom-redirect',
+    (c, next) => {
+      return googleAuth({
+        client_id,
+        client_secret,
+        scope: ['openid', 'email', 'profile'],
+        redirect_uri: 'http://localhost:3000/google',
+      })(c, next)
+    },
+  )
   app.get('/google', (c) => {
     const user = c.get('user-google')
     const token = c.get('token')
@@ -295,6 +306,16 @@ describe('OAuth Middleware', () => {
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(302)
+      expect(res.headers)
+    })
+
+    it('Should redirect to custom redirect_uri', async () => {
+      const res = await app.request('/google-custom-redirect')
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(302)
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/google')
     })
 
     it('Prevent CSRF attack', async () => {
