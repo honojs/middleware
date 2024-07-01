@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.7
+
+### Patch Changes
+
+- [#609](https://github.com/honojs/middleware/pull/609) [`b06bde6ef59368e00c7c75f5866687df2ce47bd9`](https://github.com/honojs/middleware/commit/b06bde6ef59368e00c7c75f5866687df2ce47bd9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support a base path
+
 ## 0.14.6
 
 ### Patch Changes
