@@ -1019,14 +1019,13 @@ describe('With hc', () => {
       },
       (result, c) => {
         if (!result.success) {
-          const res = c.json(
+          return c.json(
             {
               ok: false,
               source: 'routeHook' as const,
             },
             400
           )
-          return res
         }
       }
     )
