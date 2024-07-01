@@ -27,14 +27,6 @@ export function linkedinAuth(options: {
       code: c.req.query('code'),
     })
 
-    // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
-      const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
-        throw new HTTPException(401)
-      }
-    }
-
     // Redirect to login dialog
     if (!auth.code && !options.appAuth) {
       setCookie(c, 'state', newState, {
@@ -44,6 +36,14 @@ export function linkedinAuth(options: {
         // secure: true,
       })
       return c.redirect(auth.redirect())
+    }
+
+    // Avoid CSRF attack by checking state
+    if (c.req.url.includes('?')) {
+      const storedState = getCookie(c, 'state')
+      if (c.req.query('state') !== storedState) {
+        throw new HTTPException(401)
+      }
     }
 
     if (options.appAuth) {

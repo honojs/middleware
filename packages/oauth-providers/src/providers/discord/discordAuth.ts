@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from 'hono'
-import { setCookie, getCookie } from 'hono/cookie'
+import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
@@ -31,14 +31,6 @@ export function discordAuth(options: {
       },
     })
 
-    // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
-      const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
-        throw new HTTPException(401)
-      }
-    }
-
     // Redirect to login dialog
     if (!auth.code) {
       setCookie(c, 'state', newState, {
@@ -48,6 +40,14 @@ export function discordAuth(options: {
         // secure: true,
       })
       return c.redirect(auth.redirect())
+    }
+
+    // Avoid CSRF attack by checking state
+    if (c.req.url.includes('?')) {
+      const storedState = getCookie(c, 'state')
+      if (c.req.query('state') !== storedState) {
+        throw new HTTPException(401)
+      }
     }
 
     // Retrieve user data from discord
