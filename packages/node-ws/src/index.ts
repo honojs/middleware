@@ -52,7 +52,10 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           return
         }
         const events = await createEvents(c)
-        wss.on('connection', (ws) => {
+        wss.on('connection', (ws, request) => {
+          if (request !== c.env.incoming) {
+            return
+          }
           const ctx: WSContext = {
             binaryType: 'arraybuffer',
             close(code, reason) {

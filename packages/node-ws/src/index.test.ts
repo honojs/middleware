@@ -12,20 +12,10 @@ describe('WebSocket helper', () => {
 
   beforeEach(async () => {
     app = new Hono()
-    const websocketHelpers = createNodeWebSocket({ app })
-    injectWebSocket = websocketHelpers.injectWebSocket
-    upgradeWebSocket = websocketHelpers.upgradeWebSocket
+    ;({ injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
-      const server = serve(
-        {
-          fetch: app.fetch,
-          port: 3030,
-        },
-        () => {
-          resolve(server)
-        }
-      )
+      const server = serve({ fetch: app.fetch, port: 3030 }, () => resolve(server))
     })
     injectWebSocket(server)
   })
@@ -81,8 +71,9 @@ describe('WebSocket helper', () => {
         onOpen() {
           openConnections++
         },
-        onMessage(data) {
+        onMessage(data, ws) {
           messages.push(data.data as string)
+          ws.send(data.data as string)
         },
       }))
     )
