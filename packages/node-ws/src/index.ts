@@ -37,7 +37,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         await init.app.request(
           url,
           { headers: headers },
-          { incoming: request, outcoming: undefined }
+          { incoming: request, outgoing: undefined }
         )
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit('connection', ws, request)
