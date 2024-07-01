@@ -918,6 +918,50 @@ app.post('/remove-user', async (c, next) => {
 })
 ```
 
+## Advance Usage
+
+### Customize `redirect_uri`
+
+All the provider middlewares also accept a `redirect_uri` parameter that overrides the default `redirect_uri = c.req.url` behavior.
+
+This parameters can be useful if
+
+1. `hono` process cannot infer correct redirect_uri from the request. For example, when the server runs behind a reverse proxy and have no access to its internet hostname.
+2. Or, in need to start oauth flow from a different route.
+
+```ts
+const app = new Hono();
+
+const SITE_ORIGIN = `https://my-site.com`;
+const OAUTH_CALLBACK_PATH = `/oauth/google`;
+
+app.get('/*',
+  async (c, next) => {
+    const session = readSession(c);
+    if (!session) {
+      // start oauth flow
+      const redirectUri = `${SITE_ORIGIN}${OAUTH_CALLBACK_PATH}?redirect=${encodeURIComponent(c.req.path)}`;
+      const oauth = googleAuth({ redirect_uri: redirectUri, ...more });
+      return await oauth(c, next)
+    }
+  },
+  async (c, next) => {
+    // if we are here, the req should contain either a valid session or a valid auth code
+    const session = readSession(c);
+    const authedGoogleUser = c.get('user-google')
+    if (authedGoogleUser) {
+      await saveSession(c, authedGoogleUser);
+    } else if (!session) {
+      throw new HttpException(401)
+    }
+    return next();
+  },
+  async (c, next) => {
+    // serve protected content
+  }
+);
+```
+
 ## Author
 
 monoald https://github.com/monoald
