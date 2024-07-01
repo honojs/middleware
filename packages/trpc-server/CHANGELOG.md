@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.3.2
+
+### Patch Changes
+
+- [#599](https://github.com/honojs/middleware/pull/599) [`43f34ea4dcc15925d1bd555b6d2bdb24e1eaa1a1`](https://github.com/honojs/middleware/commit/43f34ea4dcc15925d1bd555b6d2bdb24e1eaa1a1) Thanks [@BlankParticle](https://github.com/BlankParticle)! - chore: update `@hono/trpc-server` to allow using Trpc 11
+
 ## 0.3.1
 
 ### Patch Changes
