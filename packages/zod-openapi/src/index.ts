@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  ResponseConfig,
   RouteConfig as RouteConfigBase,
   ZodContentObject,
   ZodMediaTypeObject,
@@ -37,7 +36,7 @@ import type {
   SuccessStatusCode,
 } from 'hono/utils/http-status'
 import { mergePath } from 'hono/utils/url'
-import type { AnyZodObject, ZodError, ZodSchema } from 'zod'
+import type { ZodError, ZodSchema } from 'zod'
 import { ZodType, z } from 'zod'
 
 type MaybePromise<T> = Promise<T> | T
@@ -405,16 +404,22 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (config: OpenAPIObjectConfig) => {
+  getOpenAPIDocument = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (config: OpenAPIObjectConfig) => {
+  getOpenAPI31Document = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   doc = <P extends string>(
@@ -533,3 +538,16 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
+
+function addBasePathToDocument(document: Record<string, any>, basePath: string) {
+  const updatedPaths: Record<string, any> = {}
+
+  Object.keys(document.paths).forEach((path) => {
+    updatedPaths[mergePath(basePath, path)] = document.paths[path]
+  })
+
+  return {
+    ...document,
+    paths: updatedPaths,
+  }
+}
