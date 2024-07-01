@@ -3,7 +3,9 @@ import type { Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
+import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
+import type { IncomingMessage } from 'http'
 
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket
@@ -21,6 +23,21 @@ export interface NodeWebSocketInit {
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
+  const waiter = new Map<IncomingMessage, (ws: WebSocket) => void>()
+
+  wss.on('connection', (ws, request) => {
+    const waiterFn = waiter.get(request)
+    if (waiterFn) {
+      waiterFn(ws)
+      waiter.delete(request)
+    }
+  })
+
+  const nodeUpgradeWebSocket = (request: IncomingMessage) => {
+    return new Promise<WebSocket>((resolve) => {
+      waiter.set(request, resolve)
+    })
+  }
 
   return {
     injectWebSocket(server) {
@@ -51,11 +68,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           await next()
           return
         }
-        const events = await createEvents(c)
-        wss.on('connection', (ws, request) => {
-          if (request !== c.env.incoming) {
-            return
-          }
+
+        ;(async () => {
+          const events = await createEvents(c)
+          const ws = await nodeUpgradeWebSocket(c.env.incoming)
+
           const ctx: WSContext = {
             binaryType: 'arraybuffer',
             close(code, reason) {
@@ -97,7 +114,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
               ctx
             )
           })
-        })
+        })()
 
         return new Response()
       },
