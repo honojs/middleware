@@ -20,7 +20,7 @@ export interface NodeWebSocketInit {
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
-  const wss = new WebSocketServer({noServer: true})
+  const wss = new WebSocketServer({ noServer: true })
 
   return {
     injectWebSocket(server) {
@@ -34,9 +34,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           }
           headers.append(key, Array.isArray(value) ? value[0] : value)
         }
-        await init.app.request(url, {
-          headers: headers,
-        })
+        await init.app.request(
+          url,
+          { headers: headers },
+          { incoming: request, outcoming: undefined }
+        )
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit('connection', ws, request)
         })
