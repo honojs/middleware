@@ -2,11 +2,11 @@ import { HTTPException } from 'hono/http-exception'
 
 import { toQueryParams } from '../../utils/objectToQuery'
 import type {
+  GitHubEmailResponse,
   GitHubErrorResponse,
+  GitHubScope,
   GitHubTokenResponse,
   GitHubUser,
-  GitHubScope,
-  GitHubEmailResponse,
 } from './types'
 
 type GithubAuthFlow = {

@@ -4,9 +4,9 @@ import type { Token } from '../../types'
 import { toQueryParams } from '../../utils/objectToQuery'
 import type {
   LinkedInErrorResponse,
+  LinkedInScope,
   LinkedInTokenResponse,
   LinkedInUser,
-  LinkedInScope,
 } from './types'
 
 export type LinkedInAuthFlow = {
