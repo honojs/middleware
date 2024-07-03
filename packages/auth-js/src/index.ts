@@ -4,10 +4,9 @@ import type { AdapterUser } from '@auth/core/adapters'
 import type { JWT } from '@auth/core/jwt'
 import type { Session } from '@auth/core/types'
 import type { Context, MiddlewareHandler } from 'hono'
-import { env ,getRuntimeKey} from 'hono/adapter'
+import { env, getRuntimeKey } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import { setEnvDefaults as coreSetEnvDefaults } from '@auth/core'
-
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -39,34 +38,31 @@ export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   coreSetEnvDefaults(env, config)
 }
 
-async function cloneRequest(input: URL | string, request: Request){
-
-  if ( getRuntimeKey() === "bun") {
-  return new Request(input, {
-    method: request.method,
-    headers:new Headers(request.headers),
-    body:
-      request.method === "GET" || request.method === "HEAD"
-        ? undefined
-        : await request.blob(),
-    // @ts-ignore: TS2353
-    referrer: "referrer" in request ? (request.referrer as string) : undefined,
-    // deno-lint-ignore no-explicit-any
-    referrerPolicy: request.referrerPolicy as any,
-    mode: request.mode,
-    credentials: request.credentials,
-    // @ts-ignore: TS2353
-    cache: request.cache,
-    redirect: request.redirect,
-    integrity: request.integrity,
-    keepalive: request.keepalive,
-    signal: request.signal
-  })
-}
-return new Request(input, request)
+async function cloneRequest(input: URL | string, request: Request, headers?: Headers) {
+  if (getRuntimeKey() === 'bun') {
+    return new Request(input, {
+      method: request.method,
+      headers: headers ?? new Headers(request.headers),
+      body:
+        request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.blob(),
+      // @ts-ignore: TS2353
+      referrer: 'referrer' in request ? (request.referrer as string) : undefined,
+      // deno-lint-ignore no-explicit-any
+      referrerPolicy: request.referrerPolicy as any,
+      mode: request.mode,
+      credentials: request.credentials,
+      // @ts-ignore: TS2353
+      cache: request.cache,
+      redirect: request.redirect,
+      integrity: request.integrity,
+      keepalive: request.keepalive,
+      signal: request.signal,
+    })
+  }
+  return new Request(input, request)
 }
 
-export async  function reqWithEnvUrl(req: Request, authUrl?: string){
+export async function reqWithEnvUrl(req: Request, authUrl?: string) {
   if (authUrl) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)
@@ -75,19 +71,20 @@ export async  function reqWithEnvUrl(req: Request, authUrl?: string){
     return cloneRequest(reqUrlObj.href, req)
   } else {
     const url = new URL(req.url)
-    const proto = req.headers.get('x-forwarded-proto')
-    const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host')
+    const headers = new Headers(req.headers)
+    const proto = headers.get('x-forwarded-proto')
+    const host = headers.get('x-forwarded-host') ?? headers.get('host')
     if (proto != null) url.protocol = proto.endsWith(':') ? proto : proto + ':'
-    if (host!=null) {
+    if (host != null) {
       url.host = host
       const portMatch = host.match(/:(\d+)$/)
       if (portMatch) url.port = portMatch[1]
       else url.port = ''
-      req.headers.delete("x-forwarded-host")
-      req.headers.delete("Host")
-      req.headers.set("Host", host)
+      headers.delete('x-forwarded-host')
+      headers.delete('Host')
+      headers.set('Host', host)
     }
-    return cloneRequest(url.href, req)
+    return cloneRequest(url.href, req, headers)
   }
 }
 
@@ -150,7 +147,7 @@ export function authHandler(): MiddlewareHandler {
   return async (c) => {
     const config = c.get('authConfig')
     const ctxEnv = env(c) as AuthEnv
-    
+
     setEnvDefaults(ctxEnv, config)
 
     if (!config.secret || config.secret.length === 0) {
