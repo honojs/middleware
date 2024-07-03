@@ -1880,6 +1880,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/event-emitter@workspace:packages/event-emitter":
+  version: 0.0.0-use.local
+  resolution: "@hono/event-emitter@workspace:packages/event-emitter"
+  dependencies:
+    hono: "npm:^3.11.7"
+    tsup: "npm:^8.0.1"
+    vitest: "npm:^1.0.4"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/firebase-auth@workspace:packages/firebase-auth":
   version: 0.0.0-use.local
   resolution: "@hono/firebase-auth@workspace:packages/firebase-auth"
