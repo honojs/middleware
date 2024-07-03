@@ -31,6 +31,7 @@
     "url": "https://github.com/honojs/middleware.git"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "author": "David Havl <contact@davidhavl.com> (https://github.com/DavidHavl)",
   "peerDependencies": {
     "hono": "*"
   },
