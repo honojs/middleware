@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.10
+
+### Patch Changes
+
+- [#614](https://github.com/honojs/middleware/pull/614) [`19f3beae1ab33bb3257694c742d1b3e5487a187d`](https://github.com/honojs/middleware/commit/19f3beae1ab33bb3257694c742d1b3e5487a187d) Thanks [@divyam234](https://github.com/divyam234)! - fix immutable headers error in x-forwarded req
+
 ## 1.0.9
 
 ### Patch Changes
