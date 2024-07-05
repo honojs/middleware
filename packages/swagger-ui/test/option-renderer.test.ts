@@ -1,367 +1,194 @@
 /*eslint quotes: ["off", "single"]*/
 
-import { renderSwaggerUIOptions } from '../src/swagger/renderer'
+import { DistSwaggerUIOptions, renderSwaggerUIOptions } from '../src/swagger/renderer'
+
+type TestCase = [description: string, config: DistSwaggerUIOptions, expected: string]
 
 describe('SwaggerUIOption Rendering', () => {
-  it('renders correctly with configUrl', () =>
-    expect(
-      renderSwaggerUIOptions({
-        configUrl: 'https://petstore3.swagger.io/api/v3/openapi.json',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "configUrl: 'https://petstore3.swagger.io/api/v3/openapi.json',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with presets', () =>
-    expect(
-      renderSwaggerUIOptions({
-        presets: ['SwaggerUIBundle.presets.apis', 'SwaggerUIStandalonePreset'],
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "presets: [SwaggerUIBundle.presets.apis,SwaggerUIStandalonePreset],url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with plugins', () =>
-    expect(
-      renderSwaggerUIOptions({
-        plugins: ['SwaggerUIBundle.plugins.DownloadUrl'],
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "plugins: [SwaggerUIBundle.plugins.DownloadUrl],url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with deepLinking', () =>
-    expect(
-      renderSwaggerUIOptions({
-        deepLinking: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("deepLinking: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with spec', () =>
-    expect(
-      renderSwaggerUIOptions({
+  const baseUrl = 'https://petstore3.swagger.io/api/v3/openapi.json'
+  const commonTests: TestCase[] = [
+    [
+      'configUrl',
+      { configUrl: baseUrl, url: baseUrl },
+      `configUrl: '${baseUrl}',url: '${baseUrl}'`,
+    ],
+    [
+      'presets',
+      { presets: ['SwaggerUIBundle.presets.apis', 'SwaggerUIStandalonePreset'], url: baseUrl },
+      `presets: [SwaggerUIBundle.presets.apis,SwaggerUIStandalonePreset],url: '${baseUrl}'`,
+    ],
+    [
+      'plugins',
+      { plugins: ['SwaggerUIBundle.plugins.DownloadUrl'], url: baseUrl },
+      `plugins: [SwaggerUIBundle.plugins.DownloadUrl],url: '${baseUrl}'`,
+    ],
+    ['deepLinking', { deepLinking: true, url: baseUrl }, `deepLinking: true,url: '${baseUrl}'`],
+    [
+      'spec',
+      {
         spec: {
           openapi: '3.0.0',
-          info: {
-            title: 'Swagger Petstore',
-            version: '1.0.0',
-          },
-          servers: [
-            {
-              url: 'https://petstore3.swagger.io/api/v3',
-            },
-          ],
+          info: { title: 'Swagger Petstore', version: '1.0.0' },
+          servers: [{ url: 'https://petstore3.swagger.io/api/v3' }],
         },
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      'spec: {"openapi":"3.0.0","info":{"title":"Swagger Petstore","version":"1.0.0"},"servers":[{"url":"https://petstore3.swagger.io/api/v3"}]},url: \'https://petstore3.swagger.io/api/v3/openapi.json\''
-    ))
+        url: baseUrl,
+      },
+      `spec: {"openapi":"3.0.0","info":{"title":"Swagger Petstore","version":"1.0.0"},"servers":[{"url":"https://petstore3.swagger.io/api/v3"}]},url: '${baseUrl}'`,
+    ],
+    [
+      'layout',
+      { layout: 'StandaloneLayout', url: baseUrl },
+      `layout: 'StandaloneLayout',url: '${baseUrl}'`,
+    ],
+    [
+      'docExpansion',
+      { docExpansion: 'list', url: baseUrl },
+      `docExpansion: 'list',url: '${baseUrl}'`,
+    ],
+    [
+      'maxDisplayedTags',
+      { maxDisplayedTags: 5, url: baseUrl },
+      `maxDisplayedTags: 5,url: '${baseUrl}'`,
+    ],
+    [
+      'operationsSorter',
+      { operationsSorter: '(a, b) => a.path.localeCompare(b.path)', url: baseUrl },
+      `operationsSorter: (a, b) => a.path.localeCompare(b.path),url: '${baseUrl}'`,
+    ],
+    [
+      'requestInterceptor',
+      { requestInterceptor: '(req) => req', url: baseUrl },
+      `requestInterceptor: (req) => req,url: '${baseUrl}'`,
+    ],
+    [
+      'responseInterceptor',
+      { responseInterceptor: '(res) => res', url: baseUrl },
+      `responseInterceptor: (res) => res,url: '${baseUrl}'`,
+    ],
+    [
+      'persistAuthorization',
+      { persistAuthorization: true, url: baseUrl },
+      `persistAuthorization: true,url: '${baseUrl}'`,
+    ],
+    [
+      'defaultModelsExpandDepth',
+      { defaultModelsExpandDepth: 1, url: baseUrl },
+      `defaultModelsExpandDepth: 1,url: '${baseUrl}'`,
+    ],
+    [
+      'defaultModelExpandDepth',
+      { defaultModelExpandDepth: 2, url: baseUrl },
+      `defaultModelExpandDepth: 2,url: '${baseUrl}'`,
+    ],
+    [
+      'defaultModelRendering',
+      { defaultModelRendering: 'model', url: baseUrl },
+      `defaultModelRendering: 'model',url: '${baseUrl}'`,
+    ],
+    [
+      'displayRequestDuration',
+      { displayRequestDuration: true, url: baseUrl },
+      `displayRequestDuration: true,url: '${baseUrl}'`,
+    ],
+    ['filter', { filter: true, url: baseUrl }, `filter: true,url: '${baseUrl}'`],
+    [
+      'showExtensions',
+      { showExtensions: true, url: baseUrl },
+      `showExtensions: true,url: '${baseUrl}'`,
+    ],
+    [
+      'showCommonExtensions',
+      { showCommonExtensions: true, url: baseUrl },
+      `showCommonExtensions: true,url: '${baseUrl}'`,
+    ],
+    [
+      'queryConfigEnabled',
+      { queryConfigEnabled: true, url: baseUrl },
+      `queryConfigEnabled: true,url: '${baseUrl}'`,
+    ],
+    [
+      'displayOperationId',
+      { displayOperationId: true, url: baseUrl },
+      `displayOperationId: true,url: '${baseUrl}'`,
+    ],
+    [
+      'tagsSorter',
+      { tagsSorter: '(a, b) => a.name.localeCompare(b.name)', url: baseUrl },
+      `tagsSorter: (a, b) => a.name.localeCompare(b.name),url: '${baseUrl}'`,
+    ],
+    [
+      'useUnsafeMarkdown',
+      { useUnsafeMarkdown: true, url: baseUrl },
+      `useUnsafeMarkdown: true,url: '${baseUrl}'`,
+    ],
+    [
+      'onComplete',
+      { onComplete: '() => console.log("Completed")', url: baseUrl },
+      `onComplete: () => console.log("Completed"),url: '${baseUrl}'`,
+    ],
+    [
+      'syntaxHighlight as false',
+      { syntaxHighlight: false, url: baseUrl },
+      `syntaxHighlight: false,url: '${baseUrl}'`,
+    ],
+    [
+      'syntaxHighlight as object',
+      { syntaxHighlight: { activated: true, theme: ['agate', 'arta'] }, url: baseUrl },
+      `syntaxHighlight: {"activated":true,"theme":["agate","arta"]},url: '${baseUrl}'`,
+    ],
+    [
+      'tryItOutEnabled',
+      { tryItOutEnabled: true, url: baseUrl },
+      `tryItOutEnabled: true,url: '${baseUrl}'`,
+    ],
+    [
+      'requestSnippets',
+      { requestSnippets: { generators: { curl_bash: { title: 'cURL (bash)' } } }, url: baseUrl },
+      `requestSnippets: {"generators":{"curl_bash":{"title":"cURL (bash)"}}},url: '${baseUrl}'`,
+    ],
+    [
+      'oauth2RedirectUrl',
+      { oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html', url: baseUrl },
+      `oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html',url: '${baseUrl}'`,
+    ],
+    [
+      'showMutableRequest',
+      { showMutableRequest: true, url: baseUrl },
+      `showMutableRequest: true,url: '${baseUrl}'`,
+    ],
+    [
+      'request',
+      { request: { curlOptions: ['--insecure'] }, url: baseUrl },
+      `request: {"curlOptions":["--insecure"]},url: '${baseUrl}'`,
+    ],
+    [
+      'supportedSubmitMethods',
+      { supportedSubmitMethods: ['get', 'post', 'put'], url: baseUrl },
+      `supportedSubmitMethods: ["get","post","put"],url: '${baseUrl}'`,
+    ],
+    [
+      'validatorUrl',
+      { validatorUrl: 'https://validator.swagger.io', url: baseUrl },
+      `validatorUrl: 'https://validator.swagger.io',url: '${baseUrl}'`,
+    ],
+    [
+      'withCredentials',
+      { withCredentials: true, url: baseUrl },
+      `withCredentials: true,url: '${baseUrl}'`,
+    ],
+    [
+      'modelPropertyMacro',
+      { modelPropertyMacro: '(property) => property', url: baseUrl },
+      `modelPropertyMacro: (property) => property,url: '${baseUrl}'`,
+    ],
+    [
+      'parameterMacro',
+      { parameterMacro: '(parameter) => parameter', url: baseUrl },
+      `parameterMacro: (parameter) => parameter,url: '${baseUrl}'`,
+    ],
+  ]
 
-  it('renders correctly with url', () => {
-    expect(
-      renderSwaggerUIOptions({
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("url: 'https://petstore3.swagger.io/api/v3/openapi.json'")
+  it.each(commonTests)('renders correctly with %s', (_, input, expected) => {
+    expect(renderSwaggerUIOptions(input)).toEqual(expected)
   })
-
-  it('renders correctly with urls', () => {
-    expect(
-      renderSwaggerUIOptions({
-        urls: [
-          {
-            name: 'Petstore',
-            url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-          },
-        ],
-      })
-    ).toEqual(
-      'urls: [{"name":"Petstore","url":"https://petstore3.swagger.io/api/v3/openapi.json"}]'
-    )
-  })
-
-  it('renders correctly with layout', () =>
-    expect(
-      renderSwaggerUIOptions({
-        layout: 'StandaloneLayout',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("layout: 'StandaloneLayout',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with docExpansion', () =>
-    expect(
-      renderSwaggerUIOptions({
-        docExpansion: 'list',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("docExpansion: 'list',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with maxDisplayedTags', () =>
-    expect(
-      renderSwaggerUIOptions({
-        maxDisplayedTags: 5,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("maxDisplayedTags: 5,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with operationsSorter', () =>
-    expect(
-      renderSwaggerUIOptions({
-        operationsSorter: '(a, b) => a.path.localeCompare(b.path)',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "operationsSorter: (a, b) => a.path.localeCompare(b.path),url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with requestInterceptor', () =>
-    expect(
-      renderSwaggerUIOptions({
-        requestInterceptor: '(req) => req',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "requestInterceptor: (req) => req,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with responseInterceptor', () =>
-    expect(
-      renderSwaggerUIOptions({
-        responseInterceptor: '(res) => res',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "responseInterceptor: (res) => res,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with persistAuthorization', () =>
-    expect(
-      renderSwaggerUIOptions({
-        persistAuthorization: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("persistAuthorization: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with defaultModelsExpandDepth', () =>
-    expect(
-      renderSwaggerUIOptions({
-        defaultModelsExpandDepth: 1,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "defaultModelsExpandDepth: 1,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with defaultModelExpandDepth', () =>
-    expect(
-      renderSwaggerUIOptions({
-        defaultModelExpandDepth: 2,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("defaultModelExpandDepth: 2,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with defaultModelRendering', () =>
-    expect(
-      renderSwaggerUIOptions({
-        defaultModelRendering: 'model',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "defaultModelRendering: 'model',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with displayRequestDuration', () =>
-    expect(
-      renderSwaggerUIOptions({
-        displayRequestDuration: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "displayRequestDuration: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with filter', () =>
-    expect(
-      renderSwaggerUIOptions({
-        filter: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("filter: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with showExtensions', () =>
-    expect(
-      renderSwaggerUIOptions({
-        showExtensions: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("showExtensions: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with showCommonExtensions', () =>
-    expect(
-      renderSwaggerUIOptions({
-        showCommonExtensions: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("showCommonExtensions: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with queryConfigEnabled', () =>
-    expect(
-      renderSwaggerUIOptions({
-        queryConfigEnabled: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("queryConfigEnabled: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with displayOperationId', () =>
-    expect(
-      renderSwaggerUIOptions({
-        displayOperationId: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("displayOperationId: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with tagsSorter', () =>
-    expect(
-      renderSwaggerUIOptions({
-        tagsSorter: '(a, b) => a.name.localeCompare(b.name)',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "tagsSorter: (a, b) => a.name.localeCompare(b.name),url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with useUnsafeMarkdown', () =>
-    expect(
-      renderSwaggerUIOptions({
-        useUnsafeMarkdown: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("useUnsafeMarkdown: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with onComplete', () =>
-    expect(
-      renderSwaggerUIOptions({
-        onComplete: '() => console.log("Completed")',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      'onComplete: () => console.log("Completed"),url: \'https://petstore3.swagger.io/api/v3/openapi.json\''
-    ))
-
-  it('renders correctly with syntaxHighlight as false', () =>
-    expect(
-      renderSwaggerUIOptions({
-        syntaxHighlight: false,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("syntaxHighlight: false,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with syntaxHighlight as object', () =>
-    expect(
-      renderSwaggerUIOptions({
-        syntaxHighlight: { activated: true, theme: ['agate', 'arta'] },
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      'syntaxHighlight: {"activated":true,"theme":["agate","arta"]},url: \'https://petstore3.swagger.io/api/v3/openapi.json\''
-    ))
-
-  it('renders correctly with tryItOutEnabled', () =>
-    expect(
-      renderSwaggerUIOptions({
-        tryItOutEnabled: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("tryItOutEnabled: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with requestSnippets', () =>
-    expect(
-      renderSwaggerUIOptions({
-        requestSnippets: { generators: { curl_bash: { title: 'cURL (bash)' } } },
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      'requestSnippets: {"generators":{"curl_bash":{"title":"cURL (bash)"}}},url: \'https://petstore3.swagger.io/api/v3/openapi.json\''
-    ))
-
-  it('renders correctly with oauth2RedirectUrl', () =>
-    expect(
-      renderSwaggerUIOptions({
-        oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with showMutableRequest', () =>
-    expect(
-      renderSwaggerUIOptions({
-        showMutableRequest: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("showMutableRequest: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with request', () =>
-    expect(
-      renderSwaggerUIOptions({
-        request: { curlOptions: ['--insecure'] },
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      'request: {"curlOptions":["--insecure"]},url: \'https://petstore3.swagger.io/api/v3/openapi.json\''
-    ))
-
-  it('renders correctly with supportedSubmitMethods', () =>
-    expect(
-      renderSwaggerUIOptions({
-        supportedSubmitMethods: ['get', 'post', 'put'],
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "supportedSubmitMethods: [get,post,put],url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with validatorUrl', () =>
-    expect(
-      renderSwaggerUIOptions({
-        validatorUrl: 'https://validator.swagger.io',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "validatorUrl: 'https://validator.swagger.io',url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with withCredentials', () =>
-    expect(
-      renderSwaggerUIOptions({
-        withCredentials: true,
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual("withCredentials: true,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"))
-
-  it('renders correctly with modelPropertyMacro', () =>
-    expect(
-      renderSwaggerUIOptions({
-        modelPropertyMacro: '(property) => property',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "modelPropertyMacro: (property) => property,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
-
-  it('renders correctly with parameterMacro', () =>
-    expect(
-      renderSwaggerUIOptions({
-        parameterMacro: '(parameter) => parameter',
-        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
-      })
-    ).toEqual(
-      "parameterMacro: (parameter) => parameter,url: 'https://petstore3.swagger.io/api/v3/openapi.json'"
-    ))
 })
