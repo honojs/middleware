@@ -25,6 +25,24 @@ export type DistSwaggerUIOptions = {
   filter?: boolean | string
   showExtensions?: boolean
   showCommonExtensions?: boolean
+  queryConfigEnabled?: boolean
+  displayOperationId?: boolean
+  tagsSorter?: string
+  useUnsafeMarkdown?: boolean
+  onComplete?: string
+  syntaxHighlight?: false | { activated: boolean, theme: string[] },
+  tryItOutEnabled?: boolean
+  requestSnippets?: object
+  oauth2RedirectUrl?: string
+  showMutableRequest?: boolean
+  request?: {
+    curlOptions?: string[]
+  },
+  supportedSubmitMethods?: string[]
+  validatorUrl?: string
+  withCredentials?: boolean
+  modelPropertyMacro?: string
+  parameterMacro?: string
 } & RequireOne<{
   url?: SwaggerConfigs['url']
   urls?: SwaggerConfigs['urls']
@@ -59,6 +77,22 @@ const RENDER_TYPE_MAP = {
   filter: RENDER_TYPE.RAW,
   showExtensions: RENDER_TYPE.RAW,
   showCommonExtensions: RENDER_TYPE.RAW,
+  queryConfigEnabled: RENDER_TYPE.RAW,
+  displayOperationId: RENDER_TYPE.RAW,
+  tagsSorter: RENDER_TYPE.RAW,
+  useUnsafeMarkdown: RENDER_TYPE.RAW,
+  onComplete: RENDER_TYPE.RAW,
+  syntaxHighlight: RENDER_TYPE.JSON_STRING,
+  tryItOutEnabled: RENDER_TYPE.RAW,
+  requestSnippets: RENDER_TYPE.JSON_STRING,
+  oauth2RedirectUrl: RENDER_TYPE.STRING,
+  showMutableRequest: RENDER_TYPE.RAW,
+  request: RENDER_TYPE.JSON_STRING,
+  supportedSubmitMethods: RENDER_TYPE.JSON_STRING,
+  validatorUrl: RENDER_TYPE.STRING,
+  withCredentials: RENDER_TYPE.RAW,
+  modelPropertyMacro: RENDER_TYPE.RAW,
+  parameterMacro: RENDER_TYPE.RAW,
 } as const satisfies Record<
   keyof DistSwaggerUIOptions,
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]

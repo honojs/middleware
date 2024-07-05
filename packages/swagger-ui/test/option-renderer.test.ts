@@ -150,7 +150,7 @@ describe('SwaggerUIOption Rendering', () => {
         displayRequestDuration: true,
       })
     ).toEqual('displayRequestDuration: true'))
-  
+
   it('renders correctly with filter', () =>
     expect(
       renderSwaggerUIOptions({
@@ -171,4 +171,123 @@ describe('SwaggerUIOption Rendering', () => {
         showCommonExtensions: true,
       })
     ).toEqual('showCommonExtensions: true'))
+
+  it('renders correctly with queryConfigEnabled', () =>
+    expect(
+      renderSwaggerUIOptions({
+        queryConfigEnabled: true,
+      })
+    ).toEqual('queryConfigEnabled: true'))
+
+  it('renders correctly with displayOperationId', () =>
+    expect(
+      renderSwaggerUIOptions({
+        displayOperationId: true,
+      })
+    ).toEqual('displayOperationId: true'))
+
+  it('renders correctly with tagsSorter', () =>
+    expect(
+      renderSwaggerUIOptions({
+        tagsSorter: '(a, b) => a.name.localeCompare(b.name)',
+      })
+    ).toEqual('tagsSorter: (a, b) => a.name.localeCompare(b.name)'))
+
+  it('renders correctly with useUnsafeMarkdown', () =>
+    expect(
+      renderSwaggerUIOptions({
+        useUnsafeMarkdown: true,
+      })
+    ).toEqual('useUnsafeMarkdown: true'))
+
+  it('renders correctly with onComplete', () =>
+    expect(
+      renderSwaggerUIOptions({
+        onComplete: '() => console.log("Completed")',
+      })
+    ).toEqual('onComplete: () => console.log("Completed")'))
+
+  it('renders correctly with syntaxHighlight as false', () =>
+    expect(
+      renderSwaggerUIOptions({
+        syntaxHighlight: false,
+      })
+    ).toEqual('syntaxHighlight: false'))
+
+  it('renders correctly with syntaxHighlight as object', () =>
+    expect(
+      renderSwaggerUIOptions({
+        syntaxHighlight: { activated: true, theme: ['agate', 'arta'] },
+      })
+    ).toEqual('syntaxHighlight: {"activated":true,"theme":["agate","arta"]}'))
+
+  it('renders correctly with tryItOutEnabled', () =>
+    expect(
+      renderSwaggerUIOptions({
+        tryItOutEnabled: true,
+      })
+    ).toEqual('tryItOutEnabled: true'))
+
+  it('renders correctly with requestSnippets', () =>
+    expect(
+      renderSwaggerUIOptions({
+        requestSnippets: { generators: { curl_bash: { title: 'cURL (bash)' } } },
+      })
+    ).toEqual('requestSnippets: {"generators":{"curl_bash":{"title":"cURL (bash)"}}}'))
+
+  it('renders correctly with oauth2RedirectUrl', () =>
+    expect(
+      renderSwaggerUIOptions({
+        oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html',
+      })
+    ).toEqual("oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html'"))
+
+  it('renders correctly with showMutableRequest', () =>
+    expect(
+      renderSwaggerUIOptions({
+        showMutableRequest: true,
+      })
+    ).toEqual('showMutableRequest: true'))
+
+  it('renders correctly with request', () =>
+    expect(
+      renderSwaggerUIOptions({
+        request: { curlOptions: ['--insecure'] },
+      })
+    ).toEqual('request: {"curlOptions":["--insecure"]}'))
+
+  it('renders correctly with supportedSubmitMethods', () =>
+    expect(
+      renderSwaggerUIOptions({
+        supportedSubmitMethods: ['get', 'post', 'put'],
+      })
+    ).toEqual('supportedSubmitMethods: [get,post,put]'))
+
+  it('renders correctly with validatorUrl', () =>
+    expect(
+      renderSwaggerUIOptions({
+        validatorUrl: 'https://validator.swagger.io',
+      })
+    ).toEqual("validatorUrl: 'https://validator.swagger.io'"))
+
+  it('renders correctly with withCredentials', () =>
+    expect(
+      renderSwaggerUIOptions({
+        withCredentials: true,
+      })
+    ).toEqual('withCredentials: true'))
+
+  it('renders correctly with modelPropertyMacro', () =>
+    expect(
+      renderSwaggerUIOptions({
+        modelPropertyMacro: '(property) => property',
+      })
+    ).toEqual('modelPropertyMacro: (property) => property'))
+
+  it('renders correctly with parameterMacro', () =>
+    expect(
+      renderSwaggerUIOptions({
+        parameterMacro: '(parameter) => parameter',
+      })
+    ).toEqual('parameterMacro: (parameter) => parameter'))
 })
