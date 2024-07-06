@@ -138,6 +138,11 @@ describe('SwaggerUIOption Rendering', () => {
       `tryItOutEnabled: true,url: '${baseUrl}'`,
     ],
     [
+      'requestSnippetsEnabled',
+      { requestSnippetsEnabled: true, url: baseUrl },
+      `requestSnippetsEnabled: true,url: '${baseUrl}'`,
+    ],
+    [
       'requestSnippets',
       { requestSnippets: { generators: { curl_bash: { title: 'cURL (bash)' } } }, url: baseUrl },
       `requestSnippets: {"generators":{"curl_bash":{"title":"cURL (bash)"}}},url: '${baseUrl}'`,

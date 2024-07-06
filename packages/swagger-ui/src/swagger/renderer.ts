@@ -31,6 +31,7 @@ export type DistSwaggerUIOptions = {
   onComplete?: string
   syntaxHighlight?: false | { activated: boolean, theme: string[] },
   tryItOutEnabled?: boolean
+  requestSnippetsEnabled?: boolean
   requestSnippets?: object
   oauth2RedirectUrl?: string
   showMutableRequest?: boolean
@@ -82,6 +83,7 @@ const RENDER_TYPE_MAP = {
   onComplete: RENDER_TYPE.RAW,
   syntaxHighlight: RENDER_TYPE.JSON_STRING,
   tryItOutEnabled: RENDER_TYPE.RAW,
+  requestSnippetsEnabled: RENDER_TYPE.RAW,
   requestSnippets: RENDER_TYPE.JSON_STRING,
   oauth2RedirectUrl: RENDER_TYPE.STRING,
   showMutableRequest: RENDER_TYPE.RAW,
