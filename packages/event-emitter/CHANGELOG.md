@@ -1,1 +1,0 @@
-# @hono/event-emitter
