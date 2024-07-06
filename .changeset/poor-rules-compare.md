@@ -1,5 +1,5 @@
 ---
-"@hono/sentry": patch
+"@hono/sentry": minor
 ---
 
 Toucan 4.0.0
