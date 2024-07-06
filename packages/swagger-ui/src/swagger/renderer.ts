@@ -28,7 +28,6 @@ export type DistSwaggerUIOptions = {
   queryConfigEnabled?: boolean
   displayOperationId?: boolean
   tagsSorter?: string
-  useUnsafeMarkdown?: boolean
   onComplete?: string
   syntaxHighlight?: false | { activated: boolean, theme: string[] },
   tryItOutEnabled?: boolean
@@ -80,7 +79,6 @@ const RENDER_TYPE_MAP = {
   queryConfigEnabled: RENDER_TYPE.RAW,
   displayOperationId: RENDER_TYPE.RAW,
   tagsSorter: RENDER_TYPE.RAW,
-  useUnsafeMarkdown: RENDER_TYPE.RAW,
   onComplete: RENDER_TYPE.RAW,
   syntaxHighlight: RENDER_TYPE.JSON_STRING,
   tryItOutEnabled: RENDER_TYPE.RAW,

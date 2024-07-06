@@ -1,6 +1,7 @@
 /*eslint quotes: ["off", "single"]*/
 
-import { DistSwaggerUIOptions, renderSwaggerUIOptions } from '../src/swagger/renderer'
+import type { DistSwaggerUIOptions } from '../src/swagger/renderer'
+import { renderSwaggerUIOptions } from '../src/swagger/renderer'
 
 type TestCase = [description: string, config: DistSwaggerUIOptions, expected: string]
 
@@ -115,11 +116,6 @@ describe('SwaggerUIOption Rendering', () => {
       'tagsSorter',
       { tagsSorter: '(a, b) => a.name.localeCompare(b.name)', url: baseUrl },
       `tagsSorter: (a, b) => a.name.localeCompare(b.name),url: '${baseUrl}'`,
-    ],
-    [
-      'useUnsafeMarkdown',
-      { useUnsafeMarkdown: true, url: baseUrl },
-      `useUnsafeMarkdown: true,url: '${baseUrl}'`,
     ],
     [
       'onComplete',
