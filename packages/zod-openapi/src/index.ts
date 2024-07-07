@@ -24,6 +24,7 @@ import type {
   Schema,
   ToSchema,
   TypedResponse,
+  ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
@@ -71,14 +72,24 @@ type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyo
   ? R['request'][Part]
   : {}
 
+type HasUndefined<T> = undefined extends T ? true : false
+
 type InputTypeBase<
   R extends RouteConfig,
   Part extends string,
-  Type extends string
+  Type extends keyof ValidationTargets
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends ZodType
     ? {
-        in: { [K in Type]: z.input<RequestPart<R, Part>> }
+        in: {
+          [K in Type]: HasUndefined<ValidationTargets[K]> extends true
+            ? {
+                [K2 in keyof z.input<RequestPart<R, Part>>]?: ValidationTargets[K][K2]
+              }
+            : {
+                [K2 in keyof z.input<RequestPart<R, Part>>]: ValidationTargets[K][K2]
+              }
+        }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}

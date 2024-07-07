@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sentry, getSentry } from '../src'
+import { getSentry, sentry } from '../src'
 
 // Mock
 class Context implements ExecutionContext {

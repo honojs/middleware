@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.8
+
+### Patch Changes
+
+- [#623](https://github.com/honojs/middleware/pull/623) [`834a97a7b069fe5301f305f18bf271f3842af647`](https://github.com/honojs/middleware/commit/834a97a7b069fe5301f305f18bf271f3842af647) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support `coerce`
+
 ## 0.14.7
 
 ### Patch Changes

@@ -1,9 +1,9 @@
 {
-  "name": "@hono/hello",
-  "version": "0.1.1",
-  "description": "An example of third-party middleware for Hono",
-  "type": "module",
-  "module": "dist/index.js",
+  "name": "@hono/event-emitter",
+  "version": "1.0.0",
+  "description": "Event Emitter middleware for Hono",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -16,14 +16,9 @@
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "license": "MIT",
@@ -36,12 +31,13 @@
     "url": "https://github.com/honojs/middleware.git"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "author": "David Havl <contact@davidhavl.com> (https://github.com/DavidHavl)",
   "peerDependencies": {
     "hono": "*"
   },
   "devDependencies": {
-    "hono": "^4.4.12",
-    "tsup": "^8.1.0",
-    "vitest": "^1.6.0"
+    "hono": "^3.11.7",
+    "tsup": "^8.0.1",
+    "vitest": "^1.0.4"
   }
 }

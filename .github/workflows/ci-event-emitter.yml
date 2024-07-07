@@ -1,20 +1,20 @@
-name: ci-hello
+name: ci-event-emitter
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/hello/**'
+      - 'packages/event-emitter/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/hello/**'
+      - 'packages/event-emitter/**'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/hello
+        working-directory: ./packages/event-emitter
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
