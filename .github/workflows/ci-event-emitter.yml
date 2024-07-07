@@ -1,0 +1,25 @@
+name: ci-event-emitter
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/event-emitter/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/event-emitter/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/event-emitter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test
