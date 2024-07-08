@@ -14,20 +14,45 @@ export type DistSwaggerUIOptions = {
   layout?: SwaggerConfigs['layout']
   docExpansion?: SwaggerConfigs['docExpansion']
   maxDisplayedTags?: SwaggerConfigs['maxDisplayedTags']
+  /**
+   * accepts function as a string.
+   *
+   * @example (a, b) => a.path.localeCompare(b.path)
+   */
   operationsSorter?: string
+  /**
+   * accepts function as a string.
+   *
+   * @example (req) => req
+   */
   requestInterceptor?: string
+  /**
+   * accepts function as a string.
+   *
+   * @example (res) => res
+   */
   responseInterceptor?: string
   persistAuthorization?: boolean
   defaultModelsExpandDepth?: number
   defaultModelExpandDepth?: number
-  defaultModelRendering?: "example" | "model" | undefined
+  defaultModelRendering?: 'example' | 'model' | undefined
   displayRequestDuration?: boolean
   filter?: boolean | string
   showExtensions?: boolean
   showCommonExtensions?: boolean
   queryConfigEnabled?: boolean
   displayOperationId?: boolean
+  /**
+   * accepts function as a string.
+   * swagger-ui accepts alpha in the tagsSorter, but this middleware does not support it.
+   *
+   * @example (a, b) => a.name.localeCompare(b.name)
+   */
   tagsSorter?: string
+  /**
+   * accepts function as a string.
+   * @example () => { console.log('Swagger UI Loaded'); }
+   */
   onComplete?: string
   syntaxHighlight?: boolean | { activated: boolean; theme: string[] }
   tryItOutEnabled?: boolean
