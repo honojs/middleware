@@ -34,7 +34,7 @@ export type DistSwaggerUIOptions = {
   requestSnippetsEnabled?: boolean
   requestSnippets?: object
   oauth2RedirectUrl?: string
-  showMutableRequest?: boolean
+  showMutabledRequest?: boolean
   request?: {
     curlOptions?: string[]
   },
@@ -86,7 +86,7 @@ const RENDER_TYPE_MAP = {
   requestSnippetsEnabled: RENDER_TYPE.RAW,
   requestSnippets: RENDER_TYPE.JSON_STRING,
   oauth2RedirectUrl: RENDER_TYPE.STRING,
-  showMutableRequest: RENDER_TYPE.RAW,
+  showMutabledRequest: RENDER_TYPE.RAW,
   request: RENDER_TYPE.JSON_STRING,
   supportedSubmitMethods: RENDER_TYPE.JSON_STRING,
   validatorUrl: RENDER_TYPE.STRING,

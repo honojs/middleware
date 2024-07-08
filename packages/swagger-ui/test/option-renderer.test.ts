@@ -154,8 +154,8 @@ describe('SwaggerUIOption Rendering', () => {
     ],
     [
       'showMutableRequest',
-      { showMutableRequest: true, url: baseUrl },
-      `showMutableRequest: true,url: '${baseUrl}'`,
+      { showMutabledRequest: true, url: baseUrl },
+      `showMutabledRequest: true,url: '${baseUrl}'`,
     ],
     [
       'request',
