@@ -29,7 +29,7 @@ export type DistSwaggerUIOptions = {
   displayOperationId?: boolean
   tagsSorter?: string
   onComplete?: string
-  syntaxHighlight?: boolean | { activated: boolean, theme: string[] },
+  syntaxHighlight?: boolean | { activated: boolean; theme: string[] }
   tryItOutEnabled?: boolean
   requestSnippetsEnabled?: boolean
   requestSnippets?: object
@@ -37,7 +37,7 @@ export type DistSwaggerUIOptions = {
   showMutabledRequest?: boolean
   request?: {
     curlOptions?: string[]
-  },
+  }
   supportedSubmitMethods?: string[]
   validatorUrl?: string
   withCredentials?: boolean
