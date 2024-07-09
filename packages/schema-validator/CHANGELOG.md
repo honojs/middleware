@@ -1,2 +1,0 @@
-# @hono/schema-validator
-
