@@ -1,5 +1,17 @@
 # @hono/typebox-validator
 
+## 0.2.4
+
+### Patch Changes
+
+- [#488](https://github.com/honojs/middleware/pull/488) [`1cc5e0a5b07a14723c5d21ceea33ad9caef33025`](https://github.com/honojs/middleware/commit/1cc5e0a5b07a14723c5d21ceea33ad9caef33025) Thanks [@Frog-kt](https://github.com/Frog-kt)! - Fixed a part of deprecated response json method in hono since v4.
+
+## 0.2.3
+
+### Patch Changes
+
+- [#463](https://github.com/honojs/middleware/pull/463) [`892ea7da85fb2c799eacc4d29651e1fa45a6aec0`](https://github.com/honojs/middleware/commit/892ea7da85fb2c799eacc4d29651e1fa45a6aec0) Thanks [@yudai-nkt](https://github.com/yudai-nkt)! - Update peer dependencies so that newer validators can be installed.
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,23 @@
 # @hono/oauth-providers
 
+## 0.5.1
+
+### Patch Changes
+
+- [#588](https://github.com/honojs/middleware/pull/588) [`69eca66e4de153fa46a6298314a1688fd4efbe4c`](https://github.com/honojs/middleware/commit/69eca66e4de153fa46a6298314a1688fd4efbe4c) Thanks [@jokester](https://github.com/jokester)! - load env.SECRET with hono/adapter, to support non-worker
+
+## 0.5.0
+
+### Minor Changes
+
+- [#505](https://github.com/honojs/middleware/pull/505) [`42e75f07dc4eef9a1cd3d88062fc90edd6677aeb`](https://github.com/honojs/middleware/commit/42e75f07dc4eef9a1cd3d88062fc90edd6677aeb) Thanks [@monoald](https://github.com/monoald)! - Requesting github for user email with token
+
+## 0.4.0
+
+### Minor Changes
+
+- [#454](https://github.com/honojs/middleware/pull/454) [`65418948ab4e977102dabe6373246890a337e5e9`](https://github.com/honojs/middleware/commit/65418948ab4e977102dabe6373246890a337e5e9) Thanks [@aaronware](https://github.com/aaronware)! - Allow for an optional state arg to be passed to Google Auth middleware
+
 ## 0.3.2
 
 ### Patch Changes

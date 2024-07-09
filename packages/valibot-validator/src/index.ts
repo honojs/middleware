@@ -1,9 +1,9 @@
-import type { Context, MiddlewareHandler, Env, ValidationTargets } from 'hono'
+import type { Context, Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { BaseSchema, Input, Output, SafeParseResult } from 'valibot'
-import { safeParse } from 'valibot'
+import type { GenericSchema, GenericSchemaAsync, InferInput, InferOutput, SafeParseResult } from 'valibot'
+import { safeParseAsync } from 'valibot'
 
-type Hook<T extends BaseSchema, E extends Env, P extends string> = (
+type Hook<T extends GenericSchema | GenericSchemaAsync, E extends Env, P extends string> = (
   result: SafeParseResult<T>,
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void>
@@ -11,28 +11,39 @@ type Hook<T extends BaseSchema, E extends Env, P extends string> = (
 type HasUndefined<T> = undefined extends T ? true : false
 
 export const vValidator = <
-  T extends BaseSchema,
+  T extends GenericSchema | GenericSchemaAsync,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
-  V extends {
-    in: HasUndefined<Input<T>> extends true
-      ? { [K in Target]?: Input<T> }
-      : { [K in Target]: Input<T> }
-    out: { [K in Target]: Output<T> }
-  } = {
-    in: HasUndefined<Input<T>> extends true
-      ? { [K in Target]?: Input<T> }
-      : { [K in Target]: Input<T> }
-    out: { [K in Target]: Output<T> }
-  }
+  In = InferInput<T>,
+  Out = InferOutput<T>,
+  I extends HonoInput = {
+    in: HasUndefined<In> extends true
+      ? {
+          [K in Target]?: K extends 'json'
+            ? In
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+        }
+      : {
+          [K in Target]: K extends 'json'
+            ? In
+            : HasUndefined<keyof ValidationTargets[K]> extends true
+            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+        }
+    out: { [K in Target]: Out }
+  },
+  V extends I = I
 >(
   target: Target,
   schema: T,
   hook?: Hook<T, E, P>
 ): MiddlewareHandler<E, P, V> =>
-  validator(target, (value, c) => {
-    const result = safeParse(schema, value)
+  // @ts-expect-error not typed well
+  validator(target, async (value, c) => {
+    const result = await safeParseAsync(schema, value)
 
     if (hook) {
       const hookResult = hook(result, c)
@@ -45,6 +56,6 @@ export const vValidator = <
       return c.json(result, 400)
     }
 
-    const data = result.output as Output<T>
+    const data = result.output as InferOutput<T>
     return data
   })

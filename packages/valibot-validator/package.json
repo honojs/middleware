@@ -1,6 +1,6 @@
 {
   "name": "@hono/valibot-validator",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Validator middleware using Valibot",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -28,12 +28,12 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "valibot": "^0.13.1"
+    "valibot": ">=0.31.0 <1"
   },
   "devDependencies": {
-    "hono": "^3.11.7",
+    "hono": "^4.0.10",
     "jest": "^29.7.0",
     "rimraf": "^5.0.5",
-    "valibot": "^0.24.1"
+    "valibot": "^0.31.0"
   }
 }

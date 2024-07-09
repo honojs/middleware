@@ -122,4 +122,53 @@ describe('SwaggerUIOption Rendering', () => {
         persistAuthorization: true,
       })
     ).toEqual('persistAuthorization: true'))
+
+  it('renders correctly with defaultModelsExpandDepth', () =>
+    expect(
+      renderSwaggerUIOptions({
+        defaultModelsExpandDepth: 1,
+      })
+    ).toEqual('defaultModelsExpandDepth: 1'))
+
+  it('renders correctly with defaultModelExpandDepth', () =>
+    expect(
+      renderSwaggerUIOptions({
+        defaultModelExpandDepth: 2,
+      })
+    ).toEqual('defaultModelExpandDepth: 2'))
+
+  it('renders correctly with defaultModelRendering', () =>
+    expect(
+      renderSwaggerUIOptions({
+        defaultModelRendering: 'model',
+      })
+    ).toEqual("defaultModelRendering: 'model'"))
+
+  it('renders correctly with displayRequestDuration', () =>
+    expect(
+      renderSwaggerUIOptions({
+        displayRequestDuration: true,
+      })
+    ).toEqual('displayRequestDuration: true'))
+  
+  it('renders correctly with filter', () =>
+    expect(
+      renderSwaggerUIOptions({
+        filter: true,
+      })
+    ).toEqual('filter: true'))
+
+  it('renders correctly with showExtensions', () =>
+    expect(
+      renderSwaggerUIOptions({
+        showExtensions: true,
+      })
+    ).toEqual('showExtensions: true'))
+
+  it('renders correctly with showCommonExtensions', () =>
+    expect(
+      renderSwaggerUIOptions({
+        showCommonExtensions: true,
+      })
+    ).toEqual('showCommonExtensions: true'))
 })

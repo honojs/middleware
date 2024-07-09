@@ -1,5 +1,47 @@
 # @hono/auth-js
 
+## 1.0.10
+
+### Patch Changes
+
+- [#614](https://github.com/honojs/middleware/pull/614) [`19f3beae1ab33bb3257694c742d1b3e5487a187d`](https://github.com/honojs/middleware/commit/19f3beae1ab33bb3257694c742d1b3e5487a187d) Thanks [@divyam234](https://github.com/divyam234)! - fix immutable headers error in x-forwarded req
+
+## 1.0.9
+
+### Patch Changes
+
+- [#598](https://github.com/honojs/middleware/pull/598) [`eb7e597aaabce2b2ac6e7809579c44f440c2b8b0`](https://github.com/honojs/middleware/commit/eb7e597aaabce2b2ac6e7809579c44f440c2b8b0) Thanks [@divyam234](https://github.com/divyam234)! - fix bun req cloning
+
+## 1.0.8
+
+### Patch Changes
+
+- [#549](https://github.com/honojs/middleware/pull/549) [`d5ebee9c70b5c6e9ecdcadd39805a6a7c481c0ee`](https://github.com/honojs/middleware/commit/d5ebee9c70b5c6e9ecdcadd39805a6a7c481c0ee) Thanks [@divyam234](https://github.com/divyam234)! - handle x-forwarded headers to detect auth url
+
+## 1.0.7
+
+### Patch Changes
+
+- [#494](https://github.com/honojs/middleware/pull/494) [`300ef2f8bf4761b7b005e0c4ee7cb6ccf3ef810b`](https://github.com/honojs/middleware/commit/300ef2f8bf4761b7b005e0c4ee7cb6ccf3ef810b) Thanks [@divyam234](https://github.com/divyam234)! - fix for ssr
+
+## 1.0.6
+
+### Patch Changes
+
+- [#486](https://github.com/honojs/middleware/pull/486) [`18959557f45851a0109a63de3e865329c30d4fcc`](https://github.com/honojs/middleware/commit/18959557f45851a0109a63de3e865329c30d4fcc) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use `env` in `hono/adapter` and add tests
+
+## 1.0.5
+
+### Patch Changes
+
+- [#481](https://github.com/honojs/middleware/pull/481) [`b8fb9a06c13c3d5988b21e1b286c2a0b5ba99d80`](https://github.com/honojs/middleware/commit/b8fb9a06c13c3d5988b21e1b286c2a0b5ba99d80) Thanks [@DIYgod](https://github.com/DIYgod)! - fix AUTH_URL not working in getAuthUser
+
+## 1.0.4
+
+### Patch Changes
+
+- [#478](https://github.com/honojs/middleware/pull/478) [`5004ca9c5b6f75c1fca001c26fc70b927c154589`](https://github.com/honojs/middleware/commit/5004ca9c5b6f75c1fca001c26fc70b927c154589) Thanks [@DIYgod](https://github.com/DIYgod)! - fix env AUTH_URL not working
+
 ## 1.0.3
 
 ### Patch Changes

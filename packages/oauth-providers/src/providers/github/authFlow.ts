@@ -94,6 +94,26 @@ export class AuthFlow {
     }
   }
 
+  private async getEmail() {
+    const emails = (await fetch('https://api.github.com/user/emails', {
+      headers: {
+        Authorization: `Bearer ${this.token?.token}`,
+        'User-Agent': userAgent,
+      },
+    }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
+
+    if ('message' in emails) {
+      throw new HTTPException(400, { message: emails.message })
+    }
+
+    let email = emails.find((emails) => emails.primary === true)?.email
+    if (email === undefined) {
+      email = emails.find((emails) => !emails.email.includes('@users.noreply.github.com'))?.email
+    }
+
+    return email as string
+  }
+
   async getUserData() {
     if (!this.token?.token) {
       await this.getTokenFromCode()
@@ -112,25 +132,7 @@ export class AuthFlow {
       throw new HTTPException(400, { message: response.message })
     }
 
-    if (!this.oauthApp) {
-      const emails = (await fetch('https://api.github.com/user/emails', {
-        headers: {
-          Authorization: `Bearer ${this.token?.token}`,
-          'User-Agent': userAgent,
-        },
-      }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
-
-      if ('message' in emails) {
-        throw new HTTPException(400, { message: emails.message })
-      }
-
-      let email = emails.find((emails) => emails.primary === true)?.email
-      if (email === undefined) {
-        email = emails.find((emails) => !emails.email.includes('@users.noreply.github.com'))?.email
-      }
-
-      response.email = email as string
-    }
+    response.email = await this.getEmail()
 
     if ('id' in response) {
       this.user = response

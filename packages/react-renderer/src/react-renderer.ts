@@ -15,14 +15,21 @@ type BaseProps = {
   children: React.ReactElement
 }
 
+type ComponentProps = Props &
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  BaseProps & { Layout: React.FC<Record<string, any> & { children: React.ReactElement }> }
+
 const RequestContext = React.createContext<Context | null>(null)
 
 const createRenderer =
-  (c: Context, component?: React.FC<Props & BaseProps>, options?: RendererOptions) =>
+  (
+    c: Context,
+    Layout: React.FC<{ children: React.ReactElement }>,
+    component?: React.FC<ComponentProps>,
+    options?: RendererOptions
+  ) =>
   async (children: React.ReactElement, props?: Props) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const node = component ? component({ children, c, ...props }) : children
+    const node = component ? component({ children, Layout, c, ...props }) : children
 
     if (options?.stream) {
       const { renderToReadableStream } = await import('react-dom/server')
@@ -53,11 +60,20 @@ const createRenderer =
   }
 
 export const reactRenderer = (
-  component?: React.FC<Props & BaseProps>,
+  component?: React.FC<ComponentProps>,
   options?: RendererOptions
 ): MiddlewareHandler =>
   function reactRenderer(c, next) {
-    c.setRenderer(createRenderer(c, component, options))
+    const Layout = (c.getLayout() ?? React.Fragment) as React.FC<{
+      children: React.ReactElement
+    }>
+    if (component) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      c.setLayout((props: any) => {
+        return component({ ...props, Layout, c }, c)
+      })
+    }
+    c.setRenderer(createRenderer(c, Layout, component, options))
     return next()
   }
 

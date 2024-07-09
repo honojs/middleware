@@ -1,6 +1,6 @@
 {
   "name": "@hono/arktype-validator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "ArkType validator middleware",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,11 +31,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "arktype": "^1.0.28-alpha",
+    "arktype": "^2.0.0-dev.14",
     "hono": "*"
   },
   "devDependencies": {
-    "arktype": "^1.0.28-alpha",
+    "arktype": "^2.0.0-dev.14",
     "hono": "^3.11.7",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"

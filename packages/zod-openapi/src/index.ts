@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  ResponseConfig,
   RouteConfig as RouteConfigBase,
   ZodContentObject,
   ZodMediaTypeObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
 import {
+  OpenAPIRegistry,
   OpenApiGeneratorV3,
   OpenApiGeneratorV31,
-  OpenAPIRegistry,
+  extendZodWithOpenApi,
 } from '@asteasolutions/zod-to-openapi'
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
@@ -25,23 +24,34 @@ import type {
   Schema,
   ToSchema,
   TypedResponse,
+  ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { RemoveBlankRecord } from 'hono/utils/types'
+import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
+import type {
+  ClientErrorStatusCode,
+  InfoStatusCode,
+  RedirectStatusCode,
+  ServerErrorStatusCode,
+  StatusCode,
+  SuccessStatusCode,
+} from 'hono/utils/http-status'
 import { mergePath } from 'hono/utils/url'
-import type { AnyZodObject, ZodSchema, ZodError } from 'zod'
-import { z, ZodType } from 'zod'
+import type { ZodError, ZodSchema } from 'zod'
+import { ZodType, z } from 'zod'
 
-type RouteConfig = RouteConfigBase & {
+type MaybePromise<T> = Promise<T> | T
+
+export type RouteConfig = RouteConfigBase & {
   middleware?: MiddlewareHandler | MiddlewareHandler[]
 }
 
 type RequestTypes = {
   body?: ZodRequestBody
-  params?: AnyZodObject
-  query?: AnyZodObject
-  cookies?: AnyZodObject
-  headers?: AnyZodObject | ZodType<unknown>[]
+  params?: ZodType
+  query?: ZodType
+  cookies?: ZodType
+  headers?: ZodType | ZodType[]
 }
 
 type IsJson<T> = T extends string
@@ -62,14 +72,24 @@ type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyo
   ? R['request'][Part]
   : {}
 
+type HasUndefined<T> = undefined extends T ? true : false
+
 type InputTypeBase<
   R extends RouteConfig,
   Part extends string,
-  Type extends string
+  Type extends keyof ValidationTargets
 > = R['request'] extends RequestTypes
-  ? RequestPart<R, Part> extends AnyZodObject
+  ? RequestPart<R, Part> extends ZodType
     ? {
-        in: { [K in Type]: z.input<RequestPart<R, Part>> }
+        in: {
+          [K in Type]: HasUndefined<ValidationTargets[K]> extends true
+            ? {
+                [K2 in keyof z.input<RequestPart<R, Part>>]?: ValidationTargets[K][K2]
+              }
+            : {
+                [K2 in keyof z.input<RequestPart<R, Part>>]: ValidationTargets[K][K2]
+              }
+        }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
@@ -132,19 +152,38 @@ type InputTypeQuery<R extends RouteConfig> = InputTypeBase<R, 'query', 'query'>
 type InputTypeHeader<R extends RouteConfig> = InputTypeBase<R, 'headers', 'header'>
 type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cookie'>
 
-type OutputType<R extends RouteConfig> = R['responses'] extends Record<infer _, infer C>
-  ? C extends ResponseConfig
-    ? C['content'] extends ZodContentObject
-      ? IsJson<keyof C['content']> extends never
-        ? {}
-        : C['content'][keyof C['content']] extends Record<'schema', ZodSchema>
-        ? z.infer<C['content'][keyof C['content']]['schema']>
-        : {}
-      : {}
-    : {}
-  : {}
+type ExtractContent<T> = T extends {
+  [K in keyof T]: infer A
+}
+  ? A extends Record<'schema', ZodSchema>
+    ? z.infer<A['schema']>
+    : never
+  : never
 
-export type Hook<T, E extends Env, P extends string, O> = (
+type StatusCodeRangeDefinitions = {
+  '1XX': InfoStatusCode
+  '2XX': SuccessStatusCode
+  '3XX': RedirectStatusCode
+  '4XX': ClientErrorStatusCode
+  '5XX': ServerErrorStatusCode
+}
+type RouteConfigStatusCode = keyof StatusCodeRangeDefinitions | StatusCode
+type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof StatusCodeRangeDefinitions
+  ? StatusCodeRangeDefinitions[T]
+  : T
+export type RouteConfigToTypedResponse<R extends RouteConfig> = {
+  [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
+    keyof R['responses'][Status]['content']
+  > extends never
+    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+    : TypedResponse<
+        JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
+        ExtractStatusCode<Status>,
+        'json'
+      >
+}[keyof R['responses'] & RouteConfigStatusCode]
+
+export type Hook<T, E extends Env, P extends string, R> = (
   result:
     | {
         success: true
@@ -155,18 +194,11 @@ export type Hook<T, E extends Env, P extends string, O> = (
         error: ZodError
       },
   c: Context<E, P>
-) => TypedResponse<O> | Promise<TypedResponse<T>> | Response | Promise<Response> | void
+) => R
 
 type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
-
-type HandlerTypedResponse<O> = TypedResponse<O> | Promise<TypedResponse<O>>
-type HandlerAllResponse<O> =
-  | Response
-  | Promise<Response>
-  | TypedResponse<O>
-  | Promise<TypedResponse<O>>
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
@@ -190,15 +222,15 @@ export type RouteHandler<
   // If response type is defined, only TypedResponse is allowed.
   R extends {
     responses: {
-      [statusCode: string]: {
+      [statusCode: number]: {
         content: {
           [mediaType: string]: ZodMediaTypeObject
         }
       }
     }
   }
-    ? HandlerTypedResponse<OutputType<R>>
-    : HandlerAllResponse<OutputType<R>>
+    ? MaybePromise<RouteConfigToTypedResponse<R>>
+    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
 >
 
 export type RouteHook<
@@ -211,7 +243,12 @@ export type RouteHook<
     InputTypeForm<R> &
     InputTypeJson<R>,
   P extends string = ConvertPathType<R['path']>
-> = Hook<I, E, P, OutputType<R>>
+> = Hook<
+  I,
+  E,
+  P,
+  RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+>
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
@@ -231,6 +268,37 @@ export class OpenAPIHono<
     this.defaultHook = init?.defaultHook
   }
 
+  /**
+   *
+   * @param {RouteConfig} route - The route definition which you create with `createRoute()`.
+   * @param {Handler} handler - The handler. If you want to return a JSON object, you should specify the status code with `c.json()`.
+   * @param {Hook} hook - Optional. The hook method defines what it should do after validation.
+   * @example
+   * app.openapi(
+   *   route,
+   *   (c) => {
+   *     // ...
+   *     return c.json(
+   *       {
+   *         age: 20,
+   *         name: 'Young man',
+   *       },
+   *       200 // You should specify the status code even if it's 200.
+   *     )
+   *   },
+   *  (result, c) => {
+   *    if (!result.success) {
+   *      return c.json(
+   *        {
+   *          code: 400,
+   *          message: 'Custom Message',
+   *        },
+   *        400
+   *      )
+   *    }
+   *  }
+   *)
+   */
   openapi = <
     R extends RouteConfig,
     I extends Input = InputTypeParam<R> &
@@ -241,7 +309,7 @@ export class OpenAPIHono<
       InputTypeJson<R>,
     P extends string = ConvertPathType<R['path']>
   >(
-    route: R,
+    { middleware: routeMiddleware, ...route }: R,
     handler: Handler<
       E,
       P,
@@ -249,20 +317,37 @@ export class OpenAPIHono<
       // If response type is defined, only TypedResponse is allowed.
       R extends {
         responses: {
-          [statusCode: string]: {
+          [statusCode: number]: {
             content: {
               [mediaType: string]: ZodMediaTypeObject
             }
           }
         }
       }
-        ? HandlerTypedResponse<OutputType<R>>
-        : HandlerAllResponse<OutputType<R>>
+        ? MaybePromise<RouteConfigToTypedResponse<R>>
+        : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
     >,
-    hook: Hook<I, E, P, OutputType<R>> | undefined = this.defaultHook
+    hook:
+      | Hook<
+          I,
+          E,
+          P,
+          R extends {
+            responses: {
+              [statusCode: number]: {
+                content: {
+                  [mediaType: string]: ZodMediaTypeObject
+                }
+              }
+            }
+          }
+            ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
+            : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
+        >
+      | undefined = this.defaultHook
   ): OpenAPIHono<
     E,
-    S & ToSchema<R['method'], MergePath<BasePath, P>, I['in'], OutputType<R>>,
+    S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
     BasePath
   > => {
     this.openAPIRegistry.registerPath(route)
@@ -314,22 +399,38 @@ export class OpenAPIHono<
       }
     }
 
-    const middleware = route.middleware ? (Array.isArray(route.middleware) ? route.middleware : [route.middleware]) : []
+    const middleware = routeMiddleware
+      ? Array.isArray(routeMiddleware)
+        ? routeMiddleware
+        : [routeMiddleware]
+      : []
 
-    this.on([route.method], route.path.replaceAll(/\/{(.+?)}/g, '/:$1'), ...middleware, ...validators, handler)
+    this.on(
+      [route.method],
+      route.path.replaceAll(/\/{(.+?)}/g, '/:$1'),
+      ...middleware,
+      ...validators,
+      handler
+    )
     return this
   }
 
-  getOpenAPIDocument = (config: OpenAPIObjectConfig) => {
+  getOpenAPIDocument = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (config: OpenAPIObjectConfig) => {
+  getOpenAPI31Document = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   doc = <P extends string>(
@@ -341,7 +442,7 @@ export class OpenAPIHono<
       try {
         const document = this.getOpenAPIDocument(config)
         return c.json(document)
-      } catch (e) {
+      } catch (e: any) {
         return c.json(e, 500)
       }
     }) as any
@@ -356,7 +457,7 @@ export class OpenAPIHono<
       try {
         const document = this.getOpenAPI31Document(config)
         return c.json(document)
-      } catch (e) {
+      } catch (e: any) {
         return c.json(e, 500)
       }
     }) as any
@@ -448,3 +549,16 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
+
+function addBasePathToDocument(document: Record<string, any>, basePath: string) {
+  const updatedPaths: Record<string, any> = {}
+
+  Object.keys(document.paths).forEach((path) => {
+    updatedPaths[mergePath(basePath, path)] = document.paths[path]
+  })
+
+  return {
+    ...document,
+    paths: updatedPaths,
+  }
+}

@@ -91,7 +91,7 @@ app.openapi(
     }
   }),
   (c) => {
-    return c.jsonT({
+    return c.json({
       message: 'hello'
     })
   }

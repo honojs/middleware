@@ -1,0 +1,50 @@
+{
+  "name": "@hono/node-ws",
+  "version": "1.0.2",
+  "description": "WebSocket helper for Node.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "devDependencies": {
+    "@hono/node-server": "^1.11.1",
+    "@types/ws": "^8",
+    "hono": "^4.2.9",
+    "tsup": "^8.0.1",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
+  "peerDependencies": {
+    "@hono/node-server": "^1.11.1"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  }
+}

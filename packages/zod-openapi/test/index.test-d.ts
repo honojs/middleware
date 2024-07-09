@@ -1,6 +1,8 @@
-import type { Hono, Env, ToSchema } from 'hono'
-import { describe, it, expectTypeOf, assertType } from 'vitest'
+import type { Env, Hono, ToSchema } from 'hono'
+import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { OpenAPIHono, createRoute, z } from '../src/index'
+import type { ExtractSchema } from 'hono/types'
+import type { Equal, Expect } from 'hono/utils/types'
 
 describe('Types', () => {
   const RequestSchema = z.object({
@@ -169,5 +171,66 @@ describe('Input types', () => {
         name: 'Ultra-man',
       })
     })
+  })
+})
+
+describe('Response schema includes a Date type', () => {
+  it('Should not throw a type error', () => {
+    new OpenAPIHono().openapi(
+      createRoute({
+        method: 'get',
+        path: '/example',
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  updatedAt: z.date(),
+                }),
+              },
+            },
+            description: '',
+          },
+        },
+      }),
+      async (ctx) => {
+        // Don't throw an error:
+        return ctx.json({ updatedAt: new Date() }, 200)
+      }
+    )
+  })
+})
+
+describe('coerce', () => {
+  it('Should not throw type errors', () => {
+    const routes = new OpenAPIHono().openapi(
+      createRoute({
+        method: 'get',
+        path: '/api/users/{id}',
+        request: {
+          params: z.object({
+            id: z.coerce.number().openapi({ description: 'userId', example: 1 }),
+          }),
+        },
+        responses: {
+          200: {
+            description: 'Get a user',
+          },
+        },
+      }),
+      (c) => {
+        const { id } = c.req.valid('param')
+        assertType<number>(id)
+        return c.json({ id })
+      }
+    )
+
+    type Actual = ExtractSchema<typeof routes>['/api/users/:id']['$get']['input']
+    type Expected = {
+      param: {
+        id: string | undefined
+      }
+    }
+    type verify = Expect<Equal<Expected, Actual>>
   })
 })

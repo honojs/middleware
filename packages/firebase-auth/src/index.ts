@@ -1,7 +1,7 @@
-import { getCookie } from 'hono/cookie'
 import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { Context, MiddlewareHandler } from 'hono'
+import { getCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 export type VerifyFirebaseAuthEnv = {
@@ -22,10 +22,10 @@ export interface VerifyFirebaseAuthConfig {
 const defaultKVStoreJWKCacheKey = 'verify-firebase-auth-cached-public-key'
 const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>): KeyStorer => {
   if (c.env.PUBLIC_JWK_CACHE_KV === undefined) {
-    const res = new Response('Not Implemented', {
-      status: 501,
+    const status = 501
+    throw new HTTPException(status, {
+      res: new Response('Not Implemented', { status }),
     })
-    throw new HTTPException(res.status, { res })
   }
   return WorkersKVStoreSingle.getOrInitialize(
     c.env.PUBLIC_JWK_CACHE_KEY ?? defaultKVStoreJWKCacheKey,
@@ -49,10 +49,11 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
   return async (c, next) => {
     const authorization = c.req.raw.headers.get(config.authorizationHeaderKey)
     if (authorization === null) {
-      const res = new Response('Bad Request', {
-        status: 400,
+      const status = 400
+      throw new HTTPException(status, {
+        res: new Response('Bad Request', { status }),
+        message: 'authorization header is empty',
       })
-      throw new HTTPException(res.status, { res, message: 'authorization header is empty' })
     }
     const jwt = authorization.replace(/Bearer\s+/i, '')
     const auth = Auth.getOrInitialize(
@@ -74,12 +75,11 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
         })
       }
 
-      const res = new Response('Unauthorized', {
-        status: 401,
-      })
-      throw new HTTPException(res.status, {
-        res,
+      const status = 401
+      throw new HTTPException(status, {
+        res: new Response('Unauthorized', { status }),
         message: `failed to verify the requested firebase token: ${String(err)}`,
+        cause: err,
       })
     }
     await next()
@@ -131,8 +131,9 @@ export const verifySessionCookieFirebaseAuth = (
     )
     const session = getCookie(c, config.cookieName)
     if (session === undefined) {
-      const res = c.redirect(config.redirects.signIn)
-      throw new HTTPException(res.status, { res, message: 'session is empty' })
+      const status = 302
+      const res = c.redirect(config.redirects.signIn, status)
+      throw new HTTPException(status, { res, message: 'session is empty' })
     }
 
     try {
@@ -142,10 +143,12 @@ export const verifySessionCookieFirebaseAuth = (
       })
       setFirebaseToken(c, idToken)
     } catch (err) {
-      const res = c.redirect(config.redirects.signIn)
-      throw new HTTPException(res.status, {
+      const status = 302
+      const res = c.redirect(config.redirects.signIn, status)
+      throw new HTTPException(status, {
         res,
         message: `failed to verify the requested firebase token: ${String(err)}`,
+        cause: err,
       })
     }
     await next()

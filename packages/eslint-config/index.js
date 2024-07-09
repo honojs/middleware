@@ -34,6 +34,26 @@ module.exports = defineConfig({
         destructuring: 'all',
       },
     ],
+    'sort-imports': [
+      'error',
+      {
+        ignoreCase: false,
+        ignoreDeclarationSort: true,
+        ignoreMemberSort: false,
+        memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
+      },
+    ],
+
+    'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+    'import/no-duplicates': 'error',
+
+    'node/no-missing-import': 'off',
+    'node/no-missing-require': 'off',
+    'node/no-deprecated-api': 'off',
+    'node/no-unpublished-import': 'off',
+    'node/no-unpublished-require': 'off',
+    'node/no-unsupported-features/es-syntax': 'off',
+
     '@typescript-eslint/ban-types': [
       'error',
       {
@@ -43,16 +63,6 @@ module.exports = defineConfig({
         },
       },
     ],
-    'sort-imports': 0,
-    'import/order': [2, { alphabetize: { order: 'asc' } }],
-
-    'node/no-missing-import': 'off',
-    'node/no-missing-require': 'off',
-    'node/no-deprecated-api': 'off',
-    'node/no-unpublished-import': 'off',
-    'node/no-unpublished-require': 'off',
-    'node/no-unsupported-features/es-syntax': 'off',
-
     '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',

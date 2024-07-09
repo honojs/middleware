@@ -1,6 +1,6 @@
 {
   "name": "@hono/typia-validator",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Validator middleware using Typia",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "typia": "^5.0.4"
+    "typia": "^6.1.0"
   },
   "devDependencies": {
     "hono": "^3.11.7",

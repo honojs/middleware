@@ -1,5 +1,11 @@
 # @hono/prometheus
 
+## 1.0.1
+
+### Patch Changes
+
+- [#476](https://github.com/honojs/middleware/pull/476) [`7e129138120504b8fbd2641048347c43674a827d`](https://github.com/honojs/middleware/commit/7e129138120504b8fbd2641048347c43674a827d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump peer dependency
+
 ## 1.0.0
 
 ### Major Changes

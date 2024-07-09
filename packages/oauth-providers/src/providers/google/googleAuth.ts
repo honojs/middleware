@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -17,8 +18,8 @@ export function googleAuth(options: {
     const newState = options.state || getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || (c.env?.GOOGLE_ID as string),
-      client_secret: options.client_secret || (c.env?.GOOGLE_SECRET as string),
+      client_id: options.client_id || (env(c).GOOGLE_ID as string),
+      client_secret: options.client_secret || (env(c).GOOGLE_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       login_hint: options.login_hint,
       prompt: options.prompt,

@@ -15,14 +15,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asteasolutions/zod-to-openapi@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@asteasolutions/zod-to-openapi@npm:7.0.0"
+"@asteasolutions/zod-to-openapi@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@asteasolutions/zod-to-openapi@npm:7.1.0"
   dependencies:
     openapi3-ts: "npm:^4.1.2"
   peerDependencies:
     zod: ^3.20.2
-  checksum: 120499b6d997bd3fa21b4e6600f42d6b9201e2a85a7656b722a02c712d6a9fd7c474bf62ad31f76646fbd129d75331408ad3ed5c350c1436856ef306966a33e1
+  checksum: cd2931826073004c240ce8272a390107299881b9ad96fe10a31e824de0ec1b6c97c2949270c09dec9c71c25c45e00de8f03019bb47c8c41f85006a9018fc2d78
   languageName: node
   linkType: hard
 
@@ -591,29 +591,29 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/zod-openapi@workspace:."
   dependencies:
-    "@asteasolutions/zod-to-openapi": "npm:^7.0.0"
+    "@asteasolutions/zod-to-openapi": "npm:^7.1.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
-    "@hono/zod-validator": "npm:0.2.1"
-    hono: "npm:^4.2.2"
+    "@hono/zod-validator": "npm:0.2.2"
+    hono: "npm:^4.3.6"
     jest: "npm:^29.7.0"
-    openapi3-ts: "npm:^4.1.2"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
     vitest: "npm:^1.4.0"
+    yaml: "npm:^2.4.3"
     zod: "npm:^3.22.1"
   peerDependencies:
-    hono: ">=3.11.3"
+    hono: ">=4.3.6"
     zod: 3.*
   languageName: unknown
   linkType: soft
 
-"@hono/zod-validator@npm:0.2.1":
-  version: 0.2.1
-  resolution: "@hono/zod-validator@npm:0.2.1"
+"@hono/zod-validator@npm:0.2.2":
+  version: 0.2.2
+  resolution: "@hono/zod-validator@npm:0.2.2"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.19.1
-  checksum: de399abc8ab26552111c745ae0ecad714af549e79b0412c2285d057bde72b434b09b8f9b65940d3a4b2dd82dcfb52e1601ac505effb410e4439e9c8835a99d7d
+  checksum: 3d6d03d28287e6f05e4cf5b86f3fa5fa386429a4212881f7344fe93272a69732ca8dd98634eb51df434b002230d2be2f3c6822f3b1ab320676932583856b30a5
   languageName: node
   linkType: hard
 
@@ -2379,10 +2379,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "hono@npm:4.2.2"
-  checksum: 4f423ff808c105341d2802192abe9070c5f6fc4a45da51842a5f5f2111b4c333ef4aea2720a585e16996944cc0cedf68657c57df1d150f1382f21fc18e814b42
+"hono@npm:^4.3.6":
+  version: 4.4.6
+  resolution: "hono@npm:4.4.6"
+  checksum: 065318f3fe021320b59f3daddacf7d74bfc3303de55f415a999b6967a9f09714e136528bc86cc880a45633cd85dec5428e41e902b5e3a3809f3cd17204302668
   languageName: node
   linkType: hard
 
@@ -4832,6 +4832,15 @@ __metadata:
   version: 2.3.4
   resolution: "yaml@npm:2.3.4"
   checksum: cf03b68f8fef5e8516b0f0b54edaf2459f1648317fc6210391cf606d247e678b449382f4bd01f77392538429e306c7cba8ff46ff6b37cac4de9a76aff33bd9e1
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "yaml@npm:2.4.3"
+  bin:
+    yaml: bin.mjs
+  checksum: b4a9dea34265f000402c909144ac310be42c4526dfd16dff1aee2b04a0d94051713651c0cd2b0a3d8109266997422120f16a7934629d12f22dc215839ebbeccf
   languageName: node
   linkType: hard
 

@@ -1,6 +1,6 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Validator middleware using TypeBox",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@sinclair/typebox": "^0.31.15",
+    "@sinclair/typebox": ">=0.31.15 <1",
     "hono": ">=3.9.0"
   },
   "devDependencies": {

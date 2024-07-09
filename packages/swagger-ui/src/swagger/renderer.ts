@@ -18,6 +18,13 @@ export type DistSwaggerUIOptions = {
   requestInterceptor?: string
   responseInterceptor?: string
   persistAuthorization?: boolean
+  defaultModelsExpandDepth?: number
+  defaultModelExpandDepth?: number
+  defaultModelRendering?: "example" | "model" | undefined
+  displayRequestDuration?: boolean
+  filter?: boolean | string
+  showExtensions?: boolean
+  showCommonExtensions?: boolean
 } & RequireOne<{
   url?: SwaggerConfigs['url']
   urls?: SwaggerConfigs['urls']
@@ -45,6 +52,13 @@ const RENDER_TYPE_MAP = {
   requestInterceptor: RENDER_TYPE.RAW,
   responseInterceptor: RENDER_TYPE.RAW,
   persistAuthorization: RENDER_TYPE.RAW,
+  defaultModelsExpandDepth: RENDER_TYPE.RAW,
+  defaultModelExpandDepth: RENDER_TYPE.RAW,
+  defaultModelRendering: RENDER_TYPE.STRING,
+  displayRequestDuration: RENDER_TYPE.RAW,
+  filter: RENDER_TYPE.RAW,
+  showExtensions: RENDER_TYPE.RAW,
+  showCommonExtensions: RENDER_TYPE.RAW,
 } as const satisfies Record<
   keyof DistSwaggerUIOptions,
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]

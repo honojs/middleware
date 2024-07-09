@@ -31,8 +31,8 @@ export { SessionProviderProps }
 class AuthConfigManager {
   private static instance: AuthConfigManager | null = null
   _config: AuthClientConfig = {
-    baseUrl: parseUrl(window.location.origin).origin,
-    basePath: parseUrl(window.location.origin).path,
+    baseUrl: typeof window !== 'undefined' ? parseUrl(window.location.origin).origin : '',
+    basePath: typeof window !== 'undefined' ? parseUrl(window.location.origin).path : '/api/auth',
     credentials: 'same-origin',
     _lastSync: 0,
     _session: undefined,
@@ -75,7 +75,6 @@ const logger: LoggerInstance = {
   warn: console.warn,
 }
 
-/** @todo Document */
 export type UpdateSession = (data?: any) => Promise<Session | null>
 
 export type SessionContextValue<R extends boolean = false> = R extends true
@@ -148,13 +147,6 @@ export async function getSession(params?: GetSessionParams) {
   return session
 }
 
-/**
- * Returns the current Cross-Site Request Forgery Token (CSRF Token)
- * required to make requests that changes state. (e.g. signing in or out, or updating the session).
- *
- * [CSRF Prevention: Double Submit Cookie](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie)
- * @internal
- */
 export async function getCsrfToken() {
   const response = await fetchData<{ csrfToken: string }>(
     'csrf',

@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -16,8 +17,8 @@ export function githubAuth(options: {
     const newState = getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
-      client_id: options.client_id || (c.env?.GITHUB_ID as string),
-      client_secret: options.client_secret || (c.env?.GITHUB_SECRET as string),
+      client_id: options.client_id || (env(c).GITHUB_ID as string),
+      client_secret: options.client_secret || (env(c).GITHUB_SECRET as string),
       scope: options.scope,
       state: newState,
       oauthApp: options.oauthApp || false,

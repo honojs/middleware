@@ -1,6 +1,6 @@
 {
   "name": "@hono/eslint-config",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "ESLint Config for Hono projects",
   "main": "index.js",
   "license": "MIT",

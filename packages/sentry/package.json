@@ -1,18 +1,25 @@
 {
   "name": "@hono/sentry",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "Sentry Middleware for Hono",
   "main": "dist/index.js",
+  "type": "commonjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/index.d.ts"
+    "dist"
   ],
   "scripts": {
     "test": "jest",
-    "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn test:all",
-    "release": "np"
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "prerelease": "yarn build && yarn test:all"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "license": "MIT",
   "repository": {
@@ -29,7 +36,7 @@
     "hono": ">=3.*"
   },
   "dependencies": {
-    "toucan-js": "^3.2.2"
+    "toucan-js": "^4.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.0",
@@ -47,10 +54,10 @@
     "hono": "^3.11.7",
     "jest": "^28.1.2",
     "jest-environment-miniflare": "^2.6.0",
-    "np": "^7.6.2",
     "prettier": "^2.7.1",
-    "rimraf": "^3.0.2",
+    "publint": "^0.2.7",
     "ts-jest": "^28.0.5",
+    "tsup": "^8.0.2",
     "typescript": "^4.7.4"
   }
 }

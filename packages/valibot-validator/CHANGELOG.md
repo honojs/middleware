@@ -1,5 +1,29 @@
 # @hono/valibot-validator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#553](https://github.com/honojs/middleware/pull/553) [`7375c096b51b3e050cc808c29f5d122c028e4291`](https://github.com/honojs/middleware/commit/7375c096b51b3e050cc808c29f5d122c028e4291) Thanks [@chimame](https://github.com/chimame)! - changed supported version of valibot to 0.31.0 or later
+
+## 0.2.5
+
+### Patch Changes
+
+- [#515](https://github.com/honojs/middleware/pull/515) [`f59edfe89c95a145cb75ef4c5c41b730f535d32e`](https://github.com/honojs/middleware/commit/f59edfe89c95a145cb75ef4c5c41b730f535d32e) Thanks [@mizno-hito](https://github.com/mizno-hito)! - Add supports async validation
+
+## 0.2.4
+
+### Patch Changes
+
+- [#502](https://github.com/honojs/middleware/pull/502) [`d703577b551c82506e94c4a9c2ae9e7d933fb695`](https://github.com/honojs/middleware/commit/d703577b551c82506e94c4a9c2ae9e7d933fb695) Thanks [@y-hiraoka](https://github.com/y-hiraoka)! - improved vvalidator to infer route types with number queries
+
+## 0.2.3
+
+### Patch Changes
+
+- [#463](https://github.com/honojs/middleware/pull/463) [`892ea7da85fb2c799eacc4d29651e1fa45a6aec0`](https://github.com/honojs/middleware/commit/892ea7da85fb2c799eacc4d29651e1fa45a6aec0) Thanks [@yudai-nkt](https://github.com/yudai-nkt)! - Update peer dependencies so that newer validators can be installed.
+
 ## 0.2.2
 
 ### Patch Changes

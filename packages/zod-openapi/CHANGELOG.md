@@ -1,5 +1,90 @@
 # @hono/zod-openapi
 
+## 0.14.8
+
+### Patch Changes
+
+- [#623](https://github.com/honojs/middleware/pull/623) [`834a97a7b069fe5301f305f18bf271f3842af647`](https://github.com/honojs/middleware/commit/834a97a7b069fe5301f305f18bf271f3842af647) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support `coerce`
+
+## 0.14.7
+
+### Patch Changes
+
+- [#609](https://github.com/honojs/middleware/pull/609) [`b06bde6ef59368e00c7c75f5866687df2ce47bd9`](https://github.com/honojs/middleware/commit/b06bde6ef59368e00c7c75f5866687df2ce47bd9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support a base path
+
+## 0.14.6
+
+### Patch Changes
+
+- [#607](https://github.com/honojs/middleware/pull/607) [`375c98b145560c855f9000c523734bb2d31990c9`](https://github.com/honojs/middleware/commit/375c98b145560c855f9000c523734bb2d31990c9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: remove the type error for the hook
+
+## 0.14.5
+
+### Patch Changes
+
+- [#582](https://github.com/honojs/middleware/pull/582) [`053a85c722833b1f670fe667fb80b3cbe88f9a4d`](https://github.com/honojs/middleware/commit/053a85c722833b1f670fe667fb80b3cbe88f9a4d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@asteasolutions/zod-to-openapi`
+
+## 0.14.4
+
+### Patch Changes
+
+- [#576](https://github.com/honojs/middleware/pull/576) [`9a9de504942358be5a77236231e20f5016b6d1a9`](https://github.com/honojs/middleware/commit/9a9de504942358be5a77236231e20f5016b6d1a9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use `JSONParsed` for creating a response type
+
+## 0.14.3
+
+### Patch Changes
+
+- [#574](https://github.com/honojs/middleware/pull/574) [`ef9f45ab692c81e1474cfb054f55a2c9fc39bdf8`](https://github.com/honojs/middleware/commit/ef9f45ab692c81e1474cfb054f55a2c9fc39bdf8) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: relax types to support `.refine()` for an object
+
+## 0.14.2
+
+### Patch Changes
+
+- [#557](https://github.com/honojs/middleware/pull/557) [`69e53644647c156e5f6df0d981eabcd490c4e60b`](https://github.com/honojs/middleware/commit/69e53644647c156e5f6df0d981eabcd490c4e60b) Thanks [@arjunyel](https://github.com/arjunyel)! - Fix OpenAPI yaml with route middleware
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [[`aa055494974eb911ec784e6462691aafefd98125`](https://github.com/honojs/middleware/commit/aa055494974eb911ec784e6462691aafefd98125)]:
+  - @hono/zod-validator@0.2.2
+
+## 0.14.0
+
+### Minor Changes
+
+- [#535](https://github.com/honojs/middleware/pull/535) [`a595e4e260040decd871e271c60c5a07c6db4086`](https://github.com/honojs/middleware/commit/a595e4e260040decd871e271c60c5a07c6db4086) Thanks [@taku-hatano](https://github.com/taku-hatano)! - extract range definitions to StatusCode
+
+## 0.13.0
+
+### Minor Changes
+
+- [#532](https://github.com/honojs/middleware/pull/532) [`eeccd4fc2fd63c9d79d7a4911f80fa94d1680983`](https://github.com/honojs/middleware/commit/eeccd4fc2fd63c9d79d7a4911f80fa94d1680983) Thanks [@akineko](https://github.com/akineko)! - feat(zod-openapi): export RouteConfig type
+
+## 0.12.2
+
+### Patch Changes
+
+- [#529](https://github.com/honojs/middleware/pull/529) [`0a43d2c562f5adb12009f6bdd0e7fb7c06a625e6`](https://github.com/honojs/middleware/commit/0a43d2c562f5adb12009f6bdd0e7fb7c06a625e6) Thanks [@akineko](https://github.com/akineko)! - fix(zod-openapi): update RouteHandler type to support MaybePromise
+
+## 0.12.1
+
+### Patch Changes
+
+- [#522](https://github.com/honojs/middleware/pull/522) [`2d5ef8255861482cd62deee3d6616a2e21016d53`](https://github.com/honojs/middleware/commit/2d5ef8255861482cd62deee3d6616a2e21016d53) Thanks [@alexzhang1030](https://github.com/alexzhang1030)! - fix(zod-openapi): return type of handler should be MaybePromise
+
+## 0.12.0
+
+### Minor Changes
+
+- [#519](https://github.com/honojs/middleware/pull/519) [`b03484ba056215f0506894f9156cb1e2963cb450`](https://github.com/honojs/middleware/commit/b03484ba056215f0506894f9156cb1e2963cb450) Thanks [@yusukebe](https://github.com/yusukebe)! - feat(zod-openapi): support "status code"
+
+## 0.11.1
+
+### Patch Changes
+
+- [#510](https://github.com/honojs/middleware/pull/510) [`88113fae8b5bd5d0a7662a1cca426f522da109b7`](https://github.com/honojs/middleware/commit/88113fae8b5bd5d0a7662a1cca426f522da109b7) Thanks [@taku-hatano](https://github.com/taku-hatano)! - Add Promise<void> to Hook
+
 ## 0.11.0
 
 ### Minor Changes
