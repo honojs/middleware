@@ -24,6 +24,7 @@
     "build:typia-validator": "yarn workspace @hono/typia-validator build",
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
+    "build:event-emitter": "yarn workspace @hono/event-emitter build",
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",
     "build:react-renderer": "yarn workspace @hono/react-renderer build",
     "build:auth-js": "yarn workspace @hono/auth-js build",

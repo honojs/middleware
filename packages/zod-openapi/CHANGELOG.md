@@ -1,5 +1,23 @@
 # @hono/zod-openapi
 
+## 0.14.8
+
+### Patch Changes
+
+- [#623](https://github.com/honojs/middleware/pull/623) [`834a97a7b069fe5301f305f18bf271f3842af647`](https://github.com/honojs/middleware/commit/834a97a7b069fe5301f305f18bf271f3842af647) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support `coerce`
+
+## 0.14.7
+
+### Patch Changes
+
+- [#609](https://github.com/honojs/middleware/pull/609) [`b06bde6ef59368e00c7c75f5866687df2ce47bd9`](https://github.com/honojs/middleware/commit/b06bde6ef59368e00c7c75f5866687df2ce47bd9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support a base path
+
+## 0.14.6
+
+### Patch Changes
+
+- [#607](https://github.com/honojs/middleware/pull/607) [`375c98b145560c855f9000c523734bb2d31990c9`](https://github.com/honojs/middleware/commit/375c98b145560c855f9000c523734bb2d31990c9) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: remove the type error for the hook
+
 ## 0.14.5
 
 ### Patch Changes

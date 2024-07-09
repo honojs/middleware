@@ -1,5 +1,13 @@
 # @hono/sentry
 
+## 1.2.0
+
+### Minor Changes
+
+- [#620](https://github.com/honojs/middleware/pull/620) [`16d4efb01bd418231a4f344c6a10b328e600ac31`](https://github.com/honojs/middleware/commit/16d4efb01bd418231a4f344c6a10b328e600ac31) Thanks [@sam-lippert](https://github.com/sam-lippert)! - Toucan 4.0.0
+
+  This changeset updates the @hono/sentry middleware from Toucan 3.4.0 to 4.0.0. This provides a version bump for the @sentry/core dependency and adds support for Sentry v8.
+
 ## 1.1.0
 
 ### Minor Changes

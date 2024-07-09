@@ -1,5 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
 import { getCodeChallenge } from '../../utils/getCodeChallenge'
@@ -19,8 +20,8 @@ export function xAuth(options: {
     const challenge = await getCodeChallenge()
 
     const auth = new AuthFlow({
-      client_id: options.client_id || (c.env?.X_ID as string),
-      client_secret: options.client_secret || (c.env?.X_SECRET as string),
+      client_id: options.client_id || (env(c).X_ID as string),
+      client_secret: options.client_secret || (env(c).X_SECRET as string),
       redirect_uri: c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,

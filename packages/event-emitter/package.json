@@ -1,7 +1,7 @@
 {
-  "name": "@hono/node-ws",
-  "version": "1.0.2",
-  "description": "WebSocket helper for Node.js",
+  "name": "@hono/event-emitter",
+  "version": "1.0.0",
+  "description": "Event Emitter middleware for Hono",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -31,20 +31,13 @@
     "url": "https://github.com/honojs/middleware.git"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "author": "David Havl <contact@davidhavl.com> (https://github.com/DavidHavl)",
+  "peerDependencies": {
+    "hono": "*"
+  },
   "devDependencies": {
-    "@hono/node-server": "^1.11.1",
-    "@types/ws": "^8",
-    "hono": "^4.2.9",
+    "hono": "^3.11.7",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"
-  },
-  "dependencies": {
-    "ws": "^8.17.0"
-  },
-  "peerDependencies": {
-    "@hono/node-server": "^1.11.1"
-  },
-  "engines": {
-    "node": ">=18.14.1"
   }
 }

@@ -873,6 +873,13 @@ describe('basePath()', () => {
 
     expect(client.api.message.$url().pathname).toBe('/api/message')
   })
+
+  it('Should add the base path to paths', async () => {
+    const res = await app.request('/api/doc')
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as any
+    expect(Object.keys(data.paths)[0]).toBe('/api/message')
+  })
 })
 
 describe('With hc', () => {
@@ -1019,14 +1026,13 @@ describe('With hc', () => {
       },
       (result, c) => {
         if (!result.success) {
-          const res = c.json(
+          return c.json(
             {
               ok: false,
               source: 'routeHook' as const,
             },
             400
           )
-          return res
         }
       }
     )

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  ResponseConfig,
   RouteConfig as RouteConfigBase,
   ZodContentObject,
   ZodMediaTypeObject,
@@ -25,6 +24,7 @@ import type {
   Schema,
   ToSchema,
   TypedResponse,
+  ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
@@ -37,7 +37,7 @@ import type {
   SuccessStatusCode,
 } from 'hono/utils/http-status'
 import { mergePath } from 'hono/utils/url'
-import type { AnyZodObject, ZodError, ZodSchema } from 'zod'
+import type { ZodError, ZodSchema } from 'zod'
 import { ZodType, z } from 'zod'
 
 type MaybePromise<T> = Promise<T> | T
@@ -72,14 +72,24 @@ type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyo
   ? R['request'][Part]
   : {}
 
+type HasUndefined<T> = undefined extends T ? true : false
+
 type InputTypeBase<
   R extends RouteConfig,
   Part extends string,
-  Type extends string
+  Type extends keyof ValidationTargets
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends ZodType
     ? {
-        in: { [K in Type]: z.input<RequestPart<R, Part>> }
+        in: {
+          [K in Type]: HasUndefined<ValidationTargets[K]> extends true
+            ? {
+                [K2 in keyof z.input<RequestPart<R, Part>>]?: ValidationTargets[K][K2]
+              }
+            : {
+                [K2 in keyof z.input<RequestPart<R, Part>>]: ValidationTargets[K][K2]
+              }
+        }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
       }
     : {}
@@ -322,7 +332,17 @@ export class OpenAPIHono<
           I,
           E,
           P,
-          RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+          R extends {
+            responses: {
+              [statusCode: number]: {
+                content: {
+                  [mediaType: string]: ZodMediaTypeObject
+                }
+              }
+            }
+          }
+            ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
+            : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
         >
       | undefined = this.defaultHook
   ): OpenAPIHono<
@@ -395,16 +415,22 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (config: OpenAPIObjectConfig) => {
+  getOpenAPIDocument = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (config: OpenAPIObjectConfig) => {
+  getOpenAPI31Document = (
+    config: OpenAPIObjectConfig
+  ): ReturnType<typeof generator.generateDocument> => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
-    return document
+    // @ts-expect-error the _basePath is a private property
+    return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   doc = <P extends string>(
@@ -523,3 +549,16 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { z }
+
+function addBasePathToDocument(document: Record<string, any>, basePath: string) {
+  const updatedPaths: Record<string, any> = {}
+
+  Object.keys(document.paths).forEach((path) => {
+    updatedPaths[mergePath(basePath, path)] = document.paths[path]
+  })
+
+  return {
+    ...document,
+    paths: updatedPaths,
+  }
+}

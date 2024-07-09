@@ -1,6 +1,6 @@
 {
   "name": "@hono/trpc-server",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "tRPC Server Middleware for Hono",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -27,11 +27,11 @@
   },
   "homepage": "https://honojs.dev",
   "peerDependencies": {
-    "@trpc/server": "^10.10.0",
+    "@trpc/server": "^10.10.0 || >11.0.0-rc",
     "hono": ">=4.*"
   },
   "devDependencies": {
-    "@trpc/server": "^10.10.0",
+    "@trpc/server": "^10.10.0 || >11.0.0-rc",
     "hono": "^4.3.6",
     "jest": "^29.7.0",
     "rimraf": "^5.0.5",
