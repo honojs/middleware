@@ -38,3 +38,9 @@ export type GoogleUser = {
   picture: string
   locale: string
 }
+
+export type Token = {
+  token: string
+  expires_in: number
+  refresh_token: string
+}
