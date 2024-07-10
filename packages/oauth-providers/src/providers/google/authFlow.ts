@@ -14,6 +14,7 @@ type GoogleAuthFlow = {
   state?: string
   login_hint?: string
   prompt?: 'none' | 'consent' | 'select_account'
+  access_type?: 'online' | 'offline'
 }
 
 export class AuthFlow {
@@ -26,6 +27,7 @@ export class AuthFlow {
   state: string | undefined
   login_hint: string | undefined
   prompt: 'none' | 'consent' | 'select_account' | undefined
+  access_type: 'online' | 'offline' | undefined
   user: Partial<GoogleUser> | undefined
   granted_scopes: string[] | undefined
 
@@ -39,6 +41,7 @@ export class AuthFlow {
     state,
     code,
     token,
+    access_type
   }: GoogleAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -49,6 +52,7 @@ export class AuthFlow {
     this.state = state
     this.code = code
     this.token = token
+    this.access_type = access_type
     this.user = undefined
     this.granted_scopes = undefined
 
@@ -71,6 +75,7 @@ export class AuthFlow {
       include_granted_scopes: true,
       scope: this.scope.join(' '),
       state: this.state,
+      access_type: this.access_type
     })
     return `https://accounts.google.com/o/oauth2/v2/auth?${parsedOptions}`
   }
@@ -99,6 +104,7 @@ export class AuthFlow {
       this.token = {
         token: response.access_token,
         expires_in: response.expires_in,
+        refresh_token: reponse.refresh_token
       }
 
       this.granted_scopes = response.scope.split(' ')
@@ -106,7 +112,13 @@ export class AuthFlow {
   }
 
   async getUserData() {
-    await this.getTokenFromCode()
+
+    // Check if token is expired and refresh if necessary
+    if ( this.access_type === 'offline' && this.isTokenExpired() ) {
+      await this.refreshToken()
+    } else {
+      await this.getTokenFromCode()
+    }
 
     const response = (await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
@@ -122,4 +134,40 @@ export class AuthFlow {
       this.user = response
     }
   }
+
+  async refreshToken() {
+    if (!this.token?.refresh_token) {
+      throw new HTTPException(400, { message: 'Refresh token not found' })
+    }
+
+    const response = (await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json',
+      },
+      body: JSON.stringify({
+        client_id: this.client_id,
+        client_secret: this.client_secret,
+        refresh_token: this.token.refresh_token,
+        grant_type: 'refresh_token',
+      }),
+    }).then((res) => res.json())) as GoogleTokenResponse | GoogleErrorResponse
+
+    if ('error' in response) {
+      throw new HTTPException(400, { message: response.error_description })
+    }
+
+    if ('access_token' in response) {
+      this.token.token = response.access_token
+      this.token.expires_in = response.expires_in
+    }
+  }
+
+  isTokenExpired() {
+    const currentTime = Math.floor(Date.now() / 1000)
+    return currentTime >= (this.token?.expires_in || 0)
+  }
+
+
 }
