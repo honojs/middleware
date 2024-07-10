@@ -2278,7 +2278,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/swagger-ui@workspace:packages/swagger-ui"
   dependencies:
-    "@types/swagger-ui-dist": "npm:^3.30.3"
+    "@types/swagger-ui-dist": "npm:^3.30.5"
     hono: "npm:^3.11.7"
     publint: "npm:^0.2.2"
     tsup: "npm:^7.2.0"
@@ -4352,10 +4352,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/swagger-ui-dist@npm:^3.30.3":
-  version: 3.30.4
-  resolution: "@types/swagger-ui-dist@npm:3.30.4"
-  checksum: 106114fef47a29811a37810e00e52d3fb6f99bafa7ec00b49926827a9c502b27550e2de589af000e472d327c3fc32417f75befa37b2450e8fad81e0a79ad641f
+"@types/swagger-ui-dist@npm:^3.30.5":
+  version: 3.30.5
+  resolution: "@types/swagger-ui-dist@npm:3.30.5"
+  checksum: 0e6ea1b6add4fb9cfd82dcdbd8156b3d0921a6bd2d511b92c05fc6d76e94a78d89eab81ffd6bb34c0c52e97b5e4a61eea77fab502698e9cf170aabf5d2c09510
   languageName: node
   linkType: hard
 

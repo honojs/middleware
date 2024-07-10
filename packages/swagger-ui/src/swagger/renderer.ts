@@ -14,17 +14,60 @@ export type DistSwaggerUIOptions = {
   layout?: SwaggerConfigs['layout']
   docExpansion?: SwaggerConfigs['docExpansion']
   maxDisplayedTags?: SwaggerConfigs['maxDisplayedTags']
+  /**
+   * accepts function as a string.
+   *
+   * @example (a, b) => a.path.localeCompare(b.path)
+   */
   operationsSorter?: string
+  /**
+   * accepts function as a string.
+   *
+   * @example (req) => req
+   */
   requestInterceptor?: string
+  /**
+   * accepts function as a string.
+   *
+   * @example (res) => res
+   */
   responseInterceptor?: string
   persistAuthorization?: boolean
   defaultModelsExpandDepth?: number
   defaultModelExpandDepth?: number
-  defaultModelRendering?: "example" | "model" | undefined
+  defaultModelRendering?: 'example' | 'model' | undefined
   displayRequestDuration?: boolean
   filter?: boolean | string
   showExtensions?: boolean
   showCommonExtensions?: boolean
+  queryConfigEnabled?: boolean
+  displayOperationId?: boolean
+  /**
+   * accepts function as a string.
+   * swagger-ui accepts alpha in the tagsSorter, but this middleware does not support it.
+   *
+   * @example (a, b) => a.name.localeCompare(b.name)
+   */
+  tagsSorter?: string
+  /**
+   * accepts function as a string.
+   * @example () => { console.log('Swagger UI Loaded'); }
+   */
+  onComplete?: string
+  syntaxHighlight?: boolean | { activated: boolean; theme: string[] }
+  tryItOutEnabled?: boolean
+  requestSnippetsEnabled?: boolean
+  requestSnippets?: object
+  oauth2RedirectUrl?: string
+  showMutabledRequest?: boolean
+  request?: {
+    curlOptions?: string[]
+  }
+  supportedSubmitMethods?: string[]
+  validatorUrl?: string
+  withCredentials?: boolean
+  modelPropertyMacro?: string
+  parameterMacro?: string
 } & RequireOne<{
   url?: SwaggerConfigs['url']
   urls?: SwaggerConfigs['urls']
@@ -59,6 +102,22 @@ const RENDER_TYPE_MAP = {
   filter: RENDER_TYPE.RAW,
   showExtensions: RENDER_TYPE.RAW,
   showCommonExtensions: RENDER_TYPE.RAW,
+  queryConfigEnabled: RENDER_TYPE.RAW,
+  displayOperationId: RENDER_TYPE.RAW,
+  tagsSorter: RENDER_TYPE.RAW,
+  onComplete: RENDER_TYPE.RAW,
+  syntaxHighlight: RENDER_TYPE.JSON_STRING,
+  tryItOutEnabled: RENDER_TYPE.RAW,
+  requestSnippetsEnabled: RENDER_TYPE.RAW,
+  requestSnippets: RENDER_TYPE.JSON_STRING,
+  oauth2RedirectUrl: RENDER_TYPE.STRING,
+  showMutabledRequest: RENDER_TYPE.RAW,
+  request: RENDER_TYPE.JSON_STRING,
+  supportedSubmitMethods: RENDER_TYPE.JSON_STRING,
+  validatorUrl: RENDER_TYPE.STRING,
+  withCredentials: RENDER_TYPE.RAW,
+  modelPropertyMacro: RENDER_TYPE.RAW,
+  parameterMacro: RENDER_TYPE.RAW,
 } as const satisfies Record<
   keyof DistSwaggerUIOptions,
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]
