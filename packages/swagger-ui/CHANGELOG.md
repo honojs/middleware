@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- [#618](https://github.com/honojs/middleware/pull/618) [`47be5c695662406c220346a741857872115ac0ae`](https://github.com/honojs/middleware/commit/47be5c695662406c220346a741857872115ac0ae) Thanks [@naporin0624](https://github.com/naporin0624)! - Add Full Configuration Parameters and Update Dependencies for Swagger UI
+
 ## 0.3.0
 
 ### Minor Changes
