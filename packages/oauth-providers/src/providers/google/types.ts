@@ -13,6 +13,7 @@ export type GoogleTokenResponse = {
   scope: string
   token_type: string
   id_token: string
+  refresh_token: string
 }
 
 export type GoogleTokenInfoResponse = {
@@ -35,4 +36,10 @@ export type GoogleUser = {
   family_name: string
   picture: string
   locale: string
+}
+
+export type Token = {
+  token: string
+  expires_in: number
+  refresh_token: string
 }

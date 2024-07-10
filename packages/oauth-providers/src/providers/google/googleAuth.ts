@@ -13,7 +13,7 @@ export function googleAuth(options: {
   client_id?: string
   client_secret?: string
   state?: string
-  access_type?: string
+  access_type?: 'online' | 'offline'
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = options.state || getRandomState()
@@ -30,6 +30,7 @@ export function googleAuth(options: {
       token: {
         token: c.req.query('access_token') as string,
         expires_in: Number(c.req.query('expires-in')) as number,
+		refresh_token: c.req.query('refresh_token') as string, 
       },
       access_type: options.access_type
     })
@@ -60,10 +61,6 @@ export function googleAuth(options: {
     c.set('token', auth.token)
     c.set('user-google', auth.user)
     c.set('granted-scopes', auth.granted_scopes)
-
-    if ( access_type === 'offline' ) {
-      c.set('refresh_token', auth.refresh_token )
-    }
 
     await next()
   }

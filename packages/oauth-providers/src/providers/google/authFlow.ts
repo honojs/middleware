@@ -1,8 +1,7 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
 import { toQueryParams } from '../../utils/objectToQuery'
-import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from './types'
+import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser, Token } from './types'
 
 type GoogleAuthFlow = {
   client_id: string
@@ -104,7 +103,7 @@ export class AuthFlow {
       this.token = {
         token: response.access_token,
         expires_in: response.expires_in,
-        refresh_token: reponse.refresh_token
+		refresh_token: response.refresh_token
       }
 
       this.granted_scopes = response.scope.split(' ')
@@ -161,6 +160,7 @@ export class AuthFlow {
     if ('access_token' in response) {
       this.token.token = response.access_token
       this.token.expires_in = response.expires_in
+	  this.token.refresh_token = response.refresh_token
     }
   }
 
