@@ -1,6 +1,6 @@
 {
   "name": "@hono/swagger-ui",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A middleware for using SwaggerUI in Hono",
   "type": "module",
   "main": "dist/index.cjs",
@@ -41,7 +41,7 @@
     "hono": "*"
   },
   "devDependencies": {
-    "@types/swagger-ui-dist": "^3.30.3",
+    "@types/swagger-ui-dist": "^3.30.5",
     "hono": "^3.11.7",
     "publint": "^0.2.2",
     "tsup": "^7.2.0",
