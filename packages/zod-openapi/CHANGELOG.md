@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.14.9
+
+### Patch Changes
+
+- [#632](https://github.com/honojs/middleware/pull/632) [`a405d0870998f131dbc05a44fae0e6df7ff82521`](https://github.com/honojs/middleware/commit/a405d0870998f131dbc05a44fae0e6df7ff82521) Thanks [@paolostyle](https://github.com/paolostyle)! - expose `extendZodWithOpenApi` from `zod-to-openapi`
+
 ## 0.14.8
 
 ### Patch Changes
