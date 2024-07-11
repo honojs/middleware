@@ -548,7 +548,7 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 }
 
 extendZodWithOpenApi(z)
-export { z }
+export { extendZodWithOpenApi, z }
 
 function addBasePathToDocument(document: Record<string, any>, basePath: string) {
   const updatedPaths: Record<string, any> = {}
