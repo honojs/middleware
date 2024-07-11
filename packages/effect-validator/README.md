@@ -11,13 +11,12 @@ Effect Schema offers several advantages over other validation libraries:
 3. Highly customizable: Users can attach meta-information through annotations.
 4. Functional programming style: Uses combinators and transformations for schema definition.
 
-
 ## Usage
 
 ```ts
-import { Schema as S } from "@effect/schema"
-import { effectValidator } from "@hono/effect-validator"
-import { Effect } from "effect"
+import { Hono } from 'hono'
+import { Schema as S } from '@effect/schema'
+import { effectValidator } from '@hono/effect-validator'
 
 const app = new Hono()
 
@@ -26,18 +25,14 @@ const User = S.Struct({
   age: S.Number,
 })
 
-app.post(
-    '/user',
-    effectValidator('json', User),
-    (c) => {
-      const user = c.req.valid('json') as S.Schema.Type<typeof User>
+app.post('/user', effectValidator('json', User), (c) => {
+  const user = c.req.valid('json')
 
-      return c.json({
-        success: true,
-        message: `${user.name} is ${user.age}`
-      })
-    }
-  )
+  return c.json({
+    success: true,
+    message: `${user.name} is ${user.age}`,
+  })
+})
 ```
 
 ## API
@@ -46,7 +41,6 @@ app.post(
 
 - `target`: The target of validation ('json', 'form', 'query', etc.)
 - `schema`: An Effect Schema schema
-
 
 ## Author
 

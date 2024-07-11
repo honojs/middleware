@@ -1,2 +1,0 @@
-# @hono/effect-validator
-

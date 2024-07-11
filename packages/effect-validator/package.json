@@ -1,6 +1,6 @@
 {
   "name": "@hono/effect-validator",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Validator middleware using Effect Schema",
   "type": "module",
   "main": "dist/cjs/index.js",
@@ -8,9 +8,14 @@
   "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
@@ -18,12 +23,9 @@
   ],
   "scripts": {
     "test": "vitest --run",
-    "copy:package.cjs.json": "cp ./package.cjs.json ./dist/cjs/package.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm && yarn copy:package.cjs.json",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
   },
   "license": "MIT",
   "publishConfig": {
@@ -37,14 +39,13 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "@effect/schema": ">=0.68.18",
-    "hono": ">=4.4.12"
+    "hono": ">=4.4.13"
   },
   "devDependencies": {
-    "@effect/schema": "^0.68.18",
+    "@effect/schema": "^0.68.21",
     "effect": "^3.4.8",
-    "hono": "^4.4.12",
-    "jest": "^29.7.0",
-    "rimraf": "^6.0.0",
+    "hono": "^4.4.13",
+    "tsup": "^8.1.0",
     "typescript": "^5.5.3",
     "vitest": "^2.0.1"
   }

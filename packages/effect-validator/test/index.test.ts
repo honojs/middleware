@@ -1,6 +1,7 @@
-import { Hono } from 'hono'
-import type { Equal, Expect } from 'hono/utils/types'
 import { Schema as S } from '@effect/schema'
+import { Hono } from 'hono'
+import type { StatusCode } from 'hono/utils/http-status'
+import type { Equal, Expect } from 'hono/utils/types'
 import { effectValidator } from '../src'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,20 +12,23 @@ describe('Basic', () => {
 
   const jsonSchema = S.Struct({
     name: S.String,
-    age: S.Number
+    age: S.Number,
   })
 
-  const querySchema = S.Struct({
-    name: S.optional(S.String)
-  })
+  const querySchema = S.Union(
+    S.Struct({
+      name: S.optional(S.String),
+    }),
+    S.Undefined
+  )
 
   const route = app.post(
     '/author',
     effectValidator('json', jsonSchema),
     effectValidator('query', querySchema),
     (c) => {
-      const data = c.req.valid('json') as S.Schema.Type<typeof jsonSchema>
-      const query = c.req.valid('query') as S.Schema.Type<typeof querySchema>
+      const data = c.req.valid('json')
+      const query = c.req.valid('query')
 
       return c.json({
         success: true,
@@ -35,6 +39,7 @@ describe('Basic', () => {
   )
 
   type Actual = ExtractSchema<typeof route>
+
   type Expected = {
     '/author': {
       $post: {
@@ -44,17 +49,17 @@ describe('Basic', () => {
             age: number
           }
         } & {
-          query?:
-          | {
+          query?: {
             name?: string | string[] | undefined
           }
-          | undefined
         }
         output: {
           success: boolean
           message: string
           queryName: string | undefined
         }
+        outputFormat: 'json'
+        status: StatusCode
       }
     }
   }
@@ -107,9 +112,8 @@ describe('coerce', () => {
   const app = new Hono()
 
   const querySchema = S.Struct({
-    page: S.NumberFromString
+    page: S.NumberFromString,
   })
-
 
   const route = app.get('/page', effectValidator('query', querySchema), (c) => {
     const { page } = c.req.valid('query')
@@ -128,6 +132,8 @@ describe('coerce', () => {
         output: {
           page: number
         }
+        outputFormat: 'json'
+        status: StatusCode
       }
     }
   }
@@ -144,4 +150,3 @@ describe('coerce', () => {
     })
   })
 })
-
