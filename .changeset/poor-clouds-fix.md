@@ -1,5 +1,5 @@
 ---
-'@hono/schema-validator': major
+'@hono/effect-validator': major
 ---
 
 Add new basic Effect Schema validator middleware
