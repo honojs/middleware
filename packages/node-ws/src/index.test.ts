@@ -3,6 +3,7 @@ import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
+import type { WSMessageReceive } from 'hono/ws'
 
 describe('WebSocket helper', () => {
   let app: Hono
@@ -105,5 +106,32 @@ describe('WebSocket helper', () => {
     })
 
     connections.forEach((ws) => ws.close())
+  })
+
+  it('Should be able to send and receive binary content with good length', async () => {
+    const mainPromise = new Promise<WSMessageReceive>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(() => ({
+          onMessage(data) {
+            resolve(data.data)
+          },
+        }))
+      )
+    )
+
+    const binaryData = new Uint8Array(Array.from({ length: 16 }).map((_, i) => i ** 2))
+
+    const ws = new WebSocket('ws://localhost:3030/')
+    await new Promise<void>((resolve) => ws.on('open', resolve))
+    ws.send(binaryData)
+
+    const receivedMessage = await mainPromise;
+    expect(receivedMessage).toBeInstanceOf(Buffer)
+    expect((receivedMessage as Buffer).byteLength).toBe(binaryData.length)
+
+    binaryData.forEach((val, idx) => {
+      expect((receivedMessage as Buffer).at(idx)).toBe(val)
+    })
   })
 })
