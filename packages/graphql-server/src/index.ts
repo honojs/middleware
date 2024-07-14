@@ -23,7 +23,7 @@ import { parseBody } from './parse-body'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RootResolver<E extends Env = any, P extends string = any, I extends Input = {}> = (
   // eslint-enable-next-line @typescript-eslint/no-explicit-any
-  ctx?: Context<E, P, I>
+  c?: Context<E, P, I>
 ) => Promise<unknown> | unknown
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
