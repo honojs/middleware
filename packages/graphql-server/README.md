@@ -16,11 +16,11 @@ yarn add @hono/graphql-server
 
 ## Usage
 
-index.js:
+index.ts:
 
-```js
+```ts
 import { Hono } from 'hono'
-import { graphqlServer } from '@hono/graphql-server'
+import { type RootResolver, graphqlServer } from '@hono/graphql-server'
 import { buildSchema } from 'graphql'
 
 export const app = new Hono()
@@ -31,7 +31,7 @@ type Query {
 }
 `)
 
-const rootResolver = (ctx) => {
+const rootResolver: RootResolver = (c) => {
   return {
     hello: () => 'Hello Hono!',
   }
