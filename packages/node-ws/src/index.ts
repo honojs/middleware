@@ -94,10 +94,9 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           ws.on('message', (data, isBinary) => {
             const datas = Array.isArray(data) ? data : [data]
             for (const data of datas) {
-              const buff: Buffer = Buffer.from(data)
               events.onMessage?.(
                 new MessageEvent('message', {
-                  data: isBinary ? buff.buffer : buff.toString('utf-8'),
+                  data: isBinary ? data : data.toString('utf-8'),
                 }),
                 ctx
               )
