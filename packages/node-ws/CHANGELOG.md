@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.3
+
+### Patch Changes
+
+- [#639](https://github.com/honojs/middleware/pull/639) [`2f307e687797feaf68de4579cf14c230f239fa2b`](https://github.com/honojs/middleware/commit/2f307e687797feaf68de4579cf14c230f239fa2b) Thanks [@Yovach](https://github.com/Yovach)! - Fixed wrong byteLength on binary messages
+
 ## 1.0.2
 
 ### Patch Changes
