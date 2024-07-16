@@ -126,7 +126,7 @@ describe('WebSocket helper', () => {
     await new Promise<void>((resolve) => ws.on('open', resolve))
     ws.send(binaryData)
 
-    const receivedMessage = await mainPromise;
+    const receivedMessage = await mainPromise
     expect(receivedMessage).toBeInstanceOf(Buffer)
     expect((receivedMessage as Buffer).byteLength).toBe(binaryData.length)
 
