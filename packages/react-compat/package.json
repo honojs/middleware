@@ -27,7 +27,7 @@
     "hono": ">=4.5.*"
   },
   "devDependencies": {
-    "hono": "4.5.0-rc.1",
+    "hono": "^4.5.0",
     "tsup": "^8.0.1"
   }
 }

@@ -2256,7 +2256,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/react-compat@workspace:packages/react-compat"
   dependencies:
-    hono: "npm:4.5.0-rc.1"
+    hono: "npm:^4.5.0"
     tsup: "npm:^8.0.1"
   peerDependencies:
     hono: ">=4.5.*"
@@ -10082,13 +10082,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"hono@npm:4.5.0-rc.1":
-  version: 4.5.0-rc.1
-  resolution: "hono@npm:4.5.0-rc.1"
-  checksum: aaba4187da6dfb697b63772fd3f05466697a01eb2cc8a0c189a0bc464d49f6cedc1caa107b390488634e72544551ed8b34d906b9ef5c5780f1860a68666d56de
-  languageName: node
-  linkType: hard
-
 "hono@npm:^3.11.7":
   version: 3.11.7
   resolution: "hono@npm:3.11.7"
@@ -10163,6 +10156,13 @@ __metadata:
   version: 4.4.13
   resolution: "hono@npm:4.4.13"
   checksum: 213c09eafa4d82dfa6b6326fd37e8f0d17753ece62581ea849ec0eb87b0984a721389a0d8480f64dbef564d3fa49cc6031603374f326cb48ad4bc9eb9496e876
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "hono@npm:4.5.0"
+  checksum: 0c1d10b0e30202a1493ab9db7e8068449a10ad352e3a9794d866eaa08c15b04c0d896499fec8ebe8994035a93ae0f54691c59c712600cd0515bcaee87bfbb1c9
   languageName: node
   linkType: hard
 
