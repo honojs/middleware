@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer'
 import type { Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
@@ -6,6 +5,7 @@ import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import type { IncomingMessage } from 'http'
+import { CloseEvent } from './events'
 
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket
