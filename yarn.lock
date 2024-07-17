@@ -2082,9 +2082,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/event-emitter@workspace:packages/event-emitter"
   dependencies:
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.3.6"
     tsup: "npm:^8.0.1"
-    vitest: "npm:^1.0.4"
+    vitest: "npm:^1.6.0"
   peerDependencies:
     hono: "*"
   languageName: unknown
