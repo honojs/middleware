@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.15.0
+
+### Minor Changes
+
+- [#645](https://github.com/honojs/middleware/pull/645) [`f38a6166f6ced37ebea3f7cfcefe91d001b0c3b3`](https://github.com/honojs/middleware/commit/f38a6166f6ced37ebea3f7cfcefe91d001b0c3b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - Support other json content-types such as application/vnd.api+json, application/problem+json, etc.
+
 ## 0.14.9
 
 ### Patch Changes
