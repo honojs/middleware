@@ -55,10 +55,12 @@ type RequestTypes = {
 }
 
 type IsJson<T> = T extends string
-  ? T extends `application/json${infer _Rest}`
-    ? 'json'
+    ? T extends `application/${infer Start}json${infer _End}`
+        ? Start extends '' | `${string}+` | `vnd.${string}+`
+            ? 'json'
+            : never
+        : never
     : never
-  : never
 
 type IsForm<T> = T extends string
   ? T extends
@@ -385,7 +387,7 @@ export class OpenAPIHono<
         if (!(schema instanceof ZodType)) {
           continue
         }
-        if (mediaType.startsWith('application/json')) {
+        if (/^application\/([a-z-\.]+\+)?json/.test(mediaType)) {
           const validator = zValidator('json', schema, hook as any)
           validators.push(validator as any)
         }

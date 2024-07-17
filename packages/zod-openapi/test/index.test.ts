@@ -422,74 +422,157 @@ describe('JSON', () => {
     })
     .openapi('Post')
 
-  const route = createRoute({
-    method: 'post',
-    path: '/posts',
-    request: {
-      body: {
-        content: {
-          'application/json': {
-            schema: RequestSchema,
+  describe('Content-Type application/json', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: RequestSchema,
+            },
           },
         },
       },
-    },
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: PostSchema,
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: PostSchema,
+            },
           },
+          description: 'Post a post',
         },
-        description: 'Post a post',
       },
-    },
-  })
-
-  const app = new OpenAPIHono()
-
-  app.openapi(route, (c) => {
-    const { id, title } = c.req.valid('json')
-    return c.json({
-      id,
-      title,
     })
-  })
 
-  it('Should return 200 response with correct contents', async () => {
-    const req = new Request('http://localhost/posts', {
-      method: 'POST',
-      body: JSON.stringify({
+    const app = new OpenAPIHono()
+
+    app.openapi(route, (c) => {
+      const {id, title} = c.req.valid('json')
+      return c.json({
+        id,
+        title,
+      })
+    })
+
+    it('Should return 200 response with correct contents', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: 123,
+          title: 'Good title',
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const res = await app.request(req)
+
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({
         id: 123,
         title: 'Good title',
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      })
     })
 
-    const res = await app.request(req)
-
-    expect(res.status).toBe(200)
-    expect(await res.json()).toEqual({
-      id: 123,
-      title: 'Good title',
+    it('Should return 400 response with correct contents', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      })
+      const res = await app.request(req)
+      expect(res.status).toBe(400)
     })
   })
 
-  it('Should return 400 response with correct contents', async () => {
-    const req = new Request('http://localhost/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  describe('Content-Type application/vnd.api+json', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/vnd.api+json': {
+              schema: RequestSchema,
+            },
+          },
+        },
       },
-      body: JSON.stringify({}),
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: PostSchema,
+            },
+          },
+          description: 'Post a post',
+        },
+      },
     })
-    const res = await app.request(req)
-    expect(res.status).toBe(400)
+
+    const app = new OpenAPIHono()
+
+    app.openapi(route, (c) => {
+      const {id, title} = c.req.valid('json')
+      return c.json({
+        id,
+        title,
+      })
+    })
+
+    it('Should return 200 response with correct contents', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: 123,
+          title: 'Good title',
+        }),
+        headers: {
+          'Content-Type': 'application/vnd.api+json',
+        },
+      })
+
+      const res = await app.request(req)
+
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({
+        id: 123,
+        title: 'Good title',
+      })
+    })
+
+    it('Should return 400 response with correct contents for empty request data', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.api+json',
+        },
+        body: JSON.stringify({}),
+      })
+      const res = await app.request(req)
+      expect(res.status).toBe(400)
+    })
+
+    it('Should return 400 response with correct contents for non application/vnd.api+json request', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      })
+      const res = await app.request(req)
+      expect(res.status).toBe(400)
+    })
   })
 })
-
+// application/vnd.api+json
 describe('Form', () => {
   const RequestSchema = z.object({
     id: z.string().openapi({}),
