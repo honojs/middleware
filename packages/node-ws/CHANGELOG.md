@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.4
+
+### Patch Changes
+
+- [#648](https://github.com/honojs/middleware/pull/648) [`139e34a90775d25a61002baeb84d7927b9d75b70`](https://github.com/honojs/middleware/commit/139e34a90775d25a61002baeb84d7927b9d75b70) Thanks [@Yovach](https://github.com/Yovach)! - Add a `CloseEvent` class to avoid exception "CloseEvent is not defined"
+
 ## 1.0.3
 
 ### Patch Changes
