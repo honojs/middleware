@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from 'hono'
-import { setCookie, getCookie } from 'hono/cookie'
+import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 
@@ -11,6 +11,7 @@ export function discordAuth(options: {
   scope: Scopes[]
   client_id?: string
   client_secret?: string
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     // Generate encoded "keys"
@@ -20,7 +21,7 @@ export function discordAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).DISCORD_ID as string),
       client_secret: options.client_secret || (env(c).DISCORD_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
       code: c.req.query('code'),
@@ -29,14 +30,6 @@ export function discordAuth(options: {
         expires_in: Number(c.req.query('expires_in')),
       },
     })
-
-    // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
-      const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
-        throw new HTTPException(401)
-      }
-    }
 
     // Redirect to login dialog
     if (!auth.code) {
@@ -47,6 +40,14 @@ export function discordAuth(options: {
         // secure: true,
       })
       return c.redirect(auth.redirect())
+    }
+
+    // Avoid CSRF attack by checking state
+    if (c.req.url.includes('?')) {
+      const storedState = getCookie(c, 'state')
+      if (c.req.query('state') !== storedState) {
+        throw new HTTPException(401)
+      }
     }
 
     // Retrieve user data from discord

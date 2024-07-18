@@ -2,9 +2,9 @@ import { Hono } from 'hono'
 import { setupServer } from 'msw/node'
 import type { DiscordUser } from '../src/providers/discord'
 import {
+  discordAuth,
   refreshToken as discordRefresh,
   revokeToken as discordRevoke,
-  discordAuth,
 } from '../src/providers/discord'
 import { facebookAuth } from '../src/providers/facebook'
 import type { FacebookUser } from '../src/providers/facebook'
@@ -18,30 +18,30 @@ import type { XUser } from '../src/providers/x'
 import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
 import type { Token } from '../src/types'
 import {
+  discordCodeError,
+  discordRefreshToken,
+  discordRefreshTokenError,
+  discordToken,
+  discordUser,
+  dummyCode,
   dummyToken,
+  facebookCodeError,
+  facebookUser,
+  githubCodeError,
+  githubToken,
+  githubUser,
+  googleCodeError,
   googleUser,
   handlers,
-  facebookUser,
-  githubUser,
-  dummyCode,
-  googleCodeError,
-  facebookCodeError,
-  githubToken,
-  githubCodeError,
   linkedInCodeError,
-  linkedInUser,
   linkedInToken,
+  linkedInUser,
   xCodeError,
-  xUser,
-  xToken,
   xRefreshToken,
   xRefreshTokenError,
   xRevokeTokenError,
-  discordCodeError,
-  discordUser,
-  discordToken,
-  discordRefreshToken,
-  discordRefreshTokenError,
+  xToken,
+  xUser,
 } from './handlers'
 
 const server = setupServer(...handlers)
@@ -62,6 +62,14 @@ describe('OAuth Middleware', () => {
       scope: ['openid', 'email', 'profile'],
     })
   )
+  app.use('/google-custom-redirect', (c, next) => {
+    return googleAuth({
+      client_id,
+      client_secret,
+      scope: ['openid', 'email', 'profile'],
+      redirect_uri: 'http://localhost:3000/google',
+    })(c, next)
+  })
   app.get('/google', (c) => {
     const user = c.get('user-google')
     const token = c.get('token')
@@ -93,6 +101,15 @@ describe('OAuth Middleware', () => {
       ],
     })
   )
+  app.use('/facebook-custom-redirect', (c, next) =>
+    facebookAuth({
+      client_id,
+      client_secret,
+      scope: [],
+      fields: [],
+      redirect_uri: 'http://localhost:3000/facebook',
+    })(c, next)
+  )
   app.get('/facebook', (c) => {
     const user = c.get('user-facebook')
     const token = c.get('token')
@@ -112,6 +129,13 @@ describe('OAuth Middleware', () => {
       client_id,
       client_secret,
     })
+  )
+  app.use('/github/app-custom-redirect', (c, next) =>
+    githubAuth({
+      client_id,
+      client_secret,
+      redirect_uri: 'http://localhost:3000/github/app',
+    })(c, next)
   )
   app.get('/github/app', (c) => {
     const token = c.get('token')
@@ -156,6 +180,14 @@ describe('OAuth Middleware', () => {
       scope: ['email', 'openid', 'profile'],
     })
   )
+  app.use('/linkedin-custom-redirect', (c, next) =>
+    linkedinAuth({
+      client_id,
+      client_secret,
+      scope: ['email', 'openid', 'profile'],
+      redirect_uri: 'http://localhost:3000/linkedin',
+    })(c, next)
+  )
   app.get('/linkedin', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
@@ -193,6 +225,15 @@ describe('OAuth Middleware', () => {
         'withheld',
       ],
     })
+  )
+  app.use('/x-custom-redirect', (c, next) =>
+    xAuth({
+      client_id,
+      client_secret,
+      scope: [],
+      fields: [],
+      redirect_uri: 'http://localhost:3000/x',
+    })(c, next)
   )
   app.get('/x', (c) => {
     const token = c.get('token')
@@ -240,6 +281,14 @@ describe('OAuth Middleware', () => {
       client_secret,
       scope: ['identify', 'email'],
     })
+  )
+  app.use('/discord-custom-redirect', (c, next) =>
+    discordAuth({
+      client_id,
+      client_secret,
+      scope: ['identify', 'email'],
+      redirect_uri: 'http://localhost:3000/discord',
+    })(c, next)
   )
   app.get('/discord', (c) => {
     const token = c.get('token')
@@ -295,6 +344,16 @@ describe('OAuth Middleware', () => {
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(302)
+      expect(res.headers)
+    })
+
+    it('Should redirect to custom redirect_uri', async () => {
+      const res = await app.request('/google-custom-redirect')
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(302)
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/google')
     })
 
     it('Prevent CSRF attack', async () => {
@@ -339,6 +398,14 @@ describe('OAuth Middleware', () => {
       expect(res.status).toBe(302)
     })
 
+    it('Should redirect to custom redirect_uri', async () => {
+      const res = await app.request('/facebook-custom-redirect')
+      expect(res?.status).toBe(302)
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/facebook')
+    })
+
     it('Prevent CSRF attack', async () => {
       const res = await app.request(`/facebook?code=${dummyCode}&state=malware-state`)
       expect(res).not.toBeNull()
@@ -381,6 +448,16 @@ describe('OAuth Middleware', () => {
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(302)
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/github/app-custom-redirect')
+        expect(res?.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe(
+          'http://localhost:3000/github/app'
+        )
       })
 
       it('Should throw error for invalide code', async () => {
@@ -459,6 +536,14 @@ describe('OAuth Middleware', () => {
       expect(res.status).toBe(302)
     })
 
+    it('Should redirect to custom redirect_uri', async () => {
+      const res = await app.request('/linkedin-custom-redirect')
+      expect(res?.status).toBe(302)
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/linkedin')
+    })
+
     it('Should throw error for invalide code', async () => {
       const res = await app.request('/linkedin?code=9348ffdsd-sdsdbad-code')
 
@@ -498,6 +583,14 @@ describe('OAuth Middleware', () => {
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(302)
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/x-custom-redirect')
+        expect(res?.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/x')
       })
 
       it('Prevent CSRF attack', async () => {
@@ -586,6 +679,14 @@ describe('OAuth Middleware', () => {
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(302)
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/discord-custom-redirect')
+        expect(res?.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/discord')
       })
 
       it('Prevent CSRF attack', async () => {
