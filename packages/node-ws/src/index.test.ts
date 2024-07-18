@@ -13,6 +13,7 @@ describe('WebSocket helper', () => {
 
   beforeEach(async () => {
     app = new Hono()
+    
     ;({ injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
@@ -108,6 +109,21 @@ describe('WebSocket helper', () => {
     connections.forEach((ws) => ws.close())
   })
 
+  it('CloseEvent should be executed without crash', async () => {
+    app.get(
+      '/',
+      upgradeWebSocket(() => ({
+        onClose() {
+          // doing some stuff here
+        },
+      }))
+    )
+
+    const ws = new WebSocket('ws://localhost:3030/')
+    await new Promise<void>((resolve) => ws.on('open', resolve))
+    ws.close()
+  })
+
   it('Should be able to send and receive binary content with good length', async () => {
     const mainPromise = new Promise<WSMessageReceive>((resolve) =>
       app.get(
@@ -126,7 +142,7 @@ describe('WebSocket helper', () => {
     await new Promise<void>((resolve) => ws.on('open', resolve))
     ws.send(binaryData)
 
-    const receivedMessage = await mainPromise;
+    const receivedMessage = await mainPromise
     expect(receivedMessage).toBeInstanceOf(Buffer)
     expect((receivedMessage as Buffer).byteLength).toBe(binaryData.length)
 
