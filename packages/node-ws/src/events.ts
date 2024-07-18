@@ -7,7 +7,7 @@ interface CloseEventInit extends EventInit {
 /**
  * @link https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
  */
-export class CloseEvent extends Event {
+export const CloseEvent = globalThis.CloseEvent ?? class extends Event {
     #eventInitDict
 
     constructor(
