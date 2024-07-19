@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.6.0
+
+### Minor Changes
+
+- [#601](https://github.com/honojs/middleware/pull/601) [`e54c62875161c0d2b7e21c0d9108d311e23072a8`](https://github.com/honojs/middleware/commit/e54c62875161c0d2b7e21c0d9108d311e23072a8) Thanks [@jokester](https://github.com/jokester)! - allow override of redirect_uri
+
 ## 0.5.1
 
 ### Patch Changes
