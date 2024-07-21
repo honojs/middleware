@@ -1,5 +1,5 @@
 ---
-'@hono/zod-openapi': minor
+'@hono/zod-openapi': patch
 ---
 
 fix(zod-openapi): infer OpenAPIObjectConfig
