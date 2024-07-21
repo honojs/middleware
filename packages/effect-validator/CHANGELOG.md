@@ -1,5 +1,11 @@
 # @hono/effect-validator
 
+## 1.0.1
+
+### Patch Changes
+
+- [#657](https://github.com/honojs/middleware/pull/657) [`8cf5bf0055483caa08344efc8ada3d22d4833fac`](https://github.com/honojs/middleware/commit/8cf5bf0055483caa08344efc8ada3d22d4833fac) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: add a build command to `package.json` at the top
+
 ## 1.0.0
 
 ### Major Changes
