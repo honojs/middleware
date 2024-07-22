@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
 import { vValidator } from '../src'
+import { StatusCode } from 'hono/utils/http-status'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -57,6 +58,8 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
+        status: StatusCode
+        outputFormat: 'json'
       }
     }
   }
@@ -214,6 +217,8 @@ describe('Async', () => {
           success: boolean
           message: string
         }
+        status: StatusCode
+        outputFormat: 'json'
       }
     }
   }
