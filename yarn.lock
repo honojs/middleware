@@ -1985,7 +1985,7 @@ __metadata:
   dependencies:
     "@auth/core": "npm:^0.30.0"
     "@types/react": "npm:^18"
-    hono: "npm:^4.5.1"
+    hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
     react: "npm:^18.2.0"
     tsup: "npm:^8.0.1"
