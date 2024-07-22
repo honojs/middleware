@@ -4,7 +4,7 @@ import { HonoBase } from 'hono/hono-base'
 const INFO_COLOR = '\x1b[36m'
 const RESET_COLOR = '\x1b[0m'
 
-export const brief = (app: HonoBase) => {
+export const brief = (app: HonoBase, title: string = 'APP ROUTES') => {
   return createMiddleware(async (_, next) => {
     const uniqueRoutes = app.routes.filter((value, index) => {
       const _value = JSON.stringify(value)
@@ -21,7 +21,7 @@ export const brief = (app: HonoBase) => {
       .filter(({ method }) => method != 'ALL')
       .map(({ path, method }) => ({ path, method }))
 
-    console.info(`${INFO_COLOR}[INFO] APP ROUTES:${RESET_COLOR}`)
+    console.info(`${INFO_COLOR}[INFO] ${title}:${RESET_COLOR}`)
     console.table(mappedRoutes)
     console.log()
 
