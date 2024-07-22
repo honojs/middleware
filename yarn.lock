@@ -1970,7 +1970,7 @@ __metadata:
   resolution: "@hono/arktype-validator@workspace:packages/arktype-validator"
   dependencies:
     arktype: "npm:^2.0.0-dev.14"
-    hono: "npm:^4.5.1"
+    hono: "npm:^3.11.7"
     tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
   peerDependencies:
