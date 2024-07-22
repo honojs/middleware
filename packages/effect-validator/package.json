@@ -44,7 +44,7 @@
   "devDependencies": {
     "@effect/schema": "^0.68.21",
     "effect": "^3.4.8",
-    "hono": "^4.4.13",
+    "hono": "^4.5.1",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
     "vitest": "^2.0.1"

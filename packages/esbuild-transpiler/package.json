@@ -56,7 +56,7 @@
   "devDependencies": {
     "esbuild": "^0.19.9",
     "esbuild-wasm": "^0.19.5",
-    "hono": "^3.11.7",
+    "hono": "^4.5.1",
     "tsup": "^8.0.1",
     "vitest": "^0.34.6"
   },

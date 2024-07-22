@@ -34,7 +34,7 @@
   "devDependencies": {
     "@hono/node-server": "^1.11.1",
     "@types/ws": "^8",
-    "hono": "^4.2.9",
+    "hono": "^4.5.1",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"
   },
