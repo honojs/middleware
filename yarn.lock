@@ -10166,6 +10166,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^4.5.1":
+  version: 4.5.1
+  resolution: "hono@npm:4.5.1"
+  checksum: 71228cefd3808b4bb42c10de23d67f135678eb0ab7fdfd1728d934ec2ee1241be9b1260f279b81acd2a6a57346d06d047a2650ff9bddd48fda6581751a690d80
+  languageName: node
+  linkType: hard
+
 "hosted-git-info@npm:^2.1.4":
   version: 2.8.9
   resolution: "hosted-git-info@npm:2.8.9"
