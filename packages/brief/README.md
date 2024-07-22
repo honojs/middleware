@@ -16,6 +16,20 @@ app.get('/', (c) => c.text('foo'))
 export default app
 ```
 
+With custom title:
+
+```ts
+import { brief } from '@hono/brief'
+import { Hono } from 'hono'
+
+const app = new Hono()
+
+app.use('*', brief(app, 'CUSTOM TITLE'))
+app.get('/', (c) => c.text('foo'))
+
+export default app
+```
+
 ## Author
 
 pietrodev07 <https://github.com/pietrodev07>
