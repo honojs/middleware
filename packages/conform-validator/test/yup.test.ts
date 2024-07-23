@@ -1,8 +1,9 @@
+import type { ExtractSchema } from 'hono/types'
+import type { Equal, Expect } from 'hono/utils/types'
 import * as y from 'yup'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import type { ExtractSchema } from 'hono/types'
-import type { Equal, Expect } from 'hono/utils/types'
+import { HTTPException } from 'hono/http-exception'
 import { parseWithYup } from '@conform-to/yup'
 import { conformValidator } from '../src'
 
@@ -32,13 +33,8 @@ describe('Validate requests using a Valibot schema', () => {
         })
       }
 
-      return c.json(
-        {
-          success: false,
-          message: 'Bad Request',
-        },
-        400
-      )
+      const res = c.json({ success: false, message: 'Bad Request' }, 400)
+      throw new HTTPException(400, { res })
     }
   )
 

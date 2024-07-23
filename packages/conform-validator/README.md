@@ -32,8 +32,8 @@ app.post(
       })
     }
 
-    const res = c.json({ success: false, message: `Bad Request` })
-    return HTTPException(400, { res })
+    const res = c.json({ success: false, message: `Bad Request` }, 400)
+    throw HTTPException(400, { res })
   }
 )
 ```
@@ -66,8 +66,8 @@ app.post(
       })
     }
 
-    const res = c.json({ success: false, message: `Bad Request` })
-    return HTTPException(400, { res })
+    const res = c.json({ success: false, message: `Bad Request` }, 400)
+    throw HTTPException(400, { res })
   }
 )
 ```
@@ -100,8 +100,8 @@ app.post(
       })
     }
 
-    const res = c.json({ success: false, message: `Bad Request` })
-    return HTTPException(400, { res })
+    const res = c.json({ success: false, message: `Bad Request` }, 400)
+    throw HTTPException(400, { res })
   }
 )
 ```
