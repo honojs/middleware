@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.15.1
+
+### Patch Changes
+
+- [#656](https://github.com/honojs/middleware/pull/656) [`a04ab70c2c4254eed24efd81d6e5a31553553ec9`](https://github.com/honojs/middleware/commit/a04ab70c2c4254eed24efd81d6e5a31553553ec9) Thanks [@adjsky](https://github.com/adjsky)! - fix(zod-openapi): infer OpenAPIObjectConfig
+
 ## 0.15.0
 
 ### Minor Changes

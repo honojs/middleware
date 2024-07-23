@@ -33,6 +33,7 @@
     "build:oidc-auth": "yarn workspace @hono/oidc-auth build",
     "build:node-ws": "yarn workspace @hono/node-ws build",
     "build:react-compat": "yarn workspace @hono/react-compat build",
+    "build:effect-validator": "yarn workspace @hono/effect-validator build",
     "build:conform-validator": "yarn workspace @hono/conform-validator build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",

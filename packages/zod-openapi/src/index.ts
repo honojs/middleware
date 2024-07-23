@@ -12,7 +12,6 @@ import {
   OpenApiGeneratorV31,
   extendZodWithOpenApi,
 } from '@asteasolutions/zod-to-openapi'
-import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import type {
@@ -251,6 +250,10 @@ export type RouteHook<
   P,
   RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
 >
+
+type OpenAPIObjectConfig = Parameters<
+  InstanceType<typeof OpenApiGeneratorV3>['generateDocument']
+>[0]
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
