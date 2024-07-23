@@ -1,5 +1,6 @@
-import type { ExtractSchema } from 'hono/types'
+import type { ExtractSchema, ParsedFormValue } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
+import type { StatusCode } from 'hono/utils/http-status'
 import * as z from 'zod'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
@@ -33,7 +34,7 @@ describe('Validate requests using a Valibot schema', () => {
         })
       }
 
-      const res = c.json({ success: false, message: 'Bad Request' }, 400)
+      const res = c.json({ success: false, message: 'Bad Request' })
       throw new HTTPException(400, { res })
     }
   )
@@ -45,15 +46,17 @@ describe('Validate requests using a Valibot schema', () => {
         $post: {
           input: {
             form: {
-              name: string | File
-              age: string | File
-              nickname?: string | File | undefined
+              name: ParsedFormValue | ParsedFormValue[]
+              age: ParsedFormValue | ParsedFormValue[]
+              nickname?: ParsedFormValue | ParsedFormValue[] | undefined
             }
           }
           output: {
             success: boolean
             message: string
           }
+          outputFormat: 'json'
+          status: StatusCode
         }
       }
     }
