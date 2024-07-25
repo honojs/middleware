@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
+import type { Context, Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
 import type { Submission } from '@conform-to/dom'
 import { getFormDataFromContext } from './utils'
 
@@ -13,6 +13,11 @@ type GetInput<T extends ParseFn> = T extends (_: any) => infer S
   : never
 
 type ParseFn = (formData: FormData) => Submission<unknown> | Promise<Submission<unknown>>
+
+type Hook<F extends ParseFn, E extends Env, P extends string> = (
+  submission: Awaited<ReturnType<F>>,
+  c: Context<E, P>
+) => Response | Promise<Response> | void | Promise<Response | void>
 
 export const conformValidator = <
   F extends ParseFn,
@@ -27,13 +32,21 @@ export const conformValidator = <
     out: { form: Out }
   }
 >(
-  parse: F
+  parse: F,
+  hook?: Hook<F, E, P>
 ): MiddlewareHandler<E, P, I> => {
-  return async (ctx, next) => {
-    const formData = await getFormDataFromContext(ctx)
-    const submission = parse(formData)
+  return async (c, next) => {
+    const formData = await getFormDataFromContext(c)
+    const submission = await parse(formData)
 
-    ctx.req.addValidatedData('form', submission)
+    if (hook) {
+      const hookResult = hook(submission as any, c)
+      if (hookResult instanceof Response || hookResult instanceof Promise) {
+        return hookResult
+      }
+    }
+
+    c.req.addValidatedData('form', submission)
 
     await next()
   }
