@@ -1,7 +1,6 @@
 import * as z from 'zod'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import { HTTPException } from 'hono/http-exception'
 import { parseWithZod } from '@conform-to/zod'
 import { conformValidator } from '../src'
 import { vi } from 'vitest'
@@ -16,10 +15,6 @@ describe('Validate requests using a Valibot schema', () => {
   })
   const handlerMockFn = vi.fn((c) => {
     const submission = c.req.valid('form')
-    if (submission.status !== 'success') {
-      throw new HTTPException()
-    }
-
     const value = submission.value
     return c.json({ success: true, message: `name is ${value.name}` })
   })
@@ -47,19 +42,21 @@ describe('Validate requests using a Valibot schema', () => {
   describe('When the hook return Response', () => {
     it('Should return response that the hook returned', async () => {
       const req = new Request('http://localhost/author', { body: new FormData(), method: 'POST' })
-      const res = await app.request(req)
-      const hookRes = hookMockFn.mock.results[0].value
+      const res = (await app.request(req)).clone()
+      const hookRes = hookMockFn.mock.results[0].value.clone()
       expect(hookMockFn).toHaveReturnedWith(expect.any(Response))
       expect(res.status).toBe(hookRes.status)
+      expect(await res.json()).toStrictEqual(await hookRes.json())
     })
   })
 
   describe('When the hook not return Response', () => {
     it('Should return response that the handler function returned', async () => {
-      const res = await client.author.$post({ form: { name: 'Space Cat' } })
-      const handlerRes = handlerMockFn.mock.results[0].value
+      const res = (await client.author.$post({ form: { name: 'Space Cat' } })).clone()
+      const handlerRes = handlerMockFn.mock.results[0].value.clone()
       expect(hookMockFn).not.toHaveReturnedWith(expect.any(Response))
       expect(res.status).toBe(handlerRes.status)
+      expect(await res.json()).toStrictEqual(await handlerRes.json())
     })
   })
 })

@@ -22,18 +22,9 @@ app.post(
   conformValidator((formData) => parseWithZod(formData, { schema })),
   (c) => {
     const submission = c.req.valid('form')
+    const data = submission.value
 
-    if (submission.status === 'success') {
-      const data = submission.value
-
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}`,
-      })
-    }
-
-    const res = c.json({ success: false, message: `Bad Request` }, 400)
-    throw HTTPException(400, { res })
+    return c.json({ success: true, message: `${data.name} is ${data.age}` })
   }
 )
 ```
@@ -56,18 +47,8 @@ app.post(
   conformValidator((formData) => parseWithYup(formData, { schema })),
   (c) => {
     const submission = c.req.valid('form')
-
-    if (submission.status === 'success') {
-      const data = submission.value
-
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}`,
-      })
-    }
-
-    const res = c.json({ success: false, message: `Bad Request` }, 400)
-    throw HTTPException(400, { res })
+    const data = submission.value
+    return c.json({ success: true, message: `${data.name} is ${data.age}` })
   }
 )
 ```
@@ -90,21 +71,37 @@ app.post(
   conformValidator((formData) => parseWithYup(formData, { schema })),
   (c) => {
     const submission = c.req.valid('form')
-
-    if (submission.status === 'success') {
-      const data = submission.value
-
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}`,
-      })
-    }
-
-    const res = c.json({ success: false, message: `Bad Request` }, 400)
-    throw HTTPException(400, { res })
+    const data = submission.value
+    return c.json({ success: true, message: `${data.name} is ${data.age}` })
   }
 )
 ```
+
+## Custom Hook Option
+
+By default, `conformValidator()` returns a [`SubmissionResult`](https://github.com/edmundhung/conform/blob/6b98c077d757edd4846321678dfb6de283c177b1/packages/conform-dom/submission.ts#L40-L47) when a validation error occurs. If you wish to change this behavior, or if you wish to perform common processing, you can modify the response by passing a function as the second argument.
+
+```ts
+app.post(
+  '/author',
+  conformValidator(
+    (formData) => parseWithYup(formData, { schema })
+    (submission, c) => {
+      if(submission.status !== 'success') {
+        return c.json({ success: false, message: 'Bad Request' }, 400)
+      }
+    }
+  ),
+  (c) => {
+    const submission = c.req.valid('form')
+    const data = submission.value
+    return c.json({ success: true, message: `${data.name} is ${data.age}` })
+  }
+)
+```
+
+> [!NOTE]
+> if a response is returned by the Hook function, subsequent middleware or handler functions will not be executed. [see more](https://hono.dev/docs/concepts/middleware).
 
 ## Author
 

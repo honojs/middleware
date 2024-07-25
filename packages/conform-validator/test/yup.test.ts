@@ -4,7 +4,6 @@ import type { StatusCode } from 'hono/utils/http-status'
 import * as y from 'yup'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import { HTTPException } from 'hono/http-exception'
 import { parseWithYup } from '@conform-to/yup'
 import { conformValidator } from '../src'
 
@@ -22,20 +21,14 @@ describe('Validate requests using a Valibot schema', () => {
     conformValidator((formData) => parseWithYup(formData, { schema })),
     (c) => {
       const submission = c.req.valid('form')
+      const value = submission.value
 
-      if (submission.status === 'success') {
-        const value = submission.value
-
-        return c.json({
-          success: true,
-          message: `${value.name} is ${value.age}, nickname is ${
-            value?.nickname || 'nothing yet :3'
-          }`,
-        })
-      }
-
-      const res = c.json({ success: false, message: 'Bad Request' })
-      throw new HTTPException(400, { res })
+      return c.json({
+        success: true,
+        message: `${value.name} is ${value.age}, nickname is ${
+          value?.nickname || 'nothing yet :3'
+        }`,
+      })
     }
   )
 
@@ -103,9 +96,12 @@ describe('Validate requests using a Valibot schema', () => {
     expect(res.status).toBe(400)
 
     const json = await res.json()
-    expect(json).toEqual({
-      success: false,
-      message: 'Bad Request',
+    expect(json).toMatchObject({
+      status: 'error',
+      error: {
+        name: ['name is a required field'],
+        age: ['age is a required field'],
+      },
     })
   })
 })

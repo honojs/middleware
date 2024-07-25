@@ -4,7 +4,6 @@ import type { StatusCode } from 'hono/utils/http-status'
 import * as v from 'valibot'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import { HTTPException } from 'hono/http-exception'
 import { parseWithValibot } from 'conform-to-valibot'
 import { conformValidator } from '../src'
 
@@ -26,20 +25,14 @@ describe('Validate requests using a Valibot schema', () => {
     conformValidator((formData) => parseWithValibot(formData, { schema })),
     (c) => {
       const submission = c.req.valid('form')
+      const value = submission.value
 
-      if (submission.status === 'success') {
-        const value = submission.value
-
-        return c.json({
-          success: true,
-          message: `${value.name} is ${value.age}, nickname is ${
-            value?.nickname || 'nothing yet :<'
-          }`,
-        })
-      }
-
-      const res = c.json({ success: false, message: 'Bad Request' })
-      throw new HTTPException(400, { res })
+      return c.json({
+        success: true,
+        message: `${value.name} is ${value.age}, nickname is ${
+          value?.nickname || 'nothing yet :3'
+        }`,
+      })
     }
   )
 
@@ -107,9 +100,12 @@ describe('Validate requests using a Valibot schema', () => {
     expect(res.status).toBe(400)
 
     const json = await res.json()
-    expect(json).toEqual({
-      success: false,
-      message: 'Bad Request',
+    expect(json).toMatchObject({
+      status: 'error',
+      error: {
+        name: ['Invalid type: Expected string but received undefined'],
+        age: ['Invalid type: Expected string but received undefined'],
+      },
     })
   })
 })

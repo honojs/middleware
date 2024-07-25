@@ -12,6 +12,8 @@ type GetInput<T extends ParseFn> = T extends (_: any) => infer S
     : never
   : never
 
+type GetSuccessSubmission<S> = S extends { status: 'success' } ? S : never
+
 type ParseFn = (formData: FormData) => Submission<unknown> | Promise<Submission<unknown>>
 
 type Hook<F extends ParseFn, E extends Env, P extends string> = (
@@ -29,7 +31,7 @@ export const conformValidator = <
     in: {
       form: { [K in keyof In]: FormTargetValue }
     }
-    out: { form: Out }
+    out: { form: GetSuccessSubmission<Out> }
   }
 >(
   parse: F,
@@ -44,6 +46,10 @@ export const conformValidator = <
       if (hookResult instanceof Response || hookResult instanceof Promise) {
         return hookResult
       }
+    }
+
+    if (submission.status !== 'success') {
+      return c.json(submission.reply(), 400)
     }
 
     c.req.addValidatedData('form', submission)
