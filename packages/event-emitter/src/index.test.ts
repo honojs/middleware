@@ -124,12 +124,12 @@ describe('Event Emitter Middleware', () => {
       const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
       const handler1 = vi.fn(
         defineHandler<EventPayloadMap, 'test'>(async (_c, _payload) => {
-          await delay(100)
+          await delay(101)
         })
       )
       const handler2 = vi.fn(
         defineHandler<EventPayloadMap, 'test'>(async (_c, _payload) => {
-          await delay(100)
+          await delay(101)
         })
       )
       ee.on('test', handler1)
