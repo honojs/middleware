@@ -22,7 +22,7 @@ This library provides an event emitter middleware for Hono, allowing you to easi
 It enables event driven logic flow, allowing you to decouple your code and make it more modular and maintainable.
 
 Inspired by event emitter concept in other frameworks such
-as [Adonis.js](https://docs.adonisjs.com/guides/emitter), [Nest.js](https://docs.nestjs.com/techniques/events), [Hapi.js](https://github.com/hapijs/podium), [Laravel](https://laravel.com/docs/11.x/events), [Sails.js](https://sailsjs.com/documentation/concepts/extending-sails/hooks/events), [Meteor](https://github.com/Meteor-Community-Packages/Meteor-EventEmitter) and others.
+as [Adonis.js](https://docs.adonisjs.com/guides/emitter), [Nest.js](https://docs.nestjs.com/techniques/events), [Hapi.js](https://github.com/hapijs/podium), [Meteor](https://github.com/Meteor-Community-Packages/Meteor-EventEmitter) and others.
 
 See [FAQ](#faq) bellow for some common questions.
 
@@ -94,14 +94,14 @@ app.use(emitter(handlers))
 app.post('/users', (c) => {
   // ...
   // Emit event and pass current context plus the payload
-  c.get('emitter').emit('user:created', c, user)
+  c.get('emitter').emit(c, 'user:created', user)
   // ...
 })
 
 app.delete('/users/:id', async (c) => {
   // ...
   // Emit event asynchronpusly and pass current context plus the payload
-  await c.get('emitter').emitAsync('user:deleted', c, id)
+  await c.get('emitter').emitAsync(c, 'user:deleted', id)
   // ...
 })
 
@@ -156,14 +156,14 @@ const app = new Hono()
 app.post('/users', async (c) => {
     // ...
     // Emit event and pass current context plus the payload
-    ee.emit('user:created', c, user)
+    ee.emit(c, 'user:created', user)
     // ...
 })
 
 app.delete('/users/:id', async (c) => {
     // ...
     // Emit event and pass current context plus the payload
-    await ee.emitAsync('user:deleted', c, id )
+    await ee.emitAsync(c, 'user:deleted', id )
     // ...
 })
 
@@ -252,14 +252,14 @@ app.use(emitter(handlers))
 app.post('/user', async (c) => {
   // ...
   // Emit event and pass current context plus the payload (User type)
-  c.get('emitter').emit('user:created', c, user)
+  c.get('emitter').emit(c, 'user:created', user)
   // ...
 })
 
 app.delete('/user/:id', async (c) => {
   // ...
   // Emit event and pass current context plus the payload (string)
-  await c.get('emitter').emitAsync('user:deleted', c, id)
+  await c.get('emitter').emitAsync(c, 'user:deleted', id)
   // ...
 })
 
@@ -338,14 +338,14 @@ const app = new Hono()
 app.post('/user', async (c) => {
   // ...
   // Emit event and pass current context plus the payload (User)
-  ee.emit('user:created', c, user)
+  ee.emit(c, 'user:created', user)
   // ...
 })
 
 app.delete('/user/:id', async (c) => {
   // ...
   // Emit event and pass current context plus the payload (string)
-  ee.emit('user:deleted', c, id )
+  ee.emit(c, 'user:deleted', id )
   // ...
 })
 
@@ -491,7 +491,8 @@ function on<Key extends keyof EventPayloadMap>(
 #### Parameters
 
 - `key`: The event key to listen for. Must be a key of `EventHandlerPayloads`.
-- `handler`: The function to be called when the event is emitted. If using within a Hono middleware or request handler, do not use anonymous or closure functions! It should accept two parameters:
+- `handler`: The function to be called when the event is emitted. If using within a Hono middleware or request handler, do not use anonymous or closure functions!
+  It should accept two parameters:
     - `c`: The current Hono context object.
     - `payload`: The payload passed when the event is emitted. The type of the payload is inferred from the `EventHandlerPayloads` type.
 
@@ -520,14 +521,15 @@ type AvailableEvents = {
 };
 
 // Define event handler as named function, outside of the Hono middleware or request handler to prevent duplicates/memory leaks
-const handler = defineHandler<AvailableEvents, 'user:created'>((c, user) => {
+const namedHandler = defineHandler<AvailableEvents, 'user:created'>((c, user) => {
    console.log('New user created:', user)
 })
 
 app.use(emitter<AvailableEvents>());
 
-app.use((c) => {
-    c.get('emitter').on('user:created', handler)    
+app.use((c, next) => {
+    c.get('emitter').on('user:created', namedHandler)
+    return next()
 })
 ```
 
@@ -582,15 +584,15 @@ Synchronously emits an event with the specified key and payload.
 
 ```ts
 emit<Key extends keyof EventPayloadMap>(
-    key: Key,
     c: Context,
+    key: Key,
     payload: EventPayloadMap[Key]
 ): void
 ```
 
 #### Parameters
-- `key`: The event key to emit. Must be a key of `EventPayloadMap`.
 - `c`: The current Hono context object.
+- `key`: The event key to emit. Must be a key of `EventPayloadMap`.
 - `payload`: The payload to pass to the event handlers. The type of the payload is inferred from the `EventPayloadMap` type.
 
 #### Returns
@@ -602,7 +604,7 @@ emit<Key extends keyof EventPayloadMap>(
 ```ts
 app.post('/users', (c) => {
     const user = { name: 'Alice' };
-    c.get('emitter').emit('user:created', c, user);
+    c.get('emitter').emit(c, 'user:created', user);
 });
 ```
 
@@ -614,16 +616,16 @@ Asynchronously emits an event with the specified key and payload.
 
 ```ts
 emitAsync<Key extends keyof EventPayloadMap>(
-    key: Key,
     c: Context,
+    key: Key,
     payload: EventPayloadMap[Key],
     options?: EmitAsyncOptions
 ): Promise<void>
 ```
 
 #### Parameters
-- `key`: The event key to emit. Must be a key of `EventPayloadMap`.
 - `c`: The current Hono context object.
+- `key`: The event key to emit. Must be a key of `EventPayloadMap`.
 - `payload`: The payload to pass to the event handlers. The type of the payload is inferred from the `EventPayloadMap` type.
 - `options` (optional): An object containing options for the asynchronous emission.
   Currently, the only option is `mode`, which can be `'concurrent'` (default) or `'sequencial'`.
@@ -639,8 +641,8 @@ emitAsync<Key extends keyof EventPayloadMap>(
 ```ts
 app.post('/users', async (c) => {
     const user = { name: 'Alice' };
-    await c.get('emitter').emitAsync('user:created', c, user);
-    // await c.get('emitter').emitAsync('user:created', c, user, { mode: 'sequencial' });
+    await c.get('emitter').emitAsync(c, 'user:created', user);
+    // await c.get('emitter').emitAsync(c, 'user:created', user, { mode: 'sequencial' });
 });
 ```
 
@@ -699,12 +701,12 @@ An interface representing an event emitter.
 interface Emitter<EventPayloadMap> {
    on<Key extends keyof EventPayloadMap>(key: Key, handler: EventHandler<EventPayloadMap[Key]>): void;
    off<Key extends keyof EventPayloadMap>(key: Key, handler?: EventHandler<EventPayloadMap[Key]>): void;
-   emit<Key extends keyof EventPayloadMap>(key: Key, c: Context, payload: EventPayloadMap[Key]): void;
+   emit<Key extends keyof EventPayloadMap>(c: Context, key: Key, payload: EventPayloadMap[Key]): void;
    emitAsync<Key extends keyof EventPayloadMap>(
-           key: Key,
-           c: Context,
-           payload: EventPayloadMap[Key],
-           options?: EmitAsyncOptions
+       c: Context,
+       key: Key,
+       payload: EventPayloadMap[Key],
+       options?: EmitAsyncOptions
    ): Promise<void>;
 }
 ```
@@ -719,11 +721,6 @@ It's especially useful in larger projects or projects with a lot of interactions
 Just imagine you have a user registration feature, and you want to send a welcome email after the user is created. You can do this by emitting an event `user:created` and then listen to this event in another part of your application (e.g. email service).
 ### How is this different to the built-in EventEmitter in Node.js?
 The build-in EventEmitter has huge API surface, weak TypeScript support and does only synchronous event emitting. Hono's event emitter is designed to be minimal, lightweight, edge compatible and fully typed. Additionally, it supports async event handlers.
-### Can I use anonymous functions or closures as event handlers?
-Yes, but only when adding them as argument via either the middleware function `app.use(emitter(handlers))` or the standalone emitter via `createEmitter(handlers)` function.
-Aditionally you can use the `on()` method to add anonymous or closure function as event handler, but only outside of a Hono middleware or request handler!
-This is because middlewares or request handlers run repeatedly on every request, and as anonymous functions can't be checked for equality, it would result in memory leaks and duplicate handlers.
-You should use named functions if you really want to use the `on()` method inside of middleware or request handler.
 ### Is there a way to define event handlers with types?
 Yes, you can use `defineHandlers` and `defineHandler` functions to define event handlers with types. This way you can leverage TypeScript's type inference and get better type checking.
 ### Does it support async event handlers?
@@ -733,7 +730,14 @@ Nothing. The event will be emitted, but no handlers will be called.
 ### Using `emitAsync` function, what happens if one or more of the handlers reject?
 - If using `{ mode = 'concurrent' }` in the options (which is the default), it will call all handlers concurrently (at the same time) and resolve or reject (with aggregated errors) after all handlers settle.
 - If using `{ mode = 'sequencial' }` in the options, it will call handlers one by one and resolve when all handlers are done or reject when the first error is thrown, not executing rest of the handlers.
-
+### Is it request scoped?
+No, by design it's not request scoped. The same Emitter instance is shared across all requests.
+This aproach prevents memory leaks (especially when using closures or dealing with large data structures within the handlers) and additional strain on Javascript garbage collector.
+### Why can't I use anonymous functions or closures as event handlers when adding them inside of middleware?
+This is because middleware or request handlers run repeatedly on every request, and because anonymous functions are created as new unique object in memory every time,
+you would be instructing the event emitter to add new handler for same key every time the request/middleware runs.
+Since they are each different objects in memory they can't be checked for equality and would result in memory leaks and duplicate handlers.
+You should use named functions if you really want to use the `on()` method inside of middleware or request handler.
 ## Author
 
 David Havl <https://github.com/DavidHavl>

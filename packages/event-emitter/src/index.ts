@@ -18,10 +18,10 @@ export type EventEmitterOptions = { maxHandlers?: number }
 export interface Emitter<EPMap extends EventPayloadMap> {
   on<Key extends keyof EPMap>(key: Key, handler: EventHandler<EPMap[Key]>): void
   off<Key extends keyof EPMap>(key: Key, handler?: EventHandler<EPMap[Key]>): void
-  emit<Key extends keyof EPMap>(key: Key, c: Context, payload: EPMap[Key]): void
+  emit<Key extends keyof EPMap>(c: Context, key: Key, payload: EPMap[Key]): void
   emitAsync<Key extends keyof EPMap>(
-    key: Key,
     c: Context,
+    key: Key,
     payload: EPMap[Key],
     options?: EmitAsyncOptions
   ): Promise<void>
@@ -83,9 +83,9 @@ export const defineHandlers = <EPMap extends EventPayloadMap, E extends Env = En
  * })
  *
  * // Use the emitter to emit events.
- * ee.emit('foo', c, 42)
- * ee.emit('bar', c, { item: { id: '12345678' } })
- * await ee.emitAsync('baz', c, { item: { id: '12345678' } })
+ * ee.emit(c, 'foo', 42)
+ * ee.emit(c, 'bar', { item: { id: '12345678' } })
+ * await ee.emitAsync(c, 'baz', { item: { id: '12345678' } })
  * ```
  *
  * ```ts
@@ -116,9 +116,9 @@ export const defineHandlers = <EPMap extends EventPayloadMap, E extends Env = En
  * })
  *
  * // Use the emitter to emit events.
- * ee.emit('foo', c, 42) // Payload will be expected to be of a type number
- * ee.emit('bar', c, { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string }, c: Context }
- * await ee.emitAsync('baz', c, { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
+ * ee.emit(c, 'foo', 42) // Payload will be expected to be of a type number
+ * ee.emit(c, 'bar', { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string }, c: Context }
+ * await ee.emitAsync(c, 'baz', { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
  * ```
  *
  */
@@ -183,11 +183,11 @@ export const createEmitter = <EPMap extends EventPayloadMap>(
     /**
      * Emit an event with the given event key and payload.
      * Triggers all event handlers associated with the specified key.
-     * @param {string|symbol} key - The event key
      * @param {Context} c - The current context object
+     * @param {string|symbol} key - The event key
      * @param {EventPayloadMap[keyof EventPayloadMap]} payload - Data passed to each invoked handler
      */
-    emit<Key extends keyof EPMap>(key: Key, c: Context, payload: EPMap[Key]) {
+    emit<Key extends keyof EPMap>(c: Context, key: Key, payload: EPMap[Key]) {
       const handlerArray = handlers.get(key as EventKey)
       if (handlerArray) {
         for (const handler of handlerArray) {
@@ -199,15 +199,15 @@ export const createEmitter = <EPMap extends EventPayloadMap>(
     /**
      * Emit an event with the given event key and payload.
      * Asynchronously triggers all event handlers associated with the specified key.
-     * @param {string|symbol} key - The event key
      * @param {Context} c - The current context object
+     * @param {string|symbol} key - The event key
      * @param {EventPayloadMap[keyof EventPayloadMap]} payload - Data passed to each invoked handler
      * @param {EmitAsyncOptions} options - Options.
      * @throws {AggregateError} If any handler encounters an error.
      */
     async emitAsync<Key extends keyof EPMap>(
-      key: Key,
       c: Context,
+      key: Key,
       payload: EPMap[Key],
       options: EmitAsyncOptions = { mode: 'concurrent' }
     ) {
@@ -274,9 +274,9 @@ export const createEmitter = <EPMap extends EventPayloadMap>(
  * // Use the emitter in route handlers to emit events.
  * app.post('/foo', async (c) => {
  *   // The emitter is available under "emitter" key in the context.
- *   c.get('emitter').emit('foo', c, 42)
- *   c.get('emitter').emit('bar', c, { item: { id: '12345678' } })
- *   await c.get('emitter').emitAsync('baz', c, { item: { id: '12345678' } })
+ *   c.get('emitter').emit(c, 'foo', 42)
+ *   c.get('emitter').emit(c, 'bar', { item: { id: '12345678' } })
+ *   await c.get('emitter').emitAsync(c, 'baz', { item: { id: '12345678' } })
  *   return c.text('Success')
  * })
  * ```
@@ -314,9 +314,9 @@ export const createEmitter = <EPMap extends EventPayloadMap>(
  * // Use the emitter in route handlers to emit events.
  * app.post('/foo', async (c) => {
  *   // The emitter is available under "emitter" key in the context.
- *   c.get('emitter').emit('foo', c, 42) // Payload will be expected to be of a type number
- *   c.get('emitter').emit('bar', c, { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
- *   await c.get('emitter').emitAsync('baz', c, { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
+ *   c.get('emitter').emit(c, 'foo', 42) // Payload will be expected to be of a type number
+ *   c.get('emitter').emit(c, 'bar', { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
+ *   await c.get('emitter').emitAsync(c, 'baz', { item: { id: '12345678' } }) // Payload will be expected to be of a type { item: { id: string } }
  *   return c.text('Success')
  * })
  * ```
