@@ -5,7 +5,7 @@ import { parseWithZod } from '@conform-to/zod'
 import { conformValidator } from '../src'
 import { vi } from 'vitest'
 
-describe('Validate requests using a Valibot schema', () => {
+describe('Validate the hook option processing', () => {
   const app = new Hono()
   const schema = z.object({ name: z.string() })
   const hookMockFn = vi.fn((submission, c) => {

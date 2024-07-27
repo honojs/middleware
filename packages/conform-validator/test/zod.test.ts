@@ -7,7 +7,7 @@ import { hc } from 'hono/client'
 import { parseWithZod } from '@conform-to/zod'
 import { conformValidator } from '../src'
 
-describe('Validate requests using a Valibot schema', () => {
+describe('Validate requests using a Zod schema', () => {
   const app = new Hono()
 
   const schema = z.object({

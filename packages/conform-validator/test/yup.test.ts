@@ -7,7 +7,7 @@ import { hc } from 'hono/client'
 import { parseWithYup } from '@conform-to/yup'
 import { conformValidator } from '../src'
 
-describe('Validate requests using a Valibot schema', () => {
+describe('Validate requests using a Yup schema', () => {
   const app = new Hono()
 
   const schema = y.object({
