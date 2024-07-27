@@ -32,7 +32,7 @@ describe('Validate requests using a Valibot schema', () => {
     }
   )
 
-  it.skip('check the route object types', () => {
+  it('check the route object types', () => {
     type Actual = ExtractSchema<typeof route>
     type Expected = {
       '/author': {
