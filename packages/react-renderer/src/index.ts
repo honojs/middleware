@@ -1,6 +1,6 @@
 export * from './react-renderer'
 
-export type Props = {}
+export interface Props {}
 
 declare module 'hono' {
   interface ContextRenderer {
