@@ -1,5 +1,5 @@
 ---
-'@hono/conform-validator': patch
+'@hono/conform-validator': major
 ---
 
 Create Conform validator middleware
