@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.4.4
+
+### Patch Changes
+
+- [#667](https://github.com/honojs/middleware/pull/667) [`41ab4b029d225901b7369d88fb29b64f6c217dda`](https://github.com/honojs/middleware/commit/41ab4b029d225901b7369d88fb29b64f6c217dda) Thanks [@3w36zj6](https://github.com/3w36zj6)! - fix: add type to Middleware Handler
+
 ## 0.4.3
 
 ### Patch Changes
