@@ -17,7 +17,7 @@ import type {
   GraphQLFormattedError,
 } from 'graphql'
 
-import type { Context, Env, Input } from 'hono'
+import type { Context, Env, Input, MiddlewareHandler } from 'hono'
 import { parseBody } from './parse-body'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +40,7 @@ type Options<E extends Env = any, P extends string = any, I extends Input = {}> 
 export const graphqlServer = <E extends Env = any, P extends string = any, I extends Input = {}>(
   // eslint-enable-next-line @typescript-eslint/no-explicit-any
   options: Options<E, P, I>
-) => {
+): MiddlewareHandler => {
   const schema = options.schema
   const pretty = options.pretty ?? false
   const validationRules = options.validationRules ?? []
