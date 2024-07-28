@@ -1,6 +1,6 @@
 {
   "name": "@hono/graphql-server",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "repository": "git@github.com:honojs/middleware.git",
   "author": "Minghe Huang <h.minghe@gmail.com>",
   "main": "dist/index.js",
