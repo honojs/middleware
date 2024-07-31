@@ -1,6 +1,6 @@
 {
   "name": "@hono/conform-validator",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Validator middleware using Conform",
   "type": "module",
   "main": "dist/index.cjs",

@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 0.2.1
+
+### Patch Changes
+
+- [#668](https://github.com/honojs/middleware/pull/668) [`9c58014a7c5ebadc3345656fe17a83efd55b895b`](https://github.com/honojs/middleware/commit/9c58014a7c5ebadc3345656fe17a83efd55b895b) Thanks [@alexturpin](https://github.com/alexturpin)! - Change renderer Props type to interface to allow merging
+
 ## 0.2.0
 
 ### Minor Changes
