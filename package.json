@@ -34,6 +34,7 @@
     "build:node-ws": "yarn workspace @hono/node-ws build",
     "build:react-compat": "yarn workspace @hono/react-compat build",
     "build:effect-validator": "yarn workspace @hono/effect-validator build",
+    "build:casbin": "yarn workspace @hono/casbin build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
