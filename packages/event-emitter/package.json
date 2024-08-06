@@ -36,8 +36,11 @@
     "hono": "*"
   },
   "devDependencies": {
-    "hono": "^3.11.7",
+    "hono": "^4.3.6",
     "tsup": "^8.0.1",
-    "vitest": "^1.0.4"
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
