@@ -1,6 +1,6 @@
 {
   "name": "@hono/event-emitter",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Event Emitter middleware for Hono",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
