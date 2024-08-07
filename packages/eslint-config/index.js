@@ -54,15 +54,10 @@ module.exports = defineConfig({
     'node/no-unpublished-require': 'off',
     'node/no-unsupported-features/es-syntax': 'off',
 
-    '@typescript-eslint/ban-types': [
-      'error',
-      {
-        types: {
-          Function: false,
-          '{}': false,
-        },
-      },
-    ],
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "@typescript-eslint/no-wrapper-object-types": "error",
+    
     '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
