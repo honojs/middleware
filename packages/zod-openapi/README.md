@@ -269,7 +269,7 @@ You can configure middleware for each endpoint from a route created by `createRo
 
 ```ts
 import { prettyJSON } from 'hono/pretty-json'
-import { cache } from 'honoc/cache'
+import { cache } from 'hono/cache'
 
 app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
 app.openapi(route, handler)
