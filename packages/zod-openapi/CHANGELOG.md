@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.15.2
+
+### Patch Changes
+
+- [#686](https://github.com/honojs/middleware/pull/686) [`a6ec008fbd8235368b796d2c0edb6adfe8c03cc5`](https://github.com/honojs/middleware/commit/a6ec008fbd8235368b796d2c0edb6adfe8c03cc5) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: don't validate the body if content-type is mismatched
+
 ## 0.15.1
 
 ### Patch Changes
