@@ -259,17 +259,6 @@ export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
   | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
-const isJSONContentType = (contentType: string) => {
-  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
-}
-
-const isFormContentType = (contentType: string) => {
-  return (
-    contentType.startsWith('multipart/form-data') ||
-    contentType.startsWith('application/x-www-form-urlencoded')
-  )
-}
-
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -592,4 +581,15 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
     ...document,
     paths: updatedPaths,
   }
+}
+
+function isJSONContentType(contentType: string) {
+  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+}
+
+function isFormContentType(contentType: string) {
+  return (
+    contentType.startsWith('multipart/form-data') ||
+    contentType.startsWith('application/x-www-form-urlencoded')
+  )
 }
