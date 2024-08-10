@@ -54,12 +54,12 @@ type RequestTypes = {
 }
 
 type IsJson<T> = T extends string
-    ? T extends `application/${infer Start}json${infer _End}`
-        ? Start extends '' | `${string}+` | `vnd.${string}+`
-            ? 'json'
-            : never
-        : never
+  ? T extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? 'json'
+      : never
     : never
+  : never
 
 type IsForm<T> = T extends string
   ? T extends
@@ -259,6 +259,17 @@ export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
   | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
+const isJSONContentType = (contentType: string) => {
+  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+}
+
+const isFormContentType = (contentType: string) => {
+  return (
+    contentType.startsWith('multipart/form-data') ||
+    contentType.startsWith('application/x-www-form-urlencoded')
+  )
+}
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -390,16 +401,31 @@ export class OpenAPIHono<
         if (!(schema instanceof ZodType)) {
           continue
         }
-        if (/^application\/([a-z-\.]+\+)?json/.test(mediaType)) {
+        if (isJSONContentType(mediaType)) {
           const validator = zValidator('json', schema, hook as any)
-          validators.push(validator as any)
+          const mw: MiddlewareHandler = async (c, next) => {
+            if (c.req.header('content-type')) {
+              if (isJSONContentType(c.req.header('content-type')!)) {
+                return await validator(c, next)
+              }
+            }
+            c.req.addValidatedData('json', {})
+            await next()
+          }
+          validators.push(mw)
         }
-        if (
-          mediaType.startsWith('multipart/form-data') ||
-          mediaType.startsWith('application/x-www-form-urlencoded')
-        ) {
+        if (isFormContentType(mediaType)) {
           const validator = zValidator('form', schema, hook as any)
-          validators.push(validator as any)
+          const mw: MiddlewareHandler = async (c, next) => {
+            if (c.req.header('content-type')) {
+              if (isFormContentType(c.req.header('content-type')!)) {
+                return await validator(c, next)
+              }
+            }
+            c.req.addValidatedData('form', {})
+            await next()
+          }
+          validators.push(mw)
         }
       }
     }
