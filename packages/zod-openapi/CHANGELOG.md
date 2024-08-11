@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.15.3
+
+### Patch Changes
+
+- [#689](https://github.com/honojs/middleware/pull/689) [`c3d48868003ebd215074777a4846af208ddab123`](https://github.com/honojs/middleware/commit/c3d48868003ebd215074777a4846af208ddab123) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: supports `required` for JSON and Form body
+
 ## 0.15.2
 
 ### Patch Changes
