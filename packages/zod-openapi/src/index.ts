@@ -392,29 +392,37 @@ export class OpenAPIHono<
         }
         if (isJSONContentType(mediaType)) {
           const validator = zValidator('json', schema, hook as any)
-          const mw: MiddlewareHandler = async (c, next) => {
-            if (c.req.header('content-type')) {
-              if (isJSONContentType(c.req.header('content-type')!)) {
-                return await validator(c, next)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isJSONContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
               }
+              c.req.addValidatedData('json', {})
+              await next()
             }
-            c.req.addValidatedData('json', {})
-            await next()
+            validators.push(mw)
           }
-          validators.push(mw)
         }
         if (isFormContentType(mediaType)) {
           const validator = zValidator('form', schema, hook as any)
-          const mw: MiddlewareHandler = async (c, next) => {
-            if (c.req.header('content-type')) {
-              if (isFormContentType(c.req.header('content-type')!)) {
-                return await validator(c, next)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isFormContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
               }
+              c.req.addValidatedData('form', {})
+              await next()
             }
-            c.req.addValidatedData('form', {})
-            await next()
+            validators.push(mw)
           }
-          validators.push(mw)
         }
       }
     }
