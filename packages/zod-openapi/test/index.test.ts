@@ -579,8 +579,41 @@ describe('JSON', () => {
       expect(res.status).toBe(400)
     })
   })
+
+  describe('required', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: RequestSchema,
+            },
+          },
+          required: true,
+        },
+      },
+      responses: {
+        200: {
+          description: 'Post a post',
+        },
+      },
+    })
+    const app = new OpenAPIHono()
+    app.openapi(route, (c) => {
+      return c.text('Post success')
+    })
+
+    it('Should return 400 response since body is required', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+      })
+      expect(res.status).toBe(400)
+    })
+  })
 })
-// application/vnd.api+json
+
 describe('Form', () => {
   const RequestSchema = z.object({
     id: z.string().openapi({}),
@@ -655,6 +688,39 @@ describe('Form', () => {
     })
     const res = await app.request(req)
     expect(res.status).toBe(200)
+  })
+
+  describe('required', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/x-www-form-urlencoded': {
+              schema: RequestSchema,
+            },
+          },
+          required: true,
+        },
+      },
+      responses: {
+        200: {
+          description: 'Post a post',
+        },
+      },
+    })
+    const app = new OpenAPIHono()
+    app.openapi(route, (c) => {
+      return c.text('Post success')
+    })
+
+    it('Should return 400 response since body is required', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+      })
+      expect(res.status).toBe(400)
+    })
   })
 })
 
