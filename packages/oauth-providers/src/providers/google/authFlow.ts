@@ -41,7 +41,7 @@ export class AuthFlow {
     state,
     code,
     token,
-    access_type
+    access_type,
   }: GoogleAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
