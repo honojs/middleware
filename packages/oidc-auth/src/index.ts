@@ -40,6 +40,7 @@ type OidcAuthEnv = {
   OIDC_CLIENT_ID: string
   OIDC_CLIENT_SECRET: string
   OIDC_REDIRECT_URI: string
+  OIDC_COOKIE_PATH?: string
 }
 
 /**
@@ -186,7 +187,7 @@ const updateAuth = async (
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
   const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
-  setCookie(c, oidcAuthCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
+  setCookie(c, oidcAuthCookieName, session_jwt, { path: env.OIDC_COOKIE_PATH ?? '/', httpOnly: true, secure: true })
   c.set('oidcAuthJwt', session_jwt)
   return updated
 }
@@ -352,16 +353,17 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
     try {
       const auth = await getAuth(c)
       if (auth === null) {
+        const path = new URL(env.OIDC_REDIRECT_URI).pathname;
         // Redirect to IdP for login
         const state = oauth2.generateRandomState()
         const nonce = oauth2.generateRandomNonce()
         const code_verifier = oauth2.generateRandomCodeVerifier()
         const code_challenge = await oauth2.calculatePKCECodeChallenge(code_verifier)
         const url = await generateAuthorizationRequestUrl(c, state, nonce, code_challenge)
-        setCookie(c, 'state', state, { path: '/', httpOnly: true, secure: true })
-        setCookie(c, 'nonce', nonce, { path: '/', httpOnly: true, secure: true })
-        setCookie(c, 'code_verifier', code_verifier, { path: '/', httpOnly: true, secure: true })
-        setCookie(c, 'continue', c.req.url, { path: '/', httpOnly: true, secure: true })
+        setCookie(c, 'state', state, { path, httpOnly: true, secure: true })
+        setCookie(c, 'nonce', nonce, { path, httpOnly: true, secure: true })
+        setCookie(c, 'code_verifier', code_verifier, { path, httpOnly: true, secure: true })
+        setCookie(c, 'continue', c.req.url, { path, httpOnly: true, secure: true })
         return c.redirect(url)
       }
     } catch (e) {
@@ -373,7 +375,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
     // Workaround to set the session cookie when the response is returned by the origin server
     const session_jwt = c.get('oidcAuthJwt')
     if (session_jwt !== undefined) {
-      setCookie(c, oidcAuthCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
+      setCookie(c, oidcAuthCookieName, session_jwt, { path: env.OIDC_COOKIE_PATH ?? '/', httpOnly: true, secure: true })
     }
   })
 }
