@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.6.1
+
+### Patch Changes
+
+- [#697](https://github.com/honojs/middleware/pull/697) [`c3b67a6c3b493482833f5b030596906286da62b8`](https://github.com/honojs/middleware/commit/c3b67a6c3b493482833f5b030596906286da62b8) Thanks [@taishinaritomi](https://github.com/taishinaritomi)! - fix(@hono/oauth-providers): google provider attach custom parameters
+
 ## 0.6.0
 
 ### Minor Changes
