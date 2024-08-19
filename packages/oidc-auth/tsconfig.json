@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
+    "module": "ESNext"
   },
   "include": [
     "src/**/*.ts"

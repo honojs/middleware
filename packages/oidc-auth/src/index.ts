@@ -120,7 +120,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       return null
     }
     try {
-      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     } catch (e) {
       deleteCookie(c, oidcAuthCookieName)
       return null
@@ -199,7 +199,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   if (session_jwt !== undefined) {
     const env = getOidcAuthEnv(c)
     deleteCookie(c, oidcAuthCookieName)
-    const auth: OidcAuth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+    const auth: OidcAuth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
@@ -215,7 +215,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
       }
     }
   }
-  c.set('oidcAuth', undefined)
+  c.set('oidcAuth', null)
 }
 
 /**
