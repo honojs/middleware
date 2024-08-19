@@ -14,6 +14,7 @@ type GoogleAuthFlow = {
   state?: string
   login_hint?: string
   prompt?: 'none' | 'consent' | 'select_account'
+  access_type?: 'offline' | 'online'
 }
 
 export class AuthFlow {
@@ -28,6 +29,7 @@ export class AuthFlow {
   prompt: 'none' | 'consent' | 'select_account' | undefined
   user: Partial<GoogleUser> | undefined
   granted_scopes: string[] | undefined
+  access_type: 'offline' | 'online' | undefined
 
   constructor({
     client_id,
@@ -39,6 +41,7 @@ export class AuthFlow {
     state,
     code,
     token,
+    access_type,
   }: GoogleAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -51,6 +54,7 @@ export class AuthFlow {
     this.token = token
     this.user = undefined
     this.granted_scopes = undefined
+    this.access_type = access_type
 
     if (
       this.client_id === undefined ||
@@ -71,6 +75,9 @@ export class AuthFlow {
       include_granted_scopes: true,
       scope: this.scope.join(' '),
       state: this.state,
+      prompt: this.prompt,
+      login_hint: this.login_hint,
+      access_type: this.access_type,
     })
     return `https://accounts.google.com/o/oauth2/v2/auth?${parsedOptions}`
   }
