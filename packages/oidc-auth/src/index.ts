@@ -26,7 +26,7 @@ const defaultExpirationInterval = 60 * 60 * 24 // 1 day
 
 export type OidcAuth = {
   sub: string
-  email: string
+  email?: string
   rtk: string // refresh token
   rtkexp: number // token expiration time ; refresh token if it's expired
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
@@ -180,7 +180,7 @@ const updateAuth = async (
   const authExpires = Number(env.OIDC_AUTH_EXPIRES!) || defaultExpirationInterval
   const updated: OidcAuth = {
     sub: claims?.sub || orig?.sub || '',
-    email: (claims?.email as string) || orig?.email || '',
+    email: (claims?.email as string | undefined) || orig?.email || '',
     rtk: response.refresh_token || orig?.rtk || '',
     rtkexp: Math.floor(Date.now() / 1000) + authRefreshInterval,
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
@@ -240,17 +240,16 @@ const generateAuthorizationRequestUrl = async (
   authorizationRequestUrl.searchParams.set('client_id', client.client_id)
   authorizationRequestUrl.searchParams.set('redirect_uri', env.OIDC_REDIRECT_URI)
   authorizationRequestUrl.searchParams.set('response_type', 'code')
-  if (as.scopes_supported === undefined || as.scopes_supported.length === 0) {
-    throw new HTTPException(500, {
-      message: 'The supported scopes information is not provided by the IdP',
-    })
-  } else if (as.scopes_supported.indexOf('email') === -1) {
-    throw new HTTPException(500, { message: 'The "email" scope is not supported by the IdP' })
-  } else if (as.scopes_supported.indexOf('offline_access') === -1) {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email')
-  } else {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email offline_access')
+
+  const scopes = ['openid'];  
+  if (as.scopes_supported?.includes('email')) {
+    scopes.push('email')
   }
+  if (as.scopes_supported?.includes('offline_access')) {
+    scopes.push('offline_access')
+  }
+  authorizationRequestUrl.searchParams.set('scope', scopes.join(' '))
+  
   authorizationRequestUrl.searchParams.set('state', state)
   authorizationRequestUrl.searchParams.set('nonce', nonce)
   authorizationRequestUrl.searchParams.set('code_challenge', code_challenge)
