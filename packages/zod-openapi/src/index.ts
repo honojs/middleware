@@ -54,12 +54,12 @@ type RequestTypes = {
 }
 
 type IsJson<T> = T extends string
-    ? T extends `application/${infer Start}json${infer _End}`
-        ? Start extends '' | `${string}+` | `vnd.${string}+`
-            ? 'json'
-            : never
-        : never
+  ? T extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? 'json'
+      : never
     : never
+  : never
 
 type IsForm<T> = T extends string
   ? T extends
@@ -390,16 +390,39 @@ export class OpenAPIHono<
         if (!(schema instanceof ZodType)) {
           continue
         }
-        if (/^application\/([a-z-\.]+\+)?json/.test(mediaType)) {
+        if (isJSONContentType(mediaType)) {
           const validator = zValidator('json', schema, hook as any)
-          validators.push(validator as any)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isJSONContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
+              }
+              c.req.addValidatedData('json', {})
+              await next()
+            }
+            validators.push(mw)
+          }
         }
-        if (
-          mediaType.startsWith('multipart/form-data') ||
-          mediaType.startsWith('application/x-www-form-urlencoded')
-        ) {
+        if (isFormContentType(mediaType)) {
           const validator = zValidator('form', schema, hook as any)
-          validators.push(validator as any)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isFormContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
+              }
+              c.req.addValidatedData('form', {})
+              await next()
+            }
+            validators.push(mw)
+          }
         }
       }
     }
@@ -566,4 +589,15 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
     ...document,
     paths: updatedPaths,
   }
+}
+
+function isJSONContentType(contentType: string) {
+  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+}
+
+function isFormContentType(contentType: string) {
+  return (
+    contentType.startsWith('multipart/form-data') ||
+    contentType.startsWith('application/x-www-form-urlencoded')
+  )
 }
