@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "0.15.1",
+  "version": "0.15.3",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",
-    "hono": "^4.3.6",
+    "hono": "^4.5.4",
     "jest": "^29.7.0",
     "tsup": "^8.0.1",
     "typescript": "^5.4.4",

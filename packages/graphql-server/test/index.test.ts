@@ -174,6 +174,13 @@ describe('GraphQL Middleware - GET functionality', () => {
       schema: TestSchema,
     })
   )
+  app.use(
+    '/graphql-with-graphiql',
+    graphqlServer({
+      schema: TestSchema,
+      graphiql: true,
+    })
+  )
 
   it('Allows GET with variable values', async () => {
     const query = {
@@ -275,6 +282,21 @@ describe('GraphQL Middleware - GET functionality', () => {
         test: 'Hello World',
       },
     })
+  })
+
+  it('Errors when query is not provided and GraphiQL is disabled', async () => {
+    const res = await app.request('http://localhost/graphql', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(400)
+  })
+
+  it('Renders GraphiQL when query is not provided and GraphiQL is enabled', async () => {
+    const res = await app.request('http://localhost/graphql-with-graphiql', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('<div id="graphiql">')
   })
 })
 

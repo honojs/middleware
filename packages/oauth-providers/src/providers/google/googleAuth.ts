@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -10,6 +10,7 @@ export function googleAuth(options: {
   scope: string[]
   login_hint?: string
   prompt?: 'none' | 'consent' | 'select_account'
+  access_type?: 'online' | 'offline'
   client_id?: string
   client_secret?: string
   state?: string
@@ -24,6 +25,7 @@ export function googleAuth(options: {
       redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       login_hint: options.login_hint,
       prompt: options.prompt,
+      access_type: options.access_type,
       scope: options.scope,
       state: newState,
       code: c.req.query('code'),

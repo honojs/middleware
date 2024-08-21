@@ -42,6 +42,7 @@ app.use(
   graphqlServer({
     schema,
     rootResolver,
+    graphiql: true, // if `true`, presents GraphiQL when the GraphQL endpoint is loaded in a browser.
   })
 )
 
