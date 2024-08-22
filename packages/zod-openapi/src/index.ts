@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type {
   RouteConfig as RouteConfigBase,
   ZodContentObject,
@@ -180,7 +181,7 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> = {
     : TypedResponse<
         JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
         ExtractStatusCode<Status>,
-        'json'
+        'json' | 'text'
       >
 }[keyof R['responses'] & RouteConfigStatusCode]
 
@@ -445,7 +446,7 @@ export class OpenAPIHono<
 
   getOpenAPIDocument = (
     config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  ): OpenAPIObject => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
@@ -454,7 +455,7 @@ export class OpenAPIHono<
 
   getOpenAPI31Document = (
     config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  ): OpenAPIObject => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
@@ -578,7 +579,7 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 extendZodWithOpenApi(z)
 export { extendZodWithOpenApi, z }
 
-function addBasePathToDocument(document: Record<string, any>, basePath: string) {
+function addBasePathToDocument(document: OpenAPIObject, basePath: string): OpenAPIObject {
   const updatedPaths: Record<string, any> = {}
 
   Object.keys(document.paths).forEach((path) => {
