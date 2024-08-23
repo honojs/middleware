@@ -4,7 +4,7 @@
 
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
@@ -123,7 +123,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     try {
       auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     } catch (e) {
-      deleteCookie(c, oidcAuthCookieName)
+      deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/'} )
       return null
     }
     if (auth === null || auth.rtkexp === undefined || auth.ssnexp === undefined) {
@@ -138,7 +138,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     if (auth.rtkexp < now) {
       // Refresh the token if it has expired
       if (auth.rtk === undefined || auth.rtk === '') {
-        deleteCookie(c, oidcAuthCookieName)
+        deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/'})
         return null
       }
       const as = await getAuthorizationServer(c)
@@ -147,7 +147,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       const result = await oauth2.processRefreshTokenResponse(as, client, response)
       if (oauth2.isOAuth2Error(result)) {
         // The refresh_token might be expired or revoked
-        deleteCookie(c, oidcAuthCookieName)
+        deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/'})
         return null
       }
       auth = await updateAuth(c, auth, result)
@@ -199,7 +199,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const session_jwt = getCookie(c, oidcAuthCookieName)
   if (session_jwt !== undefined) {
     const env = getOidcAuthEnv(c)
-    deleteCookie(c, oidcAuthCookieName)
+    deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/' })
     const auth: OidcAuth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
@@ -274,7 +274,8 @@ export const processOAuthCallback = async (c: Context) => {
 
   // Parses the authorization response and validates the state parameter
   const state = getCookie(c, 'state')
-  deleteCookie(c, 'state')
+  const path = new URL(env.OIDC_REDIRECT_URI).pathname
+  deleteCookie(c, 'state', { path })
   const currentUrl: URL = new URL(c.req.url)
   const params = oauth2.validateAuthResponse(as, client, currentUrl, state)
   if (oauth2.isOAuth2Error(params)) {
@@ -286,11 +287,11 @@ export const processOAuthCallback = async (c: Context) => {
   // Exchanges the authorization code for a refresh token
   const code = c.req.query('code')
   const nonce = getCookie(c, 'nonce')
-  deleteCookie(c, 'nonce')
+  deleteCookie(c, 'nonce', { path })
   const code_verifier = getCookie(c, 'code_verifier')
-  deleteCookie(c, 'code_verifier')
+  deleteCookie(c, 'code_verifier', { path })
   const continue_url = getCookie(c, 'continue')
-  deleteCookie(c, 'continue')
+  deleteCookie(c, 'continue', { path })
   if (code === undefined || nonce === undefined || code_verifier === undefined) {
     throw new HTTPException(500, { message: 'Missing required parameters / cookies' })
   }
@@ -353,7 +354,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
     try {
       const auth = await getAuth(c)
       if (auth === null) {
-        const path = new URL(env.OIDC_REDIRECT_URI).pathname;
+        const path = new URL(env.OIDC_REDIRECT_URI).pathname
         // Redirect to IdP for login
         const state = oauth2.generateRandomState()
         const nonce = oauth2.generateRandomNonce()
@@ -367,7 +368,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
         return c.redirect(url)
       }
     } catch (e) {
-      deleteCookie(c, oidcAuthCookieName)
+      deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/' })
       throw new HTTPException(500, { message: 'Invalid session' })
     }
     await next()
