@@ -205,7 +205,7 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
-    expect(res.headers.get('location')).toMatch(/scope=openid(%20|\+)email&/)
+    expect(res.headers.get('location')).toMatch(/scope=openid(%20|\+)email(%20|\+)profile&/)
     expect(res.headers.get('location')).toMatch('access_type=offline&prompt=consent')
     expect(res.headers.get('set-cookie')).toMatch(`state=${MOCK_STATE}`)
     expect(res.headers.get('set-cookie')).toMatch(`nonce=${MOCK_NONCE}`)

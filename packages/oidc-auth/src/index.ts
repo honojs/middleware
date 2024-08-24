@@ -2,21 +2,24 @@
  * OpenID Connect authentication middleware for hono
  */
 
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, MiddlewareHandler, OidcAuthClaims } from 'hono'
 import { env } from 'hono/adapter'
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
+import type { JWTPayload } from 'hono/utils/jwt/types'
 import * as oauth2 from 'oauth4webapi'
 
 declare module 'hono' {
+  interface OidcAuthClaims {}
   interface ContextVariableMap {
     oidcAuthEnv: OidcAuthEnv
     oidcAuthorizationServer: oauth2.AuthorizationServer
     oidcClient: oauth2.Client
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
+    oidcClaimsHook?: (orig: OidcAuth | undefined, claims: oauth2.IDToken | undefined, response: oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse) => Promise<Omit<OidcAuth, 'rtk' | 'rtkexp' | 'ssnexp'>>
   }
 }
 
@@ -30,7 +33,8 @@ export type OidcAuth = {
   rtk: string // refresh token
   rtkexp: number // token expiration time ; refresh token if it's expired
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
-}
+  // [claim: string]: oauth2.JsonValue | undefined
+} & OidcAuthClaims
 
 type OidcAuthEnv = {
   OIDC_AUTH_SECRET: string
@@ -40,6 +44,7 @@ type OidcAuthEnv = {
   OIDC_CLIENT_ID: string
   OIDC_CLIENT_SECRET: string
   OIDC_REDIRECT_URI: string
+  OIDC_SCOPES?: string
 }
 
 /**
@@ -113,14 +118,14 @@ export const getClient = (c: Context): oauth2.Client => {
  */
 export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
   const env = getOidcAuthEnv(c)
-  let auth = c.get('oidcAuth')
+  let auth: Partial<OidcAuth> | null = c.get('oidcAuth')
   if (auth === undefined) {
     const session_jwt = getCookie(c, oidcAuthCookieName)
     if (session_jwt === undefined) {
       return null
     }
     try {
-      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as Partial<OidcAuth>
     } catch (e) {
       deleteCookie(c, oidcAuthCookieName)
       return null
@@ -149,11 +154,11 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
         deleteCookie(c, oidcAuthCookieName)
         return null
       }
-      auth = await updateAuth(c, auth, result)
+      auth = await updateAuth(c, auth as OidcAuth, result)
     }
-    c.set('oidcAuth', auth)
+    c.set('oidcAuth', auth as OidcAuth)
   }
-  return auth
+  return auth as OidcAuth
 }
 
 /**
@@ -178,14 +183,19 @@ const updateAuth = async (
   const claims = oauth2.getValidatedIdTokenClaims(response)
   const authRefreshInterval = Number(env.OIDC_AUTH_REFRESH_INTERVAL!) || defaultRefreshInterval
   const authExpires = Number(env.OIDC_AUTH_EXPIRES!) || defaultExpirationInterval
+  const claimsHook = c.get('oidcClaimsHook') ?? (async (orig: OidcAuth | undefined, claims: oauth2.IDToken | undefined) => {
+    return {
+      sub: claims?.sub || orig?.sub || '',
+      email: (claims?.email as string) || orig?.email || '',
+    }
+  })
   const updated: OidcAuth = {
-    sub: claims?.sub || orig?.sub || '',
-    email: (claims?.email as string) || orig?.email || '',
+    ...await claimsHook(orig, claims, response),
     rtk: response.refresh_token || orig?.rtk || '',
     rtkexp: Math.floor(Date.now() / 1000) + authRefreshInterval,
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
-  const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
+  const session_jwt = await sign(updated as Partial<JWTPayload>, env.OIDC_AUTH_SECRET)
   setCookie(c, oidcAuthCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
   c.set('oidcAuthJwt', session_jwt)
   return updated
@@ -199,7 +209,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   if (session_jwt !== undefined) {
     const env = getOidcAuthEnv(c)
     deleteCookie(c, oidcAuthCookieName)
-    const auth: OidcAuth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+    const auth: Partial<OidcAuth> = await verify(session_jwt, env.OIDC_AUTH_SECRET) as Partial<OidcAuth>
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
@@ -215,7 +225,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
       }
     }
   }
-  c.set('oidcAuth', undefined)
+  c.set('oidcAuth', null)
 }
 
 /**
@@ -244,12 +254,15 @@ const generateAuthorizationRequestUrl = async (
     throw new HTTPException(500, {
       message: 'The supported scopes information is not provided by the IdP',
     })
-  } else if (as.scopes_supported.indexOf('email') === -1) {
-    throw new HTTPException(500, { message: 'The "email" scope is not supported by the IdP' })
-  } else if (as.scopes_supported.indexOf('offline_access') === -1) {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email')
+  } else if(env.OIDC_SCOPES != null) {
+    for(const scope of env.OIDC_SCOPES.split(' ')) {
+      if (as.scopes_supported.indexOf(scope) === -1) {
+        throw new HTTPException(500, { message: `The '${scope}' scope is not supported by the IdP` })
+      }
+    }
+    authorizationRequestUrl.searchParams.set('scope', env.OIDC_SCOPES)
   } else {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email offline_access')
+    authorizationRequestUrl.searchParams.set('scope', as.scopes_supported.join(' '))
   }
   authorizationRequestUrl.searchParams.set('state', state)
   authorizationRequestUrl.searchParams.set('nonce', nonce)
