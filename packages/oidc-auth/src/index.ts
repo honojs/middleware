@@ -8,18 +8,21 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
-import type { JWTPayload } from 'hono/utils/jwt/types'
 import * as oauth2 from 'oauth4webapi'
 
+export type IDToken = oauth2.IDToken
+export type TokenEndpointResponses = oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse
 declare module 'hono' {
-  interface OidcAuthClaims {}
+  export interface OidcAuthClaims {
+    readonly [claim: string]: oauth2.JsonValue | undefined;
+  }
   interface ContextVariableMap {
     oidcAuthEnv: OidcAuthEnv
     oidcAuthorizationServer: oauth2.AuthorizationServer
     oidcClient: oauth2.Client
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
-    oidcClaimsHook?: (orig: OidcAuth | undefined, claims: oauth2.IDToken | undefined, response: oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse) => Promise<Omit<OidcAuth, 'rtk' | 'rtkexp' | 'ssnexp'>>
+    oidcClaimsHook?: (orig: OidcAuth | undefined, claims: IDToken | undefined, response: TokenEndpointResponses) => Promise<OidcAuthClaims>
   }
 }
 
@@ -28,12 +31,9 @@ const defaultRefreshInterval = 15 * 60 // 15 minutes
 const defaultExpirationInterval = 60 * 60 * 24 // 1 day
 
 export type OidcAuth = {
-  sub: string
-  email: string
   rtk: string // refresh token
   rtkexp: number // token expiration time ; refresh token if it's expired
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
-  // [claim: string]: oauth2.JsonValue | undefined
 } & OidcAuthClaims
 
 type OidcAuthEnv = {
@@ -177,7 +177,7 @@ const setAuth = async (
 const updateAuth = async (
   c: Context,
   orig: OidcAuth | undefined,
-  response: oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse
+  response: TokenEndpointResponses
 ): Promise<OidcAuth> => {
   const env = getOidcAuthEnv(c)
   const claims = oauth2.getValidatedIdTokenClaims(response)
@@ -189,13 +189,13 @@ const updateAuth = async (
       email: (claims?.email as string) || orig?.email || '',
     }
   })
-  const updated: OidcAuth = {
+  const updated = {
     ...await claimsHook(orig, claims, response),
     rtk: response.refresh_token || orig?.rtk || '',
     rtkexp: Math.floor(Date.now() / 1000) + authRefreshInterval,
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
-  const session_jwt = await sign(updated as Partial<JWTPayload>, env.OIDC_AUTH_SECRET)
+  const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
   setCookie(c, oidcAuthCookieName, session_jwt, { path: '/', httpOnly: true, secure: true })
   c.set('oidcAuthJwt', session_jwt)
   return updated

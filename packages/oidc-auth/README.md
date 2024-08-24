@@ -52,6 +52,7 @@ The middleware requires the following environment variables to be set:
 | OIDC_CLIENT_ID             | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider. | None, must be provided |
 | OIDC_CLIENT_SECRET         | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider. | None, must be provided |
 | OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider. | None, must be provided |
+| OIDC_SCOPES          | The scopes that should be used for the OIDC authentication | The server provided `scopes_supported` |
 
 ## How to Use
 
@@ -98,6 +99,38 @@ app.get('*', async (c) => {
 });
 
 export default app
+```
+
+## Using original response or additional claims
+```typescript
+import type { IDToken, OidcAuth, TokenEndpointResponses } from '@hono/oidc-auth';
+import { processOAuthCallback } from '@hono/oidc-auth';
+import type { Context, OidcAuthClaims } from 'hono';
+
+declare module 'hono' {
+  interface OidcAuthClaims {
+    name: string
+    sub: string
+  }
+}
+
+const oidcClaimsHook = async (orig: OidcAuth | undefined, claims: IDToken | undefined, _response: TokenEndpointResponses): Promise<OidcAuthClaims> => {
+  /*
+  const { someOtherInfo } = await fetch(c.get('oidcAuthorizationServer').userinfo_endpoint, {
+    header: _response.access_token
+  }).then((res) => res.json())
+  */
+  return {
+    name: claims?.name as string ?? orig?.name ?? '',
+    sub: claims?.sub ?? orig?.sub ?? ''
+  };
+}),
+...
+app.get('/callback', async (c) => {
+  c.set('oidcClaimsHook', oidcClaimsHook); // also assure to set before any getAuth(), in case the token is refreshed
+  return processOAuthCallback(c);
+})
+...
 ```
 
 Note:
