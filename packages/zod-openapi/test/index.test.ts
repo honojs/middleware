@@ -797,43 +797,45 @@ describe('JSON and Text response', () => {
       200: {
         content: {
           'application/json': {
-            schema: z.object({})
+            schema: z.object({}),
           },
           'text/plain': {
-            schema: z.string()
-          }
+            schema: z.string(),
+          },
         },
         description: 'response',
-      }
-    }
+      },
+    },
   })
 
   const app = new OpenAPIHono()
 
-  app.openapi(route, (c: Context) => {
+  app.openapi(route, (c) => {
     const mimeTypes = ['application/json', 'text/plain']
-    if (accepts(c, {
-      default: mimeTypes[0],
-      header: 'Accept',
-      supports: mimeTypes
-    }) === mimeTypes[0]) {
-      return c.json<{}, 200>({})
+    if (
+      accepts(c, {
+        default: mimeTypes[0],
+        header: 'Accept',
+        supports: mimeTypes,
+      }) === mimeTypes[0]
+    ) {
+      return c.json({})
     }
-    return c.text<string, 200>('')
+    return c.text('')
   })
 
-  test('should responde with JSON fallback', async () => {
+  test('should respond with JSON fallback', async () => {
     const res = await app.request('/hello', {
-      method: 'GET'
+      method: 'GET',
     })
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({})
   })
-  test('should responde with Text', async () => {
+  test('should respond with Text', async () => {
     const res = await app.request('/hello', {
       method: 'GET',
       headers: {
-        'accept': 'text/plain',
+        accept: 'text/plain',
       },
     })
     expect(res.status).toBe(200)
