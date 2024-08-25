@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.4.1
+
+### Patch Changes
+
+- [#701](https://github.com/honojs/middleware/pull/701) [`32abe11a4ad67275e3a5e8767684f750d3f04a7a`](https://github.com/honojs/middleware/commit/32abe11a4ad67275e3a5e8767684f750d3f04a7a) Thanks [@rwv](https://github.com/rwv)! - perf: use jsdelivr instead of unpkg to serve swagger-ui assets
+
 ## 0.4.0
 
 ### Minor Changes
