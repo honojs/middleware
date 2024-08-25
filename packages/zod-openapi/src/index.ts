@@ -180,7 +180,7 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> = {
     : TypedResponse<
         JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
         ExtractStatusCode<Status>,
-        'json'
+        'json' | 'text'
       >
 }[keyof R['responses'] & RouteConfigStatusCode]
 
