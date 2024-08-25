@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.5.1
+
+### Patch Changes
+
+- [#705](https://github.com/honojs/middleware/pull/705) [`9cac146245bc410f328ce59e1b82358464307a88`](https://github.com/honojs/middleware/commit/9cac146245bc410f328ce59e1b82358464307a88) Thanks [@metrue](https://github.com/metrue)! - Make argument (context) for the root resolver function from optional to required.
+
 ## 0.5.0
 
 ### Minor Changes
