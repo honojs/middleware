@@ -79,8 +79,8 @@ describe('GraphQL Middleware - Simple way', () => {
     }
   `)
 
-    const rootResolver: RootResolver = (ctx?: Context) => {
-      const name = ctx?.get('name')
+    const rootResolver: RootResolver = (c: Context) => {
+      const name = c.get('name')
       return {
         hi: `hi ${name}`,
       }
