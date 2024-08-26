@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.16.0
+
+### Minor Changes
+
+- [#710](https://github.com/honojs/middleware/pull/710) [`dadf5ce3c2c134b83420702ca8fe13d6fb8d9390`](https://github.com/honojs/middleware/commit/dadf5ce3c2c134b83420702ca8fe13d6fb8d9390) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Allow multiple mime type response
+
 ## 0.15.3
 
 ### Patch Changes

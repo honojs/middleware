@@ -165,9 +165,9 @@ app.get('/logout', async (c) => {
 })
 app.get('/callback-custom', async (c) => {
   c.set('oidcClaimsHook', async (orig, claims, response) => ({
-    name: claims?.name as string ?? orig?.name ?? '',
+    name: (claims?.name as string) ?? orig?.name ?? '',
     sub: claims?.sub ?? orig?.sub ?? '',
-    token: response.access_token
+    token: response.access_token,
   }))
   return processOAuthCallback(c)
 })
@@ -185,6 +185,7 @@ beforeEach(() => {
   process.env.OIDC_AUTH_SECRET = MOCK_AUTH_SECRET
   process.env.OIDC_AUTH_EXPIRES = MOCK_AUTH_EXPIRES
   delete process.env.OIDC_SCOPES
+  delete process.env.OIDC_COOKIE_PATH
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -266,7 +267,7 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
-    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
+    expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
   })
   test('Should delete session and redirect to authorization endpoint if the algorithm of the session JWT is invalid', async () => {
     const req = new Request('http://localhost/', {
@@ -276,7 +277,7 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
-    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
+    expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
   })
 })
 describe('processOAuthCallback()', () => {
@@ -288,7 +289,14 @@ describe('processOAuthCallback()', () => {
       },
     })
     const res = await app.request(req, {}, {})
-    const { email, name, sub } = JSON.parse(atob(res.headers.get('set-cookie')?.match(/oidc-auth=[^;]+/)?.[0]?.split('.')[1] as string))
+    const { email, name, sub } = JSON.parse(
+      atob(
+        res.headers
+          .get('set-cookie')
+          ?.match(/oidc-auth=[^;]+/)?.[0]
+          ?.split('.')[1] as string
+      )
+    )
     expect(sub).toBe(MOCK_SUBJECT)
     expect(email).toBe(MOCK_EMAIL)
     expect(name).toBeUndefined()
@@ -304,12 +312,66 @@ describe('processOAuthCallback()', () => {
       },
     })
     const res = await app.request(req, {}, {})
-    const { email, name, sub } = JSON.parse(atob(res.headers.get('set-cookie')?.match(/oidc-auth=[^;]+/)?.[0]?.split('.')[1] as string))
+    const { email, name, sub } = JSON.parse(
+      atob(
+        res.headers
+          .get('set-cookie')
+          ?.match(/oidc-auth=[^;]+/)?.[0]
+          ?.split('.')[1] as string
+      )
+    )
     expect(sub).toBe(MOCK_SUBJECT)
     expect(email).toBeUndefined()
     expect(name).toBe(MOCK_NAME)
+    const path = new URL(MOCK_REDIRECT_URI).pathname
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`state=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp('oidc-auth=[^;]+; Path=/; HttpOnly; Secure')
+    )
+    expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Should restrict the auth cookie to a given path', async () => {
+    const MOCK_COOKIE_PATH = (process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication')
+    process.env.OIDC_REDIRECT_URI = `http://localhost${MOCK_COOKIE_PATH}/callback`
+    const parentApp = new Hono().route(MOCK_COOKIE_PATH, app)
+    const path = new URL(process.env.OIDC_REDIRECT_URI).pathname
+    const req = new Request(`${process.env.OIDC_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await parentApp.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`state=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`oidc-auth=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
+    )
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
   test('Should return an error if the state parameter does not match', async () => {
@@ -356,6 +418,20 @@ describe('RevokeSession()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;')
+    expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
+  })
+  test('Should revoke the session of the given path', async () => {
+    const MOCK_COOKIE_PATH = (process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication')
+    const parentApp = new Hono().route(MOCK_COOKIE_PATH, app)
+    const req = new Request(`http://localhost${MOCK_COOKIE_PATH}/logout`, {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await parentApp.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`oidc-auth=; Max-Age=0; Path=${MOCK_COOKIE_PATH}($|,)`)
+    )
   })
 })

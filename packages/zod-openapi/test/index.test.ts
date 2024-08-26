@@ -8,6 +8,7 @@ import { OpenAPIHono, createRoute, z } from '../src/index'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { ServerErrorStatusCode } from 'hono/utils/http-status'
 import { stringify } from 'yaml'
+import { accepts } from 'hono/accepts'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -785,6 +786,60 @@ describe('JSON and Form', () => {
     expect(functionInJSON).toHaveBeenCalled()
     functionInForm.mockReset()
     functionInJSON.mockReset()
+  })
+})
+
+describe('JSON and Text response', () => {
+  const route = createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({}),
+          },
+          'text/plain': {
+            schema: z.string(),
+          },
+        },
+        description: 'response',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const mimeTypes = ['application/json', 'text/plain']
+    if (
+      accepts(c, {
+        default: mimeTypes[0],
+        header: 'Accept',
+        supports: mimeTypes,
+      }) === mimeTypes[0]
+    ) {
+      return c.json({})
+    }
+    return c.text('')
+  })
+
+  test('should respond with JSON fallback', async () => {
+    const res = await app.request('/hello', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({})
+  })
+  test('should respond with Text', async () => {
+    const res = await app.request('/hello', {
+      method: 'GET',
+      headers: {
+        accept: 'text/plain',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toEqual('')
   })
 })
 
@@ -1724,21 +1779,21 @@ describe('RouteConfigToTypedResponse', () => {
             age: number
           },
           200,
-          'json'
+          'json' | 'text'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           400,
-          'json'
+          'json' | 'text'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           ServerErrorStatusCode,
-          'json'
+          'json' | 'text'
         >
     type verify = Expect<Equal<Expected, Actual>>
   })
