@@ -2,6 +2,8 @@ import type { Enforcer } from 'casbin'
 import type { Context, HonoRequest } from 'hono'
 import { decodeBase64 } from 'hono/utils/encode'
 
+// NOTE: Hono's basic-auth middleware implementation:
+// https://github.com/honojs/hono/blob/8ba02273e829318d7f8797267f52229e531b8bd5/src/middleware/basic-auth/index.ts#L16-L33
 const CREDENTIALS_REGEXP = /^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$/
 const USER_PASS_REGEXP = /^([^:]*):(.*)$/
 const utf8Decoder = new TextDecoder()
