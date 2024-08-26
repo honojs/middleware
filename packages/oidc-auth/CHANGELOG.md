@@ -1,5 +1,15 @@
 # @hono/oidc-auth
 
+## 1.1.0
+
+### Minor Changes
+
+- [#711](https://github.com/honojs/middleware/pull/711) [`5675a5fc323a007447f077b97273938baddba59c`](https://github.com/honojs/middleware/commit/5675a5fc323a007447f077b97273938baddba59c) Thanks [@ameinhardt](https://github.com/ameinhardt)! - define custom scope, access oauth response and set custom session claims
+
+- [#709](https://github.com/honojs/middleware/pull/709) [`cd99b40177cc3eef706ab37d21f4351e86934cc6`](https://github.com/honojs/middleware/commit/cd99b40177cc3eef706ab37d21f4351e86934cc6) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Optionally restrict cookie path with new envvar OIDC_COOKIE_PATH
+
+- [#709](https://github.com/honojs/middleware/pull/709) [`cd99b40177cc3eef706ab37d21f4351e86934cc6`](https://github.com/honojs/middleware/commit/cd99b40177cc3eef706ab37d21f4351e86934cc6) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Restrict path of callback cookies to pathname of OIDC_REDIRECT_URI
+
 ## 1.0.1
 
 ### Patch Changes
