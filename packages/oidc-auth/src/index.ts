@@ -14,6 +14,12 @@ export type IDToken = oauth2.IDToken
 export type TokenEndpointResponses =
   | oauth2.OpenIDTokenEndpointResponse
   | oauth2.TokenEndpointResponse
+export type OidcClaimsHook = (
+  orig: OidcAuth | undefined,
+  claims: IDToken | undefined,
+  response: TokenEndpointResponses
+) => Promise<OidcAuthClaims>
+
 declare module 'hono' {
   export interface OidcAuthClaims {
     readonly [claim: string]: oauth2.JsonValue | undefined
@@ -24,11 +30,7 @@ declare module 'hono' {
     oidcClient: oauth2.Client
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
-    oidcClaimsHook?: (
-      orig: OidcAuth | undefined,
-      claims: IDToken | undefined,
-      response: TokenEndpointResponses
-    ) => Promise<OidcAuthClaims>
+    oidcClaimsHook?: OidcClaimsHook
   }
 }
 
@@ -132,7 +134,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       return null
     }
     try {
-      auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as Partial<OidcAuth>
+      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
     } catch (e) {
       deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/' })
       return null
@@ -190,9 +192,9 @@ const updateAuth = async (
   const claims = oauth2.getValidatedIdTokenClaims(response)
   const authRefreshInterval = Number(env.OIDC_AUTH_REFRESH_INTERVAL!) || defaultRefreshInterval
   const authExpires = Number(env.OIDC_AUTH_EXPIRES!) || defaultExpirationInterval
-  const claimsHook =
+  const claimsHook: OidcClaimsHook =
     c.get('oidcClaimsHook') ??
-    (async (orig: OidcAuth | undefined, claims: oauth2.IDToken | undefined) => {
+    (async (orig, claims) => {
       return {
         sub: claims?.sub || orig?.sub || '',
         email: (claims?.email as string) || orig?.email || '',
