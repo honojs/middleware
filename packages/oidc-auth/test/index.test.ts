@@ -10,6 +10,7 @@ const MOCK_CLIENT_SECRET = 'CLIENT_SECRET_001'
 const MOCK_REDIRECT_URI = 'http://localhost/callback'
 const MOCK_SUBJECT = 'USER_ID_001'
 const MOCK_EMAIL = 'user001@example.com'
+const MOCK_NAME = 'John Doe'
 const MOCK_STATE = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_NONCE = crypto.randomBytes(16).toString('hex') // 32 bytes
 const MOCK_AUTH_SECRET = crypto.randomBytes(16).toString('hex') // 32 bytes
@@ -19,6 +20,8 @@ const MOCK_ID_TOKEN = jwt.sign(
     iss: MOCK_ISSUER,
     aud: MOCK_CLIENT_ID,
     sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    name: MOCK_NAME,
     exp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
     nonce: MOCK_NONCE,
   },
@@ -153,12 +156,20 @@ jest.unstable_mockModule('oauth4webapi', () => {
   }
 })
 
-const { oidcAuthMiddleware, getAuth, revokeSession } = await import('../src')
+const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession } = await import('../src')
 
 const app = new Hono()
 app.get('/logout', async (c) => {
   await revokeSession(c)
   return c.text('OK')
+})
+app.get('/callback-custom', async (c) => {
+  c.set('oidcClaimsHook', async (orig, claims, response) => ({
+    name: (claims?.name as string) ?? orig?.name ?? '',
+    sub: claims?.sub ?? orig?.sub ?? '',
+    token: response.access_token,
+  }))
+  return processOAuthCallback(c)
 })
 app.use('/*', oidcAuthMiddleware())
 app.all('/*', async (c) => {
@@ -173,6 +184,7 @@ beforeEach(() => {
   process.env.OIDC_REDIRECT_URI = MOCK_REDIRECT_URI
   process.env.OIDC_AUTH_SECRET = MOCK_AUTH_SECRET
   process.env.OIDC_AUTH_EXPIRES = MOCK_AUTH_EXPIRES
+  delete process.env.OIDC_SCOPES
   delete process.env.OIDC_COOKIE_PATH
 })
 describe('oidcAuthMiddleware()', () => {
@@ -206,12 +218,38 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toMatch(/scope=openid(%20|\+)email(%20|\+)profile&/)
+    expect(res.headers.get('location')).toMatch('access_type=offline&prompt=consent')
+    expect(res.headers.get('set-cookie')).toMatch(`state=${MOCK_STATE}`)
+    expect(res.headers.get('set-cookie')).toMatch(`nonce=${MOCK_NONCE}`)
+    expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
+    expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
+  })
+  test('Should use custom scope, if defined', async () => {
+    process.env.OIDC_SCOPES = 'openid email'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
     expect(res.headers.get('location')).toMatch(/scope=openid(%20|\+)email&/)
     expect(res.headers.get('location')).toMatch('access_type=offline&prompt=consent')
     expect(res.headers.get('set-cookie')).toMatch(`state=${MOCK_STATE}`)
     expect(res.headers.get('set-cookie')).toMatch(`nonce=${MOCK_NONCE}`)
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
+  })
+  test('Custom scope is limited to supported scopes', async () => {
+    process.env.OIDC_SCOPES = 'openid email salary'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
   })
   test('Should redirect to authorization endpoint if no session cookie is found', async () => {
     const req = new Request('http://localhost/', {
@@ -251,18 +289,62 @@ describe('processOAuthCallback()', () => {
       },
     })
     const res = await app.request(req, {}, {})
+    const { email, name, sub } = JSON.parse(
+      atob(
+        res.headers
+          .get('set-cookie')
+          ?.match(/oidc-auth=[^;]+/)?.[0]
+          ?.split('.')[1] as string
+      )
+    )
+    expect(sub).toBe(MOCK_SUBJECT)
+    expect(email).toBe(MOCK_EMAIL)
+    expect(name).toBeUndefined()
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Should respond with customized claims', async () => {
+    const req = new Request(`${MOCK_REDIRECT_URI}-custom?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await app.request(req, {}, {})
+    const { email, name, sub } = JSON.parse(
+      atob(
+        res.headers
+          .get('set-cookie')
+          ?.match(/oidc-auth=[^;]+/)?.[0]
+          ?.split('.')[1] as string
+      )
+    )
+    expect(sub).toBe(MOCK_SUBJECT)
+    expect(email).toBeUndefined()
+    expect(name).toBe(MOCK_NAME)
     const path = new URL(MOCK_REDIRECT_URI).pathname
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`state=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=[^;]+; Path=/; HttpOnly; Secure'))
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`state=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp('oidc-auth=[^;]+; Path=/; HttpOnly; Secure')
+    )
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
   test('Should restrict the auth cookie to a given path', async () => {
-    const MOCK_COOKIE_PATH = process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication'
+    const MOCK_COOKIE_PATH = (process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication')
     process.env.OIDC_REDIRECT_URI = `http://localhost${MOCK_COOKIE_PATH}/callback`
     const parentApp = new Hono().route(MOCK_COOKIE_PATH, app)
     const path = new URL(process.env.OIDC_REDIRECT_URI).pathname
@@ -275,11 +357,21 @@ describe('processOAuthCallback()', () => {
     const res = await parentApp.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`state=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`))
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`oidc-auth=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`))
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`state=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`nonce=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`code_verifier=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`continue=; Max-Age=0; Path=${path}($|,)`)
+    )
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`oidc-auth=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
+    )
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
   test('Should return an error if the state parameter does not match', async () => {
@@ -329,7 +421,7 @@ describe('RevokeSession()', () => {
     expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
   })
   test('Should revoke the session of the given path', async () => {
-    const MOCK_COOKIE_PATH = process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication'
+    const MOCK_COOKIE_PATH = (process.env.OIDC_COOKIE_PATH = '/some/subpath/for/authentication')
     const parentApp = new Hono().route(MOCK_COOKIE_PATH, app)
     const req = new Request(`http://localhost${MOCK_COOKIE_PATH}/logout`, {
       method: 'GET',
@@ -338,6 +430,8 @@ describe('RevokeSession()', () => {
     const res = await parentApp.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(res.headers.get('set-cookie')).toMatch(new RegExp(`oidc-auth=; Max-Age=0; Path=${MOCK_COOKIE_PATH}($|,)`))
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`oidc-auth=; Max-Age=0; Path=${MOCK_COOKIE_PATH}($|,)`)
+    )
   })
 })

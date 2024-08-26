@@ -2,7 +2,7 @@
  * OpenID Connect authentication middleware for hono
  */
 
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, MiddlewareHandler, OidcAuthClaims } from 'hono'
 import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
@@ -10,13 +10,27 @@ import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
 import * as oauth2 from 'oauth4webapi'
 
+export type IDToken = oauth2.IDToken
+export type TokenEndpointResponses =
+  | oauth2.OpenIDTokenEndpointResponse
+  | oauth2.TokenEndpointResponse
+export type OidcClaimsHook = (
+  orig: OidcAuth | undefined,
+  claims: IDToken | undefined,
+  response: TokenEndpointResponses
+) => Promise<OidcAuthClaims>
+
 declare module 'hono' {
+  export interface OidcAuthClaims {
+    readonly [claim: string]: oauth2.JsonValue | undefined
+  }
   interface ContextVariableMap {
     oidcAuthEnv: OidcAuthEnv
     oidcAuthorizationServer: oauth2.AuthorizationServer
     oidcClient: oauth2.Client
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
+    oidcClaimsHook?: OidcClaimsHook
   }
 }
 
@@ -25,12 +39,10 @@ const defaultRefreshInterval = 15 * 60 // 15 minutes
 const defaultExpirationInterval = 60 * 60 * 24 // 1 day
 
 export type OidcAuth = {
-  sub: string
-  email: string
   rtk: string // refresh token
   rtkexp: number // token expiration time ; refresh token if it's expired
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
-}
+} & OidcAuthClaims
 
 type OidcAuthEnv = {
   OIDC_AUTH_SECRET: string
@@ -40,6 +52,7 @@ type OidcAuthEnv = {
   OIDC_CLIENT_ID: string
   OIDC_CLIENT_SECRET: string
   OIDC_REDIRECT_URI: string
+  OIDC_SCOPES?: string
   OIDC_COOKIE_PATH?: string
 }
 
@@ -114,7 +127,7 @@ export const getClient = (c: Context): oauth2.Client => {
  */
 export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
   const env = getOidcAuthEnv(c)
-  let auth = c.get('oidcAuth')
+  let auth: Partial<OidcAuth> | null = c.get('oidcAuth')
   if (auth === undefined) {
     const session_jwt = getCookie(c, oidcAuthCookieName)
     if (session_jwt === undefined) {
@@ -150,11 +163,11 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
         deleteCookie(c, oidcAuthCookieName, { path: env.OIDC_COOKIE_PATH ?? '/' })
         return null
       }
-      auth = await updateAuth(c, auth, result)
+      auth = await updateAuth(c, auth as OidcAuth, result)
     }
-    c.set('oidcAuth', auth)
+    c.set('oidcAuth', auth as OidcAuth)
   }
-  return auth
+  return auth as OidcAuth
 }
 
 /**
@@ -173,15 +186,22 @@ const setAuth = async (
 const updateAuth = async (
   c: Context,
   orig: OidcAuth | undefined,
-  response: oauth2.OpenIDTokenEndpointResponse | oauth2.TokenEndpointResponse
+  response: TokenEndpointResponses
 ): Promise<OidcAuth> => {
   const env = getOidcAuthEnv(c)
   const claims = oauth2.getValidatedIdTokenClaims(response)
   const authRefreshInterval = Number(env.OIDC_AUTH_REFRESH_INTERVAL!) || defaultRefreshInterval
   const authExpires = Number(env.OIDC_AUTH_EXPIRES!) || defaultExpirationInterval
-  const updated: OidcAuth = {
-    sub: claims?.sub || orig?.sub || '',
-    email: (claims?.email as string) || orig?.email || '',
+  const claimsHook: OidcClaimsHook =
+    c.get('oidcClaimsHook') ??
+    (async (orig, claims) => {
+      return {
+        sub: claims?.sub || orig?.sub || '',
+        email: (claims?.email as string) || orig?.email || '',
+      }
+    })
+  const updated = {
+    ...(await claimsHook(orig, claims, response)),
     rtk: response.refresh_token || orig?.rtk || '',
     rtkexp: Math.floor(Date.now() / 1000) + authRefreshInterval,
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
@@ -249,12 +269,17 @@ const generateAuthorizationRequestUrl = async (
     throw new HTTPException(500, {
       message: 'The supported scopes information is not provided by the IdP',
     })
-  } else if (as.scopes_supported.indexOf('email') === -1) {
-    throw new HTTPException(500, { message: 'The "email" scope is not supported by the IdP' })
-  } else if (as.scopes_supported.indexOf('offline_access') === -1) {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email')
+  } else if (env.OIDC_SCOPES != null) {
+    for (const scope of env.OIDC_SCOPES.split(' ')) {
+      if (as.scopes_supported.indexOf(scope) === -1) {
+        throw new HTTPException(500, {
+          message: `The '${scope}' scope is not supported by the IdP`,
+        })
+      }
+    }
+    authorizationRequestUrl.searchParams.set('scope', env.OIDC_SCOPES)
   } else {
-    authorizationRequestUrl.searchParams.set('scope', 'openid email offline_access')
+    authorizationRequestUrl.searchParams.set('scope', as.scopes_supported.join(' '))
   }
   authorizationRequestUrl.searchParams.set('state', state)
   authorizationRequestUrl.searchParams.set('nonce', nonce)
