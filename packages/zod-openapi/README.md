@@ -239,8 +239,8 @@ app.openapi(
 You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
-app.doc31('/docs', { openapi: '3.1.0' }) // new endpoint
-app.getOpenAPI31Document({ openapi: '3.1.0' }) // raw json
+app.doc31('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // new endpoint
+app.getOpenAPI31Document({ openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // schema object
 ```
 
 ### The Registry
