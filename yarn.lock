@@ -2034,6 +2034,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint-community/eslint-plugin-eslint-comments@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@eslint-community/eslint-plugin-eslint-comments@npm:4.4.0"
+  dependencies:
+    escape-string-regexp: "npm:^4.0.0"
+    ignore: "npm:^5.2.4"
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
+  checksum: 26ef5a2aea65ba9c7ee542f784af9cbc1627e167002fe6c908a36e7baed7d14df0af565d7d09745ce8a624c92bdcefbc5075007b61285e33e753879994c5cafc
+  languageName: node
+  linkType: hard
+
 "@eslint-community/eslint-utils@npm:^4.1.2, @eslint-community/eslint-utils@npm:^4.2.0, @eslint-community/eslint-utils@npm:^4.4.0":
   version: 4.4.0
   resolution: "@eslint-community/eslint-utils@npm:4.4.0"
@@ -2337,6 +2349,7 @@ __metadata:
   resolution: "@hono/graphql-server@workspace:packages/graphql-server"
   dependencies:
     "@cloudflare/workers-types": "npm:^3.14.0"
+    "@eslint-community/eslint-plugin-eslint-comments": "npm:^4.4.0"
     "@types/jest": "npm:^28.1.4"
     "@typescript-eslint/eslint-plugin": "npm:^5.21.0"
     "@typescript-eslint/parser": "npm:^5.21.0"
@@ -2344,7 +2357,6 @@ __metadata:
     eslint-config-prettier: "npm:^8.5.0"
     eslint-define-config: "npm:^1.4.0"
     eslint-import-resolver-typescript: "npm:^2.7.1"
-    eslint-plugin-eslint-comments: "npm:^3.2.0"
     eslint-plugin-flowtype: "npm:^8.0.3"
     eslint-plugin-import-x: "npm:^4.1.1"
     eslint-plugin-n: "npm:^17.10.2"
@@ -2510,6 +2522,7 @@ __metadata:
   resolution: "@hono/sentry@workspace:packages/sentry"
   dependencies:
     "@cloudflare/workers-types": "npm:^3.14.0"
+    "@eslint-community/eslint-plugin-eslint-comments": "npm:^4.4.0"
     "@types/jest": "npm:^28.1.4"
     "@typescript-eslint/eslint-plugin": "npm:^5.32.0"
     "@typescript-eslint/parser": "npm:^5.32.0"
@@ -2517,7 +2530,6 @@ __metadata:
     eslint-config-prettier: "npm:^8.5.0"
     eslint-define-config: "npm:^1.6.0"
     eslint-import-resolver-typescript: "npm:^3.4.0"
-    eslint-plugin-eslint-comments: "npm:^3.2.0"
     eslint-plugin-flowtype: "npm:^8.0.3"
     eslint-plugin-import-x: "npm:^4.1.1"
     eslint-plugin-n: "npm:^17.10.2"
@@ -8956,18 +8968,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-eslint-comments@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "eslint-plugin-eslint-comments@npm:3.2.0"
-  dependencies:
-    escape-string-regexp: "npm:^1.0.5"
-    ignore: "npm:^5.0.5"
-  peerDependencies:
-    eslint: ">=4.19.1"
-  checksum: c71db824592dc8ea498021572a0bd33d763ef26126bdb3b84a027ca75a1adbe0894ec95024f7de39ef12308560e62cbf8af0d06ffe472be5ba8bd9169c928e96
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-flowtype@npm:^8.0.3":
   version: 8.0.3
   resolution: "eslint-plugin-flowtype@npm:8.0.3"
@@ -10901,7 +10901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.0.5, ignore@npm:^5.2.0, ignore@npm:^5.2.4":
+"ignore@npm:^5.2.0, ignore@npm:^5.2.4":
   version: 5.3.0
   resolution: "ignore@npm:5.3.0"
   checksum: dc06bea5c23aae65d0725a957a0638b57e235ae4568dda51ca142053ed2c352de7e3bc93a69b2b32ac31966a1952e9a93c5ef2e2ab7c6b06aef9808f6b55b571
