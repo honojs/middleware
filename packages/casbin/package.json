@@ -39,11 +39,11 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "casbin": ">=5.30.0",
-    "hono": ">=4.5.*"
+    "hono": ">=4.5.11"
   },
   "devDependencies": {
     "casbin": "^5.30.0",
-    "hono": "^4.5.3",
+    "hono": "^4.5.11",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
     "vitest": "^2.0.1"

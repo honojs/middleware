@@ -2213,13 +2213,13 @@ __metadata:
   resolution: "@hono/casbin@workspace:packages/casbin"
   dependencies:
     casbin: "npm:^5.30.0"
-    hono: "npm:^4.5.3"
+    hono: "npm:^4.5.11"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.5.3"
     vitest: "npm:^2.0.1"
   peerDependencies:
     casbin: ">=5.30.0"
-    hono: ">=4.5.*"
+    hono: ">=4.5.11"
   languageName: unknown
   linkType: soft
 
@@ -10730,10 +10730,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.5.1, hono@npm:^4.5.3":
+"hono@npm:^4.5.1":
   version: 4.5.3
   resolution: "hono@npm:4.5.3"
   checksum: 360fec2ea66b85d688dd9ce50eb6cdf94f6a2b8508e0b37b688fda3a94e7438cc4c143c0282b7aea41f7be8fa69f0b6d0039931fc8e1526c11ae09303dccce30
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.5.11":
+  version: 4.5.11
+  resolution: "hono@npm:4.5.11"
+  checksum: 839c90273b17ed3797d34a19d12dc577d6f98590a4261bf87488880db13137c0c84a165e7810dc50af2ce4680c8fc915c0bb65673bf5fc54c6d951f18454b2c5
   languageName: node
   linkType: hard
 
