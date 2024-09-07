@@ -4,7 +4,7 @@ module.exports = defineConfig({
   root: true,
   extends: [
     'eslint:recommended',
-    'plugin:node/recommended',
+    'plugin:n/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
@@ -13,7 +13,7 @@ module.exports = defineConfig({
     sourceType: 'module',
     ecmaVersion: 2021,
   },
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: ['@typescript-eslint', 'import-x'],
   globals: {
     fetch: false,
     Response: false,
@@ -44,15 +44,15 @@ module.exports = defineConfig({
       },
     ],
 
-    'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
-    'import/no-duplicates': 'error',
+    'import-x/consistent-type-specifier-style': ['error', 'prefer-top-level'],
+    'import-x/no-duplicates': 'error',
 
-    'node/no-missing-import': 'off',
-    'node/no-missing-require': 'off',
-    'node/no-deprecated-api': 'off',
-    'node/no-unpublished-import': 'off',
-    'node/no-unpublished-require': 'off',
-    'node/no-unsupported-features/es-syntax': 'off',
+    'n/no-missing-import': 'off',
+    'n/no-missing-require': 'off',
+    'n/no-deprecated-api': 'off',
+    'n/no-unpublished-import': 'off',
+    'n/no-unpublished-require': 'off',
+    'n/no-unsupported-features/es-syntax': 'off',
 
     '@typescript-eslint/ban-types': [
       'error',
