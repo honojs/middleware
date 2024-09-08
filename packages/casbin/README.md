@@ -55,8 +55,8 @@ You can implement a scenario where `alice` and `bob` have different permissions.
 import { Hono } from 'hono'
 import { basicAuth } from 'hono/basic-auth'
 import { newEnforcer } from 'casbin'
-import { casbin } from '@hono/cabin'
-import { basicAuthorizer } from '@hono/cabin/helper'
+import { casbin } from '@hono/casbin'
+import { basicAuthorizer } from '@hono/casbin/helper'
 
 const app = new Hono()
 app.use('*',
@@ -88,8 +88,8 @@ By default, `jwtAuthorizer` uses the `sub` in the JWT payload as the username.
 import { Hono } from 'hono'
 import { jwt } from 'hono/jwt'
 import { newEnforcer } from 'casbin'
-import { casbin } from '@hono/cabin'
-import { jwtAuthorizer } from '@hono/cabin/helper'
+import { casbin } from '@hono/casbin'
+import { jwtAuthorizer } from '@hono/casbin/helper'
 
 const app = new Hono()
 app.use('*',
@@ -126,7 +126,7 @@ You can also use a customized authorizer function to handle the authorization lo
 ```ts
 import { Hono } from 'hono'
 import { newEnforcer } from 'casbin'
-import { casbin } from '@hono/cabin'
+import { casbin } from '@hono/casbin'
 
 const app = new Hono()
 app.use('*', casbin({
