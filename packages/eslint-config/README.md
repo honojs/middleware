@@ -10,12 +10,12 @@ yarn add @hono/eslint-config
 
 ## Setting
 
-`.eslintrc.cjs`
+`eslint.config.mjs`
 
 ```js
-module.exports = {
-  extends: ['@hono/eslint-config'],
-}
+import baseConfig from '@hono/eslint-config'
+
+export default [...baseConfig]
 ```
 
 ## Authors

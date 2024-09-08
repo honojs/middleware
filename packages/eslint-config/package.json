@@ -2,7 +2,11 @@
   "name": "@hono/eslint-config",
   "version": "0.0.6",
   "description": "ESLint Config for Hono projects",
-  "main": "index.js",
+  "type": "module",
+  "module": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -14,12 +18,14 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.4.0",
+    "@typescript-eslint/parser": "^8.4.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-define-config": "^2.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
@@ -28,7 +34,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8",
-    "eslint": "^8.57.0",
+    "eslint": "^9.10.0",
     "typescript": "^5.3.3"
   }
 }
