@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 1.0.1
+
+### Patch Changes
+
+- [#732](https://github.com/honojs/middleware/pull/732) [`1bbb1416ca4a53db65d1b4462228b40a46256d5d`](https://github.com/honojs/middleware/commit/1bbb1416ca4a53db65d1b4462228b40a46256d5d) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: `@typescript-eslint/no-require-imports` as `off`
+
 ## 1.0.0
 
 ### Major Changes
