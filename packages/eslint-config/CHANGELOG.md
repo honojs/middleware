@@ -1,5 +1,15 @@
 # @hono/eslint-config
 
+## 1.0.0
+
+### Major Changes
+
+- [#731](https://github.com/honojs/middleware/pull/731) [`80cd26ab6e644e1d57a91ad38be05d1e3807c8ea`](https://github.com/honojs/middleware/commit/80cd26ab6e644e1d57a91ad38be05d1e3807c8ea) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support ESLint v9
+
+### Minor Changes
+
+- [#724](https://github.com/honojs/middleware/pull/724) [`f7a950a649006600ba31b8fe8ccf960e7bf4ee92`](https://github.com/honojs/middleware/commit/f7a950a649006600ba31b8fe8ccf960e7bf4ee92) Thanks [@Jayllyz](https://github.com/Jayllyz)! - Migrate to maintained and improved plugin alternatives
+
 ## 0.0.6
 
 ### Patch Changes
