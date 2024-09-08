@@ -239,8 +239,8 @@ app.openapi(
 You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
-app.doc31('/docs', { openapi: '3.1.0' }) // new endpoint
-app.getOpenAPI31Document({ openapi: '3.1.0' }) // raw json
+app.doc31('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // new endpoint
+app.getOpenAPI31Document({ openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // schema object
 ```
 
 ### The Registry
@@ -269,7 +269,7 @@ You can configure middleware for each endpoint from a route created by `createRo
 
 ```ts
 import { prettyJSON } from 'hono/pretty-json'
-import { cache } from 'honoc/cache'
+import { cache } from 'hono/cache'
 
 app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
 app.openapi(route, handler)

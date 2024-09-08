@@ -8,8 +8,8 @@ describe('SwaggerUI Rendering', () => {
     expect(SwaggerUI({ url }).toString()).toEqual(`
     <div>
       <div id="swagger-ui"></div>
-      <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
-      <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css" />
+      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
@@ -25,8 +25,8 @@ describe('SwaggerUI Rendering', () => {
     expect(SwaggerUI({ url, version: '5.0.0' }).toString()).toEqual(`
     <div>
       <div id="swagger-ui"></div>
-      <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.0.0/swagger-ui.css" />
-      <script src="https://unpkg.com/swagger-ui-dist@5.0.0/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.0.0/swagger-ui.css" />
+      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.0.0/swagger-ui-bundle.js" crossorigin="anonymous"></script>
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
@@ -51,8 +51,8 @@ describe('SwaggerUI Rendering', () => {
     ).toEqual(`
     <div>
       <div id="swagger-ui"></div>
-      <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
-      <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css" />
+      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
@@ -89,8 +89,8 @@ describe('SwaggerUI Rendering', () => {
       `
         <div>
           <div id="swagger-ui-manually"></div>
-          <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
-          <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css" />
+          <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
           <script>
             window.onload = () => {
               window.ui = SwaggerUIBundle({

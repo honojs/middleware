@@ -2,12 +2,13 @@ import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Context, TypedResponse } from 'hono'
 import { bearerAuth } from 'hono/bearer-auth'
 import { hc } from 'hono/client'
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import type { RouteConfigToTypedResponse } from '../src/index'
 import { OpenAPIHono, createRoute, z } from '../src/index'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { ServerErrorStatusCode } from 'hono/utils/http-status'
 import { stringify } from 'yaml'
+import { accepts } from 'hono/accepts'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -450,7 +451,7 @@ describe('JSON', () => {
     const app = new OpenAPIHono()
 
     app.openapi(route, (c) => {
-      const {id, title} = c.req.valid('json')
+      const { id, title } = c.req.valid('json')
       return c.json({
         id,
         title,
@@ -489,6 +490,14 @@ describe('JSON', () => {
       const res = await app.request(req)
       expect(res.status).toBe(400)
     })
+
+    it('Should return 200 response without a content-type', async () => {
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+      })
+      const res = await app.request(req)
+      expect(res.status).toBe(200)
+    })
   })
 
   describe('Content-Type application/vnd.api+json', () => {
@@ -519,7 +528,7 @@ describe('JSON', () => {
     const app = new OpenAPIHono()
 
     app.openapi(route, (c) => {
-      const {id, title} = c.req.valid('json')
+      const { id, title } = c.req.valid('json')
       return c.json({
         id,
         title,
@@ -571,8 +580,41 @@ describe('JSON', () => {
       expect(res.status).toBe(400)
     })
   })
+
+  describe('required', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/json': {
+              schema: RequestSchema,
+            },
+          },
+          required: true,
+        },
+      },
+      responses: {
+        200: {
+          description: 'Post a post',
+        },
+      },
+    })
+    const app = new OpenAPIHono()
+    app.openapi(route, (c) => {
+      return c.text('Post success')
+    })
+
+    it('Should return 400 response since body is required', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+      })
+      expect(res.status).toBe(400)
+    })
+  })
 })
-// application/vnd.api+json
+
 describe('Form', () => {
   const RequestSchema = z.object({
     id: z.string().openapi({}),
@@ -641,12 +683,163 @@ describe('Form', () => {
     })
   })
 
-  it('Should return 400 response with correct contents', async () => {
+  it('Should return 200 response without a content-type', async () => {
     const req = new Request('http://localhost/posts', {
       method: 'POST',
     })
     const res = await app.request(req)
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(200)
+  })
+
+  describe('required', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/posts',
+      request: {
+        body: {
+          content: {
+            'application/x-www-form-urlencoded': {
+              schema: RequestSchema,
+            },
+          },
+          required: true,
+        },
+      },
+      responses: {
+        200: {
+          description: 'Post a post',
+        },
+      },
+    })
+    const app = new OpenAPIHono()
+    app.openapi(route, (c) => {
+      return c.text('Post success')
+    })
+
+    it('Should return 400 response since body is required', async () => {
+      const res = await app.request('/posts', {
+        method: 'POST',
+      })
+      expect(res.status).toBe(400)
+    })
+  })
+})
+
+describe('JSON and Form', () => {
+  const functionInForm = vi.fn()
+  const functionInJSON = vi.fn()
+  const route = createRoute({
+    method: 'post',
+    path: '/hello',
+    request: {
+      body: {
+        content: {
+          'application/x-www-form-urlencoded': {
+            schema: z.custom(() => {
+              functionInForm()
+              return true
+            }),
+          },
+          'application/json': {
+            schema: z.custom(() => {
+              functionInJSON()
+              return true
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'response',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    return c.json(0)
+  })
+
+  test('functionInJSON should not be called when the body is Form', async () => {
+    const form = new FormData()
+    form.append('foo', 'foo')
+    await app.request('/hello', {
+      method: 'POST',
+      body: form,
+    })
+    expect(functionInForm).toHaveBeenCalled()
+    expect(functionInJSON).not.toHaveBeenCalled()
+    functionInForm.mockReset()
+    functionInJSON.mockReset()
+  })
+  test('functionInForm should not be called when the body is JSON', async () => {
+    await app.request('/hello', {
+      method: 'POST',
+      body: JSON.stringify({ foo: 'foo' }),
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+    expect(functionInForm).not.toHaveBeenCalled()
+    expect(functionInJSON).toHaveBeenCalled()
+    functionInForm.mockReset()
+    functionInJSON.mockReset()
+  })
+})
+
+describe('JSON and Text response', () => {
+  const route = createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({}),
+          },
+          'text/plain': {
+            schema: z.string(),
+          },
+        },
+        description: 'response',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const mimeTypes = ['application/json', 'text/plain']
+    if (
+      accepts(c, {
+        default: mimeTypes[0],
+        header: 'Accept',
+        supports: mimeTypes,
+      }) === mimeTypes[0]
+    ) {
+      return c.json({})
+    }
+    return c.text('')
+  })
+
+  test('should respond with JSON fallback', async () => {
+    const res = await app.request('/hello', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({})
+  })
+  test('should respond with Text', async () => {
+    const res = await app.request('/hello', {
+      method: 'GET',
+      headers: {
+        accept: 'text/plain',
+      },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.text()).toEqual('')
   })
 })
 
@@ -1586,21 +1779,21 @@ describe('RouteConfigToTypedResponse', () => {
             age: number
           },
           200,
-          'json'
+          'json' | 'text'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           400,
-          'json'
+          'json' | 'text'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           ServerErrorStatusCode,
-          'json'
+          'json' | 'text'
         >
     type verify = Expect<Equal<Expected, Actual>>
   })

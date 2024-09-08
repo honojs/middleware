@@ -1,6 +1,6 @@
 {
   "name": "@hono/oidc-auth",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "OpenID Connect Authentication middleware for Hono",
   "type": "module",
   "main": "dist/index.js",
@@ -47,5 +47,8 @@
   },
   "dependencies": {
     "oauth4webapi": "^2.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

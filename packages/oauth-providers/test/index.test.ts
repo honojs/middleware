@@ -70,6 +70,18 @@ describe('OAuth Middleware', () => {
       redirect_uri: 'http://localhost:3000/google',
     })(c, next)
   })
+  app.use('/google-custom-params', (c, next) => {
+    return googleAuth({
+      client_id,
+      client_secret,
+      scope: ['openid', 'email', 'profile'],
+      redirect_uri: 'http://localhost:3000/google',
+      login_hint: 'test-login-hint',
+      prompt: 'select_account',
+      state: 'test-state',
+      access_type: 'offline',
+    })(c, next)
+  })
   app.get('/google', (c) => {
     const user = c.get('user-google')
     const token = c.get('token')
@@ -354,6 +366,21 @@ describe('OAuth Middleware', () => {
       const redirectLocation = res.headers.get('location')!
       const redirectUrl = new URL(redirectLocation)
       expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/google')
+    })
+
+    it('Should attach custom parameters', async () => {
+      const res = await app.request('/google-custom-params')
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(302)
+
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/google')
+      expect(redirectUrl.searchParams.get('scope')).toBe('openid email profile')
+      expect(redirectUrl.searchParams.get('login_hint')).toBe('test-login-hint')
+      expect(redirectUrl.searchParams.get('prompt')).toBe('select_account')
+      expect(redirectUrl.searchParams.get('state')).toBe('test-state')
+      expect(redirectUrl.searchParams.get('access_type')).toBe('offline')
     })
 
     it('Prevent CSRF attack', async () => {

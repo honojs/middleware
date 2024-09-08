@@ -1,5 +1,23 @@
 # @hono/zod-openapi
 
+## 0.16.0
+
+### Minor Changes
+
+- [#710](https://github.com/honojs/middleware/pull/710) [`dadf5ce3c2c134b83420702ca8fe13d6fb8d9390`](https://github.com/honojs/middleware/commit/dadf5ce3c2c134b83420702ca8fe13d6fb8d9390) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Allow multiple mime type response
+
+## 0.15.3
+
+### Patch Changes
+
+- [#689](https://github.com/honojs/middleware/pull/689) [`c3d48868003ebd215074777a4846af208ddab123`](https://github.com/honojs/middleware/commit/c3d48868003ebd215074777a4846af208ddab123) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: supports `required` for JSON and Form body
+
+## 0.15.2
+
+### Patch Changes
+
+- [#686](https://github.com/honojs/middleware/pull/686) [`a6ec008fbd8235368b796d2c0edb6adfe8c03cc5`](https://github.com/honojs/middleware/commit/a6ec008fbd8235368b796d2c0edb6adfe8c03cc5) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: don't validate the body if content-type is mismatched
+
 ## 0.15.1
 
 ### Patch Changes
