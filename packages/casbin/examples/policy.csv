@@ -1,0 +1,5 @@
+p, dataset1_admin, /dataset1/*, *
+p, dataset2_admin, /dataset2/*, *
+
+g, alice, dataset1_admin
+g, bob, dataset2_admin
