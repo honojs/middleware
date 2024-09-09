@@ -1,6 +1,6 @@
 {
   "name": "@hono/casbin",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Casbin middleware for Hono",
   "type": "module",
   "main": "dist/index.cjs",
