@@ -38,7 +38,8 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
-  hook?: Hook<z.infer<T>, E, P>
+  hook?: Hook<z.infer<T>, E, P>,
+  statusCode?: Number
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
@@ -58,7 +59,7 @@ export const zValidator = <
     }
 
     if (!result.success) {
-      return c.json(result, 400)
+      return c.json(result, statusCode ?? 400);
     }
 
     return result.data as z.infer<T>
