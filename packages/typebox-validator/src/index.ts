@@ -72,6 +72,15 @@ export function tbValidator<
       }
       return data
     }
-    return c.json({ success: false, errors: [...Value.Errors(schema, data)] }, 400)
+    
+    const errors = Array.from(Value.Errors(schema, data));
+		if (hook) {
+			const hookResult = hook({ success: false, errors }, c);
+			if (hookResult instanceof Response || hookResult instanceof Promise) {
+				return hookResult;
+			}
+		}
+
+		return c.json({ success: false, errors }, 400);
   })
 }
