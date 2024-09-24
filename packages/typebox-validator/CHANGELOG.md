@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.2.5
+
+### Patch Changes
+
+- [#742](https://github.com/honojs/middleware/pull/742) [`39cb252df9a0829b8397b9edbcc1de27e49230e1`](https://github.com/honojs/middleware/commit/39cb252df9a0829b8397b9edbcc1de27e49230e1) Thanks [@Micnubinub](https://github.com/Micnubinub)! - Fix fail case not returning error array in hook
+
 ## 0.2.4
 
 ### Patch Changes
