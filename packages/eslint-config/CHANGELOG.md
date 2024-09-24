@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 1.0.2
+
+### Patch Changes
+
+- [#745](https://github.com/honojs/middleware/pull/745) [`2378265f717900b75410c8dbd6b597190bdc301c`](https://github.com/honojs/middleware/commit/2378265f717900b75410c8dbd6b597190bdc301c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: update dependencies
+
 ## 1.0.1
 
 ### Patch Changes
