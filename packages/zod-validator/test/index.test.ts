@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import { z } from 'zod'
 import { zValidator } from '../src'
+import {vi} from 'vitest'
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -254,5 +256,48 @@ describe('With Async Hook', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
     expect(await res.text()).toBe('123 is invalid!')
+  })
+})
+
+
+describe('With target', () => {
+  it('should call hook for correctly validated target', async () => {
+    const app = new Hono()
+
+    const schema = z.object({
+      id: z.string(),
+    })
+
+    const jsonHook = vi.fn()
+    const paramHook = vi.fn()
+    const queryHook = vi.fn()
+    app.post(
+      '/:id/post',
+      zValidator('json', schema, jsonHook),
+      zValidator('param', schema, paramHook),
+      zValidator('query', schema, queryHook),
+      (c) => {
+        return c.text('ok')
+      }
+    )
+
+    const req = new Request('http://localhost/1/post?id=2', {
+      body: JSON.stringify({
+        id: '3',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('ok')
+    expect(paramHook).toHaveBeenCalledWith({data: {id: '1'}, success: true, target:
+        'param'}, expect.anything())
+    expect(queryHook).toHaveBeenCalledWith({data: {id: '2'}, success: true, target: 'query'}, expect.anything())
+    expect(jsonHook).toHaveBeenCalledWith({data: {id: '3'}, success: true, target: 'json'}, expect.anything())
   })
 })
