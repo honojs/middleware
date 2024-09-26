@@ -2,9 +2,17 @@ import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse,
 import { validator } from 'hono/validator'
 import type { z, ZodSchema, ZodError } from 'zod'
 
-export type Hook<T, E extends Env, P extends string, Target extends keyof ValidationTargets = keyof ValidationTargets, O = {}> = (
-  result: ({ success: true; data: T} | { success: false; error: ZodError; data: T }) & {target: Target },
-  c: Context<E, P>,
+export type Hook<
+  T,
+  E extends Env,
+  P extends string,
+  Target extends keyof ValidationTargets = keyof ValidationTargets,
+  O = {}
+> = (
+  result: ({ success: true; data: T } | { success: false; error: ZodError; data: T }) & {
+    target: Target
+  },
+  c: Context<E, P>
 ) => Response | void | TypedResponse<O> | Promise<Response | void | TypedResponse<O>>
 
 type HasUndefined<T> = undefined extends T ? true : false
@@ -45,7 +53,7 @@ export const zValidator = <
     const result = await schema.safeParseAsync(value)
 
     if (hook) {
-      const hookResult = await hook({ data: value, ...result, target, }, c)
+      const hookResult = await hook({ data: value, ...result, target }, c)
       if (hookResult) {
         if (hookResult instanceof Response) {
           return hookResult
