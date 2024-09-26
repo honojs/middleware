@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#695](https://github.com/honojs/middleware/pull/695) [`eda35847916cf7f7e84289eba29a8e5517615c6b`](https://github.com/honojs/middleware/commit/eda35847916cf7f7e84289eba29a8e5517615c6b) Thanks [@bartekbp](https://github.com/bartekbp)! - feat(zod-validator): pass target to a hook
+
 ## 0.2.2
 
 ### Patch Changes
