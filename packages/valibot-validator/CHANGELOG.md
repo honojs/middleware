@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.3.1
+
+### Patch Changes
+
+- [#753](https://github.com/honojs/middleware/pull/753) [`9639103a9ae711707f240376ee7fed4d0e77b121`](https://github.com/honojs/middleware/commit/9639103a9ae711707f240376ee7fed4d0e77b121) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - Fix ESM/CJS exports and use `tsup` for building
+
 ## 0.3.0
 
 ### Minor Changes
