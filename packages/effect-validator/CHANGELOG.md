@@ -1,5 +1,11 @@
 # @hono/effect-validator
 
+## 1.1.0
+
+### Minor Changes
+
+- [#718](https://github.com/honojs/middleware/pull/718) [`80da4aa50a74af1d442893ddcd1ac4fc4f5d5d4c`](https://github.com/honojs/middleware/commit/80da4aa50a74af1d442893ddcd1ac4fc4f5d5d4c) Thanks [@shokiw](https://github.com/shokiw)! - format errors with array formatting for improved readability
+
 ## 1.0.1
 
 ### Patch Changes
