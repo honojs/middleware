@@ -1,3 +1,4 @@
+import { ArrayFormatter } from '@effect/schema'
 import * as S from '@effect/schema/Schema'
 import { Either } from 'effect'
 import type { Env, Input, MiddlewareHandler, ValidationTargets } from 'hono'
@@ -45,7 +46,8 @@ export const effectValidator = <
     const result = S.decodeUnknownEither(schema)(value)
 
     return Either.match(result, {
-      onLeft: (error) => c.json({ success: false, error: JSON.parse(JSON.stringify(error)) }, 400),
+      onLeft: (error) =>
+        c.json({ success: false, error: ArrayFormatter.formatErrorSync(error) }, 400),
       onRight: (data) => {
         c.req.addValidatedData(target, data as object)
         return data
