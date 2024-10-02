@@ -1,3 +1,4 @@
+import type { ArrayFormatter } from '@effect/schema'
 import { Schema as S } from '@effect/schema'
 import { Hono } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
@@ -103,8 +104,10 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
 
-    const data = (await res.json()) as { success: boolean }
+    const data = await res.json<{ success: boolean; error: ArrayFormatter.Issue[] }>()
     expect(data.success).toBe(false)
+    expect(data.error[0].path).toEqual(['age'])
+    expect(data.error[0].message).toBeDefined()
   })
 })
 
