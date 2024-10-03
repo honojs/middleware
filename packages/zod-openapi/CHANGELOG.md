@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.16.3
+
+### Patch Changes
+
+- [#756](https://github.com/honojs/middleware/pull/756) [`f6d642afddb31ffb379e71398f6fef534a6621f3`](https://github.com/honojs/middleware/commit/f6d642afddb31ffb379e71398f6fef534a6621f3) Thanks [@lucaschultz](https://github.com/lucaschultz)! - fix: add target property to parameter of validation hook
+
 ## 0.16.2
 
 ### Patch Changes
