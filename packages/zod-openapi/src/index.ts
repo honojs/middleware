@@ -185,7 +185,7 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> = {
 }[keyof R['responses'] & RouteConfigStatusCode]
 
 export type Hook<T, E extends Env, P extends string, R> = (
-  result:
+  result: { target: keyof ValidationTargets } & (
     | {
         success: true
         data: T
@@ -193,7 +193,8 @@ export type Hook<T, E extends Env, P extends string, R> = (
     | {
         success: false
         error: ZodError
-      },
+      }
+  ),
   c: Context<E, P>
 ) => R
 
