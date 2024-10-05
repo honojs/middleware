@@ -34,7 +34,6 @@ export type ConfigHandler = (c: Context) => AuthConfig
 
 export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   config.secret ??= env.AUTH_SECRET
-  config.basePath ||= '/api/auth'
   coreSetEnvDefaults(env, config)
 }
 

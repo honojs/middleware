@@ -71,15 +71,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@auth/core@npm:^0.30.0":
-  version: 0.30.0
-  resolution: "@auth/core@npm:0.30.0"
+"@auth/core@npm:^0.35.3":
+  version: 0.35.3
+  resolution: "@auth/core@npm:0.35.3"
   dependencies:
     "@panva/hkdf": "npm:^1.1.1"
     "@types/cookie": "npm:0.6.0"
     cookie: "npm:0.6.0"
     jose: "npm:^5.1.3"
-    oauth4webapi: "npm:^2.4.0"
+    oauth4webapi: "npm:^2.10.4"
     preact: "npm:10.11.3"
     preact-render-to-string: "npm:5.2.3"
   peerDependencies:
@@ -93,7 +93,7 @@ __metadata:
       optional: true
     nodemailer:
       optional: true
-  checksum: caa94cc9b42c354fef57e337a844bca0c0770ac809ba1cf00b30d7fc2e383d1d42dafeb3e39b9dde92b85a9eb821cde905b662638bfe98d8e2439c6d3e64c8cd
+  checksum: 0543d5ec0eea4df14826aabd5e220dd64772d9f8e81920f0d5c3971cf6298cdc1e089ddead18ab3a30de295f35e5227eeaa7631d64f35749a50b73cfea538c4c
   languageName: node
   linkType: hard
 
@@ -2257,7 +2257,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/auth-js@workspace:packages/auth-js"
   dependencies:
-    "@auth/core": "npm:^0.30.0"
+    "@auth/core": "npm:^0.35.3"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
     jest: "npm:^29.7.0"
@@ -15410,10 +15410,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "oauth4webapi@npm:2.4.0"
-  checksum: da9fae4b6c116a1d80e2e0408e70530703691bb3a5dd6ca2e59a212e8f3b9b04a2a3bf68400f949e627e97af7c7de07b7975bd374629e4f7f4ef9906d5afad10
+"oauth4webapi@npm:^2.10.4":
+  version: 2.17.0
+  resolution: "oauth4webapi@npm:2.17.0"
+  checksum: a3be4f07f3050c982c9f47a899cb34eb4ce1b2072818eab37f241c7db932cf0dac31ed90b0913eaaaebfd7b23e8bf397ecef249a11aea699efb62c7657884ba5
   languageName: node
   linkType: hard
 

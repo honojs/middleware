@@ -3,7 +3,7 @@ import { skipCSRFCheck } from '@auth/core'
 import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it, vi } from 'vitest'
 import type { AuthConfig } from '../src'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
 
@@ -39,6 +39,7 @@ describe('Config', () => {
       '/*',
       initAuthConfig(() => {
         return {
+          basePath: '/api/auth',
           providers: [],
         }
       })
@@ -78,7 +79,7 @@ describe('Config', () => {
   })
 })
 
-describe('reqWithEnvUrl()', async() => {
+describe('reqWithEnvUrl()', async () => {
   const req = new Request('http://request-base/request-path')
   const newReq = await reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
   it('Should rewrite the base path', () => {
@@ -126,7 +127,6 @@ describe('Credentials Provider', () => {
       password: {},
     },
     authorize: (credentials) => {
-
       if (credentials.password === 'password') {
         return user
       }
@@ -193,8 +193,8 @@ describe('Credentials Provider', () => {
 
   it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
     const headers = new Headers()
-    headers.append('x-forwarded-proto', "https")
-    headers.append('x-forwarded-host', "example.com")
+    headers.append('x-forwarded-proto', 'https')
+    headers.append('x-forwarded-host', 'example.com')
     const res = await app.request('http://localhost/api/auth/signin', {
       headers,
     })
