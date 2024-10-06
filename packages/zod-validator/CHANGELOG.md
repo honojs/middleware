@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.4.0
+
+### Minor Changes
+
+- [#763](https://github.com/honojs/middleware/pull/763) [`2a45247d805520c08501727af0d00fd52d34b429`](https://github.com/honojs/middleware/commit/2a45247d805520c08501727af0d00fd52d34b429) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support enum types for `query`
+
 ## 0.3.0
 
 ### Minor Changes
