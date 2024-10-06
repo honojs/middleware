@@ -49,7 +49,7 @@ describe('Basic', () => {
         } & {
           query?:
             | {
-                name?: string | string[] | undefined
+                name?: string | undefined
               }
             | undefined
         }
@@ -305,5 +305,37 @@ describe('With target', () => {
       { data: { id: '3' }, success: true, target: 'json' },
       expect.anything()
     )
+  })
+})
+
+describe('Only Types', () => {
+  it('Should return correct enum types for query', () => {
+    const app = new Hono()
+
+    const querySchema = z.object({
+      order: z.enum(['asc', 'desc']),
+    })
+
+    const route = app.get('/', zValidator('query', querySchema), (c) => {
+      const data = c.req.valid('query')
+      return c.json(data)
+    })
+
+    type Actual = ExtractSchema<typeof route>
+    type Expected = {
+      '/': {
+        $get: {
+          input: {
+            query: {
+              order: 'asc' | 'desc'
+            }
+          }
+          output: {
+            order: 'asc' | 'desc'
+          }
+        }
+      }
+    }
+    type verify = Expect<Equal<Expected, Actual>>
   })
 })

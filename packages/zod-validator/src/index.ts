@@ -27,17 +27,13 @@ export const zValidator = <
   I extends Input = {
     in: HasUndefined<In> extends true
       ? {
-          [K in Target]?: K extends 'json'
+          [K in Target]?: In extends ValidationTargets[K]
             ? In
-            : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+            : { [K2 in keyof In]?: ValidationTargets[K][K2] }
         }
       : {
-          [K in Target]: K extends 'json'
+          [K in Target]: In extends ValidationTargets[K]
             ? In
-            : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
             : { [K2 in keyof In]: ValidationTargets[K][K2] }
         }
     out: { [K in Target]: Out }
