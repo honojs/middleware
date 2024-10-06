@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.4.1
+
+### Patch Changes
+
+- [#766](https://github.com/honojs/middleware/pull/766) [`ed27af46ecb8a7c3b5399b725feded4feaf6f8a6`](https://github.com/honojs/middleware/commit/ed27af46ecb8a7c3b5399b725feded4feaf6f8a6) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: releasing correctly
+
 ## 0.4.0
 
 ### Minor Changes
