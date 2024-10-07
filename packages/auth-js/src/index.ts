@@ -44,13 +44,10 @@ async function cloneRequest(input: URL | string, request: Request, headers?: Hea
       headers: headers ?? new Headers(request.headers),
       body:
         request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.blob(),
-      // @ts-ignore: TS2353
       referrer: 'referrer' in request ? (request.referrer as string) : undefined,
-      // deno-lint-ignore no-explicit-any
-      referrerPolicy: request.referrerPolicy as any,
+      referrerPolicy: request.referrerPolicy,
       mode: request.mode,
       credentials: request.credentials,
-      // @ts-ignore: TS2353
       cache: request.cache,
       redirect: request.redirect,
       integrity: request.integrity,
@@ -66,25 +63,26 @@ export async function reqWithEnvUrl(req: Request, authUrl?: string) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)
     const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
-    props.forEach((prop) => (reqUrlObj[prop] = authUrlObj[prop]))
-    return cloneRequest(reqUrlObj.href, req)
-  } else {
-    const url = new URL(req.url)
-    const headers = new Headers(req.headers)
-    const proto = headers.get('x-forwarded-proto')
-    const host = headers.get('x-forwarded-host') ?? headers.get('host')
-    if (proto != null) url.protocol = proto.endsWith(':') ? proto : proto + ':'
-    if (host != null) {
-      url.host = host
-      const portMatch = host.match(/:(\d+)$/)
-      if (portMatch) url.port = portMatch[1]
-      else url.port = ''
-      headers.delete('x-forwarded-host')
-      headers.delete('Host')
-      headers.set('Host', host)
+    for (const prop of props) {
+      if (authUrlObj[prop]) reqUrlObj[prop] = authUrlObj[prop]
     }
-    return cloneRequest(url.href, req, headers)
+    return cloneRequest(reqUrlObj.href, req)
   }
+  const url = new URL(req.url)
+  const headers = new Headers(req.headers)
+  const proto = headers.get('x-forwarded-proto')
+  const host = headers.get('x-forwarded-host') ?? headers.get('host')
+  if (proto != null) url.protocol = proto.endsWith(':') ? proto : `${proto}:`
+  if (host != null) {
+    url.host = host
+    const portMatch = host.match(/:(\d+)$/)
+    if (portMatch) url.port = portMatch[1]
+    else url.port = ''
+    headers.delete('x-forwarded-host')
+    headers.delete('Host')
+    headers.set('Host', host)
+  }
+  return cloneRequest(url.href, req, headers)
 }
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
@@ -114,7 +112,7 @@ export async function getAuthUser(c: Context): Promise<AuthUser | null> {
 
   const session = (await response.json()) as Session | null
 
-  return session && session.user ? authUser : null
+  return session?.user ? authUser : null
 }
 
 export function verifyAuth(): MiddlewareHandler {
@@ -126,9 +124,8 @@ export function verifyAuth(): MiddlewareHandler {
         status: 401,
       })
       throw new HTTPException(401, { res })
-    } else {
-      c.set('authUser', authUser)
     }
+    c.set('authUser', authUser)
 
     await next()
   }
