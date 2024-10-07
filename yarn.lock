@@ -2502,7 +2502,7 @@ __metadata:
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20231025.0"
     "@types/jest": "npm:^29.5.7"
-    hono: "npm:^3.11.7"
+    hono: "npm:^4.5.1"
     jest: "npm:^29.7.0"
     jest-environment-miniflare: "npm:^2.14.1"
     msw: "npm:^2.0.11"
