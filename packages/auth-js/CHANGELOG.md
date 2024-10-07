@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.11
+
+### Patch Changes
+
+- [#769](https://github.com/honojs/middleware/pull/769) [`c2d661aa697bc3800a1b4b6c10ed3589d6d85cf2`](https://github.com/honojs/middleware/commit/c2d661aa697bc3800a1b4b6c10ed3589d6d85cf2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: remove config.basePath
+
 ## 1.0.10
 
 ### Patch Changes
