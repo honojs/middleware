@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.4.0
+
+### Minor Changes
+
+- [#762](https://github.com/honojs/middleware/pull/762) [`05610f520e4dda7290f2b4a6fe7c4dba9d41be1a`](https://github.com/honojs/middleware/commit/05610f520e4dda7290f2b4a6fe7c4dba9d41be1a) Thanks [@fabian-hiller](https://github.com/fabian-hiller)! - Upgrade Valibot peer dependency to v1.0.0
+
 ## 0.3.1
 
 ### Patch Changes
