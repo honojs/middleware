@@ -6,5 +6,5 @@ export type OAuthVariables = {
 
 export type Token = {
   token: string
-  expires_in: number
+  expires_in?: number
 }
