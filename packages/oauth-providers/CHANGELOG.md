@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.6.2
+
+### Patch Changes
+
+- [#662](https://github.com/honojs/middleware/pull/662) [`40e3a780d1c817abab48177a49fb8040eda4633d`](https://github.com/honojs/middleware/commit/40e3a780d1c817abab48177a49fb8040eda4633d) Thanks [@nakasyou](https://github.com/nakasyou)! - support hono v4.5
+
 ## 0.6.1
 
 ### Patch Changes
