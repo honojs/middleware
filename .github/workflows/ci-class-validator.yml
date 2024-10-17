@@ -1,0 +1,25 @@
+name: ci-cabin
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/class-validator/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/class-validator/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/cabin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

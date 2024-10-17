@@ -2300,6 +2300,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/class-validator@workspace:packages/class-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/class-validator@workspace:packages/class-validator"
+  dependencies:
+    hono: "npm:^4.0.10"
+    jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
+    typescript: "npm:^5.3.3"
+    vitest: "npm:^1.4.0"
+  peerDependencies:
+    hono: ">=3.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/clerk-auth@workspace:packages/clerk-auth":
   version: 0.0.0-use.local
   resolution: "@hono/clerk-auth@workspace:packages/clerk-auth"
