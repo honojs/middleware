@@ -42,8 +42,6 @@ async function cloneRequest(input: URL | string, request: Request, headers?: Hea
     return new Request(input, {
       method: request.method,
       headers: headers ?? new Headers(request.headers),
-      body:
-        request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.blob(),
       // @ts-ignore: TS2353
       referrer: 'referrer' in request ? (request.referrer as string) : undefined,
       // deno-lint-ignore no-explicit-any
