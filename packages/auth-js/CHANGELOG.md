@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.12
+
+### Patch Changes
+
+- [#775](https://github.com/honojs/middleware/pull/775) [`c19b51baaf396647f2d6b021e38f083768328b74`](https://github.com/honojs/middleware/commit/c19b51baaf396647f2d6b021e38f083768328b74) Thanks [@divyam234](https://github.com/divyam234)! - refactor session provider
+
 ## 1.0.11
 
 ### Patch Changes
