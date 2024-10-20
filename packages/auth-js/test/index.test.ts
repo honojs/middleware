@@ -186,7 +186,12 @@ describe('Credentials Provider', () => {
       headers,
     })
     expect(res.status).toBe(200)
-    const obj = await res.json()
+    const obj = await res.json<{
+      token: {
+        name: string
+        email: string
+      }
+    }>()
     expect(obj.token.name).toBe(user.name)
     expect(obj.token.email).toBe(user.email)
   })
