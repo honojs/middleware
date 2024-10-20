@@ -1,19 +1,24 @@
 import { AuthError } from '@auth/core/errors'
 import type { BuiltInProviderType, ProviderType } from '@auth/core/providers'
 import type { LoggerInstance, Session } from '@auth/core/types'
-import * as React from 'react'
+import { useEffect, useState } from 'react'
 
 class ClientFetchError extends AuthError {}
 
 export class ClientSessionError extends AuthError {}
 
+export interface GetSessionParams {
+  event?: 'storage' | 'timer' | 'hidden' | string
+  triggerEvent?: boolean
+}
+
 export interface AuthClientConfig {
   baseUrl: string
   basePath: string
-  credentials?: RequestCredentials
-  _session?: Session | null | undefined
-  _lastSync: number
-  _getSession: (...args: any[]) => any
+  credentials: RequestCredentials
+  lastSync: number
+  session: Session | null
+  fetchSession: (params?: GetSessionParams) => Promise<void>
 }
 
 export interface UseSessionOptions<R extends boolean> {
@@ -32,13 +37,7 @@ export interface ClientSafeProvider {
 }
 
 export interface SignInOptions extends Record<string, unknown> {
-  /**
-   * Specify to which URL the user will be redirected after signing in. Defaults to the page URL the sign-in is initiated from.
-   *
-   * [Documentation](https://next-auth.js.org/getting-started/client#specifying-a-callbackurl)
-   */
   callbackUrl?: string
-  /** [Documentation](https://next-auth.js.org/getting-started/client#using-the-redirect-false-option) */
   redirect?: boolean
 }
 
@@ -60,26 +59,39 @@ export interface SignOutResponse {
 }
 
 export interface SignOutParams<R extends boolean = true> {
-  /** [Documentation](https://next-auth.js.org/getting-started/client#specifying-a-callbackurl-1) */
   callbackUrl?: string
-  /** [Documentation](https://next-auth.js.org/getting-started/client#using-the-redirect-false-option-1 */
   redirect?: R
 }
-
 
 export interface SessionProviderProps {
   children: React.ReactNode
   session?: Session | null
-  baseUrl?: string
-  basePath?: string
   refetchInterval?: number
   refetchOnWindowFocus?: boolean
   refetchWhenOffline?: false
 }
 
+export type UpdateSession = (data?: any) => Promise<Session | null>
+
+export type SessionContextValue<R extends boolean = false> = R extends true
+  ?
+      | { update: UpdateSession; data: Session; status: 'authenticated' }
+      | { update: UpdateSession; data: null; status: 'loading' }
+  :
+      | { update: UpdateSession; data: Session; status: 'authenticated' }
+      | {
+          update: UpdateSession
+          data: null
+          status: 'unauthenticated' | 'loading'
+        }
+
 export async function fetchData<T = any>(
   path: string,
-  config: AuthClientConfig,
+  config: {
+    baseUrl: string
+    basePath: string
+    credentials: RequestCredentials
+  },
   logger: LoggerInstance,
   req: any = {}
 ): Promise<T | null> {
@@ -111,20 +123,22 @@ export async function fetchData<T = any>(
 }
 
 export function useOnline() {
-  const [isOnline, setIsOnline] = React.useState(
+  const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : false
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const abortController = new AbortController()
+    const { signal } = abortController
+
     const setOnline = () => setIsOnline(true)
     const setOffline = () => setIsOnline(false)
 
-    window.addEventListener('online', setOnline)
-    window.addEventListener('offline', setOffline)
+    window.addEventListener('online', setOnline, { signal })
+    window.addEventListener('offline', setOffline, { signal })
 
     return () => {
-      window.removeEventListener('online', setOnline)
-      window.removeEventListener('offline', setOffline)
+      abortController.abort()
     }
   }, [])
 
@@ -136,11 +150,11 @@ export function now() {
 }
 
 export function parseUrl(url?: string) {
-  const defaultUrl = 'http://localhost:3000/api/auth';
-  const parsedUrl = new URL(url?.startsWith('http') ? url : `https://${url}` || defaultUrl);
+  const defaultUrl = 'http://localhost:3000/api/auth'
+  const parsedUrl = new URL(url?.startsWith('http') ? url : `https://${url}` || defaultUrl)
 
-  const path = parsedUrl.pathname === '/' ? '/api/auth' : parsedUrl.pathname.replace(/\/$/, '');
-  const base = `${parsedUrl.origin}${path}`;
+  const path = parsedUrl.pathname === '/' ? '/api/auth' : parsedUrl.pathname.replace(/\/$/, '')
+  const base = `${parsedUrl.origin}${path}`
 
   return {
     origin: parsedUrl.origin,
@@ -148,5 +162,5 @@ export function parseUrl(url?: string) {
     path,
     base,
     toString: () => base,
-  };
+  }
 }

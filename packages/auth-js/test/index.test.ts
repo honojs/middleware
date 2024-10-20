@@ -186,9 +186,14 @@ describe('Credentials Provider', () => {
       headers,
     })
     expect(res.status).toBe(200)
-    const obj = await res.json()
-    expect(obj['token']['name']).toBe(user.name)
-    expect(obj['token']['email']).toBe(user.email)
+    const obj = await res.json<{
+      token: {
+        name: string
+        email: string
+      }
+    }>()
+    expect(obj.token.name).toBe(user.name)
+    expect(obj.token.email).toBe(user.email)
   })
 
   it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
@@ -198,7 +203,7 @@ describe('Credentials Provider', () => {
     const res = await app.request('http://localhost/api/auth/signin', {
       headers,
     })
-    let html = await res.text()
+    const html = await res.text()
     expect(html).toContain('action="https://example.com/api/auth/callback/credentials"')
   })
 })
