@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { validator } from 'hono/validator';
-import { ClassConstructor, plainToClass } from 'class-transformer';
+import { ClassConstructor, ClassTransformOptions, plainToClass } from 'class-transformer';
 import { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono';
 import { ValidationError, validate } from 'class-validator';
 
@@ -75,15 +75,16 @@ type HasUndefined<T> = undefined extends T ? true : false;
 
 type HasClassConstructor<T> = ClassConstructor<any> extends T ? true : false;
 
-type StaticObject<T extends ClassConstructor<any>> = {
+export type StaticObject<T extends ClassConstructor<any>> = {
   [K in keyof InstanceType<T>]: HasClassConstructor<InstanceType<T>[K]> extends true ? StaticObject<InstanceType<T>[K]> : InstanceType<T>[K];
 };
 
-const parseAndValidate = async <T extends ClassConstructor<any>>(dto: T, obj: object): 
+const parseAndValidate = async <T extends ClassConstructor<any>>(dto: T, obj: object, options: ClassTransformOptions): 
   Promise<{ success: false; errors: ValidationError[] } | { success: true; output: InstanceType<T> }> => {
   // tranform the literal object to class object
-  const objInstance = plainToClass(dto, obj, { enableImplicitConversion: true });
+  const objInstance = plainToClass(dto, obj, options);
   // validating and check the errors, throw the errors if exist
+
   const errors = await validate(objInstance);
   // errors is an array of validation errors
   if (errors.length > 0) {
@@ -126,10 +127,11 @@ export const classValidator = <
   target: Target,
   dataType: T,
   hook?: Hook<Output, E, P, Target>,
+  options: ClassTransformOptions = { enableImplicitConversion: false },
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (data, c) => {
-    const result = await parseAndValidate(dataType, data);
+    const result = await parseAndValidate(dataType, data, options);
 
     if (hook) {
       const hookResult = hook({ ...result, data, target }, c)

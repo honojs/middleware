@@ -4,6 +4,8 @@
     "types": [
       "vitest/globals",
     ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
   },
   "include": [
     "src/",
