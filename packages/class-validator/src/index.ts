@@ -4,6 +4,59 @@ import { ClassConstructor, plainToClass } from 'class-transformer';
 import { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono';
 import { ValidationError, validate } from 'class-validator';
 
+/**
+ * Hono middleware that validates incoming data using class-validator(https://github.com/typestack/class-validator).
+ *
+ * ---
+ *
+ * No Hook
+ *
+ * ```ts
+ * import { classValidator } from '@hono/class-validator'
+ * import { IsInt, IsString } from 'class-validator'
+ * 
+ * class CreateUserDto {
+ *  @IsString()
+ *  name!: string;
+ * 
+ *  @IsInt()
+ *  age!: number;
+ * }
+ *
+ *
+ * const route = app.post('/user', classValidator('json', CreateUserDto), (c) => {
+ *   const user = c.req.valid('json')
+ *   return c.json({ success: true, message: `${user.name} is ${user.age}` })
+ * })
+ * ```
+ *
+ * ---
+ * Hook
+ *
+ * ```ts
+ * import { classValidator } from '@hono/class-validator'
+ * import { IsInt, IsString } from 'class-validator'
+ * 
+ * class CreateUserDto {
+ *  @IsString()
+ *  name!: string;
+ * 
+ *  @IsInt()
+ *  age!: number;
+ * }
+ *
+ * app.post(
+ *   '/user',
+ *   classValidator('json', CreateUserDto, (result, c) => {
+ *     if (!result.success) {
+ *       return c.text('Invalid!', 400)
+ *     }
+ *   })
+ *   //...
+ * )
+ * ```
+ */
+
 type Hook<
   T,
   E extends Env,
@@ -23,7 +76,7 @@ type HasUndefined<T> = undefined extends T ? true : false;
 type HasClassConstructor<T> = ClassConstructor<any> extends T ? true : false;
 
 type StaticObject<T extends ClassConstructor<any>> = {
-  [K in keyof InstanceType<T>]: InstanceType<T>[K];
+  [K in keyof InstanceType<T>]: HasClassConstructor<InstanceType<T>[K]> extends true ? StaticObject<InstanceType<T>[K]> : InstanceType<T>[K];
 };
 
 const parseAndValidate = async <T extends ClassConstructor<any>>(dto: T, obj: object): 
@@ -43,7 +96,7 @@ const parseAndValidate = async <T extends ClassConstructor<any>>(dto: T, obj: ob
   return { success: true, output: objInstance as InstanceType<T> };
 };
 
-export const classValidatorV2 = <
+export const classValidator = <
   T extends ClassConstructor<any>,
   Output extends InstanceType<T> = InstanceType<T>,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
