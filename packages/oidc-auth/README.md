@@ -54,6 +54,7 @@ The middleware requires the following environment variables to be set:
 | OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider.       | None, must be provided                 |
 | OIDC_SCOPES                | The scopes that should be used for the OIDC authentication                                                                                                  | The server provided `scopes_supported` |
 | OIDC_COOKIE_PATH           | The path to which the `oidc-auth` cookie is set. Restrict to not send it with every request to your domain                                                  | /                                      |
+| OIDC_COOKIE_NAME           | The name of the cookie to be set                                                                                                                            | `oidc-auth`                            |
 
 ## How to Use
 

@@ -186,6 +186,7 @@ beforeEach(() => {
   process.env.OIDC_AUTH_EXPIRES = MOCK_AUTH_EXPIRES
   delete process.env.OIDC_SCOPES
   delete process.env.OIDC_COOKIE_PATH
+  delete process.env.OIDC_COOKIE_NAME
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -373,6 +374,21 @@ describe('processOAuthCallback()', () => {
       new RegExp(`oidc-auth=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
     )
     expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Should respond with custom cookie name', async () => {
+    const MOCK_COOKIE_NAME = (process.env.OIDC_COOKIE_NAME = 'custom-auth-cookie')
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch(
+      new RegExp(`${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
+    )
   })
   test('Should return an error if the state parameter does not match', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
