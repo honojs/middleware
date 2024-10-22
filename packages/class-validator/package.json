@@ -38,5 +38,10 @@
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "reflect-metadata": "^0.2.2"
   }
 }

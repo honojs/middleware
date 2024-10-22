@@ -2304,8 +2304,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/class-validator@workspace:packages/class-validator"
   dependencies:
+    class-transformer: "npm:^0.5.1"
+    class-validator: "npm:^0.14.1"
     hono: "npm:^4.0.10"
     jest: "npm:^29.7.0"
+    reflect-metadata: "npm:^0.2.2"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.3.3"
     vitest: "npm:^1.4.0"
@@ -4913,6 +4916,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/validator@npm:^13.11.8":
+  version: 13.12.2
+  resolution: "@types/validator@npm:13.12.2"
+  checksum: 64f1326c768947d756ab5bcd73f3f11a6f07dc76292aea83890d0390a9b9acb374f8df6b24af2c783271f276d3d613b78fc79491fe87edee62108d54be2e3c31
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^8":
   version: 8.5.10
   resolution: "@types/ws@npm:8.5.10"
@@ -7078,6 +7088,24 @@ __metadata:
   dependencies:
     json-parse-helpfulerror: "npm:^1.0.3"
   checksum: a753f1ace13feecbf685f05d461d202c900dbe027993987f8bd28f4fce1b65d414fad6f9d2e2c88107c4743dc5ac0a8c608c32d06ceee2bf9f59869942f2b0c3
+  languageName: node
+  linkType: hard
+
+"class-transformer@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "class-transformer@npm:0.5.1"
+  checksum: 19809914e51c6db42c036166839906420bb60367df14e15f49c45c8c1231bf25ae661ebe94736ee29cc688b77101ef851a8acca299375cc52fc141b64acde18a
+  languageName: node
+  linkType: hard
+
+"class-validator@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "class-validator@npm:0.14.1"
+  dependencies:
+    "@types/validator": "npm:^13.11.8"
+    libphonenumber-js: "npm:^1.10.53"
+    validator: "npm:^13.9.0"
+  checksum: 946e914e47548b5081449c720ea6a4877bac63dc960e14fca4b990b56e64efe3802d12f07ec22d6420c290245b72ea2d646939239f2a3b597794e6c4c2a4f2ae
   languageName: node
   linkType: hard
 
@@ -13394,6 +13422,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"libphonenumber-js@npm:^1.10.53":
+  version: 1.11.12
+  resolution: "libphonenumber-js@npm:1.11.12"
+  checksum: 56fdf7ce107bd9d0329c47392d21649ee61b5ef210fa5926cb839506195d8482760982c9f75c207e97cf070be8ef2edc5a81db7cc3623f46990222945f4e0f65
+  languageName: node
+  linkType: hard
+
 "libsodium-wrappers@npm:^0.7.10":
   version: 0.7.13
   resolution: "libsodium-wrappers@npm:0.7.13"
@@ -16854,6 +16889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reflect-metadata@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "reflect-metadata@npm:0.2.2"
+  checksum: 1cd93a15ea291e420204955544637c264c216e7aac527470e393d54b4bb075f10a17e60d8168ec96600c7e0b9fcc0cb0bb6e91c3fbf5b0d8c9056f04e6ac1ec2
+  languageName: node
+  linkType: hard
+
 "regenerator-runtime@npm:^0.14.0":
   version: 0.14.1
   resolution: "regenerator-runtime@npm:0.14.1"
@@ -19898,6 +19940,13 @@ __metadata:
   dependencies:
     builtins: "npm:^5.0.0"
   checksum: d7f753c0aac0a2b8dd06752e7278d18165a21e28b5064d897a1b6f10350d857b339d6bd9e08dd140710433479940bec9ba151b619196780dc6e49dd8fbff6df8
+  languageName: node
+  linkType: hard
+
+"validator@npm:^13.9.0":
+  version: 13.12.0
+  resolution: "validator@npm:13.12.0"
+  checksum: 21d48a7947c9e8498790550f56cd7971e0e3d724c73388226b109c1bac2728f4f88caddfc2f7ed4b076f9b0d004316263ac786a17e9c4edf075741200718cd32
   languageName: node
   linkType: hard
 
