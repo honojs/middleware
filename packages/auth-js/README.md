@@ -112,8 +112,7 @@ const useSession = () => {
   return { session: data, status }
 }
 ```
-
-Working example repo https://github.com/divyam234/next-auth-hono-react
+For more details on how to Popup Oauth Login see [example](https://github.com/divyam234/next-auth-hono-react)
 
 ## Author
 
