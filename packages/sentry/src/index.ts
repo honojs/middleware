@@ -62,6 +62,7 @@ export const sentry = (
     } catch {
       hasExecutionContext = false
     }
+    const { includeStatusCodes, ...sentryOpts } = options ?? {}
     const sentry = new Toucan({
       dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
       requestDataOptions: {
@@ -70,7 +71,7 @@ export const sentry = (
       },
       request: c.req.raw,
       context: hasExecutionContext ? c.executionCtx : new MockContext(),
-      ...options,
+      ...sentryOpts,
     })
     c.set('sentry', sentry)
     if (callback) {
