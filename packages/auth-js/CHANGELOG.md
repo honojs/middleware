@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.13
+
+### Patch Changes
+
+- [#790](https://github.com/honojs/middleware/pull/790) [`ed31c680f7cb4d08985c820e8e1bf051ddc57acd`](https://github.com/honojs/middleware/commit/ed31c680f7cb4d08985c820e8e1bf051ddc57acd) Thanks [@divyam234](https://github.com/divyam234)! - clone request directly for bun
+
 ## 1.0.12
 
 ### Patch Changes
