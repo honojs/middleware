@@ -83,7 +83,7 @@ export const sentry = (
     const error = c.error
     const shouldCapture =
       error instanceof HTTPException
-        ? shouldCaptureHTTPException(error, options?.includeStatusCodes)
+        ? shouldCaptureHTTPException(error, includeStatusCodes)
         : true
 
     if (shouldCapture) {
