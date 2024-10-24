@@ -76,6 +76,24 @@ app.onError((e, c) => {
 })
 ```
 
+### Handling `HTTPException`
+
+You can specify which HTTP exceptions (`HTTPException`) should be captured by using the `includeStatusCodes` option.
+
+```ts
+app.use(
+  '*',
+  sentry({
+    dsn: 'https://xxxxxx@xxx.ingest.sentry.io/xxxxxx',
+    // Includes only 500-599 status codes by default.
+    includeStatusCodes: [{ min: 500, max: 599 }],
+    // Or, you can combine a specific status code and a range.
+    // includeStatusCodes: [500, { min: 503, max: 599 }],
+    // If you want to exclude all HTTPExceptions, you can set an empty array.
+  })
+)
+```
+
 ## Authors
 
 - Samuel Lippert - <https://github.com/sam-lippert>

@@ -1,6 +1,7 @@
 import type { Context, MiddlewareHandler } from 'hono'
-import { Toucan } from 'toucan-js'
 import type { Options as ToucanOptions } from 'toucan-js'
+import { Toucan } from 'toucan-js'
+import { HTTPException } from 'hono/http-exception'
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -18,7 +19,37 @@ class MockContext implements ExecutionContext {
   }
 }
 
-export type Options = Omit<ToucanOptions, 'request' | 'context'>
+interface StatusCodeRange {
+  min: number
+  max: number
+}
+
+export type Options = Omit<ToucanOptions, 'request' | 'context'> & {
+  /**
+   * Included status codes from `HTTPException` instances to be reported to Sentry.
+   *
+   * example:
+   * - [500] will only send events on HTTPException with status 500.
+   * - [400, { min: 500, max: 599 }] will send events on HTTPException with status 400 and the status code range 500-599.
+   * - [500, 503] will send events on HTTPException with status 500 and 503.
+   *
+   * The default is [{ min: 500, max: 599 }].
+   */
+  includeStatusCodes?: (number | StatusCodeRange)[]
+}
+
+const shouldCaptureHTTPException = (
+  error: HTTPException,
+  includeStatusCodes: Options['includeStatusCodes'] = [{ min: 500, max: 599 }]
+) => {
+  return includeStatusCodes.some((codeOrRange) => {
+    if (typeof codeOrRange === 'number') {
+      return codeOrRange === error.status
+    }
+
+    return error.status >= codeOrRange.min && error.status <= codeOrRange.max
+  })
+}
 
 export const sentry = (
   options?: Options,
@@ -47,8 +78,15 @@ export const sentry = (
     }
 
     await next()
-    if (c.error) {
-      sentry.captureException(c.error)
+
+    const error = c.error
+    const shouldCapture =
+      error instanceof HTTPException
+        ? shouldCaptureHTTPException(error, options?.includeStatusCodes)
+        : true
+
+    if (shouldCapture) {
+      sentry.captureException(error)
     }
   }
 }
