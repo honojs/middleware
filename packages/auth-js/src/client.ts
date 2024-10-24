@@ -85,6 +85,18 @@ export type SessionContextValue<R extends boolean = false> = R extends true
           status: 'unauthenticated' | 'loading'
         }
 
+export type WindowProps = {
+  url: string
+  title: string
+  width: number
+  height: number
+}
+
+export type AuthState = {
+  status:  'loading' | 'success' | 'errored'
+  error?: string
+}
+
 export async function fetchData<T = any>(
   path: string,
   config: {
