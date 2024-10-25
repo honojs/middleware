@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.2.0
+
+### Minor Changes
+
+- [#789](https://github.com/honojs/middleware/pull/789) [`68eec9e2bc9aedbf3d631a2c6a4c7f55417d661c`](https://github.com/honojs/middleware/commit/68eec9e2bc9aedbf3d631a2c6a4c7f55417d661c) Thanks [@maemaemae3](https://github.com/maemaemae3)! - Optionally specify a custom cookie name using the OIDC_COOKIE_NAME environment variable (default is 'oidc-auth')
+
 ## 1.1.0
 
 ### Minor Changes
