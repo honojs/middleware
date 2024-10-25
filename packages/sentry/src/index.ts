@@ -80,12 +80,13 @@ export const sentry = (
 
     await next()
 
-    const shouldCapture =
-      c.error instanceof HTTPException
+    const shouldCapture = c.error
+      ? c.error instanceof HTTPException
         ? shouldCaptureHTTPException(c.error, includeStatusCodes)
-        : !!c.error
+        : true
+      : false
 
-    if (shouldCapture) {
+    if (shouldCapture && c.error) {
       sentry.captureException(c.error)
     }
   }
