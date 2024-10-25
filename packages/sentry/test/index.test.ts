@@ -67,6 +67,14 @@ describe('Sentry middleware', () => {
     expect(captureException).toHaveBeenCalled()
   })
 
+  it('Should not report if there is no error', async () => {
+    const req = new Request('http://localhost/sentry/foo')
+    const res = await app.fetch(req, {}, new Context())
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(captureException).not.toHaveBeenCalled()
+  })
+
   describe('Handle HTTPExceptions through `includeStatusCodes` option', () => {
     it('Should only report HTTPExceptions of range 500-599 if `includeStatusCodes` is not provided', async () => {
       const req = new Request('http://localhost/sentry/http-exception/500')

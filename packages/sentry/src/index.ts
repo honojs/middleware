@@ -86,7 +86,7 @@ export const sentry = (
         : true
       : false
 
-    if (shouldCapture && c.error) {
+    if (shouldCapture) {
       sentry.captureException(c.error)
     }
   }
