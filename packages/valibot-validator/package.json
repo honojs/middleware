@@ -32,7 +32,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "valibot": "^1.0.0"
+    "valibot": "^1.0.0 || ^1.0.0-beta || ^1.0.0-rc"
   },
   "devDependencies": {
     "hono": "^4.5.1",

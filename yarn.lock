@@ -2690,7 +2690,7 @@ __metadata:
     valibot: "npm:^1.0.0-beta.0"
   peerDependencies:
     hono: ">=3.9.0"
-    valibot: ^1.0.0
+    valibot: ^1.0.0 || ^1.0.0-beta || ^1.0.0-rc
   languageName: unknown
   linkType: soft
 
