@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.4.1
+
+### Patch Changes
+
+- [#797](https://github.com/honojs/middleware/pull/797) [`0ff894aeb11da0713d461099ee68521cbe37f99a`](https://github.com/honojs/middleware/commit/0ff894aeb11da0713d461099ee68521cbe37f99a) Thanks [@fabian-hiller](https://github.com/fabian-hiller)! - Fix Valibot peer dependency to support dist-tags
+
 ## 0.4.0
 
 ### Minor Changes
