@@ -2622,6 +2622,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/swagger-editor@workspace:packages/swagger-editor":
+  version: 0.0.0-use.local
+  resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
+  dependencies:
+    hono: "npm:^3.11.7"
+    publint: "npm:^0.2.2"
+    tsup: "npm:^7.2.0"
+    vite: "npm:^4.4.9"
+    vitest: "npm:^0.34.5"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/swagger-ui@workspace:packages/swagger-ui":
   version: 0.0.0-use.local
   resolution: "@hono/swagger-ui@workspace:packages/swagger-ui"

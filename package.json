@@ -23,6 +23,7 @@
     "build:zod-openapi": "yarn workspace @hono/zod-openapi install && yarn workspace @hono/zod-openapi build",
     "build:typia-validator": "yarn workspace @hono/typia-validator build",
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
+    "build:swagger-editor": "yarn workspace @hono/swagger-editor build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
     "build:event-emitter": "yarn workspace @hono/event-emitter build",
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",
