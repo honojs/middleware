@@ -136,7 +136,7 @@ export interface SwaggerEditorOptions extends CustomSwaggerUIOptions {
     version?: string;
 }
 
-export function swaggerEditor(options: SwaggerEditorOptions) {
+export function swaggerEditor(options: SwaggerEditorOptions = {}) {
     const url = getUrl()
 
     options.layout = 'StandaloneLayout';
@@ -171,8 +171,8 @@ export function swaggerEditor(options: SwaggerEditorOptions) {
 
     <body>
         <div id="swagger-editor"></div>
-        <script src="./dist/swagger-editor-bundle.js"> </script>
-        <script src="./dist/swagger-editor-standalone-preset.js"> </script>
+        <script src=".${url}/swagger-editor-bundle.js"> </script>
+        <script src="${url}/swagger-editor-standalone-preset.js"> </script>
         <script>
         window.onload = function() {
             const editor = SwaggerEditorBundle({
