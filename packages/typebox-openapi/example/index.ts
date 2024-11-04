@@ -1,4 +1,4 @@
-import { Kind, Type as T, TSchema, TypeRegistry } from '@sinclair/typebox'
+import { Type as T } from '@sinclair/typebox'
 import { OpenAPIHono, createRoute } from '../src'
 
 const RequestSchema = T.Object({
@@ -9,7 +9,7 @@ const RequestSchema = T.Object({
 const PostSchema = T.Object(
   {
     id: T.Number(),
-    title: T.String(),
+    message: T.String(),
   },
   { $id: 'Post' }
 )
@@ -42,24 +42,12 @@ const app = new OpenAPIHono()
 
 const appRoutes = app.openapi(route, (c) => {
   const { id, title } = c.req.valid('json')
-  return c.json({
-    id,
-    title,
-  })
+  return c.json({ id, message: `The response of: ${title}` }, 200)
 })
 
 export type AppType = typeof appRoutes
 
-TypeRegistry.Set('Form', (schema, value) => {
-  console.log('Form called')
-  return true
-})
-
-// export default {
-//   fetch: app.fetch,
-//   port: 8080,
-// }
-Deno.serve({
-  port: 8080,
-  handler: app.fetch,
-})
+export default {
+  fetch: app.fetch,
+  port: 8000,
+}

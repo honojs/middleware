@@ -146,15 +146,7 @@ type ExtractContent<T> = T extends {
     : never
   : never
 
-type ExtractStatusCode<T extends string | number | symbol> = T extends `${number}`
-  ? Extract<StatusCode, number> extends infer S
-    ? T extends `${S & number}`
-      ? T
-      : never
-    : never
-  : T extends StatusCode
-  ? T
-  : never
+type ExtractStatusCode<T> = T extends StatusCode ? T : never
 
 export type RouteConfigToTypedResponse<R extends OpenAPIRoute> = {
   [Status in keyof R['responses']]: R['responses'][Status] extends {

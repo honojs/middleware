@@ -21,6 +21,7 @@
     "build:medley-router": "yarn workspace @hono/medley-router build",
     "build:valibot-validator": "yarn workspace @hono/valibot-validator build",
     "build:zod-openapi": "yarn workspace @hono/zod-openapi install && yarn workspace @hono/zod-openapi build",
+    "build:typebox-openapi": "yarn workspace @hono/typebox-openapi install && yarn workspace @hono/typebox-openapi build",
     "build:typia-validator": "yarn workspace @hono/typia-validator build",
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
