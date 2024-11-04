@@ -19,7 +19,7 @@ import type {
   ContentObject,
   ContentTypeObject,
   OpenAPIRoute,
-  OpenDocsConfig,
+  OpenAPIDocsConfig,
   RequestBodyObject,
   RequestTypes,
 } from './types'
@@ -238,6 +238,10 @@ export type RouteHook<
   RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
 >
 
+export type OpenAPIDocsConfigure<E extends Env, P extends string> =
+  | OpenAPIDocsConfig
+  | ((context: Context<E, P>) => OpenAPIDocsConfig)
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -337,10 +341,33 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           const validator = tbValidator('json', schema, hook as any)
           validators.push(validator)
-        }
-        if (isFormContentType(mediaType)) {
+          // If the body is not required
+          // const mw: MiddlewareHandler = async (c, next) => {
+          //   const contentTypeHeader = c.req.header('content-type')
+          //   if (contentTypeHeader) {
+          //     if (isJSONContentType(contentTypeHeader)) {
+          //       return await validator(c, next)
+          //     }
+          //   }
+          //   c.req.addValidatedData('json', {})
+          //   await next()
+          // }
+          // validators.push(mw)
+        } else if (isFormContentType(mediaType)) {
           const validator = tbValidator('form', schema, hook as any)
           validators.push(validator)
+          // If the body is not required
+          // const mw: MiddlewareHandler = async (c, next) => {
+          //   const contentTypeHeader = c.req.header('content-type')
+          //   if (contentTypeHeader) {
+          //     if (isFormContentType(contentTypeHeader)) {
+          //       return await validator(c, next)
+          //     }
+          //   }
+          //   c.req.addValidatedData('form', {})
+          //   await next()
+          // }
+          // validators.push(mw)
         }
       }
     }
@@ -361,7 +388,7 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (config: OpenDocsConfig): OpenAPIV3_1.Document => {
+  getOpenAPIDocument = (config: OpenAPIDocsConfig): OpenAPIV3_1.Document => {
     const { documentation } = config
     const schema: {
       paths: Record<string, any>
@@ -410,7 +437,7 @@ export class OpenAPIHono<
 
   doc = <P extends string = '/openapi.json'>(
     path: P,
-    config: OpenDocsConfig = {
+    configure: OpenAPIDocsConfigure<E, P> = {
       documentation: {
         openapi: '3.1.0',
         info: {
@@ -422,6 +449,7 @@ export class OpenAPIHono<
     }
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
+      const config = typeof configure === 'function' ? configure(c) : configure
       try {
         const document = this.getOpenAPIDocument(config)
         return c.json(document)
@@ -517,3 +545,5 @@ function isFormContentType(contentType: string) {
     contentType.startsWith('application/x-www-form-urlencoded')
   )
 }
+
+export { T } from './type-system'

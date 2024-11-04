@@ -1,104 +1,65 @@
-import { Type as T } from '@sinclair/typebox'
-import { logger } from 'hono/logger'
-import { createRoute, OpenAPIHono } from '../src'
+import { Kind, Type as T, TSchema, TypeRegistry } from '@sinclair/typebox'
+import { OpenAPIHono, createRoute } from '../src'
 
-const ParamsSchema = T.Object({
-  id: T.String({ minLength: 3, examples: ['1212121'] }),
+const RequestSchema = T.Object({
+  id: T.Number(),
+  title: T.String(),
 })
 
-const UserSchema = T.Object(
+const PostSchema = T.Object(
   {
-    id: T.String({ examples: ['123'] }),
-    name: T.String({ examples: ['John Doe'] }),
-    age: T.Number({ examples: [42] }),
+    id: T.Number(),
+    title: T.String(),
   },
-  { $id: 'User' }
+  { $id: 'Post' }
 )
 
-const ErrorSchema = T.Object({
-  code: T.Number({ examples: [400] }),
-  message: T.String({ examples: ['Bad Request'] }),
-})
-
 const route = createRoute({
-  method: 'get',
-  path: '/users/{id}',
+  method: 'post',
+  path: '/posts',
   request: {
-    params: ParamsSchema,
+    body: {
+      content: {
+        'application/json': {
+          schema: RequestSchema,
+        },
+      },
+    },
   },
-  middleware: [logger()],
   responses: {
     200: {
       content: {
         'application/json': {
-          schema: UserSchema,
+          schema: PostSchema,
         },
       },
-      description: 'Retrieve the user',
-    },
-    400: {
-      content: {
-        'application/json': {
-          schema: ErrorSchema,
-        },
-      },
-      description: 'Returns an error',
+      description: 'Post a post',
     },
   },
 })
 
-const app = new OpenAPIHono({
-  defaultHook: (result, c) => {
-    if (!result.success) {
-      return c.json(
-        {
-          ok: false,
-          errors: result.errors,
-          source: 'custom_error_handler',
-        },
-        422
-      )
-    }
-  },
-})
-
-// The OpenAPI documentation will be available at /openapi.json
-app.doc('/openapi.json', {
-  documentation: {
-    openapi: '3.1.0',
-    info: {
-      version: '1.0.0',
-      title: 'My API',
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-    securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-      },
-    },
-  },
-})
+const app = new OpenAPIHono()
 
 const appRoutes = app.openapi(route, (c) => {
-  const { id } = c.req.valid('param')
-  return c.json(
-    {
-      id,
-      age: 20,
-      name: 'Ultra-man',
-    },
-    200 // You should specify the status code even if it is 200.
-  )
+  const { id, title } = c.req.valid('json')
+  return c.json({
+    id,
+    title,
+  })
 })
 
 export type AppType = typeof appRoutes
 
-export default {
-  fetch: app.fetch,
+TypeRegistry.Set('Form', (schema, value) => {
+  console.log('Form called')
+  return true
+})
+
+// export default {
+//   fetch: app.fetch,
+//   port: 8080,
+// }
+Deno.serve({
   port: 8080,
-}
+  handler: app.fetch,
+})

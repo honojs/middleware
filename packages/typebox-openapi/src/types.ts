@@ -86,7 +86,7 @@ export type ResponseConfig<TResp extends TSchema = TSchema> =
       links?: OpenAPIV3_1.ResponseObject['links']
     }
 
-export type OpenDocsConfig = {
+export type OpenAPIDocsConfig = {
   documentation: Omit<
     Partial<OpenAPIV3_1.Document>,
     | 'openapi'
