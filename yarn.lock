@@ -2627,7 +2627,6 @@ __metadata:
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
   dependencies:
     hono: "npm:^3.11.7"
-    publint: "npm:^0.2.2"
     tsup: "npm:^7.2.0"
     vitest: "npm:^0.34.5"
   peerDependencies:

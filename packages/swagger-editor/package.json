@@ -24,8 +24,8 @@
   "scripts": {
     "test": "vitest run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
   },
   "license": "MIT",
   "publishConfig": {
@@ -42,7 +42,6 @@
   },
   "devDependencies": {
     "hono": "^3.11.7",
-    "publint": "^0.2.2",
     "tsup": "^7.2.0",
     "vitest": "^0.34.5"
   }
