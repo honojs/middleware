@@ -5,7 +5,7 @@ const DEFAULT_VERSION = '4.13.1'
 
 const CDN_LINK = 'https://cdn.jsdelivr.net/npm/swagger-editor-dist'
 
-export const MODREN_NORMALIZE_CSS = `
+export const MODERN_NORMALIZE_CSS = `
 *,
 ::before,
 ::after {
@@ -165,7 +165,7 @@ export function swaggerEditor(options: SwaggerEditorOptions = {}) {
         <meta charset="UTF-8">
         <title>Swagger Editor</title>
         <style>
-            ${MODREN_NORMALIZE_CSS}
+            ${MODERN_NORMALIZE_CSS}
         </style>
         <link href="${url}/swagger-editor.css" rel="stylesheet">
         <link rel="icon" type="image/png" href="${url}/favicon-32x32.png" sizes="32x32" />
