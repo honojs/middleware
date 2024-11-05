@@ -174,7 +174,7 @@ export function swaggerEditor(options: SwaggerEditorOptions = {}) {
 
     <body>
         <div id="swagger-editor"></div>
-        <script src=".${url}/swagger-editor-bundle.js"> </script>
+        <script src="${url}/swagger-editor-bundle.js"> </script>
         <script src="${url}/swagger-editor-standalone-preset.js"> </script>
         <script>
         window.onload = function() {
