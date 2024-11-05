@@ -1,6 +1,12 @@
 import type { Context, Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { GenericSchema, GenericSchemaAsync, InferInput, InferOutput, SafeParseResult } from 'valibot'
+import type {
+  GenericSchema,
+  GenericSchemaAsync,
+  InferInput,
+  InferOutput,
+  SafeParseResult,
+} from 'valibot'
 import { safeParseAsync } from 'valibot'
 
 type Hook<T extends GenericSchema | GenericSchemaAsync, E extends Env, P extends string> = (

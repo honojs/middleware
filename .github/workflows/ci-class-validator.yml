@@ -1,4 +1,4 @@
-name: ci-cabin
+name: ci-class-validator
 on:
   push:
     branches: [main]

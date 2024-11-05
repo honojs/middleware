@@ -13,7 +13,6 @@ describe('WebSocket helper', () => {
 
   beforeEach(async () => {
     app = new Hono()
-    
     ;({ injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
