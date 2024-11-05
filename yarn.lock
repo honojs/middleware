@@ -2629,7 +2629,6 @@ __metadata:
     hono: "npm:^3.11.7"
     publint: "npm:^0.2.2"
     tsup: "npm:^7.2.0"
-    vite: "npm:^4.4.9"
     vitest: "npm:^0.34.5"
   peerDependencies:
     hono: "*"
