@@ -1,9 +1,9 @@
-import type { Context } from "hono";
-import type { CustomSwaggerUIOptions } from "./types";
+import type { Context } from 'hono'
+import type { CustomSwaggerUIOptions } from './types'
 
-const DEFAULT_VERSION = "4.13.1";
+const DEFAULT_VERSION = '4.13.1'
 
-const CDN_LINK = "https://cdn.jsdelivr.net/npm/swagger-editor-dist";
+const CDN_LINK = 'https://cdn.jsdelivr.net/npm/swagger-editor-dist'
 
 export const MODREN_NORMALIZE_CSS = `
 *,
@@ -126,36 +126,39 @@ summary {
 .Pane2 {
     overflow-y: scroll;
 }
-`;
+`
 
 function getUrl(version?: string) {
-    return `${CDN_LINK}@${version ? version : DEFAULT_VERSION}`;
+  return `${CDN_LINK}@${version ? version : DEFAULT_VERSION}`
 }
 
 export interface SwaggerEditorOptions extends CustomSwaggerUIOptions {
-    version?: string;
+  version?: string
 }
 
 export function swaggerEditor(options: SwaggerEditorOptions = {}) {
-    const url = getUrl()
+  const url = getUrl()
 
-    options.layout = 'StandaloneLayout';
+  options.layout = 'StandaloneLayout'
 
-    const optionString = Object.entries(options).map(([key, value]) => {
-        if (typeof value === "string") {
-            return `${key}:'${value}'`
-        }
-        if (Array.isArray(value)) {
-            return `${key}:${value.map(v => `${v}`).join(", ")}`
-        }
-        if (typeof value === 'object') {
-            return `${key}:${JSON.stringify(value)}`
-        }
+  const optionString = Object.entries(options)
+    .map(([key, value]) => {
+      if (typeof value === 'string') {
+        return `${key}:'${value}'`
+      }
+      if (Array.isArray(value)) {
+        return `${key}:${value.map((v) => `${v}`).join(', ')}`
+      }
+      if (typeof value === 'object') {
+        return `${key}:${JSON.stringify(value)}`
+      }
 
-        return `${key}: ${value}`
-    }).join(",")
+      return `${key}: ${value}`
+    })
+    .join(',')
 
-    return async (c: Context) => c.html(`
+  return async (c: Context) =>
+    c.html(`
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -163,7 +166,7 @@ export function swaggerEditor(options: SwaggerEditorOptions = {}) {
         <title>Swagger Editor</title>
         <style>
             ${MODREN_NORMALIZE_CSS}
-        </style>  
+        </style>
         <link href="${url}/swagger-editor.css" rel="stylesheet">
         <link rel="icon" type="image/png" href="${url}/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="${url}/favicon-16x16.png" sizes="16x16" />
@@ -188,5 +191,5 @@ export function swaggerEditor(options: SwaggerEditorOptions = {}) {
         </script>
     </body>
 </html>
-`);
+`)
 }
