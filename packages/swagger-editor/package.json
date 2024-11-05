@@ -1,6 +1,6 @@
 {
   "name": "@hono/swagger-editor",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A middleware for using Swagger Editor in Hono",
   "type": "module",
   "main": "dist/index.cjs",
