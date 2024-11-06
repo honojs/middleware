@@ -30,7 +30,7 @@
     "hono": ">=3.9.0"
   },
   "dependencies": {
-    "@decs/typeschema": "^0.12.2"
+    "@typeschema/all": "^0.14.1"
   },
   "devDependencies": {
     "hono": "^3.11.7",

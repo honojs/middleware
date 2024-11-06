@@ -1,5 +1,6 @@
-import type { Infer, InferIn, Schema, ValidationIssue } from '@decs/typeschema'
-import { validate } from '@decs/typeschema'
+import type { Infer, InferIn, Schema } from '@typeschema/main'
+import type {ValidationIssue} from '@typeschema/core'
+import { validate } from '@typeschema/main'
 import type { Context, Env, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { validator } from 'hono/validator'

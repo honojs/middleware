@@ -2592,6 +2592,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/schema-validator@workspace:packages/schema-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/schema-validator@workspace:packages/schema-validator"
+  dependencies:
+    "@typeschema/all": "npm:^0.14.1"
+    hono: "npm:^3.11.7"
+    jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
+    typescript: "npm:^5.3.3"
+    zod: "npm:3.19.1"
+  peerDependencies:
+    hono: ">=3.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@hono/sentry@workspace:packages/sentry"
@@ -4933,6 +4948,397 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "npm:*"
   checksum: 2095e8aad8a4e66b86147415364266b8d607a3b95b4239623423efd7e29df93ba81bb862784a6e08664f645cc1981b25fd598f532019174cd3e5e1e689e1cccf
+  languageName: node
+  linkType: hard
+
+"@typeschema/all@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@typeschema/all@npm:0.14.1"
+  dependencies:
+    "@typeschema/arktype": "npm:0.14.0"
+    "@typeschema/class-validator": "npm:0.3.0"
+    "@typeschema/core": "npm:0.14.0"
+    "@typeschema/deepkit": "npm:0.14.0"
+    "@typeschema/effect": "npm:0.14.0"
+    "@typeschema/fastest-validator": "npm:0.2.0"
+    "@typeschema/function": "npm:0.14.0"
+    "@typeschema/io-ts": "npm:0.14.0"
+    "@typeschema/joi": "npm:0.14.0"
+    "@typeschema/json": "npm:0.14.0"
+    "@typeschema/main": "npm:0.14.1"
+    "@typeschema/ow": "npm:0.14.0"
+    "@typeschema/runtypes": "npm:0.14.0"
+    "@typeschema/superstruct": "npm:0.14.0"
+    "@typeschema/suretype": "npm:0.2.0"
+    "@typeschema/typebox": "npm:0.14.0"
+    "@typeschema/valibot": "npm:0.14.0"
+    "@typeschema/valita": "npm:0.2.0"
+    "@typeschema/vine": "npm:0.2.0"
+    "@typeschema/yup": "npm:0.14.0"
+    "@typeschema/zod": "npm:0.14.0"
+  checksum: 5cc0065d08f74ea821cd9fd1f7c6a3752fd12700ce9335682b29ec3fbdf92cd4f9ac3531f8e29b102e112875a130332be112962e7e681a405c5634320d434ec2
+  languageName: node
+  linkType: hard
+
+"@typeschema/arktype@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/arktype@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    arktype: ^2.0.0-rc.0
+  peerDependenciesMeta:
+    arktype:
+      optional: true
+  checksum: a8205ef5cd9b0860b284aed0bd36b3d85d26dc9894bfa4769c5bced3bba846f4622aea5f489450ae81a0d5acb065f4737f300a8d55fac536b62638521fb8fc9e
+  languageName: node
+  linkType: hard
+
+"@typeschema/class-validator@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@typeschema/class-validator@npm:0.3.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    class-validator: ^0.14.1
+  peerDependenciesMeta:
+    class-validator:
+      optional: true
+  checksum: f58d510dfd06548e5c8625299b4aa38a5f49418502b5aa5b10a31f92ec4d1f3701a3c34d78ad1dc4ce42b8ccdcd21f39c64e7adf091125b41f4c335c504681f8
+  languageName: node
+  linkType: hard
+
+"@typeschema/core@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/core@npm:0.14.0"
+  peerDependencies:
+    "@types/json-schema": ^7.0.15
+  peerDependenciesMeta:
+    "@types/json-schema":
+      optional: true
+  checksum: 736353e126ebdc82afe06de49e73a92cb911f309854c5afc76a94c6df5ca7fd30aec486c82d587948fcb2bc0f401a0adf6f75a54738612dbbe9bd71c9d6effba
+  languageName: node
+  linkType: hard
+
+"@typeschema/deepkit@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/deepkit@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@deepkit/type": ^1.0.1-alpha.145
+  peerDependenciesMeta:
+    "@deepkit/type":
+      optional: true
+  checksum: eea006df5501178847b56ce2c1180c0f25c840f56177fe9fbfc8cdd1d85b5cabbea8664ab8ceb7d0aa45aad055046512f0a10ecef141144388f8454300d650c6
+  languageName: node
+  linkType: hard
+
+"@typeschema/effect@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/effect@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@effect/schema": ^0.71.1
+    effect: ^3.6.5
+  peerDependenciesMeta:
+    "@effect/schema":
+      optional: true
+    effect:
+      optional: true
+  checksum: fdb1623b282758896663e12cdbff2985fa279af7202da8f631e8e1b2b060fa1a284c701a335afe8ea886568eb102311cdc8e5326a55552a688671fc21ed70e77
+  languageName: node
+  linkType: hard
+
+"@typeschema/fastest-validator@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@typeschema/fastest-validator@npm:0.2.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    fastest-validator: ^1.19.0
+  peerDependenciesMeta:
+    fastest-validator:
+      optional: true
+  checksum: 0752a5ff6cee5a5610d091fdc952dafcfdb3a5662d7aa60cec15ee30f24fa360ac84b41443363476b93a10e6f37e9994bf6c4a7caacbbdc21d610574379e24f3
+  languageName: node
+  linkType: hard
+
+"@typeschema/function@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/function@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  checksum: ba502ffca22079719d54ac35dc1b1236180a6689d4d90dcc6ddb1cceabdb744100f7a8d69a209fca10da4ef204b8398c046a1a66e3d81899fba479d9aa676c9e
+  languageName: node
+  linkType: hard
+
+"@typeschema/io-ts@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/io-ts@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    fp-ts: ^2.16.9
+    io-ts: ^2.2.21
+  peerDependenciesMeta:
+    fp-ts:
+      optional: true
+    io-ts:
+      optional: true
+  checksum: 92f1cf3e999f412c5baf65991513ad01c3e5428e19b485482b96e629395e0c25eb602f1241a2b86123e46fcb5e4f7e4271eae76bde520115ab0e75a4a4cc2649
+  languageName: node
+  linkType: hard
+
+"@typeschema/joi@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/joi@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    joi: ^17.13.3
+    joi-to-json: ^4.3.0
+  peerDependenciesMeta:
+    joi:
+      optional: true
+    joi-to-json:
+      optional: true
+  checksum: ff770fdc629086b171ea6a741957bcaf955d845a1a061456a7d656854c7dbb774348c868cdda60b05cd7a81721493910dff8aece68140c943df110ea7008019d
+  languageName: node
+  linkType: hard
+
+"@typeschema/json@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/json@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    ajv: ^8.17.1
+    json-schema-to-ts: ^3.1.0
+  peerDependenciesMeta:
+    ajv:
+      optional: true
+    json-schema-to-ts:
+      optional: true
+  checksum: c976f734099fed274cef6fe2c146d43a690c39377f482e7ac24b213d050289e716ffd0c30344f68f7ef483aeaf3ac51bc6c293f5d020582e92de67134bcee845
+  languageName: node
+  linkType: hard
+
+"@typeschema/main@npm:0.14.1":
+  version: 0.14.1
+  resolution: "@typeschema/main@npm:0.14.1"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@typeschema/arktype": 0.14.0
+    "@typeschema/class-validator": 0.3.0
+    "@typeschema/deepkit": 0.14.0
+    "@typeschema/effect": 0.14.0
+    "@typeschema/fastest-validator": 0.2.0
+    "@typeschema/function": 0.14.0
+    "@typeschema/io-ts": 0.14.0
+    "@typeschema/joi": 0.14.0
+    "@typeschema/json": 0.14.0
+    "@typeschema/ow": 0.14.0
+    "@typeschema/runtypes": 0.14.0
+    "@typeschema/superstruct": 0.14.0
+    "@typeschema/suretype": 0.2.0
+    "@typeschema/typebox": 0.14.0
+    "@typeschema/valibot": 0.14.0
+    "@typeschema/valita": 0.2.0
+    "@typeschema/vine": 0.2.0
+    "@typeschema/yup": 0.14.0
+    "@typeschema/zod": 0.14.0
+  peerDependenciesMeta:
+    "@typeschema/arktype":
+      optional: true
+    "@typeschema/class-validator":
+      optional: true
+    "@typeschema/deepkit":
+      optional: true
+    "@typeschema/effect":
+      optional: true
+    "@typeschema/fastest-validator":
+      optional: true
+    "@typeschema/function":
+      optional: true
+    "@typeschema/io-ts":
+      optional: true
+    "@typeschema/joi":
+      optional: true
+    "@typeschema/json":
+      optional: true
+    "@typeschema/ow":
+      optional: true
+    "@typeschema/runtypes":
+      optional: true
+    "@typeschema/superstruct":
+      optional: true
+    "@typeschema/suretype":
+      optional: true
+    "@typeschema/typebox":
+      optional: true
+    "@typeschema/valibot":
+      optional: true
+    "@typeschema/valita":
+      optional: true
+    "@typeschema/vine":
+      optional: true
+    "@typeschema/yup":
+      optional: true
+    "@typeschema/zod":
+      optional: true
+  checksum: 174b2a2e000e18010cf6616dea732f7f7af7b11e464ef3292f8f85f3b4ece1a52c7e9459f449c51ed5da00d95a5c7c45beadd5c0a222960231d1ad794ac97499
+  languageName: node
+  linkType: hard
+
+"@typeschema/ow@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/ow@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    ow: ^0.28.2
+  peerDependenciesMeta:
+    ow:
+      optional: true
+  checksum: 5db8d03055bf02460bfe46263e551de272e5276dad749823f3cf4f7b72ec1dabccd0bea2c0c673f7d4cddbaf6fe3602fdf3944795986a179ae16a3ca5ba6d267
+  languageName: node
+  linkType: hard
+
+"@typeschema/runtypes@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/runtypes@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    runtypes: ^6.7.0
+  peerDependenciesMeta:
+    runtypes:
+      optional: true
+  checksum: ecead8f5391792067d827e215a57d856251bc3f895fe24347c8e37ba94f157a3436cd90d64006f76bb1a2a56b006e52cafcb44f2eaaed41008b97bc0d07a8b48
+  languageName: node
+  linkType: hard
+
+"@typeschema/superstruct@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/superstruct@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    superstruct: ^2.0.2
+  peerDependenciesMeta:
+    superstruct:
+      optional: true
+  checksum: c73af7c39a66f766b7a174c388fe070fd640e6e70b86d3ee8c38cbbbca99de821f80a3a7f16c0fdb19a215ac27a214ca861d4b315eff0c469b2a63acb5298e31
+  languageName: node
+  linkType: hard
+
+"@typeschema/suretype@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@typeschema/suretype@npm:0.2.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    suretype: ^3.3.1
+  peerDependenciesMeta:
+    suretype:
+      optional: true
+  checksum: b019e566a7db2c8cd33ee67951d9c99ee5384991c298c309d1d56b2a46e4a4aaa3b89cb28ad968aa8e22d7820132fc93b50d5ac8e64ede4dd38dd57d63194f3e
+  languageName: node
+  linkType: hard
+
+"@typeschema/typebox@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/typebox@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@sinclair/typebox": ^0.33.7
+  peerDependenciesMeta:
+    "@sinclair/typebox":
+      optional: true
+  checksum: 571f584d039b9d41cffb286bcf02ab051e3c3578da656f667cef5e18ffcbd4dcf64b521e4ec5f20489a4cc0163a3d2619b8ba70552973f258630d9b60eb5b97a
+  languageName: node
+  linkType: hard
+
+"@typeschema/valibot@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/valibot@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@gcornut/valibot-json-schema": ^0.37.0
+    valibot: ^0.39.0
+  peerDependenciesMeta:
+    "@gcornut/valibot-json-schema":
+      optional: true
+    valibot:
+      optional: true
+  checksum: 2962d351c32b340ec053e755b5c92cdd1aa0f0c86c759000f268fb884095130d59866d1f4628a63e90e4997cd0ffaf17020892559e398916e6472f8c479a15f4
+  languageName: node
+  linkType: hard
+
+"@typeschema/valita@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@typeschema/valita@npm:0.2.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@badrap/valita": ^0.3.9
+  peerDependenciesMeta:
+    "@badrap/valita":
+      optional: true
+  checksum: 1867c2ee5ee80daabb38b588ebaa875da68618c67242545ece438e0dcaf9704a59cff4efcc549b389f9a4eb537a7389b852181c9a87403e1dbabc4245a73cd38
+  languageName: node
+  linkType: hard
+
+"@typeschema/vine@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@typeschema/vine@npm:0.2.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@vinejs/vine": ^2.1.0
+  peerDependenciesMeta:
+    "@vinejs/vine":
+      optional: true
+  checksum: 632be32829055da39d8f5dd9b881d1e15bbc3067605980d72cf36dcc896b0fc4dde31f05704eea990dcfcea0dae431c0031c71f5625069d63829e274d07b3857
+  languageName: node
+  linkType: hard
+
+"@typeschema/yup@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/yup@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@sodaru/yup-to-json-schema": ^2.0.1
+    yup: ^1.4.0
+  peerDependenciesMeta:
+    "@sodaru/yup-to-json-schema":
+      optional: true
+    yup:
+      optional: true
+  checksum: 62b6cc5e2765d9899e421212d51994547297e559de651f5378fd9b5b01a01bf63cbe78a678f5b75a3389983aa1eb16763d020aab2b0b3fd936001501dfaf36b2
+  languageName: node
+  linkType: hard
+
+"@typeschema/zod@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/zod@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    zod: ^3.23.8
+    zod-to-json-schema: ^3.23.2
+  peerDependenciesMeta:
+    zod:
+      optional: true
+    zod-to-json-schema:
+      optional: true
+  checksum: d6a7aaf2b8631759061de2cbf8f2b947e3cb27533a595c9f36aa009ccdc843e725ab809d3eba85ac39159519d29cf73d609ea538a8eff5dd1425f8c443d35c56
   languageName: node
   linkType: hard
 
@@ -21159,6 +21565,13 @@ __metadata:
     compress-commons: "npm:^4.1.2"
     readable-stream: "npm:^3.6.0"
   checksum: 38f91ca116a38561cf184c29e035e9453b12c30eaf574e0993107a4a5331882b58c9a7f7b97f63910664028089fbde3296d0b3682d1ccb2ad96929e68f1b2b89
+  languageName: node
+  linkType: hard
+
+"zod@npm:3.19.1":
+  version: 3.19.1
+  resolution: "zod@npm:3.19.1"
+  checksum: e08197793f26916f8abea40687fc968b2de0471049b29b7ff25825a9f28ba24205d1c5b8ad26df17538b051928192f9ef8f9ef3132aece9cb56f0830a7450c26
   languageName: node
   linkType: hard
 
