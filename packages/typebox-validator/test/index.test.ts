@@ -1,8 +1,8 @@
-import { Type as T, TypeBoxError } from '@sinclair/typebox'
+import { Type as T, TypeBoxError } from '@sinclair/typebox';
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import { tbValidator } from '../src'
-import { ValueError } from '@sinclair/typebox/value'
+import { ValueError } from '@sinclair/typebox/value';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -91,37 +91,35 @@ describe('With Hook', () => {
     title: T.String(),
   })
 
-  app
-    .post(
-      '/post',
-      tbValidator('json', schema, (result, c) => {
-        if (!result.success) {
-          return c.text('Invalid!', 400)
-        }
-        const data = result.data
-        return c.text(`${data.id} is valid!`)
-      }),
-      (c) => {
-        const data = c.req.valid('json')
-        return c.json({
-          success: true,
-          message: `${data.id} is ${data.title}`,
-        })
+  app.post(
+    '/post',
+    tbValidator('json', schema, (result, c) => {
+      if (!result.success) {
+        return c.text('Invalid!', 400)
       }
-    )
-    .post(
-      '/errorTest',
-      tbValidator('json', schema, (result, c) => {
-        return c.json(result, 400)
-      }),
-      (c) => {
-        const data = c.req.valid('json')
-        return c.json({
-          success: true,
-          message: `${data.id} is ${data.title}`,
-        })
-      }
-    )
+      const data = result.data
+      return c.text(`${data.id} is valid!`)
+    }),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `${data.id} is ${data.title}`,
+      })
+    }
+  ).post(
+    '/errorTest',
+    tbValidator('json', schema, (result, c) => {
+      return c.json(result, 400)
+    }),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `${data.id} is ${data.title}`,
+      })
+    }
+  )
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/post', {
@@ -170,26 +168,24 @@ describe('With Hook', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
 
-    const { errors, success } = (await res.json()) as { success: boolean; errors: any[] }
+    const {errors, success} = (await res.json()) as { success: boolean; errors: any[] }
     expect(success).toBe(false)
     expect(Array.isArray(errors)).toBe(true)
-    expect(
-      errors.map((e: ValueError) => ({
-        type: e?.schema?.type,
+    expect(errors.map((e: ValueError) => ({
+      'type': e?.schema?.type,
         path: e?.path,
-        message: e?.message,
-      }))
-    ).toEqual([
+        message: e?.message
+    }))).toEqual([
       {
-        type: 'string',
-        path: '/title',
-        message: 'Required property',
+        "type":  "string",
+        "path": "/title",
+        "message": "Required property"
       },
       {
-        type: 'string',
-        path: '/title',
-        message: 'Expected string',
-      },
+        "type":  "string",
+        "path": "/title",
+        "message": "Expected string"
+      }
     ])
   })
 })
