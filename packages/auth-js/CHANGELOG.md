@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.14
+
+### Patch Changes
+
+- [#806](https://github.com/honojs/middleware/pull/806) [`9a2cf452c7000aee4193502da755b2c4352b077d`](https://github.com/honojs/middleware/commit/9a2cf452c7000aee4193502da755b2c4352b077d) Thanks [@985563349](https://github.com/985563349)! - fix cloned request causing request body to be unavailable in middleware
+
 ## 1.0.13
 
 ### Patch Changes
