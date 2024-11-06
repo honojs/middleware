@@ -122,6 +122,11 @@ describe('Credentials Provider', () => {
     return c.json(auth)
   })
 
+  app.post('/api/create', async (c) => {
+    const data = await c.req.json()
+    return c.json({ data })
+  })
+
   const credentials = Credentials({
     credentials: {
       password: {},
@@ -186,7 +191,7 @@ describe('Credentials Provider', () => {
       headers,
     })
     expect(res.status).toBe(200)
-    const obj = await res.json() as {
+    const obj = (await res.json()) as {
       token: {
         name: string
         email: string
@@ -194,6 +199,26 @@ describe('Credentials Provider', () => {
     }
     expect(obj.token.name).toBe(user.name)
     expect(obj.token.email).toBe(user.email)
+  })
+
+  it('Should authorize and return 200 - /api/create', async () => {
+    const data = { name: 'Hono' }
+
+    const headers = new Headers()
+    headers.append('cookie', cookie[1])
+    headers.append('Content-Type', 'application/json')
+    const res = await app.request('http://localhost/api/create', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data),
+    })
+    expect(res.status).toBe(200)
+    const obj = (await res.json()) as {
+      data: {
+        name: string
+      }
+    }
+    expect(obj.data.name).toBe(data.name)
   })
 
   it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
