@@ -54,7 +54,7 @@
   "peerDependencies": {
     "@auth/core": "0.*",
     "hono": ">=3.*",
-    "react": ">=18"
+    "react": "^18 || ^19"
   },
   "devDependencies": {
     "@auth/core": "^0.35.3",
