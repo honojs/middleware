@@ -1,6 +1,7 @@
 import type { Env, Hono, ToSchema } from 'hono'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { OpenAPIHono, createRoute, z } from '../src/index'
+import { MiddlewareToHandlerType, OfHandlerType, OpenAPIHono, createRoute, z } from '../src/index'
+import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
 
@@ -232,5 +233,97 @@ describe('coerce', () => {
       }
     }
     type verify = Expect<Equal<Expected, Actual>>
+  })
+})
+
+describe('Middleware', () => {
+  it('Should merge Env', async () => {
+    const middlewareA = createMiddleware<{
+      Variables: { foo: string }
+    }>(async (c, next) => {
+      c.set('foo', 'abc')
+      next()
+    })
+
+    const middlewareB = createMiddleware<{
+      Variables: { bar: number }
+    }>(async (c, next) => {
+      c.set('bar', 321)
+      next()
+    })
+
+    type Example = MiddlewareToHandlerType<[typeof middlewareA, typeof middlewareB]>
+
+    type verify = Expect<
+      Equal<
+        OfHandlerType<Example>['env'],
+        {
+          Variables: { foo: string; bar: number }
+        }
+      >
+    >
+  })
+
+  it('Should infer Env from router middleware', async () => {
+    const app = new OpenAPIHono<{Variables: { too: Symbol }}>()
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/books',
+        middleware: [
+          createMiddleware<{
+            Variables: { foo: string }
+          }>((c, next) => {
+            c.set('foo', 'abc')
+            return next()
+          }),
+          createMiddleware<{
+            Variables: { bar: number }
+          }>((c, next) => {
+            c.set('bar', 321)
+            return next()
+          }),
+        ] as const,
+        responses: {
+          200: {
+            description: 'response',
+          },
+        },
+      }),
+      (c) => {
+        c.var.foo
+        c.var.bar
+        c.var.too
+
+        type verifyFoo = Expect<Equal<typeof c.var.foo, string>>
+        type verifyBar = Expect<Equal<typeof c.var.bar, number>>
+        type verifyToo = Expect<Equal<typeof c.var.too, Symbol>>
+
+        return c.json({})
+      }
+    )
+  })
+
+  it('Should infer Env root when no middleware provided', async () => {
+    const app = new OpenAPIHono<{Variables: { too: Symbol }}>()
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/books',
+        middleware: undefined,
+        responses: {
+          200: {
+            description: 'response',
+          },
+        },
+      }),
+      (c) => {
+        c.var.too
+
+        type verify = Expect<Equal<typeof c.var.too, Symbol>>
+
+        return c.json({})
+      }
+    )
   })
 })
