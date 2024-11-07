@@ -1,7 +1,7 @@
 {
   "name": "@hono/class-validator",
   "packageManager": "yarn@4.0.2",
-  "description": "Validator middleware using Zod",
+  "description": "Validator middleware using class-validator",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
