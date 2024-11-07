@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.15
+
+### Patch Changes
+
+- [#813](https://github.com/honojs/middleware/pull/813) [`b1c812e50c9388cf7cda893e7c554cedeb24d803`](https://github.com/honojs/middleware/commit/b1c812e50c9388cf7cda893e7c554cedeb24d803) Thanks [@divyam234](https://github.com/divyam234)! - add react 19 in peer dependencies
+
 ## 1.0.14
 
 ### Patch Changes
