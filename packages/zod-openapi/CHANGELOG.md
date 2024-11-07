@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.17.0
+
+### Minor Changes
+
+- [#807](https://github.com/honojs/middleware/pull/807) [`2eec6f6fd90b00e130db5f0b3cfeff806132d98a`](https://github.com/honojs/middleware/commit/2eec6f6fd90b00e130db5f0b3cfeff806132d98a) Thanks [@oberbeck](https://github.com/oberbeck)! - introduce routeMiddleware Env inference
+
 ## 0.16.3
 
 ### Patch Changes
