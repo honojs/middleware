@@ -1,5 +1,17 @@
 # @hono/auth-js
 
+## 1.0.15
+
+### Patch Changes
+
+- [#813](https://github.com/honojs/middleware/pull/813) [`b1c812e50c9388cf7cda893e7c554cedeb24d803`](https://github.com/honojs/middleware/commit/b1c812e50c9388cf7cda893e7c554cedeb24d803) Thanks [@divyam234](https://github.com/divyam234)! - add react 19 in peer dependencies
+
+## 1.0.14
+
+### Patch Changes
+
+- [#806](https://github.com/honojs/middleware/pull/806) [`9a2cf452c7000aee4193502da755b2c4352b077d`](https://github.com/honojs/middleware/commit/9a2cf452c7000aee4193502da755b2c4352b077d) Thanks [@985563349](https://github.com/985563349)! - fix cloned request causing request body to be unavailable in middleware
+
 ## 1.0.13
 
 ### Patch Changes

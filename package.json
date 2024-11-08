@@ -10,6 +10,7 @@
   "scripts": {
     "build:hello": "yarn workspace @hono/hello build",
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
+    "build:class-validator": "yarn workspace @hono/class-validator build",
     "build:arktype-validator": "yarn workspace @hono/arktype-validator build",
     "build:qwik-city": "yarn workspace @hono/qwik-city build",
     "build:graphql-server": "yarn workspace @hono/graphql-server build",
@@ -24,6 +25,7 @@
     "build:typebox-openapi": "yarn workspace @hono/typebox-openapi install && yarn workspace @hono/typebox-openapi build",
     "build:typia-validator": "yarn workspace @hono/typia-validator build",
     "build:swagger-ui": "yarn workspace @hono/swagger-ui build",
+    "build:swagger-editor": "yarn workspace @hono/swagger-editor build",
     "build:esbuild-transpiler": "yarn workspace @hono/esbuild-transpiler build",
     "build:event-emitter": "yarn workspace @hono/event-emitter build",
     "build:oauth-providers": "yarn workspace @hono/oauth-providers build",

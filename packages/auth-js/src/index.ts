@@ -47,8 +47,8 @@ export function reqWithEnvUrl(req: Request, authUrl?: string) {
     }
     return new Request(reqUrlObj.href, req)
   }
-  const newReq = new Request(req)
-  const url = new URL(newReq.url)
+  const url = new URL(req.url)
+  const newReq = new Request(url.href, req)
   const proto = newReq.headers.get('x-forwarded-proto')
   const host = newReq.headers.get('x-forwarded-host') ?? newReq.headers.get('host')
   if (proto != null) url.protocol = proto.endsWith(':') ? proto : `${proto}:`
@@ -128,7 +128,7 @@ export function authHandler(): MiddlewareHandler {
     if (!config.secret || config.secret.length === 0) {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
-    
+
     const res = await Auth(reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
     return new Response(res.body, res)
   }

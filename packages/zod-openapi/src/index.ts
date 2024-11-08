@@ -207,6 +207,68 @@ export type OpenAPIHonoOptions<E extends Env> = {
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
+/**
+ * Turns `T | T[] | undefined` into `T[]`
+ */
+type AsArray<T> = T extends undefined // TODO move to utils?
+  ? []
+  : T extends any[]
+  ? T
+  : [T]
+
+/**
+ * Like simplify but recursive
+ */
+export type DeepSimplify<T> = {
+  // TODO move to utils?
+  [KeyType in keyof T]: T[KeyType] extends object ? DeepSimplify<T[KeyType]> : T[KeyType]
+} & {}
+
+/**
+ * Helper to infer generics from {@link MiddlewareHandler}
+ */
+export type OfHandlerType<T extends MiddlewareHandler> = T extends MiddlewareHandler<
+  infer E,
+  infer P,
+  infer I
+>
+  ? {
+      env: E
+      path: P
+      input: I
+    }
+  : never
+
+/**
+ * Reduce a tuple of middleware handlers into a single
+ * handler representing the composition of all
+ * handlers.
+ */
+export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]> = M extends [
+  infer First,
+  infer Second,
+  ...infer Rest
+]
+  ? First extends MiddlewareHandler<any, any, any>
+    ? Second extends MiddlewareHandler<any, any, any>
+      ? Rest extends MiddlewareHandler<any, any, any>[] // Ensure Rest is an array of MiddlewareHandler
+        ? MiddlewareToHandlerType<
+            [
+              MiddlewareHandler<
+                DeepSimplify<OfHandlerType<First>['env'] & OfHandlerType<Second>['env']>, // Combine envs
+                OfHandlerType<First>['path'], // Keep path from First
+                OfHandlerType<First>['input'] // Keep input from First
+              >,
+              ...Rest
+            ]
+          >
+        : never
+      : never
+    : never
+  : M extends [infer Last]
+  ? Last // Return the last remaining handler in the array
+  : never
+
 export type RouteHandler<
   R extends RouteConfig,
   E extends Env = Env,
@@ -317,7 +379,10 @@ export class OpenAPIHono<
   >(
     { middleware: routeMiddleware, ...route }: R,
     handler: Handler<
-      E,
+      // use the env from the middleware if it's defined
+      R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
+        ? OfHandlerType<MiddlewareToHandlerType<AsArray<R['middleware']>>>['env'] & E
+        : E,
       P,
       I,
       // If response type is defined, only TypedResponse is allowed.

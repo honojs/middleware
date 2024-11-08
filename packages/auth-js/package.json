@@ -1,6 +1,6 @@
 {
   "name": "@hono/auth-js",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "description": "A third-party Auth js middleware for Hono",
   "main": "dist/index.js",
   "exports": {
@@ -54,7 +54,7 @@
   "peerDependencies": {
     "@auth/core": "0.*",
     "hono": ">=3.*",
-    "react": ">=18"
+    "react": "^18 || ^19 || ^19.0.0-rc"
   },
   "devDependencies": {
     "@auth/core": "^0.35.3",
