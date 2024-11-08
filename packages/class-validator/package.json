@@ -1,0 +1,47 @@
+{
+  "name": "@hono/class-validator",
+  "packageManager": "yarn@4.0.2",
+  "description": "Validator middleware using class-validator",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest --run",
+    "build": "rimraf dist && tsup ./src/index.ts --format esm,cjs --dts",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=3.9.0"
+  },
+  "devDependencies": {
+    "hono": "^4.0.10",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.3.5",
+    "typescript": "^5.3.3",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "reflect-metadata": "^0.2.2"
+  }
+}

@@ -10,6 +10,7 @@
   "scripts": {
     "build:hello": "yarn workspace @hono/hello build",
     "build:zod-validator": "yarn workspace @hono/zod-validator build",
+    "build:class-validator": "yarn workspace @hono/class-validator build",
     "build:arktype-validator": "yarn workspace @hono/arktype-validator build",
     "build:qwik-city": "yarn workspace @hono/qwik-city build",
     "build:graphql-server": "yarn workspace @hono/graphql-server build",
