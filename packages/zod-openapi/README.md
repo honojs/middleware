@@ -285,7 +285,10 @@ const route = createRoute({
   request: {
     params: ParamsSchema,
   },
-  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })],
+  middleware: [
+    prettyJSON(),
+    cache({ cacheName: 'my-cache' })
+  ] as const, // Use `as const` to ensure TypeScript infers the middleware's Context.
   responses: {
     200: {
       content: {
