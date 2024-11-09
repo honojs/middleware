@@ -12,7 +12,7 @@ import { authHandler, verifyAuth, initAuthConfig } from '../src'
 global.crypto = webcrypto
 
 describe('Config', () => {
-  it('Should return 500 if AUTH_SECRET is missing', async () => {
+  test('Should return 500 if AUTH_SECRET is missing', async () => {
     globalThis.process.env = { AUTH_SECRET: '' }
     const app = new Hono()
 
@@ -20,6 +20,7 @@ describe('Config', () => {
       '/*',
       initAuthConfig(() => {
         return {
+          basePath: "/api/auth",
           providers: [],
         }
       })
@@ -28,7 +29,7 @@ describe('Config', () => {
     const req = new Request('http://localhost/api/auth/signin')
     const res = await app.request(req)
     expect(res.status).toBe(500)
-    expect(await res.text()).toBe('Missing AUTH_SECRET')
+    expect(await res.text()).include("There is a problem with the server configuration.")
   })
 
   it('Should return 200 auth initial config is correct', async () => {
