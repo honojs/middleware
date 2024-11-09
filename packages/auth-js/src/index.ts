@@ -37,38 +37,12 @@ export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   coreSetEnvDefaults(env, config)
 }
 
-export function reqWithEnvUrl(req: Request, authUrl?: string) {
-  if (authUrl) {
-    const reqUrlObj = new URL(req.url)
-    const authUrlObj = new URL(authUrl)
-    const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
-    for (const prop of props) {
-      if (authUrlObj[prop]) reqUrlObj[prop] = authUrlObj[prop]
-    }
-    return new Request(reqUrlObj.href, req)
-  }
-  const url = new URL(req.url)
-  const newReq = new Request(url.href, req)
-  const proto = newReq.headers.get('x-forwarded-proto')
-  const host = newReq.headers.get('x-forwarded-host') ?? newReq.headers.get('host')
-  if (proto != null) url.protocol = proto.endsWith(':') ? proto : `${proto}:`
-  if (host != null) {
-    url.host = host
-    const portMatch = host.match(/:(\d+)$/)
-    if (portMatch) url.port = portMatch[1]
-    else url.port = ''
-    newReq.headers.delete('x-forwarded-host')
-    newReq.headers.delete('Host')
-    newReq.headers.set('Host', host)
-  }
-  return new Request(url.href, newReq)
-}
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
   const ctxEnv = env(c) as AuthEnv
   setEnvDefaults(ctxEnv, config)
-  const authReq = reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
+  const authReq = c.req.raw
   const origin = new URL(authReq.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
@@ -129,7 +103,7 @@ export function authHandler(): MiddlewareHandler {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
+    const res = await Auth(c.req.raw, config)
     return new Response(res.body, res)
   }
 }
