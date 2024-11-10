@@ -2884,10 +2884,10 @@ __metadata:
     hono: "npm:^4.5.1"
     jest: "npm:^29.7.0"
     tsup: "npm:^8.3.0"
-    valibot: "npm:^1.0.0-beta.0"
+    valibot: "npm:^1.0.0-beta.5"
   peerDependencies:
     hono: ">=3.9.0"
-    valibot: ^1.0.0 || ^1.0.0-beta || ^1.0.0-rc
+    valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
   languageName: unknown
   linkType: soft
 
@@ -20466,15 +20466,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valibot@npm:^1.0.0-beta.0":
-  version: 1.0.0-beta.0
-  resolution: "valibot@npm:1.0.0-beta.0"
+"valibot@npm:^1.0.0-beta.5":
+  version: 1.0.0-beta.5
+  resolution: "valibot@npm:1.0.0-beta.5"
   peerDependencies:
     typescript: ">=5"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 0b5525fb3504f65011d2c7f57679d187f63c1205da2f441397f3d263514672938d2a8145b85ea2e1e46c505b5641d79f5628ba3262689b34fb918177176660fe
+  checksum: 9c433f6a6ba5d1761a42801d76ae87e9d81ade16908d8a74643d0f7c6f9f744f289b042c80cf619757a72c57891ab7e73b8d6b5d24e9e89bb4a78f0a9936552d
   languageName: node
   linkType: hard
 
