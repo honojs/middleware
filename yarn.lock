@@ -2468,6 +2468,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/cbor@workspace:packages/cbor":
+  version: 0.0.0-use.local
+  resolution: "@hono/cbor@workspace:packages/cbor"
+  dependencies:
+    cbor2: "npm:^1.7.1"
+    hono: "npm:^4.6.9"
+    tsup: "npm:^8.1.0"
+    typescript: "npm:^5.5.3"
+    vitest: "npm:^2.0.1"
+  peerDependencies:
+    hono: ">=4.6.9"
+  languageName: unknown
+  linkType: soft
+
 "@hono/class-validator@workspace:packages/class-validator":
   version: 0.0.0-use.local
   resolution: "@hono/class-validator@workspace:packages/class-validator"
@@ -7195,6 +7209,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cbor2@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "cbor2@npm:1.7.1"
+  checksum: a124fcbfcdd3e464318d64042c5d511432fedb3a9454649a26b3e606cbc4ba8bf6172deddddd58fe7aa22466294cde3b2f1556e4369d71529fb6c8eb4c40b024
+  languageName: node
+  linkType: hard
+
 "ccount@npm:^2.0.0":
   version: 2.0.1
   resolution: "ccount@npm:2.0.1"
@@ -11463,6 +11484,13 @@ __metadata:
   version: 4.5.4
   resolution: "hono@npm:4.5.4"
   checksum: 980accb9567fe5ba4533c1378d175a95a0eef0a1fa8a03ceb1f9296d88d4ee8ff0e1447f5e69eb56150a8b6cc66f4a663ec9d1c1135f005f44f61353b58e276f
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.6.9":
+  version: 4.6.9
+  resolution: "hono@npm:4.6.9"
+  checksum: 492971f111ccec8745df449ef8e28d8bc2a4bf29bb9545c2697df2f3252c2a393e66969e6aa3f0fffdff4322461b59805482734bc12d9c9c3b3dcbe10b13d8a0
   languageName: node
   linkType: hard
 
