@@ -10,7 +10,7 @@ The list of supported validation libraries can be found at [TypeSchema](https://
 
 ```ts
 import { z } from 'zod'
-import { schemaValidator, type ValidationError } from '@hono/schema-validator'
+import { schemaValidator, type ValidationError } from '@hono/typeschema-validator'
 
 const schema = z.object({
   name: z.string(),

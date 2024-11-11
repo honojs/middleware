@@ -1,4 +1,4 @@
-# @hono/schema-validator
+# @hono/typeschema-validator
 
 ## 1.0.0
 
