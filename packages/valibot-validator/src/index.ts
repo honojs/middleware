@@ -3,7 +3,7 @@ import { validator } from 'hono/validator'
 import type { GenericSchema, GenericSchemaAsync, InferInput, InferOutput, SafeParseResult } from 'valibot'
 import { safeParseAsync } from 'valibot'
 
-type Hook<T extends GenericSchema | GenericSchemaAsync, E extends Env, P extends string> = (
+export type Hook<T extends GenericSchema | GenericSchemaAsync, E extends Env, P extends string> = (
   result: SafeParseResult<T>,
   c: Context<E, P>
 ) => Response | Promise<Response> | void | Promise<Response | void>
