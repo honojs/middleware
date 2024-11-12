@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.2.6
+
+### Patch Changes
+
+- [#821](https://github.com/honojs/middleware/pull/821) [`553112c2c6440f3326e9fde839681620acb3090e`](https://github.com/honojs/middleware/commit/553112c2c6440f3326e9fde839681620acb3090e) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - exported the Hook type
+
 ## 0.2.5
 
 ### Patch Changes
