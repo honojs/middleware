@@ -265,7 +265,7 @@ describe('Middleware', () => {
   })
 
   it('Should infer Env from router middleware', async () => {
-    const app = new OpenAPIHono<{Variables: { too: Symbol }}>()
+    const app = new OpenAPIHono<{ Variables: { too: Symbol } }>()
     app.openapi(
       createRoute({
         method: 'get',
@@ -305,7 +305,7 @@ describe('Middleware', () => {
   })
 
   it('Should infer Env root when no middleware provided', async () => {
-    const app = new OpenAPIHono<{Variables: { too: Symbol }}>()
+    const app = new OpenAPIHono<{ Variables: { too: Symbol } }>()
     app.openapi(
       createRoute({
         method: 'get',

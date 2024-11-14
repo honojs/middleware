@@ -1602,7 +1602,7 @@ describe('Named params in nested routes', () => {
   it('Should return a correct path', async () => {
     const res = await root.request('/doc')
     expect(res.status).toBe(200)
-    const data = await res.json()
+    const data = (await res.json()) as { paths: string[] }
     expect(Object.keys(data['paths'])[0]).toBe('/root/{rootId}/sub/{subId}')
   })
 })
