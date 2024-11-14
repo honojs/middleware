@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "exactOptionalPropertyTypes": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+}
