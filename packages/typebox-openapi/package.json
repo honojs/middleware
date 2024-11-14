@@ -1,0 +1,51 @@
+{
+  "name": "@hono/typebox-openapi",
+  "version": "0.0.1",
+  "description": "A wrapper class of Hono which supports OpenAPI using Typebox schemas",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "hono": "^4.6.8",
+    "openapi-types": "^12.1.3",
+    "tsup": "^8.1.0",
+    "vitest": "^2.1.4"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.33.17"
+  }
+}
