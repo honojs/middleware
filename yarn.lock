@@ -2926,8 +2926,8 @@ __metadata:
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
     hono: "npm:^4.0.10"
-    jest: "npm:^29.7.0"
-    rimraf: "npm:^5.0.5"
+    publint: "npm:^0.2.7"
+    tsup: "npm:^8.1.0"
     typescript: "npm:^5.3.3"
     vitest: "npm:^1.4.0"
     zod: "npm:^3.22.4"

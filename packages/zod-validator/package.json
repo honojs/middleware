@@ -3,14 +3,14 @@
   "version": "0.4.1",
   "description": "Validator middleware using Zod",
   "type": "module",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
@@ -18,10 +18,8 @@
   ],
   "scripts": {
     "test": "vitest --run",
-    "copy:package.cjs.json": "cp ./package.cjs.json ./dist/cjs/package.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm && yarn copy:package.cjs.json",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
     "prerelease": "yarn build && yarn test",
     "release": "yarn publish"
   },
@@ -41,8 +39,8 @@
   },
   "devDependencies": {
     "hono": "^4.0.10",
-    "jest": "^29.7.0",
-    "rimraf": "^5.0.5",
+    "publint": "^0.2.7",
+    "tsup": "^8.1.0",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0",
     "zod": "^3.22.4"
