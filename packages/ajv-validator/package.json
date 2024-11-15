@@ -1,6 +1,6 @@
 {
   "name": "@hono/ajv-validator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Validator middleware using Ajv",
   "type": "module",
   "module": "dist/index.js",
