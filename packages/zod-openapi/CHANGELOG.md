@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.17.1
+
+### Patch Changes
+
+- [#828](https://github.com/honojs/middleware/pull/828) [`bbb48ef368d8277b89cb938207093462addf4be3`](https://github.com/honojs/middleware/commit/bbb48ef368d8277b89cb938207093462addf4be3) Thanks [@daniel-pedersen](https://github.com/daniel-pedersen)! - infer env type parameter from middleware
+
 ## 0.17.0
 
 ### Minor Changes
