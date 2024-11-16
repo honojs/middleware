@@ -269,9 +269,17 @@ export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]
   ? Last // Return the last remaining handler in the array
   : never
 
+type RouteMiddlewareParams<R extends RouteConfig> = OfHandlerType<
+  MiddlewareToHandlerType<AsArray<R['middleware']>>
+>
+
+export type RouteConfigToEnv<R extends RouteConfig> = RouteMiddlewareParams<R> extends never
+  ? Env
+  : RouteMiddlewareParams<R>['env']
+
 export type RouteHandler<
   R extends RouteConfig,
-  E extends Env = Env,
+  E extends Env = RouteConfigToEnv<R>,
   I extends Input = InputTypeParam<R> &
     InputTypeQuery<R> &
     InputTypeHeader<R> &
@@ -299,7 +307,7 @@ export type RouteHandler<
 
 export type RouteHook<
   R extends RouteConfig,
-  E extends Env = Env,
+  E extends Env = RouteConfigToEnv<R>,
   I extends Input = InputTypeParam<R> &
     InputTypeQuery<R> &
     InputTypeHeader<R> &
@@ -381,7 +389,7 @@ export class OpenAPIHono<
     handler: Handler<
       // use the env from the middleware if it's defined
       R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
-        ? OfHandlerType<MiddlewareToHandlerType<AsArray<R['middleware']>>>['env'] & E
+        ? RouteMiddlewareParams<R>['env'] & E
         : E,
       P,
       I,
