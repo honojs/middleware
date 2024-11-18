@@ -39,6 +39,7 @@
     "build:conform-validator": "yarn workspace @hono/conform-validator build",
     "build:casbin": "yarn workspace @hono/casbin build",
     "build:ajv-validator": "yarn workspace @hono/ajv-validator build",
+    "build:tsyringe": "yarn workspace @hono/tsyringe build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
