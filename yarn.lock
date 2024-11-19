@@ -2927,8 +2927,8 @@ __metadata:
   dependencies:
     "@asteasolutions/zod-to-openapi": "npm:^7.1.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
-    "@hono/zod-validator": "npm:0.3.0"
-    hono: "npm:^4.5.4"
+    "@hono/zod-validator": "npm:^0.4.1"
+    hono: "npm:^4.6.10"
     jest: "npm:^29.7.0"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
@@ -2941,17 +2941,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/zod-validator@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@hono/zod-validator@npm:0.3.0"
-  peerDependencies:
-    hono: ">=3.9.0"
-    zod: ^3.19.1
-  checksum: 0c33f99bec89aa5bf042e1d490b894044b60db98d9d7b1d9586ee2d4855a72b216a0101c4549118e7c7643acf12237c716a27c1849f07276dccb8e0be362a63e
-  languageName: node
-  linkType: hard
-
-"@hono/zod-validator@workspace:packages/zod-validator":
+"@hono/zod-validator@npm:^0.4.1, @hono/zod-validator@workspace:packages/zod-validator":
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
@@ -11508,10 +11498,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.5.4":
-  version: 4.5.4
-  resolution: "hono@npm:4.5.4"
-  checksum: 980accb9567fe5ba4533c1378d175a95a0eef0a1fa8a03ceb1f9296d88d4ee8ff0e1447f5e69eb56150a8b6cc66f4a663ec9d1c1135f005f44f61353b58e276f
+"hono@npm:^4.6.10":
+  version: 4.6.10
+  resolution: "hono@npm:4.6.10"
+  checksum: e1a56e82059197607fbdebb5ad4a4962aa44ae239753a9be067ac61824f953bf7baf6415e03adc05986136b53cfa15b6e6d2d89d463cc3d4fc2fe93862425bab
   languageName: node
   linkType: hard
 
