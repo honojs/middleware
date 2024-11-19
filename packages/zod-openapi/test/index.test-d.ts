@@ -1,5 +1,4 @@
-import type { Env, Hono, ToSchema } from 'hono'
-import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { assertType, describe, it } from 'vitest'
 import { MiddlewareToHandlerType, OfHandlerType, OpenAPIHono, createRoute, z } from '../src/index'
 import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
@@ -18,10 +17,13 @@ describe('Types', () => {
     })
     .openapi('Post')
 
+  const QuerySchema = z.object({ order: z.enum(['asc', 'desc']) })
+
   const route = createRoute({
     method: 'post',
     path: '/posts',
     request: {
+      query: QuerySchema,
       body: {
         content: {
           'application/json': {
@@ -47,32 +49,41 @@ describe('Types', () => {
   const appRoutes = app.openapi(route, (c) => {
     const data = c.req.valid('json')
     assertType<number>(data.id)
+    const order = c.req.valid('query')
+    assertType<{ order: 'asc' | 'desc' }>(order)
     return c.json({
       id: data.id,
       message: 'Success',
+      order,
     })
   })
 
   it('Should return correct types', () => {
-    type H = Hono<
-      Env,
-      ToSchema<
-        'post',
-        '/posts',
-        {
-          json: {
-            title: string
-            id: number
+    type Expected = {
+      '/posts': {
+        $post: {
+          input: {
+            query: {
+              order: 'asc' | 'desc'
+            }
+          } & {
+            json: {
+              title: string
+              id: number
+            }
           }
-        },
-        {
-          id: number
-          message: string
+          output: {
+            id: number
+            message: string
+          }
+          outputFormat: 'json' | 'text'
+          status: 200
         }
-      >,
-      '/'
-    >
-    expectTypeOf(appRoutes).toMatchTypeOf<H>()
+      }
+    }
+
+    type Actual = ExtractSchema<typeof appRoutes>
+    type verify = Expect<Equal<Expected, Actual>>
   })
 })
 
@@ -229,7 +240,7 @@ describe('coerce', () => {
     type Actual = ExtractSchema<typeof routes>['/api/users/:id']['$get']['input']
     type Expected = {
       param: {
-        id: string
+        id: number
       }
     }
     type verify = Expect<Equal<Expected, Actual>>

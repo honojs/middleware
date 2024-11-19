@@ -85,10 +85,10 @@ type InputTypeBase<
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
             ? {
-                [K2 in keyof z.input<RequestPart<R, Part>>]?: ValidationTargets[K][K2]
+                [K2 in keyof z.input<RequestPart<R, Part>>]?: z.input<RequestPart<R, Part>>[K2]
               }
             : {
-                [K2 in keyof z.input<RequestPart<R, Part>>]: ValidationTargets[K][K2]
+                [K2 in keyof z.input<RequestPart<R, Part>>]: z.input<RequestPart<R, Part>>[K2]
               }
         }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
