@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.18.0
+
+### Minor Changes
+
+- [#837](https://github.com/honojs/middleware/pull/837) [`ebd70a0e03c5bb78ba2d39613e10bdc28fe7822b`](https://github.com/honojs/middleware/commit/ebd70a0e03c5bb78ba2d39613e10bdc28fe7822b) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support `enum`
+
 ## 0.17.1
 
 ### Patch Changes
