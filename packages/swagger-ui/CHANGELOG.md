@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [#845](https://github.com/honojs/middleware/pull/845) [`934b3932c1c3fd54b22ff96ad1f9f8846ba9edc9`](https://github.com/honojs/middleware/commit/934b3932c1c3fd54b22ff96ad1f9f8846ba9edc9) Thanks [@rwv](https://github.com/rwv)! - customize html title for swagger-ui
+
 ## 0.4.1
 
 ### Patch Changes
