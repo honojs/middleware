@@ -32,7 +32,7 @@ export function sentry<E extends Env = Env, P extends string = string, I extends
       hasExecutionContext = false
     }
     const sentry = new Toucan({
-      dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
+      dsn: (c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN) as string | undefined,
       requestDataOptions: {
         allowedHeaders: ['user-agent'],
         allowedSearchParams: /(.*)/,
