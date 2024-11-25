@@ -1,4 +1,4 @@
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, Env, Input, MiddlewareHandler } from 'hono'
 import { Toucan } from 'toucan-js'
 import type { Options as ToucanOptions } from 'toucan-js'
 
@@ -20,10 +20,10 @@ class MockContext implements ExecutionContext {
 
 export type Options = Omit<ToucanOptions, 'request' | 'context'>
 
-export const sentry = (
+export function sentry<E extends Env = Env, P extends string = string, I extends Input = Input>(
   options?: Options,
   callback?: (sentry: Toucan) => void
-): MiddlewareHandler => {
+): MiddlewareHandler<E, P, I> {
   return async (c, next) => {
     let hasExecutionContext = true
     try {
@@ -53,6 +53,8 @@ export const sentry = (
   }
 }
 
-export const getSentry = (c: Context) => {
+export function getSentry<E extends Env = Env, P extends string = string, I extends Input = Input>(
+  c: Context<E, P, I>
+) {
   return c.get('sentry')
 }
