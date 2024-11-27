@@ -184,7 +184,13 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> = {
   [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
     keyof R['responses'][Status]['content']
   > extends never
-    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+    ? IsHtml<keyof R['responses'][Status]['content']> extends never
+      ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+      : /**
+         *  c.html returns Response
+         *  see: HTMLRespond in honojs/hono/context.ts
+         */
+        Response
     : TypedResponse<
         JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
         ExtractStatusCode<Status>,

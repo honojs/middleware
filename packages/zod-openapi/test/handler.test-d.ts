@@ -123,4 +123,48 @@ describe('supports async handler', () => {
       >
     >
   })
+
+  test('Route accepts c.html when html like content type is specified', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/html',
+      responses: {
+        200: {
+          content: {
+            'text/html': {
+              schema: z.string(),
+            },
+          },
+          description: 'Return HTML',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = (c) => {
+      return c.html('<h1>Hello from html</h1>')
+    }
+
+    const route2 = createRoute({
+      method: 'get',
+      path: '/vnd/html',
+      responses: {
+        200: {
+          content: {
+            'application/vnd.dtg.local.html': {
+              schema: z.string(),
+            },
+          },
+          description: 'Return HTML',
+        },
+      },
+    })
+
+    const handler2: RouteHandler<typeof route2> = (c) => {
+      return c.html('<h1>Hello from vnd html</h1>')
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+    hono.openapi(route2, handler2)
+  })
 })
