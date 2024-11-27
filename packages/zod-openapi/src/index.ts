@@ -61,6 +61,14 @@ type IsJson<T> = T extends string
     : never
   : never
 
+type IsHtml<T> = T extends string
+  ? T extends `text/html${infer _Rest}` | `application/xhtml+xml${infer _Rest}`
+    ? 'html'
+    : T extends `application/vnd.${infer _Start}html${infer _Rest}`
+    ? 'html'
+    : never
+  : never
+
 type IsForm<T> = T extends string
   ? T extends
       | `multipart/form-data${infer _Rest}`
