@@ -1,5 +1,7 @@
 import type { MiddlewareHandler } from 'hono'
-import type { RouteHandler } from '../src'
+import type { Equal, Expect } from 'hono/utils/types'
+import type { MiddlewareToHandlerType, OfHandlerType, RouteHandler } from '../src'
+
 import { OpenAPIHono, createRoute, z } from '../src'
 
 describe('supports async handler', () => {
@@ -88,5 +90,37 @@ describe('supports async handler', () => {
 
     const hono = new OpenAPIHono()
     hono.openapi(routeWithMiddleware, handler)
+  })
+
+  test('RouteHandler infers complex objects from multiple middleware handlers', () => {
+    // https://github.com/honojs/middleware/issues/847
+    type CustomEnv = { Variables: { session: { id: string; createdAt: Date } } }
+
+    const setSessionMiddleware: MiddlewareHandler<CustomEnv> = (c, next) => {
+      c.set('session', { id: '8e760fe8-f064-4929-b632-737f88213e57', createdAt: new Date() })
+      return next()
+    }
+
+    const validateSessionMiddleware: MiddlewareHandler<CustomEnv> = async (c, next) => {
+      const session = c.get('session')
+      if ((new Date().getTime() - session.createdAt.getTime()) / 1000 / 60 / 60 > 1) {
+        return c.json({ message: 'Unauthorized' }, 401)
+      }
+      return await next()
+    }
+
+    type Example = MiddlewareToHandlerType<
+      [typeof setSessionMiddleware, typeof validateSessionMiddleware]
+    >
+
+    // ensure the first defined env does not lose its type in multi-middleware handler
+    type Verify = Expect<
+      Equal<
+        OfHandlerType<Example>['env'],
+        {
+          Variables: CustomEnv['Variables']
+        }
+      >
+    >
   })
 })
