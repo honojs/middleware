@@ -76,7 +76,7 @@ describe('Types', () => {
             id: number
             message: string
           }
-          outputFormat: 'json' | 'text'
+          outputFormat: 'json'
           status: 200
         }
       }

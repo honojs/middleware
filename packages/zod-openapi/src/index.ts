@@ -26,7 +26,7 @@ import type {
   ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
+import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -67,6 +67,28 @@ type IsForm<T> = T extends string
       | `application/x-www-form-urlencoded${infer _Rest}`
     ? 'form'
     : never
+  : never
+
+type ReturnJsonOrTextOrResponse<
+  ContentType,
+  Content,
+  Status extends keyof StatusCodeRangeDefinitions | StatusCode
+> = ContentType extends string
+  ? ContentType extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? TypedResponse<
+          SimplifyDeepArray<Content> extends JSONValue
+            ? JSONValue extends SimplifyDeepArray<Content>
+              ? never
+              : JSONParsed<Content>
+            : never,
+          ExtractStatusCode<Status>,
+          'json'
+        >
+      : never
+    : ContentType extends `text/plain${infer _Rest}`
+    ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
+    : Response
   : never
 
 type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyof R['request']
@@ -173,14 +195,13 @@ type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof Status
   ? StatusCodeRangeDefinitions[T]
   : T
 export type RouteConfigToTypedResponse<R extends RouteConfig> = {
-  [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
-    keyof R['responses'][Status]['content']
-  > extends never
+  [Status in keyof R['responses'] &
+    RouteConfigStatusCode]: undefined extends R['responses'][Status]['content']
     ? TypedResponse<{}, ExtractStatusCode<Status>, string>
-    : TypedResponse<
-        JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
-        ExtractStatusCode<Status>,
-        'json' | 'text'
+    : ReturnJsonOrTextOrResponse<
+        keyof R['responses'][Status]['content'],
+        ExtractContent<R['responses'][Status]['content']>,
+        Status
       >
 }[keyof R['responses'] & RouteConfigStatusCode]
 
