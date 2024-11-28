@@ -26,7 +26,7 @@ import type {
   ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
+import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -76,7 +76,15 @@ type ReturnJsonOrTextOrResponse<
 > = ContentType extends string
   ? ContentType extends `application/${infer Start}json${infer _End}`
     ? Start extends '' | `${string}+` | `vnd.${string}+`
-      ? TypedResponse<Content, ExtractStatusCode<Status>, 'json'>
+      ? TypedResponse<
+          SimplifyDeepArray<Content> extends JSONValue
+            ? JSONValue extends SimplifyDeepArray<Content>
+              ? never
+              : JSONParsed<Content>
+            : never,
+          ExtractStatusCode<Status>,
+          'json'
+        >
       : never
     : ContentType extends `text/plain${infer _Rest}`
     ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
@@ -187,11 +195,14 @@ type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof Status
   ? StatusCodeRangeDefinitions[T]
   : T
 export type RouteConfigToTypedResponse<R extends RouteConfig> = {
-  [Status in keyof R['responses'] & RouteConfigStatusCode]: ReturnJsonOrTextOrResponse<
-    keyof R['responses'][Status]['content'],
-    ExtractContent<R['responses'][Status]['content']>,
-    Status
-  >
+  [Status in keyof R['responses'] &
+    RouteConfigStatusCode]: undefined extends R['responses'][Status]['content']
+    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+    : ReturnJsonOrTextOrResponse<
+        keyof R['responses'][Status]['content'],
+        ExtractContent<R['responses'][Status]['content']>,
+        Status
+      >
 }[keyof R['responses'] & RouteConfigStatusCode]
 
 export type Hook<T, E extends Env, P extends string, R> = (

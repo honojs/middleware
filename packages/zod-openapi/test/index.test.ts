@@ -1779,21 +1779,21 @@ describe('RouteConfigToTypedResponse', () => {
             age: number
           },
           200,
-          'json' | 'text'
+          'json'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           400,
-          'json' | 'text'
+          'json'
         >
       | TypedResponse<
           {
             ok: boolean
           },
           ServerErrorStatusCode,
-          'json' | 'text'
+          'json'
         >
     type verify = Expect<Equal<Expected, Actual>>
   })
