@@ -147,4 +147,86 @@ describe('supports async handler', () => {
     const hono = new OpenAPIHono()
     hono.openapi(route, handler)
   })
+
+  test('handler should support default response for unspecified status codes', () => {
+    const routeWithDefault = createRoute({
+      method: 'get',
+      path: '/users',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ id: z.string() }),
+            },
+          },
+          description: 'Success response',
+        },
+        default: {
+          content: {
+            'application/json': {
+              schema: z.object({ error: z.string() }),
+            },
+          },
+          description: 'Error response',
+        },
+      },
+    })
+
+    const errorHandler: RouteHandler<typeof routeWithDefault> = (c) => {
+      return c.json({ error: 'Server Error' }, 500)
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(routeWithDefault, errorHandler)
+  })
+
+  test('handler should respect explicitly defined status codes with default fallback', () => {
+    const routeWithDefault = createRoute({
+      method: 'get',
+      path: '/users',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ id: z.string() }),
+            },
+          },
+          description: 'Success response',
+        },
+        404: {
+          content: {
+            'application/json': {
+              schema: z.object({ message: z.string() }),
+            },
+          },
+          description: 'Not found response',
+        },
+        default: {
+          content: {
+            'application/json': {
+              schema: z.object({ error: z.string() }),
+            },
+          },
+          description: 'Error response',
+        },
+      },
+    })
+
+    const successHandler: RouteHandler<typeof routeWithDefault> = (c) => {
+      return c.json({ id: '123' }, 200)
+    }
+
+    const notFoundHandler: RouteHandler<typeof routeWithDefault> = (c) => {
+      return c.json({ message: 'Not Found' }, 404)
+    }
+
+    const errorHandler: RouteHandler<typeof routeWithDefault> = (c) => {
+      return c.json({ error: 'Server Error' }, 500)
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(routeWithDefault, successHandler)
+    hono.openapi(routeWithDefault, notFoundHandler)
+    hono.openapi(routeWithDefault, errorHandler)
+  })
 })
