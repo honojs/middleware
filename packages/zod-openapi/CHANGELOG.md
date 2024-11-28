@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.18.1
+
+### Patch Changes
+
+- [#849](https://github.com/honojs/middleware/pull/849) [`4ebecc61420b6bd94b3a44b8ea58a85654f7ec5d`](https://github.com/honojs/middleware/commit/4ebecc61420b6bd94b3a44b8ea58a85654f7ec5d) Thanks [@askorupskyy](https://github.com/askorupskyy)! - Fix multi-middleware complex object type inference
+
 ## 0.18.0
 
 ### Minor Changes
