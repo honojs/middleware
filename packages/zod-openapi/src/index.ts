@@ -69,6 +69,20 @@ type IsForm<T> = T extends string
     : never
   : never
 
+type ReturnJsonOrTextOrResponse<
+  ContentType,
+  Content,
+  Status extends keyof StatusCodeRangeDefinitions | StatusCode
+> = ContentType extends string
+  ? ContentType extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? TypedResponse<Content, ExtractStatusCode<Status>, 'json'>
+      : never
+    : ContentType extends `text/plain${infer _Rest}`
+    ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
+    : Response
+  : never
+
 type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyof R['request']
   ? R['request'][Part]
   : {}
@@ -173,15 +187,11 @@ type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof Status
   ? StatusCodeRangeDefinitions[T]
   : T
 export type RouteConfigToTypedResponse<R extends RouteConfig> = {
-  [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
-    keyof R['responses'][Status]['content']
-  > extends never
-    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
-    : TypedResponse<
-        JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
-        ExtractStatusCode<Status>,
-        'json' | 'text'
-      >
+  [Status in keyof R['responses'] & RouteConfigStatusCode]: ReturnJsonOrTextOrResponse<
+    keyof R['responses'][Status]['content'],
+    ExtractContent<R['responses'][Status]['content']>,
+    Status
+  >
 }[keyof R['responses'] & RouteConfigStatusCode]
 
 export type Hook<T, E extends Env, P extends string, R> = (

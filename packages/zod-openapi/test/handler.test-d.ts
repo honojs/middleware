@@ -123,4 +123,28 @@ describe('supports async handler', () => {
       >
     >
   })
+
+  test('Route accepts a response other than the response from c.json() and c.text()', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/html',
+      responses: {
+        200: {
+          content: {
+            'text/html': {
+              schema: z.string(),
+            },
+          },
+          description: 'Return HTML',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = (c) => {
+      return c.html('<h1>Hello from html</h1>')
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+  })
 })
