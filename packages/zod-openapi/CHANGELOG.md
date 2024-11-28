@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.18.2
+
+### Patch Changes
+
+- [#853](https://github.com/honojs/middleware/pull/853) [`a9804afe71fe5876963b3a6f5972a3e5d50dbdca`](https://github.com/honojs/middleware/commit/a9804afe71fe5876963b3a6f5972a3e5d50dbdca) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: return `Response` if response is not text or JSON
+
 ## 0.18.1
 
 ### Patch Changes
