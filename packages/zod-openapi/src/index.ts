@@ -221,7 +221,9 @@ type AsArray<T> = T extends undefined // TODO move to utils?
  */
 export type DeepSimplify<T> = {
   // TODO move to utils?
-  [KeyType in keyof T]: T[KeyType] extends object ? DeepSimplify<T[KeyType]> : T[KeyType]
+  [KeyType in keyof T]: T[KeyType] extends Record<string, unknown>
+    ? DeepSimplify<T[KeyType]>
+    : T[KeyType]
 } & {}
 
 /**
