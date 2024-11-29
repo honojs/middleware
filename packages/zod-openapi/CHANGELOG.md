@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.18.3
+
+### Patch Changes
+
+- [#855](https://github.com/honojs/middleware/pull/855) [`3f63c46fa66bfb7f1d80174bfb160cccfa69f0bc`](https://github.com/honojs/middleware/commit/3f63c46fa66bfb7f1d80174bfb160cccfa69f0bc) Thanks [@jstri](https://github.com/jstri)! - fix: support default response
+
 ## 0.18.2
 
 ### Patch Changes
