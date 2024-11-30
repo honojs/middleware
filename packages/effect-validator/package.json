@@ -38,12 +38,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@effect/schema": ">=0.68.18",
+    "effect": ">=3.10.0",
     "hono": ">=4.4.13"
   },
   "devDependencies": {
-    "@effect/schema": "^0.68.21",
-    "effect": "^3.4.8",
+    "effect": "3.10.0",
     "hono": "^4.4.13",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
