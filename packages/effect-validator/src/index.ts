@@ -1,5 +1,4 @@
-import { Schema as S, ParseResult } from 'effect'
-import { Either } from 'effect'
+import { Schema as S, ParseResult, Either } from 'effect'
 import type { Env, Input, MiddlewareHandler, ValidationTargets } from 'hono'
 import type { Simplify } from 'hono/utils/types'
 import { validator } from 'hono/validator'
