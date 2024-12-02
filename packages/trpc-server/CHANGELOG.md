@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.3.3
+
+### Patch Changes
+
+- [#850](https://github.com/honojs/middleware/pull/850) [`ee83665c5e01acbcfaaddcd552f2f6d2d3e8006c`](https://github.com/honojs/middleware/commit/ee83665c5e01acbcfaaddcd552f2f6d2d3e8006c) Thanks [@Gaubee](https://github.com/Gaubee)! - Use honoReq's bodyCache to provide a body function for trpc's req
+
 ## 0.3.2
 
 ### Patch Changes
