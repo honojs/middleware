@@ -1041,17 +1041,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@effect/schema@npm:^0.68.21":
-  version: 0.68.21
-  resolution: "@effect/schema@npm:0.68.21"
-  dependencies:
-    fast-check: "npm:^3.19.0"
-  peerDependencies:
-    effect: ^3.5.1
-  checksum: 127b4b89ce637c9be1dc84d933cefd63fdbf30f1fad9acf656c32a19df41875b646f2775129b331db9090f198a08f67f3ffe277af914a157a0c6711f3669b9a7
-  languageName: node
-  linkType: hard
-
 "@emnapi/runtime@npm:^0.44.0":
   version: 0.44.0
   resolution: "@emnapi/runtime@npm:0.44.0"
@@ -2540,14 +2529,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/effect-validator@workspace:packages/effect-validator"
   dependencies:
-    "@effect/schema": "npm:^0.68.21"
-    effect: "npm:^3.4.8"
+    effect: "npm:3.10.0"
     hono: "npm:^4.4.13"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.5.3"
     vitest: "npm:^2.0.1"
   peerDependencies:
-    "@effect/schema": ">=0.68.18"
+    effect: ">=3.10.0"
     hono: ">=4.4.13"
   languageName: unknown
   linkType: soft
@@ -8610,10 +8598,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:^3.4.8":
-  version: 3.4.8
-  resolution: "effect@npm:3.4.8"
-  checksum: 951962386775fa8506a6bfae75dc2802b00557dc58d9aecc7dff552c2e01ba651b87d662bdbf1f7c5ba1e450bc1a58f6daf44628222b0260471c5b52e0e76a8f
+"effect@npm:3.10.0":
+  version: 3.10.0
+  resolution: "effect@npm:3.10.0"
+  dependencies:
+    fast-check: "npm:^3.21.0"
+  checksum: 9d59b7c50ece9e9f9b87df587941927f206e863226ebad607a0880aab3287d67d751288e796db138d6682a130c97a92361a881c2fa1b6864810905372ecff159
   languageName: node
   linkType: hard
 
@@ -10173,12 +10163,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^3.19.0":
-  version: 3.19.0
-  resolution: "fast-check@npm:3.19.0"
+"fast-check@npm:^3.21.0":
+  version: 3.23.1
+  resolution: "fast-check@npm:3.23.1"
   dependencies:
     pure-rand: "npm:^6.1.0"
-  checksum: 5a15484d380fb5a3e94ec951c97e59b940ac4f2e1f3f7a05578d67851e5cb5283121bcf08c57e3238bc85899ce691b47ab477a6dd481a6f520e2e7ab4952d1ee
+  checksum: d61ee4a7a2e1abc5126bf2f1894413f532f686b3d1fc15c67fefb60dcca66024934b69a6454d3eba92e6568ac1abbb9882080e212d255865c3b3bbe52c5bf702
   languageName: node
   linkType: hard
 

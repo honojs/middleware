@@ -1,5 +1,4 @@
-import type { ArrayFormatter } from '@effect/schema'
-import { Schema as S } from '@effect/schema'
+import { Schema as S } from 'effect'
 import { Hono } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
@@ -45,14 +44,14 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: {
+          json: Readonly<{
             name: string
             age: number
-          }
+          }>
         } & {
-          query?: {
+          query?: Readonly<{
             name?: string | string[] | undefined
-          }
+          }>
         }
         output: {
           success: boolean
@@ -104,7 +103,7 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
 
-    const data = await res.json<{ success: boolean; error: ArrayFormatter.Issue[] }>()
+    const data = await res.json()
     expect(data.success).toBe(false)
     expect(data.error[0].path).toEqual(['age'])
     expect(data.error[0].message).toBeDefined()
@@ -128,9 +127,9 @@ describe('coerce', () => {
     '/page': {
       $get: {
         input: {
-          query: {
+          query: Readonly<{
             page: string | string[]
-          }
+          }>
         }
         output: {
           page: number
