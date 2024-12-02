@@ -3,8 +3,6 @@ import type { Env, Input, MiddlewareHandler, ValidationTargets } from 'hono'
 import type { Simplify } from 'hono/utils/types'
 import { validator } from 'hono/validator'
 
-type RemoveReadonly<T> = { -readonly [P in keyof T]: RemoveReadonly<T[P]> }
-
 type HasUndefined<T> = undefined extends T ? true : false
 
 export const effectValidator = <
@@ -13,8 +11,8 @@ export const effectValidator = <
   P extends string,
   Type,
   Encoded,
-  In = Simplify<RemoveReadonly<Encoded>>,
-  Out = Simplify<RemoveReadonly<Type>>,
+  In = Simplify<Encoded>,
+  Out = Simplify<Type>,
   I extends Input = {
     in: HasUndefined<In> extends true
       ? {

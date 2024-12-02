@@ -44,14 +44,14 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: {
+          json: Readonly<{
             name: string
             age: number
-          }
+          }>
         } & {
-          query?: {
+          query?: Readonly<{
             name?: string | string[] | undefined
-          }
+          }>
         }
         output: {
           success: boolean
@@ -127,9 +127,9 @@ describe('coerce', () => {
     '/page': {
       $get: {
         input: {
-          query: {
+          query: Readonly<{
             page: string | string[]
-          }
+          }>
         }
         output: {
           page: number
