@@ -2535,7 +2535,7 @@ __metadata:
     typescript: "npm:^5.5.3"
     vitest: "npm:^2.0.1"
   peerDependencies:
-    effect: ">=3.0.0"
+    effect: ">=3.10.0"
     hono: ">=4.4.13"
   languageName: unknown
   linkType: soft
