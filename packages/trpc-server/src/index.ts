@@ -22,7 +22,10 @@ export const trpcServer = ({
   createContext,
   ...rest
 }: tRPCOptions): MiddlewareHandler => {
+  const bodyProps = new Set(['arrayBuffer', 'blob', 'formData', 'json', 'text'] as const)
+  type BodyProp = typeof bodyProps extends Set<infer T> ? T : never
   return async (c) => {
+    const canWithBody = c.req.method === 'GET' || c.req.method === 'HEAD'
     const res = fetchRequestHandler({
       ...rest,
       createContext: async (opts) => ({
@@ -31,7 +34,16 @@ export const trpcServer = ({
         env: c.env,
       }),
       endpoint,
-      req: c.req.raw,
+      req: canWithBody
+        ? c.req.raw
+        : new Proxy(c.req.raw, {
+            get(t, p, r) {
+              if (bodyProps.has(p as BodyProp)) {
+                return () => c.req[p as BodyProp]()
+              }
+              return Reflect.get(t, p, r)
+            },
+          }),
     }).then((res) => c.body(res.body, res))
     return res
   }
