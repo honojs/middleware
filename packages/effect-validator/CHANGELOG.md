@@ -1,5 +1,11 @@
 # @hono/effect-validator
 
+## 1.2.0
+
+### Minor Changes
+
+- [#859](https://github.com/honojs/middleware/pull/859) [`739d4a01fc4e2f3d3c252d617ae27058c40c9b37`](https://github.com/honojs/middleware/commit/739d4a01fc4e2f3d3c252d617ae27058c40c9b37) Thanks [@baseballyama](https://github.com/baseballyama)! - feat: support `effect@3.10.0`
+
 ## 1.1.0
 
 ### Minor Changes
