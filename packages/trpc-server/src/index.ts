@@ -37,11 +37,11 @@ export const trpcServer = ({
       req: canWithBody
         ? c.req.raw
         : new Proxy(c.req.raw, {
-            get(t, p, r) {
+            get(t, p, _r) {
               if (bodyProps.has(p as BodyProp)) {
                 return () => c.req[p as BodyProp]()
               }
-              return Reflect.get(t, p, r)
+              return Reflect.get(t, p, t)
             },
           }),
     }).then((res) => c.body(res.body, res))
