@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.3.4
+
+### Patch Changes
+
+- [#864](https://github.com/honojs/middleware/pull/864) [`d67e279d8289d8a0e5c0a71b80f8703b4a97a0c4`](https://github.com/honojs/middleware/commit/d67e279d8289d8a0e5c0a71b80f8703b4a97a0c4) Thanks [@Gaubee](https://github.com/Gaubee)! - fix(trpc-server) wrap Request with Proxy getter receiver should Request-instance
+
 ## 0.3.3
 
 ### Patch Changes
