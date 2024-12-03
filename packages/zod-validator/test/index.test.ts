@@ -339,3 +339,33 @@ describe('Only Types', () => {
     type verify = Expect<Equal<Expected, Actual>>
   })
 })
+
+describe('Case-Insensitive Headers', () => {
+  it('Should ignore the case for headers in the Zod schema and return 200', () => {
+    const app = new Hono()
+    const headerSchema = z.object({
+      'Content-Type': z.string(),
+      ApiKey: z.string(),
+      onlylowercase: z.string(),
+      ONLYUPPERCASE: z.string(),
+    })
+
+    const route = app.get('/', zValidator('header', headerSchema), (c) => {
+      const headers = c.req.valid('header')
+      return c.json(headers)
+    })
+
+    type Actual = ExtractSchema<typeof route>
+    type Expected = {
+      '/': {
+        $get: {
+          input: {
+            header: z.infer<typeof headerSchema>
+          }
+          output: z.infer<typeof headerSchema>
+        }
+      }
+    }
+    type verify = Expect<Equal<Expected, Actual>>
+  })
+})
