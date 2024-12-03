@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#866](https://github.com/honojs/middleware/pull/866) [`c815055bb6669aff8fccf5f478983906c65aca9d`](https://github.com/honojs/middleware/commit/c815055bb6669aff8fccf5f478983906c65aca9d) Thanks [@Micnubinub](https://github.com/Micnubinub)! - Added ability to remove properties that are not in the schema to emulate other validators like zod
+
 ## 0.2.6
 
 ### Patch Changes
