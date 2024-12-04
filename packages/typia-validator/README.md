@@ -9,19 +9,19 @@ import typia, { tags } from 'typia'
 import { typiaValidator } from '@hono/typia-validator'
 
 interface Author {
-    name: string
-    age: number & tags.Type<'uint32'> & tags.Minimum<20> & tags.ExclusiveMaximum<100>
-  }
+  name: string
+  age: number & tags.Type<'uint32'> & tags.Minimum<20> & tags.ExclusiveMaximum<100>
+}
 
-  const validate = typia.createValidate<Author>()
+const validate = typia.createValidate<Author>()
 
-  const route = app.post('/author', typiaValidator('json', validate), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `${data.name} is ${data.age}`,
-    })
+const route = app.post('/author', typiaValidator('json', validate), (c) => {
+  const data = c.req.valid('json')
+  return c.json({
+    success: true,
+    message: `${data.name} is ${data.age}`,
   })
+})
 ```
 
 Hook:
