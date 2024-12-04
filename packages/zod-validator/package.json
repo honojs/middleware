@@ -1,48 +1,46 @@
 {
-  "name": "@hono/zod-validator",
-  "version": "0.4.1",
-  "description": "Validator middleware using Zod",
-  "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
-  },
-  "license": "MIT",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
-  },
-  "homepage": "https://github.com/honojs/middleware",
-  "peerDependencies": {
-    "hono": ">=3.9.0",
-    "zod": "^3.19.1"
-  },
-  "devDependencies": {
-    "hono": "^4.0.10",
-    "publint": "^0.2.7",
-    "tsup": "^8.1.0",
-    "typescript": "^5.3.3",
-    "vitest": "^1.4.0",
-    "zod": "^3.22.4"
-  }
+	"name": "@hono/zod-validator",
+	"version": "0.4.1",
+	"description": "Validator middleware using Zod",
+	"type": "module",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"files": ["dist"],
+	"scripts": {
+		"test": "vitest --run",
+		"build": "tsup ./src/index.ts --format esm,cjs --dts",
+		"publint": "publint",
+		"prerelease": "yarn build && yarn test",
+		"release": "yarn publish"
+	},
+	"license": "MIT",
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org",
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/honojs/middleware.git"
+	},
+	"homepage": "https://github.com/honojs/middleware",
+	"peerDependencies": {
+		"hono": ">=3.9.0",
+		"zod": "^3.19.1"
+	},
+	"devDependencies": {
+		"hono": "^4.0.10",
+		"publint": "^0.2.7",
+		"tsup": "^8.1.0",
+		"typescript": "^5.3.3",
+		"vitest": "^1.4.0",
+		"zod": "^3.22.4"
+	}
 }
