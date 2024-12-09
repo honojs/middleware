@@ -40,6 +40,7 @@
     "build:casbin": "yarn workspace @hono/casbin build",
     "build:ajv-validator": "yarn workspace @hono/ajv-validator build",
     "build:tsyringe": "yarn workspace @hono/tsyringe build",
+    "build:jwks": "yarn workspace @hono/jwks build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",

@@ -2648,6 +2648,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/jwks@workspace:packages/jwks":
+  version: 0.0.0-use.local
+  resolution: "@hono/jwks@workspace:packages/jwks"
+  dependencies:
+    hono: "npm:^4.4.12"
+    jose: "npm:^5.9.6"
+    tsup: "npm:^8.1.0"
+    vitest: "npm:^1.6.0"
+  peerDependencies:
+    hono: "*"
+    jose: ^5.9.6
+  languageName: unknown
+  linkType: soft
+
 "@hono/medley-router@workspace:packages/medley-router":
   version: 0.0.0-use.local
   resolution: "@hono/medley-router@workspace:packages/medley-router"
@@ -13455,6 +13469,13 @@ __metadata:
   version: 5.1.3
   resolution: "jose@npm:5.1.3"
   checksum: 39b6b5fea0d73b73a9934f6dbf84f0f553c0ea15289d700e6bc80057124e5ebd4e7182868c598df16ed571764fc140a5908bb7fe269fe5b9b83bc769920355cf
+  languageName: node
+  linkType: hard
+
+"jose@npm:^5.9.6":
+  version: 5.9.6
+  resolution: "jose@npm:5.9.6"
+  checksum: d6bcd8c7d655b5cda8e182952a76f0c093347f5476d74795405bb91563f7ab676f61540310dd4b1531c60d685335ceb600571a409551d2cbd2ab3e9f9fbf1e4d
   languageName: node
   linkType: hard
 
