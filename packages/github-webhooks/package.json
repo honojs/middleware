@@ -1,0 +1,15 @@
+{
+	"name": "github-webhooks",
+	"version": "1.0.0",
+	"packageManager": "yarn@4.0.2",
+	"dependencies": {
+		"@octokit/webhooks": "^13.4.1"
+	},
+	"devDependencies": {
+		"@octokit/types": "^13.6.2",
+		"hono": "^4.6.13"
+	},
+	"peerDependencies": {
+		"hono": "*"
+	}
+}

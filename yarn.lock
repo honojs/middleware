@@ -4080,6 +4080,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@octokit/openapi-types@npm:^22.2.0":
+  version: 22.2.0
+  resolution: "@octokit/openapi-types@npm:22.2.0"
+  checksum: a45bfc735611e836df0729f5922bbd5811d401052b972d1e3bc1278a2d2403e00f4552ce9d1f2793f77f167d212da559c5cb9f1b02c935114ad6d898779546ee
+  languageName: node
+  linkType: hard
+
+"@octokit/openapi-webhooks-types@npm:8.5.1":
+  version: 8.5.1
+  resolution: "@octokit/openapi-webhooks-types@npm:8.5.1"
+  checksum: 56c57fc6f9209ddb95e95034ee167e42d3bd68d5bb8286864d6f751ab0f2a6859614b4b0a98a85aa131dd9aa4522245b6dc5065e820f80f37fe791fac651244f
+  languageName: node
+  linkType: hard
+
+"@octokit/request-error@npm:^6.0.1":
+  version: 6.1.5
+  resolution: "@octokit/request-error@npm:6.1.5"
+  dependencies:
+    "@octokit/types": "npm:^13.0.0"
+  checksum: 37afef6c072d987ddf50b3438bcc974741a22ee7f788172876f92b5228ed43f5c4c1556a1d73153508d6c8d3a3d2344c7fefb6cde8678c7f63c2115b8629c49b
+  languageName: node
+  linkType: hard
+
+"@octokit/types@npm:^13.0.0, @octokit/types@npm:^13.6.2":
+  version: 13.6.2
+  resolution: "@octokit/types@npm:13.6.2"
+  dependencies:
+    "@octokit/openapi-types": "npm:^22.2.0"
+  checksum: ea51afb21b667b25dad9e5daae1701da1b362a4d6ed9609f6d3f9f219e5389bf50f7e53ae029ca190750e278be3ab963cac648a95ad248f245a5fda16a4f1ed1
+  languageName: node
+  linkType: hard
+
+"@octokit/webhooks-methods@npm:^5.0.0":
+  version: 5.1.0
+  resolution: "@octokit/webhooks-methods@npm:5.1.0"
+  checksum: 8f59f960c44ed9bdecd0f4a71ec6a50d490e9b46aa588887df8a69b15722262ce4cc02f0c1915cc145b452fd5b1e38e4b4ab0fb1d92e151308da550a7dfc1f6a
+  languageName: node
+  linkType: hard
+
+"@octokit/webhooks@npm:^13.4.1":
+  version: 13.4.1
+  resolution: "@octokit/webhooks@npm:13.4.1"
+  dependencies:
+    "@octokit/openapi-webhooks-types": "npm:8.5.1"
+    "@octokit/request-error": "npm:^6.0.1"
+    "@octokit/webhooks-methods": "npm:^5.0.0"
+  checksum: 59a917d52874bc318546d17f3ee3e94abd1658437eb69bf5af55a605a39832bcff321e075d1dae1feee57ed6df5511403a4e389e774dec82f6a5a6e69fcf6d11
+  languageName: node
+  linkType: hard
+
 "@open-draft/deferred-promise@npm:^2.2.0":
   version: 2.2.0
   resolution: "@open-draft/deferred-promise@npm:2.2.0"
@@ -10871,6 +10921,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"github-webhooks@workspace:packages/github-webhooks":
+  version: 0.0.0-use.local
+  resolution: "github-webhooks@workspace:packages/github-webhooks"
+  dependencies:
+    "@octokit/types": "npm:^13.6.2"
+    "@octokit/webhooks": "npm:^13.4.1"
+    hono: "npm:^4.6.13"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "glob-parent@npm:^5.1.2, glob-parent@npm:~5.1.2":
   version: 5.1.2
   resolution: "glob-parent@npm:5.1.2"
@@ -11492,6 +11554,13 @@ __metadata:
   version: 4.6.10
   resolution: "hono@npm:4.6.10"
   checksum: e1a56e82059197607fbdebb5ad4a4962aa44ae239753a9be067ac61824f953bf7baf6415e03adc05986136b53cfa15b6e6d2d89d463cc3d4fc2fe93862425bab
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.6.13":
+  version: 4.6.13
+  resolution: "hono@npm:4.6.13"
+  checksum: 8bf6ed856e3204d8dadc74cddc0f5a8e99e78a12df00e5b57f4d6c416ad7f808e6140688a30606c7d4b2a585b0ad085b7ed8be419f13a4b58e29dfdd54cfdac8
   languageName: node
   linkType: hard
 
