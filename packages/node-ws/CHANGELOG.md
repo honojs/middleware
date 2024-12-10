@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.5
+
+### Patch Changes
+
+- [#876](https://github.com/honojs/middleware/pull/876) [`a092ffaadb3a265a207acc558e6cd021fc3bb6d9`](https://github.com/honojs/middleware/commit/a092ffaadb3a265a207acc558e6cd021fc3bb6d9) Thanks [@HusamElbashir](https://github.com/HusamElbashir)! - Fixed case-sensitivity of the WebSocket "Upgrade" header value
+
 ## 1.0.4
 
 ### Patch Changes
