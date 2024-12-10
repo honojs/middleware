@@ -1,6 +1,6 @@
-import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse, Input } from 'hono'
+import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { z, ZodSchema, ZodError } from 'zod'
+import { ZodObject, type ZodError, type ZodSchema, type z } from 'zod'
 
 export type Hook<
   T,
@@ -46,10 +46,26 @@ export const zValidator = <
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
-    const result = await schema.safeParseAsync(value)
+    let validatorValue = value
+
+    // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
+    // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
+    if (target === 'header' && schema instanceof ZodObject) {
+      // create an object that maps lowercase schema keys to lowercase
+      const schemaKeys = Object.keys(schema.shape)
+      const caseInsensitiveKeymap = Object.fromEntries(
+        schemaKeys.map((key) => [key.toLowerCase(), key])
+      )
+
+      validatorValue = Object.fromEntries(
+        Object.entries(value).map(([key, value]) => [caseInsensitiveKeymap[key] || key, value])
+      )
+    }
+
+    const result = await schema.safeParseAsync(validatorValue)
 
     if (hook) {
-      const hookResult = await hook({ data: value, ...result, target }, c)
+      const hookResult = await hook({ data: validatorValue, ...result, target }, c)
       if (hookResult) {
         if (hookResult instanceof Response) {
           return hookResult
