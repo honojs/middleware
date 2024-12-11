@@ -2606,6 +2606,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/github-webhooks@workspace:packages/github-webhooks":
+  version: 0.0.0-use.local
+  resolution: "@hono/github-webhooks@workspace:packages/github-webhooks"
+  dependencies:
+    "@octokit/types": "npm:^13.6.2"
+    "@octokit/webhooks": "npm:^13.4.1"
+    hono: "npm:^4.6.13"
+    tsup: "npm:^8.3.5"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/graphql-server@workspace:packages/graphql-server":
   version: 0.0.0-use.local
   resolution: "@hono/graphql-server@workspace:packages/graphql-server"
@@ -10920,18 +10933,6 @@ __metadata:
   checksum: d9af476188a660a289f7f2a32d6f25e5199dc04a31ac6f5b4e0c3749cd0b42db9768571cd72659ecf5cb98ca687a14dc43da315c7b52e53c21702ff534012b28
   languageName: node
   linkType: hard
-
-"github-webhooks@workspace:packages/github-webhooks":
-  version: 0.0.0-use.local
-  resolution: "github-webhooks@workspace:packages/github-webhooks"
-  dependencies:
-    "@octokit/types": "npm:^13.6.2"
-    "@octokit/webhooks": "npm:^13.4.1"
-    hono: "npm:^4.6.13"
-  peerDependencies:
-    hono: "*"
-  languageName: unknown
-  linkType: soft
 
 "glob-parent@npm:^5.1.2, glob-parent@npm:~5.1.2":
   version: 5.1.2

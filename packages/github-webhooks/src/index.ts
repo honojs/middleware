@@ -6,7 +6,7 @@ import { createMiddleware } from 'hono/factory'
 
 type GithubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
 
-type GithubWebhooksEnv = {
+export type GithubWebhooksEnv = {
   GITHUB_WEBHOOK_SECRET: string
 }
 
@@ -20,23 +20,23 @@ declare module 'hono' {
  * Middleware to receive & validate GitHub webhook requests by verifying their signatures. It
  * exposes the `webhooks` instance in the context variable map, and allows you to listen to specific
  * events using the `webhooks.on`, `webhooks.onAny`, or `webhooks.onError` methods.
- * 
+ *
  * @see [Octokit Webhooks documentation](https://github.com/octokit/webhooks.js)
- * 
+ *
  * The webhooks instance can be accessed via `c.get('webhooks')` in the route handler.
- * 
+ *
  * @example
  * type Env = {
  *   GITHUB_WEBHOOK_SECRET: string
  * }
- * 
+ *
  * const app = new Hono<{ Bindings: Env }>()
- * 
+ *
  * app.use("/webhook", githubWebhooksMiddleware())
- * 
+ *
  * app.post("/webhook", async (c) => {
  *   const webhooks = c.get("webhooks")
- * 
+ *
  *   webhooks.on("star.created", async ({ id, name, payload }) => {
  *     console.log(`Received ${name} event with id ${id} and payload: ${payload}`)
  *   })
@@ -61,7 +61,7 @@ export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
 
     const id = c.req.header('x-github-delivery')
     const signature = c.req.header('x-hub-signature-256')
-    const name = c.req.header('x-github-event') as WebhookEventName
+    const name = c.req.header('x-github-event') as WebhookEventName | undefined
 
     if (!(id && name && signature)) {
       return c.text('Invalid webhook request', 403)

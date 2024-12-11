@@ -1,15 +1,55 @@
 {
-	"name": "github-webhooks",
-	"version": "1.0.0",
-	"packageManager": "yarn@4.0.2",
-	"dependencies": {
-		"@octokit/webhooks": "^13.4.1"
-	},
-	"devDependencies": {
-		"@octokit/types": "^13.6.2",
-		"hono": "^4.6.13"
-	},
-	"peerDependencies": {
-		"hono": "*"
-	}
+  "name": "@hono/github-webhooks",
+  "version": "1.0.0",
+  "packageManager": "yarn@4.0.2",
+  "description": "GitHub Webhooks Hono middleware",
+  "author": "oscarvz <oscar@fiberplane.com> (http://github.com/oscarvz)",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@octokit/webhooks": "^13.4.1"
+  },
+  "devDependencies": {
+    "@octokit/types": "^13.6.2",
+    "hono": "^4.6.13",
+    "tsup": "^8.3.5"
+  },
+  "peerDependencies": {
+    "hono": "*"
+  }
 }
