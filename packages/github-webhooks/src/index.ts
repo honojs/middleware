@@ -1,8 +1,8 @@
 import { Webhooks } from '@octokit/webhooks'
 import type { Options, WebhookEventName } from '@octokit/webhooks/dist-types/types'
+import type { MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 import { createMiddleware } from 'hono/factory'
-import type { MiddlewareHandler } from 'hono/types'
 
 type GithubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
 
@@ -10,9 +10,37 @@ type GithubWebhooksEnv = {
   GITHUB_WEBHOOK_SECRET: string
 }
 
+declare module 'hono' {
+  interface ContextVariableMap {
+    webhooks: InstanceType<typeof Webhooks>
+  }
+}
+
 /**
- * Middleware to verify and handle Github Webhook requests. It exposes the
- * `webhooks` object on the context.
+ * Middleware to receive & validate GitHub webhook requests by verifying their signatures. It
+ * exposes the `webhooks` instance in the context variable map, and allows you to listen to specific
+ * events using the `webhooks.on`, `webhooks.onAny`, or `webhooks.onError` methods.
+ * 
+ * @see [Octokit Webhooks documentation](https://github.com/octokit/webhooks.js)
+ * 
+ * The webhooks instance can be accessed via `c.get('webhooks')` in the route handler.
+ * 
+ * @example
+ * type Env = {
+ *   GITHUB_WEBHOOK_SECRET: string
+ * }
+ * 
+ * const app = new Hono<{ Bindings: Env }>()
+ * 
+ * app.use("/webhook", githubWebhooksMiddleware())
+ * 
+ * app.post("/webhook", async (c) => {
+ *   const webhooks = c.get("webhooks")
+ * 
+ *   webhooks.on("star.created", async ({ id, name, payload }) => {
+ *     console.log(`Received ${name} event with id ${id} and payload: ${payload}`)
+ *   })
+ * })
  */
 export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
   createMiddleware(async (c, next) => {
@@ -22,7 +50,7 @@ export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
     }
 
     if (!secret) {
-      throw new Error('Missing Github Webhook Secret key')
+      throw new Error('Missing Github Webhook secret key')
     }
 
     const webhooks = new Webhooks({ secret, ...rest })
