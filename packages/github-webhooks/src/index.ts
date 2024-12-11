@@ -4,9 +4,9 @@ import type { MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 import { createMiddleware } from 'hono/factory'
 
-type GithubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
+type GitHubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
 
-export type GithubWebhooksEnv = {
+export type GitHubWebhooksEnv = {
   GITHUB_WEBHOOK_SECRET: string
 }
 
@@ -32,7 +32,7 @@ declare module 'hono' {
  *
  * const app = new Hono<{ Bindings: Env }>()
  *
- * app.use("/webhook", githubWebhooksMiddleware())
+ * app.use("/webhook", GitHubWebhooksMiddleware())
  *
  * app.post("/webhook", async (c) => {
  *   const webhooks = c.get("webhooks")
@@ -42,15 +42,15 @@ declare module 'hono' {
  *   })
  * })
  */
-export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
+export const gitHubWebhooksMiddleware: GitHubWebhooksMiddleware = (options) =>
   createMiddleware(async (c, next) => {
-    const { GITHUB_WEBHOOK_SECRET } = env<GithubWebhooksEnv>(c)
+    const { GITHUB_WEBHOOK_SECRET } = env<GitHubWebhooksEnv>(c)
     const { secret, ...rest } = options || {
       secret: GITHUB_WEBHOOK_SECRET,
     }
 
     if (!secret) {
-      throw new Error('Missing Github Webhook secret key')
+      throw new Error('Missing GitHub Webhook secret key')
     }
 
     const webhooks = new Webhooks({ secret, ...rest })
@@ -78,6 +78,6 @@ export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
       })
       return c.text('Webhook received & verified', 201)
     } catch (error) {
-      return c.text(`Failed to verify Github Webhook request: ${error}`, 400)
+      return c.text(`Failed to verify GitHub Webhook request: ${error}`, 400)
     }
   })
