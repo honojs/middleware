@@ -1,30 +1,31 @@
 import { Webhooks } from '@octokit/webhooks'
+import type { Options, WebhookEventName } from '@octokit/webhooks/dist-types/types'
 import { env } from 'hono/adapter'
 import { createMiddleware } from 'hono/factory'
+import type { MiddlewareHandler } from 'hono/types'
 
-// Octokit isn't exporting this particular type, so we extract it from the `verifyAndReceive`
-// method
-export type WebhookEventName = Parameters<
-  InstanceType<typeof Webhooks>['verifyAndReceive']
->[number]['name']
+type GithubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
 
-let webhooks: Webhooks | undefined
-function getWebhooksInstance(secret: string) {
-  if (!webhooks) {
-    webhooks = new Webhooks({ secret })
-  }
-
-  return webhooks
+type GithubWebhooksEnv = {
+  GITHUB_WEBHOOK_SECRET: string
 }
 
 /**
  * Middleware to verify and handle Github Webhook requests. It exposes the
  * `webhooks` object on the context.
  */
-export const githubWebhooksMiddleware = () =>
+export const githubWebhooksMiddleware: GithubWebhooksMiddleware = (options) =>
   createMiddleware(async (c, next) => {
-    const { GITHUB_WEBHOOK_SECRET } = env<{ GITHUB_WEBHOOK_SECRET: string }>(c)
-    const webhooks = getWebhooksInstance(GITHUB_WEBHOOK_SECRET)
+    const { GITHUB_WEBHOOK_SECRET } = env<GithubWebhooksEnv>(c)
+    const { secret, ...rest } = options || {
+      secret: GITHUB_WEBHOOK_SECRET,
+    }
+
+    if (!secret) {
+      throw new Error('Missing Github Webhook Secret key')
+    }
+
+    const webhooks = new Webhooks({ secret, ...rest })
 
     c.set('webhooks', webhooks)
 
@@ -33,6 +34,7 @@ export const githubWebhooksMiddleware = () =>
     const id = c.req.header('x-github-delivery')
     const signature = c.req.header('x-hub-signature-256')
     const name = c.req.header('x-github-event') as WebhookEventName
+
     if (!(id && name && signature)) {
       return c.text('Invalid webhook request', 403)
     }
