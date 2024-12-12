@@ -1,7 +1,8 @@
-import { Webhooks } from '@octokit/webhooks'
-import type { Options, WebhookEventName } from '@octokit/webhooks/dist-types/types'
-import { env } from 'hono/adapter'
-import { createMiddleware } from 'hono/factory'
+import { Webhooks } from '@octokit/webhooks';
+import type { Options, WebhookEventName } from '@octokit/webhooks/dist-types/types';
+import { } from 'hono';
+import { env } from 'hono/adapter';
+import { createMiddleware } from 'hono/factory';
 
 export type GitHubWebhooksEnv = {
   GITHUB_WEBHOOK_SECRET: string
