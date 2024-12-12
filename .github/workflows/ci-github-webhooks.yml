@@ -1,0 +1,24 @@
+name: ci-github-webhooks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/github-webhooks/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/github-webhooks/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/github-webhooks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn prerelease

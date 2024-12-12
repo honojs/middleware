@@ -2,7 +2,7 @@
   "name": "@hono/github-webhooks",
   "version": "1.0.0",
   "packageManager": "yarn@4.0.2",
-  "description": "GitHub Webhooks Hono middleware",
+  "description": "Hono middleware that listens for GitHub Webhooks",
   "author": "oscarvz <oscar@fiberplane.com> (http://github.com/oscarvz)",
   "type": "module",
   "main": "dist/index.cjs",

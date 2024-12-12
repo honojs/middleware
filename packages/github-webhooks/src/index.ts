@@ -47,7 +47,7 @@ export const gitHubWebhooksMiddleware = (options?: Options) =>
     }
 
     if (!secret) {
-      throw new Error('Missing GitHub Webhook secret key')
+      return c.text('Missing GitHub Webhook secret key', 403)
     }
 
     const webhooks = new Webhooks({ secret, ...rest })
