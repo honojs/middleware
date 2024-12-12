@@ -1,10 +1,7 @@
 import { Webhooks } from '@octokit/webhooks'
 import type { Options, WebhookEventName } from '@octokit/webhooks/dist-types/types'
-import type { MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 import { createMiddleware } from 'hono/factory'
-
-type GitHubWebhooksMiddleware = (options?: Options) => MiddlewareHandler
 
 export type GitHubWebhooksEnv = {
   GITHUB_WEBHOOK_SECRET: string
@@ -42,7 +39,7 @@ declare module 'hono' {
  *   })
  * })
  */
-export const gitHubWebhooksMiddleware: GitHubWebhooksMiddleware = (options) =>
+export const gitHubWebhooksMiddleware = (options?: Options) =>
   createMiddleware(async (c, next) => {
     const { GITHUB_WEBHOOK_SECRET } = env<GitHubWebhooksEnv>(c)
     const { secret, ...rest } = options || {

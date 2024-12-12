@@ -12,6 +12,7 @@
     "dist"
   ],
   "scripts": {
+    "test": "vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "prerelease": "yarn build && yarn test",
     "release": "yarn publish"
@@ -46,8 +47,10 @@
   },
   "devDependencies": {
     "@octokit/types": "^13.6.2",
+    "@octokit/webhooks-methods": "^5.1.0",
     "hono": "^4.6.13",
-    "tsup": "^8.3.5"
+    "tsup": "^8.3.5",
+    "vitest": "^2.1.8"
   },
   "peerDependencies": {
     "hono": "*"
