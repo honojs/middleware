@@ -44,6 +44,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ark/schema@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@ark/schema@npm:0.26.0"
+  dependencies:
+    "@ark/util": "npm:0.26.0"
+  checksum: e038b73bd0d1a7556d5d7ab70382ddcc1ba35cafdddf81ea961a676d10bd2d642514c08b7a7cd9f4d99fb8e5ec3ae4e2ea8d3bbdf1d8b19d94149379f1c739f3
+  languageName: node
+  linkType: hard
+
+"@ark/util@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@ark/util@npm:0.26.0"
+  checksum: 60c54dca4556b1ccb6f4a3dc1e28beb09219ee3f01124916550c993f0508ac2142c9c967992ee16a71334e849c214234e6c3e4c2271dc104a893068a9cc33afc
+  languageName: node
+  linkType: hard
+
 "@arktype/schema@npm:0.1.4-cjs":
   version: 0.1.4-cjs
   resolution: "@arktype/schema@npm:0.1.4-cjs"
@@ -2821,6 +2837,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/standard-validator@workspace:packages/standard-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/standard-validator@workspace:packages/standard-validator"
+  dependencies:
+    "@standard-schema/spec": "npm:1.0.0-beta.4"
+    "@standard-schema/utils": "npm:0.3.0"
+    arktype: "npm:^2.0.0-rc.26"
+    hono: "npm:^4.0.10"
+    publint: "npm:^0.2.7"
+    tsup: "npm:^8.1.0"
+    typescript: "npm:^5.3.3"
+    valibot: "npm:^1.0.0-beta.9"
+    vitest: "npm:^1.4.0"
+    zod: "npm:^3.24.0"
+  peerDependencies:
+    "@standard-schema/spec": 1.0.0-beta.4
+    "@standard-schema/utils": 0.3.0
+    hono: ">=3.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/swagger-editor@workspace:packages/swagger-editor":
   version: 0.0.0-use.local
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
@@ -4707,6 +4744,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:1.0.0-beta.4":
+  version: 1.0.0-beta.4
+  resolution: "@standard-schema/spec@npm:1.0.0-beta.4"
+  checksum: f001a08d798fe2eb19e4982fc7707549be2b5d0a61c6f144ace9c85e71eee23a2774d84f83f3b2dea02cb670cbe5cd91c151c0bebbc15d0b7fbcf6b29911e334
+  languageName: node
+  linkType: hard
+
+"@standard-schema/utils@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@standard-schema/utils@npm:0.3.0"
+  checksum: 6eb74cd13e52d5fc74054df51e37d947ef53f3ab9e02c085665dcca3c38c60ece8d735cebbdf18fbb13c775fbcb9becb3f53109b0e092a63f0f7389ce0993fd0
+  languageName: node
+  linkType: hard
+
 "@szmarczak/http-timer@npm:^1.1.2":
   version: 1.1.2
   resolution: "@szmarczak/http-timer@npm:1.1.2"
@@ -6407,6 +6458,16 @@ __metadata:
     "@arktype/schema": "npm:0.1.4-cjs"
     "@arktype/util": "npm:0.0.41-cjs"
   checksum: b0e7fc182bb6d4d0d4e125744a5b8233295d2ca30715f1bafdd158d37ed8abffafe0f5ef28ff8f99f82ffb1b8d1f36fcc282035c4ef4b909a748c1d520044afc
+  languageName: node
+  linkType: hard
+
+"arktype@npm:^2.0.0-rc.26":
+  version: 2.0.0-rc.26
+  resolution: "arktype@npm:2.0.0-rc.26"
+  dependencies:
+    "@ark/schema": "npm:0.26.0"
+    "@ark/util": "npm:0.26.0"
+  checksum: 190c4a82baec546bca704b26bffa73209a756ea4a0a2ade080a6d640a807e7eb1990a69e6507112f103151a37592cca84591569c90e607fb2865bd6ea2532b9a
   languageName: node
   linkType: hard
 
@@ -20537,6 +20598,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"valibot@npm:^1.0.0-beta.9":
+  version: 1.0.0-beta.9
+  resolution: "valibot@npm:1.0.0-beta.9"
+  peerDependencies:
+    typescript: ">=5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: ecd20ec024f5f05985002b385f624d9218c839a54c23f3dbf3e193161207c049859d99069b257334756b3a07e2734e93456061600dd1101aec121828df3ab286
+  languageName: node
+  linkType: hard
+
 "valid-url@npm:^1":
   version: 1.0.9
   resolution: "valid-url@npm:1.0.9"
@@ -21853,6 +21926,13 @@ __metadata:
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.24.0":
+  version: 3.24.1
+  resolution: "zod@npm:3.24.1"
+  checksum: 0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
   languageName: node
   linkType: hard
 
