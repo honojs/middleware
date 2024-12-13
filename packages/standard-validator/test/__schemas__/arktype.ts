@@ -15,7 +15,7 @@ const idJSONSchema = type({
 })
 
 const queryNameSchema = type({
-  name: 'string|undefined',
+  'name?': 'string',
 })
 
 const queryPaginationSchema = type({

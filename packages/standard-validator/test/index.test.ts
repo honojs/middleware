@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { Equal, Expect } from 'hono/utils/types'
+import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import { sValidator } from '../src'
 import { vi } from 'vitest'
 
@@ -7,9 +7,10 @@ import * as valibotSchemas from './__schemas__/valibot'
 import * as zodSchemas from './__schemas__/zod'
 import * as arktypeSchemas from './__schemas__/arktype'
 
-import { StandardSchemaV1 } from '@standard-schema/spec'
-
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
+type MergeDiscriminatedUnion<U> = UnionToIntersection<U> extends infer O
+  ? { [K in keyof O]: O[K] }
+  : never
 
 const libs = ['valibot', 'zod', 'arktype'] as const
 const schemasByLibrary = {
@@ -41,47 +42,40 @@ describe('Standard Schema Validation', () => {
         )
 
         type Actual = ExtractSchema<typeof route>
-        type Expected = {
-          '/author': {
-            $post: {
-              input: {
-                json:
-                  | {
-                      name: string
-                      age: number
-                    }
-                  | {
-                      name: string
-                      age: number
-                    }
-                  | {
-                      name: string
-                      age: number
-                    }
-              } & {
-                query?:
-                  | {
-                      name?: string | undefined
-                    }
-                  | {
-                      name?: string | undefined
-                    }
-                  | {
-                      name?: string | string[] | undefined // arktype returns string[]
-                    }
-                  | undefined
+        type verifyOutput = Expect<
+          Equal<
+            {
+              success: boolean
+              message: string
+              queryName: string | undefined
+            },
+            MergeDiscriminatedUnion<Actual['/author']['$post']['output']>
+          >
+        >
+        type verifyJSONInput = Expect<
+          Equal<
+            {
+              name: string
+              age: number
+            },
+            MergeDiscriminatedUnion<Actual['/author']['$post']['input']['json']>
+          >
+        >
+        type verifyQueryInput = Expect<
+          Equal<
+            | {
+                name?: string | undefined
               }
-              output: {
-                success: boolean
-                message: string
-                queryName: string | undefined
+            | {
+                name?: string | undefined
               }
-            }
-          }
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type verify = Expect<Equal<Expected, Actual>>
+            | {
+                name?: string | undefined
+              }
+            | undefined,
+            Actual['/author']['$post']['input']['query']
+          >
+        >
 
         it('Should return 200 response', async () => {
           const req = new Request('http://localhost/author?name=Metallo', {
@@ -155,8 +149,20 @@ describe('Standard Schema Validation', () => {
           }
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        type verify = Expect<Equal<Expected, Actual>>
+        type verifyInput = Expect<
+          Equal<
+            { page: string | string[] },
+            MergeDiscriminatedUnion<Actual['/page']['$get']['input']['query']>
+          >
+        >
+        type verifyOutput = Expect<
+          Equal<
+            {
+              page: number
+            },
+            MergeDiscriminatedUnion<Actual['/page']['$get']['output']>
+          >
+        >
 
         it('Should return 200 response', async () => {
           const res = await app.request('/page?page=123')
@@ -334,35 +340,15 @@ describe('Standard Schema Validation', () => {
           })
 
           type Actual = ExtractSchema<typeof route>
-          type Expected = {
-            '/': {
-              $get: {
-                input: {
-                  query:
-                    | {
-                        order: 'asc' | 'desc'
-                      }
-                    | {
-                        order: 'asc' | 'desc'
-                      }
-                    | {
-                        order: 'asc' | 'desc'
-                      }
-                }
-                output:
-                  | {
-                      order: 'asc' | 'desc'
-                    }
-                  | {
-                      order: 'asc' | 'desc'
-                    }
-                  | {
-                      order: 'asc' | 'desc'
-                    }
-              }
-            }
-          }
-          type verify = Expect<Equal<Expected, Actual>>
+          type verifyInput = Expect<
+            Equal<
+              { order: 'asc' | 'desc' },
+              MergeDiscriminatedUnion<Actual['/']['$get']['input']['query']>
+            >
+          >
+          type verifyOutput = Expect<
+            Equal<{ order: 'asc' | 'desc' }, MergeDiscriminatedUnion<Actual['/']['$get']['output']>>
+          >
         })
       })
 
@@ -377,17 +363,28 @@ describe('Standard Schema Validation', () => {
           })
 
           type Actual = ExtractSchema<typeof route>
-          type Expected = {
-            '/': {
-              $get: {
-                input: {
-                  header: StandardSchemaV1.InferInput<typeof schema>
-                }
-                output: StandardSchemaV1.InferOutput<typeof schema>
-              }
-            }
-          }
-          type verify = Expect<Equal<Expected, Actual>>
+          type verifyInput = Expect<
+            Equal<
+              {
+                'Content-Type': string
+                ApiKey: string
+                onlylowercase: string
+                ONLYUPPERCASE: string
+              },
+              MergeDiscriminatedUnion<Actual['/']['$get']['input']['header']>
+            >
+          >
+          type verifyOutput = Expect<
+            Equal<
+              {
+                'Content-Type': string
+                ApiKey: string
+                onlylowercase: string
+                ONLYUPPERCASE: string
+              },
+              MergeDiscriminatedUnion<Actual['/']['$get']['output']>
+            >
+          >
         })
       })
     })
