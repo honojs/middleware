@@ -1,4 +1,4 @@
-import { object, string, number, optional, enum_, pipe, unknown, transform } from 'valibot'
+import { object, string, number, optional, enum_, pipe, unknown, transform, union, const, picklist } from 'valibot'
 
 const personJSONSchema = object({
   name: string(),
@@ -24,12 +24,8 @@ const queryPaginationSchema = object({
   page: pipe(unknown(), transform(Number)),
 })
 
-enum Sort {
-  ASC = 'asc',
-  DESC = 'desc',
-}
 const querySortSchema = object({
-  order: enum_(Sort),
+  order: picklist(['asc', 'desc']),
 })
 
 const headerSchema = object({
