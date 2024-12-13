@@ -1,18 +1,10 @@
 {
-  "name": "@hono/zod-validator",
-  "version": "0.4.2",
-  "description": "Validator middleware using Zod",
+  "name": "@hono/cloudflare-access",
+  "version": "0.1.0",
+  "description": "A third-party Cloudflare Access auth middleware for Hono",
   "type": "module",
-  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
   "files": [
     "dist"
   ],
@@ -20,8 +12,19 @@
     "test": "vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "license": "MIT",
   "publishConfig": {
@@ -34,15 +37,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=3.9.0",
-    "zod": "^3.19.1"
+    "hono": "*"
   },
   "devDependencies": {
-    "hono": "^4.0.10",
-    "publint": "^0.2.7",
+    "hono": "^4.4.12",
     "tsup": "^8.1.0",
-    "typescript": "^5.3.3",
-    "vitest": "^1.4.0",
-    "zod": "^3.22.4"
+    "vitest": "^1.6.0"
   }
 }

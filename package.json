@@ -40,6 +40,7 @@
     "build:casbin": "yarn workspace @hono/casbin build",
     "build:ajv-validator": "yarn workspace @hono/ajv-validator build",
     "build:tsyringe": "yarn workspace @hono/tsyringe build",
+    "build:cloudflare-access": "yarn workspace @hono/cloudflare-access build",
     "build:github-webhooks": "yarn workspace @hono/github-webhooks build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",

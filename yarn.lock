@@ -2505,6 +2505,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/cloudflare-access@workspace:packages/cloudflare-access":
+  version: 0.0.0-use.local
+  resolution: "@hono/cloudflare-access@workspace:packages/cloudflare-access"
+  dependencies:
+    hono: "npm:^4.4.12"
+    tsup: "npm:^8.1.0"
+    vitest: "npm:^1.6.0"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/conform-validator@workspace:packages/conform-validator":
   version: 0.0.0-use.local
   resolution: "@hono/conform-validator@workspace:packages/conform-validator"

@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.4.2
+
+### Patch Changes
+
+- [#860](https://github.com/honojs/middleware/pull/860) [`803f011e41ecb3da503ddb2b3286c6d7606d9c4b`](https://github.com/honojs/middleware/commit/803f011e41ecb3da503ddb2b3286c6d7606d9c4b) Thanks [@askorupskyy](https://github.com/askorupskyy)! - Case-insensitive Zod schemas for headers
+
 ## 0.4.1
 
 ### Patch Changes
