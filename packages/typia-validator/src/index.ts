@@ -29,11 +29,11 @@ export const typiaValidator = <
   validate: T,
   hook?: Hook<O, E, P>
 ): MiddlewareHandler<E, P, V> =>
-  validator(target, (value, c) => {
+  validator(target, async (value, c) => {
     const result = validate(value)
 
     if (hook) {
-      const hookResult = hook({ ...result, data: value }, c)
+      const hookResult = await hook({ ...result, data: value }, c)
       if (hookResult) {
         if (hookResult instanceof Response || hookResult instanceof Promise) {
           return hookResult
