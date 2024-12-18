@@ -28,7 +28,7 @@ describe('ReDoc Rendering', () => {
   `)
   })
 
-    it('renders correctly with custom UI', () => {
+  it('renders correctly with custom UI', () => {
     expect(
       ReDoc({
         url,
@@ -58,6 +58,21 @@ describe('ReDoc Rendering', () => {
         </div>
     `.trim()
     )
+  })
+
+  it('should include RedocRawOptions in Redoc.init', () => {
+    const options = {
+      url: url,
+      version: '2.0.0',
+      theme: { colors: { primary: { main: '#FF0000' } } },
+      scrollYOffset: 100,
+    }
+
+    const result = ReDoc(options)
+
+    expect(result).toContain('Redoc.init')
+    expect(result).toContain('"scrollYOffset": "100"')
+    expect(result).toContain('"primary":{"main":"#FF0000"}')
   })
 })
 

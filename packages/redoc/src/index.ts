@@ -1,5 +1,6 @@
 import type { Env, MiddlewareHandler } from 'hono'
 import type { RedocRawOptions } from 'redoc'
+import { renderRedocOptions } from './redoc/render'
 import type { AssetURLs } from './redoc/resource'
 import { remoteAssets } from './redoc/resource'
 
@@ -27,23 +28,27 @@ type OriginalRedocOptions = {
   title?: string
 }
 
-type RedocOptions = OriginalRedocOptions & RedocRawOptions & {
-  url: string
-}
+type RedocOptions = OriginalRedocOptions &
+  RedocRawOptions & {
+    url: string
+  }
 
 const ReDoc = (options: RedocOptions): string => {
-  const asset = remoteAssets({ version: options.version })
+  const asset = remoteAssets({ version: options?.version })
+  delete options.version
 
   if (options.manuallyReDocHtml) {
     return options.manuallyReDocHtml(asset)
   }
+
+  const optionsStrings = renderRedocOptions(options)
 
   return `
     <div>
       <script src="${asset.js[0]}" crossorigin="anonymous"></script>
       <div id="redoc-container"></div>
       <script>
-        Redoc.init('${options.url}', {}, document.getElementById('redoc-container'));
+        Redoc.init('${options.url}', {${optionsStrings}}, document.getElementById('redoc-container'));
       </script>
     </div>
   `
