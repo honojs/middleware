@@ -4,7 +4,7 @@ const RENDER_TYPE_MAP: Record<keyof RedocRawOptions, 'STRING' | 'JSON_STRING' | 
   theme: 'JSON_STRING',
   scrollYOffset: 'RAW',
   hideHostname: 'RAW',
-  expandResponses: 'JSON_STRING',
+  expandResponses: 'RAW',
   requiredPropsFirst: 'RAW',
   sortPropsAlphabetically: 'RAW',
   sortEnumValuesAlphabetically: 'RAW',
@@ -49,6 +49,7 @@ const RENDER_TYPE_MAP: Record<keyof RedocRawOptions, 'STRING' | 'JSON_STRING' | 
 }
 
 export const renderRedocOptions = (options: RedocRawOptions) => {
+  console.log(JSON.stringify(options))
   const optionsStrings = Object.entries(options)
     .map(([key, value]) => {
       const typedKey = key as keyof RedocRawOptions

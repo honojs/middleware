@@ -1,6 +1,6 @@
 import type { Env, MiddlewareHandler } from 'hono'
 import type { RedocRawOptions } from 'redoc'
-import { renderRedocOptions } from './redoc/render'
+import { renderRedocOptions } from './redoc/renderer'
 import type { AssetURLs } from './redoc/resource'
 import { remoteAssets } from './redoc/resource'
 
