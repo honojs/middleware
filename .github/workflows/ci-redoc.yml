@@ -1,4 +1,4 @@
-name: ci-redoc-ui
+name: ci-redoc
 on:
   push:
     branches: [main]
