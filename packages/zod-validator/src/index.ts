@@ -83,3 +83,15 @@ export const zValidator = <
 
     return result.data as z.infer<T>
   })
+
+
+export const zErrValidator = <
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets,
+  E extends Env,
+  P extends string
+>(
+  target: Target,
+  schema: T,
+  hook: Hook<z.infer<T>, E, P, Target> = (result, _c) => { if(!result.success) throw result.error }
+) => zValidator(target, schema, hook)
