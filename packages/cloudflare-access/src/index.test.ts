@@ -116,20 +116,29 @@ describe('Cloudflare Access middleware', async () => {
   const keyPair2 = await generateJWTKeyPair();
   const keyPair3 = await generateJWTKeyPair();
 
-  vi.stubGlobal('fetch', async () => {
-    return Response.json({
-      keys: [
-        publicKeyToJWK(keyPair1.publicKey),
-        publicKeyToJWK(keyPair2.publicKey),
-      ],
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', async () => {
+      return Response.json({
+        keys: [
+          publicKeyToJWK(keyPair1.publicKey),
+          publicKeyToJWK(keyPair2.publicKey),
+        ],
+      })
     })
-  })
+  });
 
   const app = new Hono()
 
   app.use('/*', cloudflareAccess('my-cool-team-name'))
   app.get('/hello-behind-access', (c) => c.text('foo'))
   app.get('/access-payload', (c) => c.json(c.get('accessPayload')))
+
+  app.onError((err, c) => {
+    return c.json({
+      err: err.toString(),
+    }, 500)
+  })
 
   it('Should be throw Missing bearer token when nothing is sent', async () => {
     const res = await app.request('http://localhost/hello-behind-access')
@@ -247,5 +256,35 @@ describe('Cloudflare Access middleware', async () => {
       "iat":expect.any(Number),
       "exp":expect.any(Number)
     })
+  })
+
+  it('Should throw an error, if the access organization does not exist', async () => {
+    vi.stubGlobal('fetch', async () => {
+      return Response.json({success: false}, {status: 404})
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': 'asdads'
+      }
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({"err":"Error: Authentication error: The Access Organization 'my-cool-team-name' does not exist"})
+  })
+
+  it('Should throw an error, if the access certs url is unavailable', async () => {
+    vi.stubGlobal('fetch', async () => {
+      return Response.json({success: false}, {status: 500})
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': 'asdads'
+      }
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({"err":"Error: Authentication error: Received unexpected HTTP code 500 from Cloudflare Access"})
   })
 })
