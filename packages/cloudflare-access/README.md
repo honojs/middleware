@@ -38,13 +38,12 @@ const app = new Hono<{ Variables: myVariables & CloudflareAccessVariables }>()
 app.use('*', cloudflareAccess('my-access-team-name'))
 app.get('/', (c) => {
   const payload = c.get('accessPayload')
-  
+
   return c.text(`You just authenticated with the email ${payload.email}`)
 })
 
 export default app
 ```
-
 
 ## Errors throw by the middleware
 
@@ -55,6 +54,8 @@ export default app
 | Authentication error: Token is expired                                                                 | 401       |
 | Authentication error: Expected team name {your-team-name}, but received ${different-team-signed-token} | 401       |
 | Authentication error: Invalid Token                                                                    | 401       |
+| Authentication error: The Access Organization 'my-team-name' does not exist                            | 500       |
+| Authentication error: Received unexpected HTTP code 500 from Cloudflare Access                         | 500       |
 
 ## Author
 
