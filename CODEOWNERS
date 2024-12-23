@@ -1,0 +1,34 @@
+/packages/ajv-validator/ @ikhvost
+/packages/arktype-validator/ @MonsterDeveloper
+/packages/auth-js/ @divyam234
+/packages/bun-transpiler/ @floriankapaun
+/packages/casbin/ @sugar-cat7
+/packages/class-validator/ @pr0m3th3usex
+/packages/clerk-auth/ @octoper
+/packages/cloudflare-access/ @g4brym
+/packages/conform-validator/ @uttk
+/packages/effect-validator/ @gunta
+/packages/esbuild-transpiler/ @yusukebe @acrodrig
+/packages/eslint-config/ @yusukebe
+/packages/event-emitter/ @DavidHavl
+/packages/firebase-auth/ @Code-Hex
+/packages/graphql-server/ @metrue
+/packages/hello/ @yusukebe
+/packages/medley-router/ @yusukebe
+/packages/node-ws/ @nakasyou
+/packages/oauth-providers/ @monoald
+/packages/oidc-auth/ @hnw
+/packages/prometheus/ @dios-david
+/packages/qwik-city/ @yusukebe
+/packages/react-compat/ @usualoma
+/packages/react-renderer/ @yusukebe
+/packages/sentry/ @sam-lippert @yusukebe
+/packages/swagger-editor/ @OgabekYuldoshev
+/packages/swagger-ui/ @naporin0624 @sor4chi
+/packages/trpc-server/ @yusukebe
+/packages/tsyringe/ @elct9620
+/packages/typebox-validator/ @curtislarson
+/packages/typia-validator/ @dworznik
+/packages/valibot-validator/ @ZerNico
+/packages/zod-openapi/ @yusukebe
+/packages/zod-validator/ @yusukebe
