@@ -55,7 +55,7 @@ export const zValidator = <
   schema: T,
 ) => zv(target, schema, (result, c) => {
   if (!result.success) {
-    throw result.error
+    throw new HTTPException(400, { cause: result.error });
   }
 })
 
