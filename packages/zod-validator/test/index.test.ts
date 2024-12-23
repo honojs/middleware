@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import { z } from 'zod'
-import { zValidator } from '../src'
+import {ZodError, z } from 'zod'
+import { zValidator, zErrValidator } from '../src'
 import { vi } from 'vitest'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -199,6 +199,63 @@ describe('With Hook', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
     expect(await res.text()).toBe('123 is invalid!')
+  })
+})
+
+describe('With default error Hook', () => {
+  const app = new Hono()
+
+  const schema = z.object({
+    id: z.number(),
+    title: z.string(),
+  })
+  app.onError((err, c) => {
+    if(err instanceof ZodError) {
+      return c.text('this is a zod validate error', 400)
+    }
+    return c.text('unknown error', 500)
+  })
+  app.post(
+    '/post',
+    zErrValidator('json', schema),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.text(`${data.id} is valid!`)
+    }
+  )
+
+  it('Should return 200 response', async () => {
+    const req = new Request('http://localhost/post', {
+      body: JSON.stringify({
+        id: 123,
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('123 is valid!')
+  })
+
+  it('Should return 400 response and zod error', async () => {
+    const req = new Request('http://localhost/post', {
+      body: JSON.stringify({
+        id: '123',
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    expect(await res.text()).toBe('this is a zod validate error')
   })
 })
 
