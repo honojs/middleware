@@ -5,14 +5,14 @@ import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
 import type { AuthConfig } from '../src'
-import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
+import { authHandler, verifyAuth, initAuthConfig } from '../src'
 
 // @ts-expect-error - global crypto
 //needed for node 18 and below but should work in node 20 and above
 global.crypto = webcrypto
 
 describe('Config', () => {
-  it('Should return 500 if AUTH_SECRET is missing', async () => {
+  test('Should return 500 if AUTH_SECRET is missing', async () => {
     globalThis.process.env = { AUTH_SECRET: '' }
     const app = new Hono()
 
@@ -20,6 +20,7 @@ describe('Config', () => {
       '/*',
       initAuthConfig(() => {
         return {
+          basePath: "/api/auth",
           providers: [],
         }
       })
@@ -28,7 +29,7 @@ describe('Config', () => {
     const req = new Request('http://localhost/api/auth/signin')
     const res = await app.request(req)
     expect(res.status).toBe(500)
-    expect(await res.text()).toBe('Missing AUTH_SECRET')
+    expect(await res.text()).include("There is a problem with the server configuration.")
   })
 
   it('Should return 200 auth initial config is correct', async () => {
@@ -40,6 +41,25 @@ describe('Config', () => {
       initAuthConfig(() => {
         return {
           basePath: '/api/auth',
+          providers: [],
+        }
+      })
+    )
+
+    app.use('/api/auth/*', authHandler())
+    const req = new Request('http://localhost/api/auth/signin')
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+  })
+
+  it('Should return 200 auth initial config is correct with AUTH_URL', async () => {
+    globalThis.process.env = { AUTH_SECRET: 'secret',AUTH_URL:'http://example.com/api/auth' }
+    const app = new Hono()
+
+    app.use(
+      '/*',
+      initAuthConfig(() => {
+        return {
           providers: [],
         }
       })
@@ -79,13 +99,6 @@ describe('Config', () => {
   })
 })
 
-describe('reqWithEnvUrl()', async () => {
-  const req = new Request('http://request-base/request-path')
-  const newReq = await reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
-  it('Should rewrite the base path', () => {
-    expect(newReq.url.toString()).toBe('https://auth-url-base/request-path')
-  })
-})
 
 describe('Credentials Provider', () => {
   const mockAdapter: Adapter = {
@@ -221,14 +234,4 @@ describe('Credentials Provider', () => {
     expect(obj.data.name).toBe(data.name)
   })
 
-  it('Should respect x-forwarded-proto and x-forwarded-host', async () => {
-    const headers = new Headers()
-    headers.append('x-forwarded-proto', 'https')
-    headers.append('x-forwarded-host', 'example.com')
-    const res = await app.request('http://localhost/api/auth/signin', {
-      headers,
-    })
-    const html = await res.text()
-    expect(html).toContain('action="https://example.com/api/auth/callback/credentials"')
-  })
 })

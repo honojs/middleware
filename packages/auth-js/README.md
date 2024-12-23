@@ -16,7 +16,6 @@ Before starting using the middleware you must set the following environment vari
 
 ```plain
 AUTH_SECRET=#required
-AUTH_URL=https://example.com/api/auth
 ```
 
 ## How to Use
@@ -38,6 +37,8 @@ app.use(
         clientSecret: c.env.GITHUB_SECRET,
       }),
     ],
+    // This is required and should match the path of the authHandler route
+    basePath: '/api/auth',
   }))
 )
 
@@ -117,3 +118,11 @@ For more details on how to Popup Oauth Login see [example](https://github.com/di
 ## Author
 
 Divyam <https://github.com/divyam234>
+
+### Contributors
+
+Catnaut <https://github.com/catnaut>
+
+## Breaking Changes
+
+Due to security concerns, support for `x-forward-*` has been removed starting from version 1.0.15. This change is marked as a breaking change. For more details, refer to issue [#817](https://github.com/honojs/middleware/issues/817).
