@@ -1,5 +1,6 @@
 import { createMiddleware } from 'hono/factory'
 import { Context } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 
 export type CloudflareAccessPayload = {
   aud: string[],
@@ -88,6 +89,14 @@ async function getPublicKeys(accessTeamName: string) {
       cacheTtlByStatus: { '200-299': 30, '300-599': 0 },
     },
   })
+
+  if (!result.ok) {
+    if (result.status === 404) {
+      throw new HTTPException(500, { message: `Authentication error: The Access Organization '${accessTeamName}' does not exist` })
+    }
+
+    throw new HTTPException(500, { message: `Authentication error: Received unexpected HTTP code ${result.status} from Cloudflare Access` })
+  }
 
   const data: any = await result.json()
 
