@@ -1,6 +1,6 @@
 {
   "name": "@hono/cloudflare-access",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A third-party Cloudflare Access auth middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
