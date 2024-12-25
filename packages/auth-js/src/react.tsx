@@ -1,28 +1,24 @@
+import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/providers'
+import type { LoggerInstance, Session } from '@auth/core/types'
 import * as React from 'react'
-import {
-  type AuthClientConfig,
-  ClientSessionError,
-  fetchData,
-  now,
-  parseUrl,
-  useOnline,
-  type SessionContextValue,
-  type SessionProviderProps,
-  type GetSessionParams,
-  type UseSessionOptions,
-  type LiteralUnion,
-  type SignInOptions,
-  type SignInAuthorizationParams,
-  type SignInResponse,
-  type ClientSafeProvider,
-  type SignOutParams,
-  type SignOutResponse,
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { ClientSessionError, fetchData, now, parseUrl, useOnline } from './client'
+import type {
   WindowProps,
   AuthState,
+  AuthClientConfig,
+  SessionContextValue,
+  SessionProviderProps,
+  GetSessionParams,
+  UseSessionOptions,
+  LiteralUnion,
+  SignInOptions,
+  SignInAuthorizationParams,
+  SignInResponse,
+  ClientSafeProvider,
+  SignOutParams,
+  SignOutResponse,
 } from './client'
-import type { LoggerInstance, Session } from '@auth/core/types'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/providers'
 
 const logger: LoggerInstance = {
   debug: console.debug,
@@ -431,7 +427,9 @@ export const useOauthPopupLogin = (
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent<AuthState>) => {
-      if (event.origin !== window.location.origin) return
+      if (event.origin !== window.location.origin) {
+        return
+      }
       if (event.data.status) {
         setState(event.data)
         if (event.data.status === 'success') {

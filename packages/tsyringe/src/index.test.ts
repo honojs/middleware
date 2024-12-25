@@ -1,6 +1,6 @@
 import 'reflect-metadata'
-import { injectable, inject } from 'tsyringe'
 import { Hono } from 'hono'
+import { injectable, inject } from 'tsyringe'
 import { tsyringe } from '../src'
 
 class Config {

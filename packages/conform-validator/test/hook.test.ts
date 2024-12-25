@@ -1,9 +1,9 @@
-import * as z from 'zod'
+import { parseWithZod } from '@conform-to/zod'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import { parseWithZod } from '@conform-to/zod'
-import { conformValidator } from '../src'
 import { vi } from 'vitest'
+import * as z from 'zod'
+import { conformValidator } from '../src'
 
 describe('Validate the hook option processing', () => {
   const app = new Hono()

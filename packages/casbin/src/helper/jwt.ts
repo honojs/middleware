@@ -1,6 +1,6 @@
-import { decode } from 'hono/jwt'
 import type { Enforcer } from 'casbin'
 import type { Context } from 'hono'
+import { decode } from 'hono/jwt'
 import type { JWTPayload } from 'hono/utils/jwt/types'
 
 export const jwtAuthorizer = async (
@@ -14,10 +14,14 @@ export const jwtAuthorizer = async (
 
   if (!payload) {
     const credentials = c.req.header('Authorization')
-    if (!credentials) return false
+    if (!credentials) {
+      return false
+    }
 
     const parts = credentials.split(/\s+/)
-    if (parts.length !== 2 || parts[0] !== 'Bearer') return false
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+      return false
+    }
 
     const token = parts[1]
 

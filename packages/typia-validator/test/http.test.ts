@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import typia, { tags } from 'typia'
+import type { tags } from 'typia'
+import typia from 'typia'
 import { typiaValidator } from '../src/http'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

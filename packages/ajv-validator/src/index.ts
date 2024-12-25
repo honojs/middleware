@@ -1,11 +1,12 @@
-import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono';
-import { validator } from 'hono/validator';
-import { Ajv, type JSONSchemaType, type ErrorObject } from 'ajv';
+import { Ajv } from 'ajv'
+import type { JSONSchemaType, ErrorObject } from 'ajv'
+import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono'
+import { validator } from 'hono/validator'
 
 type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; errors: ErrorObject[] },
   c: Context<E, P>
-) => Response | Promise<Response> | void;
+) => Response | Promise<Response> | void
 
 /**
  * Hono middleware that validates incoming data via an Ajv JSON schema.
@@ -75,32 +76,32 @@ export function ajvValidator<
   E,
   P,
   {
-    in: { [K in Target]: T };
-    out: { [K in Target]: T };
+    in: { [K in Target]: T }
+    out: { [K in Target]: T }
   }
 > {
-  const ajv = new Ajv();
-  const validate = ajv.compile(schema);
+  const ajv = new Ajv()
+  const validate = ajv.compile(schema)
 
   return validator(target, (data, c) => {
-    const valid = validate(data);
+    const valid = validate(data)
     if (valid) {
       if (hook) {
-        const hookResult = hook({ success: true, data: data as T }, c);
+        const hookResult = hook({ success: true, data: data as T }, c)
         if (hookResult instanceof Response || hookResult instanceof Promise) {
-          return hookResult;
+          return hookResult
         }
       }
-      return data as T;
+      return data as T
     }
 
-    const errors = validate.errors || [];
+    const errors = validate.errors || []
     if (hook) {
-      const hookResult = hook({ success: false, errors }, c);
+      const hookResult = hook({ success: false, errors }, c)
       if (hookResult instanceof Response || hookResult instanceof Promise) {
-        return hookResult;
+        return hookResult
       }
     }
-    return c.json({ success: false, errors }, 400);
-  });
+    return c.json({ success: false, errors }, 400)
+  })
 }

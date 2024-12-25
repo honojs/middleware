@@ -1,6 +1,7 @@
-import { container, DependencyContainer, InjectionToken } from 'tsyringe'
 import type { Context, MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import type { DependencyContainer, InjectionToken } from 'tsyringe'
+import { container } from 'tsyringe'
 
 declare module 'hono' {
   interface ContextVariableMap {

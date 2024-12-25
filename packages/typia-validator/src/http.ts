@@ -129,7 +129,7 @@ export const typiaValidator: TypiaValidator = (
   validate: (input: any) => IValidation<any>,
   hook?: Hook<any, any, any>
 ): MiddlewareHandler => {
-  if (target === 'query' || target === 'header')
+  if (target === 'query' || target === 'header') {
     return async (c, next) => {
       let value: any
       if (target === 'query') {
@@ -140,15 +140,20 @@ export const typiaValidator: TypiaValidator = (
         } satisfies IReadableURLSearchParams
       } else {
         value = Object.create(null)
-        for (const [key, headerValue] of c.req.raw.headers) value[key.toLowerCase()] = headerValue
-        if (c.req.raw.headers.has('Set-Cookie'))
+        for (const [key, headerValue] of c.req.raw.headers) {
+          value[key.toLowerCase()] = headerValue
+        }
+        if (c.req.raw.headers.has('Set-Cookie')) {
           value['Set-Cookie'] = c.req.raw.headers.getSetCookie()
+        }
       }
       const result = validate(value)
 
       if (hook) {
         const res = await hook(result as never, c)
-        if (res instanceof Response) return res
+        if (res instanceof Response) {
+          return res
+        }
       }
       if (!result.success) {
         return c.json({ success: false, error: result.errors }, 400)
@@ -157,6 +162,7 @@ export const typiaValidator: TypiaValidator = (
 
       await next()
     }
+  }
 
   return validator(target, async (value, c) => {
     const result = validate(value)

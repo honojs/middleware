@@ -1,8 +1,8 @@
 import { Type as T } from '@sinclair/typebox'
+import type { ValueError } from '@sinclair/typebox/value'
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import { tbValidator } from '../src'
-import { ValueError } from '@sinclair/typebox/value'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -91,35 +91,37 @@ describe('With Hook', () => {
     title: T.String(),
   })
 
-  app.post(
-    '/post',
-    tbValidator('json', schema, (result, c) => {
-      if (!result.success) {
-        return c.text('Invalid!', 400)
+  app
+    .post(
+      '/post',
+      tbValidator('json', schema, (result, c) => {
+        if (!result.success) {
+          return c.text('Invalid!', 400)
+        }
+        const data = result.data
+        return c.text(`${data.id} is valid!`)
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true,
+          message: `${data.id} is ${data.title}`,
+        })
       }
-      const data = result.data
-      return c.text(`${data.id} is valid!`)
-    }),
-    (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true,
-        message: `${data.id} is ${data.title}`,
-      })
-    },
-  ).post(
-    '/errorTest',
-    tbValidator('json', schema, (result, c) => {
-      return c.json(result, 400)
-    }),
-    (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true,
-        message: `${data.id} is ${data.title}`,
-      })
-    },
-  )
+    )
+    .post(
+      '/errorTest',
+      tbValidator('json', schema, (result, c) => {
+        return c.json(result, 400)
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true,
+          message: `${data.id} is ${data.title}`,
+        })
+      }
+    )
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/post', {
@@ -171,20 +173,22 @@ describe('With Hook', () => {
     const { errors, success } = (await res.json()) as { success: boolean; errors: any[] }
     expect(success).toBe(false)
     expect(Array.isArray(errors)).toBe(true)
-    expect(errors.map((e: ValueError) => ({
-      'type': e?.schema?.type,
-      path: e?.path,
-      message: e?.message,
-    }))).toEqual([
+    expect(
+      errors.map((e: ValueError) => ({
+        type: e?.schema?.type,
+        path: e?.path,
+        message: e?.message,
+      }))
+    ).toEqual([
       {
-        'type': 'string',
-        'path': '/title',
-        'message': 'Required property',
+        type: 'string',
+        path: '/title',
+        message: 'Required property',
       },
       {
-        'type': 'string',
-        'path': '/title',
-        'message': 'Expected string',
+        type: 'string',
+        path: '/title',
+        message: 'Expected string',
       },
     ])
   })
@@ -207,25 +211,19 @@ describe('Remove non schema items', () => {
     }),
   })
 
-  app.post(
-    '/stripValuesNested',
-    tbValidator('json', nestedSchema, undefined, true),
-    (c) => {
+  app
+    .post('/stripValuesNested', tbValidator('json', nestedSchema, undefined, true), (c) => {
       return c.json({
         success: true,
         message: c.req.valid('json'),
       })
-    },
-  ).post(
-    '/stripValuesArray',
-    tbValidator('json', T.Array(schema), undefined, true),
-    (c) => {
+    })
+    .post('/stripValuesArray', tbValidator('json', T.Array(schema), undefined, true), (c) => {
       return c.json({
         success: true,
         message: c.req.valid('json'),
       })
-    },
-  )
+    })
 
   it('Should remove all the values in the nested object and return a 200 response', async () => {
     const req = new Request('http://localhost/stripValuesNested', {
@@ -274,20 +272,21 @@ describe('Remove non schema items', () => {
 
     const { message, success } = (await res.json()) as { success: boolean; message: any }
     expect(success).toBe(true)
-    expect(message).toEqual(
-      {
-        'id': 123,
-        'itemArray': [{ 'id': 123, 'title': 'Hello' }, {
-          'id': 123,
-          'title': 'Hello',
-        }],
-        'item': { 'id': 123, 'title': 'Hello' },
-        'itemObject': {
-          'item1': { 'id': 123, 'title': 'Hello' },
-          'item2': { 'id': 123, 'title': 'Hello' },
+    expect(message).toEqual({
+      id: 123,
+      itemArray: [
+        { id: 123, title: 'Hello' },
+        {
+          id: 123,
+          title: 'Hello',
         },
+      ],
+      item: { id: 123, title: 'Hello' },
+      itemObject: {
+        item1: { id: 123, title: 'Hello' },
+        item2: { id: 123, title: 'Hello' },
       },
-    )
+    })
   })
 
   it('Should remove all the values in the array and return a 200 response', async () => {
@@ -303,7 +302,8 @@ describe('Remove non schema items', () => {
           title: 'Hello 2',
           nonExistentKey: 'error',
         },
-      ]), method: 'POST',
+      ]),
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -313,11 +313,12 @@ describe('Remove non schema items', () => {
     const { message, success } = (await res.json()) as { success: boolean; message: Array<any> }
     expect(res.status).toBe(200)
     expect(success).toBe(true)
-    expect(message).toEqual([{ 'id': 123, 'title': 'Hello' }, {
-        'id': 123,
-        'title': 'Hello 2',
-      }],
-    )
+    expect(message).toEqual([
+      { id: 123, title: 'Hello' },
+      {
+        id: 123,
+        title: 'Hello 2',
+      },
+    ])
   })
 })
-

@@ -1,7 +1,8 @@
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
-import { renderToString, type RenderToReadableStreamOptions } from 'react-dom/server'
+import { renderToString } from 'react-dom/server'
+import type { RenderToReadableStreamOptions } from 'react-dom/server'
 import type { Props } from '.'
 
 type RendererOptions = {

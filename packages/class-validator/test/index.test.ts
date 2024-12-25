@@ -1,9 +1,10 @@
-import { Hono } from 'hono'
-import { classValidator } from '../src'
-import type { Equal, Expect } from 'hono/utils/types'
-import { IsInt, IsString, ValidateNested, ValidationError } from 'class-validator'
-import { ExtractSchema } from 'hono/types'
 import { Type } from 'class-transformer'
+import type { ValidationError } from 'class-validator'
+import { IsInt, IsString, ValidateNested } from 'class-validator'
+import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
+import type { Equal, Expect } from 'hono/utils/types'
+import { classValidator } from '../src'
 
 describe('Basic', () => {
   const app = new Hono()

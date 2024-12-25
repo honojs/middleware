@@ -1,8 +1,8 @@
-import crypto from 'node:crypto'
 import { jest } from '@jest/globals'
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
 import * as oauth2 from 'oauth4webapi'
+import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
 const MOCK_CLIENT_ID = 'CLIENT_ID_001'
@@ -387,7 +387,9 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(
-      new RegExp(`${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
+      new RegExp(
+        `${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`
+      )
     )
   })
   test('Should return an error if the state parameter does not match', async () => {

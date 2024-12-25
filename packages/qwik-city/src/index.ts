@@ -13,7 +13,6 @@ import {
 import type { MiddlewareHandler } from 'hono'
 
 export const qwikMiddleware = (opts: ServerRenderOptions): MiddlewareHandler => {
-  // eslint-disable-next-line @typescript-eslint/no-extra-semi
   ;(globalThis as any).TextEncoderStream = TextEncoderStream
   const qwikSerializer = {
     _deserializeData,

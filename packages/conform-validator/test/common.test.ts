@@ -1,6 +1,6 @@
+import { parseWithZod } from '@conform-to/zod'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { parseWithZod } from '@conform-to/zod'
 import { conformValidator } from '../src'
 
 describe('Validate common processing', () => {
