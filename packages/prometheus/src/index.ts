@@ -2,11 +2,8 @@ import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client'
 import { Registry, collectDefaultMetrics as promCollectDefaultMetrics } from 'prom-client'
-import {
-  type MetricOptions,
-  type CustomMetricsOptions,
-  createStandardMetrics,
-} from './standardMetrics'
+import { createStandardMetrics } from './standardMetrics'
+import type { MetricOptions, CustomMetricsOptions } from './standardMetrics'
 
 interface PrometheusOptions {
   registry?: Registry

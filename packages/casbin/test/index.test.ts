@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { Hono } from 'hono'
 import { newEnforcer } from 'casbin'
+import { Hono } from 'hono'
+import { basicAuth } from 'hono/basic-auth'
+import { jwt, sign } from 'hono/jwt'
+import { describe, it, expect } from 'vitest'
 import { casbin } from '../src'
 import { basicAuthorizer, jwtAuthorizer } from '../src/helper'
-import { jwt, sign } from 'hono/jwt'
-import { basicAuth } from 'hono/basic-auth'
 
 describe('Casbin Middleware Tests', () => {
   describe('BasicAuthorizer', () => {

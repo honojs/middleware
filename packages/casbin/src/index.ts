@@ -1,5 +1,5 @@
 import { Enforcer } from 'casbin'
-import { type Context, MiddlewareHandler } from 'hono'
+import type { MiddlewareHandler, type Context } from 'hono'
 
 interface CasbinOptions {
   newEnforcer: Promise<Enforcer>

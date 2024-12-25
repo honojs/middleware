@@ -1,4 +1,5 @@
-import { type, type Type, type ArkErrors } from 'arktype'
+import { type } from 'arktype'
+import type { Type, ArkErrors } from 'arktype'
 import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse } from 'hono'
 import { validator } from 'hono/validator'
 
