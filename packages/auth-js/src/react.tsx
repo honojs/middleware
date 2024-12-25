@@ -2,26 +2,22 @@ import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/p
 import type { LoggerInstance, Session } from '@auth/core/types'
 import * as React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { ClientSessionError, fetchData, now, parseUrl, useOnline } from './client'
 import type {
   WindowProps,
   AuthState,
-  type AuthClientConfig,
-  ClientSessionError,
-  fetchData,
-  now,
-  parseUrl,
-  useOnline,
-  type SessionContextValue,
-  type SessionProviderProps,
-  type GetSessionParams,
-  type UseSessionOptions,
-  type LiteralUnion,
-  type SignInOptions,
-  type SignInAuthorizationParams,
-  type SignInResponse,
-  type ClientSafeProvider,
-  type SignOutParams,
-  type SignOutResponse,
+  AuthClientConfig,
+  SessionContextValue,
+  SessionProviderProps,
+  GetSessionParams,
+  UseSessionOptions,
+  LiteralUnion,
+  SignInOptions,
+  SignInAuthorizationParams,
+  SignInResponse,
+  ClientSafeProvider,
+  SignOutParams,
+  SignOutResponse,
 } from './client'
 
 const logger: LoggerInstance = {

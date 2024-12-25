@@ -1,12 +1,6 @@
 import type { Context } from 'hono'
-import type {
-  CounterConfiguration,
-  HistogramConfiguration,
-  Metric,
-  Counter,
-  Histogram,
-  type Registry,
-} from 'prom-client'
+import { Counter, Histogram } from 'prom-client'
+import type { CounterConfiguration, HistogramConfiguration, Metric, Registry } from 'prom-client'
 
 export type MetricOptions = {
   disabled?: boolean
