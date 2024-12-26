@@ -19,7 +19,7 @@ body:
   - type: input
     attributes:
       label: What version of the middleware?
-      description: 0.0.0
+      placeholder: 0.0.0
     validations:
       required: true
   - type: input
