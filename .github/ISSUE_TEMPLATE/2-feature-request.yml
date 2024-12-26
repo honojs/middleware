@@ -1,0 +1,18 @@
+name: 🚀 Feature Request
+description: Suggest an idea, feature, or enhancement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting an idea. It helps make Hono better.
+  - type: input
+    attributes:
+      label: Which middleware is the feature for?
+      placeholder: '@hono/zod-validator'
+  - type: textarea
+    attributes:
+      label: What is the feature you are proposing?
+      description: A clear description of what you want to happen.
+    validations:
+      required: true
