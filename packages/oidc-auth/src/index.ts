@@ -56,6 +56,7 @@ type OidcAuthEnv = {
   OIDC_SCOPES?: string
   OIDC_COOKIE_PATH?: string
   OIDC_COOKIE_NAME?: string
+  OIDC_COOKIE_DOMAIN?: string
 }
 
 /**
@@ -215,11 +216,11 @@ const updateAuth = async (
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
   const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
-  setCookie(c, env.OIDC_COOKIE_NAME, session_jwt, {
-    path: env.OIDC_COOKIE_PATH,
-    httpOnly: true,
-    secure: true,
-  })
+  const cookieOptions =
+    env.OIDC_COOKIE_DOMAIN == null
+      ? { path: env.OIDC_COOKIE_PATH, httpOnly: true, secure: true }
+      : { path: env.OIDC_COOKIE_PATH, domain: env.OIDC_COOKIE_DOMAIN, httpOnly: true, secure: true }
+  setCookie(c, env.OIDC_COOKIE_NAME, session_jwt, cookieOptions)
   c.set('oidcAuthJwt', session_jwt)
   return updated
 }
@@ -392,16 +393,21 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
       const auth = await getAuth(c)
       if (auth === null) {
         const path = new URL(env.OIDC_REDIRECT_URI).pathname
+        const cookieDomain = env.OIDC_COOKIE_DOMAIN
         // Redirect to IdP for login
         const state = oauth2.generateRandomState()
         const nonce = oauth2.generateRandomNonce()
         const code_verifier = oauth2.generateRandomCodeVerifier()
         const code_challenge = await oauth2.calculatePKCECodeChallenge(code_verifier)
         const url = await generateAuthorizationRequestUrl(c, state, nonce, code_challenge)
-        setCookie(c, 'state', state, { path, httpOnly: true, secure: true })
-        setCookie(c, 'nonce', nonce, { path, httpOnly: true, secure: true })
-        setCookie(c, 'code_verifier', code_verifier, { path, httpOnly: true, secure: true })
-        setCookie(c, 'continue', c.req.url, { path, httpOnly: true, secure: true })
+        const cookieOptions =
+          cookieDomain == null
+            ? { path, httpOnly: true, secure: true }
+            : { path, domain: cookieDomain, httpOnly: true, secure: true }
+        setCookie(c, 'state', state, cookieOptions)
+        setCookie(c, 'nonce', nonce, cookieOptions)
+        setCookie(c, 'code_verifier', code_verifier, cookieOptions)
+        setCookie(c, 'continue', c.req.url, cookieOptions)
         return c.redirect(url)
       }
     } catch (e) {
