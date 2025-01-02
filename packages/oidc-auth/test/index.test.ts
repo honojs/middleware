@@ -187,6 +187,7 @@ beforeEach(() => {
   delete process.env.OIDC_SCOPES
   delete process.env.OIDC_COOKIE_PATH
   delete process.env.OIDC_COOKIE_NAME
+  delete process.env.OIDC_COOKIE_DOMAIN
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -279,6 +280,38 @@ describe('oidcAuthMiddleware()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
+  })
+  test('Should Domain attribute of the cookie not set if env value not defined', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).not.toMatch('Domain=')
+  })
+  test('Should Domain attribute of the cookie set if env value defined (with renewed refresh token)', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
+  })
+  test('Should Domain attribute of the cookie set if env value defined (if session is expired)', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
   })
 })
 describe('processOAuthCallback()', () => {
