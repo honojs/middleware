@@ -47,12 +47,18 @@ import { ZodSchema } from "zod";
 import type { ValidationTargets } from "hono";
 import { zValidator as zv } from "@hono/zod-validator";
 
-export const zValidator = (target: keyof ValidationTargets,  schema: ZodSchema) => 
-zv(target, schema, (result, c) => {
-  if (!result.success) {
-    throw new HTTPException(400, { cause: result.error });
-  }
-})
+export const zValidator = <
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets = keyof ValidationTargets
+>(
+  target: Target,
+  schema: T
+) =>
+  zv(target, schema, (result, c) => {
+    if (!result.success) {
+      throw new HTTPException(400, { cause: result.error });
+    }
+  });
 
 // usage
 import { zValidator } from './validator-wrapper'
