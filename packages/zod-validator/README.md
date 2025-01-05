@@ -49,7 +49,7 @@ import { zValidator as zv } from "@hono/zod-validator";
 
 export const zValidator = <
   T extends ZodSchema,
-  Target extends keyof ValidationTargets = keyof ValidationTargets
+  Target extends keyof ValidationTargets
 >(
   target: Target,
   schema: T
