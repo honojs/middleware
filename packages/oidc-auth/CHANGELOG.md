@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.3.0
+
+### Minor Changes
+
+- [#919](https://github.com/honojs/middleware/pull/919) [`4a0606f774022097bf7de69077fe366280bf4f49`](https://github.com/honojs/middleware/commit/4a0606f774022097bf7de69077fe366280bf4f49) Thanks [@maemaemae3](https://github.com/maemaemae3)! - Optionally specify a custom cookie domain using the OIDC_COOKIE_DOMAIN environment variable (default is domain of the request)
+
 ## 1.2.0
 
 ### Minor Changes
