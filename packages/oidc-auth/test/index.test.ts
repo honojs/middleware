@@ -281,6 +281,66 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
   })
+  test('Should return an error when OIDC_ISSUER is undefined', async () => {
+    delete process.env.OIDC_ISSUER
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_CLIENT_ID is undefined', async () => {
+    delete process.env.OIDC_CLIENT_ID
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_CLIENT_SECRET is undefined', async () => {
+    delete process.env.OIDC_CLIENT_SECRET
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_REDIRECT_URI is a relative path', async () => {
+    process.env.OIDC_REDIRECT_URI = '../callback'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_AUTH_SECRET is undefined', async () => {
+    delete process.env.OIDC_AUTH_SECRET
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_AUTH_SECRET is too short', async () => {
+    process.env.OIDC_AUTH_SECRET = '1234567890123456789012345678901'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
   test('Should Domain attribute of the cookie not set if env value not defined', async () => {
     const req = new Request('http://localhost/', {
       method: 'GET',
@@ -337,6 +397,18 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Verify default callback path when OIDC_REDIRECT_URI is undefined', async () => {
+    delete process.env.OIDC_REDIRECT_URI
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
   })
   test('Should respond with customized claims', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}-custom?code=1234&state=${MOCK_STATE}`, {

@@ -51,7 +51,7 @@ The middleware requires the following environment variables to be set:
 | OIDC_ISSUER                | The issuer URL of the OpenID Connect (OIDC) discovery. This URL is used to retrieve the OIDC provider's configuration.                                            | None, must be provided                 |
 | OIDC_CLIENT_ID             | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider.                                          | None, must be provided                 |
 | OIDC_CLIENT_SECRET         | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider.                              | None, must be provided                 |
-| OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider.             | None, must be provided                 |
+| OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider.             | `/callback`                            |
 | OIDC_SCOPES                | The scopes that should be used for the OIDC authentication                                                                                                        | The server provided `scopes_supported` |
 | OIDC_COOKIE_PATH           | The path to which the `oidc-auth` cookie is set. Restrict to not send it with every request to your domain                                                        | /                                      |
 | OIDC_COOKIE_NAME           | The name of the cookie to be set                                                                                                                                  | `oidc-auth`                            |
@@ -62,7 +62,6 @@ The middleware requires the following environment variables to be set:
 ```typescript
 import { Hono } from 'hono'
 import { oidcAuthMiddleware, getAuth, revokeSession, processOAuthCallback } from '@hono/oidc-auth'
-
 const app = new Hono()
 
 app.get('/logout', async (c) => {
