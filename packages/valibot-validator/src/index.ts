@@ -7,7 +7,7 @@ import type {
   InferOutput,
   SafeParseResult,
 } from 'valibot'
-import { flatten, safeParseAsync } from 'valibot'
+import { safeParseAsync } from 'valibot'
 
 export type Hook<
   T extends GenericSchema | GenericSchemaAsync,
@@ -53,10 +53,10 @@ export const vValidator = <
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
-    const parsed = await safeParseAsync(schema, value)
+    const result = await safeParseAsync(schema, value)
 
     if (hook) {
-      const hookResult = await hook({ ...parsed, target }, c)
+      const hookResult = await hook({ ...result, target }, c)
       if (hookResult) {
         if (hookResult instanceof Response) {
           return hookResult
@@ -68,12 +68,9 @@ export const vValidator = <
       }
     }
 
-    if (!parsed.success) {
-      return c.json({
-        target,
-        issues: flatten(parsed.issues)
-      }, 400)
+    if (!result.success) {
+      return c.json(result, 400)
     }
 
-    return parsed.output
+    return result.output
   })
