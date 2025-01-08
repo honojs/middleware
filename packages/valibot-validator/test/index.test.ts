@@ -324,3 +324,28 @@ describe('With Hook Async', () => {
     expect(res.status).toBe(400)
   })
 })
+
+describe('Test types', () => {
+  it('Should return correct types when validating a query', () => {
+    const app = new Hono()
+
+    const routes = app.post(
+      '/',
+      vValidator(
+        'query',
+        object({
+          foo: string(),
+        })
+      ),
+      (c) => {
+        return c.json(c.req.valid('query'))
+      }
+    )
+
+    type T = ExtractSchema<typeof routes>
+
+    type Actual = T['/']['$post']['input']['query']
+    type Expected = { foo: string }
+    type verify = Expect<Equal<Expected, Actual>>
+  })
+})
