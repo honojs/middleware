@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.5.2
+
+### Patch Changes
+
+- [#914](https://github.com/honojs/middleware/pull/914) [`c5abbc993d8e3663dfd4f2af7ba921acd5bd83ed`](https://github.com/honojs/middleware/commit/c5abbc993d8e3663dfd4f2af7ba921acd5bd83ed) Thanks [@ajotaos](https://github.com/ajotaos)! - Fix request query types for valibot schemas
+
 ## 0.5.1
 
 ### Patch Changes
