@@ -277,9 +277,9 @@ const generateAuthorizationRequestUrl = async (
   const as = await getAuthorizationServer(c)
   const client = getClient(c)
   const authorizationRequestUrl = new URL(as.authorization_endpoint!)
-  const redirect_uri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
+  const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
   authorizationRequestUrl.searchParams.set('client_id', client.client_id)
-  authorizationRequestUrl.searchParams.set('redirect_uri', redirect_uri)
+  authorizationRequestUrl.searchParams.set('redirect_uri', redirectUri)
   authorizationRequestUrl.searchParams.set('response_type', 'code')
   if (as.scopes_supported === undefined || as.scopes_supported.length === 0) {
     throw new HTTPException(500, {
@@ -340,12 +340,12 @@ export const processOAuthCallback = async (c: Context) => {
   if (code === undefined || nonce === undefined || code_verifier === undefined) {
     throw new HTTPException(500, { message: 'Missing required parameters / cookies' })
   }
-  const redirect_uri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
+  const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
   const result = await exchangeAuthorizationCode(
     as,
     client,
     params,
-    redirect_uri,
+    redirectUri,
     nonce,
     code_verifier
   )
@@ -394,8 +394,8 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
     const env = getOidcAuthEnv(c)
     const uri = new URL(c.req.url)
-    const redirect_uri = new URL(env.OIDC_REDIRECT_URI, c.req.url)
-    if (uri.pathname === redirect_uri.pathname && uri.origin === redirect_uri.origin) {
+    const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url)
+    if (uri.pathname === redirectUri.pathname && uri.origin === redirectUri.origin) {
       return processOAuthCallback(c)
     }
     try {
