@@ -61,6 +61,8 @@ export const connect = (...middlewares: ConnectMiddleware[]) => {
       c.res = res;
       c.finalized = true;
     }
+
+    // For debug
     console.log([...(c.newResponse(null, 204, {})).headers.entries()])
 
     await next();
