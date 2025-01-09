@@ -4,7 +4,6 @@ import { createResponse } from "node-mocks-http";
 import Connect, { HandleFunction } from "connect";
 import { transformRequestToIncomingMessage, transformResponseToServerResponse } from './utils';
 import { StatusCode } from 'hono/utils/http-status';
-import { resolve } from 'path';
 
 export const connect = (...middlewares: ConnectMiddleware[]) => {
   const connectApp = Connect();
@@ -26,31 +25,44 @@ export const connect = (...middlewares: ConnectMiddleware[]) => {
       response.end = (...args: Parameters<typeof response.end>) => {
         const call = end.call(response, ...args);
 
-        const _response = transformResponseToServerResponse(response);
+        const connectResponse = transformResponseToServerResponse(response);
 
         if (response.writableEnded) {
-          resolve(_response)
+          resolve(connectResponse)
         }
 
         return call;
       };
 
       connectApp.handle(request, response, () => {
-        const webResponse = transformResponseToServerResponse(response);
-        webResponse.headers.forEach((value, key) => {
-          c.header(key, value)
-        });
-        c.status(webResponse.status as StatusCode);
+        const connectResponse = transformResponseToServerResponse(response);
+        const preparedHeaders = (c.newResponse(null, 204, {})).headers;
+        const connectHeaders = connectResponse.headers;
 
-        resolve(undefined);
+        for (const key of [...preparedHeaders.keys()]) {
+          c.header(key, undefined);
+        }
+
+        for (const [key, value] of [...connectHeaders.entries()]) {
+          c.header(key, value);
+        }
+
+        c.status(connectResponse.status as StatusCode);
+
+        if (connectResponse.body) {
+          resolve(c.body(connectResponse.body));
+        } else {
+          resolve(undefined);
+        }
       });
-    })
+    });
 
     if (res) {
-      c.res = res
-      c.finalized = true
+      c.res = res;
+      c.finalized = true;
     }
+    console.log([...(c.newResponse(null, 204, {})).headers.entries()])
 
-    await next()
-  })
+    await next();
+  });
 }
