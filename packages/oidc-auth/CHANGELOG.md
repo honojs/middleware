@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.4.0
+
+### Minor Changes
+
+- [#926](https://github.com/honojs/middleware/pull/926) [`2f716d619d9e61df3f12427ef6cdebaf0888569e`](https://github.com/honojs/middleware/commit/2f716d619d9e61df3f12427ef6cdebaf0888569e) Thanks [@hnw](https://github.com/hnw)! - Add support for absolute path in OIDC_REDIRECT_URI and set its default value to '/callback'
+
 ## 1.3.0
 
 ### Minor Changes
