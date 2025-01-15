@@ -59,7 +59,6 @@ export const connect = (...middlewares: ConnectMiddleware[]) => {
 
     if (res) {
       c.res = res;
-      c.finalized = true;
     }
 
     // For debug
