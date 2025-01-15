@@ -55,10 +55,10 @@ const sValidator = <
   validator(target, async (value, c) => {
     let validatorValue = value
 
-    // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
-    // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
+    /**
+     * For headers, all keys are lower-cased, so we have to transform them.
+     */
     if (target === 'header' && isStandardSchemaValidator(schema) && schema['~standard'].types) {
-      // create an object that maps lowercase schema keys to lowercase
       const schemaKeys = Object.keys(schema['~standard'].types)
       const caseInsensitiveKeymap = Object.fromEntries(
         schemaKeys.map((key) => [key.toLowerCase(), key])
