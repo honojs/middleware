@@ -142,14 +142,14 @@ export const getClient = (c: Context): oauth2.Client => {
  */
 export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
   const env = getOidcAuthEnv(c)
-  let auth: Partial<OidcAuth> | null = c.get('oidcAuth')
+  let auth = c.get('oidcAuth')
   if (auth === undefined) {
     const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
     if (session_jwt === undefined) {
       return null
     }
     try {
-      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     } catch (e) {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
@@ -178,11 +178,11 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
         deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
         return null
       }
-      auth = await updateAuth(c, auth as OidcAuth, result)
+      auth = await updateAuth(c, auth, result)
     }
-    c.set('oidcAuth', auth as OidcAuth)
+    c.set('oidcAuth', auth)
   }
-  return auth as OidcAuth
+  return auth
 }
 
 /**
@@ -239,7 +239,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
   if (session_jwt !== undefined) {
     deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
-    const auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+    const auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
