@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.4.1
+
+### Patch Changes
+
+- [#936](https://github.com/honojs/middleware/pull/936) [`be34f6908f1ecc22171d302edb10036b3bba9fe9`](https://github.com/honojs/middleware/commit/be34f6908f1ecc22171d302edb10036b3bba9fe9) Thanks [@hnw](https://github.com/hnw)! - Fix type error
+
 ## 1.4.0
 
 ### Minor Changes
