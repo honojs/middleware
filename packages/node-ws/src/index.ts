@@ -8,7 +8,7 @@ import type { Http2SecureServer, Http2Server } from 'node:http2'
 import { CloseEvent } from './events'
 
 export interface NodeWebSocket {
-  upgradeWebSocket: UpgradeWebSocket
+  upgradeWebSocket: UpgradeWebSocket<WebSocket>
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
 }
 export interface NodeWebSocketInit {
@@ -73,7 +73,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           const events = await createEvents(c)
           const ws = await nodeUpgradeWebSocket(c.env.incoming)
 
-          const ctx: WSContext = {
+          const ctx: WSContext<WebSocket> = {
             binaryType: 'arraybuffer',
             close(code, reason) {
               ws.close(code, reason)
