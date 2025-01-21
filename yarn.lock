@@ -2779,12 +2779,13 @@ __metadata:
   dependencies:
     "@hono/node-server": "npm:^1.11.1"
     "@types/ws": "npm:^8"
-    hono: "npm:^4.2.9"
+    hono: "npm:^4.6.0"
     tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
     ws: "npm:^8.17.0"
   peerDependencies:
     "@hono/node-server": ^1.11.1
+    hono: ^4.6.0
   languageName: unknown
   linkType: soft
 
@@ -11818,13 +11819,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.2.9":
-  version: 4.3.3
-  resolution: "hono@npm:4.3.3"
-  checksum: 2e02a563ab8461a56a97b59b1c31fd002179999a0323b3a44cbf8b69b92ad35cc8f38ba26a88b64caa71e2c1c39a1454d84473ed0c69f4e9573e7b3b064e0f58
-  languageName: node
-  linkType: hard
-
 "hono@npm:^4.3.6":
   version: 4.3.6
   resolution: "hono@npm:4.3.6"
@@ -11864,6 +11858,13 @@ __metadata:
   version: 4.5.11
   resolution: "hono@npm:4.5.11"
   checksum: 839c90273b17ed3797d34a19d12dc577d6f98590a4261bf87488880db13137c0c84a165e7810dc50af2ce4680c8fc915c0bb65673bf5fc54c6d951f18454b2c5
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.6.0":
+  version: 4.6.17
+  resolution: "hono@npm:4.6.17"
+  checksum: a951eb705841282c16a98ff0b45fb58d2325f945e839ec43c820c29dd380092382781a1fd4590d809a9a0ec9f4df6db738a06bf58c6ce2c279879374d070e2ab
   languageName: node
   linkType: hard
 
