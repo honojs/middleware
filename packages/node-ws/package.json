@@ -34,7 +34,7 @@
   "devDependencies": {
     "@hono/node-server": "^1.11.1",
     "@types/ws": "^8",
-    "hono": "^4.6.17",
+    "hono": "^4.6.0",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"
   },
@@ -43,7 +43,7 @@
   },
   "peerDependencies": {
     "@hono/node-server": "^1.11.1",
-    "hono": "^4.6.17"
+    "hono": "^4.6.0"
   },
   "engines": {
     "node": ">=18.14.1"
