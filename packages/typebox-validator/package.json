@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}' > dist/esm/package.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
     "prerelease": "yarn build && yarn test",
     "release": "yarn publish"
