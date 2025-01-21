@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.6
+
+### Patch Changes
+
+- [#940](https://github.com/honojs/middleware/pull/940) [`3e2db6dc33c7ab7f471bed65004ebf8139ba7695`](https://github.com/honojs/middleware/commit/3e2db6dc33c7ab7f471bed65004ebf8139ba7695) Thanks [@Ryiski](https://github.com/Ryiski)! - fix: Added missing WSContext raw type
+
 ## 1.0.5
 
 ### Patch Changes
