@@ -2841,8 +2841,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/standard-validator@workspace:packages/standard-validator"
   dependencies:
-    "@standard-schema/spec": "npm:1.0.0-beta.4"
-    "@standard-schema/utils": "npm:0.3.0"
+    "@standard-schema/spec": "npm:1.0.0"
     arktype: "npm:^2.0.0-rc.26"
     hono: "npm:^4.0.10"
     publint: "npm:^0.2.7"
@@ -2852,8 +2851,7 @@ __metadata:
     vitest: "npm:^1.4.0"
     zod: "npm:^3.24.0"
   peerDependencies:
-    "@standard-schema/spec": 1.0.0-beta.4
-    "@standard-schema/utils": 0.3.0
+    "@standard-schema/spec": 1.0.0
     hono: ">=3.9.0"
   languageName: unknown
   linkType: soft
@@ -4744,17 +4742,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standard-schema/spec@npm:1.0.0-beta.4":
-  version: 1.0.0-beta.4
-  resolution: "@standard-schema/spec@npm:1.0.0-beta.4"
-  checksum: f001a08d798fe2eb19e4982fc7707549be2b5d0a61c6f144ace9c85e71eee23a2774d84f83f3b2dea02cb670cbe5cd91c151c0bebbc15d0b7fbcf6b29911e334
-  languageName: node
-  linkType: hard
-
-"@standard-schema/utils@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@standard-schema/utils@npm:0.3.0"
-  checksum: 6eb74cd13e52d5fc74054df51e37d947ef53f3ab9e02c085665dcca3c38c60ece8d735cebbdf18fbb13c775fbcb9becb3f53109b0e092a63f0f7389ce0993fd0
+"@standard-schema/spec@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@standard-schema/spec@npm:1.0.0"
+  checksum: a1ab9a8bdc09b5b47aa8365d0e0ec40cc2df6437be02853696a0e377321653b0d3ac6f079a8c67d5ddbe9821025584b1fb71d9cc041a6666a96f1fadf2ece15f
   languageName: node
   linkType: hard
 
