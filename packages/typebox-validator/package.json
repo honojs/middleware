@@ -1,6 +1,6 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Validator middleware using TypeBox",
   "types": "dist/esm/index.d.ts",
   "exports": {
