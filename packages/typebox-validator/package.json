@@ -2,9 +2,12 @@
   "name": "@hono/typebox-validator",
   "version": "0.3.1",
   "description": "Validator middleware using TypeBox",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/esm/index.d.ts"
+  },
   "files": [
     "dist"
   ],
