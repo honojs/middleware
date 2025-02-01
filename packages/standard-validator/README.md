@@ -7,7 +7,7 @@ You can write a schema with any validation library supporting Standard Schema an
 
 ```ts
 import { z } from 'zod'
-import { sValidator } from '@hono/standard-schema-validator'
+import { sValidator } from '@hono/standard-validator'
 
 const zod = z.object({
   name: z.string(),

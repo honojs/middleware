@@ -34,13 +34,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@standard-schema/spec": "1.0.0-beta.4",
-    "@standard-schema/utils": "0.3.0",
+    "@standard-schema/spec": "1.0.0",
     "hono": ">=3.9.0"
   },
   "devDependencies": {
-    "@standard-schema/spec": "1.0.0-beta.4",
-    "@standard-schema/utils": "0.3.0",
+    "@standard-schema/spec": "1.0.0",
     "arktype": "^2.0.0-rc.26",
     "hono": "^4.0.10",
     "publint": "^0.2.7",

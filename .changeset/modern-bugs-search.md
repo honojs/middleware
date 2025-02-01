@@ -2,4 +2,4 @@
 '@hono/standard-validator': minor
 ---
 
-Initial implementation for standar schema support
+Initial implementation for Standard Schema support
