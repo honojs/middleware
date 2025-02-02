@@ -351,42 +351,6 @@ describe('Standard Schema Validation', () => {
           >
         })
       })
-
-      describe('Case-Insensitive Headers', () => {
-        it('Should ignore the case for headers in schema and return 200', () => {
-          const app = new Hono()
-          const schema = schemas.headerSchema
-
-          const route = app.get('/', sValidator('header', schema), (c) => {
-            const headers = c.req.valid('header')
-            return c.json(headers)
-          })
-
-          type Actual = ExtractSchema<typeof route>
-          type verifyInput = Expect<
-            Equal<
-              {
-                'Content-Type': string
-                ApiKey: string
-                onlylowercase: string
-                ONLYUPPERCASE: string
-              },
-              MergeDiscriminatedUnion<Actual['/']['$get']['input']['header']>
-            >
-          >
-          type verifyOutput = Expect<
-            Equal<
-              {
-                'Content-Type': string
-                ApiKey: string
-                onlylowercase: string
-                ONLYUPPERCASE: string
-              },
-              MergeDiscriminatedUnion<Actual['/']['$get']['output']>
-            >
-          >
-        })
-      })
     })
   })
 })

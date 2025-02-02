@@ -28,13 +28,6 @@ const querySortSchema = z.object({
   order: z.enum(['asc', 'desc']),
 })
 
-const headerSchema = z.object({
-  'Content-Type': z.string(),
-  ApiKey: z.string(),
-  onlylowercase: z.string(),
-  ONLYUPPERCASE: z.string(),
-})
-
 export {
   idJSONSchema,
   personJSONSchema,
@@ -42,5 +35,4 @@ export {
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
-  headerSchema,
 }

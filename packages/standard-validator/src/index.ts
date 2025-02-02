@@ -53,29 +53,13 @@ const sValidator = <
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
-    let validatorValue = value
-
-    /**
-     * For headers, all keys are lower-cased, so we have to transform them.
-     */
-    if (target === 'header' && isStandardSchemaValidator(schema) && schema['~standard'].types) {
-      const schemaKeys = Object.keys(schema['~standard'].types)
-      const caseInsensitiveKeymap = Object.fromEntries(
-        schemaKeys.map((key) => [key.toLowerCase(), key])
-      )
-
-      validatorValue = Object.fromEntries(
-        Object.entries(value).map(([key, value]) => [caseInsensitiveKeymap[key] || key, value])
-      )
-    }
-
-    const result = await schema['~standard'].validate(validatorValue)
+    const result = await schema['~standard'].validate(value)
 
     if (hook) {
       const hookResult = await hook(
         !!result.issues
-          ? { data: validatorValue, error: result.issues, success: false, target }
-          : { data: validatorValue, success: true, target },
+          ? { data: value, error: result.issues, success: false, target }
+          : { data: value, success: true, target },
         c
       )
       if (hookResult) {
@@ -90,7 +74,7 @@ const sValidator = <
     }
 
     if (result.issues) {
-      return c.json({ data: validatorValue, error: result.issues, success: false }, 400)
+      return c.json({ data: value, error: result.issues, success: false }, 400)
     }
 
     return result.value as StandardSchemaV1.InferOutput<Schema>

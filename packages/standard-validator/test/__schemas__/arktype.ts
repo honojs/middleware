@@ -26,13 +26,6 @@ const querySortSchema = type({
   order: "'asc'|'desc'",
 })
 
-const headerSchema = type({
-  'Content-Type': 'string',
-  ApiKey: 'string',
-  onlylowercase: 'string',
-  ONLYUPPERCASE: 'string',
-})
-
 export {
   idJSONSchema,
   personJSONSchema,
@@ -40,5 +33,4 @@ export {
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
-  headerSchema,
 }

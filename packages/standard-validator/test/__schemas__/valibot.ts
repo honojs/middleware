@@ -28,13 +28,6 @@ const querySortSchema = object({
   order: picklist(['asc', 'desc']),
 })
 
-const headerSchema = object({
-  'Content-Type': string(),
-  ApiKey: string(),
-  onlylowercase: string(),
-  ONLYUPPERCASE: string(),
-})
-
 export {
   idJSONSchema,
   personJSONSchema,
@@ -42,5 +35,4 @@ export {
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
-  headerSchema,
 }
