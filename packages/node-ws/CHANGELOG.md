@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.7
+
+### Patch Changes
+
+- [#951](https://github.com/honojs/middleware/pull/951) [`c80ffbfb4c72e8ad7e9a7f65611aa667c6776d64`](https://github.com/honojs/middleware/commit/c80ffbfb4c72e8ad7e9a7f65611aa667c6776d64) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: allow `Hono` with custom Env for `createNodeWebSocket`
+
 ## 1.0.6
 
 ### Patch Changes
