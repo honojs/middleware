@@ -1,6 +1,6 @@
 {
   "name": "@hono/valibot-validator",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Validator middleware using Valibot",
   "type": "module",
   "main": "dist/index.js",

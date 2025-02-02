@@ -52,6 +52,7 @@ const UserSchema = z
 ```
 
 > [!TIP]
+>
 > `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
 > If you want to register the schema as referenced components, use `.openapi()` method.
 
@@ -113,6 +114,71 @@ You can start your app just like you would with Hono. For Cloudflare Workers and
 ```ts
 export default app
 ```
+
+> [!IMPORTANT]
+> The request must have the proper `Content-Type` to ensure the validation. For example, if you want to validate a JSON body, the request must have the `Content-Type` to `application/json` in the request. Otherwise, the value of `c.req.valid('json')` will be `{}`.
+>
+> ```ts
+> import { createRoute, z, OpenAPIHono } from '@hono/zod-openapi'
+>
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: z.object({
+>             title: z.string(),
+>           }),
+>         },
+>       },
+>     },
+>   },
+>   responses: {
+>     200: {
+>       description: 'Success message',
+>     },
+>   },
+> })
+>
+> const app = new OpenAPIHono()
+>
+> app.openapi(route, (c) => {
+>   const validatedBody = c.req.valid('json')
+>   return c.json(validatedBody) // validatedBody is {}
+> })
+>
+> const res = await app.request('/books', {
+>   method: 'POST',
+>   body: JSON.stringify({ title: 'foo' }),
+>   // The Content-Type header is lacking.
+> })
+>
+> const data = await res.json()
+> console.log(data) // {}
+> ```
+>
+> If you want to force validation of requests that do not have the proper `Content-Type`, set the value of `request.body.required` to `true`.
+>
+> ```ts
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: z.object({
+>             title: z.string(),
+>           }),
+>         },
+>       },
+>       required: true, // <== add
+>     },
+>   },
+> })
+> ```
 
 ### Handling Validation Errors
 
@@ -241,7 +307,10 @@ You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
 app.doc31('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // new endpoint
-app.getOpenAPI31Document({ openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // schema object
+app.getOpenAPI31Document({
+  openapi: '3.1.0',
+  info: { title: 'foo', version: '1' },
+}) // schema object
 ```
 
 ### The Registry
@@ -285,10 +354,7 @@ const route = createRoute({
   request: {
     params: ParamsSchema,
   },
-  middleware: [
-    prettyJSON(),
-    cache({ cacheName: 'my-cache' })
-  ] as const, // Use `as const` to ensure TypeScript infers the middleware's Context.
+  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })] as const, // Use `as const` to ensure TypeScript infers the middleware's Context.
   responses: {
     200: {
       content: {

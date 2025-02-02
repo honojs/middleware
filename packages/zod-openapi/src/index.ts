@@ -26,7 +26,6 @@ import type {
   ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -35,6 +34,7 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
+import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { ZodError, ZodSchema } from 'zod'
 import { ZodType, z } from 'zod'
@@ -657,7 +657,6 @@ export class OpenAPIHono<
       }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this as any
   }
 

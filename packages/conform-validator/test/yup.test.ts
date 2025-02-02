@@ -1,10 +1,10 @@
-import type { ExtractSchema, ParsedFormValue } from 'hono/types'
-import type { Equal, Expect } from 'hono/utils/types'
-import type { StatusCode } from 'hono/utils/http-status'
-import * as y from 'yup'
+import { parseWithYup } from '@conform-to/yup'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
-import { parseWithYup } from '@conform-to/yup'
+import type { ExtractSchema, ParsedFormValue } from 'hono/types'
+import type { StatusCode } from 'hono/utils/http-status'
+import type { Equal, Expect } from 'hono/utils/types'
+import * as y from 'yup'
 import { conformValidator } from '../src'
 
 describe('Validate requests using a Yup schema', () => {

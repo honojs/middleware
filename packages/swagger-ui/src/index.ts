@@ -69,7 +69,7 @@ const SwaggerUI = (options: SwaggerUIOptions) => {
 const middleware =
   <E extends Env>(options: SwaggerUIOptions): MiddlewareHandler<E> =>
   async (c) => {
-    const title = options?.title ?? "SwaggerUI"
+    const title = options?.title ?? 'SwaggerUI'
     return c.html(/* html */ `
       <html lang="en">
         <head>

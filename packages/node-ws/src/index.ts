@@ -1,18 +1,19 @@
-import type { Server } from 'node:http'
-import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Hono } from 'hono'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import type { IncomingMessage } from 'http'
+import type { Server } from 'node:http'
+import type { Http2SecureServer, Http2Server } from 'node:http2'
 import { CloseEvent } from './events'
 
 export interface NodeWebSocket {
-  upgradeWebSocket: UpgradeWebSocket
+  upgradeWebSocket: UpgradeWebSocket<WebSocket>
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
 }
 export interface NodeWebSocketInit {
-  app: Hono
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  app: Hono<any, any, any>
   baseUrl?: string | URL
 }
 
@@ -73,7 +74,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           const events = await createEvents(c)
           const ws = await nodeUpgradeWebSocket(c.env.incoming)
 
-          const ctx: WSContext = {
+          const ctx: WSContext<WebSocket> = {
             binaryType: 'arraybuffer',
             close(code, reason) {
               ws.close(code, reason)

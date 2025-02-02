@@ -1,17 +1,20 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Validator middleware using TypeBox",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/esm/index.d.ts"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "test": "jest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}' > dist/esm/package.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
     "prerelease": "yarn build && yarn test",
     "release": "yarn publish"

@@ -1,5 +1,17 @@
 # @hono/typebox-validator
 
+## 0.3.2
+
+### Patch Changes
+
+- [#949](https://github.com/honojs/middleware/pull/949) [`401dddc484adab7660efb31586ecb2fbcca03b9b`](https://github.com/honojs/middleware/commit/401dddc484adab7660efb31586ecb2fbcca03b9b) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct exporting in `package.json`
+
+## 0.3.1
+
+### Patch Changes
+
+- [#942](https://github.com/honojs/middleware/pull/942) [`63508a56bba1d39e7dd6d95c15f85622ed832133`](https://github.com/honojs/middleware/commit/63508a56bba1d39e7dd6d95c15f85622ed832133) Thanks [@cfraz89](https://github.com/cfraz89)! - Fix transiently importing typebox as cjs even when typebox-validator imported as esm
+
 ## 0.3.0
 
 ### Minor Changes

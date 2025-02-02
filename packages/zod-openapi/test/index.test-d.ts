@@ -1,8 +1,9 @@
-import { assertType, describe, it } from 'vitest'
-import { MiddlewareToHandlerType, OfHandlerType, OpenAPIHono, createRoute, z } from '../src/index'
 import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
+import { assertType, describe, it } from 'vitest'
+import { OpenAPIHono, createRoute, z } from '../src/index'
+import type { MiddlewareToHandlerType, OfHandlerType } from '../src/index'
 
 describe('Types', () => {
   const RequestSchema = z.object({
@@ -276,7 +277,7 @@ describe('Middleware', () => {
   })
 
   it('Should infer Env from router middleware', async () => {
-    const app = new OpenAPIHono<{ Variables: { too: Symbol } }>()
+    const app = new OpenAPIHono<{ Variables: { too: symbol } }>()
     app.openapi(
       createRoute({
         method: 'get',
@@ -308,7 +309,7 @@ describe('Middleware', () => {
 
         type verifyFoo = Expect<Equal<typeof c.var.foo, string>>
         type verifyBar = Expect<Equal<typeof c.var.bar, number>>
-        type verifyToo = Expect<Equal<typeof c.var.too, Symbol>>
+        type verifyToo = Expect<Equal<typeof c.var.too, symbol>>
 
         return c.json({})
       }
@@ -316,7 +317,7 @@ describe('Middleware', () => {
   })
 
   it('Should infer Env root when no middleware provided', async () => {
-    const app = new OpenAPIHono<{ Variables: { too: Symbol } }>()
+    const app = new OpenAPIHono<{ Variables: { too: symbol } }>()
     app.openapi(
       createRoute({
         method: 'get',
@@ -331,7 +332,7 @@ describe('Middleware', () => {
       (c) => {
         c.var.too
 
-        type verify = Expect<Equal<typeof c.var.too, Symbol>>
+        type verify = Expect<Equal<typeof c.var.too, symbol>>
 
         return c.json({})
       }

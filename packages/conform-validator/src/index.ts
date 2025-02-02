@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Context, Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
 import type { Submission } from '@conform-to/dom'
+import type { Context, Env, Input as HonoInput, MiddlewareHandler, ValidationTargets } from 'hono'
 import { getFormDataFromContext } from './utils'
 
 type FormTargetValue = ValidationTargets['form']['string']

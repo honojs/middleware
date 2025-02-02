@@ -1,6 +1,6 @@
 {
   "name": "@hono/node-ws",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "WebSocket helper for Node.js",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
+    "test": "tsc --noEmit && vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
     "release": "yarn build && yarn test && yarn publint && yarn publish"
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@hono/node-server": "^1.11.1",
     "@types/ws": "^8",
-    "hono": "^4.2.9",
+    "hono": "^4.6.0",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"
   },
@@ -42,7 +42,8 @@
     "ws": "^8.17.0"
   },
   "peerDependencies": {
-    "@hono/node-server": "^1.11.1"
+    "@hono/node-server": "^1.11.1",
+    "hono": "^4.6.0"
   },
   "engines": {
     "node": ">=18.14.1"

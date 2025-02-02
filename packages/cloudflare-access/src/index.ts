@@ -1,17 +1,18 @@
+import type { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
-import { Context } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 
 export type CloudflareAccessPayload = {
-  aud: string[],
-  email: string,
-  exp: number,
-  iat: number,
-  nbf: number,
-  iss: string,
-  type: string,
-  identity_nonce: string,
-  sub: string,
-  country: string,
+  aud: string[]
+  email: string
+  exp: number
+  iat: number
+  nbf: number
+  iss: string
+  type: string
+  identity_nonce: string
+  sub: string
+  country: string
 }
 
 export type CloudflareAccessVariables = {
@@ -38,7 +39,9 @@ export const cloudflareAccess = (accessTeamName: string) => {
 
   return createMiddleware(async (c, next) => {
     const encodedToken = getJwt(c)
-    if (encodedToken === null) return c.text('Authentication error: Missing bearer token', 401)
+    if (encodedToken === null) {
+      return c.text('Authentication error: Missing bearer token', 401)
+    }
 
     // Load jwt keys if they are not in memory or already expired
     if (Object.keys(cacheKeys).length === 0 || Math.floor(Date.now() / 1000) < cacheExpiration) {
@@ -58,19 +61,23 @@ export const cloudflareAccess = (accessTeamName: string) => {
     // Is the token expired?
     const expiryDate = new Date(token.payload.exp * 1000)
     const currentDate = new Date(Date.now())
-    if (expiryDate <= currentDate) return c.text('Authentication error: Token is expired', 401)
+    if (expiryDate <= currentDate) {
+      return c.text('Authentication error: Token is expired', 401)
+    }
 
     // Check is token is valid against at least one public key?
-    if (!(await isValidJwtSignature(token, cacheKeys)))
+    if (!(await isValidJwtSignature(token, cacheKeys))) {
       return c.text('Authentication error: Invalid Token', 401)
+    }
 
     // Is signed from the correct team?
     const expectedIss = `https://${accessTeamName}.cloudflareaccess.com`
-    if (token.payload?.iss !== expectedIss)
+    if (token.payload?.iss !== expectedIss) {
       return c.text(
         `Authentication error: Expected team name ${expectedIss}, but received ${token.payload?.iss}`,
         401
       )
+    }
 
     c.set('accessPayload', token.payload)
     await next()
@@ -82,17 +89,28 @@ async function getPublicKeys(accessTeamName: string) {
 
   const result = await fetch(jwtUrl, {
     method: 'GET',
-    // @ts-ignore
     cf: {
       // Dont cache error responses
       cacheTtlByStatus: { '200-299': 30, '300-599': 0 },
     },
   })
 
+  if (!result.ok) {
+    if (result.status === 404) {
+      throw new HTTPException(500, {
+        message: `Authentication error: The Access Organization '${accessTeamName}' does not exist`,
+      })
+    }
+
+    throw new HTTPException(500, {
+      message: `Authentication error: Received unexpected HTTP code ${result.status} from Cloudflare Access`,
+    })
+  }
+
   const data: any = await result.json()
 
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
-  let cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
+  const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
 
   const importedKeys: Record<string, CryptoKey> = {}
   for (const key of data.keys) {
@@ -149,7 +167,9 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
   for (const key of Object.values(keys)) {
     const isValid = await validateSingleKey(key, signature, data)
 
-    if (isValid) return true
+    if (isValid) {
+      return true
+    }
   }
 
   return false

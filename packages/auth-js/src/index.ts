@@ -1,12 +1,11 @@
 import type { AuthConfig as AuthConfigCore } from '@auth/core'
-import { Auth } from '@auth/core'
+import { Auth, setEnvDefaults as coreSetEnvDefaults } from '@auth/core'
 import type { AdapterUser } from '@auth/core/adapters'
 import type { JWT } from '@auth/core/jwt'
 import type { Session } from '@auth/core/types'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
-import { setEnvDefaults as coreSetEnvDefaults } from '@auth/core'
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -43,7 +42,9 @@ export function reqWithEnvUrl(req: Request, authUrl?: string) {
     const authUrlObj = new URL(authUrl)
     const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
     for (const prop of props) {
-      if (authUrlObj[prop]) reqUrlObj[prop] = authUrlObj[prop]
+      if (authUrlObj[prop]) {
+        reqUrlObj[prop] = authUrlObj[prop]
+      }
     }
     return new Request(reqUrlObj.href, req)
   }
@@ -51,12 +52,17 @@ export function reqWithEnvUrl(req: Request, authUrl?: string) {
   const newReq = new Request(url.href, req)
   const proto = newReq.headers.get('x-forwarded-proto')
   const host = newReq.headers.get('x-forwarded-host') ?? newReq.headers.get('host')
-  if (proto != null) url.protocol = proto.endsWith(':') ? proto : `${proto}:`
+  if (proto != null) {
+    url.protocol = proto.endsWith(':') ? proto : `${proto}:`
+  }
   if (host != null) {
     url.host = host
     const portMatch = host.match(/:(\d+)$/)
-    if (portMatch) url.port = portMatch[1]
-    else url.port = ''
+    if (portMatch) {
+      url.port = portMatch[1]
+    } else {
+      url.port = ''
+    }
     newReq.headers.delete('x-forwarded-host')
     newReq.headers.delete('Host')
     newReq.headers.set('Host', host)

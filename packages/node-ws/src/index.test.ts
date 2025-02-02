@@ -1,9 +1,9 @@
 import { serve } from '@hono/node-server'
 import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
+import type { WSMessageReceive } from 'hono/ws'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
-import type { WSMessageReceive } from 'hono/ws'
 
 describe('WebSocket helper', () => {
   let app: Hono
@@ -13,7 +13,6 @@ describe('WebSocket helper', () => {
 
   beforeEach(async () => {
     app = new Hono()
-    
     ;({ injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
@@ -148,6 +147,17 @@ describe('WebSocket helper', () => {
 
     binaryData.forEach((val, idx) => {
       expect((receivedMessage as Buffer).at(idx)).toBe(val)
+    })
+  })
+
+  describe('Types', () => {
+    it('Should not throw a type error with an app with Variables generics', () => {
+      const app = new Hono<{
+        Variables: {
+          foo: string
+        }
+      }>()
+      createNodeWebSocket({ app })
     })
   })
 })

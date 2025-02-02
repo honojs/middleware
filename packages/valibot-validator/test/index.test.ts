@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
+import type { StatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
 import { vValidator } from '../src'
-import { StatusCode } from 'hono/utils/http-status'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -322,5 +322,30 @@ describe('With Hook Async', () => {
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
+  })
+})
+
+describe('Test types', () => {
+  it('Should return correct types when validating a query', () => {
+    const app = new Hono()
+
+    const routes = app.post(
+      '/',
+      vValidator(
+        'query',
+        object({
+          foo: string(),
+        })
+      ),
+      (c) => {
+        return c.json(c.req.valid('query'))
+      }
+    )
+
+    type T = ExtractSchema<typeof routes>
+
+    type Actual = T['/']['$post']['input']['query']
+    type Expected = { foo: string }
+    type verify = Expect<Equal<Expected, Actual>>
   })
 })

@@ -34,8 +34,9 @@ declare module 'hono' {
   }
 }
 
-const defaultOidcAuthCookieName = 'oidc-auth'
+const defaultOidcRedirectUri = '/callback'
 const defaultOidcAuthCookiePath = '/'
+const defaultOidcAuthCookieName = 'oidc-auth'
 const defaultRefreshInterval = 15 * 60 // 15 minutes
 const defaultExpirationInterval = 60 * 60 * 24 // 1 day
 
@@ -52,10 +53,11 @@ type OidcAuthEnv = {
   OIDC_ISSUER: string
   OIDC_CLIENT_ID: string
   OIDC_CLIENT_SECRET: string
-  OIDC_REDIRECT_URI: string
+  OIDC_REDIRECT_URI?: string
   OIDC_SCOPES?: string
   OIDC_COOKIE_PATH?: string
   OIDC_COOKIE_NAME?: string
+  OIDC_COOKIE_DOMAIN?: string
 }
 
 /**
@@ -82,8 +84,13 @@ const getOidcAuthEnv = (c: Context) => {
     if (oidcAuthEnv.OIDC_CLIENT_SECRET === undefined) {
       throw new HTTPException(500, { message: 'OIDC client secret is not provided' })
     }
-    if (oidcAuthEnv.OIDC_REDIRECT_URI === undefined) {
-      throw new HTTPException(500, { message: 'OIDC redirect URI is not provided' })
+    oidcAuthEnv.OIDC_REDIRECT_URI = oidcAuthEnv.OIDC_REDIRECT_URI ?? defaultOidcRedirectUri
+    if (!oidcAuthEnv.OIDC_REDIRECT_URI.startsWith('/')) {
+      try {
+        new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
+      } catch (e) {
+        throw new HTTPException(500, { message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path' })
+      }
     }
     oidcAuthEnv.OIDC_COOKIE_PATH = oidcAuthEnv.OIDC_COOKIE_PATH ?? defaultOidcAuthCookiePath
     oidcAuthEnv.OIDC_COOKIE_NAME = oidcAuthEnv.OIDC_COOKIE_NAME ?? defaultOidcAuthCookieName
@@ -135,14 +142,14 @@ export const getClient = (c: Context): oauth2.Client => {
  */
 export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
   const env = getOidcAuthEnv(c)
-  let auth: Partial<OidcAuth> | null = c.get('oidcAuth')
+  let auth = c.get('oidcAuth')
   if (auth === undefined) {
     const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
     if (session_jwt === undefined) {
       return null
     }
     try {
-      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     } catch (e) {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
@@ -171,11 +178,11 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
         deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
         return null
       }
-      auth = await updateAuth(c, auth as OidcAuth, result)
+      auth = await updateAuth(c, auth, result)
     }
-    c.set('oidcAuth', auth as OidcAuth)
+    c.set('oidcAuth', auth)
   }
-  return auth as OidcAuth
+  return auth
 }
 
 /**
@@ -215,11 +222,11 @@ const updateAuth = async (
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
   const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
-  setCookie(c, env.OIDC_COOKIE_NAME, session_jwt, {
-    path: env.OIDC_COOKIE_PATH,
-    httpOnly: true,
-    secure: true,
-  })
+  const cookieOptions =
+    env.OIDC_COOKIE_DOMAIN == null
+      ? { path: env.OIDC_COOKIE_PATH, httpOnly: true, secure: true }
+      : { path: env.OIDC_COOKIE_PATH, domain: env.OIDC_COOKIE_DOMAIN, httpOnly: true, secure: true }
+  setCookie(c, env.OIDC_COOKIE_NAME, session_jwt, cookieOptions)
   c.set('oidcAuthJwt', session_jwt)
   return updated
 }
@@ -232,7 +239,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
   if (session_jwt !== undefined) {
     deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
-    const auth = await verify(session_jwt, env.OIDC_AUTH_SECRET)
+    const auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
@@ -270,8 +277,9 @@ const generateAuthorizationRequestUrl = async (
   const as = await getAuthorizationServer(c)
   const client = getClient(c)
   const authorizationRequestUrl = new URL(as.authorization_endpoint!)
+  const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
   authorizationRequestUrl.searchParams.set('client_id', client.client_id)
-  authorizationRequestUrl.searchParams.set('redirect_uri', env.OIDC_REDIRECT_URI)
+  authorizationRequestUrl.searchParams.set('redirect_uri', redirectUri)
   authorizationRequestUrl.searchParams.set('response_type', 'code')
   if (as.scopes_supported === undefined || as.scopes_supported.length === 0) {
     throw new HTTPException(500, {
@@ -311,7 +319,7 @@ export const processOAuthCallback = async (c: Context) => {
 
   // Parses the authorization response and validates the state parameter
   const state = getCookie(c, 'state')
-  const path = new URL(env.OIDC_REDIRECT_URI).pathname
+  const path = new URL(env.OIDC_REDIRECT_URI, c.req.url).pathname
   deleteCookie(c, 'state', { path })
   const currentUrl: URL = new URL(c.req.url)
   const params = oauth2.validateAuthResponse(as, client, currentUrl, state)
@@ -332,11 +340,12 @@ export const processOAuthCallback = async (c: Context) => {
   if (code === undefined || nonce === undefined || code_verifier === undefined) {
     throw new HTTPException(500, { message: 'Missing required parameters / cookies' })
   }
+  const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url).toString()
   const result = await exchangeAuthorizationCode(
     as,
     client,
     params,
-    env.OIDC_REDIRECT_URI,
+    redirectUri,
     nonce,
     code_verifier
   )
@@ -384,24 +393,30 @@ const exchangeAuthorizationCode = async (
 export const oidcAuthMiddleware = (): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
     const env = getOidcAuthEnv(c)
-    const uri = c.req.url.split('?')[0]
-    if (uri === env.OIDC_REDIRECT_URI) {
+    const uri = new URL(c.req.url)
+    const redirectUri = new URL(env.OIDC_REDIRECT_URI, c.req.url)
+    if (uri.pathname === redirectUri.pathname && uri.origin === redirectUri.origin) {
       return processOAuthCallback(c)
     }
     try {
       const auth = await getAuth(c)
       if (auth === null) {
-        const path = new URL(env.OIDC_REDIRECT_URI).pathname
+        const path = new URL(env.OIDC_REDIRECT_URI, c.req.url).pathname
+        const cookieDomain = env.OIDC_COOKIE_DOMAIN
         // Redirect to IdP for login
         const state = oauth2.generateRandomState()
         const nonce = oauth2.generateRandomNonce()
         const code_verifier = oauth2.generateRandomCodeVerifier()
         const code_challenge = await oauth2.calculatePKCECodeChallenge(code_verifier)
         const url = await generateAuthorizationRequestUrl(c, state, nonce, code_challenge)
-        setCookie(c, 'state', state, { path, httpOnly: true, secure: true })
-        setCookie(c, 'nonce', nonce, { path, httpOnly: true, secure: true })
-        setCookie(c, 'code_verifier', code_verifier, { path, httpOnly: true, secure: true })
-        setCookie(c, 'continue', c.req.url, { path, httpOnly: true, secure: true })
+        const cookieOptions =
+          cookieDomain == null
+            ? { path, httpOnly: true, secure: true }
+            : { path, domain: cookieDomain, httpOnly: true, secure: true }
+        setCookie(c, 'state', state, cookieOptions)
+        setCookie(c, 'nonce', nonce, cookieOptions)
+        setCookie(c, 'code_verifier', code_verifier, cookieOptions)
+        setCookie(c, 'continue', c.req.url, cookieOptions)
         return c.redirect(url)
       }
     } catch (e) {

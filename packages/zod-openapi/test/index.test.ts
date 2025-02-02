@@ -1,14 +1,14 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { Context, TypedResponse } from 'hono'
+import { accepts } from 'hono/accepts'
 import { bearerAuth } from 'hono/bearer-auth'
 import { hc } from 'hono/client'
+import type { ServerErrorStatusCode } from 'hono/utils/http-status'
+import type { Equal, Expect } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { stringify } from 'yaml'
 import type { RouteConfigToTypedResponse } from '../src/index'
 import { OpenAPIHono, createRoute, z } from '../src/index'
-import type { Equal, Expect } from 'hono/utils/types'
-import type { ServerErrorStatusCode } from 'hono/utils/http-status'
-import { stringify } from 'yaml'
-import { accepts } from 'hono/accepts'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {

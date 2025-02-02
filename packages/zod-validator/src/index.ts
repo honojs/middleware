@@ -1,6 +1,7 @@
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import { ZodObject, type ZodError, type ZodSchema, type z } from 'zod'
+import { ZodObject } from 'zod'
+import type { ZodError, ZodSchema, z } from 'zod'
 
 export type Hook<
   T,

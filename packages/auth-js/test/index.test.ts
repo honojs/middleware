@@ -1,9 +1,9 @@
-import { webcrypto } from 'node:crypto'
 import { skipCSRFCheck } from '@auth/core'
 import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
+import { webcrypto } from 'node:crypto'
 import type { AuthConfig } from '../src'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
 

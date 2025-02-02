@@ -1,8 +1,8 @@
-import {  Hono } from 'hono'
-import type {Context} from 'hono'
+import { Hono } from 'hono'
+import type { Context } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
-import {  createEmitter, defineHandler, defineHandlers, emitter } from './index'
-import type {Emitter} from './index' // Adjust the import path as needed
+import { createEmitter, defineHandler, defineHandlers, emitter } from './index'
+import type { Emitter } from './index' // Adjust the import path as needed
 
 describe('Event Emitter Middleware', () => {
   describe('createEmitter', () => {

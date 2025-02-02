@@ -1,5 +1,7 @@
-import { TSchema, Static, TypeGuard, ValueGuard } from '@sinclair/typebox'
-import { Value, type ValueError } from '@sinclair/typebox/value'
+import type { TSchema, Static } from '@sinclair/typebox'
+import { TypeGuard, ValueGuard } from '@sinclair/typebox'
+import { Value } from '@sinclair/typebox/value'
+import type { ValueError } from '@sinclair/typebox/value'
 import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 import IsObject = ValueGuard.IsObject
@@ -7,7 +9,7 @@ import IsArray = ValueGuard.IsArray
 
 export type Hook<T, E extends Env, P extends string> = (
   result: { success: true; data: T } | { success: false; errors: ValueError[] },
-  c: Context<E, P>,
+  c: Context<E, P>
 ) => Response | Promise<Response> | void
 
 /**
@@ -61,11 +63,18 @@ export function tbValidator<
   E extends Env,
   P extends string,
   V extends { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
->(target: Target, schema: T, hook?: Hook<Static<T>, E, P>, stripNonSchemaItems?: boolean): MiddlewareHandler<E, P, V> {
+>(
+  target: Target,
+  schema: T,
+  hook?: Hook<Static<T>, E, P>,
+  stripNonSchemaItems?: boolean
+): MiddlewareHandler<E, P, V> {
   // Compile the provided schema once rather than per validation. This could be optimized further using a shared schema
   // compilation pool similar to the Fastify implementation.
   return validator(target, (unprocessedData, c) => {
-    const data = stripNonSchemaItems ? removeNonSchemaItems(schema, unprocessedData) : unprocessedData
+    const data = stripNonSchemaItems
+      ? removeNonSchemaItems(schema, unprocessedData)
+      : unprocessedData
 
     if (Value.Check(schema, data)) {
       if (hook) {
@@ -90,7 +99,9 @@ export function tbValidator<
 }
 
 function removeNonSchemaItems<T extends TSchema>(schema: T, obj: any): Static<T> {
-  if (typeof obj !== 'object' || obj === null) return obj
+  if (typeof obj !== 'object' || obj === null) {
+    return obj
+  }
 
   if (Array.isArray(obj)) {
     return obj.map((item) => removeNonSchemaItems(schema.items, item))
@@ -98,12 +109,9 @@ function removeNonSchemaItems<T extends TSchema>(schema: T, obj: any): Static<T>
 
   const result: any = {}
   for (const key in schema.properties) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const propertySchema = schema.properties[key]
-      if (
-        IsObject(propertySchema) &&
-        !IsArray(propertySchema)
-      ) {
+      if (IsObject(propertySchema) && !IsArray(propertySchema)) {
         result[key] = removeNonSchemaItems(propertySchema as unknown as TSchema, obj[key])
       } else {
         result[key] = obj[key]

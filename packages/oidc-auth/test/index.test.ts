@@ -1,8 +1,8 @@
-import crypto from 'node:crypto'
 import { jest } from '@jest/globals'
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
 import * as oauth2 from 'oauth4webapi'
+import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
 const MOCK_CLIENT_ID = 'CLIENT_ID_001'
@@ -187,6 +187,7 @@ beforeEach(() => {
   delete process.env.OIDC_SCOPES
   delete process.env.OIDC_COOKIE_PATH
   delete process.env.OIDC_COOKIE_NAME
+  delete process.env.OIDC_COOKIE_DOMAIN
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -280,6 +281,98 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(new RegExp('oidc-auth=; Max-Age=0; Path=/($|,)'))
   })
+  test('Should return an error when OIDC_ISSUER is undefined', async () => {
+    delete process.env.OIDC_ISSUER
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_CLIENT_ID is undefined', async () => {
+    delete process.env.OIDC_CLIENT_ID
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_CLIENT_SECRET is undefined', async () => {
+    delete process.env.OIDC_CLIENT_SECRET
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_REDIRECT_URI is a relative path', async () => {
+    process.env.OIDC_REDIRECT_URI = '../callback'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_AUTH_SECRET is undefined', async () => {
+    delete process.env.OIDC_AUTH_SECRET
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should return an error when OIDC_AUTH_SECRET is too short', async () => {
+    process.env.OIDC_AUTH_SECRET = '1234567890123456789012345678901'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should Domain attribute of the cookie not set if env value not defined', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).not.toMatch('Domain=')
+  })
+  test('Should Domain attribute of the cookie set if env value defined (with renewed refresh token)', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
+  })
+  test('Should Domain attribute of the cookie set if env value defined (if session is expired)', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
+  })
 })
 describe('processOAuthCallback()', () => {
   test('Should successfully process the OAuth2.0 callback and redirect to the continue URL', async () => {
@@ -304,6 +397,18 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Verify default callback path when OIDC_REDIRECT_URI is undefined', async () => {
+    delete process.env.OIDC_REDIRECT_URI
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
   })
   test('Should respond with customized claims', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}-custom?code=1234&state=${MOCK_STATE}`, {
@@ -387,7 +492,9 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(
-      new RegExp(`${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`)
+      new RegExp(
+        `${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`
+      )
     )
   })
   test('Should return an error if the state parameter does not match', async () => {

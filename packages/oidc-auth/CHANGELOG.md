@@ -1,5 +1,23 @@
 # @hono/oidc-auth
 
+## 1.4.1
+
+### Patch Changes
+
+- [#936](https://github.com/honojs/middleware/pull/936) [`be34f6908f1ecc22171d302edb10036b3bba9fe9`](https://github.com/honojs/middleware/commit/be34f6908f1ecc22171d302edb10036b3bba9fe9) Thanks [@hnw](https://github.com/hnw)! - Fix type error
+
+## 1.4.0
+
+### Minor Changes
+
+- [#926](https://github.com/honojs/middleware/pull/926) [`2f716d619d9e61df3f12427ef6cdebaf0888569e`](https://github.com/honojs/middleware/commit/2f716d619d9e61df3f12427ef6cdebaf0888569e) Thanks [@hnw](https://github.com/hnw)! - Add support for absolute path in OIDC_REDIRECT_URI and set its default value to '/callback'
+
+## 1.3.0
+
+### Minor Changes
+
+- [#919](https://github.com/honojs/middleware/pull/919) [`4a0606f774022097bf7de69077fe366280bf4f49`](https://github.com/honojs/middleware/commit/4a0606f774022097bf7de69077fe366280bf4f49) Thanks [@maemaemae3](https://github.com/maemaemae3)! - Optionally specify a custom cookie domain using the OIDC_COOKIE_DOMAIN environment variable (default is domain of the request)
+
 ## 1.2.0
 
 ### Minor Changes

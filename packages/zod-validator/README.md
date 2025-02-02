@@ -37,6 +37,38 @@ app.post(
 )
 ```
 
+Throw Error:
+
+throw a zod validate error instead of directly returning an error response.
+
+```ts
+// file: validator-wrapper.ts
+import { ZodSchema } from "zod";
+import type { ValidationTargets } from "hono";
+import { zValidator as zv } from "@hono/zod-validator";
+
+export const zValidator = <
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets
+>(
+  target: Target,
+  schema: T
+) =>
+  zv(target, schema, (result, c) => {
+    if (!result.success) {
+      throw new HTTPException(400, { cause: result.error });
+    }
+  });
+
+// usage
+import { zValidator } from './validator-wrapper'
+app.post(
+  '/post',
+  zValidator('json', schema)
+  //...
+)
+```
+
 ## Author
 
 Yusuke Wada <https://github.com/yusukebe>

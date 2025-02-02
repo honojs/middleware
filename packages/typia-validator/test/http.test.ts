@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import { vi } from 'vitest'
-import { z } from 'zod'
-import { zValidator } from '../src'
+import type { tags } from 'typia'
+import typia from 'typia'
+import { typiaValidator } from '../src/http'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -10,29 +10,36 @@ type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 describe('Basic', () => {
   const app = new Hono()
 
-  const jsonSchema = z.object({
-    name: z.string(),
-    age: z.number(),
-  })
+  interface JsonSchema {
+    name: string
+    age: number
+  }
+  const validateJson = typia.createValidate<JsonSchema>()
 
-  const querySchema = z
-    .object({
-      name: z.string().optional(),
-    })
-    .optional()
+  interface QuerySchema {
+    name?: string
+  }
+  const validateQuery = typia.http.createValidateQuery<QuerySchema>()
+  interface HeaderSchema {
+    'x-Category': ('x' | 'y' | 'z')[]
+  }
+  const validateHeader = typia.http.createValidateHeaders<HeaderSchema>()
 
   const route = app.post(
     '/author',
-    zValidator('json', jsonSchema),
-    zValidator('query', querySchema),
+    typiaValidator('json', validateJson),
+    typiaValidator('query', validateQuery),
+    typiaValidator('header', validateHeader),
     (c) => {
       const data = c.req.valid('json')
       const query = c.req.valid('query')
+      const header = c.req.valid('header')
 
       return c.json({
         success: true,
         message: `${data.name} is ${data.age}`,
         queryName: query?.name,
+        headerCategory: header['x-Category'],
       })
     }
   )
@@ -47,16 +54,19 @@ describe('Basic', () => {
             age: number
           }
         } & {
-          query?:
-            | {
-                name?: string | undefined
-              }
-            | undefined
+          query: {
+            name?: string | undefined
+          }
+        } & {
+          header: {
+            'x-Category': 'x' | 'y' | 'z'
+          }
         }
         output: {
           success: boolean
           message: string
           queryName: string | undefined
+          headerCategory: ('x' | 'y' | 'z')[]
         }
       }
     }
@@ -74,6 +84,7 @@ describe('Basic', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Category': 'x, y, z',
       },
     })
     const res = await app.request(req)
@@ -83,6 +94,7 @@ describe('Basic', () => {
       success: true,
       message: 'Superman is 20',
       queryName: 'Metallo',
+      headerCategory: ['x', 'y', 'z'],
     })
   })
 
@@ -105,17 +117,29 @@ describe('Basic', () => {
   })
 })
 
-describe('coerce', () => {
+describe('transform', () => {
   const app = new Hono()
 
-  const querySchema = z.object({
-    page: z.coerce.number(),
-  })
+  interface QuerySchema {
+    page: (0 | 1 | 2)[]
+  }
+  const validateQuery = typia.http.createValidateQuery<QuerySchema>()
 
-  const route = app.get('/page', zValidator('query', querySchema), (c) => {
-    const { page } = c.req.valid('query')
-    return c.json({ page })
-  })
+  interface HeaderSchema {
+    'X-Categories': (0 | 1 | 2)[]
+  }
+  const validateHeader = typia.http.createValidateHeaders<HeaderSchema>()
+
+  const route = app.get(
+    '/page',
+    typiaValidator('query', validateQuery),
+    typiaValidator('header', validateHeader),
+    (c) => {
+      const { page } = c.req.valid('query')
+      const { 'X-Categories': categories } = c.req.valid('header')
+      return c.json({ page, categories })
+    }
+  )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
@@ -123,11 +147,16 @@ describe('coerce', () => {
       $get: {
         input: {
           query: {
-            page: string | string[]
+            page: `${0 | 1 | 2}`[]
+          }
+        } & {
+          header: {
+            'X-Categories': `${0 | 1 | 2}`
           }
         }
         output: {
-          page: number
+          page: (0 | 1 | 2)[]
+          categories: (0 | 1 | 2)[]
         }
       }
     }
@@ -137,11 +166,16 @@ describe('coerce', () => {
   type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
-    const res = await app.request('/page?page=123')
+    const res = await app.request('/page?page=1', {
+      headers: {
+        'X-Categories': '0, 1, 2',
+      },
+    })
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      page: 123,
+      page: [1],
+      categories: [0, 1, 2],
     })
   })
 })
@@ -149,14 +183,15 @@ describe('coerce', () => {
 describe('With Hook', () => {
   const app = new Hono()
 
-  const schema = z.object({
-    id: z.number(),
-    title: z.string(),
-  })
+  interface Schema {
+    id: number
+    title: string
+  }
+  const validateSchema = typia.createValidate<Schema>()
 
   app.post(
     '/post',
-    zValidator('json', schema, (result, c) => {
+    typiaValidator('json', validateSchema, (result, c) => {
       if (!result.success) {
         return c.text(`${result.data.id} is invalid!`, 400)
       }
@@ -205,26 +240,41 @@ describe('With Hook', () => {
 describe('With Async Hook', () => {
   const app = new Hono()
 
-  const schema = z.object({
-    id: z.number(),
-    title: z.string(),
-  })
+  interface Schema {
+    id: number & tags.Maximum<999>
+    title: string
+  }
+  const validateSchema = typia.createValidate<Schema>()
+  const validateQuery = typia.http.createValidateQuery<Schema>()
+  const validateHeader = typia.http.createValidateHeaders<Schema>()
 
   app.post(
     '/post',
-    zValidator('json', schema, async (result, c) => {
+    typiaValidator('json', validateSchema, async (result, c) => {
+      if (!result.success) {
+        return c.text(`${result.data.id} is invalid!`, 400)
+      }
+    }),
+    typiaValidator('query', validateQuery, async (result, c) => {
+      if (!result.success) {
+        return c.text(`${result.data.id} is invalid!`, 400)
+      }
+    }),
+    typiaValidator('header', validateHeader, async (result, c) => {
       if (!result.success) {
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),
     (c) => {
       const data = c.req.valid('json')
-      return c.text(`${data.id} is valid!`)
+      const query = c.req.valid('query')
+      const header = c.req.valid('header')
+      return c.json({ data, query, header })
     }
   )
 
   it('Should return 200 response', async () => {
-    const req = new Request('http://localhost/post', {
+    const req = new Request('http://localhost/post?id=125&title=My', {
       body: JSON.stringify({
         id: 123,
         title: 'Hello',
@@ -232,16 +282,22 @@ describe('With Async Hook', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Id: '124',
+        Title: 'World',
       },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe('123 is valid!')
+    expect(await res.json()).toEqual({
+      data: { id: 123, title: 'Hello' },
+      query: { id: 125, title: 'My' },
+      header: { id: 124, title: 'World' },
+    })
   })
 
   it('Should return 400 response', async () => {
-    const req = new Request('http://localhost/post', {
+    let req = new Request('http://localhost/post', {
       body: JSON.stringify({
         id: '123',
         title: 'Hello',
@@ -251,10 +307,44 @@ describe('With Async Hook', () => {
         'Content-Type': 'application/json',
       },
     })
-    const res = await app.request(req)
+    let res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
     expect(await res.text()).toBe('123 is invalid!')
+
+    req = new Request('http://localhost/post?id=1000&title=My', {
+      body: JSON.stringify({
+        id: 123,
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Id: '124',
+        Title: 'World',
+      },
+    })
+    res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    expect(await res.text()).toBe('1000 is invalid!')
+
+    req = new Request('http://localhost/post?id=125&title=My', {
+      body: JSON.stringify({
+        id: 123,
+        title: 'Hello',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Id: '1000',
+        Title: 'World',
+      },
+    })
+    res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    expect(await res.text()).toBe('1000 is invalid!')
   })
 })
 
@@ -262,30 +352,34 @@ describe('With target', () => {
   it('should call hook for correctly validated target', async () => {
     const app = new Hono()
 
-    const schema = z.object({
-      id: z.string(),
-    })
+    interface Schema {
+      id: number
+    }
+    const validateSchema = typia.createValidate<Schema>()
+    const validateQuery = typia.http.createValidateQuery<Schema>()
+    const validateHeader = typia.http.createValidateHeaders<Schema>()
 
-    const jsonHook = vi.fn()
-    const paramHook = vi.fn()
-    const queryHook = vi.fn()
+    const jsonHook = jest.fn()
+    const headerHook = jest.fn()
+    const queryHook = jest.fn()
     app.post(
-      '/:id/post',
-      zValidator('json', schema, jsonHook),
-      zValidator('param', schema, paramHook),
-      zValidator('query', schema, queryHook),
+      '/post',
+      typiaValidator('json', validateSchema, jsonHook),
+      typiaValidator('query', validateQuery, queryHook),
+      typiaValidator('header', validateHeader, headerHook),
       (c) => {
         return c.text('ok')
       }
     )
 
-    const req = new Request('http://localhost/1/post?id=2', {
+    const req = new Request('http://localhost/post?id=2', {
       body: JSON.stringify({
-        id: '3',
+        id: 3,
       }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        id: '1',
       },
     })
 
@@ -293,64 +387,24 @@ describe('With target', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe('ok')
-    expect(paramHook).toHaveBeenCalledWith(
-      { data: { id: '1' }, success: true, target: 'param' },
-      expect.anything()
-    )
-    expect(queryHook).toHaveBeenCalledWith(
-      { data: { id: '2' }, success: true, target: 'query' },
-      expect.anything()
-    )
-    expect(jsonHook).toHaveBeenCalledWith(
-      { data: { id: '3' }, success: true, target: 'json' },
-      expect.anything()
-    )
-  })
-})
-
-describe('Only Types', () => {
-  it('Should return correct enum types for query', () => {
-    const app = new Hono()
-
-    const querySchema = z.object({
-      order: z.enum(['asc', 'desc']),
-    })
-
-    const route = app.get('/', zValidator('query', querySchema), (c) => {
-      const data = c.req.valid('query')
-      return c.json(data)
-    })
-
-    type Actual = ExtractSchema<typeof route>
-    type Expected = {
-      '/': {
-        $get: {
-          input: {
-            query: {
-              order: 'asc' | 'desc'
-            }
-          }
-          output: {
-            order: 'asc' | 'desc'
-          }
-        }
-      }
-    }
-    type verify = Expect<Equal<Expected, Actual>>
+    expect(headerHook).toHaveBeenCalledWith({ data: { id: 1 }, success: true }, expect.anything())
+    expect(queryHook).toHaveBeenCalledWith({ data: { id: 2 }, success: true }, expect.anything())
+    expect(jsonHook).toHaveBeenCalledWith({ data: { id: 3 }, success: true }, expect.anything())
   })
 })
 
 describe('Case-Insensitive Headers', () => {
   it('Should ignore the case for headers in the Zod schema and return 200', () => {
     const app = new Hono()
-    const headerSchema = z.object({
-      'Content-Type': z.string(),
-      ApiKey: z.string(),
-      onlylowercase: z.string(),
-      ONLYUPPERCASE: z.string(),
-    })
+    interface HeaderSchema {
+      'Content-Type': string
+      ApiKey: string
+      onlylowercase: string
+      ONLYUPPERCASE: string
+    }
+    const validateHeader = typia.http.createValidateHeaders<HeaderSchema>()
 
-    const route = app.get('/', zValidator('header', headerSchema), (c) => {
+    const route = app.get('/', typiaValidator('header', validateHeader), (c) => {
       const headers = c.req.valid('header')
       return c.json(headers)
     })
@@ -360,9 +414,9 @@ describe('Case-Insensitive Headers', () => {
       '/': {
         $get: {
           input: {
-            header: z.infer<typeof headerSchema>
+            header: HeaderSchema
           }
-          output: z.infer<typeof headerSchema>
+          output: HeaderSchema
         }
       }
     }
