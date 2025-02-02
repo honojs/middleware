@@ -12,7 +12,8 @@ export interface NodeWebSocket {
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
 }
 export interface NodeWebSocketInit {
-  app: Hono
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  app: Hono<any, any, any>
   baseUrl?: string | URL
 }
 

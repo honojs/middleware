@@ -149,4 +149,15 @@ describe('WebSocket helper', () => {
       expect((receivedMessage as Buffer).at(idx)).toBe(val)
     })
   })
+
+  describe('Types', () => {
+    it('Should not throw a type error with an app with Variables generics', () => {
+      const app = new Hono<{
+        Variables: {
+          foo: string
+        }
+      }>()
+      createNodeWebSocket({ app })
+    })
+  })
 })
