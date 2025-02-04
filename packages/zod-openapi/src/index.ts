@@ -632,13 +632,23 @@ export class OpenAPIHono<
         case 'route':
           return this.openAPIRegistry.registerPath({
             ...def.route,
-            path: mergePath(pathForOpenAPI, def.route.path),
+            path: mergePath(
+              pathForOpenAPI,
+              // @ts-expect-error _basePath is private
+              app._basePath,
+              def.route.path
+            ),
           })
 
         case 'webhook':
           return this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: mergePath(pathForOpenAPI, def.webhook.path),
+            path: mergePath(
+              pathForOpenAPI,
+              // @ts-expect-error _basePath is private
+              app._basePath,
+              def.webhook.path
+            ),
           })
 
         case 'schema':
