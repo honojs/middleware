@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.18.4
+
+### Patch Changes
+
+- [#955](https://github.com/honojs/middleware/pull/955) [`70a564e268cd6350cfb994e5b5c5626b31a3fcc9`](https://github.com/honojs/middleware/commit/70a564e268cd6350cfb994e5b5c5626b31a3fcc9) Thanks [@luxass](https://github.com/luxass)! - fix: use nested app base paths in openapi schema
+
 ## 0.18.3
 
 ### Patch Changes
