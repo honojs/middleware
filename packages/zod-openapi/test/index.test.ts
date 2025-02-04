@@ -1161,54 +1161,63 @@ describe('basePath()', () => {
     const app = new OpenAPIHono()
 
     const v1 = new OpenAPIHono().basePath('/api/v1')
-    v1.openapi({
-      method: 'get',
-      path: '/message1',
-      responses: {
-        200: {
-          description: 'Get message',
-          content: {
-            'application/json': {
-              schema: z.object({ message: z.string() })
-            }
-          }
+    v1.openapi(
+      {
+        method: 'get',
+        path: '/message1',
+        responses: {
+          200: {
+            description: 'Get message',
+            content: {
+              'application/json': {
+                schema: z.object({ message: z.string() }),
+              },
+            },
+          },
         },
       },
-    }, (c) => c.json({ message: 'Hello' }))
+      (c) => c.json({ message: 'Hello' })
+    )
 
     const v2 = new OpenAPIHono().basePath('/api/v2')
-    v2.openapi({
-      method: 'get',
-      path: '/message2',
-      responses: {
-        200: {
-          description: 'Get message',
-          content: {
-            'application/json': {
-              schema: z.object({ message: z.string() })
-            }
-          }
+    v2.openapi(
+      {
+        method: 'get',
+        path: '/message2',
+        responses: {
+          200: {
+            description: 'Get message',
+            content: {
+              'application/json': {
+                schema: z.object({ message: z.string() }),
+              },
+            },
+          },
         },
       },
-    }, (c) => c.json({ message: 'Hello' }))
+      (c) => c.json({ message: 'Hello' })
+    )
 
     app.route('/', v1)
     app.route('/', v2)
 
-    app.openapi({
-      method: 'get',
-      path: '/hello',
-      responses: {
-        200: {
-          description: 'Get message',
-          content: {
-            'application/json': {
-              schema: z.object({ message: z.string() })
-            }
-          }
+    app.openapi(
+      {
+        method: 'get',
+        path: '/hello',
+        responses: {
+          200: {
+            description: 'Get message',
+            content: {
+              'application/json': {
+                schema: z.object({ message: z.string() }),
+              },
+            },
+          },
         },
       },
-    }, (c) => c.json({ message: 'Hello' }))
+      (c) => c.json({ message: 'Hello' })
+    )
 
     const res1 = await app.request('/api/v1/message1')
     expect(res1.status).toBe(200)
@@ -1216,7 +1225,7 @@ describe('basePath()', () => {
     const res2 = await app.request('/api/v2/message2')
     expect(res2.status).toBe(200)
 
-    const json =  app.getOpenAPIDocument({
+    const json = app.getOpenAPIDocument({
       openapi: '3.0.0',
       info: {
         version: '1.0.0',
@@ -1226,17 +1235,9 @@ describe('basePath()', () => {
 
     const paths = Object.keys(json.paths)
 
-    expect(paths).toStrictEqual([
-      '/api/v1/message1',
-      '/api/v2/message2',
-      '/hello'
-    ])
+    expect(paths).toStrictEqual(['/api/v1/message1', '/api/v2/message2', '/hello'])
 
-    expect(paths).not.toStrictEqual([
-      '/message1',
-      '/message2',
-      '/hello'
-    ])
+    expect(paths).not.toStrictEqual(['/message1', '/message2', '/hello'])
   })
 })
 
