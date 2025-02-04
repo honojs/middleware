@@ -1195,6 +1195,21 @@ describe('basePath()', () => {
     app.route('/', v1)
     app.route('/', v2)
 
+    app.openapi({
+      method: 'get',
+      path: '/hello',
+      responses: {
+        200: {
+          description: 'Get message',
+          content: {
+            'application/json': {
+              schema: z.object({ message: z.string() })
+            }
+          }
+        },
+      },
+    }, (c) => c.json({ message: 'Hello' }))
+
     const res1 = await app.request('/api/v1/message1')
     expect(res1.status).toBe(200)
 
@@ -1213,12 +1228,14 @@ describe('basePath()', () => {
 
     expect(paths).toStrictEqual([
       '/api/v1/message1',
-      '/api/v2/message2'
+      '/api/v2/message2',
+      '/hello'
     ])
 
     expect(paths).not.toStrictEqual([
       '/message1',
-      '/message2'
+      '/message2',
+      '/hello'
     ])
   })
 })
