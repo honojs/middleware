@@ -71,8 +71,8 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         }
 
         ;(async () => {
-          const events = await createEvents(c)
           const ws = await nodeUpgradeWebSocket(c.env.incoming)
+          const events = await createEvents(c)
 
           const ctx: WSContext<WebSocket> = {
             binaryType: 'arraybuffer',
