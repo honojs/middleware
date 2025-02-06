@@ -44,6 +44,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ark/schema@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@ark/schema@npm:0.26.0"
+  dependencies:
+    "@ark/util": "npm:0.26.0"
+  checksum: e038b73bd0d1a7556d5d7ab70382ddcc1ba35cafdddf81ea961a676d10bd2d642514c08b7a7cd9f4d99fb8e5ec3ae4e2ea8d3bbdf1d8b19d94149379f1c739f3
+  languageName: node
+  linkType: hard
+
+"@ark/util@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@ark/util@npm:0.26.0"
+  checksum: 60c54dca4556b1ccb6f4a3dc1e28beb09219ee3f01124916550c993f0508ac2142c9c967992ee16a71334e849c214234e6c3e4c2271dc104a893068a9cc33afc
+  languageName: node
+  linkType: hard
+
 "@arktype/schema@npm:0.1.4-cjs":
   version: 0.1.4-cjs
   resolution: "@arktype/schema@npm:0.1.4-cjs"
@@ -2916,6 +2932,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/standard-validator@workspace:packages/standard-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/standard-validator@workspace:packages/standard-validator"
+  dependencies:
+    "@standard-schema/spec": "npm:1.0.0"
+    arktype: "npm:^2.0.0-rc.26"
+    hono: "npm:^4.0.10"
+    publint: "npm:^0.2.7"
+    tsup: "npm:^8.1.0"
+    typescript: "npm:^5.7.3"
+    valibot: "npm:^1.0.0-beta.9"
+    vitest: "npm:^1.4.0"
+    zod: "npm:^3.24.0"
+  peerDependencies:
+    "@standard-schema/spec": 1.0.0
+    hono: ">=3.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/swagger-editor@workspace:packages/swagger-editor":
   version: 0.0.0-use.local
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
@@ -4846,6 +4881,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@standard-schema/spec@npm:1.0.0"
+  checksum: a1ab9a8bdc09b5b47aa8365d0e0ec40cc2df6437be02853696a0e377321653b0d3ac6f079a8c67d5ddbe9821025584b1fb71d9cc041a6666a96f1fadf2ece15f
+  languageName: node
+  linkType: hard
+
 "@szmarczak/http-timer@npm:^1.1.2":
   version: 1.1.2
   resolution: "@szmarczak/http-timer@npm:1.1.2"
@@ -6519,6 +6561,16 @@ __metadata:
     "@arktype/schema": "npm:0.1.4-cjs"
     "@arktype/util": "npm:0.0.41-cjs"
   checksum: b0e7fc182bb6d4d0d4e125744a5b8233295d2ca30715f1bafdd158d37ed8abffafe0f5ef28ff8f99f82ffb1b8d1f36fcc282035c4ef4b909a748c1d520044afc
+  languageName: node
+  linkType: hard
+
+"arktype@npm:^2.0.0-rc.26":
+  version: 2.0.0-rc.26
+  resolution: "arktype@npm:2.0.0-rc.26"
+  dependencies:
+    "@ark/schema": "npm:0.26.0"
+    "@ark/util": "npm:0.26.0"
+  checksum: 190c4a82baec546bca704b26bffa73209a756ea4a0a2ade080a6d640a807e7eb1990a69e6507112f103151a37592cca84591569c90e607fb2865bd6ea2532b9a
   languageName: node
   linkType: hard
 
@@ -20770,6 +20822,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.7.3":
+  version: 5.7.3
+  resolution: "typescript@npm:5.7.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: b7580d716cf1824736cc6e628ab4cd8b51877408ba2be0869d2866da35ef8366dd6ae9eb9d0851470a39be17cbd61df1126f9e211d8799d764ea7431d5435afa
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A^4.7.4#optional!builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
@@ -20817,6 +20879,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 5a437c416251334deeaf29897157032311f3f126547cfdc4b133768b606cb0e62bcee733bb97cf74c42fe7268801aea1392d8e40988cdef112e9546eba4c03c5
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
+  version: 5.7.3
+  resolution: "typescript@patch:typescript@npm%3A5.7.3#optional!builtin<compat/typescript>::version=5.7.3&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 3b56d6afa03d9f6172d0b9cdb10e6b1efc9abc1608efd7a3d2f38773d5d8cfb9bbc68dfb72f0a7de5e8db04fc847f4e4baeddcd5ad9c9feda072234f0d788896
   languageName: node
   linkType: hard
 
@@ -21243,6 +21315,18 @@ __metadata:
     typescript:
       optional: true
   checksum: 9c433f6a6ba5d1761a42801d76ae87e9d81ade16908d8a74643d0f7c6f9f744f289b042c80cf619757a72c57891ab7e73b8d6b5d24e9e89bb4a78f0a9936552d
+  languageName: node
+  linkType: hard
+
+"valibot@npm:^1.0.0-beta.9":
+  version: 1.0.0-beta.9
+  resolution: "valibot@npm:1.0.0-beta.9"
+  peerDependencies:
+    typescript: ">=5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: ecd20ec024f5f05985002b385f624d9218c839a54c23f3dbf3e193161207c049859d99069b257334756b3a07e2734e93456061600dd1101aec121828df3ab286
   languageName: node
   linkType: hard
 
@@ -22568,6 +22652,13 @@ __metadata:
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.24.0":
+  version: 3.24.1
+  resolution: "zod@npm:3.24.1"
+  checksum: 0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
   languageName: node
   linkType: hard
 

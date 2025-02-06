@@ -1,0 +1,25 @@
+name: ci-standard-validator
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/standard-validator/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/standard-validator/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/standard-validator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test

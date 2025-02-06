@@ -1,0 +1,51 @@
+{
+  "name": "@hono/standard-validator",
+  "version": "0.0.0",
+  "description": "Validator middleware using Standard Schema",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "tsc --noEmit && vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "@standard-schema/spec": "1.0.0",
+    "hono": ">=3.9.0"
+  },
+  "devDependencies": {
+    "@standard-schema/spec": "1.0.0",
+    "arktype": "^2.0.0-rc.26",
+    "hono": "^4.0.10",
+    "publint": "^0.2.7",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.3",
+    "valibot": "^1.0.0-beta.9",
+    "vitest": "^1.4.0",
+    "zod": "^3.24.0"
+  }
+}

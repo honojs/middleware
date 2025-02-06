@@ -41,6 +41,7 @@
     "build:ajv-validator": "yarn workspace @hono/ajv-validator build",
     "build:tsyringe": "yarn workspace @hono/tsyringe build",
     "build:cloudflare-access": "yarn workspace @hono/cloudflare-access build",
+    "build:standard-validator": "yarn workspace @hono/standard-validator build",
     "build": "run-p 'build:*'",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
