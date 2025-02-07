@@ -21,9 +21,6 @@ type Hook<
   c: Context<E, P>
 ) => TOrPromiseOfT<Response | void | TypedResponse<O>>
 
-const isStandardSchemaValidator = (validator: unknown): validator is StandardSchemaV1 =>
-  !!validator && typeof validator === 'object' && '~standard' in validator
-
 const sValidator = <
   Schema extends StandardSchemaV1,
   Target extends keyof ValidationTargets,
