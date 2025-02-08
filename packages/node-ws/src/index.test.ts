@@ -25,6 +25,32 @@ describe('WebSocket helper', () => {
     server.close()
   })
 
+  it('Should be inited WebSocket Context even if upgrading process is asynchronous', async () => {
+    const mainPromise = new Promise<boolean>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(
+          () =>
+            new Promise((resolveWS) =>
+              setTimeout(
+                () =>
+                  resolveWS({
+                    onOpen() {
+                      resolve(true)
+                    },
+                  }),
+                100
+              )
+            )
+        )
+      )
+    )
+
+    new WebSocket('ws://localhost:3030/')
+
+    expect(await mainPromise).toBe(true)
+  })
+
   it('Should be able to connect', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(

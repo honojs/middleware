@@ -89,7 +89,9 @@ const getOidcAuthEnv = (c: Context) => {
       try {
         new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
       } catch (e) {
-        throw new HTTPException(500, { message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path' })
+        throw new HTTPException(500, {
+          message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path',
+        })
       }
     }
     oidcAuthEnv.OIDC_COOKIE_PATH = oidcAuthEnv.OIDC_COOKIE_PATH ?? defaultOidcAuthCookiePath
@@ -149,7 +151,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       return null
     }
     try {
-      auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
+      auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
     } catch (e) {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
@@ -239,7 +241,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
   if (session_jwt !== undefined) {
     deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
-    const auth = await verify(session_jwt, env.OIDC_AUTH_SECRET) as OidcAuth
+    const auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)
