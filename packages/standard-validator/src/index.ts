@@ -13,8 +13,8 @@ type Hook<
   O = {}
 > = (
   result: (
-    | { success: boolean; data: T }
-    | { success: boolean; error: ReadonlyArray<StandardSchemaV1.Issue>; data: T }
+    | { success: true; data: T }
+    | { success: false; error: ReadonlyArray<StandardSchemaV1.Issue>; data: T }
   ) & {
     target: Target
   },
