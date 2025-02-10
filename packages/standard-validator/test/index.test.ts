@@ -1,11 +1,12 @@
+import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { Hono } from 'hono'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
-import { sValidator } from '../src'
 import { vi } from 'vitest'
+import { sValidator } from '../src'
 
+import * as arktypeSchemas from './__schemas__/arktype'
 import * as valibotSchemas from './__schemas__/valibot'
 import * as zodSchemas from './__schemas__/zod'
-import * as arktypeSchemas from './__schemas__/arktype'
 
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 type MergeDiscriminatedUnion<U> = UnionToIntersection<U> extends infer O
@@ -183,6 +184,9 @@ describe('Standard Schema Validation', () => {
           '/post',
           sValidator('json', schema, (result, c) => {
             if (!result.success) {
+              type verify = Expect<
+                Equal<ReadonlyArray<StandardSchemaV1.Issue>, typeof result.error>
+              >
               return c.text(`${result.data.id} is invalid!`, 400)
             }
           }),
