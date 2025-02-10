@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.0.8
+
+### Patch Changes
+
+- [#959](https://github.com/honojs/middleware/pull/959) [`c24efa6b8af08d0d0b3315b7b5b7355b5dd7ff5a`](https://github.com/honojs/middleware/commit/c24efa6b8af08d0d0b3315b7b5b7355b5dd7ff5a) Thanks [@nakasyou](https://github.com/nakasyou)! - fix a bug of upgrading
+
 ## 1.0.7
 
 ### Patch Changes
