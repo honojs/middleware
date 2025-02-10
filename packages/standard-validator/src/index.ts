@@ -1,6 +1,6 @@
+import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { StandardSchemaV1 } from '@standard-schema/spec'
 
 type HasUndefined<T> = undefined extends T ? true : false
 type TOrPromiseOfT<T> = T | Promise<T>
@@ -54,7 +54,7 @@ const sValidator = <
 
     if (hook) {
       const hookResult = await hook(
-        !!result.issues
+        result.issues
           ? { data: value, error: result.issues, success: false, target }
           : { data: value, success: true, target },
         c
