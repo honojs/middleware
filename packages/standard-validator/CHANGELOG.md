@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.1.2
+
+### Patch Changes
+
+- [#964](https://github.com/honojs/middleware/pull/964) [`352507bc06857466b75dbf47f6f514d28719f47c`](https://github.com/honojs/middleware/commit/352507bc06857466b75dbf47f6f514d28719f47c) Thanks [@paihu](https://github.com/paihu)! - fix result type
+
 ## 0.1.1
 
 ### Patch Changes
