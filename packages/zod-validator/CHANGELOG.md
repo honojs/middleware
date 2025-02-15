@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.4.3
+
+### Patch Changes
+
+- [#968](https://github.com/honojs/middleware/pull/968) [`b65d5a58616f861520047dd08babc9cd1d81cbd1`](https://github.com/honojs/middleware/commit/b65d5a58616f861520047dd08babc9cd1d81cbd1) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: fix commonjs import problem
+
 ## 0.4.2
 
 ### Patch Changes
