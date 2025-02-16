@@ -36,7 +36,7 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(
-      '<html><head>Title</head><body><h1>http://localhost/</h1></body></html>'
+      '<!DOCTYPE html><html><head>Title</head><body><h1>http://localhost/</h1></body></html>'
     )
   })
 
@@ -54,7 +54,7 @@ describe('Basic', () => {
     const res = await app.request('http://localhost/')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe('<h1>http://localhost/</h1>')
+    expect(await res.text()).toBe('<!DOCTYPE html><h1>http://localhost/</h1>')
   })
 
   it('nested layout with Layout', async () => {
@@ -109,14 +109,14 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(
-      '<html><head>Nested</head><body><div class="nested"><h1>http://localhost/nested</h1></div></body></html>'
+      '<!DOCTYPE html><html><head>Nested</head><body><div class="nested"><h1>http://localhost/nested</h1></div></body></html>'
     )
 
     res = await app.request('http://localhost/nested/nested2')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(
-      '<html><head>Nested2</head><body><div class="nested"><div class="nested2"><h1>http://localhost/nested</h1></div></div></body></html>'
+      '<!DOCTYPE html><html><head>Nested2</head><body><div class="nested"><div class="nested2"><h1>http://localhost/nested</h1></div></div></body></html>'
     )
   })
 
@@ -140,6 +140,28 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe('<!DOCTYPE html><html><body><h1>Hello</h1></body></html>')
+  })
+
+  it('Should return a content without a doctype', async () => {
+    const app = new Hono()
+    app.use(
+      '*',
+      reactRenderer(
+        ({ children }) => {
+          return (
+            <html>
+              <body>{children}</body>
+            </html>
+          )
+        },
+        { docType: false }
+      )
+    )
+    app.get('/', (c) => c.render(<h1>Hello</h1>, { title: 'Title' }))
+    const res = await app.request('/')
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('<html><body><h1>Hello</h1></body></html>')
   })
 
   it('Should return a custom doctype', async () => {
