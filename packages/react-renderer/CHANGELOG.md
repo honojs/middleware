@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 0.3.0
+
+### Minor Changes
+
+- [#971](https://github.com/honojs/middleware/pull/971) [`be181bfff63298c656b230092fb0dfa700ad30a4`](https://github.com/honojs/middleware/commit/be181bfff63298c656b230092fb0dfa700ad30a4) Thanks [@ghaaj](https://github.com/ghaaj)! - The `doctype` option defaults to true
+
 ## 0.2.1
 
 ### Patch Changes
