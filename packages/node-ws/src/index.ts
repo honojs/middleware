@@ -16,7 +16,6 @@ export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app: Hono<any, any, any>
   baseUrl?: string | URL
-  strict?: boolean
 }
 
 /**
@@ -26,19 +25,19 @@ export interface NodeWebSocketInit {
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
-  const waiter = new Map<IncomingMessage, { resolve: (ws: WebSocket) => void, response: Response }>()
+  const waiterMap = new Map<IncomingMessage, { resolve: (ws: WebSocket) => void, response: Response }>()
 
   wss.on('connection', (ws, request) => {
-    const waiterFn = waiter.get(request)
-    if (waiterFn) {
-      waiterFn.resolve(ws)
-      waiter.delete(request)
+    const waiter = waiterMap.get(request)
+    if (waiter) {
+      waiter.resolve(ws)
+      waiterMap.delete(request)
     }
   })
 
   const nodeUpgradeWebSocket = (request: IncomingMessage, response: Response) => {
     return new Promise<WebSocket>((resolve) => {
-      waiter.set(request, { resolve, response })
+      waiterMap.set(request, { resolve, response })
     })
   }
 
@@ -61,18 +60,16 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           { incoming: request, outgoing: undefined }
         )
 
-        if (init.strict !== false) {
-          const waiterFn = waiter.get(request)
-          if (!waiterFn || waiterFn.response !== response) {
-            socket.end(
-              'HTTP/1.1 400 Bad Request\r\n' +
-              'Connection: close\r\n' +
-              'Content-Length: 0\r\n' +
-              '\r\n'
-            )
-            waiter.delete(request)
-            return
-          }
+        const waiter = waiterMap.get(request)
+        if (!waiter || waiter.response !== response) {
+          socket.end(
+            'HTTP/1.1 400 Bad Request\r\n' +
+            'Connection: close\r\n' +
+            'Content-Length: 0\r\n' +
+            '\r\n'
+          )
+          waiterMap.delete(request)
+          return
         }
 
         wss.handleUpgrade(request, socket, head, (ws) => {
