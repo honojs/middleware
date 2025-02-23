@@ -67,3 +67,10 @@ export type Scopes =
     | 'moderator:read:vips'
     | 'moderator:read:warnings'
     | 'moderator:manage:warnings'
+      
+    // IRC Chat Scopes
+    | 'chat:edit'
+    | 'chat:read'
+    
+    // PubSub-specific Chat Scopes
+    | 'whispers:read'
