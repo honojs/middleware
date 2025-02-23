@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.0
+
+### Minor Changes
+
+- [#973](https://github.com/honojs/middleware/pull/973) [`6f90a574c465b4d0ecadbe605bdf434b9f3c95f3`](https://github.com/honojs/middleware/commit/6f90a574c465b4d0ecadbe605bdf434b9f3c95f3) Thanks [@dkulyk](https://github.com/dkulyk)! - Added rejection of WebSocket connections when the app does not expect them
+
 ## 1.0.8
 
 ### Patch Changes
