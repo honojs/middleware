@@ -51,6 +51,40 @@ describe('WebSocket helper', () => {
     expect(await mainPromise).toBe(true)
   })
 
+  it('Should be rejected if upgradeWebSocket is not used', async () => {
+    app.get(
+      '/', (c)=>c.body('')
+    )
+
+    {
+      const ws = new WebSocket('ws://localhost:3030/')
+      const mainPromise = new Promise<boolean>((resolve) => {
+        ws.onerror = () => {
+          resolve(true)
+        }
+        ws.onopen = () => {
+          resolve(false)
+        }
+      })
+
+      expect(await mainPromise).toBe(true)
+    }
+
+    { //also should rejected on fallback
+      const ws = new WebSocket('ws://localhost:3030/notFound')
+      const mainPromise = new Promise<boolean>((resolve) => {
+        ws.onerror = () => {
+          resolve(true)
+        }
+        ws.onopen = () => {
+          resolve(false)
+        }
+      })
+
+      expect(await mainPromise).toBe(true)
+    }
+  })
+
   it('Should be able to connect', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(

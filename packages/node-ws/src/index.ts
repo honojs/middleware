@@ -5,6 +5,7 @@ import { WebSocketServer } from 'ws'
 import type { IncomingMessage } from 'http'
 import type { Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
+import type { Duplex } from 'node:stream'
 import { CloseEvent } from './events'
 
 export interface NodeWebSocket {
@@ -24,25 +25,25 @@ export interface NodeWebSocketInit {
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
-  const waiter = new Map<IncomingMessage, (ws: WebSocket) => void>()
+  const waiterMap = new Map<IncomingMessage, { resolve: (ws: WebSocket) => void, response: Response }>()
 
   wss.on('connection', (ws, request) => {
-    const waiterFn = waiter.get(request)
-    if (waiterFn) {
-      waiterFn(ws)
-      waiter.delete(request)
+    const waiter = waiterMap.get(request)
+    if (waiter) {
+      waiter.resolve(ws)
+      waiterMap.delete(request)
     }
   })
 
-  const nodeUpgradeWebSocket = (request: IncomingMessage) => {
+  const nodeUpgradeWebSocket = (request: IncomingMessage, response: Response) => {
     return new Promise<WebSocket>((resolve) => {
-      waiter.set(request, resolve)
+      waiterMap.set(request, { resolve, response })
     })
   }
 
   return {
     injectWebSocket(server) {
-      server.on('upgrade', async (request, socket, head) => {
+      server.on('upgrade', async (request, socket: Duplex, head) => {
         const url = new URL(request.url ?? '/', init.baseUrl ?? 'http://localhost')
         const headers = new Headers()
         for (const key in request.headers) {
@@ -52,11 +53,25 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           }
           headers.append(key, Array.isArray(value) ? value[0] : value)
         }
-        await init.app.request(
+
+        const response = await init.app.request(
           url,
           { headers: headers },
           { incoming: request, outgoing: undefined }
         )
+
+        const waiter = waiterMap.get(request)
+        if (!waiter || waiter.response !== response) {
+          socket.end(
+            'HTTP/1.1 400 Bad Request\r\n' +
+            'Connection: close\r\n' +
+            'Content-Length: 0\r\n' +
+            '\r\n'
+          )
+          waiterMap.delete(request)
+          return
+        }
+
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit('connection', ws, request)
         })
@@ -70,8 +85,9 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           return
         }
 
+        const response = new Response()
         ;(async () => {
-          const ws = await nodeUpgradeWebSocket(c.env.incoming)
+          const ws = await nodeUpgradeWebSocket(c.env.incoming, response)
           const events = await createEvents(c)
 
           const ctx: WSContext<WebSocket> = {
@@ -116,7 +132,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           })
         })()
 
-        return new Response()
+        return response
       },
   }
 }
