@@ -46,7 +46,7 @@ export type OidcAuth = {
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
 } & OidcAuthClaims
 
-type OidcAuthEnv = {
+export type OidcAuthEnv = {
   OIDC_AUTH_SECRET: string
   OIDC_AUTH_REFRESH_INTERVAL?: string
   OIDC_AUTH_EXPIRES?: string
@@ -61,12 +61,38 @@ type OidcAuthEnv = {
 }
 
 /**
+ * Configure the OIDC variables programmatically.
+ * If used, should be called before any other OIDC functions for the Hono context.
+ * Unconfigured values will fallback to environment variables.
+ */
+export const setOidcAuthEnv = (c: Context, config: Partial<OidcAuthEnv>) => {
+  const oidcAuthEnv = c.get('oidcAuthEnv')
+  if (oidcAuthEnv !== undefined) {
+    throw new HTTPException(500, { message: 'OIDC Auth env is already configured' })
+  }
+  const _ = getOidcAuthEnv(c, config)
+}
+
+/**
  * Returns the environment variables for OIDC-auth middleware.
  */
-const getOidcAuthEnv = (c: Context) => {
+const getOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   let oidcAuthEnv = c.get('oidcAuthEnv')
   if (oidcAuthEnv === undefined) {
-    oidcAuthEnv = env<OidcAuthEnv>(c)
+    const ev = env<Readonly<OidcAuthEnv>>(c);
+    oidcAuthEnv = {
+      OIDC_AUTH_SECRET: config?.OIDC_AUTH_SECRET ?? ev.OIDC_AUTH_SECRET,
+      OIDC_AUTH_REFRESH_INTERVAL: config?.OIDC_AUTH_REFRESH_INTERVAL ?? ev.OIDC_AUTH_REFRESH_INTERVAL,
+      OIDC_AUTH_EXPIRES: config?.OIDC_AUTH_EXPIRES ?? ev.OIDC_AUTH_EXPIRES,
+      OIDC_ISSUER: config?.OIDC_ISSUER ?? ev.OIDC_ISSUER,
+      OIDC_CLIENT_ID: config?.OIDC_CLIENT_ID ?? ev.OIDC_CLIENT_ID,
+      OIDC_CLIENT_SECRET: config?.OIDC_CLIENT_SECRET ?? ev.OIDC_CLIENT_SECRET,
+      OIDC_REDIRECT_URI: config?.OIDC_REDIRECT_URI ?? ev.OIDC_REDIRECT_URI,
+      OIDC_SCOPES: config?.OIDC_SCOPES ?? ev.OIDC_SCOPES,
+      OIDC_COOKIE_PATH: config?.OIDC_COOKIE_PATH ?? ev.OIDC_COOKIE_PATH,
+      OIDC_COOKIE_NAME: config?.OIDC_COOKIE_NAME ?? ev.OIDC_COOKIE_NAME,
+      OIDC_COOKIE_DOMAIN: config?.OIDC_COOKIE_DOMAIN ?? ev.OIDC_COOKIE_DOMAIN,
+    }
     if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
       throw new HTTPException(500, { message: 'Session secret is not provided' })
     }
