@@ -79,7 +79,7 @@ export const setOidcAuthEnv = (c: Context, config: Partial<OidcAuthEnv>) => {
 const getOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   let oidcAuthEnv = c.get('oidcAuthEnv')
   if (oidcAuthEnv === undefined) {
-    const ev = env<Readonly<OidcAuthEnv>>(c);
+    const ev = env<Readonly<OidcAuthEnv>>(c)
     oidcAuthEnv = {
       OIDC_AUTH_SECRET: config?.OIDC_AUTH_SECRET ?? ev.OIDC_AUTH_SECRET,
       OIDC_AUTH_REFRESH_INTERVAL: config?.OIDC_AUTH_REFRESH_INTERVAL ?? ev.OIDC_AUTH_REFRESH_INTERVAL,
