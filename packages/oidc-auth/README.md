@@ -140,6 +140,19 @@ Note:
 If explicit logout is not required, the logout handler can be omitted.
 If the middleware is applied to the callback URL, the default callback handling in the middleware can be used, so the explicit callback handling is not required.
 
+## Programmatically configure auth variables
+
+```typescript
+// Before other oidc-auth APIs are used
+app.use(async (c, next) => {
+  let config = {
+    // Configure auth variables
+  }
+  setOidcAuthEnv(c, config)
+  await next()
+});
+```
+
 ## Author
 
 Yoshio HANAWA <https://github.com/hnw>

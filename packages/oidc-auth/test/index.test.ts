@@ -156,7 +156,7 @@ jest.unstable_mockModule('oauth4webapi', () => {
   }
 })
 
-const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession } = await import('../src')
+const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession, setOidcAuthEnv, getClient } = await import('../src')
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -557,5 +557,47 @@ describe('RevokeSession()', () => {
     expect(res.headers.get('set-cookie')).toMatch(
       new RegExp(`oidc-auth=; Max-Age=0; Path=${MOCK_COOKIE_PATH}($|,)`)
     )
+  })
+})
+describe('setOidcAuthEnv()', () => {
+  test('Should error if not called first in context', async () => {
+    const app = new Hono()
+    app.use('/*', oidcAuthMiddleware())
+    app.use(async (c, next) => {
+      setOidcAuthEnv(c, {})
+      await next()
+    })
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
+  })
+  test('Should prefer programmatically configured varaiables', async () => {
+    let client: oauth2.Client | undefined
+    const CUSTOM_OIDC_CLIENT_ID = 'custom-client-id'
+    const CUSTOM_OIDC_CLIENT_SECRET = 'custom-client-secret'
+    const app = new Hono()
+    app.use(async (c, next) => {
+      setOidcAuthEnv(c, {
+        OIDC_CLIENT_ID: CUSTOM_OIDC_CLIENT_ID,
+        OIDC_CLIENT_SECRET: CUSTOM_OIDC_CLIENT_SECRET
+      })
+      await next()
+    })
+    app.use(async (c) => {
+      client = getClient(c)
+      return c.text('finished')
+    })
+    const req = new Request('http://localhost/', {
+      method: 'GET'
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(client?.client_id).toBe(CUSTOM_OIDC_CLIENT_ID)
+    expect(client?.client_secret).toBe(CUSTOM_OIDC_CLIENT_SECRET)
   })
 })
