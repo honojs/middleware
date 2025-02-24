@@ -38,6 +38,24 @@ export type Scopes =
   // Clips
   | 'clips:edit'
 
+  // User
+  | 'user:bot'
+  | 'user:edit'
+  | 'user:edit:broadcast'
+  | 'user:read:blocked_users'
+  | 'user:manage:blocked_users'
+  | 'user:read:broadcast'
+  | 'user:read:chat'
+  | 'user:manage:chat_color'
+  | 'user:read:email'
+  | 'user:read:emotes'
+  | 'user:read:follows'
+  | 'user:read:moderated_channels'
+  | 'user:read:subscriptions'
+  | 'user:read:whispers'
+  | 'user:manage:whispers'
+  | 'user:write:chat'
+
   // Moderation
   | 'moderation:read'
   | 'moderator:manage:announcements'
