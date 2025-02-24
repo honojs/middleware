@@ -482,6 +482,7 @@ describe('processOAuthCallback()', () => {
   })
   test('Should respond with custom cookie name', async () => {
     const MOCK_COOKIE_NAME = (process.env.OIDC_COOKIE_NAME = 'custom-auth-cookie')
+    const defaultOidcAuthCookiePath = '/'
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
       headers: {
@@ -493,7 +494,7 @@ describe('processOAuthCallback()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(
       new RegExp(
-        `${MOCK_COOKIE_NAME}=[^;]+; Path=${process.env.OIDC_COOKIE_PATH}; HttpOnly; Secure`
+        `${MOCK_COOKIE_NAME}=[^;]+; Path=${defaultOidcAuthCookiePath}; HttpOnly; Secure`
       )
     )
   })
