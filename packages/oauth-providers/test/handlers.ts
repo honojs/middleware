@@ -10,6 +10,7 @@ import type {
 import type { GitHubErrorResponse, GitHubTokenResponse } from '../src/providers/github'
 import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from '../src/providers/google'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
+import type { TwitchErrorResponse, TwitchTokenResponse } from '../src/providers/twitch'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
 
 export const handlers = [
@@ -146,6 +147,38 @@ export const handlers = [
     }
   ),
   http.get('https://discord.com/api/oauth2/@me', () => HttpResponse.json(discordUser)),
+  // Twitch
+  http.post(
+    'https://id.twitch.tv/oauth2/token',
+    async ({ request }): Promise<StrictResponse<Partial<TwitchTokenResponse> | TwitchErrorResponse>> => {
+      const params = new URLSearchParams(await request.text())
+      const code = params.get('code')
+      const grant_type = params.get('grant_type')
+      if (grant_type === 'refresh_token') {
+        const refresh_token = params.get('refresh_token')
+        if (refresh_token === 'wrong-refresh-token') {
+          return HttpResponse.json(twitchRefreshTokenError)
+        }
+        return HttpResponse.json(twitchRefreshToken)
+      }
+      if (code === dummyCode) {
+        return HttpResponse.json(twitchToken)
+      }
+      return HttpResponse.json(twitchCodeError)
+    }
+  ),
+  http.get('https://api.twitch.tv/helix/users', () => HttpResponse.json(twitchUser)),
+  http.post(
+    'https://id.twitch.tv/oauth2/revoke',
+    async ({ request }): Promise<StrictResponse<{status: number, message?: string}>> => {
+      const params = new URLSearchParams(await request.text())
+      const token = params.get('token')
+      if (token === 'wrong-token') {
+        return HttpResponse.json(twitchRevokeTokenError)
+      }
+      return HttpResponse.json({ status: 204 })
+    }
+  ),
 ]
 
 export const dummyCode = '4/0AfJohXl9tS46EmTA6u9x3pJQiyCNyahx4DLJaeJelzJ0E5KkT4qJmCtjq9n3FxBvO40ofg'
@@ -432,4 +465,55 @@ export const discordRefreshToken = {
 }
 export const discordRefreshTokenError = {
   error: 'Invalid Refresh Token.',
+}
+
+export const twitchToken: TwitchTokenResponse = {
+  access_token: 'twitchr4nd0m4cc3sst0k3n',
+  expires_in: 14400,
+  refresh_token: 'twitchr4nd0mr3fr3sht0k3n',
+  scope: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
+  token_type: 'bearer',
+}
+
+export const twitchRefreshToken: TwitchTokenResponse = {
+  access_token: 'twitchn3w4cc3sst0k3n',
+  expires_in: 14400,
+  refresh_token: 'twitchn3wr3fr3sht0k3n',
+  scope: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
+  token_type: 'bearer',
+}
+
+export const twitchUser = {
+  data: [
+    {
+      id: '12345678',
+      login: 'younis',
+      display_name: 'younis.name',
+      type: '',
+      broadcaster_type: 'partner',
+      description: 'Supporting third-party developers building Twitch integrations',
+      profile_image_url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile-picture.png',
+      offline_image_url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-offline-image.png',
+      view_count: 5980557,
+      email: 'example@twitch.tv',
+      created_at: '2025-02-14T20:32:28Z',
+    },
+  ],
+}
+
+export const twitchCodeError = {
+  error: 'access_denied',
+  error_description: 'Invalid authorization code',
+  state: 'c3ab8aa609ea11e793ae92361f002671',
+}
+
+export const twitchRefreshTokenError = {
+  error: 'Bad Request',
+  status: 400,
+  message: 'Invalid refresh token',
+}
+
+export const twitchRevokeTokenError = {
+  status: 400,
+  message: 'Invalid token',
 }
