@@ -14,6 +14,8 @@ import { googleAuth } from '../src/providers/google'
 import type { GoogleUser } from '../src/providers/google'
 import { linkedinAuth } from '../src/providers/linkedin'
 import type { LinkedInUser } from '../src/providers/linkedin'
+import type { TwitchUser } from '../src/providers/twitch'
+import { twitchAuth, refreshToken as twitchRefresh, revokeToken as twitchRevoke } from '../src/providers/twitch'
 import type { XUser } from '../src/providers/x'
 import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
 import type { Token } from '../src/types'
@@ -42,6 +44,12 @@ import {
   xRevokeTokenError,
   xToken,
   xUser,
+  twitchCodeError,
+  twitchRefreshToken,
+  twitchRefreshTokenError,
+  twitchRevokeTokenError,
+  twitchToken,
+  twitchUser,
 } from './handlers'
 
 const server = setupServer(...handlers)
@@ -337,6 +345,67 @@ describe('OAuth Middleware', () => {
   })
   app.get('/discord/revoke/error', async (c) => {
     const response = await discordRevoke(client_id, client_secret, 'wrong-token')
+    return c.json(response)
+  })
+
+  // Twitch
+  app.use(
+    '/twitch',
+    twitchAuth({
+      client_id,
+      client_secret,
+      scope: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
+      redirect_uri: 'http://localhost:3000/twitch', // Redirect URI
+    })
+  )
+  app.use('/twitch-custom-redirect', (c, next) =>
+    twitchAuth({
+      client_id,
+      client_secret,
+      scope: ['user:read:email'],
+      redirect_uri: 'http://localhost:3000/twitch',
+    })(c, next)
+  )
+  app.use('/twitch-force-verify', (c, next) =>
+    twitchAuth({
+      client_id,
+      client_secret,
+      scope: ['user:read:email'],
+      redirect_uri: 'http://localhost:3000/twitch',
+      force_verify: true,
+    })(c, next)
+  )
+  app.get('/twitch', (c) => {
+    const token = c.get('token')
+    const refreshToken = c.get('refresh-token')
+    const user = c.get('user-twitch')
+    const grantedScopes = c.get('granted-scopes')
+
+    return c.json({
+      token,
+      refreshToken,
+      grantedScopes,
+      user,
+    })
+  })
+  app.get('/twitch/refresh', async (c) => {
+    const response = await twitchRefresh(
+      client_id,
+      client_secret,
+      'twitchr4nd0mr3fr3sht0k3n'
+    )
+    return c.json(response)
+  })
+  app.get('/twitch/refresh/error', async (c) => {
+    const response = await twitchRefresh(client_id, client_secret, 'wrong-refresh-token')
+    return c.json(response)
+  })
+  app.get('/twitch/revoke', async (c) => {
+    const response = await twitchRevoke(client_id, 'twitchr4nd0m4cc3sst0k3n')
+    return c.json(response)
+  })
+  app.get('/twitch/revoke/error', async (c) => {
+    const response = await twitchRevoke(client_id, 'wrong-token')
     return c.json(response)
   })
 
@@ -768,6 +837,104 @@ describe('OAuth Middleware', () => {
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(discordRefreshTokenError.error)
+      })
+    })
+  })
+
+  describe('twitchAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should redirect', async () => {
+        const res = await app.request('/twitch')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/twitch-custom-redirect')
+        expect(res?.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/twitch')
+      })
+
+      it('Should include force_verify when enabled', async () => {
+        const res = await app.request('/twitch-force-verify')
+        expect(res?.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('force_verify')).toBe('true')
+      })
+
+      it('Prevent CSRF attack', async () => {
+        const res = await app.request(`/twitch?code=${dummyCode}&state=malware-state`)
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
+      it('Should throw error for invalid code', async () => {
+        const res = await app.request('/twitch?code=9348ffdsd-sdsdbad-code')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(twitchCodeError.error_description)
+      })
+
+      it('Should work with received code', async () => {
+        const res = await app.request(`/twitch?code=${dummyCode}`)
+        const response = (await res.json()) as {
+          token: Token
+          refreshToken: Token
+          user: TwitchUser
+          grantedScopes: string[]
+        }
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(response.user).toEqual(twitchUser.data[0])
+        expect(response.grantedScopes).toEqual(twitchToken.scope)
+        expect(response.token).toEqual({
+          token: twitchToken.access_token,
+          expires_in: twitchToken.expires_in,
+        })
+        expect(response.refreshToken).toEqual({
+          token: twitchToken.refresh_token,
+          expires_in: 0,
+        })
+      })
+    })
+
+    describe('Refresh Token', () => {
+      it('Should refresh token', async () => {
+        const res = await app.request('/twitch/refresh')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(twitchRefreshToken)
+      })
+
+      it('Should return error for refresh', async () => {
+        const res = await app.request('/twitch/refresh/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(twitchRefreshTokenError.error)
+      })
+    })
+
+    describe('Revoke Token', () => {
+      it('Should revoke token', async () => {
+        const res = await app.request('/twitch/revoke')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(true)
+      })
+
+      it('Should return error for revoke', async () => {
+        const res = await app.request('/twitch/revoke/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(twitchRevokeTokenError.message)
       })
     })
   })
