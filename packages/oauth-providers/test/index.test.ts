@@ -375,6 +375,15 @@ describe('OAuth Middleware', () => {
       force_verify: true,
     })(c, next)
   )
+  app.use('/twitch-custom-state', (c, next) =>
+    twitchAuth({
+      client_id,
+      client_secret,
+      scope: ['user:read:email'],
+      redirect_uri: 'http://localhost:3000/twitch',
+      state: 'test-state',
+    })(c, next)
+  )
   app.get('/twitch', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
@@ -837,6 +846,19 @@ describe('OAuth Middleware', () => {
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(discordRefreshTokenError.error)
+      })
+    })
+  })
+
+  describe('twitchAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should work with custom state', async () => {
+        const res = await app.request('/twitch-custom-state')
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('state')).toBe('test-state')
       })
     })
   })
