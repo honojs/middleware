@@ -1,0 +1,43 @@
+{
+  "name": "@hono/schema-validator",
+  "version": "0.0.0",
+  "description": "Validator middleware for multiple schema validation libraries based on schema.com",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=3.9.0"
+  },
+  "dependencies": {
+    "@typeschema/main": "^0.14.1"
+  },
+  "devDependencies": {
+    "@typeschema/zod": "^0.14.0",
+    "hono": "^3.11.7",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3",
+    "zod": "3.19.1"
+  }
+}
