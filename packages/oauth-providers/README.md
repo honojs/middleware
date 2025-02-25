@@ -953,7 +953,7 @@ export default app
 - `scope`:
   - Type: `string[]`.
   - `Required`.
-  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Twitch offers for utilizing their API on the [Twitch API Reference](https://dev.twitch.tv/docs/authentication#scopes).
+  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Twitch offers for utilizing their API on the [Twitch API Reference](https://dev.twitch.tv/docs/authentication/scopes).
 - `redirect_uri`:
   - Type: `string`.
   - `Required`.
