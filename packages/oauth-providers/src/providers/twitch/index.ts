@@ -1,6 +1,7 @@
 export { twitchAuth } from './twitchAuth'
 export { refreshToken } from './refreshToken'
 export { revokeToken } from './revokeToken'
+export { validateToken } from './validateToken'
 export * from './types'
 import type { OAuthVariables } from '../../types'
 import type { TwitchUser } from './types'
