@@ -15,7 +15,12 @@ import type { GoogleUser } from '../src/providers/google'
 import { linkedinAuth } from '../src/providers/linkedin'
 import type { LinkedInUser } from '../src/providers/linkedin'
 import type { TwitchUser } from '../src/providers/twitch'
-import { twitchAuth, refreshToken as twitchRefresh, revokeToken as twitchRevoke } from '../src/providers/twitch'
+import { 
+  twitchAuth, 
+  refreshToken as twitchRefresh, 
+  revokeToken as twitchRevoke,
+  validateToken as twitchValidate 
+} from '../src/providers/twitch'
 import type { XUser } from '../src/providers/x'
 import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
 import type { Token } from '../src/types'
@@ -50,6 +55,8 @@ import {
   twitchRevokeTokenError,
   twitchToken,
   twitchUser,
+  twitchValidateSuccess,
+  twitchValidateError,
 } from './handlers'
 
 const server = setupServer(...handlers)
@@ -899,7 +906,7 @@ describe('OAuth Middleware', () => {
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
-        expect(await res.text()).toBe(twitchCodeError.error_description)
+        expect(await res.text()).toBe(twitchCodeError.error)
       })
 
       it('Should work with received code', async () => {
@@ -957,6 +964,28 @@ describe('OAuth Middleware', () => {
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(twitchRevokeTokenError.message)
+      })
+    })
+
+    describe('Validate Token', () => {
+      it('Should validate a valid token', async () => {
+          const res = await twitchValidate('twitchr4nd0m4cc3sst0k3n')
+          expect(res).toEqual(twitchValidateSuccess)
+      })
+    
+      it('Should throw error for invalid token', async () => {
+          try {
+              await twitchValidate('invalid-token')
+              // If we reach here, the test should fail because an exception was expected
+              fail('Expected function to throw an exception')
+          } catch (error: unknown) {
+              // Type check before accessing properties
+              if (error instanceof Error) {
+                  expect(error.message).toBe(twitchValidateError.message)
+              } else {
+                  fail('Expected error to be an instance of Error')
+              }
+          }
       })
     })
   })

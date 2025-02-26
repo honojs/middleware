@@ -10,7 +10,7 @@ import type {
 import type { GitHubErrorResponse, GitHubTokenResponse } from '../src/providers/github'
 import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from '../src/providers/google'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
-import type { TwitchErrorResponse, TwitchTokenResponse } from '../src/providers/twitch'
+import type { TwitchErrorResponse, TwitchTokenResponse, TwitchTokenSuccess } from '../src/providers/twitch'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
 
 export const handlers = [
@@ -170,13 +170,30 @@ export const handlers = [
   http.get('https://api.twitch.tv/helix/users', () => HttpResponse.json(twitchUser)),
   http.post(
     'https://id.twitch.tv/oauth2/revoke',
-    async ({ request }): Promise<StrictResponse<{status: number, message?: string}>> => {
+    async ({ request }): Promise<StrictResponse<{ status: number; message?: string } | null>> => {
       const params = new URLSearchParams(await request.text())
       const token = params.get('token')
       if (token === 'wrong-token') {
-        return HttpResponse.json(twitchRevokeTokenError)
+        return HttpResponse.json<{ status: number; message?: string }>(twitchRevokeTokenError, { status: 400 })
       }
-      return HttpResponse.json({ status: 204 })
+      return HttpResponse.json<null>(null, { status: 200 }) // Return 200 with empty body
+    }
+  ),
+  // Twitch validate token handler
+  http.get(
+    'https://id.twitch.tv/oauth2/validate',
+    async ({ request }): Promise<StrictResponse<typeof twitchValidateSuccess | typeof twitchValidateError>> => {
+      const authHeader = request.headers.get('authorization')
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return HttpResponse.json(twitchValidateError, { status: 401 })
+      }
+      
+      const token = authHeader.split(' ')[1]
+      if (token === 'twitchr4nd0m4cc3sst0k3n') {
+        return HttpResponse.json(twitchValidateSuccess)
+      }
+      
+      return HttpResponse.json(twitchValidateError, { status: 401 })
     }
   ),
 ]
@@ -467,7 +484,7 @@ export const discordRefreshTokenError = {
   error: 'Invalid Refresh Token.',
 }
 
-export const twitchToken: TwitchTokenResponse = {
+export const twitchToken: TwitchTokenSuccess = {
   access_token: 'twitchr4nd0m4cc3sst0k3n',
   expires_in: 14400,
   refresh_token: 'twitchr4nd0mr3fr3sht0k3n',
@@ -515,5 +532,18 @@ export const twitchRefreshTokenError = {
 
 export const twitchRevokeTokenError = {
   status: 400,
-  message: 'Invalid token',
+  message: 'Token revocation failed with status: 400',
+}
+
+export const twitchValidateSuccess = {
+  client_id: 'wbmytr93xzw8zbg0p1izqyzzc5mbiz',
+  login: 'younis',
+  scopes: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
+  user_id: '12345678',
+  expires_in: 14400
+}
+
+export const twitchValidateError = {
+  status: 401,
+  message: 'invalid access token'
 }
