@@ -1,12 +1,12 @@
 import { HTTPException } from 'hono/http-exception'
 import { toQueryParams } from '../../utils/objectToQuery'
-import type { TwitchErrorResponse, TwitchTokenResponse } from './types'
+import type { TwitchRefreshResponse } from './types'
 
 export async function refreshToken(
   client_id: string,
   client_secret: string,
   refresh_token: string
-): Promise<TwitchTokenResponse> {
+): Promise<TwitchRefreshResponse> {
   const params = toQueryParams({
     grant_type: 'refresh_token',
     refresh_token,
@@ -20,15 +20,15 @@ export async function refreshToken(
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params,
-  }).then((res) => res.json<TwitchTokenResponse | TwitchErrorResponse>()))
+  }).then((res) => res.json<TwitchRefreshResponse>()))
 
   if ('error' in response) {
     throw new HTTPException(400, { message: response.error })
   }
   
   if ('message' in response) {
-    throw new HTTPException(400, { message: response.message })
+    throw new HTTPException(400, { message: response.message as string })
   }
 
-  return response as TwitchTokenResponse
+  return response
 }

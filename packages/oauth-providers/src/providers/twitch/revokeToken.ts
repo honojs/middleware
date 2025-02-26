@@ -11,21 +11,29 @@ export async function revokeToken(
     token,
   })
 
-  const response = await fetch('https://id.twitch.tv/oauth2/revoke', {
+  const res = await fetch('https://id.twitch.tv/oauth2/revoke', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params,
-  }).then((res) => res.json<TwitchRevokingResponse>())
+  })
 
-  if (response.status === 400) {
-    throw new HTTPException(400, { message: response.message })
+  // Check HTTP status code first
+  if (!res.ok) {
+    // Try to parse error response
+    try {
+      const errorResponse = await res.json<TwitchRevokingResponse>()
+      if (errorResponse && typeof errorResponse === 'object' && 'message' in errorResponse) {
+        throw new HTTPException(400, { message: errorResponse.message })
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      // If parsing fails, throw a generic error with the status
+      throw new HTTPException(400, { message: `Token revocation failed with status: ${res.status}` })
+    }
   }
 
-  if (response.status === 401) {
-    throw new HTTPException(401, { message: response.message })
-  }
-
+  // Success case - Twitch returns 200 with empty body on successful revocation
   return true
 }
