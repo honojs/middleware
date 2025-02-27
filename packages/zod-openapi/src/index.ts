@@ -43,6 +43,7 @@ type MaybePromise<T> = Promise<T> | T
 
 export type RouteConfig = RouteConfigBase & {
   middleware?: MiddlewareHandler | MiddlewareHandler[]
+  hide?: boolean
 }
 
 type RequestTypes = {
@@ -418,7 +419,7 @@ export class OpenAPIHono<
       InputTypeJson<R>,
     P extends string = ConvertPathType<R['path']>
   >(
-    { middleware: routeMiddleware, ...route }: R,
+    { middleware: routeMiddleware, hide, ...route }: R,
     handler: Handler<
       // use the env from the middleware if it's defined
       R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
@@ -462,7 +463,9 @@ export class OpenAPIHono<
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
     BasePath
   > => {
-    this.openAPIRegistry.registerPath(route)
+    if (!hide) {
+      this.openAPIRegistry.registerPath(route)
+    }
 
     const validators: MiddlewareHandler[] = []
 

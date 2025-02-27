@@ -451,6 +451,17 @@ app.doc('/doc', (c) => ({
 }))
 ```
 
+### How to exclude a specific route from OpenAPI docs
+
+You can use `hide` property as follows:
+
+```ts
+const route = createRoute({
+  // ...
+  hide: true,
+})
+```
+
 ## Limitations
 
 ### Combining with `Hono`
