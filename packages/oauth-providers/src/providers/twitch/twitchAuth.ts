@@ -11,7 +11,7 @@ export function twitchAuth(options: {
   scope: Scopes[]
   client_id: string
   client_secret: string
-  redirect_uri: string
+  redirect_uri?: string
   state?: string
   force_verify?: boolean
 }): MiddlewareHandler {
