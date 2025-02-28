@@ -1925,30 +1925,31 @@ describe('Generate YAML', () => {
 })
 
 describe('Hide Routes', () => {
-  it('Should hide the route', async () => {
-    const app = new OpenAPIHono()
-    app.openapi(
-      createRoute({
-        method: 'get',
-        hide: true,
-        path: '/books',
-        responses: {
-          200: {
-            description: 'Books',
-            content: {
-              'application/json': {
-                schema: z.array(
-                  z.object({
-                    title: z.string(),
-                  })
-                ),
-              },
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      hide: true,
+      path: '/books',
+      responses: {
+        200: {
+          description: 'Books',
+          content: {
+            'application/json': {
+              schema: z.array(
+                z.object({
+                  title: z.string(),
+                })
+              ),
             },
           },
         },
-      }),
-      (c) => c.json([{ title: 'foo' }])
-    )
+      },
+    }),
+    (c) => c.json([{ title: 'foo' }])
+  )
+
+  it('Should hide the route', async () => {
     const doc = app.getOpenAPIDocument({
       openapi: '3.0.0',
       info: {
@@ -1966,5 +1967,11 @@ describe('Hide Routes', () => {
     })
     expect(doc.paths).not.toHaveProperty('/books')
     expect(doc31.paths).not.toHaveProperty('/books')
+  })
+
+  it('Should return a HTTP 200 response from a hidden route', async () => {
+    const res = await app.request('/books')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ title: 'foo' }])
   })
 })
