@@ -638,7 +638,7 @@ export class OpenAPIHono<
             path: mergePath(
               pathForOpenAPI,
               // @ts-expect-error _basePath is private
-              app._basePath,
+              app._basePath.replaceAll(/:([^\/]+)/g, '{$1}'),
               def.route.path
             ),
           })
@@ -649,7 +649,7 @@ export class OpenAPIHono<
             path: mergePath(
               pathForOpenAPI,
               // @ts-expect-error _basePath is private
-              app._basePath,
+              app._basePath.replaceAll(/:([^\/]+)/g, '{$1}'),
               def.webhook.path
             ),
           })
