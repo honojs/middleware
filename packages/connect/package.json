@@ -1,0 +1,55 @@
+{
+  "name": "@hono/connect",
+  "version": "1.0.0",
+  "description": "An middleware for compatibility with express/connect for Hono",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "publint": "publint",
+    "release": "yarn build && yarn test && yarn publint && yarn publish"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "@types/connect": "^3",
+    "@types/express": "^4",
+    "helmet": "^8.0.0",
+    "hono": "^4.4.12",
+    "tsup": "^8.1.0",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "connect": "^3.7.0",
+    "express": "^4.21.2",
+    "node-mocks-http": "^1.16.2"
+  }
+}
