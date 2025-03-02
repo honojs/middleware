@@ -2902,6 +2902,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/schema-validator@workspace:packages/typeschema-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/schema-validator@workspace:packages/typeschema-validator"
+  dependencies:
+    "@typeschema/main": "npm:^0.14.1"
+    "@typeschema/zod": "npm:^0.14.0"
+    hono: "npm:^3.11.7"
+    jest: "npm:^29.7.0"
+    rimraf: "npm:^5.0.5"
+    typescript: "npm:^5.3.3"
+    zod: "npm:3.19.1"
+  peerDependencies:
+    hono: ">=3.9.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@hono/sentry@workspace:packages/sentry"
@@ -5416,6 +5432,103 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "npm:*"
   checksum: 2095e8aad8a4e66b86147415364266b8d607a3b95b4239623423efd7e29df93ba81bb862784a6e08664f645cc1981b25fd598f532019174cd3e5e1e689e1cccf
+  languageName: node
+  linkType: hard
+
+"@typeschema/core@npm:0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/core@npm:0.14.0"
+  peerDependencies:
+    "@types/json-schema": ^7.0.15
+  peerDependenciesMeta:
+    "@types/json-schema":
+      optional: true
+  checksum: 736353e126ebdc82afe06de49e73a92cb911f309854c5afc76a94c6df5ca7fd30aec486c82d587948fcb2bc0f401a0adf6f75a54738612dbbe9bd71c9d6effba
+  languageName: node
+  linkType: hard
+
+"@typeschema/main@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@typeschema/main@npm:0.14.1"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    "@typeschema/arktype": 0.14.0
+    "@typeschema/class-validator": 0.3.0
+    "@typeschema/deepkit": 0.14.0
+    "@typeschema/effect": 0.14.0
+    "@typeschema/fastest-validator": 0.2.0
+    "@typeschema/function": 0.14.0
+    "@typeschema/io-ts": 0.14.0
+    "@typeschema/joi": 0.14.0
+    "@typeschema/json": 0.14.0
+    "@typeschema/ow": 0.14.0
+    "@typeschema/runtypes": 0.14.0
+    "@typeschema/superstruct": 0.14.0
+    "@typeschema/suretype": 0.2.0
+    "@typeschema/typebox": 0.14.0
+    "@typeschema/valibot": 0.14.0
+    "@typeschema/valita": 0.2.0
+    "@typeschema/vine": 0.2.0
+    "@typeschema/yup": 0.14.0
+    "@typeschema/zod": 0.14.0
+  peerDependenciesMeta:
+    "@typeschema/arktype":
+      optional: true
+    "@typeschema/class-validator":
+      optional: true
+    "@typeschema/deepkit":
+      optional: true
+    "@typeschema/effect":
+      optional: true
+    "@typeschema/fastest-validator":
+      optional: true
+    "@typeschema/function":
+      optional: true
+    "@typeschema/io-ts":
+      optional: true
+    "@typeschema/joi":
+      optional: true
+    "@typeschema/json":
+      optional: true
+    "@typeschema/ow":
+      optional: true
+    "@typeschema/runtypes":
+      optional: true
+    "@typeschema/superstruct":
+      optional: true
+    "@typeschema/suretype":
+      optional: true
+    "@typeschema/typebox":
+      optional: true
+    "@typeschema/valibot":
+      optional: true
+    "@typeschema/valita":
+      optional: true
+    "@typeschema/vine":
+      optional: true
+    "@typeschema/yup":
+      optional: true
+    "@typeschema/zod":
+      optional: true
+  checksum: 174b2a2e000e18010cf6616dea732f7f7af7b11e464ef3292f8f85f3b4ece1a52c7e9459f449c51ed5da00d95a5c7c45beadd5c0a222960231d1ad794ac97499
+  languageName: node
+  linkType: hard
+
+"@typeschema/zod@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@typeschema/zod@npm:0.14.0"
+  dependencies:
+    "@typeschema/core": "npm:0.14.0"
+  peerDependencies:
+    zod: ^3.23.8
+    zod-to-json-schema: ^3.23.2
+  peerDependenciesMeta:
+    zod:
+      optional: true
+    zod-to-json-schema:
+      optional: true
+  checksum: d6a7aaf2b8631759061de2cbf8f2b947e3cb27533a595c9f36aa009ccdc843e725ab809d3eba85ac39159519d29cf73d609ea538a8eff5dd1425f8c443d35c56
   languageName: node
   linkType: hard
 
@@ -22638,6 +22751,13 @@ __metadata:
     compress-commons: "npm:^6.0.2"
     readable-stream: "npm:^4.0.0"
   checksum: 50f2fb30327fb9d09879abf7ae2493705313adf403e794b030151aaae00009162419d60d0519e807673ec04d442e140c8879ca14314df0a0192de3b233e8f28b
+  languageName: node
+  linkType: hard
+
+"zod@npm:3.19.1":
+  version: 3.19.1
+  resolution: "zod@npm:3.19.1"
+  checksum: e08197793f26916f8abea40687fc968b2de0471049b29b7ff25825a9f28ba24205d1c5b8ad26df17538b051928192f9ef8f9ef3132aece9cb56f0830a7450c26
   languageName: node
   linkType: hard
 
