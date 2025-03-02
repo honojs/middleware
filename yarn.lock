@@ -2902,6 +2902,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/redis-cache@workspace:packages/response-cache":
+  version: 0.0.0-use.local
+  resolution: "@hono/redis-cache@workspace:packages/response-cache"
+  dependencies:
+    hono: "npm:>=4.7.0"
+    publint: "npm:^0.2.7"
+    tsup: "npm:^8.1.0"
+    typescript: "npm:^5.7.3"
+  peerDependencies:
+    hono: ">=4.7.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@hono/sentry@workspace:packages/sentry"
@@ -11821,6 +11834,13 @@ __metadata:
     typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
+
+"hono@npm:>=4.7.0":
+  version: 4.7.0
+  resolution: "hono@npm:4.7.0"
+  checksum: 22f0d421cdf155793b4b0c4f94d0c5b409b879643b4cb42bcb0d8c00288f7682008c07a6995b9cd27566a2daa29e907f0f75ac80290f3eaaaec84cc91ac76360
+  languageName: node
+  linkType: hard
 
 "hono@npm:^3.11.7":
   version: 3.11.7
