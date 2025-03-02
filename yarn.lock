@@ -3008,8 +3008,8 @@ __metadata:
   dependencies:
     "@trpc/server": "npm:^10.10.0 || >11.0.0-rc"
     hono: "npm:^4.3.6"
-    jest: "npm:^29.7.0"
     rimraf: "npm:^5.0.5"
+    vitest: "npm:^2.1.8"
     zod: "npm:^3.20.2"
   peerDependencies:
     "@trpc/server": ^10.10.0 || >11.0.0-rc
