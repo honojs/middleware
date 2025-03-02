@@ -2807,16 +2807,13 @@ __metadata:
   resolution: "@hono/oauth-providers@workspace:packages/oauth-providers"
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20231025.0"
-    "@types/jest": "npm:^29.5.7"
     hono: "npm:^4.5.1"
-    jest: "npm:^29.7.0"
-    jest-environment-miniflare: "npm:^2.14.1"
     msw: "npm:^2.0.11"
     patch-package: "npm:^8.0.0"
     publint: "npm:^0.2.6"
-    ts-jest: "npm:^29.1.1"
     tsup: "npm:^8.0.0"
     typescript: "npm:^5.2.2"
+    vitest: "npm:^2.1.8"
   peerDependencies:
     hono: ">=3.*"
   languageName: unknown
@@ -5134,7 +5131,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.11, @types/jest@npm:^29.5.7":
+"@types/jest@npm:^29.5.11":
   version: 29.5.11
   resolution: "@types/jest@npm:29.5.11"
   dependencies:
