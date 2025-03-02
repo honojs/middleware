@@ -36,6 +36,15 @@ The specific flow is as follows
 2. Write your middleware. Refer to [hello Middleware](https://github.com/honojs/middleware/tree/main/packages/hello).
 3. Create the pull request.
 
+We use [Vitest](https://vitest.dev/) to write and run tests.
+Test files should be added to the middleware `src` directory,
+and include `.test.` in their file name, for example; `index.test.ts`.
+Run the following command in the middleware directory to run tests.
+
+```plain
+yarn test
+```
+
 We use [changesets](https://github.com/changesets/changesets) to manage releases and CHANGELOG.
 Run the following command at the top level to describe any changes.
 
