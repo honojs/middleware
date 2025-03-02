@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.19.1
+
+### Patch Changes
+
+- [#992](https://github.com/honojs/middleware/pull/992) [`3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373`](https://github.com/honojs/middleware/commit/3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: replace path param strings correctly in basePath
+
 ## 0.19.0
 
 ### Minor Changes
