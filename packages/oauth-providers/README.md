@@ -918,6 +918,227 @@ app.post('/remove-user', async (c, next) => {
 })
 ```
 
+### Twitch
+
+```ts
+import { Hono } from 'hono'
+import { twitchAuth } from '@hono/oauth-providers/twitch'
+
+const app = new Hono()
+
+app.use(
+  '/twitch',
+  twitchAuth({
+    client_id: Bun.env.TWITCH_ID,
+    client_secret: Bun.env.TWITCH_SECRET,
+    scope: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
+    redirect_uri: 'http://localhost:3000/twitch',
+  })
+)
+
+export default app
+```
+
+#### Parameters
+
+- `client_id`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client ID. You can find this value in the [Twitch Developer Portal](https://dev.twitch.tv/console/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `TWITCH_ID=`.
+- `client_secret`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client secret. You can find this value in the [Twitch Developer Portal](https://dev.twitch.tv/console/apps). <br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `TWITCH_SECRET=`.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
+- `scope`:
+  - Type: `string[]`.
+  - `Required`.
+  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf.<br /> Review all the scopes Twitch offers for utilizing their API on the [Twitch API Reference](https://dev.twitch.tv/docs/authentication/scopes).
+- `redirect_uri`:
+  - Type: `string`.
+  - `Required`.
+  - The URI to which the user will be redirected after authentication.
+- `state`:
+  - Type: `string`.
+  - `Optional`.
+  - A unique string to protect against Cross-Site Request Forgery (CSRF) attacks. The state is passed back to your redirect URI after the user has authenticated. You should verify that the state matches the one you provided in the initial request.
+- `force_verify`:
+  - Type: `boolean`.
+  - `Optional`.
+  - Set this value to `true` if you want to force the user to verify their account. Defaults to `false`.
+
+#### Authentication Flow
+
+After the completion of the Twitch OAuth flow, essential data has been prepared for use in the subsequent steps that your app needs to take.
+
+`twitchAuth` method provides 4 set key data:
+
+- `token`:
+  - Access token to make requests to the Twitch API for retrieving user information and performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `refresh-token`:
+  - You can refresh new tokens using this token. The duration of this token is not specified on the Twitch docs.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `granted-scopes`:
+  - Scopes for which the user has granted permissions.
+  - Type: `string[]`.
+- `user-twitch`:
+  - User basic info retrieved from Twitch
+  - Type:
+    ```
+    {
+      id: string
+      login: string
+      display_name: string
+      type: string
+      broadcaster_type: string
+      description: string
+      profile_image_url: string
+      offline_image_url: string
+      view_count: number
+      email: string
+      created_at: string
+    }
+    ```
+
+> [!NOTE]
+> To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request handler.
+
+```ts
+app.get('/twitch', (c) => {
+  const token = c.get('token')
+  const refreshToken = c.get('refresh-token')
+  const grantedScopes = c.get('granted-scopes')
+  const user = c.get('user-twitch')
+
+  return c.json({
+    token,
+    refreshToken,
+    grantedScopes,
+    user,
+  })
+})
+```
+
+#### Refresh Token
+
+Once the user token expires you can refresh their token without the need to prompt the user again for access. In such scenario, you can utilize the `refreshToken` method, which accepts the `client_id`, `client_secret` and `refresh_token` as parameters.
+
+> [!NOTE]
+> The `refresh_token` can be used once. Once the token is refreshed Twitch gives you a new `refresh_token` along with the new token.
+
+```ts
+import { twitchAuth, refreshToken } from '@hono/oauth-providers/twitch'
+
+app.post('/twitch/refresh', async (c, next) => {
+  const newTokens = await refreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
+
+  // newTokens = {
+  //   token_type: 'bearer',
+  //   access_token: 'new-access-token',
+  //   expires_in: 60000,
+  //   refresh_token: 'new-refresh-token',
+  //   scope: ['user:read:email', 'channel:read:subscriptions', 'bits:read']
+  // }
+  // ...
+})
+```
+
+#### Revoke Token
+
+In certain use cases, you may need to programmatically revoke a user's access token. In such scenarios, you can utilize the `revokeToken` method, the `client_id` and the `token` to be revoked as parameters.
+
+It returns a `boolean` to tell whether the token was revoked or not.
+
+```ts
+import { twitchAuth, revokeToken } from '@hono/oauth-providers/twitch'
+
+app.post('/remove-user', async (c, next) => {
+  const revoked = await revokeToken(CLIENT_ID, USER_TOKEN)
+
+  // revoked = true | false
+  // ...
+})
+```
+
+#### Validate Token
+
+You can validate a Twitch access token to verify it's still valid or to obtain information about the token, such as its expiration date, scopes, and the associated user.
+
+> **IMPORTANT:** Twitch requires applications to validate OAuth tokens when they start and on an hourly basis thereafter. Failure to validate tokens may result in Twitch taking punitive action, such as revoking API keys or throttling performance. When a token becomes invalid, your app should terminate all sessions using that token immediately. [Read more](https://dev.twitch.tv/docs/authentication/validate-tokens)
+
+The validation endpoint helps your application detect when tokens become invalid for reasons other than expiration, such as when users disconnect your integration from their Twitch account. When a token becomes invalid, your app should terminate all sessions using that token.
+
+```ts
+import { twitchAuth, validateToken } from '@hono/oauth-providers/twitch'
+
+// Function to validate token - should be called on app startup and hourly thereafter
+async function performTokenValidation(token) {
+  try {
+    // Returns token information if valid
+    const tokenInfo = await validateToken(token)
+    
+    // tokenInfo = {
+    //   client_id: "wbmytr93xzw8zbg0p1izqyzzc5mbiz",
+    //   login: "twitchdev",
+    //   scopes: ["channel:read:subscriptions"],
+    //   user_id: "141981764",
+    //   expires_in: 5520838
+    // }
+    
+    c.logger.log("Token is valid. Next check scheduled in 1 hour")
+    return tokenInfo
+  } catch (error) {
+    // Token is invalid - should terminate user session
+    c.logger.error("Token validation failed:", error.message)
+    return null
+  }
+}
+
+// Example implementation of hourly validation
+app.get('/setup-token-validation', async (c) => {
+  const userToken = c.get('token') // Get the user's token from your auth system
+  
+  // Initial validation when app starts
+  const initialValidation = await performTokenValidation(userToken)
+  if (!initialValidation) {
+    // Token is invalid, terminate session
+    return c.json({ valid: false, message: "Invalid token. Please re-authenticate." })
+  }
+  
+  // Set up hourly validation as required by Twitch
+  setInterval(() => {
+    performTokenValidation(userToken)
+      .then(tokenInfo => {
+        if (!tokenInfo) {
+          // Token became invalid, application should terminate user session
+          // and stop making API calls with this token
+          c.logger.log("Token validation failed in scheduled check")
+        }
+      })
+  }, 60 * 60 * 1000) // Check every hour (60 minutes * 60 seconds * 1000 milliseconds)
+  
+  return c.json({ 
+    valid: true, 
+    message: "Token validation schedule established",
+    info: initialValidation
+  })
+})
+```
+> For security and compliance, make sure to implement regular token validation in your application. If a token becomes invalid, promptly sign out the user and terminate their OAuth session.
+
 ## Advance Usage
 
 ### Customize `redirect_uri`
