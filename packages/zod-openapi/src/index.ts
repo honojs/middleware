@@ -701,7 +701,7 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
   const updatedPaths: Record<string, any> = {}
 
   Object.keys(document.paths).forEach((path) => {
-    updatedPaths[mergePath(basePath, path)] = document.paths[path]
+    updatedPaths[mergePath(basePath.replaceAll(/:([^\/]+)/g, '{$1}'), path)] = document.paths[path]
   })
 
   return {
