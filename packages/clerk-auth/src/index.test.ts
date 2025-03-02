@@ -1,36 +1,31 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Hono } from 'hono'
-import { clerkMiddleware, getAuth } from '../src'
+import { clerkMiddleware, getAuth } from '.'
 
 const EnvVariables = {
   CLERK_SECRET_KEY: 'TEST_API_KEY',
   CLERK_PUBLISHABLE_KEY: 'TEST_API_KEY',
 }
 
-const authenticateRequestMock = jest.fn()
+const authenticateRequestMock = vi.fn()
 
-jest.mock('@clerk/backend', () => {
+vi.mock(import('@clerk/backend'), async (importOriginal) => {
+  const original = await importOriginal()
+
   return {
-    ...jest.requireActual('@clerk/backend'),
-    createClerkClient: () => {
-      return {
-        authenticateRequest: (...args: any) => authenticateRequestMock(...args),
-      }
+    ...original,
+    createClerkClient(options) {
+      const client = original.createClerkClient(options)
+      vi.spyOn(client, 'authenticateRequest').mockImplementation(authenticateRequestMock)
+      return client
     },
   }
 })
 
-// Test are based on Clerk's test suite for Fastify plugin - https://github.com/clerkinc/javascript/blob/main/packages/fastify/src/withClerkMiddleware.test.ts
+// Test are based on Clerk's test suite for Fastify plugin - https://github.com/clerk/javascript/blob/main/packages/fastify/src/__tests__/withClerkMiddleware.test.ts
 describe('clerkMiddleware()', () => {
   beforeEach(() => {
-    process.env.CLERK_SECRET_KEY = EnvVariables.CLERK_SECRET_KEY
-    process.env.CLERK_PUBLISHABLE_KEY = EnvVariables.CLERK_PUBLISHABLE_KEY
-    jest.clearAllMocks()
-    jest.restoreAllMocks()
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
+    vi.stubEnv('CLERK_SECRET_KEY', EnvVariables.CLERK_SECRET_KEY)
+    vi.stubEnv('CLERK_PUBLISHABLE_KEY', EnvVariables.CLERK_PUBLISHABLE_KEY)
   })
 
   test('handles signin with Authorization Bearer', async () => {
