@@ -2733,7 +2733,6 @@ __metadata:
   dependencies:
     "@cloudflare/workers-types": "npm:^3.14.0"
     "@eslint-community/eslint-plugin-eslint-comments": "npm:^4.4.0"
-    "@types/jest": "npm:^28.1.4"
     "@typescript-eslint/eslint-plugin": "npm:^5.21.0"
     "@typescript-eslint/parser": "npm:^5.21.0"
     eslint: "npm:^8.57.0"
@@ -2745,13 +2744,11 @@ __metadata:
     eslint-plugin-n: "npm:^17.10.2"
     graphql: "npm:^16.5.0"
     hono: "npm:^4.0.2"
-    jest: "npm:^28.1.2"
-    jest-environment-miniflare: "npm:^2.6.0"
     np: "npm:^7.6.2"
     prettier: "npm:^2.7.1"
     rimraf: "npm:^3.0.2"
-    ts-jest: "npm:^28.0.5"
     typescript: "npm:^4.7.4"
+    vitest: "npm:^2.1.8"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
