@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "vitest",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "prerelease": "yarn build && yarn test:all"
   },
@@ -41,7 +41,6 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.0",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
-    "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
     "eslint": "^8.57.0",
@@ -52,12 +51,10 @@
     "eslint-plugin-import-x": "^4.1.1",
     "eslint-plugin-n": "^17.10.2",
     "hono": "^3.11.7",
-    "jest": "^28.1.2",
-    "jest-environment-miniflare": "^2.6.0",
     "prettier": "^2.7.1",
     "publint": "^0.2.7",
-    "ts-jest": "^28.0.5",
     "tsup": "^8.0.2",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vitest": "^2.1.8"
   }
 }
