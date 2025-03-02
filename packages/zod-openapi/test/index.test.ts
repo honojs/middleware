@@ -1239,6 +1239,41 @@ describe('basePath()', () => {
 
     expect(paths).not.toStrictEqual(['/message1', '/message2', '/hello'])
   })
+
+  it('Should correctly handle path parameters in basePath', async () => {
+    const app = new OpenAPIHono().basePath('/:param')
+
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/',
+        responses: {
+          200: {
+            description: 'Get message',
+          },
+        },
+      }),
+      (c) => {
+        return c.json({ path: c.req.param('param') })
+      }
+    )
+
+    const json = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'My API',
+      },
+    })
+
+    const paths = Object.keys(json.paths)
+
+    expect(paths).toStrictEqual(['/{param}'])
+
+    const res = await app.request('/abc')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ path: 'abc' })
+  })
 })
 
 describe('With hc', () => {
