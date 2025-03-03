@@ -2722,6 +2722,7 @@ __metadata:
     "@asteasolutions/zod-to-openapi": "npm:^7.1.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
     "@hono/zod-validator": "npm:^0.4.1"
+    "@types/node": "npm:^20.10.4"
     hono: "npm:^4.6.10"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
