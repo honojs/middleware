@@ -191,6 +191,7 @@ __metadata:
     "@asteasolutions/zod-to-openapi": "npm:^7.1.0"
     "@cloudflare/workers-types": "npm:^4.20240117.0"
     "@hono/zod-validator": "npm:^0.4.1"
+    "@types/node": "npm:^20.10.4"
     hono: "npm:^4.6.10"
     tsup: "npm:^8.0.1"
     typescript: "npm:^5.4.4"
@@ -436,6 +437,15 @@ __metadata:
   version: 1.0.5
   resolution: "@types/estree@npm:1.0.5"
   checksum: b3b0e334288ddb407c7b3357ca67dbee75ee22db242ca7c56fe27db4e1a31989cb8af48a84dd401deb787fe10cc6b2ab1ee82dc4783be87ededbe3d53c79c70d
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.10.4":
+  version: 20.17.22
+  resolution: "@types/node@npm:20.17.22"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 5a78f60144bd69eaf1bdce39c906d988b0dc0f4c13068af9a3c44b0df737a0f363680a97d073a45d962b061cd4b3a8cfab71eec491ca6845888b68ab7855a778
   languageName: node
   linkType: hard
 
@@ -2312,6 +2322,13 @@ __metadata:
   version: 1.3.2
   resolution: "ufo@npm:1.3.2"
   checksum: 180f3dfcdf319b54fe0272780841c93cb08a024fc2ee5f95e63285c2a3c42d8b671cd3641e9a53aafccf100cf8466aa8c040ddfa0efea1fc1968c9bfb250a661
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.19.2":
+  version: 6.19.8
+  resolution: "undici-types@npm:6.19.8"
+  checksum: 078afa5990fba110f6824823ace86073b4638f1d5112ee26e790155f481f2a868cc3e0615505b6f4282bdf74a3d8caad715fd809e870c2bb0704e3ea6082f344
   languageName: node
   linkType: hard
 

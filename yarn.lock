@@ -640,6 +640,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/workers-types@npm:^4.20221111.1":
+  version: 4.20250224.0
+  resolution: "@cloudflare/workers-types@npm:4.20250224.0"
+  checksum: 7227e0c6ca1e2d2eb1b32816a6bf7eef6ddd42ce65b7b95cdd98b0cdb82f7705250657a26d99c97da8be86939411d6526baec1b12acb1de0ae05de4861946a12
+  languageName: node
+  linkType: hard
+
 "@cloudflare/workers-types@npm:^4.20230307.0, @cloudflare/workers-types@npm:^4.20231025.0":
   version: 4.20231121.0
   resolution: "@cloudflare/workers-types@npm:4.20231121.0"
@@ -2480,6 +2487,7 @@ __metadata:
     tsup: "npm:^8.0.0"
     typescript: "npm:^5.2.2"
     vitest: "npm:^2.1.8"
+    vitest-environment-miniflare: "npm:^2.14.4"
   peerDependencies:
     hono: ">=3.*"
   languageName: unknown
@@ -2795,6 +2803,13 @@ __metadata:
   version: 0.4.1
   resolution: "@humanwhocodes/retry@npm:0.4.1"
   checksum: be7bb6841c4c01d0b767d9bb1ec1c9359ee61421ce8ba66c249d035c5acdfd080f32d55a5c9e859cdd7868788b8935774f65b2caf24ec0b7bd7bf333791f063b
+  languageName: node
+  linkType: hard
+
+"@iarna/toml@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "@iarna/toml@npm:2.2.5"
+  checksum: d095381ad4554aca233b7cf5a91f243ef619e5e15efd3157bc640feac320545450d14b394aebbf6f02a2047437ced778ae598d5879a995441ab7b6c0b2c2f201
   languageName: node
   linkType: hard
 
@@ -3168,6 +3183,192 @@ __metadata:
   dependencies:
     object-treeify: "npm:^1.1.20"
   checksum: 2b7811279c5af51afec8a1fe56d09036661f805454d50bba1e8d6e6bbc16e1113cd2c9b5b42c0701cecd76df58b73cdebb19f70bc87acdbdfb939f271d68d202
+  languageName: node
+  linkType: hard
+
+"@miniflare/cache@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/cache@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    http-cache-semantics: "npm:^4.1.0"
+    undici: "npm:5.28.4"
+  checksum: 10d0021ddba44460128704be6445ca710891a574c96a2d1d004147a6a0cde48c33b789036ee7744584f8958cbee93ebef33424c31c3fd5777bcbf05e4a754732
+  languageName: node
+  linkType: hard
+
+"@miniflare/core@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/core@npm:2.14.4"
+  dependencies:
+    "@iarna/toml": "npm:^2.2.5"
+    "@miniflare/queues": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/watcher": "npm:2.14.4"
+    busboy: "npm:^1.6.0"
+    dotenv: "npm:^10.0.0"
+    kleur: "npm:^4.1.4"
+    set-cookie-parser: "npm:^2.4.8"
+    undici: "npm:5.28.4"
+    urlpattern-polyfill: "npm:^4.0.3"
+  checksum: 412f8427b347901f722a22fdc0a763fbefd48161bedfe9e1cc9893c13754d244a7644e442b5ae3869ef0738646767faa660e27adf5854d79d2350f3425ee06a8
+  languageName: node
+  linkType: hard
+
+"@miniflare/d1@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/d1@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: b6f38322883ca3745f1a95d1402bb2fbe00422b4b35a7843c3a3021fff189e0eb97e20c17ee33e3545cc11675721ff15a0f7183e85dfe8d41872298860247916
+  languageName: node
+  linkType: hard
+
+"@miniflare/durable-objects@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/durable-objects@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/storage-memory": "npm:2.14.4"
+    undici: "npm:5.28.4"
+  checksum: 13c2051f05c6bc6da21aebda576bb078593aaaf26d9f2dadbab915935de0ade00cf2392ec79aa77df89d43b836f4b3de061bcd57f96282770004bcbf9fee8e08
+  languageName: node
+  linkType: hard
+
+"@miniflare/html-rewriter@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/html-rewriter@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    html-rewriter-wasm: "npm:^0.4.1"
+    undici: "npm:5.28.4"
+  checksum: 3e363f1cd8b16f85c77ec9bfdbb7d5b947d4752467af4ec47a3aad9922eb2641ad5c1e735cc54b52ea4cec6f158d4ca125db64e0e4fa3b7794492fca5e9fde7d
+  languageName: node
+  linkType: hard
+
+"@miniflare/kv@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/kv@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: eed6dc479ba222266548e9ced55d87b12154f5683c787b1b3bdc84cf863369b9e64cbc3168cd922d6e77627c27bca2713e8170a77d488f84cb861fd5171f630b
+  languageName: node
+  linkType: hard
+
+"@miniflare/queues@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/queues@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: b5c4f19eab321d3441f7f10805a4360fd3eccc1845bf9121811b0e7e4c7468fc9d6fdf9d00c2838a196ed9ac543a7bfc716cf38be83bd214204f04e96e2ae24e
+  languageName: node
+  linkType: hard
+
+"@miniflare/r2@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/r2@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    undici: "npm:5.28.4"
+  checksum: 2830b53a8a95c9ae2e45601bad6eda8bb0380da419b912d1ebb98f958450517e6f4eea8828761ded6f866492da9d88b55ceb3ad159e7d6d5717a081246098ed7
+  languageName: node
+  linkType: hard
+
+"@miniflare/runner-vm@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/runner-vm@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: 7ef10eb0758099c33b59e32360af8b8cb4791d440f19373951cbb622949ebf8aa417ca1ec649dff21517c9764366895811b9aeefd295ef08e87eb7cbcabe6773
+  languageName: node
+  linkType: hard
+
+"@miniflare/shared-test-environment@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/shared-test-environment@npm:2.14.4"
+  dependencies:
+    "@cloudflare/workers-types": "npm:^4.20221111.1"
+    "@miniflare/cache": "npm:2.14.4"
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/d1": "npm:2.14.4"
+    "@miniflare/durable-objects": "npm:2.14.4"
+    "@miniflare/html-rewriter": "npm:2.14.4"
+    "@miniflare/kv": "npm:2.14.4"
+    "@miniflare/queues": "npm:2.14.4"
+    "@miniflare/r2": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/sites": "npm:2.14.4"
+    "@miniflare/storage-memory": "npm:2.14.4"
+    "@miniflare/web-sockets": "npm:2.14.4"
+  checksum: 62df54a0a9a122bc8808880c9145f96e40f10649a231c7ca3109ab1324b12e77d6c8720d0b9a2cc9ae408d0daa01412db248a886573cd59eacfc1fd85be7aeaa
+  languageName: node
+  linkType: hard
+
+"@miniflare/shared@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/shared@npm:2.14.4"
+  dependencies:
+    "@types/better-sqlite3": "npm:^7.6.0"
+    kleur: "npm:^4.1.4"
+    npx-import: "npm:^1.1.4"
+    picomatch: "npm:^2.3.1"
+  checksum: b920774afa7ec1e3ed5b7e341db18fa94dac4f47a74753ef2539cc83605facf7c71e5ffd34ffe3af990993b36aa208a465c85e35edfd42ae22c38c1517656179
+  languageName: node
+  linkType: hard
+
+"@miniflare/sites@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/sites@npm:2.14.4"
+  dependencies:
+    "@miniflare/kv": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/storage-file": "npm:2.14.4"
+  checksum: b7385fc34aa0947ffab8e7b865a8b303420b8625aed772d5272f62c692379462b1f47e923a636196144e9cb2614fcf9d9c1b8b1d9dc3da08cabf2291f8ef2e45
+  languageName: node
+  linkType: hard
+
+"@miniflare/storage-file@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/storage-file@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/storage-memory": "npm:2.14.4"
+  checksum: ee6f879e4a034acdc39c48434c59fa12954f5b28fda3e23c4d4cfac08d88602c791aa71e9de9a1a18a23fa9372955a208a729d4385d689a78cd731455f346103
+  languageName: node
+  linkType: hard
+
+"@miniflare/storage-memory@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/storage-memory@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: 1cc06926f600362216d6ad06c057180cd02f03afeebf4a3a81ca9151c798862a68152432bcaace461fe90ee1f1b98944273299a64a83864d7dac6807d2fee325
+  languageName: node
+  linkType: hard
+
+"@miniflare/watcher@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/watcher@npm:2.14.4"
+  dependencies:
+    "@miniflare/shared": "npm:2.14.4"
+  checksum: 02098b4787af820f5dbcc7296a5cb02f8470c3845acff5a5f71ffa2073f09febf55816246142cf03a9714d15da7f813ffcdfd05bd774f768b8f6bb4a411ceca8
+  languageName: node
+  linkType: hard
+
+"@miniflare/web-sockets@npm:2.14.4":
+  version: 2.14.4
+  resolution: "@miniflare/web-sockets@npm:2.14.4"
+  dependencies:
+    "@miniflare/core": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    undici: "npm:5.28.4"
+    ws: "npm:^8.2.2"
+  checksum: c642da59bd26a1256c9050bccfe38767611773ccfdb382cc597249b7e9bfe01ae6e84da4d25a992f60567b42d9436ae15543833ad104e8aca307a29012cf749c
   languageName: node
   linkType: hard
 
@@ -3893,6 +4094,15 @@ __metadata:
   dependencies:
     "@types/estree": "npm:*"
   checksum: 5a65a1d7e91fc95703f0a717897be60fa7ccd34b17f5462056274a246e6690259fe0a1baabc86fd3260354f87245cb3dc483346d7faad2b78fc199763978ede9
+  languageName: node
+  linkType: hard
+
+"@types/better-sqlite3@npm:^7.6.0":
+  version: 7.6.12
+  resolution: "@types/better-sqlite3@npm:7.6.12"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 5367de7492e2c697aa20cc4024ba26210971d15f60c01ef691eddfbbfd39ccf9f80d5129fd7fd6c76c98804739325e23d2b156b0eac8f5a7665ba374a08ac1e7
   languageName: node
   linkType: hard
 
@@ -5858,6 +6068,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"builtins@npm:^5.0.0":
+  version: 5.1.0
+  resolution: "builtins@npm:5.1.0"
+  dependencies:
+    semver: "npm:^7.0.0"
+  checksum: 3c32fe5bd7ed4ff7dbd6fb14bcb9d7eaa7e967327f1899cd336f8625d3f46fceead0a53528f1e332aeaee757034ebb307cb2f1a37af2b86a3c5ad4845d01c0c8
+  languageName: node
+  linkType: hard
+
 "bun-types@npm:1.0.18":
   version: 1.0.18
   resolution: "bun-types@npm:1.0.18"
@@ -5884,6 +6103,15 @@ __metadata:
   peerDependencies:
     esbuild: ">=0.18"
   checksum: 92c46df02586e0ebd66ee4831c9b5775adb3c32a43fe2b2aaf7bc675135c141f751de6a9a26b146d64c607c5b40f9eef5f10dce3c364f602d4bed268444c32c6
+  languageName: node
+  linkType: hard
+
+"busboy@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "busboy@npm:1.6.0"
+  dependencies:
+    streamsearch: "npm:^1.1.0"
+  checksum: fa7e836a2b82699b6e074393428b91ae579d4f9e21f5ac468e1b459a244341d722d2d22d10920cdd849743dbece6dca11d72de939fb75a7448825cf2babfba1f
   languageName: node
   linkType: hard
 
@@ -7376,6 +7604,13 @@ __metadata:
   dependencies:
     is-obj: "npm:^2.0.0"
   checksum: 30e51ec6408978a6951b21e7bc4938aad01a86f2fdf779efe52330205c6bb8a8ea12f35925c2029d6dc9d1df22f916f32f828ce1e9b259b1371c580541c22b5a
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "dotenv@npm:10.0.0"
+  checksum: 2d8d4ba64bfaff7931402aa5e8cbb8eba0acbc99fe9ae442300199af021079eafa7171ce90e150821a5cb3d74f0057721fbe7ec201a6044b68c8a7615f8c123f
   languageName: node
   linkType: hard
 
@@ -8897,6 +9132,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"execa@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "execa@npm:6.1.0"
+  dependencies:
+    cross-spawn: "npm:^7.0.3"
+    get-stream: "npm:^6.0.1"
+    human-signals: "npm:^3.0.1"
+    is-stream: "npm:^3.0.0"
+    merge-stream: "npm:^2.0.0"
+    npm-run-path: "npm:^5.1.0"
+    onetime: "npm:^6.0.0"
+    signal-exit: "npm:^3.0.7"
+    strip-final-newline: "npm:^3.0.0"
+  checksum: 004ee32092af745766a1b0352fdba8701a4001bc3fe08e63101c04276d4c860bbe11bb8ab85f37acdff13d3da83d60e044041dcf24bd7e25e645a543828d9c41
+  languageName: node
+  linkType: hard
+
 "execa@npm:^8.0.1":
   version: 8.0.1
   resolution: "execa@npm:8.0.1"
@@ -9724,7 +9976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-stream@npm:^6.0.0":
+"get-stream@npm:^6.0.0, get-stream@npm:^6.0.1":
   version: 6.0.1
   resolution: "get-stream@npm:6.0.1"
   checksum: 49825d57d3fd6964228e6200a58169464b8e8970489b3acdc24906c782fb7f01f9f56f8e6653c4a50713771d6658f7cfe051e5eb8c12e334138c9c918b296341
@@ -10419,7 +10671,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-cache-semantics@npm:^4.0.0, http-cache-semantics@npm:^4.1.1":
+"html-rewriter-wasm@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "html-rewriter-wasm@npm:0.4.1"
+  checksum: 54b13625578de30cabfea97e564cbb1782ce1087a93c83aa1d43ecb4a3f8a8fcfeaf3d9d0ba9a08b01adc8ce3abcee4b61a9068580b7859ff257dacb0bb64ed2
+  languageName: node
+  linkType: hard
+
+"http-cache-semantics@npm:^4.0.0, http-cache-semantics@npm:^4.1.0, http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
   checksum: ce1319b8a382eb3cbb4a37c19f6bfe14e5bb5be3d09079e885e8c513ab2d3cd9214902f8a31c9dc4e37022633ceabfc2d697405deeaf1b8f3552bb4ed996fdfc
@@ -10511,6 +10770,13 @@ __metadata:
   version: 2.1.0
   resolution: "human-signals@npm:2.1.0"
   checksum: 695edb3edfcfe9c8b52a76926cd31b36978782062c0ed9b1192b36bebc75c4c87c82e178dfcb0ed0fc27ca59d434198aac0bd0be18f5781ded775604db22304a
+  languageName: node
+  linkType: hard
+
+"human-signals@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "human-signals@npm:3.0.1"
+  checksum: 0bb27e72aea1666322f69ab9816e05df952ef2160346f2293f98f45d472edb1b62d0f1a596697b50d48d8f8222e6db3b9f9dc0b6bf6113866121001f0a8e48e9
   languageName: node
   linkType: hard
 
@@ -11769,7 +12035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kleur@npm:^4.0.3, kleur@npm:^4.1.5":
+"kleur@npm:^4.0.3, kleur@npm:^4.1.4, kleur@npm:^4.1.5":
   version: 4.1.5
   resolution: "kleur@npm:4.1.5"
   checksum: e9de6cb49657b6fa70ba2d1448fd3d691a5c4370d8f7bbf1c2f64c24d461270f2117e1b0afe8cb3114f13bbd8e51de158c2a224953960331904e636a5e4c0f2a
@@ -13808,6 +14074,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"npx-import@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "npx-import@npm:1.1.4"
+  dependencies:
+    execa: "npm:^6.1.0"
+    parse-package-name: "npm:^1.0.0"
+    semver: "npm:^7.3.7"
+    validate-npm-package-name: "npm:^4.0.0"
+  checksum: a38cea5bbd70ccfd5665ce1fd559bb9f8e5243b9532d3e5402fb6ba3597f0c0d7d8caa6099189b51692f9cd77a28ad65cf65ae4e0f3d4d37ac86037423b1499a
+  languageName: node
+  linkType: hard
+
 "nth-check@npm:^2.0.1":
   version: 2.1.1
   resolution: "nth-check@npm:2.1.1"
@@ -14339,6 +14617,13 @@ __metadata:
     json-parse-even-better-errors: "npm:^2.3.0"
     lines-and-columns: "npm:^1.1.6"
   checksum: 77947f2253005be7a12d858aedbafa09c9ae39eb4863adf330f7b416ca4f4a08132e453e08de2db46459256fb66afaac5ee758b44fe6541b7cdaf9d252e59585
+  languageName: node
+  linkType: hard
+
+"parse-package-name@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "parse-package-name@npm:1.0.0"
+  checksum: ccbe57b6589784d9485cf18f1e1b2803da95df2df80d2cf91de4ccbe54af6bae18aa6f59b826bf50aa6051d439a905c7e800c5340341edc5374558e418e6defa
   languageName: node
   linkType: hard
 
@@ -16135,6 +16420,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"set-cookie-parser@npm:^2.4.8":
+  version: 2.7.1
+  resolution: "set-cookie-parser@npm:2.7.1"
+  checksum: 060c198c4c92547ac15988256f445eae523f57f2ceefeccf52d30d75dedf6bff22b9c26f756bd44e8e560d44ff4ab2130b178bd2e52ef5571bf7be3bd7632d9a
+  languageName: node
+  linkType: hard
+
 "set-function-length@npm:^1.1.1":
   version: 1.1.1
   resolution: "set-function-length@npm:1.1.1"
@@ -16339,7 +16631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3":
+"signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.7":
   version: 3.0.7
   resolution: "signal-exit@npm:3.0.7"
   checksum: 25d272fa73e146048565e08f3309d5b942c1979a6f4a58a8c59d5fa299728e9c2fcd1a759ec870863b1fd38653670240cd420dad2ad9330c71f36608a6a1c912
@@ -16717,6 +17009,13 @@ __metadata:
   dependencies:
     mixme: "npm:^0.5.1"
   checksum: 8a4b40e1ee952869358c12bbb3da3aa9ca30c8964f8f8eef2058a3b6b2202d7a856657ef458a5f2402a464310d177f92d2e4a119667854fce4b17c05e3c180bd
+  languageName: node
+  linkType: hard
+
+"streamsearch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "streamsearch@npm:1.1.0"
+  checksum: fbd9aecc2621364384d157f7e59426f4bfd385e8b424b5aaa79c83a6f5a1c8fd2e4e3289e95de1eb3511cb96bb333d6281a9919fafce760e4edb35b2cd2facab
   languageName: node
   linkType: hard
 
@@ -18211,6 +18510,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici@npm:5.28.4":
+  version: 5.28.4
+  resolution: "undici@npm:5.28.4"
+  dependencies:
+    "@fastify/busboy": "npm:^2.0.0"
+  checksum: 08d0f2596553aa0a54ca6e8e9c7f45aef7d042c60918564e3a142d449eda165a80196f6ef19ea2ef2e6446959e293095d8e40af1236f0d67223b06afac5ecad7
+  languageName: node
+  linkType: hard
+
 "undici@npm:^5.26.0":
   version: 5.28.2
   resolution: "undici@npm:5.28.2"
@@ -18470,6 +18778,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"urlpattern-polyfill@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "urlpattern-polyfill@npm:4.0.3"
+  checksum: 2935eddcd8b573e78a2d69d9ebf51509b698ee9e0d8312fc9810a849cc277de96b3a371b08c6820c1249ccec3bc917bf2684c90292a513aed75fc4dd6a8b8cc9
+  languageName: node
+  linkType: hard
+
 "use-sync-external-store@npm:^1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
@@ -18586,6 +18901,15 @@ __metadata:
   dependencies:
     builtins: "npm:^1.0.3"
   checksum: 064f21f59aefae6cc286dd4a50b15d14adb0227e0facab4316197dfb8d06801669e997af5081966c15f7828a5e6ff1957bd20886aeb6b9d0fa430e4cb5db9c4a
+  languageName: node
+  linkType: hard
+
+"validate-npm-package-name@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "validate-npm-package-name@npm:4.0.0"
+  dependencies:
+    builtins: "npm:^5.0.0"
+  checksum: d7f753c0aac0a2b8dd06752e7278d18165a21e28b5064d897a1b6f10350d857b339d6bd9e08dd140710433479940bec9ba151b619196780dc6e49dd8fbff6df8
   languageName: node
   linkType: hard
 
@@ -18853,6 +19177,21 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: d666b2760d2a7ea1d0d35f67c042053e562144f80554be4e4dc58e607fd5f62193cd203d73ab2e315df66830d8b9d9a2e3509d0208bdef1b2e92e0a5c364df84
+  languageName: node
+  linkType: hard
+
+"vitest-environment-miniflare@npm:^2.14.4":
+  version: 2.14.4
+  resolution: "vitest-environment-miniflare@npm:2.14.4"
+  dependencies:
+    "@miniflare/queues": "npm:2.14.4"
+    "@miniflare/runner-vm": "npm:2.14.4"
+    "@miniflare/shared": "npm:2.14.4"
+    "@miniflare/shared-test-environment": "npm:2.14.4"
+    undici: "npm:5.28.4"
+  peerDependencies:
+    vitest: ">=0.23.0"
+  checksum: 7a56e8c1209ce224c84a9e98b352cdf507d957bf103361d1485103af590aa24d1cde3e59e500b529b88937eed3f4025e7616c6bc6fe57f0c61fec0dec1f05907
   languageName: node
   linkType: hard
 
@@ -19634,6 +19973,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 55241ec93a66fdfc4bf4f8bc66c8eb038fda2c7a4ee8f6f157f2ca7dc7aa76aea0c0da0bf3adb2af390074a70a0e45456a2eaf80e581e630b75df10a64b0a990
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.2.2":
+  version: 8.18.1
+  resolution: "ws@npm:8.18.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: e498965d6938c63058c4310ffb6967f07d4fa06789d3364829028af380d299fe05762961742971c764973dce3d1f6a2633fe8b2d9410c9b52e534b4b882a99fa
   languageName: node
   linkType: hard
 
