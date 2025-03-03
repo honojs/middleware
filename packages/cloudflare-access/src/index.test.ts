@@ -279,7 +279,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
     expect(await res.json()).toEqual({
-      err: "Error: Authentication error: The Access Organization 'my-cool-team-name' does not exist",
+      err: 'Error: Authentication error: The Access Organization \'my-cool-team-name\' does not exist',
     })
   })
 

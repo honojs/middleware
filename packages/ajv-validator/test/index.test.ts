@@ -193,7 +193,7 @@ describe('With Hook', () => {
       {
         keyword: 'required',
         instancePath: '',
-        message: "must have required property 'title'",
+        message: 'must have required property \'title\'',
       },
     ])
   })
