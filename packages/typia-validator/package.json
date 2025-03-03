@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "generate-test": "rimraf test-generated && typia generate --input test --output test-generated --project tsconfig.json && node scripts/add-ts-ignore.cjs",
-    "test": "npm run generate-test && jest",
+    "test": "npm run generate-test && vitest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
@@ -47,9 +47,9 @@
   },
   "devDependencies": {
     "hono": "^3.11.7",
-    "jest": "^29.7.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0",
-    "typia": "^7.3.0"
+    "typia": "^7.3.0",
+    "vitest": "^2.1.8"
   }
 }
