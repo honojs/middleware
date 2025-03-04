@@ -7,10 +7,7 @@
     "rootDir": "./",
     "outDir": "./dist",
     "jsx": "react",
-    "types": ["jest","node","vitest/globals"] 
+    "types": ["node", "vitest/globals"]
   },
-  "include": [
-    "src/**/*.ts","src/**/*.tsx"
-  ],
-  
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

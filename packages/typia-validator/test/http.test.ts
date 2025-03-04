@@ -359,9 +359,9 @@ describe('With target', () => {
     const validateQuery = typia.http.createValidateQuery<Schema>()
     const validateHeader = typia.http.createValidateHeaders<Schema>()
 
-    const jsonHook = jest.fn()
-    const headerHook = jest.fn()
-    const queryHook = jest.fn()
+    const jsonHook = vi.fn()
+    const headerHook = vi.fn()
+    const queryHook = vi.fn()
     app.post(
       '/post',
       typiaValidator('json', validateSchema, jsonHook),

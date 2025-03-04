@@ -10,10 +10,6 @@
     "skipLibCheck": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "types": [
-      "jest",
-      "node",
-      "@cloudflare/workers-types"
-    ],
+    "types": ["node", "@cloudflare/workers-types"]
   }
 }
