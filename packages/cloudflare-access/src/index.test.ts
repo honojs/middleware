@@ -229,6 +229,22 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('foo')
   })
 
+  it('Should work when sending jwt as a Cookie', async () => {
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        Cookie: `CF_Authorization=${token}`,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
   it('Should work with tokens signed by the 2º key in the public keys list', async () => {
     const token = generateJWT(keyPair2.privateKey, {
       sub: '1234567890',
@@ -279,7 +295,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
     expect(await res.json()).toEqual({
-      err: 'Error: Authentication error: The Access Organization \'my-cool-team-name\' does not exist',
+      err: "Error: Authentication error: The Access Organization 'my-cool-team-name' does not exist",
     })
   })
 

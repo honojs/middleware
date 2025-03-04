@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import { getCookie } from 'hono/cookie';
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 
@@ -133,11 +134,11 @@ async function getPublicKeys(accessTeamName: string) {
 }
 
 function getJwt(c: Context) {
-  const authHeader = c.req.header('cf-access-jwt-assertion')
-  if (!authHeader) {
+  const jwt = c.req.header('cf-access-jwt-assertion') ?? getCookie(c, 'CF_Authorization')
+  if (!jwt) {
     return null
   }
-  return authHeader.trim()
+  return jwt.trim()
 }
 
 function decodeJwt(token: string): DecodedToken {
