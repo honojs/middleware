@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { tags } from 'typia'
 import typia from 'typia'
-import { typiaValidator } from '../src/http'
+import { typiaValidator } from './http'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
@@ -359,9 +359,9 @@ describe('With target', () => {
     const validateQuery = typia.http.createValidateQuery<Schema>()
     const validateHeader = typia.http.createValidateHeaders<Schema>()
 
-    const jsonHook = jest.fn()
-    const headerHook = jest.fn()
-    const queryHook = jest.fn()
+    const jsonHook = vi.fn()
+    const headerHook = vi.fn()
+    const queryHook = vi.fn()
     app.post(
       '/post',
       typiaValidator('json', validateSchema, jsonHook),

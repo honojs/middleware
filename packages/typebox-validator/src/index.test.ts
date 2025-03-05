@@ -2,7 +2,7 @@ import { Type as T } from '@sinclair/typebox'
 import type { ValueError } from '@sinclair/typebox/value'
 import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
-import { tbValidator } from '../src'
+import { tbValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never

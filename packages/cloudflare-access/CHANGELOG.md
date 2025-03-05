@@ -1,5 +1,11 @@
 # @hono/cloudflare-access
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1001](https://github.com/honojs/middleware/pull/1001) [`69c3983d2073cbcaa45ecf8eb635bcd16dd36218`](https://github.com/honojs/middleware/commit/69c3983d2073cbcaa45ecf8eb635bcd16dd36218) Thanks [@JoaquinGimenez1](https://github.com/JoaquinGimenez1)! - Add support to read JWT from Cookie
+
 ## 0.2.0
 
 ### Minor Changes

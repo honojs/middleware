@@ -187,6 +187,31 @@ describe('SwaggerUIOption Rendering', () => {
       { parameterMacro: '(parameter) => parameter', url: baseUrl },
       `parameterMacro: (parameter) => parameter,url: '${baseUrl}'`,
     ],
+    [
+      'filters out properties not in RENDER_TYPE_MAP',
+      { url: baseUrl, title: 'My API', customProperty: 'value' } as DistSwaggerUIOptions & { title: string },
+      `url: '${baseUrl}'`
+    ],
+    [
+      'filters out undefined values',
+      { url: baseUrl, layout: undefined },
+      `url: '${baseUrl}'`
+    ],
+    [
+      'handles multiple invalid properties gracefully',
+      { 
+        url: baseUrl, 
+        title: 'My API', // Not in RENDER_TYPE_MAP but used in HTML <title>
+        presets: null as unknown, // Invalid type
+        withCredentials: true 
+      } as DistSwaggerUIOptions & { title: string },
+      `url: '${baseUrl}',withCredentials: true`
+    ],
+    [
+      'handles empty input gracefully',
+      { url: '' },
+      `url: ''`
+    ]
   ]
 
   it.each(commonTests)('renders correctly with %s', (_, input, expected) => {

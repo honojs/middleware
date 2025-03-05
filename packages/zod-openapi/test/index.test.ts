@@ -1239,6 +1239,88 @@ describe('basePath()', () => {
 
     expect(paths).not.toStrictEqual(['/message1', '/message2', '/hello'])
   })
+
+  it('Should correctly handle path parameters in basePath', async () => {
+    const app = new OpenAPIHono().basePath('/:param')
+
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/',
+        responses: {
+          200: {
+            description: 'Get message',
+          },
+        },
+      }),
+      (c) => {
+        return c.json({ path: c.req.param('param') })
+      }
+    )
+
+    const json = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'My API',
+      },
+    })
+
+    const paths = Object.keys(json.paths)
+
+    expect(paths).toStrictEqual(['/{param}'])
+
+    const res = await app.request('/abc')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ path: 'abc' })
+  })
+
+  it('Should correctly handle path parameters in nested basePath', async () => {
+    const app = new OpenAPIHono()
+    const nested = new OpenAPIHono().basePath('/:param2')
+
+    nested.openapi(
+      createRoute({
+        method: 'get',
+        path: '/{param3}',
+        responses: {
+          200: {
+            description: 'Get message',
+          },
+        },
+      }),
+      (c) => {
+        return c.json({
+          param1: c.req.param('param1'),
+          param2: c.req.param('param2'),
+          param3: c.req.param('param3')
+        })
+      }
+    )
+
+    app.route('/:param1', nested)
+
+    const json = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        version: '1.0.0',
+        title: 'My API',
+      },
+    })
+
+    const paths = Object.keys(json.paths)
+
+    expect(paths).toStrictEqual(['/{param1}/{param2}/{param3}'])
+    expect(paths).not.toStrictEqual(['/{param1}/:param2/{param3}'])
+
+    const res = await app.request('/foo/bar/baz')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      param1: 'foo',
+      param2: 'bar',
+      param3: 'baz'
+    })
+  })
 })
 
 describe('With hc', () => {
@@ -1921,5 +2003,57 @@ describe('Generate YAML', () => {
       },
     })
     expect(() => stringify(doc)).to.not.throw()
+  })
+})
+
+describe('Hide Routes', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      hide: true,
+      path: '/books',
+      responses: {
+        200: {
+          description: 'Books',
+          content: {
+            'application/json': {
+              schema: z.array(
+                z.object({
+                  title: z.string(),
+                })
+              ),
+            },
+          },
+        },
+      },
+    }),
+    (c) => c.json([{ title: 'foo' }])
+  )
+
+  it('Should hide the route', async () => {
+    const doc = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+
+    const doc31 = app.getOpenAPI31Document({
+      openapi: '3.1.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+    expect(doc.paths).not.toHaveProperty('/books')
+    expect(doc31.paths).not.toHaveProperty('/books')
+  })
+
+  it('Should return a HTTP 200 response from a hidden route', async () => {
+    const res = await app.request('/books')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ title: 'foo' }])
   })
 })
