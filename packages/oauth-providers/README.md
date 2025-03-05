@@ -1081,7 +1081,6 @@ You can validate a Twitch access token to verify it's still valid or to obtain i
 
 The validation endpoint helps your application detect when tokens become invalid for reasons other than expiration, such as when users disconnect your integration from their Twitch account. When a token becomes invalid, your app should terminate all sessions using that token.
 
-```ts
 import { twitchAuth, validateToken } from '@hono/oauth-providers/twitch'
 
 // Function to validate token - should be called on app startup and hourly thereafter

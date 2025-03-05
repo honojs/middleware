@@ -858,7 +858,6 @@ describe('OAuth Middleware', () => {
   })
 
   describe('twitchAuth middleware', () => {
-    describe('middleware', () => {
       it('Should work with custom state', async () => {
         const res = await app.request('/twitch-custom-state')
         expect(res).not.toBeNull()
@@ -867,7 +866,6 @@ describe('OAuth Middleware', () => {
         const redirectUrl = new URL(redirectLocation)
         expect(redirectUrl.searchParams.get('state')).toBe('test-state')
       })
-    })
   })
 
   describe('twitchAuth middleware', () => {
@@ -969,23 +967,13 @@ describe('OAuth Middleware', () => {
 
     describe('Validate Token', () => {
       it('Should validate a valid token', async () => {
-          const res = await twitchValidate('twitchr4nd0m4cc3sst0k3n')
-          expect(res).toEqual(twitchValidateSuccess)
+        const res = await twitchValidate('twitchr4nd0m4cc3sst0k3n')
+        expect(res).toEqual(twitchValidateSuccess)
       })
     
       it('Should throw error for invalid token', async () => {
-          try {
-              await twitchValidate('invalid-token')
-              // If we reach here, the test should fail because an exception was expected
-              fail('Expected function to throw an exception')
-          } catch (error: unknown) {
-              // Type check before accessing properties
-              if (error instanceof Error) {
-                  expect(error.message).toBe(twitchValidateError.message)
-              } else {
-                  fail('Expected error to be an instance of Error')
-              }
-          }
+        const res = twitchValidate('invalid-token')
+        await expect(res).rejects.toThrow(twitchValidateError.message)
       })
     })
   })

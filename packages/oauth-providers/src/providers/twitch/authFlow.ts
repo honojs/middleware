@@ -18,7 +18,6 @@ type TwitchAuthFlow = {
   state: string
   code: string | undefined
   force_verify: boolean | undefined
-  // token: Token | undefined
 }
 
 export class AuthFlow {
@@ -42,7 +41,6 @@ export class AuthFlow {
     state,
     code,
     force_verify,
-    // token,
   }: TwitchAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -52,7 +50,6 @@ export class AuthFlow {
     this.code = code
     this.refresh_token = undefined
     this.force_verify = force_verify
-    // this.token = token
     this.granted_scopes = undefined
     this.user = undefined
   }
