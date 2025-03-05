@@ -88,16 +88,21 @@ describe('Basic', () => {
         age: '20',
       }),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
-    const data = (await res.json()) as { success: boolean }
+    const data = (await res.json()) as { success: boolean, errors: string }
     expect(data['success']).toBe(false)
+    expect(data.errors).toEqual("age must be a number (was a string)")
   })
 })
 
 describe('With Hook', () => {
+
   const app = new Hono()
 
   const schema = type({
