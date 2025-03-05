@@ -83,6 +83,16 @@
         "types": "./dist/providers/discord/index.d.ts",
         "default": "./dist/providers/discord/index.js"
       }
+    },
+    "./twitch" : {
+      "import": {
+        "types": "./dist/providers/twitch/index.d.mts",
+        "default": "./dist/providers/twitch/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/twitch/index.d.ts",
+        "default": "./dist/providers/twitch/index.js"
+      }
     }
   },
   "typesVersions": {
@@ -104,6 +114,9 @@
       ],
       "discord": [
         "./dist/providers/discord/index.d.ts"
+      ],
+      "twitch": [
+        "./dist/providers/twitch/index.d.ts"
       ]
     }
   },
