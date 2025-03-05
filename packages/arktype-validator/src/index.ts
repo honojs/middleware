@@ -53,7 +53,7 @@ export const arktypeValidator = <
       return c.json(
         {
           success: false,
-          errors: out,
+          errors: out.errors,
         },
         400
       )
