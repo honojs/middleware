@@ -23,8 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "generate-test": "rimraf test-generated && typia generate --input test --output test-generated --project tsconfig.json && node scripts/add-ts-ignore.cjs",
-    "test": "npm run generate-test && vitest",
+    "test": "vitest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "rimraf dist && yarn build:cjs && yarn build:esm",
@@ -46,6 +45,7 @@
     "typia": "^7.0.0"
   },
   "devDependencies": {
+    "@ryoppippi/unplugin-typia": "^1.2.0",
     "hono": "^3.11.7",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0",
