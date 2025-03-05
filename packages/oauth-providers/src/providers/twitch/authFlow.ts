@@ -83,7 +83,7 @@ export class AuthFlow {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: parsedOptions,
-    }).then((res) => res.json<TwitchTokenResponse>()))
+    }).then((res) => res.json() as Promise<TwitchTokenResponse>))
 
     if ('error' in response) {
       throw new HTTPException(400, { message: response.error })

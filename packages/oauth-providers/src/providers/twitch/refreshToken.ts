@@ -20,7 +20,7 @@ export async function refreshToken(
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params,
-  }).then((res) => res.json<TwitchRefreshResponse>()))
+  }).then((res) => res.json() as Promise<TwitchRefreshResponse>))
 
   if ('error' in response) {
     throw new HTTPException(400, { message: response.error })

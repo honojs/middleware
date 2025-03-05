@@ -23,7 +23,7 @@ export async function revokeToken(
   if (!res.ok) {
     // Try to parse error response
     try {
-      const errorResponse = await res.json<TwitchRevokingResponse>()
+      const errorResponse = await res.json() as TwitchRevokingResponse
       if (errorResponse && typeof errorResponse === 'object' && 'message' in errorResponse) {
         throw new HTTPException(400, { message: errorResponse.message })
       }
