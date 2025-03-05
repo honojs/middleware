@@ -41,9 +41,9 @@ npm i hono @hono/oidc-auth
 
 ## Configuration
 
-The middleware requires the following environment variables to be set:
+The middleware requires the following variables to be set as either environment variables or by calling `setOidcAuthEnv`:
 
-| Environment Variable       | Description                                                                                                                                                       | Default Value                          |
+| Variable                   | Description                                                                                                                                                       | Default Value                          |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | OIDC_AUTH_SECRET           | The secret key used for signing the session JWT. It is used to verify the JWT in the cookie and prevent tampering. (Must be at least 32 characters long)          | None, must be provided                 |
 | OIDC_AUTH_REFRESH_INTERVAL | The interval (in seconds) at which the session should be implicitly refreshed.                                                                                    | 15 \* 60 (15 minutes)                  |
@@ -139,6 +139,19 @@ app.get('/callback', async (c) => {
 Note:
 If explicit logout is not required, the logout handler can be omitted.
 If the middleware is applied to the callback URL, the default callback handling in the middleware can be used, so the explicit callback handling is not required.
+
+## Programmatically configure auth variables
+
+```typescript
+// Before other oidc-auth APIs are used
+app.use(async (c, next) => {
+  let config = {
+    // Configure auth variables
+  }
+  setOidcAuthEnv(c, config)
+  await next()
+});
+```
 
 ## Author
 
