@@ -35,8 +35,8 @@
     "hono": "*"
   },
   "devDependencies": {
-    "arktype": "^2.0.0-dev.14",
-    "hono": "^3.11.7",
+    "arktype": "^2.1.2",
+    "hono": "^4.7.2",
     "tsup": "^8.0.1",
     "vitest": "^1.0.4"
   }

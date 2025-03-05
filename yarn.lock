@@ -43,6 +43,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ark/schema@npm:0.44.0":
+  version: 0.44.0
+  resolution: "@ark/schema@npm:0.44.0"
+  dependencies:
+    "@ark/util": "npm:0.44.0"
+  checksum: 3f7f9d5a0077f3c042d0c0f84a0dcf3135252afff330c54589db7745e9014c2a4d9abb3fa4ea13fcbd74a2af7b35a5fe780a1f2eba0781689a9076e7b5b8c723
+  languageName: node
+  linkType: hard
+
 "@ark/util@npm:0.26.0":
   version: 0.26.0
   resolution: "@ark/util@npm:0.26.0"
@@ -50,19 +59,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arktype/schema@npm:0.1.4-cjs":
-  version: 0.1.4-cjs
-  resolution: "@arktype/schema@npm:0.1.4-cjs"
-  dependencies:
-    "@arktype/util": "npm:0.0.41-cjs"
-  checksum: dd83edcbd29ab8b1faf4c8aee3d03b7d75a4cc7848c44cffd0580b89cfa0cabd280916fcd94317b89fc9d730a0fb6c9e7f53db9088788f54dd9077d5479c1b2f
-  languageName: node
-  linkType: hard
-
-"@arktype/util@npm:0.0.41-cjs":
-  version: 0.0.41-cjs
-  resolution: "@arktype/util@npm:0.0.41-cjs"
-  checksum: 77013353924d4f1d81eacc782b7bf07ac21fd5e96368505e05f75dfc822933cb3fc65ba055cc60105f5a86f89c9f4d60aa8be8f0942ebee93f0165cbe4e4b2b9
+"@ark/util@npm:0.44.0":
+  version: 0.44.0
+  resolution: "@ark/util@npm:0.44.0"
+  checksum: 4e37b0568280bd778eb30ee84f56d1cbe57c09cf82d3915d20a95f7aa9522c40742c6715107b04b92c4b113b12bf1d0f40c920837eae69792a647ac44bfcde3b
   languageName: node
   linkType: hard
 
@@ -2372,8 +2372,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/arktype-validator@workspace:packages/arktype-validator"
   dependencies:
-    arktype: "npm:^2.0.0-dev.14"
-    hono: "npm:^3.11.7"
+    arktype: "npm:^2.1.2"
+    hono: "npm:^4.7.2"
     tsup: "npm:^8.0.1"
     vitest: "npm:^1.0.4"
   peerDependencies:
@@ -5972,16 +5972,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arktype@npm:^2.0.0-dev.14":
-  version: 2.0.0-dev.12-cjs
-  resolution: "arktype@npm:2.0.0-dev.12-cjs"
-  dependencies:
-    "@arktype/schema": "npm:0.1.4-cjs"
-    "@arktype/util": "npm:0.0.41-cjs"
-  checksum: b0e7fc182bb6d4d0d4e125744a5b8233295d2ca30715f1bafdd158d37ed8abffafe0f5ef28ff8f99f82ffb1b8d1f36fcc282035c4ef4b909a748c1d520044afc
-  languageName: node
-  linkType: hard
-
 "arktype@npm:^2.0.0-rc.26":
   version: 2.0.0-rc.26
   resolution: "arktype@npm:2.0.0-rc.26"
@@ -5989,6 +5979,16 @@ __metadata:
     "@ark/schema": "npm:0.26.0"
     "@ark/util": "npm:0.26.0"
   checksum: 190c4a82baec546bca704b26bffa73209a756ea4a0a2ade080a6d640a807e7eb1990a69e6507112f103151a37592cca84591569c90e607fb2865bd6ea2532b9a
+  languageName: node
+  linkType: hard
+
+"arktype@npm:^2.1.2":
+  version: 2.1.5
+  resolution: "arktype@npm:2.1.5"
+  dependencies:
+    "@ark/schema": "npm:0.44.0"
+    "@ark/util": "npm:0.44.0"
+  checksum: 743ef0459f2572da9b2177b92fff113ee0ffc7a247e1ed425309f893b668306f75e3470a5490cd2b41588e3ecc9de12934dd92b08098d47e8f6685db6e7538da
   languageName: node
   linkType: hard
 
@@ -11133,6 +11133,13 @@ __metadata:
   version: 4.6.10
   resolution: "hono@npm:4.6.10"
   checksum: e1a56e82059197607fbdebb5ad4a4962aa44ae239753a9be067ac61824f953bf7baf6415e03adc05986136b53cfa15b6e6d2d89d463cc3d4fc2fe93862425bab
+  languageName: node
+  linkType: hard
+
+"hono@npm:^4.7.2":
+  version: 4.7.4
+  resolution: "hono@npm:4.7.4"
+  checksum: b189c5b75527a0b2c6669a8b2d46a2c522c9f429c08da801373b13d25b476f20e639f667a9dac2fe42074e9b6f851d542d28026f158c5728b20034b9b0e3e738
   languageName: node
   linkType: hard
 
