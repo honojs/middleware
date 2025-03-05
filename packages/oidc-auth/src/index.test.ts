@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
+import type * as oauth2 from 'oauth4webapi'
 import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
