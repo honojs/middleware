@@ -10,7 +10,7 @@ export async function validateToken(
     headers: {
         authorization: `Bearer ${token}`,
     },
-  }).then((res) => res.json<TwitchValidateResponse>())
+  }).then((res) => res.json() as Promise<TwitchValidateResponse>)
 
   if ('status' in response) {
     throw new HTTPException(400, { message: response.message })
