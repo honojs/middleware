@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
-import { getSentry, sentry } from '../src'
+import { Toucan } from 'toucan-js'
+import { getSentry, sentry } from '.'
 
 // Mock
 class Context implements ExecutionContext {
@@ -12,14 +13,15 @@ class Context implements ExecutionContext {
   }
 }
 
-const captureException = jest.fn()
-const log = jest.fn()
+vi.mock(import('toucan-js'), async (importOriginal) => {
+  const original = await importOriginal()
 
-jest.mock('toucan-js', () => ({
-  Toucan: jest.fn().mockImplementation(() => ({ captureException, log })),
-}))
+  Object.assign(original.Toucan.prototype, { captureException: vi.fn(), log: vi.fn() })
 
-const callback = jest.fn()
+  return original
+})
+
+const callback = vi.fn()
 
 describe('Sentry middleware', () => {
   const app = new Hono()
@@ -46,7 +48,9 @@ describe('Sentry middleware', () => {
     const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(log).toHaveBeenCalled()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    expect(Toucan.prototype.log).toHaveBeenCalled()
   })
 
   it('Should report errors', async () => {
@@ -54,6 +58,6 @@ describe('Sentry middleware', () => {
     const res = await app.fetch(req, {}, new Context())
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
-    expect(captureException).toHaveBeenCalled()
+    expect(Toucan.prototype.captureException).toHaveBeenCalled()
   })
 })

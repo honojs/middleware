@@ -7,23 +7,22 @@ import {
 } from 'graphql'
 import { Hono } from 'hono'
 import type { Context, Next } from 'hono'
-import { errorMessages, graphqlServer } from '../src'
-import type { RootResolver } from '../src'
-
-// Do not show `console.error` messages
-jest.spyOn(console, 'error').mockImplementation()
+import { errorMessages, graphqlServer } from '.'
+import type { RootResolver } from '.'
 
 describe('errorMessages', () => {
-  const messages = errorMessages(['message a', 'message b'])
-  expect(messages).toEqual({
-    errors: [
-      {
-        message: 'message a',
-      },
-      {
-        message: 'message b',
-      },
-    ],
+  it('Should handle messages', () => {
+    const messages = errorMessages(['message a', 'message b'])
+    expect(messages).toEqual({
+      errors: [
+        {
+          message: 'message a',
+        },
+        {
+          message: 'message b',
+        },
+      ],
+    })
   })
 })
 

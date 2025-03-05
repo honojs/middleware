@@ -1,5 +1,12 @@
 # @hono/swagger-ui
 
+## 0.5.1
+
+### Patch Changes
+
+- [#988](https://github.com/honojs/middleware/pull/988) [`708aa3510c9847194974e91de9f0f323da945773`](https://github.com/honojs/middleware/commit/708aa3510c9847194974e91de9f0f323da945773) Thanks [@Younis-Ahmed](https://github.com/Younis-Ahmed)! - - fix(swagger-ui): Handle undefined options and improve rendering logic for non-RENDER_TYPE_MAP edge cases
+  - test(option-renderer): Add tests for filtering and handling invalid properties
+
 ## 0.5.0
 
 ### Minor Changes

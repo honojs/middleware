@@ -127,23 +127,28 @@ export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions) => {
   const optionsStrings = Object.entries(options)
     .map(([k, v]) => {
       const key = k as keyof typeof RENDER_TYPE_MAP
-      if (RENDER_TYPE_MAP[key] === RENDER_TYPE.STRING) {
-        return `${key}: '${v}'`
+
+      if (!RENDER_TYPE_MAP[key] || v === undefined) {
+        return ''
       }
-      if (RENDER_TYPE_MAP[key] === RENDER_TYPE.STRING_ARRAY) {
-        if (!Array.isArray(v)) {
+
+      switch (RENDER_TYPE_MAP[key]) {
+        case RENDER_TYPE.STRING:
+          return `${key}: '${v}'`
+        case RENDER_TYPE.STRING_ARRAY:
+          if (!Array.isArray(v)) {
+            return ''
+          }
+          return `${key}: [${v.map((ve) => `${ve}`).join(',')}]`
+        case RENDER_TYPE.JSON_STRING:
+          return `${key}: ${JSON.stringify(v)}`
+        case RENDER_TYPE.RAW:
+          return `${key}: ${v}`
+        default:
           return ''
-        }
-        return `${key}: [${v.map((ve) => `${ve}`).join(',')}]`
       }
-      if (RENDER_TYPE_MAP[key] === RENDER_TYPE.JSON_STRING) {
-        return `${key}: ${JSON.stringify(v)}`
-      }
-      if (RENDER_TYPE_MAP[key] === RENDER_TYPE.RAW) {
-        return `${key}: ${v}`
-      }
-      return ''
     })
+    .filter(item => item !== '')
     .join(',')
 
   return optionsStrings

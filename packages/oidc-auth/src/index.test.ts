@@ -1,7 +1,5 @@
-import { jest } from '@jest/globals'
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
-import * as oauth2 from 'oauth4webapi'
 import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
@@ -110,10 +108,12 @@ const MOCK_JWT_INVALID_ALGORITHM = jwt.sign(
   null,
   { algorithm: 'none', expiresIn: '1h' }
 )
-jest.unstable_mockModule('oauth4webapi', () => {
+vi.mock(import('oauth4webapi'), async (importOriginal) => {
+  const original = await importOriginal()
+
   return {
-    ...oauth2,
-    discoveryRequest: jest.fn(async () => {
+    ...original,
+    discoveryRequest: vi.fn(async () => {
       return new Response(
         JSON.stringify({
           issuer: MOCK_ISSUER,
@@ -124,9 +124,9 @@ jest.unstable_mockModule('oauth4webapi', () => {
         })
       )
     }),
-    generateRandomState: jest.fn(() => MOCK_STATE),
-    generateRandomNonce: jest.fn(() => MOCK_NONCE),
-    authorizationCodeGrantRequest: jest.fn(async () => {
+    generateRandomState: vi.fn(() => MOCK_STATE),
+    generateRandomNonce: vi.fn(() => MOCK_NONCE),
+    authorizationCodeGrantRequest: vi.fn(async () => {
       return new Response(
         JSON.stringify({
           access_token: 'DUMMY_ACCESS_TOKEN',
@@ -138,7 +138,7 @@ jest.unstable_mockModule('oauth4webapi', () => {
         })
       )
     }),
-    refreshTokenGrantRequest: jest.fn(async () => {
+    refreshTokenGrantRequest: vi.fn(async () => {
       return new Response(
         JSON.stringify({
           access_token: 'DUMMY_ACCESS_TOKEN',
@@ -150,7 +150,7 @@ jest.unstable_mockModule('oauth4webapi', () => {
         })
       )
     }),
-    revocationRequest: jest.fn(async () => {
+    revocationRequest: vi.fn(async () => {
       return new Response(JSON.stringify({}))
     }),
   }

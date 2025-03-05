@@ -48,7 +48,7 @@ describe('tRPC Adapter Middleware passing synchronous Context', () => {
     })
   )
 
-  it.only('Should return 200 response', async () => {
+  it('Should return 200 response', async () => {
     const searchParams = new URLSearchParams({
       input: JSON.stringify({ '0': 'Hono' }),
       batch: '1',
@@ -112,7 +112,7 @@ describe('tRPC Adapter Middleware passing asynchronous Context', () => {
     })
   )
 
-  it.only('Should return 200 response', async () => {
+  it('Should return 200 response', async () => {
     const searchParams = new URLSearchParams({
       input: JSON.stringify({ '0': 'Hono' }),
       batch: '1',

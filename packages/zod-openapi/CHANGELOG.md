@@ -1,5 +1,23 @@
 # @hono/zod-openapi
 
+## 0.19.2
+
+### Patch Changes
+
+- [#995](https://github.com/honojs/middleware/pull/995) [`c279ba2bc5204b1b9effc92c45f129904ea67795`](https://github.com/honojs/middleware/commit/c279ba2bc5204b1b9effc92c45f129904ea67795) Thanks [@luxass](https://github.com/luxass)! - fix(zod-openapi): correctly handle path parameters in basePath
+
+## 0.19.1
+
+### Patch Changes
+
+- [#992](https://github.com/honojs/middleware/pull/992) [`3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373`](https://github.com/honojs/middleware/commit/3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: replace path param strings correctly in basePath
+
+## 0.19.0
+
+### Minor Changes
+
+- [#984](https://github.com/honojs/middleware/pull/984) [`59c6356aac42d360a06cbc9357921283e455ade4`](https://github.com/honojs/middleware/commit/59c6356aac42d360a06cbc9357921283e455ade4) Thanks [@rmichalak](https://github.com/rmichalak)! - Add ability to exclude specific routes from OpenAPI docs
+
 ## 0.18.4
 
 ### Patch Changes
