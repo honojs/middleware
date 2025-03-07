@@ -12,10 +12,11 @@ export function facebookAuth(options: {
   fields: Fields[]
   client_id?: string
   client_secret?: string
+  state?: string
   redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
-    const newState = getRandomState()
+    const newState = options.state || getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).FACEBOOK_ID as string),
