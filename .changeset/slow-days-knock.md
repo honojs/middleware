@@ -1,5 +1,5 @@
 ---
-'@hono/oauth-providers': patch
+'@hono/oauth-providers': minor
 ---
 
 These chages introduces a Twitch OAuth provider, expanding the middleware's OAuth offerings. It includes a new middleware for Twitch authentication, a dedicated `AuthFlow` class, token refreshing/revocation/validation, and comprehensive type definitions. Detailed tests ensure correct behavior and error handling.
