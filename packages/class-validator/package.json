@@ -37,7 +37,7 @@
     "rimraf": "^5.0.5",
     "tsup": "^8.3.5",
     "typescript": "^5.3.3",
-    "vitest": "^1.4.0"
+    "vitest": "^3.0.8"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

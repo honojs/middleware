@@ -37,8 +37,7 @@
   "devDependencies": {
     "@types/bun": "^1.0.0",
     "hono": "^3.11.7",
-    "tsup": "^8.0.1",
-    "vitest": "^1.0.4"
+    "tsup": "^8.0.1"
   },
   "engines": {
     "node": ">=18.14.1"

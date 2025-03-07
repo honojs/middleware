@@ -1,6 +1,6 @@
-import { defaultExclude, defineConfig } from 'vitest/config'
+import { defaultExclude, defineProject } from 'vitest/config'
 
-export default defineConfig({
+export default defineProject({
   test: {
     exclude: [...defaultExclude, 'bun_test'],
     globals: true,
