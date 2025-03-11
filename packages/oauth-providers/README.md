@@ -1077,65 +1077,13 @@ app.post('/remove-user', async (c, next) => {
 
 You can validate a Twitch access token to verify it's still valid or to obtain information about the token, such as its expiration date, scopes, and the associated user.
 
+You can use `validateToken` method, which accepts the `token` to be validated as parameter and returns `TwitchValidateSuccess` if valid or throws `HTTPException` upon failure.
+
+
 > **IMPORTANT:** Twitch requires applications to validate OAuth tokens when they start and on an hourly basis thereafter. Failure to validate tokens may result in Twitch taking punitive action, such as revoking API keys or throttling performance. When a token becomes invalid, your app should terminate all sessions using that token immediately. [Read more](https://dev.twitch.tv/docs/authentication/validate-tokens)
 
 The validation endpoint helps your application detect when tokens become invalid for reasons other than expiration, such as when users disconnect your integration from their Twitch account. When a token becomes invalid, your app should terminate all sessions using that token.
 
-import { twitchAuth, validateToken } from '@hono/oauth-providers/twitch'
-
-// Function to validate token - should be called on app startup and hourly thereafter
-async function performTokenValidation(token) {
-  try {
-    // Returns token information if valid
-    const tokenInfo = await validateToken(token)
-    
-    // tokenInfo = {
-    //   client_id: "wbmytr93xzw8zbg0p1izqyzzc5mbiz",
-    //   login: "twitchdev",
-    //   scopes: ["channel:read:subscriptions"],
-    //   user_id: "141981764",
-    //   expires_in: 5520838
-    // }
-    
-    c.logger.log("Token is valid. Next check scheduled in 1 hour")
-    return tokenInfo
-  } catch (error) {
-    // Token is invalid - should terminate user session
-    c.logger.error("Token validation failed:", error.message)
-    return null
-  }
-}
-
-// Example implementation of hourly validation
-app.get('/setup-token-validation', async (c) => {
-  const userToken = c.get('token') // Get the user's token from your auth system
-  
-  // Initial validation when app starts
-  const initialValidation = await performTokenValidation(userToken)
-  if (!initialValidation) {
-    // Token is invalid, terminate session
-    return c.json({ valid: false, message: "Invalid token. Please re-authenticate." })
-  }
-  
-  // Set up hourly validation as required by Twitch
-  setInterval(() => {
-    performTokenValidation(userToken)
-      .then(tokenInfo => {
-        if (!tokenInfo) {
-          // Token became invalid, application should terminate user session
-          // and stop making API calls with this token
-          c.logger.log("Token validation failed in scheduled check")
-        }
-      })
-  }, 60 * 60 * 1000) // Check every hour (60 minutes * 60 seconds * 1000 milliseconds)
-  
-  return c.json({ 
-    valid: true, 
-    message: "Token validation schedule established",
-    info: initialValidation
-  })
-})
-```
 > For security and compliance, make sure to implement regular token validation in your application. If a token becomes invalid, promptly sign out the user and terminate their OAuth session.
 
 ## Advance Usage
