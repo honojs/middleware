@@ -133,10 +133,10 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
 /**
  * Returns the environment variables for OIDC-auth middleware.
  */
-const getOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
+const getOidcAuthEnv = (c: Context) => {
   let oidcAuthEnv = c.get('oidcAuthEnv')
   if (oidcAuthEnv === undefined) {
-    setOidcAuthEnv(c, config)
+    setOidcAuthEnv(c)
     oidcAuthEnv = c.get('oidcAuthEnv')
   }
   return oidcAuthEnv as Required<OidcAuthEnv>
