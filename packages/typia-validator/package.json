@@ -2,6 +2,7 @@
   "name": "@hono/typia-validator",
   "version": "0.1.0",
   "description": "Validator middleware using Typia",
+  "type": "module",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -50,6 +51,6 @@
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0",
     "typia": "^7.3.0",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.8"
   }
 }
