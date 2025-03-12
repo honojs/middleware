@@ -2,4 +2,4 @@
 '@hono/oidc-auth': minor
 ---
 
-Add setOidcAuthEnvMiddleware() and avoid mutating environment variables
+Add initOidcAuthMiddleware() and avoid mutating environment variables

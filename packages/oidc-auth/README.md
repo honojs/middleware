@@ -41,7 +41,7 @@ npm i hono @hono/oidc-auth
 
 ## Configuration
 
-The middleware requires the following variables to be set as either environment variables or by calling `setOidcAuthEnvMiddleware`:
+The middleware requires the following variables to be set as either environment variables or by calling `initOidcAuthMiddleware`:
 
 | Variable                   | Description                                                                                                                                                       | Default Value                          |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
@@ -144,7 +144,7 @@ If the middleware is applied to the callback URL, the default callback handling 
 
 ```typescript
 // Before other oidc-auth APIs are used
-app.use(setOidcAuthEnvMiddleware(config));
+app.use(initOidcAuthMiddleware(config));
 ```
 
 Or to leverage context, use the [`Context access inside Middleware arguments`](https://hono.dev/docs/guides/middleware#context-access-inside-middleware-arguments) pattern.
@@ -155,7 +155,7 @@ app.use(async (c, next) => {
   const config = {
     // Create config using context
   }
-  const middleware = setOidcAuthEnvMiddleware(config)
+  const middleware = initOidcAuthMiddleware(config)
   return middleware(c, next)
 })
 ```

@@ -157,7 +157,7 @@ vi.mock(import('oauth4webapi'), async (importOriginal) => {
   }
 })
 
-const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession, setOidcAuthEnvMiddleware, getClient } = await import('../src')
+const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession, initOidcAuthMiddleware, getClient } = await import('../src')
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -560,11 +560,11 @@ describe('RevokeSession()', () => {
     )
   })
 })
-describe('setOidcAuthEnvMiddleware()', () => {
+describe('initOidcAuthMiddleware()', () => {
   test('Should error if not called first in context', async () => {
     const app = new Hono()
     app.use('/*', oidcAuthMiddleware())
-    app.use(setOidcAuthEnvMiddleware({}))
+    app.use(initOidcAuthMiddleware({}))
     const req = new Request('http://localhost/', {
       method: 'GET',
       headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
@@ -578,7 +578,7 @@ describe('setOidcAuthEnvMiddleware()', () => {
     const CUSTOM_OIDC_CLIENT_ID = 'custom-client-id'
     const CUSTOM_OIDC_CLIENT_SECRET = 'custom-client-secret'
     const app = new Hono()
-    app.use(setOidcAuthEnvMiddleware({
+    app.use(initOidcAuthMiddleware({
       OIDC_CLIENT_ID: CUSTOM_OIDC_CLIENT_ID,
       OIDC_CLIENT_SECRET: CUSTOM_OIDC_CLIENT_SECRET
     }))

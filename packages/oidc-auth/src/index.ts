@@ -65,7 +65,7 @@ export type OidcAuthEnv = {
  * If used, should be called before any other OIDC middleware or functions for the Hono context.
  * Unconfigured values will fallback to environment variables.
  */
-export const setOidcAuthEnvMiddleware = (config: Partial<OidcAuthEnv>) => {
+export const initOidcAuthMiddleware = (config: Partial<OidcAuthEnv>) => {
   return createMiddleware(async (c, next) => {
     setOidcAuthEnv(c, config)
     await next()
