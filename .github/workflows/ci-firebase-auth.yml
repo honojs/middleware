@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/firebase-auth
       - run: yarn workspace @hono/firebase-auth build
-      - run: yarn test --run --project @hono/firebase-auth
+      - run: yarn test --project @hono/firebase-auth

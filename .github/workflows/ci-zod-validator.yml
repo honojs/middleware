@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/zod-validator
       - run: yarn workspace @hono/zod-validator build
-      - run: yarn test --run --project @hono/zod-validator
+      - run: yarn test --project @hono/zod-validator

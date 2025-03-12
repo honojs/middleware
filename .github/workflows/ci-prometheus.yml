@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/prometheus
       - run: yarn workspace @hono/prometheus build
-      - run: yarn test --run --project @hono/prometheus
+      - run: yarn test --project @hono/prometheus

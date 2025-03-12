@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/react-renderer
       - run: yarn workspace @hono/react-renderer build
-      - run: yarn test --run --project @hono/react-renderer
+      - run: yarn test --project @hono/react-renderer

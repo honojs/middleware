@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/ci-cabin
       - run: yarn workspace @hono/ci-cabin build
-      - run: yarn test --run --project @hono/ci-cabin
+      - run: yarn test --project @hono/ci-cabin

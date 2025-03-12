@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/clerk-auth
       - run: yarn workspace @hono/clerk-auth build
-      - run: yarn test --run --project @hono/clerk-auth
+      - run: yarn test --project @hono/clerk-auth

@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/zod-openapi
       - run: yarn workspace @hono/zod-openapi build
-      - run: yarn test --run --project @hono/zod-openapi
+      - run: yarn test --project @hono/zod-openapi

@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/hello
       - run: yarn workspace @hono/hello build
-      - run: yarn test --run --project @hono/hello
+      - run: yarn test --project @hono/hello

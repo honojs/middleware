@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/arktype-validator
       - run: yarn workspace @hono/arktype-validator build
-      - run: yarn test --run --project @hono/arktype-validator
+      - run: yarn test --project @hono/arktype-validator

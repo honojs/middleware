@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/graphql-server
       - run: yarn workspace @hono/graphql-server build
-      - run: yarn test --run --project @hono/graphql-server
+      - run: yarn test --project @hono/graphql-server

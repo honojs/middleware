@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/swagger-editor
       - run: yarn workspace @hono/swagger-editor build
-      - run: yarn test --run --project @hono/swagger-editor
+      - run: yarn test --project @hono/swagger-editor

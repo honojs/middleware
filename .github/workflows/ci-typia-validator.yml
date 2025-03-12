@@ -22,4 +22,4 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/typia-validator
       - run: yarn workspace @hono/typia-validator build
-      - run: yarn test --run --project @hono/typia-validator
+      - run: yarn test --project @hono/typia-validator

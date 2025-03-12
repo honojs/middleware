@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/otel
       - run: yarn workspace @hono/otel build
-      - run: yarn test --run --project @hono/otel
+      - run: yarn test --project @hono/otel

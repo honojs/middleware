@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/auth-js
       - run: yarn workspace @hono/auth-js build
-      - run: yarn test --run --project @hono/auth-js
+      - run: yarn test --project @hono/auth-js

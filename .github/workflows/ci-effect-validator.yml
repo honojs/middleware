@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/effect-validator
       - run: yarn workspace @hono/effect-validator build
-      - run: yarn test --run --project @hono/effect-validator
+      - run: yarn test --project @hono/effect-validator

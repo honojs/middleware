@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/oidc-auth
       - run: yarn workspace @hono/oidc-auth build
-      - run: yarn test --run --project @hono/oidc-auth
+      - run: yarn test --project @hono/oidc-auth

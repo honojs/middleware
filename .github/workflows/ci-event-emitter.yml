@@ -22,4 +22,4 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/event-emitter
       - run: yarn workspace @hono/event-emitter build
-      - run: yarn test --run --project @hono/event-emitter
+      - run: yarn test --project @hono/event-emitter
