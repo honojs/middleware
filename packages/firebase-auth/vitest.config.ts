@@ -4,7 +4,7 @@ import { defineProject } from 'vitest/config'
 const firebasePlugin = {
   name: 'firebase',
   async configureServer(server) {
-    const client = await import('firebase-tools')
+    const { default: client } = await import('firebase-tools')
 
     void client.emulators.start({
       cwd: server.config.root,
@@ -14,7 +14,7 @@ const firebasePlugin = {
     })
   },
   async buildEnd() {
-    const controller = await import('firebase-tools/lib/emulator/controller')
+    const { default: controller } = await import('firebase-tools/lib/emulator/controller')
 
     await controller.cleanShutdown()
   },
