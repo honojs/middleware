@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "main": "dist/index.js",
   "files": [
@@ -84,7 +84,7 @@
         "default": "./dist/providers/discord/index.js"
       }
     },
-    "./twitch" : {
+    "./twitch": {
       "import": {
         "types": "./dist/providers/twitch/index.d.mts",
         "default": "./dist/providers/twitch/index.mjs"
