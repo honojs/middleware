@@ -56,6 +56,7 @@ The middleware requires the following environment variables to be set:
 | OIDC_COOKIE_PATH           | The path to which the `oidc-auth` cookie is set. Restrict to not send it with every request to your domain                                                        | /                                      |
 | OIDC_COOKIE_NAME           | The name of the cookie to be set                                                                                                                                  | `oidc-auth`                            |
 | OIDC_COOKIE_DOMAIN         | The custom domain of the cookie. For example, set this like `example.com` to enable authentication across subdomains (e.g., `a.example.com` and `b.example.com`). | Domain of the request                  |
+| OIDC_AUDIENCE              | The audience for the access token                                                                                                                                 | No default, this is optional           |
 
 ## How to Use
 
