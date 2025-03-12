@@ -12,14 +12,11 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/swagger-ui
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
+      - run: yarn workspaces focus hono-middleware @hono/swagger-ui
+      - run: yarn workspace @hono/swagger-ui build
+      - run: yarn test --project @hono/swagger-ui
