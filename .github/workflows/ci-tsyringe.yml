@@ -20,6 +20,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
+      - run: yarn workspaces focus hono-middleware @hono/tsyringe
+      - run: yarn workspace @hono/tsyringe build
+      - run: yarn test --run --project @hono/tsyringe
