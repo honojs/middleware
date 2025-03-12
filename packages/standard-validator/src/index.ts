@@ -5,7 +5,7 @@ import { validator } from 'hono/validator'
 type HasUndefined<T> = undefined extends T ? true : false
 type TOrPromiseOfT<T> = T | Promise<T>
 
-type Hook<
+export type Hook<
   T,
   E extends Env,
   P extends string,
