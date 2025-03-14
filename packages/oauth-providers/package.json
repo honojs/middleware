@@ -93,6 +93,16 @@
         "types": "./dist/providers/twitch/index.d.ts",
         "default": "./dist/providers/twitch/index.js"
       }
+    },
+    "./msentra": {
+      "import": {
+        "types": "./dist/providers/msentra/index.d.mts",
+        "default": "./dist/providers/msentra/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/msentra/index.d.ts",
+        "default": "./dist/providers/msentra/index.js"
+      }
     }
   },
   "typesVersions": {
@@ -117,6 +127,9 @@
       ],
       "twitch": [
         "./dist/providers/twitch/index.d.ts"
+      ],
+      "msentra": [
+        "./dist/providers/msentra/index.d.ts"
       ]
     }
   },
