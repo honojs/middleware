@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.5.0
+
+### Minor Changes
+
+- [#980](https://github.com/honojs/middleware/pull/980) [`87be44000987c41209fbb79c1a0c95dcf31fadfa`](https://github.com/honojs/middleware/commit/87be44000987c41209fbb79c1a0c95dcf31fadfa) Thanks [@rajsite](https://github.com/rajsite)! - Add initOidcAuthMiddleware() and avoid mutating environment variables
+
 ## 1.4.1
 
 ### Patch Changes
