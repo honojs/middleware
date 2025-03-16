@@ -46,7 +46,7 @@ export type OidcAuth = {
   ssnexp: number // session expiration time; if it's expired, revoke session and redirect to IdP
 } & OidcAuthClaims
 
-type OidcAuthEnv = {
+export type OidcAuthEnv = {
   OIDC_AUTH_SECRET: string
   OIDC_AUTH_REFRESH_INTERVAL?: string
   OIDC_AUTH_EXPIRES?: string
@@ -61,46 +61,83 @@ type OidcAuthEnv = {
 }
 
 /**
+ * Configure the OIDC variables programmatically.
+ * If used, should be called before any other OIDC middleware or functions for the Hono context.
+ * Unconfigured values will fallback to environment variables.
+ */
+export const initOidcAuthMiddleware = (config: Partial<OidcAuthEnv>) => {
+  return createMiddleware(async (c, next) => {
+    setOidcAuthEnv(c, config)
+    await next()
+  })
+}
+
+/**
+ * Configure the OIDC variables.
+ */
+const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
+  const currentOidcAuthEnv = c.get('oidcAuthEnv')
+  if (currentOidcAuthEnv !== undefined) {
+    throw new HTTPException(500, { message: 'OIDC Auth env is already configured' })
+  }
+  const ev = env<Readonly<OidcAuthEnv>>(c)
+  const oidcAuthEnv = {
+    OIDC_AUTH_SECRET: config?.OIDC_AUTH_SECRET ?? ev.OIDC_AUTH_SECRET,
+    OIDC_AUTH_REFRESH_INTERVAL: config?.OIDC_AUTH_REFRESH_INTERVAL ?? ev.OIDC_AUTH_REFRESH_INTERVAL,
+    OIDC_AUTH_EXPIRES: config?.OIDC_AUTH_EXPIRES ?? ev.OIDC_AUTH_EXPIRES,
+    OIDC_ISSUER: config?.OIDC_ISSUER ?? ev.OIDC_ISSUER,
+    OIDC_CLIENT_ID: config?.OIDC_CLIENT_ID ?? ev.OIDC_CLIENT_ID,
+    OIDC_CLIENT_SECRET: config?.OIDC_CLIENT_SECRET ?? ev.OIDC_CLIENT_SECRET,
+    OIDC_REDIRECT_URI: config?.OIDC_REDIRECT_URI ?? ev.OIDC_REDIRECT_URI,
+    OIDC_SCOPES: config?.OIDC_SCOPES ?? ev.OIDC_SCOPES,
+    OIDC_COOKIE_PATH: config?.OIDC_COOKIE_PATH ?? ev.OIDC_COOKIE_PATH,
+    OIDC_COOKIE_NAME: config?.OIDC_COOKIE_NAME ?? ev.OIDC_COOKIE_NAME,
+    OIDC_COOKIE_DOMAIN: config?.OIDC_COOKIE_DOMAIN ?? ev.OIDC_COOKIE_DOMAIN,
+  }
+  if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
+    throw new HTTPException(500, { message: 'Session secret is not provided' })
+  }
+  if (oidcAuthEnv.OIDC_AUTH_SECRET.length < 32) {
+    throw new HTTPException(500, {
+      message: 'Session secrets must be at least 32 characters long',
+    })
+  }
+  if (oidcAuthEnv.OIDC_ISSUER === undefined) {
+    throw new HTTPException(500, { message: 'OIDC issuer is not provided' })
+  }
+  if (oidcAuthEnv.OIDC_CLIENT_ID === undefined) {
+    throw new HTTPException(500, { message: 'OIDC client ID is not provided' })
+  }
+  if (oidcAuthEnv.OIDC_CLIENT_SECRET === undefined) {
+    throw new HTTPException(500, { message: 'OIDC client secret is not provided' })
+  }
+  oidcAuthEnv.OIDC_REDIRECT_URI = oidcAuthEnv.OIDC_REDIRECT_URI ?? defaultOidcRedirectUri
+  if (!oidcAuthEnv.OIDC_REDIRECT_URI.startsWith('/')) {
+    try {
+      new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
+    } catch (e) {
+      throw new HTTPException(500, {
+        message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path',
+      })
+    }
+  }
+  oidcAuthEnv.OIDC_COOKIE_PATH = oidcAuthEnv.OIDC_COOKIE_PATH ?? defaultOidcAuthCookiePath
+  oidcAuthEnv.OIDC_COOKIE_NAME = oidcAuthEnv.OIDC_COOKIE_NAME ?? defaultOidcAuthCookieName
+  oidcAuthEnv.OIDC_AUTH_REFRESH_INTERVAL =
+    oidcAuthEnv.OIDC_AUTH_REFRESH_INTERVAL ?? `${defaultRefreshInterval}`
+  oidcAuthEnv.OIDC_AUTH_EXPIRES = oidcAuthEnv.OIDC_AUTH_EXPIRES ?? `${defaultExpirationInterval}`
+  oidcAuthEnv.OIDC_SCOPES = oidcAuthEnv.OIDC_SCOPES ?? ''
+  c.set('oidcAuthEnv', oidcAuthEnv)
+}
+
+/**
  * Returns the environment variables for OIDC-auth middleware.
  */
 const getOidcAuthEnv = (c: Context) => {
   let oidcAuthEnv = c.get('oidcAuthEnv')
   if (oidcAuthEnv === undefined) {
-    oidcAuthEnv = env<OidcAuthEnv>(c)
-    if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
-      throw new HTTPException(500, { message: 'Session secret is not provided' })
-    }
-    if (oidcAuthEnv.OIDC_AUTH_SECRET.length < 32) {
-      throw new HTTPException(500, {
-        message: 'Session secrets must be at least 32 characters long',
-      })
-    }
-    if (oidcAuthEnv.OIDC_ISSUER === undefined) {
-      throw new HTTPException(500, { message: 'OIDC issuer is not provided' })
-    }
-    if (oidcAuthEnv.OIDC_CLIENT_ID === undefined) {
-      throw new HTTPException(500, { message: 'OIDC client ID is not provided' })
-    }
-    if (oidcAuthEnv.OIDC_CLIENT_SECRET === undefined) {
-      throw new HTTPException(500, { message: 'OIDC client secret is not provided' })
-    }
-    oidcAuthEnv.OIDC_REDIRECT_URI = oidcAuthEnv.OIDC_REDIRECT_URI ?? defaultOidcRedirectUri
-    if (!oidcAuthEnv.OIDC_REDIRECT_URI.startsWith('/')) {
-      try {
-        new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
-      } catch (e) {
-        throw new HTTPException(500, {
-          message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path',
-        })
-      }
-    }
-    oidcAuthEnv.OIDC_COOKIE_PATH = oidcAuthEnv.OIDC_COOKIE_PATH ?? defaultOidcAuthCookiePath
-    oidcAuthEnv.OIDC_COOKIE_NAME = oidcAuthEnv.OIDC_COOKIE_NAME ?? defaultOidcAuthCookieName
-    oidcAuthEnv.OIDC_AUTH_REFRESH_INTERVAL =
-      oidcAuthEnv.OIDC_AUTH_REFRESH_INTERVAL ?? `${defaultRefreshInterval}`
-    oidcAuthEnv.OIDC_AUTH_EXPIRES = oidcAuthEnv.OIDC_AUTH_EXPIRES ?? `${defaultExpirationInterval}`
-    oidcAuthEnv.OIDC_SCOPES = oidcAuthEnv.OIDC_SCOPES ?? ''
-    c.set('oidcAuthEnv', oidcAuthEnv)
+    setOidcAuthEnv(c)
+    oidcAuthEnv = c.get('oidcAuthEnv')
   }
   return oidcAuthEnv as Required<OidcAuthEnv>
 }
