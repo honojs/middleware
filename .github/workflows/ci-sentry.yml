@@ -19,4 +19,11 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/sentry
       - run: yarn workspace @hono/sentry build
-      - run: yarn test --project @hono/sentry
+      - run: yarn test --coverage --project @hono/sentry
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: sentry
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

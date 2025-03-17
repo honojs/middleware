@@ -19,4 +19,11 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/typia-validator
       - run: yarn workspace @hono/typia-validator build
-      - run: yarn test --project @hono/typia-validator
+      - run: yarn test --coverage --project @hono/typia-validator
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: typia-validator
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

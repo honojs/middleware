@@ -19,4 +19,11 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/oauth-providers
       - run: yarn workspace @hono/oauth-providers build
-      - run: yarn test --project @hono/oauth-providers
+      - run: yarn test --coverage --project @hono/oauth-providers
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: oauth-providers
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
