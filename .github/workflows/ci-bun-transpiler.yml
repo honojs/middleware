@@ -19,4 +19,11 @@ jobs:
           bun-version: 1.1.32
       - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
       - run: yarn workspace @hono/bun-transpiler build
-      - run: yarn workspace @hono/bun-transpiler test
+      - run: yarn workspace @hono/bun-transpiler test --coverage --coverage-reporter lcov
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./packages/bun-transpiler/coverage
+          flags: bun-transpiler
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
