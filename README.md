@@ -1,5 +1,7 @@
 # monorepo for Hono third-party middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg)](https://codecov.io/github/honojs/middleware)
+
 This repository is monorepo for third-party middleware of Hono.
 We develop middleware in this repository and manage the issues and pull requests.
 
