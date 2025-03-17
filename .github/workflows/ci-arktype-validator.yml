@@ -12,14 +12,11 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/arktype-validator
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
+      - run: yarn workspaces focus hono-middleware @hono/arktype-validator
+      - run: yarn workspace @hono/arktype-validator build
+      - run: yarn test --project @hono/arktype-validator

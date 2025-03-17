@@ -46,7 +46,6 @@
     "typia": "^7.0.0"
   },
   "devDependencies": {
-    "@ryoppippi/unplugin-typia": "^1.2.0",
     "hono": "^3.11.7",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.0",
