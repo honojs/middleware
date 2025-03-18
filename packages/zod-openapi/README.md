@@ -1,5 +1,7 @@
 # Zod OpenAPI Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=zod-openapi)](https://codecov.io/github/honojs/middleware)
+
 **Zod OpenAPI Hono** is an extended Hono class that supports OpenAPI. With it, you can validate values and types using [**Zod**](https://zod.dev/) and generate OpenAPI Swagger documentation. This is based on [**Zod to OpenAPI**](https://github.com/asteasolutions/zod-to-openapi) (thanks a lot!). For details on creating schemas and defining routes, please refer to [the "Zod to OpenAPI" resource](https://github.com/asteasolutions/zod-to-openapi).
 
 _Note: This is not standalone middleware but is hosted on the monorepo "[github.com/honojs/middleware](https://github.com/honojs/middleware)"._

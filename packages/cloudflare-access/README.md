@@ -1,5 +1,7 @@
 # Cloudflare Access middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=cloudflare-access)](https://codecov.io/github/honojs/middleware)
+
 This is a [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/) third-party middleware
 for [Hono](https://github.com/honojs/hono).
 
@@ -48,7 +50,7 @@ export default app
 ## Errors throw by the middleware
 
 | Error                                                                                                  | HTTP Code |
-|--------------------------------------------------------------------------------------------------------|-----------|
+| ------------------------------------------------------------------------------------------------------ | --------- |
 | Authentication error: Missing bearer token                                                             | 401       |
 | Authentication error: Unable to decode Bearer token                                                    | 401       |
 | Authentication error: Token is expired                                                                 | 401       |

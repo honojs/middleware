@@ -1,5 +1,7 @@
 # Effect Schema Validator Middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=effect-validator)](https://codecov.io/github/honojs/middleware)
+
 This package provides a validator middleware using [Effect Schema](https://github.com/Effect-TS/effect/blob/main/packages/schema/README.md) for [Hono](https://honojs.dev) applications. With this middleware, you can define schemas using Effect Schema and validate incoming data in your Hono routes.
 
 ## Why Effect Schema?

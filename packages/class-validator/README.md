@@ -1,5 +1,7 @@
 # Class-validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=class-validator)](https://codecov.io/github/honojs/middleware)
+
 The validator middleware using [class-validator](https://github.com/typestack/class-validator) for [Hono](https://github.com/honojs/hono) applications.
 
 ## Usage
@@ -7,16 +9,15 @@ The validator middleware using [class-validator](https://github.com/typestack/cl
 ```ts
 import { classValidator } from '@hono/class-validator'
 import { IsInt, IsString } from 'class-validator'
- 
+
 class CreateUserDto {
   @IsString()
-  name!: string;
- 
+  name!: string
+
   @IsInt()
-  age!: number;
+  age!: number
 }
- 
- 
+
 const route = app.post('/user', classValidator('json', CreateUserDto), (c) => {
   const user = c.req.valid('json')
   return c.json({ success: true, message: `${user.name} is ${user.age}` })
@@ -31,17 +32,18 @@ import { IsInt, IsString } from 'class-validator'
 
 class CreateUserDto {
   @IsString()
-  name!: string;
+  name!: string
 
- @IsInt()
-  age!: number;
+  @IsInt()
+  age!: number
 }
 
 app.post(
-  '/user', classValidator('json', CreateUserDto, (result, c) => {
+  '/user',
+  classValidator('json', CreateUserDto, (result, c) => {
     if (!result.success) {
       return c.text('Invalid!', 400)
-     }
+    }
   })
   //...
 )

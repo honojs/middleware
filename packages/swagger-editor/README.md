@@ -1,5 +1,7 @@
 # Swagger Editor Middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=swagger-editor)](https://codecov.io/github/honojs/middleware)
+
 This library, `@hono/swagger-editor` is the middleware for integrating Swagger Editor with Hono applications. The Swagger Editor is an open source editor to design, define and document RESTful APIs in the Swagger Specification.
 
 ## Installation
@@ -13,7 +15,6 @@ yarn add @hono/swagger-editor
 ## Usage
 
 You can use the `swaggerEditor` middleware to serve Swagger Editor on a specific route in your Hono application. Here's how you can do it:
-
 
 ```ts
 import { Hono } from 'hono'

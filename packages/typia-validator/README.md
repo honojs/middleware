@@ -1,5 +1,7 @@
 # Typia validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=typia-validator)](https://codecov.io/github/honojs/middleware)
+
 The validator middleware using [Typia](https://typia.io/docs/) for [Hono](https://honojs.dev) applications.
 
 ## Usage
@@ -83,7 +85,8 @@ const validate = typia.createValidate<Author>()
 const validateQuery = typia.http.createValidateQuery<IQuery>()
 const validateHeaders = typia.http.createValidateHeaders<IHeaders>()
 
-app.get('/items',
+app.get(
+  '/items',
   typiaValidator('json', validate),
   typiaValidator('query', validateQuery),
   typiaValidator('header', validateHeaders),
@@ -98,6 +101,7 @@ app.get('/items',
   }
 )
 ```
+
 ## Author
 
 Patryk Dwórznik <https://github.com/dworznik>

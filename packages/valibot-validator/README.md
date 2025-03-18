@@ -1,5 +1,7 @@
 # Valibot validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=valibot-validator)](https://codecov.io/github/honojs/middleware)
+
 The validator middleware using [Valibot](https://valibot.dev) for [Hono](https://honojs.dev) applications.
 You can write a schema with Valibot and validate the incoming values.
 
