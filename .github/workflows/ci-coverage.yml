@@ -1,5 +1,7 @@
 name: initial-coverage
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: ['*']
 
