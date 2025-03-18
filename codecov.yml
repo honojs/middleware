@@ -1,0 +1,10 @@
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - type: project
+        target: auto
+        threshold: 1%
+      - type: patch
+        informational: true # Don't fail the build even if coverage is below target
+        target: 80%

@@ -19,4 +19,11 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/trpc-server
       - run: yarn workspace @hono/trpc-server build
-      - run: yarn test --project @hono/trpc-server
+      - run: yarn test --coverage --project @hono/trpc-server
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: trpc-server
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
