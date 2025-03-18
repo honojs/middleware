@@ -19,4 +19,11 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/typebox-validator
       - run: yarn workspace @hono/typebox-validator build
-      - run: yarn test --project @hono/typebox-validator
+      - run: yarn test --coverage --project @hono/typebox-validator
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: typebox-validator
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

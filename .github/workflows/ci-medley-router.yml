@@ -19,4 +19,11 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/medley-router
       - run: yarn workspace @hono/medley-router build
-      - run: yarn test --project @hono/medley-router
+      - run: yarn test --coverage --project @hono/medley-router
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: medley-router
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
