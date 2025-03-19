@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/conform-validator
-      - run: yarn workspace @hono/conform-validator build
-      - run: yarn test --coverage --project @hono/conform-validator
+          bun-version: latest
+      - run: bun install --filter './' --filter './packages/conform-validator'
+      - run: bun --filter './packages/conform-validator' build
+      - run: bun run test --coverage --project @hono/conform-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

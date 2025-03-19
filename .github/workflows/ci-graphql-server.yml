@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 18.x
-      - run: yarn workspaces focus hono-middleware @hono/graphql-server
-      - run: yarn workspace @hono/graphql-server build
-      - run: yarn test --coverage --project @hono/graphql-server
+          bun-version: latest
+      - run: bun install --filter './' --filter './packages/graphql-server'
+      - run: bun --filter './packages/graphql-server' build
+      - run: bun run test --coverage --project @hono/graphql-server
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

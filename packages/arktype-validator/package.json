@@ -11,7 +11,7 @@
   "scripts": {
     "test": "vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "release": "yarn build && yarn test && yarn publish"
+    "release": "bun run build && bun run test && bun run publish"
   },
   "exports": {
     ".": {
@@ -31,11 +31,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "arktype": "^2.0.0-dev.14",
+    "arktype": "2.0.0-dev.14",
     "hono": "*"
   },
   "devDependencies": {
-    "arktype": "^2.0.0-dev.14",
+    "arktype": "2.0.0-dev.14",
     "hono": "^3.11.7",
     "tsup": "^8.0.1",
     "vitest": "^3.0.8"

@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 18.x
-      - run: yarn workspaces focus hono-middleware @hono/react-renderer
-      - run: yarn workspace @hono/react-renderer build
-      - run: yarn test --coverage --project @hono/react-renderer
+          bun-version: latest
+      - run: bun install --filter './' --filter './packages/react-renderer'
+      - run: bun --filter './packages/react-renderer' build
+      - run: bun run test --coverage --project @hono/react-renderer
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

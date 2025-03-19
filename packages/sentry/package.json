@@ -12,7 +12,7 @@
   "scripts": {
     "test": "vitest",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test:all"
+    "prerelease": "bun run build && bun run test:all"
   },
   "exports": {
     ".": {

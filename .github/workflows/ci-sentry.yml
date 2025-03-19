@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 18.x
-      - run: yarn workspaces focus hono-middleware @hono/sentry
-      - run: yarn workspace @hono/sentry build
-      - run: yarn test --coverage --project @hono/sentry
+          bun-version: latest
+      - run: bun install --filter './' --filter './packages/sentry'
+      - run: bun --filter './packages/sentry' build
+      - run: bun run test --coverage --project @hono/sentry
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

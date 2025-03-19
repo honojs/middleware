@@ -1,6 +1,5 @@
 {
   "name": "@hono/class-validator",
-  "packageManager": "yarn@4.0.2",
   "description": "Validator middleware using class-validator",
   "version": "1.0.0",
   "type": "module",
@@ -16,8 +15,8 @@
   "scripts": {
     "test": "vitest --run",
     "build": "rimraf dist && tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "prerelease": "bun run build && bun run test",
+    "release": "bun run publish"
   },
   "license": "MIT",
   "publishConfig": {

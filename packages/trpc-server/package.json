@@ -12,9 +12,9 @@
     "test": "vitest",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "rimraf dist && bun run build:cjs && bun run build:esm",
+    "prerelease": "bun run build && bun run test",
+    "release": "bun run publish"
   },
   "license": "MIT",
   "publishConfig": {

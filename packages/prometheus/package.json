@@ -12,7 +12,7 @@
     "test": "vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "release": "bun run build && bun run test && bun run publint && bun run publish"
   },
   "exports": {
     ".": {

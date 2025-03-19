@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.1.32
-      - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
-      - run: yarn workspace @hono/bun-transpiler build
-      - run: yarn workspace @hono/bun-transpiler test --coverage --coverage-reporter lcov
+      - run: bun install --filter './' --filter './packages/bun-transpiler'
+      - run: bun --filter './packages/bun-transpiler' build
+      - run: bun --filter './packages/bun-transpiler' test --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

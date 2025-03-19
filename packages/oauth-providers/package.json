@@ -11,7 +11,7 @@
     "build": "tsup && publint",
     "watch": "tsup --watch",
     "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "release": "bun run build && bun run test && bun run publint && bun run publish"
   },
   "exports": {
     ".": {

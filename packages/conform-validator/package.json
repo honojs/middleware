@@ -12,8 +12,8 @@
   "scripts": {
     "test": "vitest --run",
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "prerelease": "bun run build && bun run test",
+    "release": "bun run publish"
   },
   "exports": {
     ".": {

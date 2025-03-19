@@ -10,8 +10,8 @@
   "scripts": {
     "test": "vitest",
     "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "prerelease": "bun run build && bun run test",
+    "release": "bun run publish"
   },
   "license": "MIT",
   "publishConfig": {

@@ -15,11 +15,11 @@
   },
   "scripts": {
     "test": "vitest",
-    "test:all": "yarn test",
+    "test:all": "bun run test",
     "build": "rimraf dist && tsc",
     "lint": "eslint --ext js,ts src .eslintrc.js",
     "lint:fix": "eslint --ext js,ts src .eslintrc.js --fix",
-    "prerelease": "yarn build && yarn test",
+    "prerelease": "bun run build && bun run test",
     "release": "np"
   },
   "peerDependencies": {
