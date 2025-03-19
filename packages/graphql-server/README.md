@@ -1,5 +1,7 @@
 # GraphQL Server Middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=graphql-server)](https://codecov.io/github/honojs/middleware)
+
 ## Requirements
 
 This middleware depends on [GraphQL.js](https://www.npmjs.com/package/graphql).

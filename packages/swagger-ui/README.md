@@ -1,5 +1,7 @@
 # Swagger UI Middleware and Component for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=swagger-ui)](https://codecov.io/github/honojs/middleware)
+
 This library, `@hono/swagger-ui`, provides a middleware and a component for integrating Swagger UI with Hono applications. Swagger UI is an interactive documentation interface for APIs compliant with the OpenAPI Specification, making it easier to understand and test API endpoints.
 
 ## Installation
@@ -83,16 +85,16 @@ app.openapi(
         content: {
           'application/json': {
             schema: z.object({
-              message: z.string()
-            })
-          }
-        }
-      }
-    }
+              message: z.string(),
+            }),
+          },
+        },
+      },
+    },
   }),
   (c) => {
     return c.json({
-      message: 'hello'
+      message: 'hello',
     })
   }
 )
@@ -100,16 +102,16 @@ app.openapi(
 app.get(
   '/ui',
   swaggerUI({
-    url: '/doc'
+    url: '/doc',
   })
 )
 
 app.doc('/doc', {
   info: {
     title: 'An API',
-    version: 'v1'
+    version: 'v1',
   },
-  openapi: '3.1.0'
+  openapi: '3.1.0',
 })
 
 export default app
@@ -124,11 +126,10 @@ The following options are available:
 - `version` (string, optional): The version of Swagger UI to use, defaults to `latest`.
 - `manuallySwaggerUIHtml` (string, optional): If you want to use your own custom HTML, you can specify it here. If this option is specified, the all options except `version` will be ignored.
 
-and most of options from [Swagger UI](
-  https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
-) are supported as well.
+and most of options from [Swagger UI](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/) are supported as well.
 
 such as:
+
 - `url` (string, optional): The URL pointing to the OpenAPI definition (v2 or v3) that describes the API.
 - `urls` (array, optional): An array of OpenAPI definitions (v2 or v3) that describe the APIs. Each definition must have a `name` and `url`.
 - `presets` (array, optional): An array of presets to use for Swagger UI.

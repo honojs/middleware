@@ -1,5 +1,7 @@
 # ArkType validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=arktype-validator)](https://codecov.io/github/honojs/middleware)
+
 The validator middleware using [ArkType](https://arktype.io/) for [Hono](https://honojs.dev) applications.
 You can write a schema with ArkType and validate the incoming values.
 
@@ -11,7 +13,7 @@ import { arktypeValidator } from '@hono/arktype-validator'
 
 const schema = type({
   name: 'string',
-  age: 'number'
+  age: 'number',
 })
 
 app.post('/author', arktypeValidator('json', schema), (c) => {
