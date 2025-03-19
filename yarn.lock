@@ -2903,7 +2903,7 @@ __metadata:
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.9.0"
-    typia: ^8.0.0
+    typia: ^7.0.0 || ^8.0.0
   languageName: unknown
   linkType: soft
 

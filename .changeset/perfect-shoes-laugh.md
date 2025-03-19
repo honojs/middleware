@@ -1,5 +1,5 @@
 ---
-'@hono/typia-validator': major
+'@hono/typia-validator': patch
 ---
 
-bump typia 8.0.3
+Include `typia@8` as a peer dependency
