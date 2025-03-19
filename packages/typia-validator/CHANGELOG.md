@@ -1,5 +1,11 @@
 # @hono/typia-validator
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1024](https://github.com/honojs/middleware/pull/1024) [`4f1782919154946a4105a113884f2ae929dc9317`](https://github.com/honojs/middleware/commit/4f1782919154946a4105a113884f2ae929dc9317) Thanks [@gronxb](https://github.com/gronxb)! - Include `typia@8` as a peer dependency
+
 ## 0.1.0
 
 ### Minor Changes
