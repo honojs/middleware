@@ -58,6 +58,7 @@ export type OidcAuthEnv = {
   OIDC_COOKIE_PATH?: string
   OIDC_COOKIE_NAME?: string
   OIDC_COOKIE_DOMAIN?: string
+  OIDC_AUDIENCE?: string
 }
 
 /**
@@ -344,6 +345,9 @@ const generateAuthorizationRequestUrl = async (
     // Google requires 'access_type=offline' and 'prompt=consent' to obtain a refresh token
     authorizationRequestUrl.searchParams.set('access_type', 'offline')
     authorizationRequestUrl.searchParams.set('prompt', 'consent')
+  }
+  if (env.OIDC_AUDIENCE) {
+    authorizationRequestUrl.searchParams.set('audience', env.OIDC_AUDIENCE)
   }
   return authorizationRequestUrl.toString()
 }
