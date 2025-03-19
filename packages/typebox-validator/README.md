@@ -1,5 +1,7 @@
 # TypeBox validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?typebox-validator)](https://codecov.io/github/honojs/middleware)
+
 Validator middleware using [TypeBox](https://github.com/sinclairzx81/typebox) for [Hono](https://honojs.dev) applications.
 Define your schema with TypeBox and validate incoming requests.
 

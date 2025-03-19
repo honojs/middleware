@@ -1,5 +1,7 @@
 # Prometheus middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=prometheus)](https://codecov.io/github/honojs/middleware)
+
 This middleware adds basic [RED metrics](https://www.weave.works/blog/the-red-method-key-metrics-for-microservices-architecture/) to your Hono application, and exposes them on the `/metrics` endpoint for Prometheus to scrape.
 
 ## Installation
@@ -81,13 +83,13 @@ An options object can be passed in the `prometheus()` middleware factory to conf
 
 ### `prefix`
 
-Type: *string*
+Type: _string_
 
 Prefix all metrics with this string.
 
 ### `registry`
 
-Type: *[Registry](https://www.npmjs.com/package/prom-client)*
+Type: _[Registry](https://www.npmjs.com/package/prom-client)_
 
 A prom-client Registry instance to store the metrics. If not provided, a new one will be created.
 
@@ -95,7 +97,7 @@ Useful when you want to register some custom metrics while exposing them on the 
 
 ### `collectDefaultMetrics`
 
-Type: *boolean | [CollectDefaultMetricsOptions](https://www.npmjs.com/package/prom-client#default-metrics)*
+Type: _boolean | [CollectDefaultMetricsOptions](https://www.npmjs.com/package/prom-client#default-metrics)_
 
 There are some default metrics recommended by prom-client, like event loop delay, garbage collection statistics etc.
 
@@ -103,34 +105,37 @@ To enable these metrics, set this option to `true`. To configure the default met
 
 ### `metricOptions`
 
-Type: *object (see below)*
+Type: _object (see below)_
 
-Modify the standard metrics (*requestDuration* and *requestsTotal*) with any of the [Counter](https://www.npmjs.com/package/prom-client#counter) / [Histogram](https://www.npmjs.com/package/prom-client#histogram) metric options, including:
+Modify the standard metrics (_requestDuration_ and _requestsTotal_) with any of the [Counter](https://www.npmjs.com/package/prom-client#counter) / [Histogram](https://www.npmjs.com/package/prom-client#histogram) metric options, including:
 
 #### `disabled`
 
-Type: *boolean*
+Type: _boolean_
 
 Disables the metric.
 
 #### `customLabels`
 
-Type: *Record<string, (context) => string>*
+Type: _Record<string, (context) => string>_
 
 A record where the keys are the labels to add to the metrics, and the values are functions that receive the Hono context and return the value for that label. This is useful when adding labels to the metrics that are specific to your application or your needs. These functions are executed after all the other middlewares finished.
 
-The following example adds a label to the *requestsTotal* metric with the `contentType` name where the value is the content type of the response:
+The following example adds a label to the _requestsTotal_ metric with the `contentType` name where the value is the content type of the response:
 
 ```ts
-app.use('*', prometheus({
-  metricOptions: {
-    requestsTotal: {
-      customLabels: {
-        content_type: (c) => c.res.headers.get('content-type'),
-      }
+app.use(
+  '*',
+  prometheus({
+    metricOptions: {
+      requestsTotal: {
+        customLabels: {
+          content_type: (c) => c.res.headers.get('content-type'),
+        },
+      },
     },
-  }
-}))
+  })
+)
 ```
 
 ## Examples

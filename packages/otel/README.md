@@ -1,5 +1,7 @@
 # OpenTelemetry middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=otel)](https://codecov.io/github/honojs/middleware)
+
 This package provides a [Hono](https://hono.dev/) middleware that instruments your application with [OpenTelemetry](https://opentelemetry.io/).
 
 ## Usage

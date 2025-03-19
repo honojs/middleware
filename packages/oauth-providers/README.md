@@ -1,5 +1,7 @@
 # OAuth Providers Middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=oauth-providers)](https://codecov.io/github/honojs/middleware)
+
 Authentication middleware for [Hono](https://github.com/honojs/hono). This package offers a straightforward API for social login with platforms such as Facebook, GitHub, Google, LinkedIn and X(Twitter).
 
 ## Installation
@@ -1079,7 +1081,6 @@ You can validate a Twitch access token to verify it's still valid or to obtain i
 
 You can use `validateToken` method, which accepts the `token` to be validated as parameter and returns `TwitchValidateSuccess` if valid or throws `HTTPException` upon failure.
 
-
 > **IMPORTANT:** Twitch requires applications to validate OAuth tokens when they start and on an hourly basis thereafter. Failure to validate tokens may result in Twitch taking punitive action, such as revoking API keys or throttling performance. When a token becomes invalid, your app should terminate all sessions using that token immediately. [Read more](https://dev.twitch.tv/docs/authentication/validate-tokens)
 
 The validation endpoint helps your application detect when tokens become invalid for reasons other than expiration, such as when users disconnect your integration from their Twitch account. When a token becomes invalid, your app should terminate all sessions using that token.
@@ -1221,36 +1222,39 @@ This parameters can be useful if
 3. Or, in need to encode more info into `redirect_uri`.
 
 ```ts
-const app = new Hono();
+const app = new Hono()
 
-const SITE_ORIGIN = `https://my-site.com`;
-const OAUTH_CALLBACK_PATH = `/oauth/google`;
+const SITE_ORIGIN = `https://my-site.com`
+const OAUTH_CALLBACK_PATH = `/oauth/google`
 
-app.get('/*',
+app.get(
+  '/*',
   async (c, next) => {
-    const session = readSession(c);
+    const session = readSession(c)
     if (!session) {
       // start oauth flow
-      const redirectUri = `${SITE_ORIGIN}${OAUTH_CALLBACK_PATH}?redirect=${encodeURIComponent(c.req.path)}`;
-      const oauth = googleAuth({ redirect_uri: redirectUri, ...more });
+      const redirectUri = `${SITE_ORIGIN}${OAUTH_CALLBACK_PATH}?redirect=${encodeURIComponent(
+        c.req.path
+      )}`
+      const oauth = googleAuth({ redirect_uri: redirectUri, ...more })
       return await oauth(c, next)
     }
   },
   async (c, next) => {
     // if we are here, the req should contain either a valid session or a valid auth code
-    const session = readSession(c);
+    const session = readSession(c)
     const authedGoogleUser = c.get('user-google')
     if (authedGoogleUser) {
-      await saveSession(c, authedGoogleUser);
+      await saveSession(c, authedGoogleUser)
     } else if (!session) {
       throw new HttpException(401)
     }
-    return next();
+    return next()
   },
   async (c, next) => {
     // serve protected content
   }
-);
+)
 ```
 
 ## Author

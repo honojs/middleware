@@ -1,11 +1,13 @@
 # tsyringe middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=tsyringe)](https://codecov.io/github/honojs/middleware)
+
 The [tsyringe](https://github.com/microsoft/tsyringe) middleware provides a way to use dependency injection in [Hono](https://hono.dev/).
 
 ## Usage
 
 ```ts
-import "reflect-metadata" // tsyringe requires reflect-metadata or polyfill
+import 'reflect-metadata' // tsyringe requires reflect-metadata or polyfill
 import { container, inject, injectable } from 'tsyringe'
 import { tsyringe } from '@hono/tsyringe'
 import { Hono } from 'hono'
@@ -21,13 +23,16 @@ class Hello {
 
 const app = new Hono()
 
-app.use('*', tsyringe((container) => {
+app.use(
+  '*',
+  tsyringe((container) => {
     container.register('name', { useValue: 'world' })
-}))
+  })
+)
 
 app.get('/', (c) => {
-    const hello = container.resolve(Hello)
-    return c.text(hello.greet())
+  const hello = container.resolve(Hello)
+  return c.text(hello.greet())
 })
 
 export default app
@@ -39,12 +44,12 @@ export default app
 const app = new Hono()
 
 app.use('/tenant/:name/*', async (c, next) => {
-    await tsyringe((container) => {
-        // Allowing to inject `c.var` or `c.req.param` in the providers
-        const tenantName = c.req.param('name')
+  await tsyringe((container) => {
+    // Allowing to inject `c.var` or `c.req.param` in the providers
+    const tenantName = c.req.param('name')
 
-        container.register(Config, { useFactory: () => new Config(tenantName) })
-    })(c, next)
+    container.register(Config, { useFactory: () => new Config(tenantName) })
+  })(c, next)
 })
 ```
 

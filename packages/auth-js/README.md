@@ -1,5 +1,7 @@
 # Auth.js middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=auth-js)](https://codecov.io/github/honojs/middleware)
+
 This is a [Auth.js](https://authjs.dev) third-party middleware for [Hono](https://github.com/honojs/hono).
 
 This middleware can be used to inject the Auth.js session into the request context.
@@ -112,6 +114,7 @@ const useSession = () => {
   return { session: data, status }
 }
 ```
+
 For more details on how to Popup Oauth Login see [example](https://github.com/divyam234/next-auth-hono-react)
 
 ## Author

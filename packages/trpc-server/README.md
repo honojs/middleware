@@ -1,5 +1,7 @@
 # tRPC Server Middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=trpc-server)](https://codecov.io/github/honojs/middleware)
+
 tRPC Server Middleware adapts a [tRPC](https://trpc.io) server as middleware for Hono.
 Hono works on almost any JavaScript runtime, including Cloudflare Workers, Deno, and Bun. So, with this middleware, the same code will run as tRPC server.
 
@@ -76,11 +78,11 @@ import { initTRPC } from '@trpc/server'
 import { z } from 'zod'
 
 type Env = {
-  DB: D1Database;
+  DB: D1Database
 }
 type HonoContext = {
-  env: Env,
-};
+  env: Env
+}
 
 const t = initTRPC.context<HonoContext>().create()
 
@@ -89,8 +91,8 @@ const router = t.router
 
 export const appRouter = router({
   usersCount: publicProcedure.query(({ input, ctx }) => {
-    const result = await ctx.env.DB.prepare("SELECT count(*) from user;").all();
-    return result.results[0].count;
+    const result = await ctx.env.DB.prepare('SELECT count(*) from user;').all()
+    return result.results[0].count
   }),
 })
 
@@ -108,10 +110,11 @@ app.use(
       // c is the hono context
       var1: c.env.MY_VAR1,
       var2: c.req.header('X-VAR2'),
-    })
+    }),
   })
 )
 ```
+
 ## Custom Endpoints
 
 To set up custom endpoints ensure the endpoint parameter matches the middleware's path. This alignment allows `@trpc/server` to accurately extract your procedure paths.

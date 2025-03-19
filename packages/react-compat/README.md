@@ -1,5 +1,7 @@
 # Alias of hono/jsx for replacement of React
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=react-compat)](https://codecov.io/github/honojs/middleware)
+
 This package is used to install the React compatibility API provided by [Hono](https://github.com/honojs/hono). This package allows you to replace the "react" and "react-dom" entities with "@hono/react-compat".
 
 ## Usage

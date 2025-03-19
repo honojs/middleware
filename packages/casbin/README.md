@@ -1,5 +1,7 @@
 # Casbin Middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=casbin)](https://codecov.io/github/honojs/middleware)
+
 This is a third-party [Casbin](https://casbin.org) middleware for [Hono](https://github.com/honojs/hono).
 
 This middleware can be used to enforce authorization policies defined using Casbin in your Hono routes.
@@ -56,7 +58,8 @@ import { casbin } from '@hono/casbin'
 import { basicAuthorizer } from '@hono/casbin/helper'
 
 const app = new Hono()
-app.use('*',
+app.use(
+  '*',
   basicAuth(
     {
       username: 'alice', // alice has full access to /dataset1/test
@@ -69,7 +72,7 @@ app.use('*',
   ),
   casbin({
     newEnforcer: newEnforcer('examples/model.conf', 'examples/policy.csv'),
-    authorizer: basicAuthorizer
+    authorizer: basicAuthorizer,
   })
 )
 app.get('/dataset1/test', (c) => c.text('dataset1 test')) // alice and bob can access /dataset1/test
@@ -89,13 +92,14 @@ import { casbin } from '@hono/casbin'
 import { jwtAuthorizer } from '@hono/casbin/helper'
 
 const app = new Hono()
-app.use('*',
+app.use(
+  '*',
   jwt({
     secret: 'it-is-very-secret',
   }),
   casbin({
     newEnforcer: newEnforcer('examples/model.conf', 'examples/policy.csv'),
-    authorizer: jwtAuthorizer
+    authorizer: jwtAuthorizer,
   })
 )
 app.get('/dataset1/test', (c) => c.text('dataset1 test')) // alice and bob can access /dataset1/test
@@ -112,7 +116,7 @@ const claimMapping = {
 // ...
 casbin({
   newEnforcer: newEnforcer('examples/model.conf', 'examples/policy.csv'),
-  authorizer: (c, e) => jwtAuthorizer(c, e, claimMapping)
+  authorizer: (c, e) => jwtAuthorizer(c, e, claimMapping),
 })
 ```
 
@@ -126,13 +130,16 @@ import { newEnforcer } from 'casbin'
 import { casbin } from '@hono/casbin'
 
 const app = new Hono()
-app.use('*', casbin({
-  newEnforcer: newEnforcer('path-to-your-model.conf', 'path-to-your-policy.csv'),
-  authorizer: async (c, enforcer) => {
-    const { user, path, method } = c
-    return await enforcer.enforce(user, path, method)
-  }
-}))
+app.use(
+  '*',
+  casbin({
+    newEnforcer: newEnforcer('path-to-your-model.conf', 'path-to-your-policy.csv'),
+    authorizer: async (c, enforcer) => {
+      const { user, path, method } = c
+      return await enforcer.enforce(user, path, method)
+    },
+  })
+)
 ```
 
 ## Author

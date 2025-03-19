@@ -1,5 +1,7 @@
 # esbuild Transpiler Middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=esbuild-transpiler)](https://codecov.io/github/honojs/middleware)
+
 The **esbuild Transpiler Middleware** is a Hono Middleware designed to transpile content such as TypeScript or TSX.
 You can place your script written in TypeScript in a directory and serve it using `serveStatic`.
 When you apply this Middleware, the script will be transpiled into JavaScript code.

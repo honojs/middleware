@@ -1,5 +1,7 @@
 # Qwik City middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=qwik-city)](https://codecov.io/github/honojs/middleware)
+
 **WIP**
 
 ## Usage

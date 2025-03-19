@@ -1,5 +1,7 @@
 # OpenID Connect Authentication middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=oidc-auth)](https://codecov.io/github/honojs/middleware)
+
 This is an OpenID Connect (OIDC) authentication third-party middleware for [Hono](https://github.com/honojs/hono), which depends on [oauth4webapi](https://www.npmjs.com/package/oauth4webapi).
 
 This middleware provides storage-less login sessions.
@@ -144,7 +146,7 @@ If the middleware is applied to the callback URL, the default callback handling 
 
 ```typescript
 // Before other oidc-auth APIs are used
-app.use(initOidcAuthMiddleware(config));
+app.use(initOidcAuthMiddleware(config))
 ```
 
 Or to leverage context, use the [`Context access inside Middleware arguments`](https://hono.dev/docs/guides/middleware#context-access-inside-middleware-arguments) pattern.

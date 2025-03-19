@@ -1,5 +1,7 @@
 # Bun Transpiler middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=bun-transpiler)](https://codecov.io/github/honojs/middleware)
+
 The Bun Transpiler middleware is a Hono middleware designed to transpile content such as TypeScript or TSX. You can place your script written in TypeScript in a directory and serve it using `serveStatic`. When you apply this middleware, your script will automatically be served transpiled into JavaScript code.
 
 This middleware works only with [Bun](https://bun.sh/).

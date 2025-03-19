@@ -1,5 +1,7 @@
 # Conform validator middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=conform-validator)](https://codecov.io/github/honojs/middleware)
+
 The validator middleware using [conform](https://conform.guide) for [Hono](https://honojs.dev) applications. This middleware allows you to validate submitted FormValue and making better use of [Hono RPC](https://hono.dev/docs/guides/rpc).
 
 ## Usage
