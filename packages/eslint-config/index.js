@@ -1,9 +1,8 @@
 import js from '@eslint/js'
-import tseslint from '@typescript-eslint/eslint-plugin'
-import tsParser from '@typescript-eslint/parser'
 import importX from 'eslint-plugin-import-x'
 import nodePlugin from 'eslint-plugin-n'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import tseslint from 'typescript-eslint'
 
 export default [
   js.configs.recommended,
@@ -12,7 +11,7 @@ export default [
   eslintPluginPrettierRecommended,
 	{
 		plugins: {
-			'@typescript-eslint': tseslint,
+			'@typescript-eslint': tseslint.plugin,
 			'import-x': importX,
 		},
 
@@ -24,7 +23,7 @@ export default [
 				addEventListener: false,
 			},
 
-			parser: tsParser,
+			parser: tseslint.parser,
 			ecmaVersion: 2021,
 			sourceType: 'module',
 		},
