@@ -19,6 +19,7 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/ajv-validator
       - run: yarn workspace @hono/ajv-validator build
+      - run: yarn workspace @hono/ajv-validator publint
       - run: yarn test --coverage --project @hono/ajv-validator
       - uses: codecov/codecov-action@v5
         with:
