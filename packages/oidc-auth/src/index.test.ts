@@ -189,6 +189,7 @@ beforeEach(() => {
   delete process.env.OIDC_COOKIE_PATH
   delete process.env.OIDC_COOKIE_NAME
   delete process.env.OIDC_COOKIE_DOMAIN
+  delete process.env.OIDC_AUDIENCE
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -373,6 +374,27 @@ describe('oidcAuthMiddleware()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
+  })
+  test('Should use custom audience if defined', async () => {
+    process.env.OIDC_AUDIENCE = 'audience'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toMatch(/audience=audience/)
+  })
+  test('Should not set audience if not defined', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).not.toMatch(/audience=/)
   })
 })
 describe('processOAuthCallback()', () => {
