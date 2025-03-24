@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.6.0
+
+### Minor Changes
+
+- [#1010](https://github.com/honojs/middleware/pull/1010) [`e6160a2f94d65b1a72df06b667b8c8d0c21d00e5`](https://github.com/honojs/middleware/commit/e6160a2f94d65b1a72df06b667b8c8d0c21d00e5) Thanks [@wayofthepie](https://github.com/wayofthepie)! - Add support for setting audience in the OIDC_AUDIENCE environment variable
+
 ## 1.5.0
 
 ### Minor Changes
