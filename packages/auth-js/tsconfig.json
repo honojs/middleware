@@ -4,10 +4,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    "rootDir": "./",
     "outDir": "./dist",
     "jsx": "react",
     "types": ["node", "vitest/globals"]
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  }
 }
