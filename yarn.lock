@@ -2616,9 +2616,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/bun": "npm:^1.0.0"
     hono: "npm:^3.11.7"
-    tsup: "npm:^8.0.1"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
   languageName: unknown
@@ -11047,6 +11050,7 @@ __metadata:
     eslint: "npm:^9.17.0"
     npm-run-all2: "npm:^6.2.2"
     prettier: "npm:^2.7.1"
+    tsup: "npm:^8.4.0"
     typescript: "npm:^5.2.2"
     vitest: "npm:^3.0.8"
   languageName: unknown
