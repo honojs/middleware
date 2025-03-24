@@ -32,10 +32,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts ./src/helper/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts ./src/helper/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack --profile node16 && publint",
+    "test": "vitest"
   },
   "license": "MIT",
   "publishConfig": {
@@ -44,7 +44,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/casbin"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -52,10 +53,11 @@
     "hono": ">=4.5.11"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "casbin": "^5.30.0",
     "hono": "^4.5.11",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
