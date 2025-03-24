@@ -19,6 +19,7 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/auth-js
       - run: yarn workspace @hono/auth-js build
+      - run: yarn workspace @hono/auth-js publint
       - run: yarn test --coverage --project @hono/auth-js
       - uses: codecov/codecov-action@v5
         with:
