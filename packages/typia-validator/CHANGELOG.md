@@ -1,5 +1,11 @@
 # @hono/typia-validator
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1027](https://github.com/honojs/middleware/pull/1027) [`70bae1d5734bb411b0e9d4ae8f5f010966da8d5c`](https://github.com/honojs/middleware/commit/70bae1d5734bb411b0e9d4ae8f5f010966da8d5c) Thanks [@koteelok](https://github.com/koteelok)! - Move 'default' entry point down to fix imports in ESM environments.
+
 ## 0.1.1
 
 ### Patch Changes

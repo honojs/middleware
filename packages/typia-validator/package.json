@@ -1,6 +1,6 @@
 {
   "name": "@hono/typia-validator",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Validator middleware using Typia",
   "type": "module",
   "main": "dist/cjs/index.js",
@@ -8,16 +8,16 @@
   "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "default": "./dist/cjs/index.js",
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js",
-      "types": "./dist/esm/index.d.ts"
+      "types": "./dist/esm/index.d.ts",
+      "default": "./dist/cjs/index.js"
     },
     "./http": {
-      "default": "./dist/cjs/http.js",
       "require": "./dist/cjs/http.js",
       "import": "./dist/esm/http.js",
-      "types": "./dist/esm/http.d.ts"
+      "types": "./dist/esm/http.d.ts",
+      "default": "./dist/cjs/http.js"
     }
   },
   "files": [
