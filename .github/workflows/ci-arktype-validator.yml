@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/arktype-validator
       - run: yarn workspace @hono/arktype-validator build
+      - run: yarn workspace @hono/arktype-validator publint
       - run: yarn test --coverage --project @hono/arktype-validator
       - uses: codecov/codecov-action@v5
         with:
