@@ -37,7 +37,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/react.tsx --no-splitting",
+    "build": "tsup src/index.ts src/react.tsx",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "test": "vitest"
