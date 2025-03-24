@@ -70,6 +70,7 @@
     "eslint": "^9.17.0",
     "npm-run-all2": "^6.2.2",
     "prettier": "^2.7.1",
+    "tsup": "^8.4.0",
     "typescript": "^5.2.2",
     "vitest": "^3.0.8"
   },
