@@ -1,7 +1,7 @@
 import js from '@eslint/js'
+import prettier from 'eslint-config-prettier/flat'
 import importX from 'eslint-plugin-import-x'
 import nodePlugin from 'eslint-plugin-n'
-import prettier from 'eslint-config-prettier/flat'
 import tseslint from 'typescript-eslint'
 
 export default [
@@ -21,7 +21,6 @@ export default [
 				addEventListener: false,
 			},
 
-			parser: tseslint.parser,
 			ecmaVersion: 2021,
 			sourceType: 'module',
 		},
