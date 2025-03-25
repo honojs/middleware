@@ -2267,7 +2267,7 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": "npm:^3.1.0"
     "@eslint/js": "npm:^9.10.0"
-    eslint: "npm:^9.10.0"
+    eslint: "npm:^9.23.0"
     eslint-config-prettier: "npm:^10.1.1"
     eslint-import-resolver-typescript: "npm:^4.2.2"
     eslint-plugin-import-x: "npm:^4.1.1"
@@ -7771,7 +7771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.10.0, eslint@npm:^9.17.0":
+"eslint@npm:^9.17.0, eslint@npm:^9.23.0":
   version: 9.23.0
   resolution: "eslint@npm:9.23.0"
   dependencies:
