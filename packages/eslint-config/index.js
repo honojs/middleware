@@ -1,20 +1,18 @@
 import js from '@eslint/js'
 import importX from 'eslint-plugin-import-x'
 import nodePlugin from 'eslint-plugin-n'
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import prettier from 'eslint-config-prettier/flat'
 import tseslint from 'typescript-eslint'
 
 export default [
   js.configs.recommended,
-  nodePlugin.configs.recommended,
+  nodePlugin.configs["flat/recommended"],
   tseslint.configs.recommended,
-  eslintPluginPrettierRecommended,
 	{
 		plugins: {
 			'@typescript-eslint': tseslint.plugin,
 			'import-x': importX,
 		},
-
 		languageOptions: {
 			globals: {
 				fetch: false,
@@ -102,4 +100,5 @@ export default [
 			'@typescript-eslint/no-var-requires': 'off',
 		},
 	},
+  prettier,
 ]
