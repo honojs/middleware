@@ -58,6 +58,7 @@ export type OidcAuthEnv = {
   OIDC_COOKIE_PATH?: string
   OIDC_COOKIE_NAME?: string
   OIDC_COOKIE_DOMAIN?: string
+  OIDC_AUDIENCE?: string
 }
 
 /**
@@ -93,6 +94,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
     OIDC_COOKIE_PATH: config?.OIDC_COOKIE_PATH ?? ev.OIDC_COOKIE_PATH,
     OIDC_COOKIE_NAME: config?.OIDC_COOKIE_NAME ?? ev.OIDC_COOKIE_NAME,
     OIDC_COOKIE_DOMAIN: config?.OIDC_COOKIE_DOMAIN ?? ev.OIDC_COOKIE_DOMAIN,
+    OIDC_AUDIENCE: config?.OIDC_AUDIENCE ?? ev.OIDC_AUDIENCE,
   }
   if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
     throw new HTTPException(500, { message: 'Session secret is not provided' })
@@ -344,6 +346,9 @@ const generateAuthorizationRequestUrl = async (
     // Google requires 'access_type=offline' and 'prompt=consent' to obtain a refresh token
     authorizationRequestUrl.searchParams.set('access_type', 'offline')
     authorizationRequestUrl.searchParams.set('prompt', 'consent')
+  }
+  if (env.OIDC_AUDIENCE) {
+    authorizationRequestUrl.searchParams.set('audience', env.OIDC_AUDIENCE)
   }
   return authorizationRequestUrl.toString()
 }

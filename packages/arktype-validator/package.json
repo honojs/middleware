@@ -2,22 +2,29 @@
   "name": "@hono/arktype-validator",
   "version": "2.0.0",
   "description": "ArkType validator middleware",
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "release": "yarn build && yarn test && yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "license": "MIT",
@@ -27,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/arktype-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -35,9 +43,11 @@
     "hono": "*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "arktype": "^2.0.0-dev.14",
     "hono": "^3.11.7",
-    "tsup": "^8.0.1",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
