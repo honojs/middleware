@@ -2936,10 +2936,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/qwik-city@workspace:packages/qwik-city"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@builder.io/qwik": "npm:^1.2.0"
     "@builder.io/qwik-city": "npm:^1.2.0"
     hono: "npm:^3.11.7"
-    rimraf: "npm:^5.0.5"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
   peerDependencies:
     "@builder.io/qwik": ^1.2.0
     "@builder.io/qwik-city": ^1.2.0
