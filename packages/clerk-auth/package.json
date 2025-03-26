@@ -10,10 +10,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
@@ -34,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/clerk-auth"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -42,13 +43,13 @@
     "hono": ">=3.*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@clerk/backend": "^1.0.0",
     "@types/react": "^18",
     "hono": "^3.11.7",
-    "node-fetch-native": "^1.4.0",
+    "publint": "^0.3.9",
     "react": "^18.2.0",
-    "tsup": "^8.0.1",
-    "typescript": "^5.8.2",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   },
   "engines": {

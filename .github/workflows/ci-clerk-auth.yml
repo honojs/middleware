@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/clerk-auth
       - run: yarn workspace @hono/clerk-auth build
+      - run: yarn workspace @hono/clerk-auth publint
       - run: yarn test --coverage --project @hono/clerk-auth
       - uses: codecov/codecov-action@v5
         with:
