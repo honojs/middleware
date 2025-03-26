@@ -9,10 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
@@ -33,15 +33,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/hello"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": "*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.4.12",
-    "tsup": "^8.1.0",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
