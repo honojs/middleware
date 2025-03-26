@@ -1,10 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     "module": "ESNext",
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*.ts"]
+    "resolveJsonModule": true,
+    "types": ["vitest/globals"]
+  }
 }
