@@ -2848,12 +2848,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/standard-validator@workspace:packages/standard-validator"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@standard-schema/spec": "npm:1.0.0"
     arktype: "npm:^2.0.0-rc.26"
     hono: "npm:^4.0.10"
-    publint: "npm:^0.2.7"
-    tsup: "npm:^8.1.0"
-    typescript: "npm:^5.7.3"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
     valibot: "npm:^1.0.0-beta.9"
     vitest: "npm:^3.0.8"
     zod: "npm:^3.24.0"
@@ -17015,16 +17015,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.7.3":
-  version: 5.7.3
-  resolution: "typescript@npm:5.7.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: b7580d716cf1824736cc6e628ab4cd8b51877408ba2be0869d2866da35ef8366dd6ae9eb9d0851470a39be17cbd61df1126f9e211d8799d764ea7431d5435afa
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^5.8.2":
   version: 5.8.2
   resolution: "typescript@npm:5.8.2"
@@ -17082,16 +17072,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: c891ccf04008bc1305ba34053db951f8a4584b4a1bf2f68fd972c4a354df3dc5e62c8bfed4f6ac2d12e5b3b1c49af312c83a651048f818cd5b4949d17baacd79
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
-  version: 5.7.3
-  resolution: "typescript@patch:typescript@npm%3A5.7.3#optional!builtin<compat/typescript>::version=5.7.3&hash=e012d7"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 3b56d6afa03d9f6172d0b9cdb10e6b1efc9abc1608efd7a3d2f38773d5d8cfb9bbc68dfb72f0a7de5e8db04fc847f4e4baeddcd5ad9c9feda072234f0d788896
   languageName: node
   linkType: hard
 
