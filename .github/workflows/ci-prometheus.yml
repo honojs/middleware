@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/prometheus
       - run: yarn workspace @hono/prometheus build
+      - run: yarn workspace @hono/prometheus publint
       - run: yarn test --coverage --project @hono/prometheus
       - uses: codecov/codecov-action@v5
         with:
