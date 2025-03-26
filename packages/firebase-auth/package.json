@@ -12,11 +12,10 @@
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
-    "test": "vitest run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "prerelease": "yarn build && arn publint",
-    "release": "yarn publish"
+    "test": "vitest",
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint"
   },
   "exports": {
     ".": {
@@ -33,7 +32,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/firebase-auth"
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "codehex",
@@ -48,13 +48,14 @@
     "hono": "*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@cloudflare/workers-types": "^4.20240222.0",
     "firebase-tools": "^13.29.1",
     "hono": "^4.2.4",
     "miniflare": "^3.20240208.0",
     "prettier": "^3.2.5",
-    "tsup": "^8.0.2",
-    "typescript": "^5.3.3",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
