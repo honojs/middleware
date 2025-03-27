@@ -2693,10 +2693,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/node-ws@workspace:packages/node-ws"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@hono/node-server": "npm:^1.11.1"
-    "@types/ws": "npm:^8"
+    "@types/node": "npm:^20.14.8"
+    "@types/ws": "npm:^8.18.0"
     hono: "npm:^4.6.0"
-    tsup: "npm:^8.0.1"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.8"
     ws: "npm:^8.17.0"
   peerDependencies:
@@ -4842,12 +4845,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^8":
-  version: 8.5.10
-  resolution: "@types/ws@npm:8.5.10"
+"@types/ws@npm:^8.18.0":
+  version: 8.18.0
+  resolution: "@types/ws@npm:8.18.0"
   dependencies:
     "@types/node": "npm:*"
-  checksum: e9af279b984c4a04ab53295a40aa95c3e9685f04888df5c6920860d1dd073fcc57c7bd33578a04b285b2c655a0b52258d34bee0a20569dca8defb8393e1e5d29
+  checksum: a56d2e0d1da7411a1f3548ce02b51a50cbe9e23f025677d03df48f87e4a3c72e1342fbf1d12e487d7eafa8dc670c605152b61bbf9165891ec0e9694b0d3ea8d4
   languageName: node
   linkType: hard
 
