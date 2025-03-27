@@ -16,11 +16,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "license": "MIT",
   "publishConfig": {
@@ -29,7 +28,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/zod-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -37,10 +37,10 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.0.10",
-    "publint": "^0.2.7",
-    "tsup": "^8.1.0",
-    "typescript": "^5.3.3",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8",
     "zod": "^3.22.4"
   }

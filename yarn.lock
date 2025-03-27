@@ -2999,10 +2999,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     hono: "npm:^4.0.10"
-    publint: "npm:^0.2.7"
-    tsup: "npm:^8.1.0"
-    typescript: "npm:^5.3.3"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.8"
     zod: "npm:^3.22.4"
   peerDependencies:
