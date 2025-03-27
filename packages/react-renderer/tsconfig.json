@@ -1,17 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "rootDir": "./",
     "outDir": "./dist",
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  },
-  "include": [
-    "vitest.config.ts",
-    "src/**/*.ts",
-    "test/**/*.tsx",
-  ],
+    "jsxImportSource": "react",
+    "types": ["vitest/globals"]
+  }
 }
