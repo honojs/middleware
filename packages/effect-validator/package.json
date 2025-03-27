@@ -3,9 +3,9 @@
   "version": "1.2.0",
   "description": "Validator middleware using Effect Schema",
   "type": "module",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -22,10 +22,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "license": "MIT",
   "publishConfig": {
@@ -34,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/effect-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -42,10 +43,11 @@
     "hono": ">=4.4.13"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "effect": "3.10.0",
     "hono": "^4.4.13",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
