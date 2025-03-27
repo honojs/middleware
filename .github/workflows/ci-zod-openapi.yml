@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/zod-openapi
       - run: yarn workspace @hono/zod-openapi build
+      - run: yarn workspace @hono/zod-openapi publint
       - run: yarn test --coverage --project @hono/zod-openapi
       - uses: codecov/codecov-action@v5
         with:

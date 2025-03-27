@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/typebox-validator
       - run: yarn workspace @hono/typebox-validator build
+      - run: yarn workspace @hono/typebox-validator publint
       - run: yarn test --coverage --project @hono/typebox-validator
       - uses: codecov/codecov-action@v5
         with:
