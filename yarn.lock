@@ -2727,13 +2727,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/oidc-auth@workspace:packages/oidc-auth"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/jsonwebtoken": "npm:^9.0.5"
     hono: "npm:^4.0.1"
     jsonwebtoken: "npm:^9.0.2"
     oauth4webapi: "npm:^2.6.0"
-    tsup: "npm:^8.0.1"
-    typescript: "npm:^5.3.3"
-    vitest: "npm:^3.0.8"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
   peerDependencies:
     hono: ">=3.*"
   languageName: unknown

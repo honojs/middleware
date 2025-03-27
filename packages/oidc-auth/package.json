@@ -9,10 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build": "tsup ./src/index.ts --format esm --dts",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn prerelease && yarn npm publish"
+    "build": "tsup ./src/index.ts --format esm",
+    "prepack": "yarn build",
+    "publint": "attw --pack --profile esm-only && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
@@ -29,18 +29,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/oidc-auth"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@types/jsonwebtoken": "^9.0.5",
     "hono": "^4.0.1",
     "jsonwebtoken": "^9.0.2",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   },
   "dependencies": {
