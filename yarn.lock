@@ -2499,13 +2499,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/clerk-auth@workspace:packages/clerk-auth"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     "@clerk/backend": "npm:^1.0.0"
     "@types/react": "npm:^18"
     hono: "npm:^3.11.7"
-    node-fetch-native: "npm:^1.4.0"
+    publint: "npm:^0.3.9"
     react: "npm:^18.2.0"
-    tsup: "npm:^8.0.1"
-    typescript: "npm:^5.8.2"
+    tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.8"
   peerDependencies:
     "@clerk/backend": ^1.0.0
@@ -13930,13 +13930,6 @@ __metadata:
     emojilib: "npm:^2.4.0"
     skin-tone: "npm:^2.0.0"
   checksum: 9525defbd90a82a2131758c2470203fa2a2faa8edd177147a8654a26307fe03594e52847ecbe2746d06cfc5c50acd12bd500f035350a7609e8217c9894c19aad
-  languageName: node
-  linkType: hard
-
-"node-fetch-native@npm:^1.4.0":
-  version: 1.4.1
-  resolution: "node-fetch-native@npm:1.4.1"
-  checksum: ab298a42ebf3b1b6c6a8cbc53d8ba703895f55171ed743b0828c2a87d461642d8053143864915a69d41cc01013db86406da105fff6c0a05a00d8caf5c279549c
   languageName: node
   linkType: hard
 
