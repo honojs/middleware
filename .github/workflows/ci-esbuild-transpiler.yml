@@ -19,6 +19,7 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/esbuild-transpiler
       - run: yarn workspace @hono/esbuild-transpiler build
+      - run: yarn workspace @hono/esbuild-transpiler publint
       - run: yarn test --coverage --project @hono/esbuild-transpiler
       - uses: codecov/codecov-action@v5
         with:
