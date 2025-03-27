@@ -3,8 +3,8 @@ import { Hono } from 'hono'
 import { basicAuth } from 'hono/basic-auth'
 import { jwt, sign } from 'hono/jwt'
 import { describe, it, expect } from 'vitest'
-import { casbin } from '../src'
-import { basicAuthorizer, jwtAuthorizer } from '../src/helper'
+import { basicAuthorizer, jwtAuthorizer } from './helper'
+import { casbin } from '.'
 
 describe('Casbin Middleware Tests', () => {
   describe('BasicAuthorizer', () => {

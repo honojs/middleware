@@ -157,7 +157,14 @@ vi.mock(import('oauth4webapi'), async (importOriginal) => {
   }
 })
 
-const { oidcAuthMiddleware, getAuth, processOAuthCallback, revokeSession, initOidcAuthMiddleware, getClient } = await import('../src')
+const {
+  oidcAuthMiddleware,
+  getAuth,
+  processOAuthCallback,
+  revokeSession,
+  initOidcAuthMiddleware,
+  getClient,
+} = await import('.')
 
 const app = new Hono()
 app.get('/logout', async (c) => {
@@ -516,9 +523,7 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(
-      new RegExp(
-        `${MOCK_COOKIE_NAME}=[^;]+; Path=${defaultOidcAuthCookiePath}; HttpOnly; Secure`
-      )
+      new RegExp(`${MOCK_COOKIE_NAME}=[^;]+; Path=${defaultOidcAuthCookiePath}; HttpOnly; Secure`)
     )
   })
   test('Should return an error if the state parameter does not match', async () => {
@@ -600,16 +605,18 @@ describe('initOidcAuthMiddleware()', () => {
     const CUSTOM_OIDC_CLIENT_ID = 'custom-client-id'
     const CUSTOM_OIDC_CLIENT_SECRET = 'custom-client-secret'
     const app = new Hono()
-    app.use(initOidcAuthMiddleware({
-      OIDC_CLIENT_ID: CUSTOM_OIDC_CLIENT_ID,
-      OIDC_CLIENT_SECRET: CUSTOM_OIDC_CLIENT_SECRET
-    }))
+    app.use(
+      initOidcAuthMiddleware({
+        OIDC_CLIENT_ID: CUSTOM_OIDC_CLIENT_ID,
+        OIDC_CLIENT_SECRET: CUSTOM_OIDC_CLIENT_SECRET,
+      })
+    )
     app.use(async (c) => {
       client = getClient(c)
       return c.text('finished')
     })
     const req = new Request('http://localhost/', {
-      method: 'GET'
+      method: 'GET',
     })
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()

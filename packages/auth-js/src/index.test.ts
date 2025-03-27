@@ -3,8 +3,8 @@ import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
-import type { AuthConfig } from '../src'
-import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '../src'
+import type { AuthConfig } from '.'
+import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '.'
 
 describe('Config', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {

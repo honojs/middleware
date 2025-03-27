@@ -1,5 +1,5 @@
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { createRoute, z } from '../src/index'
+import { createRoute, z } from '.'
 
 describe('createRoute', () => {
   it.each([

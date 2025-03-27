@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { SwaggerUI, swaggerUI } from '../src'
+import { SwaggerUI, swaggerUI } from '.'
 
 describe('SwaggerUI Rendering', () => {
   const url = 'https://petstore3.swagger.io/api/v3/openapi.json'

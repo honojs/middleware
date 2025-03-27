@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { describe, it, expect } from 'vitest'
-import { esbuildTranspiler } from '../src/transpilers/node'
+import { esbuildTranspiler } from './node'
 
 const TS = 'function add(a: number, b: number) { return a + b; }'
 const BAD = 'function { !!! !@#$ add(a: INT) return a + b + c; }'

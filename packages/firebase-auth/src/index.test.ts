@@ -6,8 +6,8 @@ import { setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 import { Miniflare } from 'miniflare'
 import { describe, it, expect, beforeAll, vi } from 'vitest'
-import type { VerifyFirebaseAuthEnv } from '../src'
-import { verifyFirebaseAuth, getFirebaseToken, verifySessionCookieFirebaseAuth } from '../src'
+import type { VerifyFirebaseAuthEnv } from '.'
+import { verifyFirebaseAuth, getFirebaseToken, verifySessionCookieFirebaseAuth } from '.'
 
 describe('verifyFirebaseAuth middleware', () => {
   const emulatorHost = '127.0.0.1:9099'

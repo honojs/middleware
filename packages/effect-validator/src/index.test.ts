@@ -2,7 +2,7 @@ import { Schema as S } from 'effect'
 import { Hono } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
-import { effectValidator } from '../src'
+import { effectValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never

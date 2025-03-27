@@ -1,23 +1,24 @@
-import { Type } from 'class-transformer'
-import type { ValidationError } from 'class-validator'
-import { IsInt, IsString, ValidateNested } from 'class-validator'
+import type { JSONSchemaType, type ErrorObject } from 'ajv'
 import { Hono } from 'hono'
-import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
-import { classValidator } from '../src'
+import { ajvValidator } from '.'
+
+type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 
 describe('Basic', () => {
   const app = new Hono()
 
-  class UserDto {
-    @IsString()
-    name!: string
-
-    @IsInt()
-    age!: number
+  const schema: JSONSchemaType<{ name: string; age: number }> = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number' },
+    },
+    required: ['name', 'age'],
+    additionalProperties: false,
   }
 
-  const route = app.post('/author', classValidator('json', UserDto), (c) => {
+  const route = app.post('/author', ajvValidator('json', schema), (c) => {
     const data = c.req.valid('json')
     return c.json({
       success: true,
@@ -43,7 +44,6 @@ describe('Basic', () => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
@@ -80,26 +80,28 @@ describe('Basic', () => {
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
-    const data = (await res.json()) as { errors: ValidationError[] }
-    expect(data.errors.length).toBe(1)
+    const data = (await res.json()) as { success: boolean }
+    expect(data.success).toBe(false)
   })
 })
 
 describe('With Hook', () => {
   const app = new Hono()
 
-  class PostDto {
-    @IsInt()
-    id!: number
-
-    @IsString()
-    title!: string
+  const schema: JSONSchemaType<{ id: number; title: string }> = {
+    type: 'object',
+    properties: {
+      id: { type: 'number' },
+      title: { type: 'string' },
+    },
+    required: ['id', 'title'],
+    additionalProperties: false,
   }
 
   app
     .post(
       '/post',
-      classValidator('json', PostDto, (result, c) => {
+      ajvValidator('json', schema, (result, c) => {
         if (!result.success) {
           return c.text('Invalid!', 400)
         }
@@ -116,7 +118,7 @@ describe('With Hook', () => {
     )
     .post(
       '/errorTest',
-      classValidator('json', PostDto, (result, c) => {
+      ajvValidator('json', schema, (result, c) => {
         return c.json(result, 400)
       }),
       (c) => {
@@ -177,87 +179,22 @@ describe('With Hook', () => {
 
     const { errors, success } = (await res.json()) as {
       success: boolean
-      errors: ValidationError[]
+      errors: ErrorObject[]
     }
     expect(success).toBe(false)
     expect(Array.isArray(errors)).toBe(true)
-  })
-})
-
-describe('Nested DTO', () => {
-  const app = new Hono()
-
-  class AuthorDto {
-    @IsString()
-    name!: string
-
-    @ValidateNested({ each: true })
-    @Type(() => PostDto)
-    posts!: PostDto[]
-  }
-
-  class PostDto {
-    @IsInt()
-    id!: number
-
-    @IsString()
-    title!: string
-  }
-
-  app.post('/author', classValidator('json', AuthorDto), (c) => {
-    const data = c.req.valid('json')
-
-    return c.json({
-      success: true,
-      message: `Posts sent: ${data.posts.length}`,
-    })
-  })
-
-  it('Should return 200 response', async () => {
-    const req = new Request('http://localhost/author', {
-      body: JSON.stringify({
-        name: 'Superman',
-        posts: [
-          {
-            id: 1,
-            title: 'Volume 1',
-          },
-        ],
-      }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    expect(
+      errors.map((e: ErrorObject) => ({
+        keyword: e.keyword,
+        instancePath: e.instancePath,
+        message: e.message,
+      }))
+    ).toEqual([
+      {
+        keyword: 'required',
+        instancePath: '',
+        message: "must have required property 'title'",
       },
-    })
-    const res = await app.request(req)
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(200)
-    expect(await res.json()).toEqual({
-      success: true,
-      message: 'Posts sent: 1',
-    })
-  })
-
-  it('Should return 400 response', async () => {
-    const req = new Request('http://localhost/author', {
-      body: JSON.stringify({
-        name: 'Superman',
-        posts: [
-          {
-            id: '1223',
-            name: 'Error id',
-          },
-        ],
-      }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const res = await app.request(req)
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(400)
-    const data = (await res.json()) as { errors: ValidationError[] }
-    expect(data.errors.length).toBe(1)
+    ])
   })
 })
