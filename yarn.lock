@@ -2553,10 +2553,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/effect-validator@workspace:packages/effect-validator"
   dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
     effect: "npm:3.10.0"
     hono: "npm:^4.4.13"
-    tsup: "npm:^8.1.0"
-    typescript: "npm:^5.5.3"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
     vitest: "npm:^3.0.8"
   peerDependencies:
     effect: ">=3.10.0"
@@ -18490,16 +18491,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
-  version: 5.5.3
-  resolution: "typescript@npm:5.5.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: f52c71ccbc7080b034b9d3b72051d563601a4815bf3e39ded188e6ce60813f75dbedf11ad15dd4d32a12996a9ed8c7155b46c93a9b9c9bad1049766fe614bbdd
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^5.7.3":
   version: 5.7.3
   resolution: "typescript@npm:5.7.3"
@@ -18567,16 +18558,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: c891ccf04008bc1305ba34053db951f8a4584b4a1bf2f68fd972c4a354df3dc5e62c8bfed4f6ac2d12e5b3b1c49af312c83a651048f818cd5b4949d17baacd79
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
-  version: 5.5.3
-  resolution: "typescript@patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=e012d7"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 5a437c416251334deeaf29897157032311f3f126547cfdc4b133768b606cb0e62bcee733bb97cf74c42fe7268801aea1392d8e40988cdef112e9546eba4c03c5
   languageName: node
   linkType: hard
 
