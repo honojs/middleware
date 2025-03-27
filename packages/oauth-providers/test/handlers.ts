@@ -10,6 +10,11 @@ import type {
 import type { GitHubErrorResponse, GitHubTokenResponse } from '../src/providers/github'
 import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from '../src/providers/google'
 import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
+import type {
+  MSEntraErrorResponse,
+  MSEntraTokenResponse,
+  MSEntraUser,
+} from '../src/providers/msentra'
 import type { TwitchErrorResponse, TwitchTokenResponse, TwitchTokenSuccess } from '../src/providers/twitch'
 import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
 
@@ -194,6 +199,30 @@ export const handlers = [
       }
       
       return HttpResponse.json(twitchValidateError, { status: 401 })
+    }
+  ),
+  // MSEntra
+  http.post(
+    'https://login.microsoft.com/fake-tenant-id/oauth2/v2.0/token',
+    async ({
+      request,
+    }): Promise<StrictResponse<Partial<MSEntraTokenResponse> | MSEntraErrorResponse>> => {
+      const body = new URLSearchParams(await request.text())
+      if (body.get('code') === dummyCode || body.get('refresh_token') === msentraRefreshToken) {
+        return HttpResponse.json(msentraToken)
+      }
+      return HttpResponse.json(msentraCodeError)
+    }
+  ),
+  http.get(
+    'https://graph.microsoft.com/v1.0/me',
+    async ({ request }): Promise<StrictResponse<Partial<MSEntraUser> | MSEntraErrorResponse>> => {
+      const authorization = request.headers.get('authorization')
+
+      if (authorization === `Bearer ${msentraToken.access_token}`) {
+        return HttpResponse.json(msentraUser)
+      }
+      return HttpResponse.json(msentraCodeError)
     }
   ),
 ]
@@ -546,4 +575,29 @@ export const twitchValidateSuccess = {
 export const twitchValidateError = {
   status: 401,
   message: 'invalid access token'
+}
+
+export const msentraRefreshToken = 'paofniueawnbfisdjkaierlufjkdnsj'
+export const msentraToken = {
+  ...dummyToken,
+  refresh_token: msentraRefreshToken,
+}
+export const msentraUser = {
+  '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata#users/$entity',
+  businessPhones: ['111-111-1111'],
+  displayName: 'Test User',
+  givenName: 'Test',
+  jobTitle: 'Developer',
+  mail: 'example@email.com',
+  mobilePhone: '111-111-1111',
+  officeLocation: 'es-419',
+  preferredLanguage: null,
+  surname: 'User',
+  userPrincipalName: 'example@email.com',
+  id: '11111111-1111-1111-1111-111111111111',
+}
+export const msentraCodeError = {
+  error: 'invalid_grant',
+  error_description: 'AADSTS1234567: Invalid request.',
+  error_codes: [1234567],
 }

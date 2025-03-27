@@ -35,6 +35,16 @@
         "types": "./dist/providers/*/index.d.cts",
         "default": "./dist/providers/*/index.cjs"
       }
+    },
+    "./msentra": {
+      "import": {
+        "types": "./dist/providers/msentra/index.d.mts",
+        "default": "./dist/providers/msentra/index.mjs"
+      },
+      "require": {
+        "types": "./dist/providers/msentra/index.d.ts",
+        "default": "./dist/providers/msentra/index.js"
+      }
     }
   },
   "typesVersions": {
@@ -59,6 +69,9 @@
       ],
       "twitch": [
         "./dist/providers/twitch/index.d.ts"
+      ],
+      "msentra": [
+        "./dist/providers/msentra/index.d.ts"
       ]
     }
   },
