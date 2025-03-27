@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/medley-router
       - run: yarn workspace @hono/medley-router build
+      - run: yarn workspace @hono/medley-router publint
       - run: yarn test --coverage --project @hono/medley-router
       - uses: codecov/codecov-action@v5
         with:
