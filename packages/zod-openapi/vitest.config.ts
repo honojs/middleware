@@ -4,7 +4,8 @@ export default defineProject({
   test: {
     globals: true,
     typecheck: {
-      tsconfig: './tsconfig.vitest.json',
+      tsconfig: './tsconfig.json',
+      enabled: true,
     },
   },
 })

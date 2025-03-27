@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/valibot-validator
       - run: yarn workspace @hono/valibot-validator build
+      - run: yarn workspace @hono/valibot-validator publint
       - run: yarn test --coverage --project @hono/valibot-validator
       - uses: codecov/codecov-action@v5
         with:
