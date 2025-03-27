@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/graphql-server
       - run: yarn workspace @hono/graphql-server build
+      - run: yarn workspace @hono/graphql-server publint
       - run: yarn test --coverage --project @hono/graphql-server
       - uses: codecov/codecov-action@v5
         with:
