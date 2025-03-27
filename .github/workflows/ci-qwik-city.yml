@@ -1,0 +1,30 @@
+name: ci-qwik-city
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/qwik-city/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/qwik-city/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn workspaces focus hono-middleware @hono/qwik-city
+      - run: yarn workspace @hono/qwik-city build
+      - run: yarn workspace @hono/qwik-city publint
+      # - run: yarn test --coverage --project @hono/qwik-city
+      # - uses: codecov/codecov-action@v5
+      #   with:
+      #     fail_ci_if_error: true
+      #     directory: ./coverage
+      #     flags: qwik-city
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

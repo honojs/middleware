@@ -2,96 +2,38 @@
   "name": "@hono/oauth-providers",
   "version": "0.7.0",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "./dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build": "tsup && publint",
-    "watch": "tsup --watch",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts ./src/providers/**/index.ts ./src/providers/**/types.ts --no-splitting",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      }
-    },
-    "./google": {
-      "import": {
-        "types": "./dist/providers/google/index.d.mts",
-        "default": "./dist/providers/google/index.mjs"
       },
       "require": {
-        "types": "./dist/providers/google/index.d.ts",
-        "default": "./dist/providers/google/index.js"
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     },
-    "./facebook": {
+    "./*": {
       "import": {
-        "types": "./dist/providers/facebook/index.d.mts",
-        "default": "./dist/providers/facebook/index.mjs"
+        "types": "./dist/providers/*/index.d.ts",
+        "default": "./dist/providers/*/index.js"
       },
       "require": {
-        "types": "./dist/providers/facebook/index.d.ts",
-        "default": "./dist/providers/facebook/index.js"
-      }
-    },
-    "./github": {
-      "import": {
-        "types": "./dist/providers/github/index.d.mts",
-        "default": "./dist/providers/github/index.mjs"
-      },
-      "require": {
-        "types": "./dist/providers/github/index.d.ts",
-        "default": "./dist/providers/github/index.js"
-      }
-    },
-    "./linkedin": {
-      "import": {
-        "types": "./dist/providers/linkedin/index.d.mts",
-        "default": "./dist/providers/linkedin/index.mjs"
-      },
-      "require": {
-        "types": "./dist/providers/linkedin/index.d.ts",
-        "default": "./dist/providers/linkedin/index.js"
-      }
-    },
-    "./x": {
-      "import": {
-        "types": "./dist/providers/x/index.d.mts",
-        "default": "./dist/providers/x/index.mjs"
-      },
-      "require": {
-        "types": "./dist/providers/x/index.d.ts",
-        "default": "./dist/providers/x/index.js"
-      }
-    },
-    "./discord": {
-      "import": {
-        "types": "./dist/providers/discord/index.d.mts",
-        "default": "./dist/providers/discord/index.mjs"
-      },
-      "require": {
-        "types": "./dist/providers/discord/index.d.ts",
-        "default": "./dist/providers/discord/index.js"
-      }
-    },
-    "./twitch": {
-      "import": {
-        "types": "./dist/providers/twitch/index.d.mts",
-        "default": "./dist/providers/twitch/index.mjs"
-      },
-      "require": {
-        "types": "./dist/providers/twitch/index.d.ts",
-        "default": "./dist/providers/twitch/index.js"
+        "types": "./dist/providers/*/index.d.cts",
+        "default": "./dist/providers/*/index.cjs"
       }
     }
   },
@@ -124,13 +66,11 @@
     "hono": ">=3.*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20231025.0",
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.5.1",
     "msw": "^2.0.11",
-    "patch-package": "^8.0.0",
-    "publint": "^0.2.6",
-    "tsup": "^8.0.0",
-    "typescript": "^5.2.2",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   },
   "engines": {

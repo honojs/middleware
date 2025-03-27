@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/trpc-server
       - run: yarn workspace @hono/trpc-server build
+      - run: yarn workspace @hono/trpc-server publint
       - run: yarn test --coverage --project @hono/trpc-server
       - uses: codecov/codecov-action@v5
         with:

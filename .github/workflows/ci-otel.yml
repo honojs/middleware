@@ -19,6 +19,7 @@ jobs:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/otel
       - run: yarn workspace @hono/otel build
+      - run: yarn workspace @hono/otel publint
       - run: yarn test --coverage --project @hono/otel
       - uses: codecov/codecov-action@v5
         with:

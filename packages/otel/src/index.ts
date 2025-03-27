@@ -1,4 +1,5 @@
-import { SpanKind, SpanStatusCode, type TracerProvider, trace } from '@opentelemetry/api'
+import type { TracerProvider } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode,  trace } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,

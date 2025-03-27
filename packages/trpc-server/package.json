@@ -2,19 +2,29 @@
   "name": "@hono/trpc-server",
   "version": "0.3.4",
   "description": "tRPC Server Middleware for Hono",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "license": "MIT",
   "publishConfig": {
@@ -23,7 +33,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/trpc-server"
   },
   "homepage": "https://honojs.dev",
   "peerDependencies": {
@@ -31,9 +42,11 @@
     "hono": ">=4.*"
   },
   "devDependencies": {
-    "@trpc/server": "^10.10.0 || >11.0.0-rc",
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@trpc/server": "^11.0.0",
     "hono": "^4.3.6",
-    "rimraf": "^5.0.5",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8",
     "zod": "^3.20.2"
   },

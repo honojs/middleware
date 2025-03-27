@@ -19,6 +19,7 @@ jobs:
           node-version: 18.x
       - run: yarn workspaces focus hono-middleware @hono/firebase-auth
       - run: yarn workspace @hono/firebase-auth build
+      - run: yarn workspace @hono/firebase-auth publint
       - run: yarn test --coverage --project @hono/firebase-auth
       - uses: codecov/codecov-action@v5
         with:
