@@ -2,29 +2,35 @@
   "name": "@hono/sentry",
   "version": "1.2.0",
   "description": "Sentry Middleware for Hono",
-  "main": "dist/index.js",
-  "type": "commonjs",
-  "module": "dist/index.mjs",
+  "type": "module",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test:all"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/sentry"
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "Samuel Lippert <samuel@driv.ly> (https://github.com/sam-lippert)",
@@ -39,22 +45,10 @@
     "toucan-js": "^4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.14.0",
-    "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-define-config": "^1.6.0",
-    "eslint-import-resolver-typescript": "^3.4.0",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-import-x": "^4.1.1",
-    "eslint-plugin-n": "^17.10.2",
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^3.11.7",
-    "prettier": "^2.7.1",
-    "publint": "^0.2.7",
-    "tsup": "^8.0.2",
-    "typescript": "^4.7.4",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
