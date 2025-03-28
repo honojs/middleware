@@ -3,33 +3,38 @@
   "version": "0.1.2",
   "description": "Validator middleware using Typia",
   "type": "module",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js",
-      "types": "./dist/esm/index.d.ts",
-      "default": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./http": {
-      "require": "./dist/cjs/http.js",
-      "import": "./dist/esm/http.js",
-      "types": "./dist/esm/http.d.ts",
-      "default": "./dist/cjs/http.js"
+      "import": {
+        "types": "./dist/http.d.ts",
+        "default": "./dist/http.js"
+      },
+      "require": {
+        "types": "./dist/http.d.cts",
+        "default": "./dist/http.cjs"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts ./src/http.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack --profile node16 && publint",
+    "test": "vitest"
   },
   "license": "MIT",
   "publishConfig": {
@@ -38,7 +43,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/typia-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
@@ -46,10 +52,14 @@
     "typia": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^3.11.7",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.4.0",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "typia": "^8.0.3",
     "vitest": "^3.0.8"
+  },
+  "dependencies": {
+    "@ryoppippi/unplugin-typia": "^2.1.4"
   }
 }

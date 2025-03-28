@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { hello } from '../src'
+import { hello } from '.'
 
 describe('Hello middleware', () => {
   const app = new Hono()

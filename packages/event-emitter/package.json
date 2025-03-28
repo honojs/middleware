@@ -2,23 +2,29 @@
   "name": "@hono/event-emitter",
   "version": "2.0.0",
   "description": "Event Emitter middleware for Hono",
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "license": "MIT",
@@ -28,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/event-emitter"
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "David Havl <contact@davidhavl.com> (https://github.com/DavidHavl)",
@@ -36,8 +43,10 @@
     "hono": "*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.3.6",
-    "tsup": "^8.0.1",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   },
   "engines": {

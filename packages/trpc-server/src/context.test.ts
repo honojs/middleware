@@ -1,6 +1,6 @@
 import { initTRPC } from '@trpc/server'
 import { Hono } from 'hono'
-import { trpcServer } from '../src'
+import { trpcServer } from '.'
 
 describe('tRPC Adapter Middleware passing synchronous Context', () => {
   type Env = {

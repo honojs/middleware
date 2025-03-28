@@ -22,10 +22,10 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest run",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "test": "vitest"
   },
   "license": "MIT",
   "publishConfig": {
@@ -34,15 +34,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/swagger-editor"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": "*"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^3.11.7",
-    "tsup": "^7.2.0",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
     "vitest": "^3.0.8"
   }
 }
