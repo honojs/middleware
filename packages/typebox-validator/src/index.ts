@@ -2,7 +2,7 @@ import type { TSchema, Static } from '@sinclair/typebox'
 import { TypeGuard, ValueGuard } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
 import type { ValueError } from '@sinclair/typebox/value'
-import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono'
+import type { Context, Env, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 import IsObject = ValueGuard.IsObject
 import IsArray = ValueGuard.IsArray
@@ -57,12 +57,18 @@ export type Hook<T, E extends Env, P extends string> = (
  * )
  * ```
  */
+
+type ExcludeResponseType<T> = T extends Response & TypedResponse<any> ? never : T
+
 export function tbValidator<
   T extends TSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
-  V extends { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
+  V extends {
+    in: { [K in Target]: Static<T> }
+    out: { [K in Target]: ExcludeResponseType<Static<T>> }
+  }
 >(
   target: Target,
   schema: T,
