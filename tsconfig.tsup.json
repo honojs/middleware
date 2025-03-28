@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "jsx": "react",
+    "types": ["@cloudflare/workers-types", "node", "ws"]
+  }
+}

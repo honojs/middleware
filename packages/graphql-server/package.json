@@ -31,6 +31,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.build.json",
     "test": "vitest"
   },
   "peerDependencies": {
@@ -41,10 +42,10 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@cloudflare/workers-types": "^3.14.0",
     "hono": "^4.0.2",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   },
   "engines": {

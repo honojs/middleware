@@ -20,6 +20,8 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/react-compat
       - run: yarn workspace @hono/react-compat build
       - run: yarn workspace @hono/react-compat publint
+      - run: yarn workspace @hono/react-compat typecheck
+
       # - run: yarn test --coverage --project @hono/react-compat
       # - uses: codecov/codecov-action@v5
       #   with:

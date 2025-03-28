@@ -1,4 +1,6 @@
 import { serve } from '@hono/node-server'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
 import type { WSMessageReceive } from 'hono/ws'
@@ -52,9 +54,7 @@ describe('WebSocket helper', () => {
   })
 
   it('Should be rejected if upgradeWebSocket is not used', async () => {
-    app.get(
-      '/', (c)=>c.body('')
-    )
+    app.get('/', (c) => c.body(''))
 
     {
       const ws = new WebSocket('ws://localhost:3030/')
@@ -70,7 +70,8 @@ describe('WebSocket helper', () => {
       expect(await mainPromise).toBe(true)
     }
 
-    { //also should rejected on fallback
+    {
+      //also should rejected on fallback
       const ws = new WebSocket('ws://localhost:3030/notFound')
       const mainPromise = new Promise<boolean>((resolve) => {
         ws.onerror = () => {
