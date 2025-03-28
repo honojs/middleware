@@ -1,4 +1,4 @@
-import { remoteAssets } from '../src/swagger/resource'
+import { remoteAssets } from './swagger/resource'
 
 describe('remoteAssets', () => {
   it('should return default assets when no version is provided', () => {

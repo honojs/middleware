@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import crypto from 'crypto'
 import { promisify } from 'util'
-import { cloudflareAccess } from '../src'
+import { cloudflareAccess } from '.'
 
 const generateKeyPair = promisify(crypto.generateKeyPair)
 

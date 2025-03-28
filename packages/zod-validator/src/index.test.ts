@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
 import { z } from 'zod'
-import { zValidator } from '../src'
+import { zValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never

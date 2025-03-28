@@ -60,6 +60,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.0",
+    "@cloudflare/vitest-pool-workers": "^0.7.8",
     "@cloudflare/workers-types": "^4.20230307.0",
     "@ryoppippi/unplugin-typia": "^1.2.0",
     "@types/node": "^20.14.8",

@@ -2,11 +2,11 @@ import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { Hono } from 'hono'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import { vi } from 'vitest'
-import { sValidator } from '../src'
 
 import * as arktypeSchemas from './__schemas__/arktype'
 import * as valibotSchemas from './__schemas__/valibot'
 import * as zodSchemas from './__schemas__/zod'
+import { sValidator } from '.'
 
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 type MergeDiscriminatedUnion<U> = UnionToIntersection<U> extends infer O

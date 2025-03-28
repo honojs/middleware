@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { Hono } from 'hono'
 import { injectable, inject } from 'tsyringe'
-import { tsyringe } from '../src'
+import { tsyringe } from '.'
 
 class Config {
   constructor(public readonly tenantName: string) {}

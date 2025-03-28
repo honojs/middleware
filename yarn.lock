@@ -8612,6 +8612,7 @@ __metadata:
   dependencies:
     "@changesets/changelog-github": "npm:^0.4.8"
     "@changesets/cli": "npm:^2.26.0"
+    "@cloudflare/vitest-pool-workers": "npm:^0.7.8"
     "@cloudflare/workers-types": "npm:^4.20230307.0"
     "@ryoppippi/unplugin-typia": "npm:^1.2.0"
     "@types/node": "npm:^20.14.8"

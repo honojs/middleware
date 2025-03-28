@@ -7,8 +7,8 @@ import type { ServerErrorStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
-import type { RouteConfigToTypedResponse } from '../src/index'
-import { OpenAPIHono, createRoute, z } from '../src/index'
+import type { RouteConfigToTypedResponse } from './index'
+import { OpenAPIHono, createRoute, z } from './index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -1073,7 +1073,6 @@ describe('Multi params', () => {
     },
     responses: {
       200: {
-        // eslint-disable-next-line quotes
         description: "Get the user's tag",
       },
     },
@@ -1293,7 +1292,7 @@ describe('basePath()', () => {
         return c.json({
           param1: c.req.param('param1'),
           param2: c.req.param('param2'),
-          param3: c.req.param('param3')
+          param3: c.req.param('param3'),
         })
       }
     )
@@ -1318,7 +1317,7 @@ describe('basePath()', () => {
     expect(await res.json()).toEqual({
       param1: 'foo',
       param2: 'bar',
-      param3: 'baz'
+      param3: 'baz',
     })
   })
 })

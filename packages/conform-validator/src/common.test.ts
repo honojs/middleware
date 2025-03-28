@@ -1,7 +1,7 @@
 import { parseWithZod } from '@conform-to/zod'
 import { Hono } from 'hono'
 import { z } from 'zod'
-import { conformValidator } from '../src'
+import { conformValidator } from '.'
 
 describe('Validate common processing', () => {
   const app = new Hono()

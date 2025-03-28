@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { MedleyRouter } from '../src'
+import { MedleyRouter } from '.'
 
 describe('Basic', () => {
   const app = new Hono({ router: new MedleyRouter() })

@@ -5,7 +5,7 @@ import type { ExtractSchema, ParsedFormValue } from 'hono/types'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import * as y from 'yup'
-import { conformValidator } from '../src'
+import { conformValidator } from '.'
 
 describe('Validate requests using a Yup schema', () => {
   const app = new Hono()
