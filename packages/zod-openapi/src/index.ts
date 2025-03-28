@@ -200,24 +200,24 @@ export type RouteConfigToTypedResponse<R extends RouteConfig> =
   | {
       [Status in DefinedStatusCodes<R>]: R['responses'][Status] extends { content: infer Content }
         ? undefined extends Content
-          ? TypedResponse<{}, ExtractStatusCode<Status>, string>
+          ? never
           : ReturnJsonOrTextOrResponse<
               keyof R['responses'][Status]['content'],
               ExtractContent<R['responses'][Status]['content']>,
               Status
             >
-        : never
+        : TypedResponse<{}, ExtractStatusCode<Status>, string>
     }[DefinedStatusCodes<R>]
   | ('default' extends keyof R['responses']
       ? R['responses']['default'] extends { content: infer Content }
         ? undefined extends Content
-          ? TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
+          ? never
           : ReturnJsonOrTextOrResponse<
               keyof Content,
               ExtractContent<Content>,
               Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>
             >
-        : never
+        : TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
       : never)
 
 export type Hook<T, E extends Env, P extends string, R> = (
