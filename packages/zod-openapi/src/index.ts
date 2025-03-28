@@ -198,22 +198,26 @@ type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof Status
 type DefinedStatusCodes<R extends RouteConfig> = keyof R['responses'] & RouteConfigStatusCode
 export type RouteConfigToTypedResponse<R extends RouteConfig> =
   | {
-      [Status in DefinedStatusCodes<R>]: undefined extends R['responses'][Status]['content']
-        ? TypedResponse<{}, ExtractStatusCode<Status>, string>
-        : ReturnJsonOrTextOrResponse<
-            keyof R['responses'][Status]['content'],
-            ExtractContent<R['responses'][Status]['content']>,
-            Status
-          >
+      [Status in DefinedStatusCodes<R>]: R['responses'][Status] extends { content: infer Content }
+        ? undefined extends Content
+          ? never
+          : ReturnJsonOrTextOrResponse<
+              keyof R['responses'][Status]['content'],
+              ExtractContent<R['responses'][Status]['content']>,
+              Status
+            >
+        : TypedResponse<{}, ExtractStatusCode<Status>, string>
     }[DefinedStatusCodes<R>]
   | ('default' extends keyof R['responses']
-      ? undefined extends R['responses']['default']['content']
-        ? TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
-        : ReturnJsonOrTextOrResponse<
-            keyof R['responses']['default']['content'],
-            ExtractContent<R['responses']['default']['content']>,
-            Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>
-          >
+      ? R['responses']['default'] extends { content: infer Content }
+        ? undefined extends Content
+          ? never
+          : ReturnJsonOrTextOrResponse<
+              keyof Content,
+              ExtractContent<Content>,
+              Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>
+            >
+        : TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
       : never)
 
 export type Hook<T, E extends Env, P extends string, R> = (
