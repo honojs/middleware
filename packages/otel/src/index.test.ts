@@ -9,7 +9,7 @@ import {
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
 import { Hono } from 'hono'
-import { otel } from '../src'
+import { otel } from '.'
 
 describe('OpenTelemetry middleware', () => {
   const app = new Hono()

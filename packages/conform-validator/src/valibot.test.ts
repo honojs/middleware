@@ -1,24 +1,28 @@
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithValibot } from 'conform-to-valibot'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import type { ExtractSchema, ParsedFormValue } from 'hono/types'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
-import * as z from 'zod'
-import { conformValidator } from '../src'
+import * as v from 'valibot'
+import { conformValidator } from '.'
 
-describe('Validate requests using a Zod schema', () => {
+describe('Validate requests using a Valibot schema', () => {
   const app = new Hono()
 
-  const schema = z.object({
-    name: z.string(),
-    age: z.string().transform((str) => Number(str)),
-    nickname: z.string().optional(),
+  const schema = v.object({
+    name: v.string(),
+    age: v.pipe(
+      v.string(),
+      v.transform((v) => Number(v)),
+      v.integer()
+    ),
+    nickname: v.optional(v.string()),
   })
 
   const route = app.post(
     '/author',
-    conformValidator((formData) => parseWithZod(formData, { schema })),
+    conformValidator((formData) => parseWithValibot(formData, { schema })),
     (c) => {
       const submission = c.req.valid('form')
       const value = submission.value
@@ -99,8 +103,8 @@ describe('Validate requests using a Zod schema', () => {
     expect(json).toMatchObject({
       status: 'error',
       error: {
-        name: ['Required'],
-        age: ['Required'],
+        name: ['Invalid type: Expected string but received undefined'],
+        age: ['Invalid type: Expected string but received undefined'],
       },
     })
   })

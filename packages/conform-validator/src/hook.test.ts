@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import { vi } from 'vitest'
 import * as z from 'zod'
-import { conformValidator } from '../src'
+import { conformValidator } from '.'
 
 describe('Validate the hook option processing', () => {
   const app = new Hono()

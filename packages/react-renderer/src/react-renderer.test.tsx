@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { reactRenderer, useRequestContext } from '../src/react-renderer'
+import { reactRenderer, useRequestContext } from '.'
 
 const RequestUrl = () => {
   const c = useRequestContext()

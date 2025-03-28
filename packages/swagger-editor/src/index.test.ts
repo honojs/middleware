@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { swaggerEditor } from '../src'
+import { swaggerEditor } from '.'
 
 describe('Swagger Editor Middleware', () => {
   let app: Hono

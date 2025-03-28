@@ -1,31 +1,5 @@
 import { Hono } from 'hono'
 import { setupServer } from 'msw/node'
-import type { DiscordUser } from '../src/providers/discord'
-import {
-  discordAuth,
-  refreshToken as discordRefresh,
-  revokeToken as discordRevoke,
-} from '../src/providers/discord'
-import { facebookAuth } from '../src/providers/facebook'
-import type { FacebookUser } from '../src/providers/facebook'
-import { githubAuth } from '../src/providers/github'
-import type { GitHubUser } from '../src/providers/github'
-import { googleAuth } from '../src/providers/google'
-import type { GoogleUser } from '../src/providers/google'
-import { linkedinAuth } from '../src/providers/linkedin'
-import type { LinkedInUser } from '../src/providers/linkedin'
-import type { MSEntraUser } from '../src/providers/msentra'
-import { msentraAuth, refreshToken as msentraRefresh } from '../src/providers/msentra'
-import type { TwitchUser } from '../src/providers/twitch'
-import { 
-  twitchAuth, 
-  refreshToken as twitchRefresh, 
-  revokeToken as twitchRevoke,
-  validateToken as twitchValidate 
-} from '../src/providers/twitch'
-import type { XUser } from '../src/providers/x'
-import { refreshToken, revokeToken, xAuth } from '../src/providers/x'
-import type { Token } from '../src/types'
 import {
   discordCodeError,
   discordRefreshToken,
@@ -63,7 +37,33 @@ import {
   twitchUser,
   twitchValidateSuccess,
   twitchValidateError,
-} from './handlers'
+} from '../mocks'
+import type { DiscordUser } from './providers/discord'
+import {
+  discordAuth,
+  refreshToken as discordRefresh,
+  revokeToken as discordRevoke,
+} from './providers/discord'
+import { facebookAuth } from './providers/facebook'
+import type { FacebookUser } from './providers/facebook'
+import { githubAuth } from './providers/github'
+import type { GitHubUser } from './providers/github'
+import { googleAuth } from './providers/google'
+import type { GoogleUser } from './providers/google'
+import { linkedinAuth } from './providers/linkedin'
+import type { LinkedInUser } from './providers/linkedin'
+import type { MSEntraUser } from './providers/msentra'
+import { msentraAuth, refreshToken as msentraRefresh } from './providers/msentra'
+import type { TwitchUser } from './providers/twitch'
+import {
+  twitchAuth,
+  refreshToken as twitchRefresh,
+  revokeToken as twitchRevoke,
+  validateToken as twitchValidate,
+} from './providers/twitch'
+import type { XUser } from './providers/x'
+import { refreshToken, revokeToken, xAuth } from './providers/x'
+import type { Token } from './types'
 
 const server = setupServer(...handlers)
 server.listen()
@@ -411,11 +411,7 @@ describe('OAuth Middleware', () => {
     })
   })
   app.get('/twitch/refresh', async (c) => {
-    const response = await twitchRefresh(
-      client_id,
-      client_secret,
-      'twitchr4nd0mr3fr3sht0k3n'
-    )
+    const response = await twitchRefresh(client_id, client_secret, 'twitchr4nd0mr3fr3sht0k3n')
     return c.json(response)
   })
   app.get('/twitch/refresh/error', async (c) => {
@@ -913,14 +909,14 @@ describe('OAuth Middleware', () => {
   })
 
   describe('twitchAuth middleware', () => {
-      it('Should work with custom state', async () => {
-        const res = await app.request('/twitch-custom-state')
-        expect(res).not.toBeNull()
-        expect(res.status).toBe(302)
-        const redirectLocation = res.headers.get('location')!
-        const redirectUrl = new URL(redirectLocation)
-        expect(redirectUrl.searchParams.get('state')).toBe('test-state')
-      })
+    it('Should work with custom state', async () => {
+      const res = await app.request('/twitch-custom-state')
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(302)
+      const redirectLocation = res.headers.get('location')!
+      const redirectUrl = new URL(redirectLocation)
+      expect(redirectUrl.searchParams.get('state')).toBe('test-state')
+    })
   })
 
   describe('twitchAuth middleware', () => {
@@ -1025,7 +1021,7 @@ describe('OAuth Middleware', () => {
         const res = await twitchValidate('twitchr4nd0m4cc3sst0k3n')
         expect(res).toEqual(twitchValidateSuccess)
       })
-    
+
       it('Should throw error for invalid token', async () => {
         const res = twitchValidate('invalid-token')
         await expect(res).rejects.toThrow(twitchValidateError.message)

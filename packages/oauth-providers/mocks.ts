@@ -1,22 +1,26 @@
 import type { DefaultBodyType, StrictResponse } from 'msw'
 import { HttpResponse, http } from 'msw'
 
-import type { DiscordErrorResponse, DiscordTokenResponse } from '../src/providers/discord'
+import type { DiscordErrorResponse, DiscordTokenResponse } from './src/providers/discord'
 import type {
   FacebookErrorResponse,
   FacebookTokenResponse,
   FacebookUser,
-} from '../src/providers/facebook'
-import type { GitHubErrorResponse, GitHubTokenResponse } from '../src/providers/github'
-import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from '../src/providers/google'
-import type { LinkedInErrorResponse, LinkedInTokenResponse } from '../src/providers/linkedin'
+} from './src/providers/facebook'
+import type { GitHubErrorResponse, GitHubTokenResponse } from './src/providers/github'
+import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from './src/providers/google'
+import type { LinkedInErrorResponse, LinkedInTokenResponse } from './src/providers/linkedin'
 import type {
   MSEntraErrorResponse,
   MSEntraTokenResponse,
   MSEntraUser,
-} from '../src/providers/msentra'
-import type { TwitchErrorResponse, TwitchTokenResponse, TwitchTokenSuccess } from '../src/providers/twitch'
-import type { XErrorResponse, XRevokeResponse, XTokenResponse } from '../src/providers/x'
+} from './src/providers/msentra'
+import type {
+  TwitchErrorResponse,
+  TwitchTokenResponse,
+  TwitchTokenSuccess,
+} from './src/providers/twitch'
+import type { XErrorResponse, XRevokeResponse, XTokenResponse } from './src/providers/x'
 
 export const handlers = [
   // Google
@@ -155,7 +159,9 @@ export const handlers = [
   // Twitch
   http.post(
     'https://id.twitch.tv/oauth2/token',
-    async ({ request }): Promise<StrictResponse<Partial<TwitchTokenResponse> | TwitchErrorResponse>> => {
+    async ({
+      request,
+    }): Promise<StrictResponse<Partial<TwitchTokenResponse> | TwitchErrorResponse>> => {
       const params = new URLSearchParams(await request.text())
       const code = params.get('code')
       const grant_type = params.get('grant_type')
@@ -179,7 +185,9 @@ export const handlers = [
       const params = new URLSearchParams(await request.text())
       const token = params.get('token')
       if (token === 'wrong-token') {
-        return HttpResponse.json<{ status: number; message?: string }>(twitchRevokeTokenError, { status: 400 })
+        return HttpResponse.json<{ status: number; message?: string }>(twitchRevokeTokenError, {
+          status: 400,
+        })
       }
       return HttpResponse.json<null>(null, { status: 200 }) // Return 200 with empty body
     }
@@ -187,17 +195,19 @@ export const handlers = [
   // Twitch validate token handler
   http.get(
     'https://id.twitch.tv/oauth2/validate',
-    async ({ request }): Promise<StrictResponse<typeof twitchValidateSuccess | typeof twitchValidateError>> => {
+    async ({
+      request,
+    }): Promise<StrictResponse<typeof twitchValidateSuccess | typeof twitchValidateError>> => {
       const authHeader = request.headers.get('authorization')
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return HttpResponse.json(twitchValidateError, { status: 401 })
       }
-      
+
       const token = authHeader.split(' ')[1]
       if (token === 'twitchr4nd0m4cc3sst0k3n') {
         return HttpResponse.json(twitchValidateSuccess)
       }
-      
+
       return HttpResponse.json(twitchValidateError, { status: 401 })
     }
   ),
@@ -538,7 +548,8 @@ export const twitchUser = {
       type: '',
       broadcaster_type: 'partner',
       description: 'Supporting third-party developers building Twitch integrations',
-      profile_image_url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile-picture.png',
+      profile_image_url:
+        'https://static-cdn.jtvnw.net/jtv_user_pictures/example-profile-picture.png',
       offline_image_url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/example-offline-image.png',
       view_count: 5980557,
       email: 'example@twitch.tv',
@@ -569,12 +580,12 @@ export const twitchValidateSuccess = {
   login: 'younis',
   scopes: ['user:read:email', 'channel:read:subscriptions', 'bits:read'],
   user_id: '12345678',
-  expires_in: 14400
+  expires_in: 14400,
 }
 
 export const twitchValidateError = {
   status: 401,
-  message: 'invalid access token'
+  message: 'invalid access token',
 }
 
 export const msentraRefreshToken = 'paofniueawnbfisdjkaierlufjkdnsj'
