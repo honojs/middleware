@@ -24,7 +24,7 @@ describe('Validate the hook option processing', () => {
     handlerMockFn
   )
   const client = hc<typeof route>('http://localhost', {
-    fetch: (req, init) => {
+    fetch: (req: RequestInfo | URL, init?: RequestInit) => {
       return app.request(req, init)
     },
   })

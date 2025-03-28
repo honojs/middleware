@@ -6,5 +6,5 @@ export default defineConfig((overrideOptions) => ({
   dts: true,
   format: ['cjs', 'esm'],
   outDir: 'dist',
-  tsconfig: 'tsconfig.json',
+  tsconfig: 'tsconfig.tsup.json',
 }))

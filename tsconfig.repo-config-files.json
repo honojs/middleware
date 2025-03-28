@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "outDir": "dist/out-tsc/root/eslint"
+  },
+  "include": [
+    "eslint.config.mjs",
+    "jest.config.js",
+    "vitest.config.ts",
+    "packages/eslint-config/index.js"
+  ]
+}

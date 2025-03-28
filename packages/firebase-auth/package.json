@@ -12,6 +12,7 @@
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
+    "typecheck": "tsc -b tsconfig.build.json",
     "test": "vitest",
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
@@ -56,6 +57,7 @@
     "prettier": "^3.2.5",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   }
 }

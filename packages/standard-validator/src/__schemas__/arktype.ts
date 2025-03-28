@@ -23,7 +23,6 @@ const queryPaginationSchema = type({
 })
 
 const querySortSchema = type({
-  // eslint-disable-next-line quotes
   order: "'asc'|'desc'",
 })
 

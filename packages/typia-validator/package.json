@@ -34,6 +34,7 @@
     "build": "tsup ./src/index.ts ./src/http.ts",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
+    "typecheck": "tsc -b tsconfig.build.json",
     "test": "vitest"
   },
   "license": "MIT",
@@ -53,9 +54,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "@ryoppippi/unplugin-typia": "^1.2.0",
     "hono": "^3.11.7",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "typia": "^8.0.3",
     "vitest": "^3.0.8"
   }

@@ -64,7 +64,7 @@ describe('Validate requests using a Valibot schema', () => {
 
   it('Should return 200 response', async () => {
     const client = hc<typeof route>('http://localhost', {
-      fetch: (req, init) => {
+      fetch: (req: RequestInfo | URL, init?: RequestInit) => {
         return app.request(req, init)
       },
     })

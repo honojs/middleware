@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/packages/typia-validator",
+    "noEmit": true,
+    "types": ["vitest/globals"]
+  },
+
+  "plugins": [
+    {
+      "transform": "typia/lib/transform"
+    }
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

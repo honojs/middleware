@@ -25,6 +25,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.build.json",
     "test": "vitest"
   },
   "license": "MIT",
@@ -49,6 +50,7 @@
     "hono": "^4.0.10",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "valibot": "^1.0.0-beta.9",
     "vitest": "^3.0.8",
     "zod": "^3.24.0"
