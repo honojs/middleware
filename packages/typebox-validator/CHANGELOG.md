@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 0.3.3
+
+### Patch Changes
+
+- [#1080](https://github.com/honojs/middleware/pull/1080) [`83ca99d3377380e2e2c4699af14786f1e7d0b7c6`](https://github.com/honojs/middleware/commit/83ca99d3377380e2e2c4699af14786f1e7d0b7c6) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: export modules correctly
+
 ## 0.3.2
 
 ### Patch Changes

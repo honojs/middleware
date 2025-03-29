@@ -1,6 +1,6 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Validator middleware using TypeBox",
   "type": "module",
   "module": "dist/index.js",
