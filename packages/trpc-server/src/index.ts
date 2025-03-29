@@ -44,7 +44,7 @@ export const trpcServer = ({
               return Reflect.get(t, p, t)
             },
           }),
-    }).then((res) => c.body(res.body, res))
+    }).then((res) => c.newResponse(res.body, res))
     return res
   }
 }
