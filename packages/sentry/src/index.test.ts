@@ -11,6 +11,8 @@ class Context implements ExecutionContext {
   async waitUntil(promise: Promise<any>): Promise<void> {
     await promise
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any
 }
 
 vi.mock(import('toucan-js'), async (importOriginal) => {
