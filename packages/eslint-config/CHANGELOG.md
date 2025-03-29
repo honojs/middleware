@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1085](https://github.com/honojs/middleware/pull/1085) [`7b1d2393a59aac4e594afaf50b7b0f3b1fb5ed04`](https://github.com/honojs/middleware/commit/7b1d2393a59aac4e594afaf50b7b0f3b1fb5ed04) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: add spread to tseslint.configs.recommended
+
 ## 1.1.0
 
 ### Minor Changes
