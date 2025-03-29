@@ -16,6 +16,8 @@ class MockContext implements ExecutionContext {
   async waitUntil(promise: Promise<any>): Promise<void> {
     await promise
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any
 }
 
 export type Options = Omit<ToucanOptions, 'request' | 'context'>
