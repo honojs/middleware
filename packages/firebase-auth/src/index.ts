@@ -1,6 +1,6 @@
 import type { KeyStorer, FirebaseIdToken } from 'firebase-auth-cloudflare-workers'
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, Env, MiddlewareHandler } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
@@ -10,17 +10,19 @@ export type VerifyFirebaseAuthEnv = {
   FIREBASE_AUTH_EMULATOR_HOST: string | undefined
 }
 
-export interface VerifyFirebaseAuthConfig {
+export interface VerifyFirebaseAuthConfig<E extends Env> {
   projectId: string
   authorizationHeaderKey?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<E>) => KeyStorer
   disableErrorLog?: boolean
   firebaseEmulatorHost?: string
 }
 
 const defaultKVStoreJWKCacheKey = 'verify-firebase-auth-cached-public-key'
-const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>): KeyStorer => {
+const defaultKeyStoreInitializer = <E extends { Bindings: VerifyFirebaseAuthEnv }>(
+  c: Context<E>
+): KeyStorer => {
   if (c.env.PUBLIC_JWK_CACHE_KV === undefined) {
     const status = 501
     throw new HTTPException(status, {
@@ -33,7 +35,9 @@ const defaultKeyStoreInitializer = (c: Context<{ Bindings: VerifyFirebaseAuthEnv
   )
 }
 
-export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): MiddlewareHandler => {
+export const verifyFirebaseAuth = <E extends { Bindings: VerifyFirebaseAuthEnv }>(
+  userConfig: VerifyFirebaseAuthConfig<E>
+): MiddlewareHandler<E> => {
   const config = {
     projectId: userConfig.projectId,
     authorizationHeaderKey: userConfig.authorizationHeaderKey ?? 'Authorization',
@@ -41,7 +45,7 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
     keyStoreInitializer: userConfig.keyStoreInitializer ?? defaultKeyStoreInitializer,
     disableErrorLog: userConfig.disableErrorLog,
     firebaseEmulatorHost: userConfig.firebaseEmulatorHost,
-  } satisfies VerifyFirebaseAuthConfig
+  } satisfies VerifyFirebaseAuthConfig<E>
 
   // TODO(codehex): will be supported
   const checkRevoked = false
@@ -102,7 +106,7 @@ export interface VerifySessionCookieFirebaseAuthConfig {
   projectId: string
   cookieName?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>) => KeyStorer
   firebaseEmulatorHost?: string
   redirects: {
     signIn: string
@@ -111,7 +115,7 @@ export interface VerifySessionCookieFirebaseAuthConfig {
 
 export const verifySessionCookieFirebaseAuth = (
   userConfig: VerifySessionCookieFirebaseAuthConfig
-): MiddlewareHandler => {
+): MiddlewareHandler<{ Bindings: VerifyFirebaseAuthEnv }> => {
   const config = {
     projectId: userConfig.projectId,
     cookieName: userConfig.cookieName ?? 'session',
