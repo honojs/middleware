@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 1.2.1
+
+### Patch Changes
+
+- [#1081](https://github.com/honojs/middleware/pull/1081) [`a3979bda8ff18e0855580b2f12d645d00aafdccd`](https://github.com/honojs/middleware/commit/a3979bda8ff18e0855580b2f12d645d00aafdccd) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: fix the type error
+
 ## 1.2.0
 
 ### Minor Changes
