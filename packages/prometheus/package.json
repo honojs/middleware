@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "hono": "^4.2.7",
     "prom-client": "^15.0.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",

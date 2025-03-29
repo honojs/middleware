@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "hono": "^4.6.10",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "vitest": "^3.0.8",
@@ -52,7 +51,7 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.1.0",
-    "@hono/zod-validator": "npm:0.4.2"
+    "@hono/zod-validator": "workspace:^"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -69,6 +69,7 @@
     "@typescript-eslint/parser": "^8.7.0",
     "@vitest/coverage-istanbul": "^3.0.8",
     "eslint": "^9.17.0",
+    "hono": "*",
     "npm-run-all2": "^6.2.2",
     "prettier": "^2.7.1",
     "tsup": "^8.4.0",
