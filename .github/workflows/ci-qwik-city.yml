@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/qwik-city
       - run: yarn workspace @hono/qwik-city build
       - run: yarn workspace @hono/qwik-city publint
+      - run: yarn eslint packages/qwik-city
       # - run: yarn test --coverage --project @hono/qwik-city
       # - uses: codecov/codecov-action@v5
       #   with:

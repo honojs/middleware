@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/esbuild-transpiler
       - run: yarn workspace @hono/esbuild-transpiler build
       - run: yarn workspace @hono/esbuild-transpiler publint
+      - run: yarn eslint packages/esbuild-transpiler
       - run: yarn test --coverage --project @hono/esbuild-transpiler
       - uses: codecov/codecov-action@v5
         with:

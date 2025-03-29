@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/swagger-ui
       - run: yarn workspace @hono/swagger-ui build
       - run: yarn workspace @hono/swagger-ui publint
+      - run: yarn eslint packages/swagger-ui
       - run: yarn test --coverage --project @hono/swagger-ui
       - uses: codecov/codecov-action@v5
         with:

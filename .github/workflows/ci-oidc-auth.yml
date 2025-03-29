@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/oidc-auth
       - run: yarn workspace @hono/oidc-auth build
       - run: yarn workspace @hono/oidc-auth publint
+      - run: yarn eslint packages/oidc-auth
       - run: yarn test --coverage --project @hono/oidc-auth
       - uses: codecov/codecov-action@v5
         with:

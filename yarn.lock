@@ -1983,7 +1983,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/eslint-config@workspace:packages/eslint-config":
+"@hono/eslint-config@workspace:*, @hono/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
   resolution: "@hono/eslint-config@workspace:packages/eslint-config"
   dependencies:
@@ -8413,6 +8413,7 @@ __metadata:
     "@changesets/cli": "npm:^2.26.0"
     "@cloudflare/vitest-pool-workers": "npm:^0.7.8"
     "@cloudflare/workers-types": "npm:^4.20230307.0"
+    "@hono/eslint-config": "workspace:*"
     "@ryoppippi/unplugin-typia": "npm:^1.2.0"
     "@types/node": "npm:^20.14.8"
     "@typescript-eslint/eslint-plugin": "npm:^8.7.0"

@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/oauth-providers
       - run: yarn workspace @hono/oauth-providers build
       - run: yarn workspace @hono/oauth-providers publint
+      - run: yarn eslint packages/oauth-providers
       - run: yarn test --coverage --project @hono/oauth-providers
       - uses: codecov/codecov-action@v5
         with:
