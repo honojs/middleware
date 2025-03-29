@@ -1,5 +1,15 @@
 # @hono/eslint-config
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1031](https://github.com/honojs/middleware/pull/1031) [`0d6c13b1a339dc17028548cde10ba7ef9e1dd7fd`](https://github.com/honojs/middleware/commit/0d6c13b1a339dc17028548cde10ba7ef9e1dd7fd) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - feat: updated `@hono/eslint-config` package
+
+  - upgrading eslint plugins
+  - removing @eslint/eslintrc and the legacy FlatCompat
+  - cleanup migration to typescript-eslint
+
 ## 1.0.2
 
 ### Patch Changes
