@@ -55,7 +55,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "casbin": "^5.30.0",
-    "hono": "^4.5.11",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "vitest": "^3.0.8"
