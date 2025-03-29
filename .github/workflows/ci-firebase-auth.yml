@@ -12,13 +12,18 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hono-version: [hono@^3.0.0]
+        # hono-version: ['hono@^3.0.0', 'hono@^4.0.0']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
+      - run: yarn add ${{ matrix.hono-version }} --mode=update-lockfile
       - run: yarn workspaces focus hono-middleware @hono/firebase-auth
-      - run: yarn workspace @hono/firebase-auth build
+      - run: yarn workspaces foreach --topological --recursive --from @hono/firebase-auth run build
       - run: yarn workspace @hono/firebase-auth publint
       - run: yarn eslint packages/firebase-auth
       - run: yarn test --coverage --project @hono/firebase-auth
