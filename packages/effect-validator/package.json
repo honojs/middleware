@@ -45,7 +45,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "effect": "3.10.0",
-    "hono": "^4.4.13",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "vitest": "^3.0.8"

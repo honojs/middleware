@@ -51,7 +51,6 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@cloudflare/workers-types": "^4.20240222.0",
     "firebase-tools": "^13.29.1",
-    "hono": "^4.2.4",
     "miniflare": "^3.20240208.0",
     "prettier": "^3.2.5",
     "publint": "^0.3.9",
