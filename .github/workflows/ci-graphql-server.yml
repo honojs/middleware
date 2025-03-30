@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/graphql-server
       - run: yarn workspace @hono/graphql-server build
       - run: yarn workspace @hono/graphql-server publint
+      - run: yarn eslint packages/graphql-server
       - run: yarn test --coverage --project @hono/graphql-server
       - uses: codecov/codecov-action@v5
         with:
