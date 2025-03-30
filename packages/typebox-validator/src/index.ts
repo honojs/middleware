@@ -75,6 +75,7 @@ export function tbValidator<
   hook?: Hook<Static<T>, E, P>,
   stripNonSchemaItems?: boolean
 ): MiddlewareHandler<E, P, V> {
+  // @ts-expect-error not typed well
   // Compile the provided schema once rather than per validation. This could be optimized further using a shared schema
   // compilation pool similar to the Fastify implementation.
   return validator(target, (unprocessedData, c) => {
