@@ -472,6 +472,18 @@ Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `
 
 If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
 
+When using the `.route()` method to mount a child OpenAPIHono app that uses path parameters, you should use the Hono *:param* syntax in the parent route path, rather than the OpenAPI *{param}* syntax:
+
+```
+const bookActionsApp = new OpenAPIHono()
+...
+// ❌ Incorrect: This will not match the route
+app.route('/books/{bookId}', bookActionsApp)
+
+// ✅ Using Hono parameter syntax
+app.route('/books/:bookId', bookActionsApp)
+```
+
 ### Header keys
 
 Header keys that you define in your schema must be in lowercase.
