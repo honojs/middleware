@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/hello
       - run: yarn workspace @hono/hello build
       - run: yarn workspace @hono/hello publint
+      - run: yarn eslint packages/hello
       - run: yarn test --coverage --project @hono/hello
       - uses: codecov/codecov-action@v5
         with:

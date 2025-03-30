@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/cloudflare-access
       - run: yarn workspace @hono/cloudflare-access build
       - run: yarn workspace @hono/cloudflare-access publint
+      - run: yarn eslint packages/cloudflare-access
       - run: yarn test --coverage --project @hono/cloudflare-access
       - uses: codecov/codecov-action@v5
         with:
