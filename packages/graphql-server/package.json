@@ -42,7 +42,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@cloudflare/workers-types": "^3.14.0",
-    "hono": "^4.0.2",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "vitest": "^3.0.8"

@@ -14,7 +14,7 @@ export interface VerifyFirebaseAuthConfig {
   projectId: string
   authorizationHeaderKey?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>) => KeyStorer
   disableErrorLog?: boolean
   firebaseEmulatorHost?: string
 }
@@ -102,7 +102,7 @@ export interface VerifySessionCookieFirebaseAuthConfig {
   projectId: string
   cookieName?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>) => KeyStorer
   firebaseEmulatorHost?: string
   redirects: {
     signIn: string
