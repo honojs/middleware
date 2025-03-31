@@ -1,5 +1,6 @@
 import { type } from 'arktype'
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { arktypeValidator } from '.'
 
@@ -53,6 +54,8 @@ describe('Basic', () => {
           message: string
           queryName: string | undefined
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }

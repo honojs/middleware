@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/prometheus
       - run: yarn workspace @hono/prometheus build
       - run: yarn workspace @hono/prometheus publint
+      - run: yarn workspace @hono/prometheus typecheck
       - run: yarn eslint packages/prometheus
       - run: yarn test --coverage --project @hono/prometheus
       - uses: codecov/codecov-action@v5

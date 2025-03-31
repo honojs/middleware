@@ -12,6 +12,7 @@
     "build": "tsup ./src/*.ts ./src/transpilers/*.ts --no-splitting --external esbuild-wasm,esbuild",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
@@ -76,6 +77,7 @@
     "esbuild-wasm": "^0.19.5",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   },
   "engines": {

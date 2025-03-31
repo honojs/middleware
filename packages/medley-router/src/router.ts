@@ -2,6 +2,8 @@
 // @ts-ignore
 import OriginalRouter from '@medley/router'
 // Should be exported from `hono/router`
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import type { Result, Router } from 'hono/dist/types/router'
 
 export class MedleyRouter<T> implements Router<T> {

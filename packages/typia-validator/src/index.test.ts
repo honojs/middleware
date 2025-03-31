@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { tags } from 'typia'
 import typia from 'typia'
@@ -36,6 +37,8 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }

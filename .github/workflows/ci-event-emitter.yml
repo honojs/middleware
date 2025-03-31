@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/event-emitter
       - run: yarn workspace @hono/event-emitter build
       - run: yarn workspace @hono/event-emitter publint
+      - run: yarn workspace @hono/event-emitter typecheck
       - run: yarn eslint packages/event-emitter
       - run: yarn test --coverage --project @hono/event-emitter
       - uses: codecov/codecov-action@v5

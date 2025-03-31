@@ -1,4 +1,6 @@
 import { serve } from '@hono/node-server'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
 import type { WSMessageReceive } from 'hono/ws'

@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/conform-validator
       - run: yarn workspace @hono/conform-validator build
       - run: yarn workspace @hono/conform-validator publint
+      - run: yarn workspace @hono/conform-validator typecheck
       - run: yarn eslint packages/conform-validator
       - run: yarn test --coverage --project @hono/conform-validator
       - uses: codecov/codecov-action@v5

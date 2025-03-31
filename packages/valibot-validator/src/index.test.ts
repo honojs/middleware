@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { StatusCode } from 'hono/utils/http-status'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
 import { vValidator } from '.'
@@ -58,8 +58,8 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
-        status: StatusCode
         outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -217,8 +217,8 @@ describe('Async', () => {
           success: boolean
           message: string
         }
-        status: StatusCode
         outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }

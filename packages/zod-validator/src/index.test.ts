@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
 import { z } from 'zod'
@@ -58,6 +59,8 @@ describe('Basic', () => {
           message: string
           queryName: string | undefined
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -129,6 +132,8 @@ describe('coerce', () => {
         output: {
           page: number
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -333,6 +338,8 @@ describe('Only Types', () => {
           output: {
             order: 'asc' | 'desc'
           }
+          outputFormat: 'json'
+          status: ContentfulStatusCode
         }
       }
     }
@@ -363,6 +370,8 @@ describe('Case-Insensitive Headers', () => {
             header: z.infer<typeof headerSchema>
           }
           output: z.infer<typeof headerSchema>
+          outputFormat: 'json'
+          status: ContentfulStatusCode
         }
       }
     }

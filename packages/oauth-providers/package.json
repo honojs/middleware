@@ -13,6 +13,7 @@
     "build": "tsup ./src/index.ts ./src/providers/**/index.ts ./src/providers/**/types.ts --no-splitting",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
@@ -70,6 +71,7 @@
     "msw": "^2.0.11",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   },
   "engines": {

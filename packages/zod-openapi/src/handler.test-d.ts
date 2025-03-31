@@ -1,7 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { MiddlewareToHandlerType, OfHandlerType, RouteHandler } from '.'
-
 import { OpenAPIHono, createRoute, z } from '.'
 
 describe('supports async handler', () => {

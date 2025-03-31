@@ -13,6 +13,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
@@ -41,10 +42,9 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@hono/node-server": "^1.11.1",
-    "@types/node": "^20.14.8",
-    "@types/ws": "^8.18.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   },
   "dependencies": {

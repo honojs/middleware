@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "outDir": "../../dist/out-tsc/packages/react-renderer",
+    "types": ["vitest/globals"]
+  },
+  "include": ["**/*.test.tsx"],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

@@ -12,6 +12,7 @@
   "scripts": {
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
@@ -49,12 +50,12 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@cloudflare/workers-types": "^4.20240222.0",
     "firebase-tools": "^13.29.1",
     "miniflare": "^3.20240208.0",
     "prettier": "^3.2.5",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   }
 }

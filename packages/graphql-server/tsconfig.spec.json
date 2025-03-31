@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/packages/graphql-server",
+    "types": ["vitest/globals"]
+  },
+  "exclude": ["bun_test"],
+
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

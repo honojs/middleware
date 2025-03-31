@@ -23,7 +23,6 @@ const queryPaginationSchema = type({
 })
 
 const querySortSchema = type({
-   
   order: "'asc'|'desc'",
 })
 

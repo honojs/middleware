@@ -815,24 +815,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workers-types@npm:^3.14.0":
-  version: 3.19.0
-  resolution: "@cloudflare/workers-types@npm:3.19.0"
-  checksum: 3b899caeb7c8b5fcf9b7c4fb5cacedcd94bae5be6861ee5122a74029ae4119c9f5194359c7a9327bc4f860e8de961b37e29c67089c7271741bf507034ba86e89
-  languageName: node
-  linkType: hard
-
 "@cloudflare/workers-types@npm:^4.20230307.0":
   version: 4.20250321.0
   resolution: "@cloudflare/workers-types@npm:4.20250321.0"
   checksum: 15f89a9b29e55727dc9d3c5270eb01da9fbd024eb5d7f6ea1c5437a13d5ee1263d34e8d9dd4145e9e3a274597d23d5d12cf0b43ce7c9c5138edd0782fefc417a
-  languageName: node
-  linkType: hard
-
-"@cloudflare/workers-types@npm:^4.20240222.0":
-  version: 4.20240222.0
-  resolution: "@cloudflare/workers-types@npm:4.20240222.0"
-  checksum: b1b4af08fae1040112e9acd38e6d762c8537a2548d816da4d3bb9a3a16cd380ffd8abf802b5a7ac38ca86676ccb5744046d637a3601f1e93a7299f06db7df93e
   languageName: node
   linkType: hard
 
@@ -1651,7 +1637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/eslintrc@npm:^3.1.0, @eslint/eslintrc@npm:^3.3.1":
+"@eslint/eslintrc@npm:^3.3.1":
   version: 3.3.1
   resolution: "@eslint/eslintrc@npm:3.3.1"
   dependencies:
@@ -1805,6 +1791,7 @@ __metadata:
     ajv: "npm:>=8.12.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     ajv: ">=8.12.0"
@@ -1820,6 +1807,7 @@ __metadata:
     arktype: "npm:^2.0.0-dev.14"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     arktype: ^2.0.0-dev.14
@@ -1837,6 +1825,7 @@ __metadata:
     publint: "npm:^0.3.9"
     react: "npm:^18.2.0"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     "@auth/core": 0.*
@@ -1853,6 +1842,7 @@ __metadata:
     "@types/bun": "npm:^1.0.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -1867,6 +1857,7 @@ __metadata:
     casbin: "npm:^5.30.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     casbin: ">=5.30.0"
@@ -1884,6 +1875,7 @@ __metadata:
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.9.0"
@@ -1900,6 +1892,7 @@ __metadata:
     publint: "npm:^0.3.9"
     react: "npm:^18.2.0"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     "@clerk/backend": ^1.0.0
@@ -1912,9 +1905,9 @@ __metadata:
   resolution: "@hono/cloudflare-access@workspace:packages/cloudflare-access"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@cloudflare/workers-types": "npm:^4.20230307.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -1932,6 +1925,7 @@ __metadata:
     conform-to-valibot: "npm:^1.10.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     valibot: "npm:^0.36.0"
     vitest: "npm:^3.0.8"
     yup: "npm:^1.4.0"
@@ -1950,6 +1944,7 @@ __metadata:
     effect: "npm:3.10.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     effect: ">=3.10.0"
@@ -1966,6 +1961,7 @@ __metadata:
     esbuild-wasm: "npm:^0.19.5"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.9.2"
@@ -1976,7 +1972,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/eslint-config@workspace:packages/eslint-config"
   dependencies:
-    "@eslint/eslintrc": "npm:^3.1.0"
     "@eslint/js": "npm:^9.10.0"
     eslint: "npm:^9.23.0"
     eslint-config-prettier: "npm:^10.1.1"
@@ -1998,6 +1993,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2009,13 +2005,13 @@ __metadata:
   resolution: "@hono/firebase-auth@workspace:packages/firebase-auth"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@cloudflare/workers-types": "npm:^4.20240222.0"
     firebase-auth-cloudflare-workers: "npm:^2.0.6"
     firebase-tools: "npm:^13.29.1"
     miniflare: "npm:^3.20240208.0"
     prettier: "npm:^3.2.5"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2027,10 +2023,10 @@ __metadata:
   resolution: "@hono/graphql-server@workspace:packages/graphql-server"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@cloudflare/workers-types": "npm:^3.14.0"
     graphql: "npm:^16.5.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2044,6 +2040,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2058,6 +2055,7 @@ __metadata:
     "@medley/router": "npm:^0.2.1"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.8.0"
@@ -2079,10 +2077,9 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@hono/node-server": "npm:^1.11.1"
-    "@types/node": "npm:^20.14.8"
-    "@types/ws": "npm:^8.18.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
     ws: "npm:^8.17.0"
   peerDependencies:
@@ -2099,6 +2096,7 @@ __metadata:
     msw: "npm:^2.0.11"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.*"
@@ -2115,6 +2113,7 @@ __metadata:
     oauth4webapi: "npm:^2.6.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.*"
@@ -2132,6 +2131,7 @@ __metadata:
     "@opentelemetry/semantic-conventions": "npm:^1.28.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2146,6 +2146,7 @@ __metadata:
     prom-client: "npm:^15.0.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.*"
@@ -2162,6 +2163,7 @@ __metadata:
     "@builder.io/qwik-city": "npm:^1.2.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
   peerDependencies:
     "@builder.io/qwik": ^1.2.0
     "@builder.io/qwik-city": ^1.2.0
@@ -2176,6 +2178,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
   peerDependencies:
     hono: ">=4.5.*"
   languageName: unknown
@@ -2193,6 +2196,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2209,6 +2213,7 @@ __metadata:
     publint: "npm:^0.3.9"
     toucan-js: "npm:^4.0.0"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.*"
@@ -2224,6 +2229,7 @@ __metadata:
     arktype: "npm:^2.0.0-rc.26"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     valibot: "npm:^1.0.0-beta.9"
     vitest: "npm:^3.0.8"
     zod: "npm:^3.24.0"
@@ -2240,6 +2246,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2254,6 +2261,7 @@ __metadata:
     "@types/swagger-ui-dist": "npm:^3.30.5"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: "*"
@@ -2268,6 +2276,7 @@ __metadata:
     "@trpc/server": "npm:^11.0.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
     zod: "npm:^3.20.2"
   peerDependencies:
@@ -2285,6 +2294,7 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.4.0"
     tsyringe: "npm:^4.8.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=4.*"
@@ -2300,6 +2310,7 @@ __metadata:
     "@sinclair/typebox": "npm:^0.31.15"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
     "@sinclair/typebox": ">=0.31.15 <1"
@@ -2315,6 +2326,7 @@ __metadata:
     "@ryoppippi/unplugin-typia": "npm:^2.1.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     typia: "npm:^8.0.3"
     vitest: "npm:^3.0.8"
   peerDependencies:
@@ -2330,6 +2342,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     valibot: "npm:^1.0.0"
     vitest: "npm:^3.0.8"
   peerDependencies:
@@ -2347,6 +2360,7 @@ __metadata:
     "@hono/zod-validator": "workspace:^"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
     yaml: "npm:^2.4.3"
     zod: "npm:^3.22.1"
@@ -2363,6 +2377,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
     zod: "npm:^3.22.4"
   peerDependencies:
@@ -3886,12 +3901,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.14.8":
-  version: 20.17.27
-  resolution: "@types/node@npm:20.17.27"
+"@types/node@npm:^20.17.28":
+  version: 20.17.28
+  resolution: "@types/node@npm:20.17.28"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 09f30c65e5f2a082eddf26a7ffa859bf2b77e1123829309823e7691227fd5a691b30cd3ac413d65829aa25c1eebd2f717bed80f2f8a7f83aaa6c2c3a047b3504
+  checksum: d77214e54d8f303d0a79fc896f8c4267b057fbc774448f6d09d24874d521293cd6036292e79b2791a6aef18895bd80dc58c1853bd8a0cf261b08500083f07273
   languageName: node
   linkType: hard
 
@@ -8370,7 +8385,8 @@ __metadata:
     "@cloudflare/workers-types": "npm:^4.20230307.0"
     "@hono/eslint-config": "workspace:*"
     "@ryoppippi/unplugin-typia": "npm:^1.2.0"
-    "@types/node": "npm:^20.14.8"
+    "@types/node": "npm:^20.17.28"
+    "@types/ws": "npm:^8.18.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.7.0"
     "@typescript-eslint/parser": "npm:^8.7.0"
     "@vitest/coverage-istanbul": "npm:^3.0.8"

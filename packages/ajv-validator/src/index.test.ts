@@ -1,5 +1,6 @@
-import type { JSONSchemaType, type ErrorObject } from 'ajv'
+import type { JSONSchemaType, ErrorObject } from 'ajv'
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { ajvValidator } from '.'
 
@@ -40,6 +41,8 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
