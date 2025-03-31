@@ -29,6 +29,7 @@ export const arktypeValidator = <
   schema: T,
   hook?: Hook<T['infer'], E, P>
 ): MiddlewareHandler<E, P, V> =>
+  // @ts-expect-error not typed well
   validator(target, (value, c) => {
     const out = schema(value)
 

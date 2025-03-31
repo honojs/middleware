@@ -46,7 +46,6 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@standard-schema/spec": "1.0.0",
     "arktype": "^2.0.0-rc.26",
-    "hono": "^4.0.10",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "valibot": "^1.0.0-beta.9",

@@ -29,6 +29,7 @@ export const typiaValidator = <
   validate: T,
   hook?: Hook<O, E, P>
 ): MiddlewareHandler<E, P, V> =>
+  // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = validate(value)
 

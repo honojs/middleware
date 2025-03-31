@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/zod-openapi
-      - run: yarn workspace @hono/zod-openapi build
+      - run: yarn workspaces foreach --topological --recursive --from @hono/zod-openapi run build
       - run: yarn workspace @hono/zod-openapi publint
       - run: yarn eslint packages/zod-openapi
       - run: yarn test --coverage --project @hono/zod-openapi
