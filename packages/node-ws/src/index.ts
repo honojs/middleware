@@ -25,7 +25,10 @@ export interface NodeWebSocketInit {
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
-  const waiterMap = new Map<IncomingMessage, { resolve: (ws: WebSocket) => void, response: Response }>()
+  const waiterMap = new Map<
+    IncomingMessage,
+    { resolve: (ws: WebSocket) => void; response: Response }
+  >()
 
   wss.on('connection', (ws, request) => {
     const waiter = waiterMap.get(request)
@@ -64,9 +67,9 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         if (!waiter || waiter.response !== response) {
           socket.end(
             'HTTP/1.1 400 Bad Request\r\n' +
-            'Connection: close\r\n' +
-            'Content-Length: 0\r\n' +
-            '\r\n'
+              'Connection: close\r\n' +
+              'Content-Length: 0\r\n' +
+              '\r\n'
           )
           waiterMap.delete(request)
           return
@@ -113,7 +116,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
             for (const data of datas) {
               events.onMessage?.(
                 new MessageEvent('message', {
-                  data: isBinary ? data : data.toString('utf-8'),
+                  data: isBinary
+                    ? data instanceof ArrayBuffer
+                      ? data
+                      : data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
+                    : data.toString('utf-8'),
                 }),
                 ctx
               )
