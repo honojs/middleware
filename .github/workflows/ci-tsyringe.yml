@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/tsyringe
-      - run: yarn workspace @hono/tsyringe build
-      - run: yarn workspace @hono/tsyringe publint
-      - run: yarn workspace @hono/tsyringe typecheck
-      - run: yarn eslint packages/tsyringe
-      - run: yarn test --coverage --project @hono/tsyringe
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/tsyringe'
+      - run: bun --filter './packages/tsyringe' build
+      - run: bun --filter './packages/tsyringe' publint
+      - run: bun --filter './packages/tsyringe' typecheck
+      - run: bun eslint packages/tsyringe
+      - run: bun vitest --coverage --project @hono/tsyringe
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

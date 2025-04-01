@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "tsup ./src/index.ts",
-    "prepack": "yarn build",
+    "prepack": "bun run build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"

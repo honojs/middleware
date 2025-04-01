@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/auth-js
-      - run: yarn workspace @hono/auth-js build
-      - run: yarn workspace @hono/auth-js publint
-      - run: yarn workspace @hono/auth-js typecheck
-      - run: yarn eslint packages/auth-js
-      - run: yarn test --coverage --project @hono/auth-js
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/auth-js'
+      - run: bun --filter './packages/auth-js' build
+      - run: bun --filter './packages/auth-js' publint
+      - run: bun --filter './packages/auth-js' typecheck
+      - run: bun eslint packages/auth-js
+      - run: bun vitest --coverage --project @hono/auth-js
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
