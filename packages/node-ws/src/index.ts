@@ -119,7 +119,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
                   data: isBinary
                     ? data instanceof ArrayBuffer
                       ? data
-                      : data.buffer
+                      : data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
                     : data.toString('utf-8'),
                 }),
                 ctx

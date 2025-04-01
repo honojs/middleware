@@ -201,11 +201,11 @@ describe('WebSocket helper', () => {
     ws.send(binaryData)
 
     const receivedMessage = await mainPromise
-    expect(receivedMessage).toBeInstanceOf(Buffer)
-    expect((receivedMessage as unknown as Buffer).byteLength).toBe(binaryData.length)
+    expect(receivedMessage).toBeInstanceOf(ArrayBuffer)
+    expect((receivedMessage as ArrayBuffer).byteLength).toBe(binaryData.length)
 
     binaryData.forEach((val, idx) => {
-      expect((receivedMessage as unknown as Buffer).at(idx)).toBe(val)
+      expect(new Uint8Array((receivedMessage as ArrayBuffer)).at(idx)).toBe(val)
     })
   })
 
