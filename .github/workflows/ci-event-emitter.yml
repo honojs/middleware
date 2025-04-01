@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/event-emitter
       - run: bun run --filter @hono/event-emitter build
       - run: bun run --filter @hono/event-emitter publint
       - run: bun eslint packages/event-emitter

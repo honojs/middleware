@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/zod-openapi
       - run: yarn workspaces foreach --topological --recursive --from @hono/zod-openapi run build
       - run: bun run --filter @hono/zod-openapi publint
       - run: bun eslint packages/zod-openapi

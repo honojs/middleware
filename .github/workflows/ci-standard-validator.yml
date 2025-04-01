@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/standard-validator
       - run: bun run --filter @hono/standard-validator build
       - run: bun run --filter @hono/standard-validator publint
       - run: bun eslint packages/standard-validator

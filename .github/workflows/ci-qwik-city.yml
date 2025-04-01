@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/qwik-city
       - run: bun run --filter @hono/qwik-city build
       - run: bun run --filter @hono/qwik-city publint
       - run: bun eslint packages/qwik-city

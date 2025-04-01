@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/oauth-providers
       - run: bun run --filter @hono/oauth-providers build
       - run: bun run --filter @hono/oauth-providers publint
       - run: bun eslint packages/oauth-providers
