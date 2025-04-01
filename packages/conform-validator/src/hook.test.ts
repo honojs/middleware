@@ -1,6 +1,6 @@
 import { parseWithZod } from '@conform-to/zod'
 import { Hono } from 'hono'
-import { ClientRequestOptions, hc } from 'hono/client'
+import { type ClientRequestOptions, hc } from 'hono/client'
 import { vi } from 'vitest'
 import * as z from 'zod'
 import { conformValidator } from '.'
