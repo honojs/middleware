@@ -20,7 +20,7 @@ jobs:
       - run: bun run --filter @hono/ajv-validator build
       - run: bun run --filter @hono/ajv-validator publint
       - run: bun eslint packages/ajv-validator
-      - run: bun test --coverage --project @hono/ajv-validator
+      - run: bun run test --coverage --project @hono/ajv-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

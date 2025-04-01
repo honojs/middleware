@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/clerk-auth build
       - run: bun run --filter @hono/clerk-auth publint
       - run: bun eslint packages/clerk-auth
-      - run: bun test --coverage --project @hono/clerk-auth
+      - run: bun run test --coverage --project @hono/clerk-auth
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

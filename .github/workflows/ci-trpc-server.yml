@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/trpc-server build
       - run: bun run --filter @hono/trpc-server publint
       - run: bun eslint packages/trpc-server
-      - run: bun test --coverage --project @hono/trpc-server
+      - run: bun run test --coverage --project @hono/trpc-server
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

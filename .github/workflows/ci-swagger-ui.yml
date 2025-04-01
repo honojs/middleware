@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/swagger-ui build
       - run: bun run --filter @hono/swagger-ui publint
       - run: bun eslint packages/swagger-ui
-      - run: bun test --coverage --project @hono/swagger-ui
+      - run: bun run test --coverage --project @hono/swagger-ui
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

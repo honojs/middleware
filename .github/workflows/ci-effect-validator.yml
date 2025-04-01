@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/effect-validator build
       - run: bun run --filter @hono/effect-validator publint
       - run: bun eslint packages/effect-validator
-      - run: bun test --coverage --project @hono/effect-validator
+      - run: bun run test --coverage --project @hono/effect-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

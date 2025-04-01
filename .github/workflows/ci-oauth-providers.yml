@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/oauth-providers build
       - run: bun run --filter @hono/oauth-providers publint
       - run: bun eslint packages/oauth-providers
-      - run: bun test --coverage --project @hono/oauth-providers
+      - run: bun run test --coverage --project @hono/oauth-providers
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

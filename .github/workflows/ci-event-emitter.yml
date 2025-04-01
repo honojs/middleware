@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/event-emitter build
       - run: bun run --filter @hono/event-emitter publint
       - run: bun eslint packages/event-emitter
-      - run: bun test --coverage --project @hono/event-emitter
+      - run: bun run test --coverage --project @hono/event-emitter
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

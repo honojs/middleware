@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/zod-validator build
       - run: bun run --filter @hono/zod-validator publint
       - run: bun eslint packages/zod-validator
-      - run: bun test --coverage --project @hono/zod-validator
+      - run: bun run test --coverage --project @hono/zod-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/sentry build
       - run: bun run --filter @hono/sentry publint
       - run: bun eslint packages/sentry
-      - run: bun test --coverage --project @hono/sentry
+      - run: bun run test --coverage --project @hono/sentry
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

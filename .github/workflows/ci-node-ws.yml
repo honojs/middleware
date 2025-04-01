@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/node-ws build
       - run: bun run --filter @hono/node-ws publint
       - run: bun eslint packages/node-ws
-      - run: bun test --coverage --project @hono/node-ws
+      - run: bun run test --coverage --project @hono/node-ws
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

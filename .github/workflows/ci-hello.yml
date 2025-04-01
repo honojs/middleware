@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/hello build
       - run: bun run --filter @hono/hello publint
       - run: bun eslint packages/hello
-      - run: bun test --coverage --project @hono/hello
+      - run: bun run test --coverage --project @hono/hello
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

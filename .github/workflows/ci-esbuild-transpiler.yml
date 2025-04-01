@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/esbuild-transpiler build
       - run: bun run --filter @hono/esbuild-transpiler publint
       - run: bun eslint packages/esbuild-transpiler
-      - run: bun test --coverage --project @hono/esbuild-transpiler
+      - run: bun run test --coverage --project @hono/esbuild-transpiler
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

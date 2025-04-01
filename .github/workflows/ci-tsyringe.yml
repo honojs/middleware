@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/tsyringe build
       - run: bun run --filter @hono/tsyringe publint
       - run: bun eslint packages/tsyringe
-      - run: bun test --coverage --project @hono/tsyringe
+      - run: bun run test --coverage --project @hono/tsyringe
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

@@ -21,7 +21,7 @@ jobs:
       - run: yarn workspaces foreach --topological --recursive --from @hono/zod-openapi run build
       - run: bun run --filter @hono/zod-openapi publint
       - run: bun eslint packages/zod-openapi
-      - run: bun test --coverage --project @hono/zod-openapi
+      - run: bun run test --coverage --project @hono/zod-openapi
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

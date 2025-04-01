@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/cloudflare-access build
       - run: bun run --filter @hono/cloudflare-access publint
       - run: bun eslint packages/cloudflare-access
-      - run: bun test --coverage --project @hono/cloudflare-access
+      - run: bun run test --coverage --project @hono/cloudflare-access
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/react-renderer build
       - run: bun run --filter @hono/react-renderer publint
       - run: bun eslint packages/react-renderer
-      - run: bun test --coverage --project @hono/react-renderer
+      - run: bun run test --coverage --project @hono/react-renderer
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

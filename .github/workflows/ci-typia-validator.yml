@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/typia-validator build
       - run: bun run --filter @hono/typia-validator publint
       - run: bun eslint packages/typia-validator
-      - run: bun test --coverage --project @hono/typia-validator
+      - run: bun run test --coverage --project @hono/typia-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

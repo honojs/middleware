@@ -20,7 +20,7 @@ jobs:
       - run: bun run --filter @hono/arktype-validator build
       - run: bun run --filter @hono/arktype-validator publint
       - run: bun eslint packages/arktype-validator
-      - run: bun test --coverage --project @hono/arktype-validator
+      - run: bun run test --coverage --project @hono/arktype-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

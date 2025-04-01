@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/medley-router build
       - run: bun run --filter @hono/medley-router publint
       - run: bun eslint packages/medley-router
-      - run: bun test --coverage --project @hono/medley-router
+      - run: bun run test --coverage --project @hono/medley-router
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/oidc-auth build
       - run: bun run --filter @hono/oidc-auth publint
       - run: bun eslint packages/oidc-auth
-      - run: bun test --coverage --project @hono/oidc-auth
+      - run: bun run test --coverage --project @hono/oidc-auth
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

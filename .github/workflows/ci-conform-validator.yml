@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/conform-validator build
       - run: bun run --filter @hono/conform-validator publint
       - run: bun eslint packages/conform-validator
-      - run: bun test --coverage --project @hono/conform-validator
+      - run: bun run test --coverage --project @hono/conform-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

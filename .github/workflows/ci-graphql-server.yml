@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/graphql-server build
       - run: bun run --filter @hono/graphql-server publint
       - run: bun eslint packages/graphql-server
-      - run: bun test --coverage --project @hono/graphql-server
+      - run: bun run test --coverage --project @hono/graphql-server
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

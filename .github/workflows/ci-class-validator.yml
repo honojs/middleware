@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/class-validator build
       - run: bun run --filter @hono/class-validator publint
       - run: bun eslint packages/class-validator
-      - run: bun test --coverage --project @hono/class-validator
+      - run: bun run test --coverage --project @hono/class-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

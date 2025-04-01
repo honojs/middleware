@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/otel build
       - run: bun run --filter @hono/otel publint
       - run: bun eslint packages/otel
-      - run: bun test --coverage --project @hono/otel
+      - run: bun run test --coverage --project @hono/otel
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

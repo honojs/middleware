@@ -21,7 +21,7 @@ jobs:
       - run: bun run --filter @hono/auth-js build
       - run: bun run --filter @hono/auth-js publint
       - run: bun eslint packages/auth-js
-      - run: bun test --coverage --project @hono/auth-js
+      - run: bun run test --coverage --project @hono/auth-js
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
