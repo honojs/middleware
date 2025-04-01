@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/typebox-validator
-      - run: yarn workspace @hono/typebox-validator build
-      - run: yarn workspace @hono/typebox-validator publint
-      - run: yarn workspace @hono/typebox-validator typecheck
-      - run: yarn eslint packages/typebox-validator
-      - run: yarn test --coverage --project @hono/typebox-validator
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/typebox-validator'
+      - run: bun --filter './packages/typebox-validator' build
+      - run: bun --filter './packages/typebox-validator' publint
+      - run: bun --filter './packages/typebox-validator' typecheck
+      - run: bun eslint packages/typebox-validator
+      - run: bun vitest --coverage --project @hono/typebox-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

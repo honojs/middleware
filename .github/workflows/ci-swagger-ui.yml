@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/swagger-ui
-      - run: yarn workspace @hono/swagger-ui build
-      - run: yarn workspace @hono/swagger-ui publint
-      - run: yarn workspace @hono/swagger-ui typecheck
-      - run: yarn eslint packages/swagger-ui
-      - run: yarn test --coverage --project @hono/swagger-ui
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/swagger-ui'
+      - run: bun --filter './packages/swagger-ui' build
+      - run: bun --filter './packages/swagger-ui' publint
+      - run: bun --filter './packages/swagger-ui' typecheck
+      - run: bun eslint packages/swagger-ui
+      - run: bun vitest --coverage --project @hono/swagger-ui
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
