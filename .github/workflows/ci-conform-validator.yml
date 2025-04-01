@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/conform-validator
-      - run: yarn workspace @hono/conform-validator build
-      - run: yarn workspace @hono/conform-validator publint
-      - run: yarn eslint packages/conform-validator
-      - run: yarn test --coverage --project @hono/conform-validator
+      - run: bun run --filter @hono/conform-validator build
+      - run: bun run --filter @hono/conform-validator publint
+      - run: bun eslint packages/conform-validator
+      - run: bun test --coverage --project @hono/conform-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

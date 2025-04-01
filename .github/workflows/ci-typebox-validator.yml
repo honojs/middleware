@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/typebox-validator
-      - run: yarn workspace @hono/typebox-validator build
-      - run: yarn workspace @hono/typebox-validator publint
-      - run: yarn eslint packages/typebox-validator
-      - run: yarn test --coverage --project @hono/typebox-validator
+      - run: bun run --filter @hono/typebox-validator build
+      - run: bun run --filter @hono/typebox-validator publint
+      - run: bun eslint packages/typebox-validator
+      - run: bun test --coverage --project @hono/typebox-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

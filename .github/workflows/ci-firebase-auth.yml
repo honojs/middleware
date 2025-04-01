@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/firebase-auth
-      - run: yarn workspace @hono/firebase-auth build
-      - run: yarn workspace @hono/firebase-auth publint
-      - run: yarn eslint packages/firebase-auth
-      - run: yarn test --coverage --project @hono/firebase-auth
+      - run: bun run --filter @hono/firebase-auth build
+      - run: bun run --filter @hono/firebase-auth publint
+      - run: bun eslint packages/firebase-auth
+      - run: bun test --coverage --project @hono/firebase-auth
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

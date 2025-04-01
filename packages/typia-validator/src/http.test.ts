@@ -49,10 +49,7 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: {
-            name: string
-            age: number
-          }
+          json: JsonSchema
         } & {
           query: {
             name?: string | undefined
@@ -72,8 +69,7 @@ describe('Basic', () => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual extends Expected ? true : false>().toEqualTypeOf<true>()
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
@@ -162,8 +158,7 @@ describe('transform', () => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual>().toMatchObjectType<Expected>
 
   it('Should return 200 response', async () => {
     const res = await app.request('/page?page=1', {
@@ -420,6 +415,6 @@ describe('Case-Insensitive Headers', () => {
         }
       }
     }
-    type verify = Expect<Equal<Expected, Actual>>
+    expectTypeOf<Actual>().toMatchObjectType<Expected>()
   })
 })

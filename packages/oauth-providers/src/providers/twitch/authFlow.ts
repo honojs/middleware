@@ -77,13 +77,13 @@ export class AuthFlow {
 
     const url = 'https://id.twitch.tv/oauth2/token'
 
-    const response = (await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: parsedOptions,
-    }).then((res) => res.json() as Promise<TwitchTokenResponse>))
+    }).then((res) => res.json() as Promise<TwitchTokenResponse>)
 
     if ('error' in response) {
       throw new HTTPException(400, { message: response.error })

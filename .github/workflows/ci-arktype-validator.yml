@@ -17,11 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/arktype-validator
-      - run: yarn workspace @hono/arktype-validator build
-      - run: yarn workspace @hono/arktype-validator publint
-      - run: yarn eslint packages/arktype-validator
-      - run: yarn test --coverage --project @hono/arktype-validator
+      - run: bun run --filter @hono/arktype-validator build
+      - run: bun run --filter @hono/arktype-validator publint
+      - run: bun eslint packages/arktype-validator
+      - run: bun test --coverage --project @hono/arktype-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

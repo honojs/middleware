@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/react-compat
-      - run: yarn workspace @hono/react-compat build
-      - run: yarn workspace @hono/react-compat publint
-      - run: yarn eslint packages/react-compat
-      # - run: yarn test --coverage --project @hono/react-compat
+      - run: bun run --filter @hono/react-compat build
+      - run: bun run --filter @hono/react-compat publint
+      - run: bun eslint packages/react-compat
+      # - run: bun test --coverage --project @hono/react-compat
       # - uses: codecov/codecov-action@v5
       #   with:
       #     fail_ci_if_error: true

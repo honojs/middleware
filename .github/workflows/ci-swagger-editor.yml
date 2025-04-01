@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/swagger-editor
-      - run: yarn workspace @hono/swagger-editor build
-      - run: yarn workspace @hono/swagger-editor publint
-      - run: yarn eslint packages/swagger-editor
-      - run: yarn test --coverage --project @hono/swagger-editor
+      - run: bun run --filter @hono/swagger-editor build
+      - run: bun run --filter @hono/swagger-editor publint
+      - run: bun eslint packages/swagger-editor
+      - run: bun test --coverage --project @hono/swagger-editor
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

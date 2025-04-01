@@ -2,8 +2,6 @@ import { parseWithValibot } from 'conform-to-valibot'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import type { ExtractSchema, ParsedFormValue } from 'hono/types'
-import type { StatusCode } from 'hono/utils/http-status'
-import type { Equal, Expect } from 'hono/utils/types'
 import * as v from 'valibot'
 import { conformValidator } from '.'
 
@@ -53,18 +51,16 @@ describe('Validate requests using a Valibot schema', () => {
             message: string
           }
           outputFormat: 'json'
-          status: StatusCode
         }
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type verify = Expect<Equal<Expected, Actual>>
+    expectTypeOf<Actual>().toMatchObjectType<Expected>()
   })
 
   it('Should return 200 response', async () => {
     const client = hc<typeof route>('http://localhost', {
-      fetch: (req, init) => {
+      fetch: (req: RequestInfo | URL, init?: RequestInit) => {
         return app.request(req, init)
       },
     })

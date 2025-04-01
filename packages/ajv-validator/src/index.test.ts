@@ -1,5 +1,6 @@
 import type { JSONSchemaType, type ErrorObject } from 'ajv'
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { ajvValidator } from '.'
 
@@ -40,11 +41,13 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
 
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual>().toEqualTypeOf<Expected>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author', {

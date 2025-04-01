@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/sentry
-      - run: yarn workspace @hono/sentry build
-      - run: yarn workspace @hono/sentry publint
-      - run: yarn eslint packages/sentry
-      - run: yarn test --coverage --project @hono/sentry
+      - run: bun run --filter @hono/sentry build
+      - run: bun run --filter @hono/sentry publint
+      - run: bun eslint packages/sentry
+      - run: bun test --coverage --project @hono/sentry
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/otel
-      - run: yarn workspace @hono/otel build
-      - run: yarn workspace @hono/otel publint
-      - run: yarn eslint packages/otel
-      - run: yarn test --coverage --project @hono/otel
+      - run: bun run --filter @hono/otel build
+      - run: bun run --filter @hono/otel publint
+      - run: bun eslint packages/otel
+      - run: bun test --coverage --project @hono/otel
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

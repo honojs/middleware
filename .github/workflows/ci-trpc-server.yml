@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/trpc-server
-      - run: yarn workspace @hono/trpc-server build
-      - run: yarn workspace @hono/trpc-server publint
-      - run: yarn eslint packages/trpc-server
-      - run: yarn test --coverage --project @hono/trpc-server
+      - run: bun run --filter @hono/trpc-server build
+      - run: bun run --filter @hono/trpc-server publint
+      - run: bun eslint packages/trpc-server
+      - run: bun test --coverage --project @hono/trpc-server
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

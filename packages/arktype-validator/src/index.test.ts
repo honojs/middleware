@@ -1,6 +1,6 @@
 import { type } from 'arktype'
 import { Hono } from 'hono'
-import type { Equal, Expect } from 'hono/utils/types'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import { arktypeValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,12 +53,12 @@ describe('Basic', () => {
           message: string
           queryName: string | undefined
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual>().toEqualTypeOf<Expected>()
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {

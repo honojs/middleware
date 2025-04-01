@@ -58,14 +58,11 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
-        status: StatusCode
         outputFormat: 'json'
       }
     }
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual extends Expected ? true : false>().toEqualTypeOf<true>()
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?search=hello', {
@@ -217,14 +214,12 @@ describe('Async', () => {
           success: boolean
           message: string
         }
-        status: StatusCode
         outputFormat: 'json'
       }
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual extends Expected ? true : false>().toEqualTypeOf<true>()
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?search=hello', {

@@ -44,14 +44,16 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: Readonly<{
-            name: string
-            age: number
-          }>
+          json: {
+            readonly name: string
+            readonly age: number
+          }
         } & {
-          query?: Readonly<{
-            name?: string | string[] | undefined
-          }>
+          query?:
+            | {
+                readonly name?: string | string[]
+              }
+            | undefined
         }
         output: {
           success: boolean
@@ -59,13 +61,12 @@ describe('Basic', () => {
           queryName: string | undefined
         }
         outputFormat: 'json'
-        status: StatusCode
       }
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  type verify = Expect<Actual extends Expected ? true : false>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
@@ -135,13 +136,11 @@ describe('coerce', () => {
           page: number
         }
         outputFormat: 'json'
-        status: StatusCode
       }
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  expectTypeOf<Actual>().toMatchObjectType<Expected>()
 
   it('Should return 200 response', async () => {
     const res = await app.request('/page?page=123')

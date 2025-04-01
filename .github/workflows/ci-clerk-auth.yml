@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/clerk-auth
-      - run: yarn workspace @hono/clerk-auth build
-      - run: yarn workspace @hono/clerk-auth publint
-      - run: yarn eslint packages/clerk-auth
-      - run: yarn test --coverage --project @hono/clerk-auth
+      - run: bun run --filter @hono/clerk-auth build
+      - run: bun run --filter @hono/clerk-auth publint
+      - run: bun eslint packages/clerk-auth
+      - run: bun test --coverage --project @hono/clerk-auth
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

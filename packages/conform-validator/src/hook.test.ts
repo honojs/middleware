@@ -1,6 +1,6 @@
 import { parseWithZod } from '@conform-to/zod'
 import { Hono } from 'hono'
-import { hc } from 'hono/client'
+import { ClientRequestOptions, hc } from 'hono/client'
 import { vi } from 'vitest'
 import * as z from 'zod'
 import { conformValidator } from '.'
@@ -24,10 +24,10 @@ describe('Validate the hook option processing', () => {
     handlerMockFn
   )
   const client = hc<typeof route>('http://localhost', {
-    fetch: (req, init) => {
+    fetch: (req: RequestInfo | URL, init?: RequestInit) => {
       return app.request(req, init)
     },
-  })
+  } satisfies ClientRequestOptions)
 
   afterEach(() => {
     hookMockFn.mockClear()

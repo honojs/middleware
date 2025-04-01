@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/prometheus
-      - run: yarn workspace @hono/prometheus build
-      - run: yarn workspace @hono/prometheus publint
-      - run: yarn eslint packages/prometheus
-      - run: yarn test --coverage --project @hono/prometheus
+      - run: bun run --filter @hono/prometheus build
+      - run: bun run --filter @hono/prometheus publint
+      - run: bun eslint packages/prometheus
+      - run: bun test --coverage --project @hono/prometheus
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

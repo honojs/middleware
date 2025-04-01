@@ -2,14 +2,12 @@
   "name": "hono-middleware",
   "version": "0.0.0",
   "description": "Third-party middleware for Hono",
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "yarn workspaces foreach --all --parallel --topological --verbose run build",
-    "publint": "yarn workspaces foreach --all --parallel --topological --verbose run publint",
+    "build": "bun run --filter \"*\" build",
+    "publint": "bun run --filter \"*\" publint",
     "test": "vitest",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
@@ -40,6 +38,5 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8"
-  },
-  "packageManager": "yarn@4.0.2"
+  }
 }
