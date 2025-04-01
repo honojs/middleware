@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1094](https://github.com/honojs/middleware/pull/1094) [`519404ad2c343bcc7043d77dc6ce82217871f209`](https://github.com/honojs/middleware/commit/519404ad2c343bcc7043d77dc6ce82217871f209) Thanks [@nakasyou](https://github.com/nakasyou)! - Adapter won't send Buffer as a MessageEvent.
+
 ## 1.1.0
 
 ### Minor Changes
