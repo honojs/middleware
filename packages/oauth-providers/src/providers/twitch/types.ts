@@ -2,10 +2,10 @@ export type Scopes =
   // Analytics
   | 'analytics:read:extensions'
   | 'analytics:read:games'
-  
+
   // Bits
   | 'bits:read'
-  
+
   // Channel
   | 'channel:bot'
   | 'channel:manage:ads'
@@ -85,11 +85,11 @@ export type Scopes =
   | 'moderator:read:vips'
   | 'moderator:read:warnings'
   | 'moderator:manage:warnings'
-    
+
   // IRC Chat Scopes
   | 'chat:edit'
   | 'chat:read'
-  
+
   // PubSub-specific Chat Scopes
   | 'whispers:read'
 
@@ -109,7 +109,6 @@ export type TwitchRevokingError = Required<Pick<TwitchErrorResponse, 'status' | 
 export type TwitchRefreshError = Required<Pick<TwitchErrorResponse, 'status' | 'message' | 'error'>>
 
 export type TwitchTokenError = Required<Pick<TwitchErrorResponse, 'status' | 'message' | 'error'>>
-
 
 // Success responses types from Twitch API
 export interface TwitchValidateSuccess {
@@ -150,19 +149,21 @@ export type TwitchTokenResponse = TwitchTokenSuccess | TwitchTokenError
 export type TwitchValidateResponse = TwitchValidateSuccess | TwitchValidateError
 
 export interface TwitchUserResponse {
-  data: [{
-    id: string
-    login: string
-    display_name: string
-    type: string
-    broadcaster_type: string
-    description: string
-    profile_image_url: string
-    offline_image_url: string
-    view_count: number
-    email: string
-    created_at: string
-  }]
+  data: [
+    {
+      id: string
+      login: string
+      display_name: string
+      type: string
+      broadcaster_type: string
+      description: string
+      profile_image_url: string
+      offline_image_url: string
+      view_count: number
+      email: string
+      created_at: string
+    }
+  ]
 }
 
 export type TwitchUser = TwitchUserResponse['data'][0]

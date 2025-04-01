@@ -14,18 +14,18 @@ export async function refreshToken(
     client_secret,
   })
 
-  const response = (await fetch('https://id.twitch.tv/oauth2/token', {
+  const response = await fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params,
-  }).then((res) => res.json() as Promise<TwitchRefreshResponse>))
+  }).then((res) => res.json() as Promise<TwitchRefreshResponse>)
 
   if ('error' in response) {
     throw new HTTPException(400, { message: response.error })
   }
-  
+
   if ('message' in response) {
     throw new HTTPException(400, { message: response.message as string })
   }

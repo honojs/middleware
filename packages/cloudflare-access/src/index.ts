@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { getCookie } from 'hono/cookie';
+import { getCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 
