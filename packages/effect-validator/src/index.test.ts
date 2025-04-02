@@ -1,6 +1,6 @@
 import { Schema as S } from 'effect'
 import { Hono } from 'hono'
-import type { StatusCode } from 'hono/utils/http-status'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { effectValidator } from '.'
 
@@ -59,7 +59,7 @@ describe('Basic', () => {
           queryName: string | undefined
         }
         outputFormat: 'json'
-        status: StatusCode
+        status: ContentfulStatusCode
       }
     }
   }
@@ -135,7 +135,7 @@ describe('coerce', () => {
           page: number
         }
         outputFormat: 'json'
-        status: StatusCode
+        status: ContentfulStatusCode
       }
     }
   }

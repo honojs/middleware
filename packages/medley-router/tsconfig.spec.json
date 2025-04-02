@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/packages/medley-router",
+    "types": ["vitest/globals"]
+  },
+  "include": ["**/*.test.ts"],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}

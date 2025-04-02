@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
-    "publint": "attw --pack && publint"
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json"
   },
   "exports": {
     ".": {
@@ -46,7 +47,8 @@
     "@builder.io/qwik": "^1.2.0",
     "@builder.io/qwik-city": "^1.2.0",
     "publint": "^0.3.9",
-    "tsup": "^8.4.0"
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18"

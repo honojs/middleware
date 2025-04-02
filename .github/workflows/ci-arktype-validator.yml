@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/arktype-validator
       - run: yarn workspace @hono/arktype-validator build
       - run: yarn workspace @hono/arktype-validator publint
+      - run: yarn workspace @hono/arktype-validator typecheck
       - run: yarn eslint packages/arktype-validator
       - run: yarn test --coverage --project @hono/arktype-validator
       - uses: codecov/codecov-action@v5

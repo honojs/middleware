@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/react-renderer
       - run: yarn workspace @hono/react-renderer build
       - run: yarn workspace @hono/react-renderer publint
+      - run: yarn workspace @hono/react-renderer typecheck
       - run: yarn eslint packages/react-renderer
       - run: yarn test --coverage --project @hono/react-renderer
       - uses: codecov/codecov-action@v5

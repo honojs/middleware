@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/swagger-editor
       - run: yarn workspace @hono/swagger-editor build
       - run: yarn workspace @hono/swagger-editor publint
+      - run: yarn workspace @hono/swagger-editor typecheck
       - run: yarn eslint packages/swagger-editor
       - run: yarn test --coverage --project @hono/swagger-editor
       - uses: codecov/codecov-action@v5

@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/zod-validator
       - run: yarn workspace @hono/zod-validator build
       - run: yarn workspace @hono/zod-validator publint
+      - run: yarn workspace @hono/zod-validator typecheck
       - run: yarn eslint packages/zod-validator
       - run: yarn test --coverage --project @hono/zod-validator
       - uses: codecov/codecov-action@v5

@@ -1,7 +1,6 @@
 import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
-import { assertType, describe, it } from 'vitest'
 import { OpenAPIHono, createRoute, z } from './index'
 import type { MiddlewareToHandlerType, OfHandlerType } from './index'
 
