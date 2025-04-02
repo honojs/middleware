@@ -52,7 +52,6 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "firebase-tools": "^13.29.1",
     "miniflare": "^3.20240208.0",
-    "prettier": "^3.2.5",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
