@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "types": ["vitest/globals"],
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
-  }
-}

@@ -8,8 +8,14 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": "./dist/index.js",
-      "default": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
@@ -19,6 +25,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "license": "MIT",
@@ -40,6 +47,7 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8",
     "zod": "^3.22.4"
   }

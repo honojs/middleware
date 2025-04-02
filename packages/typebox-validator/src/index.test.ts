@@ -1,6 +1,7 @@
 import { Type as T } from '@sinclair/typebox'
 import type { ValueError } from '@sinclair/typebox/value'
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { tbValidator } from '.'
 
@@ -37,6 +38,8 @@ describe('Basic', () => {
           success: boolean
           message: string
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }

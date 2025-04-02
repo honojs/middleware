@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/typia-validator
       - run: yarn workspace @hono/typia-validator build
       - run: yarn workspace @hono/typia-validator publint
+      - run: yarn workspace @hono/typia-validator typecheck
       - run: yarn eslint packages/typia-validator
       - run: yarn test --coverage --project @hono/typia-validator
       - uses: codecov/codecov-action@v5

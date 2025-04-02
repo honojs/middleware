@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { tags } from 'typia'
 import typia from 'typia'
@@ -68,6 +69,8 @@ describe('Basic', () => {
           queryName: string | undefined
           headerCategory: ('x' | 'y' | 'z')[]
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -158,6 +161,8 @@ describe('transform', () => {
           page: (0 | 1 | 2)[]
           categories: (0 | 1 | 2)[]
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -417,6 +422,8 @@ describe('Case-Insensitive Headers', () => {
             header: HeaderSchema
           }
           output: HeaderSchema
+          outputFormat: 'json'
+          status: ContentfulStatusCode
         }
       }
     }

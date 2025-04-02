@@ -12,6 +12,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
@@ -47,6 +48,7 @@
     "reflect-metadata": "^0.2.2",
     "tsup": "^8.4.0",
     "tsyringe": "^4.8.0",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   }
 }

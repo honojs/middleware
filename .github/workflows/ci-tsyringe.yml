@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/tsyringe
       - run: yarn workspace @hono/tsyringe build
       - run: yarn workspace @hono/tsyringe publint
+      - run: yarn workspace @hono/tsyringe typecheck
       - run: yarn eslint packages/tsyringe
       - run: yarn test --coverage --project @hono/tsyringe
       - uses: codecov/codecov-action@v5

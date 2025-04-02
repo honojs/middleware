@@ -8,8 +8,11 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --all --parallel --topological --verbose run build",
-    "publint": "yarn workspaces foreach --all --parallel --topological --verbose run publint",
+    "build": "yarn workspaces foreach --all --topological --verbose run build",
+    "publint": "yarn workspaces foreach --all --topological --verbose run publint",
+    "typecheck": "yarn tsc --build",
+    "typecheck:clean": "yarn tsc --build --clean",
+    "typecheck:watch": "yarn tsc --build --watch",
     "test": "vitest",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
@@ -29,7 +32,8 @@
     "@cloudflare/workers-types": "^4.20230307.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^1.2.0",
-    "@types/node": "^20.14.8",
+    "@types/node": "^20.17.28",
+    "@types/ws": "^8.18.0",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
     "@vitest/coverage-istanbul": "^3.0.8",

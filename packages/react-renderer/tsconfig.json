@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "outDir": "./dist",
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "types": ["vitest/globals"]
-  }
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

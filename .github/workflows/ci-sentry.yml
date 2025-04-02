@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/sentry
       - run: yarn workspace @hono/sentry build
       - run: yarn workspace @hono/sentry publint
+      - run: yarn workspace @hono/sentry typecheck
       - run: yarn eslint packages/sentry
       - run: yarn test --coverage --project @hono/sentry
       - uses: codecov/codecov-action@v5
