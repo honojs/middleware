@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc/packages/valibot-validator",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.ts"],
+  "include": ["**/*.test.ts", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"

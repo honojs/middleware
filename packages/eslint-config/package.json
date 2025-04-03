@@ -28,9 +28,5 @@
     "eslint-plugin-import-x": "^4.1.1",
     "eslint-plugin-n": "^17.10.2",
     "typescript-eslint": "^8.27.0"
-  },
-  "devDependencies": {
-    "eslint": "^9.23.0",
-    "typescript": "^5.3.3"
   }
 }

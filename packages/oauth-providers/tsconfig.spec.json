@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc/packages/oauth-providers",
     "types": ["vitest/globals"]
   },
-  "include": ["mocks.ts", "**/*.test.ts"],
+  "include": ["mocks.ts", "**/*.test.ts", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"
