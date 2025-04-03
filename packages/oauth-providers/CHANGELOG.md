@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.7.1
+
+### Patch Changes
+
+- [#1099](https://github.com/honojs/middleware/pull/1099) [`091b182a6ac1b7bb1129123d3cd0acca5e41b80d`](https://github.com/honojs/middleware/commit/091b182a6ac1b7bb1129123d3cd0acca5e41b80d) Thanks [@liquidleif](https://github.com/liquidleif)! - fix: Update twitter authorization url
+
 ## 0.7.0
 
 ### Minor Changes
