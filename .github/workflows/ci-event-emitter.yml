@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/event-emitter
-      - run: yarn workspace @hono/event-emitter build
-      - run: yarn workspace @hono/event-emitter publint
-      - run: yarn workspace @hono/event-emitter typecheck
-      - run: yarn eslint packages/event-emitter
-      - run: yarn test --coverage --project @hono/event-emitter
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/event-emitter'
+      - run: bun --filter './packages/event-emitter' build
+      - run: bun --filter './packages/event-emitter' publint
+      - run: bun --filter './packages/event-emitter' typecheck
+      - run: bun eslint packages/event-emitter
+      - run: bun vitest --coverage --project @hono/event-emitter
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

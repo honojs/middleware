@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/trpc-server
-      - run: yarn workspace @hono/trpc-server build
-      - run: yarn workspace @hono/trpc-server publint
-      - run: yarn workspace @hono/trpc-server typecheck
-      - run: yarn eslint packages/trpc-server
-      - run: yarn test --coverage --project @hono/trpc-server
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/trpc-server'
+      - run: bun --filter './packages/trpc-server' build
+      - run: bun --filter './packages/trpc-server' publint
+      - run: bun --filter './packages/trpc-server' typecheck
+      - run: bun eslint packages/trpc-server
+      - run: bun vitest --coverage --project @hono/trpc-server
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
