@@ -305,7 +305,7 @@ export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]
     : never
   : M extends [infer Last]
   ? Last // Return the last remaining handler in the array
-  : never
+  : MiddlewareHandler<Env>
 
 type RouteMiddlewareParams<R extends RouteConfig> = OfHandlerType<
   MiddlewareToHandlerType<AsArray<R['middleware']>>

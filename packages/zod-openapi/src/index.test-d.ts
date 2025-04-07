@@ -337,4 +337,25 @@ describe('Middleware', () => {
       }
     )
   })
+
+  it('Should infer Env correctly when the middleware is empty', async () => {
+    const app = new OpenAPIHono<{ Variables: { foo: string } }>()
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/books',
+        middleware: [] as const, // empty
+        responses: {
+          200: {
+            description: 'response',
+          },
+        },
+      }),
+      (c) => {
+        const foo = c.get('foo')
+        type verify = Expect<Equal<typeof foo, string>>
+        return c.json({})
+      }
+    )
+  })
 })

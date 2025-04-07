@@ -2,9 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc/packages/zod-openapi",
-    "types": ["vitest/globals"]
+    "types": [
+      "vitest/globals"
+    ]
   },
-  "include": ["**/*.test.ts"],
+  "include": [
+    "**/*.test.ts",
+    "**/*.test-d.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.build.json"
