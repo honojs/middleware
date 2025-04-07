@@ -1,5 +1,16 @@
 # @hono/eslint-config
 
+## 2.0.0
+
+### Major Changes
+
+- [#1098](https://github.com/honojs/middleware/pull/1098) [`1fd8ebf9b6d8d9f473196266bf63681988dc7979`](https://github.com/honojs/middleware/commit/1fd8ebf9b6d8d9f473196266bf63681988dc7979) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Includes `typescript-eslint` presets for typed linting
+
+  - [`strict-type-checked`](https://typescript-eslint.io/users/configs#strict-type-checked)
+  - [`stylistic-type-checked`](https://typescript-eslint.io/users/configs#stylistic-type-checked)
+
+  See [Linting with Type Information](https://typescript-eslint.io/getting-started/typed-linting) for more information
+
 ## 1.1.1
 
 ### Patch Changes
