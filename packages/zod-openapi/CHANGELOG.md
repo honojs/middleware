@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.19.3
+
+### Patch Changes
+
+- [#1106](https://github.com/honojs/middleware/pull/1106) [`448a8fc687cca2bcab2353ea4237f1293706d5e2`](https://github.com/honojs/middleware/commit/448a8fc687cca2bcab2353ea4237f1293706d5e2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: infer Env correctly if the middleware is `[]`
+
 ## 0.19.2
 
 ### Patch Changes
