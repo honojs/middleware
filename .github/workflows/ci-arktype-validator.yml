@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/arktype-validator
-      - run: yarn workspace @hono/arktype-validator build
-      - run: yarn workspace @hono/arktype-validator publint
-      - run: yarn workspace @hono/arktype-validator typecheck
-      - run: yarn eslint packages/arktype-validator
-      - run: yarn test --coverage --project @hono/arktype-validator
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --filter './' --filter './packages/arktype-validator'
+      - run: bun --filter './packages/arktype-validator' build
+      - run: bun --filter './packages/arktype-validator' publint
+      - run: bun --filter './packages/arktype-validator' typecheck
+      - run: bun eslint packages/arktype-validator
+      - run: bun vitest --coverage --project @hono/arktype-validator
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

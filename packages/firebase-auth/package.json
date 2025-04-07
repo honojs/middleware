@@ -15,7 +15,7 @@
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "build": "tsup ./src/index.ts",
-    "prepack": "yarn build",
+    "prepack": "bun run build",
     "publint": "attw --pack && publint"
   },
   "exports": {

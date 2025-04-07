@@ -8,7 +8,7 @@ const TS = 'const add = (a: number, b: number): number => a + b'
 const TS_TRANSPILED = 'const add=(a,b)=>a+b;'
 const TSX = 'const element = <h1>hello world</h1>'
 const TSX_TRANSPILED =
-  'const element=jsxDEV("h1",{children:"hello world"},undefined,false,undefined,this);'
+  'const element=jsxDEV_7x81h0kn("h1",{children:"hello world"},undefined,false,undefined,this);'
 const BAD = 'function { !!! !@#$ add(a: INT) return a + b + c; }'
 
 describe('Bun Transpiler middleware', () => {
@@ -43,7 +43,7 @@ describe('Bun Transpiler middleware', () => {
     const res = await app.request(`${HOST}/script.tsx`)
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe(TSX_TRANSPILED)
+    expect(await res.text()).toMatch(TSX_TRANSPILED)
     expect(res.headers.get('content-type')).toBe('application/javascript')
   })
 

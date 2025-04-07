@@ -4,15 +4,6 @@ node_modules
 *.tgz
 coverage
 
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-yarn-error.log
-
 # for debug or playing
 sandbox
 *.log
