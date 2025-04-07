@@ -2,10 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc/packages/graphql-server",
-    "types": ["vitest/globals"]
+    "types": ["bun"]
   },
-  "exclude": ["bun_test"],
-  "include": ["**/*.test.ts", "vitest.config.ts"],
+  "exclude": ["src/**/*.test.ts"],
+  "include": ["bun_test", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"
