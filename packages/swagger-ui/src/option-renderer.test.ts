@@ -1,5 +1,3 @@
-/*eslint quotes: ["off", "single"]*/
-
 import type { DistSwaggerUIOptions } from './swagger/renderer'
 import { renderSwaggerUIOptions } from './swagger/renderer'
 

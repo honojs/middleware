@@ -39,6 +39,7 @@
     { "path": "packages/typia-validator" },
     { "path": "packages/valibot-validator" },
     { "path": "packages/zod-openapi" },
-    { "path": "packages/zod-validator" }
+    { "path": "packages/zod-validator" },
+    { "path": "./tsconfig.repo-config-files.json" }
   ]
 }

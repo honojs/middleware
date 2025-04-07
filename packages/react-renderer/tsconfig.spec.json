@@ -8,7 +8,7 @@
     "outDir": "../../dist/out-tsc/packages/react-renderer",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.tsx"],
+  "include": ["**/*.test.tsx", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"
