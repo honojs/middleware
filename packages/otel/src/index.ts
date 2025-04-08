@@ -30,9 +30,9 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
       const result = await next()
       const span = trace.getActiveSpan()
       if (span != null) {
-        const route = c.req.matchedRoutes[c.req.matchedRoutes.length - 1]
-        span.setAttribute(ATTR_HTTP_ROUTE, route.path)
-        span.updateName(`${c.req.method} ${route.path}`)
+        const routePath = c.req.routePath
+        span.setAttribute(ATTR_HTTP_ROUTE, routePath)
+        span.updateName(`${c.req.method} ${routePath}`)
       }
       return result
     })
@@ -40,15 +40,15 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
   return createMiddleware<E, P, I>(async (c, next) => {
-    const route = c.req.matchedRoutes[c.req.matchedRoutes.length - 1]
+    const routePath = c.req.routePath
     await tracer.startActiveSpan(
-      `${c.req.method} ${route.path}`,
+      `${c.req.method} ${routePath}`,
       {
         kind: SpanKind.SERVER,
         attributes: {
           [ATTR_HTTP_REQUEST_METHOD]: c.req.method,
           [ATTR_URL_FULL]: c.req.url,
-          [ATTR_HTTP_ROUTE]: route.path,
+          [ATTR_HTTP_ROUTE]: routePath,
         },
       },
       async (span) => {
