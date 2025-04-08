@@ -1,5 +1,5 @@
 import type { TracerProvider } from '@opentelemetry/api'
-import { SpanKind, SpanStatusCode,  trace } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,
@@ -10,17 +10,19 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Env, Input } from 'hono'
 import { createMiddleware } from 'hono/factory'
-import metadata from '../package.json' with { type: 'json'}
+import metadata from '../package.json' with { type: 'json' }
 
 const PACKAGE_NAME = metadata.name
 const PACKAGE_VERSION = metadata.version
 
-export type OtelOptions = {
-  augmentSpan?: false;
-  tracerProvider?: TracerProvider
-} | {
-  augmentSpan: true;
-}
+export type OtelOptions =
+  | {
+      augmentSpan?: false
+      tracerProvider?: TracerProvider
+    }
+  | {
+      augmentSpan: true
+    }
 
 export const otel = <E extends Env = any, P extends string = any, I extends Input = {}>(
   options: OtelOptions = {}
@@ -42,7 +44,7 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
   return createMiddleware<E, P, I>(async (c, next) => {
     const routePath = c.req.routePath
     await tracer.startActiveSpan(
-      `${c.req.method} ${routePath}`,
+      `${c.req.method} ${c.req.routePath}`,
       {
         kind: SpanKind.SERVER,
         attributes: {
@@ -57,6 +59,10 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
         }
         try {
           await next()
+          // Update the span name and route path now that we have the response
+          // because the route path may have changed
+          span.updateName(`${c.req.method} ${c.req.routePath}`)
+          span.setAttribute(ATTR_HTTP_ROUTE, c.req.routePath)
           span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, c.res.status)
           for (const [name, value] of c.res.headers.entries()) {
             span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
