@@ -45,6 +45,20 @@
       "require": {
         "types": "./dist/providers/msentra/index.d.ts",
         "default": "./dist/providers/msentra/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./*": {
+      "import": {
+        "types": "./dist/providers/*/index.d.ts",
+        "default": "./dist/providers/*/index.js"
+      },
+      "require": {
+        "types": "./dist/providers/*/index.d.cts",
+        "default": "./dist/providers/*/index.cjs"
       }
     }
   },

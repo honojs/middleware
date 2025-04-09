@@ -211,6 +211,7 @@ export const handlers = [
       return HttpResponse.json(twitchValidateError, { status: 401 })
     }
   ),
+
   // MSEntra
   http.post(
     'https://login.microsoft.com/fake-tenant-id/oauth2/v2.0/token',
