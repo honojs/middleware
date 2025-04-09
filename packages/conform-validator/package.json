@@ -46,9 +46,9 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@conform-to/dom": "^1.1.5",
+    "@conform-to/valibot": "^1.0.0",
     "@conform-to/yup": "^1.1.5",
     "@conform-to/zod": "^1.1.5",
-    "conform-to-valibot": "^1.10.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
