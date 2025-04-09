@@ -1,4 +1,4 @@
-import { parseWithValibot } from 'conform-to-valibot'
+import { parseWithValibot } from '@conform-to/valibot'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import type { ExtractSchema, ParsedFormValue } from 'hono/types'
