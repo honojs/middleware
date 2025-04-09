@@ -59,7 +59,7 @@ Valibot:
 
 ```ts
 import { object, string } from 'valibot'
-import { parseWithValibot } from 'conform-to-valibot'
+import { parseWithValibot } from '@conform-to/valibot'
 import { conformValidator } from '@hono/conform-validator'
 import { HTTPException } from 'hono/http-exception'
 
