@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.19.4
+
+### Patch Changes
+
+- [#1111](https://github.com/honojs/middleware/pull/1111) [`ad4622a8536c8ef9c5feec2e447f36c2629ecbca`](https://github.com/honojs/middleware/commit/ad4622a8536c8ef9c5feec2e447f36c2629ecbca) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Republish v0.19.3 without workspace reference
+
 ## 0.19.3
 
 ### Patch Changes
