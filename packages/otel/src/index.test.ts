@@ -26,6 +26,13 @@ describe('OpenTelemetry middleware', () => {
     throw new Error('error message')
   })
 
+  const subapp = new Hono()
+  subapp.get('/hello', (c) => c.text('Hello from subapp!'))
+  subapp.get('*', (c) => c.text('Fallthrough'))
+
+  // mount subapp
+  app.route('/subapp', subapp)
+
   it('Should make a span', async () => {
     memoryExporter.reset()
     const response = await app.request('http://localhost/foo')
@@ -70,5 +77,14 @@ describe('OpenTelemetry middleware', () => {
     const [span] = spans
     expect(span.name).toBe('GET /foo')
     expect(span.attributes[ATTR_HTTP_ROUTE]).toBe('/foo')
+  })
+
+  // Issue #1112
+  it('Should set the correct span name for subapp', async () => {
+    memoryExporter.reset()
+    await app.request('http://localhost/subapp/hello')
+    const spans = memoryExporter.getFinishedSpans()
+    const [span] = spans
+    expect(span.name).toBe('GET /subapp/hello')
   })
 })

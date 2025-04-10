@@ -1,5 +1,5 @@
 import type { TracerProvider } from '@opentelemetry/api'
-import { SpanKind, SpanStatusCode,  trace } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,
@@ -10,17 +10,19 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Env, Input } from 'hono'
 import { createMiddleware } from 'hono/factory'
-import metadata from '../package.json' with { type: 'json'}
+import metadata from '../package.json' with { type: 'json' }
 
 const PACKAGE_NAME = metadata.name
 const PACKAGE_VERSION = metadata.version
 
-export type OtelOptions = {
-  augmentSpan?: false;
-  tracerProvider?: TracerProvider
-} | {
-  augmentSpan: true;
-}
+export type OtelOptions =
+  | {
+      augmentSpan?: false
+      tracerProvider?: TracerProvider
+    }
+  | {
+      augmentSpan: true
+    }
 
 export const otel = <E extends Env = any, P extends string = any, I extends Input = {}>(
   options: OtelOptions = {}
@@ -30,9 +32,9 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
       const result = await next()
       const span = trace.getActiveSpan()
       if (span != null) {
-        const route = c.req.matchedRoutes[c.req.matchedRoutes.length - 1]
-        span.setAttribute(ATTR_HTTP_ROUTE, route.path)
-        span.updateName(`${c.req.method} ${route.path}`)
+        const routePath = c.req.routePath
+        span.setAttribute(ATTR_HTTP_ROUTE, routePath)
+        span.updateName(`${c.req.method} ${routePath}`)
       }
       return result
     })
@@ -40,15 +42,15 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
   return createMiddleware<E, P, I>(async (c, next) => {
-    const route = c.req.matchedRoutes[c.req.matchedRoutes.length - 1]
+    const routePath = c.req.routePath
     await tracer.startActiveSpan(
-      `${c.req.method} ${route.path}`,
+      `${c.req.method} ${c.req.routePath}`,
       {
         kind: SpanKind.SERVER,
         attributes: {
           [ATTR_HTTP_REQUEST_METHOD]: c.req.method,
           [ATTR_URL_FULL]: c.req.url,
-          [ATTR_HTTP_ROUTE]: route.path,
+          [ATTR_HTTP_ROUTE]: routePath,
         },
       },
       async (span) => {
@@ -57,6 +59,10 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
         }
         try {
           await next()
+          // Update the span name and route path now that we have the response
+          // because the route path may have changed
+          span.updateName(`${c.req.method} ${c.req.routePath}`)
+          span.setAttribute(ATTR_HTTP_ROUTE, c.req.routePath)
           span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, c.res.status)
           for (const [name, value] of c.res.headers.entries()) {
             span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
