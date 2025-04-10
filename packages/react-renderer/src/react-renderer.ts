@@ -30,10 +30,11 @@ const createRenderer =
     options?: RendererOptions
   ) =>
   async (children: React.ReactElement, props?: Props) => {
-    const node = component ? component({ children, Layout, c, ...props }) : children
+    const node = component ? await component({ children, Layout, c, ...props }) : children
 
     if (options?.stream) {
-      const { renderToReadableStream } = await import('react-dom/server')
+      // @ts-expect-error `react-dom/server.edge` is not typed well
+      const { renderToReadableStream } = await import('react-dom/server.edge')
       const stream = await renderToReadableStream(
         React.createElement(RequestContext.Provider, { value: c }, node),
         options.readableStreamOptions
@@ -52,8 +53,8 @@ const createRenderer =
         typeof options?.docType === 'string'
           ? options.docType
           : options?.docType === false
-          ? ''
-          : '<!DOCTYPE html>'
+            ? ''
+            : '<!DOCTYPE html>'
       const body =
         docType + renderToString(React.createElement(RequestContext.Provider, { value: c }, node))
       return c.html(body)
@@ -71,7 +72,7 @@ export const reactRenderer = (
     if (component) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       c.setLayout((props: any) => {
-        return component({ ...props, Layout, c }, c)
+        return component({ ...props, Layout, c })
       })
     }
     c.setRenderer(createRenderer(c, Layout, component, options))

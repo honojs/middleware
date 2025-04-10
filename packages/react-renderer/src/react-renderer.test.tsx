@@ -128,6 +128,7 @@ describe('Basic', () => {
         ({ children }) => {
           return (
             <html>
+              <head></head>
               <body>{children}</body>
             </html>
           )
@@ -139,7 +140,9 @@ describe('Basic', () => {
     const res = await app.request('/')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe('<!DOCTYPE html><html><body><h1>Hello</h1></body></html>')
+    expect(await res.text()).toBe(
+      '<!DOCTYPE html><html><head></head><body><h1>Hello</h1></body></html>'
+    )
   })
 
   it('Should return a content without a doctype', async () => {
@@ -161,7 +164,7 @@ describe('Basic', () => {
     const res = await app.request('/')
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    expect(await res.text()).toBe('<html><body><h1>Hello</h1></body></html>')
+    expect(await res.text()).toBe('<html><head></head><body><h1>Hello</h1></body></html>')
   })
 
   it('Should return a custom doctype', async () => {
@@ -187,7 +190,7 @@ describe('Basic', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
     expect(await res.text()).toBe(
-      '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html><body><h1>Hello</h1></body></html>'
+      '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html><head></head><body><h1>Hello</h1></body></html>'
     )
   })
 
@@ -231,6 +234,8 @@ describe('Streaming', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('Transfer-Encoding')).toBe('chunked')
     expect(res.headers.get('Content-Type')).toBe('text/html; charset=UTF-8')
-    expect(await res.text()).toBe('<!DOCTYPE html><html><body><h1>Hello</h1></body></html>')
+    expect(await res.text()).toBe(
+      '<!DOCTYPE html><html><head></head><body><h1>Hello</h1></body></html>'
+    )
   })
 })
