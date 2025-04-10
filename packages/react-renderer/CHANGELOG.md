@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 1.0.0
+
+### Major Changes
+
+- [#1119](https://github.com/honojs/middleware/pull/1119) [`684ae9a21d2976ad0a42853fd30dc1494494da46`](https://github.com/honojs/middleware/commit/684ae9a21d2976ad0a42853fd30dc1494494da46) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: use React v19 and specify `react-dom/server.edge` for `renderToReadableStream`
+
 ## 0.3.0
 
 ### Minor Changes
