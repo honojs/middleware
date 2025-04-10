@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1113](https://github.com/honojs/middleware/pull/1113) [`362b6701a6ee2843a51c1dfd5877a6164b7474fb`](https://github.com/honojs/middleware/commit/362b6701a6ee2843a51c1dfd5877a6164b7474fb) Thanks [@milohansen](https://github.com/milohansen)! - Use `req.routePath` to augment spans with the path that handled the request.
+
 ## 0.1.0
 
 ### Minor Changes
