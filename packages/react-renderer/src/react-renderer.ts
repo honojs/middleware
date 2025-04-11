@@ -34,7 +34,9 @@ const createRenderer =
 
     if (options?.stream) {
       // @ts-expect-error `react-dom/server.edge` is not typed well
-      const { renderToReadableStream } = await import('react-dom/server.edge')
+      const module = await import('react-dom/server.edge')
+      const renderToReadableStream =
+        module.renderToReadableStream ?? module.default.renderToReadableStream
       const stream = await renderToReadableStream(
         React.createElement(RequestContext.Provider, { value: c }, node),
         options.readableStreamOptions
