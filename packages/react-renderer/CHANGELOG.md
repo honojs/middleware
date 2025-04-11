@@ -1,5 +1,11 @@
 # @hono/react-renderer
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1122](https://github.com/honojs/middleware/pull/1122) [`944f1989f5fc14f62348427b8f26989bd17fd61c`](https://github.com/honojs/middleware/commit/944f1989f5fc14f62348427b8f26989bd17fd61c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: tweak dynamic importing `renderToReadableStream`
+
 ## 1.0.0
 
 ### Major Changes
