@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.19.5
+
+### Patch Changes
+
+- [#1127](https://github.com/honojs/middleware/pull/1127) [`63a9dff2b925a09e8597f327f954f332c3b59b14`](https://github.com/honojs/middleware/commit/63a9dff2b925a09e8597f327f954f332c3b59b14) Thanks [@sigmachirality](https://github.com/sigmachirality)! - chore: lock zod-to-openapi to `^7.3.0` to fix `z.custom`
+
 ## 0.19.4
 
 ### Patch Changes
