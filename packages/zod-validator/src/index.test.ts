@@ -49,10 +49,10 @@ describe('Basic', () => {
           }
         } & {
           query?:
-            | {
-                name?: string | undefined
-              }
-            | undefined
+          | {
+            name?: string | undefined
+          }
+          | undefined
         }
         output: {
           success: boolean
@@ -377,4 +377,88 @@ describe('Case-Insensitive Headers', () => {
     }
     type verify = Expect<Equal<Expected, Actual>>
   })
+})
+
+describe('With options + passthrough', () => {
+  const app = new Hono()
+  const jsonSchema = z.object({
+    name: z.string(),
+    age: z.number()
+  });
+
+  const route = app.post(
+    '/',
+    zValidator('json', jsonSchema),
+    (c) => {
+      const data = c.req.valid('json')
+
+      return c.json({
+        success: true,
+        data
+      })
+    }
+  ).post('/extended',
+    zValidator('json', jsonSchema, undefined, {
+      passthroughObject: true
+    }),
+    (c) => {
+      const data = c.req.valid('json')
+
+      return c.json({
+        success: true,
+        data
+      })
+    }
+  )
+
+  it('Should be ok due to passthrough schema', async () => {
+    const req = new Request('http://localhost/extended', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: 20,
+        length: 170,
+        weight: 55
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      success: true,
+      data: {
+        name: "Superman",
+        age: 20,
+        length: 170,
+        weight: 55
+      }
+    })
+  })
+  it('Should be ok due to required schema', async () => {
+    const req = new Request('http://localhost', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: 20,
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      success: true,
+      data: {
+        name: "Superman",
+        age: 20
+      }
+    })
+  })
+
 })
