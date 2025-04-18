@@ -65,7 +65,7 @@ export const zValidator = <
     }
 
     let result: z.infer<T>;
-    if (opt && "passthrough" in opt) {
+    if (opt && "passthroughObject" in opt) {
       result = await schema.passthrough().safeParseAsync(validatorValue)
     } else {
       result = await schema.safeParseAsync(validatorValue)
