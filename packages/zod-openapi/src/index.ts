@@ -550,8 +550,8 @@ export class OpenAPIHono<
     this.on(
       [route.method],
       route.path.replaceAll(/\/{(.+?)}/g, '/:$1'),
-      ...middleware,
       ...validators,
+      ...middleware,
       handler
     )
     return this
