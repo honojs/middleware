@@ -36,7 +36,7 @@ export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
   coreSetEnvDefaults(env, config)
 }
 
-export function reqWithEnvUrl(req: Request, authUrl?: string) {
+export async function reqWithEnvUrl(req: Request, authUrl?: string) {
   if (authUrl) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)
@@ -46,7 +46,12 @@ export function reqWithEnvUrl(req: Request, authUrl?: string) {
         reqUrlObj[prop] = authUrlObj[prop]
       }
     }
-    return new Request(reqUrlObj.href, req)
+    const method = req.method
+    const reqBody = method === 'GET' || method === 'HEAD' ? undefined : await req.text()
+    return new Request(reqUrlObj.href, {
+      ...req,
+      body: reqBody,
+    })
   }
   const url = new URL(req.url)
   const newReq = new Request(url.href, req)
@@ -74,7 +79,7 @@ export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
   const ctxEnv = env(c) as AuthEnv
   setEnvDefaults(ctxEnv, config)
-  const authReq = reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
+  const authReq = await reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
   const origin = new URL(authReq.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
@@ -135,7 +140,7 @@ export function authHandler(): MiddlewareHandler {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
+    const res = await Auth(await reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
     return new Response(res.body, res)
   }
 }
