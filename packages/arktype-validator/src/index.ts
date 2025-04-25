@@ -10,6 +10,10 @@ export type Hook<T, E extends Env, P extends string, O = {}> = (
 
 type HasUndefined<T> = undefined extends T ? true : false
 
+const RESTRICTED_DATA_FIELDS = {
+  header: ['cookie'],
+}
+
 export const arktypeValidator = <
   T extends Type,
   Target extends keyof ValidationTargets,
@@ -54,7 +58,31 @@ export const arktypeValidator = <
       return c.json(
         {
           success: false,
-          errors: out,
+          errors:
+            target in RESTRICTED_DATA_FIELDS
+              ? out.map((error) => {
+                  const restrictedFields =
+                    RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
+
+                  if (
+                    error &&
+                    typeof error === 'object' &&
+                    'data' in error &&
+                    typeof error.data === 'object' &&
+                    error.data !== null &&
+                    !Array.isArray(error.data)
+                  ) {
+                    const dataCopy = { ...(error.data as Record<string, unknown>) }
+                    for (const field of restrictedFields) {
+                      delete dataCopy[field]
+                    }
+
+                    error.data = dataCopy
+                  }
+
+                  return error
+                })
+              : out,
         },
         400
       )

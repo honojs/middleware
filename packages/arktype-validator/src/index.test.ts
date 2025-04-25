@@ -123,7 +123,6 @@ describe('Basic', () => {
     expect(res.status).toBe(400)
     const data = (await res.json()) as { succcess: false; errors: type.errors }
     expect(data.errors).toHaveLength(1)
-    console.log(data.errors)
     expect(data.errors[0].data).not.toHaveProperty('cookie')
   })
 })
