@@ -68,6 +68,30 @@ app.post(
 )
 ```
 
+### Custom validation function
+
+By default, this Validator validates values using `.safeParseAsync`.
+
+```ts
+await schema.safeParseAsync(value)
+```
+
+But, if you want to use the [`.passthrough`](https://zod.dev/?id=passthrough), you can specify your own function in `validationFunction`.
+
+```ts
+app.post(
+  '/',
+  zValidator('json', schema, undefined, {
+    validationFunction: async (schema, value) => {
+      return await schema.passthrough().safeParseAsync(value)
+    },
+  }),
+  (c) => {
+    // ...
+  }
+)
+```
+
 ## Author
 
 Yusuke Wada <https://github.com/yusukebe>
