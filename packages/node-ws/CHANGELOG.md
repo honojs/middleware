@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.2
+
+### Patch Changes
+
+- [#1138](https://github.com/honojs/middleware/pull/1138) [`237bff1b82f2c0adfcd015dc97538b36cfb5d418`](https://github.com/honojs/middleware/commit/237bff1b82f2c0adfcd015dc97538b36cfb5d418) Thanks [@leia-uwu](https://github.com/leia-uwu)! - Fix missing code and reason on `CloseEvent`
+
 ## 1.1.1
 
 ### Patch Changes
