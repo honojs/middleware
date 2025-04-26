@@ -126,8 +126,8 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
               )
             }
           })
-          ws.on('close', () => {
-            events.onClose?.(new CloseEvent('close'), ctx)
+          ws.on('close', (code, reason) => {
+            events.onClose?.(new CloseEvent('close', { code, reason: reason.toString() }), ctx)
           })
           ws.on('error', (error) => {
             events.onError?.(
