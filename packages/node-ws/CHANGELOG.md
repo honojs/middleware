@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.3
+
+### Patch Changes
+
+- [#1141](https://github.com/honojs/middleware/pull/1141) [`1765a9a3aa1ab6aa59b0efd2d161b7bfaa565ef7`](https://github.com/honojs/middleware/commit/1765a9a3aa1ab6aa59b0efd2d161b7bfaa565ef7) Thanks [@nakasyou](https://github.com/nakasyou)! - Make it uncrashable
+
 ## 1.1.2
 
 ### Patch Changes
