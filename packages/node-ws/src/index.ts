@@ -1,5 +1,5 @@
 import type { Hono } from 'hono'
-import type { UpgradeWebSocket, WSContext } from 'hono/ws'
+import type { UpgradeWebSocket, WSContext, WSEvents } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import type { IncomingMessage } from 'http'
@@ -9,7 +9,12 @@ import type { Duplex } from 'node:stream'
 import { CloseEvent } from './events'
 
 export interface NodeWebSocket {
-  upgradeWebSocket: UpgradeWebSocket<WebSocket>
+  upgradeWebSocket: UpgradeWebSocket<
+    WebSocket,
+    {
+      onError: (err: unknown) => void
+    }
+  >
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
 }
 export interface NodeWebSocketInit {
@@ -80,7 +85,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         })
       })
     },
-    upgradeWebSocket: (createEvents) =>
+    upgradeWebSocket: (createEvents, options) =>
       async function upgradeWebSocket(c, next) {
         if (c.req.header('upgrade')?.toLowerCase() !== 'websocket') {
           // Not websocket
@@ -91,7 +96,14 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         const response = new Response()
         ;(async () => {
           const ws = await nodeUpgradeWebSocket(c.env.incoming, response)
-          const events = await createEvents(c)
+          let events: WSEvents<WebSocket>
+          try {
+            events = await createEvents(c)
+          } catch (e) {
+            ;(options?.onError ?? console.error)(e)
+            ws.close()
+            return
+          }
 
           const ctx: WSContext<WebSocket> = {
             binaryType: 'arraybuffer',
@@ -110,32 +122,48 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
             },
             url: new URL(c.req.url),
           }
-          events.onOpen?.(new Event('open'), ctx)
+          try {
+            events?.onOpen?.(new Event('open'), ctx)
+          } catch (e) {
+            ;(options?.onError ?? console.error)(e)
+          }
           ws.on('message', (data, isBinary) => {
             const datas = Array.isArray(data) ? data : [data]
             for (const data of datas) {
-              events.onMessage?.(
-                new MessageEvent('message', {
-                  data: isBinary
-                    ? data instanceof ArrayBuffer
-                      ? data
-                      : data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
-                    : data.toString('utf-8'),
-                }),
-                ctx
-              )
+              try {
+                events?.onMessage?.(
+                  new MessageEvent('message', {
+                    data: isBinary
+                      ? data instanceof ArrayBuffer
+                        ? data
+                        : data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
+                      : data.toString('utf-8'),
+                  }),
+                  ctx
+                )
+              } catch (e) {
+                ;(options?.onError ?? console.error)(e)
+              }
             }
           })
           ws.on('close', (code, reason) => {
-            events.onClose?.(new CloseEvent('close', { code, reason: reason.toString() }), ctx)
+            try {
+              events?.onClose?.(new CloseEvent('close', { code, reason: reason.toString() }), ctx)
+            } catch (e) {
+              ;(options?.onError ?? console.error)(e)
+            }
           })
           ws.on('error', (error) => {
-            events.onError?.(
-              new ErrorEvent('error', {
-                error: error,
-              }),
-              ctx
-            )
+            try {
+              events?.onError?.(
+                new ErrorEvent('error', {
+                  error: error,
+                }),
+                ctx
+              )
+            } catch (e) {
+              ;(options?.onError ?? console.error)(e)
+            }
           })
         })()
 

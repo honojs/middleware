@@ -214,6 +214,26 @@ describe('WebSocket helper', () => {
     })
   })
 
+  it('Should onError works well', async () => {
+    const mainPromise = new Promise<unknown>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(
+          () => {
+            throw 0
+          },
+          {
+            onError(err) {
+              resolve(err)
+            },
+          }
+        )
+      )
+    )
+    const ws = new WebSocket('ws://localhost:3030/')
+    expect(await mainPromise).toBe(0)
+  })
+
   describe('Types', () => {
     it('Should not throw a type error with an app with Variables generics', () => {
       const app = new Hono<{
