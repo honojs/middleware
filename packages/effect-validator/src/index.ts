@@ -19,18 +19,18 @@ export const effectValidator = <
           [K in Target]?: K extends 'json'
             ? In
             : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+              ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+              : { [K2 in keyof In]: ValidationTargets[K][K2] }
         }
       : {
           [K in Target]: K extends 'json'
             ? In
             : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+              ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+              : { [K2 in keyof In]: ValidationTargets[K][K2] }
         }
     out: { [K in Target]: Out }
-  }
+  },
 >(
   target: Target,
   schema: S.Schema<Type, Encoded, never>

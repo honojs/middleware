@@ -73,7 +73,7 @@ type IsForm<T> = T extends string
 type ReturnJsonOrTextOrResponse<
   ContentType,
   Content,
-  Status extends keyof StatusCodeRangeDefinitions | StatusCode
+  Status extends keyof StatusCodeRangeDefinitions | StatusCode,
 > = ContentType extends string
   ? ContentType extends `application/${infer Start}json${infer _End}`
     ? Start extends '' | `${string}+` | `vnd.${string}+`
@@ -88,8 +88,8 @@ type ReturnJsonOrTextOrResponse<
         >
       : never
     : ContentType extends `text/plain${infer _Rest}`
-    ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
-    : Response
+      ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
+      : Response
   : never
 
 type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyof R['request']
@@ -101,7 +101,7 @@ type HasUndefined<T> = undefined extends T ? true : false
 type InputTypeBase<
   R extends RouteConfig,
   Part extends string,
-  Type extends keyof ValidationTargets
+  Type extends keyof ValidationTargets,
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends ZodType
     ? {
@@ -125,22 +125,22 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
       ? IsJson<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-            'schema',
-            ZodSchema<any>
-          >
-        ? {
-            in: {
-              json: z.input<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
+              'schema',
+              ZodSchema<any>
+            >
+          ? {
+              in: {
+                json: z.input<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
+              out: {
+                json: z.output<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
             }
-            out: {
-              json: z.output<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
-            }
-          }
-        : {}
+          : {}
       : {}
     : {}
   : {}
@@ -151,22 +151,22 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
       ? IsForm<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-            'schema',
-            ZodSchema<any>
-          >
-        ? {
-            in: {
-              form: z.input<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
+              'schema',
+              ZodSchema<any>
+            >
+          ? {
+              in: {
+                form: z.input<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
+              out: {
+                form: z.output<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
             }
-            out: {
-              form: z.output<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
-            }
-          }
-        : {}
+          : {}
       : {}
     : {}
   : {}
@@ -249,8 +249,8 @@ type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHo
 type AsArray<T> = T extends undefined // TODO move to utils?
   ? []
   : T extends any[]
-  ? T
-  : [T]
+    ? T
+    : [T]
 
 /**
  * Like simplify but recursive
@@ -265,17 +265,14 @@ export type DeepSimplify<T> = {
 /**
  * Helper to infer generics from {@link MiddlewareHandler}
  */
-export type OfHandlerType<T extends MiddlewareHandler> = T extends MiddlewareHandler<
-  infer E,
-  infer P,
-  infer I
->
-  ? {
-      env: E
-      path: P
-      input: I
-    }
-  : never
+export type OfHandlerType<T extends MiddlewareHandler> =
+  T extends MiddlewareHandler<infer E, infer P, infer I>
+    ? {
+        env: E
+        path: P
+        input: I
+      }
+    : never
 
 /**
  * Reduce a tuple of middleware handlers into a single
@@ -285,7 +282,7 @@ export type OfHandlerType<T extends MiddlewareHandler> = T extends MiddlewareHan
 export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]> = M extends [
   infer First,
   infer Second,
-  ...infer Rest
+  ...infer Rest,
 ]
   ? First extends MiddlewareHandler<any, any, any>
     ? Second extends MiddlewareHandler<any, any, any>
@@ -297,23 +294,22 @@ export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]
                 OfHandlerType<First>['path'], // Keep path from First
                 OfHandlerType<First>['input'] // Keep input from First
               >,
-              ...Rest
+              ...Rest,
             ]
           >
         : never
       : never
     : never
   : M extends [infer Last]
-  ? Last // Return the last remaining handler in the array
-  : MiddlewareHandler<Env>
+    ? Last // Return the last remaining handler in the array
+    : MiddlewareHandler<Env>
 
 type RouteMiddlewareParams<R extends RouteConfig> = OfHandlerType<
   MiddlewareToHandlerType<AsArray<R['middleware']>>
 >
 
-export type RouteConfigToEnv<R extends RouteConfig> = RouteMiddlewareParams<R> extends never
-  ? Env
-  : RouteMiddlewareParams<R>['env']
+export type RouteConfigToEnv<R extends RouteConfig> =
+  RouteMiddlewareParams<R> extends never ? Env : RouteMiddlewareParams<R>['env']
 
 export type RouteHandler<
   R extends RouteConfig,
@@ -324,7 +320,7 @@ export type RouteHandler<
     InputTypeCookie<R> &
     InputTypeForm<R> &
     InputTypeJson<R>,
-  P extends string = ConvertPathType<R['path']>
+  P extends string = ConvertPathType<R['path']>,
 > = Handler<
   E,
   P,
@@ -352,7 +348,7 @@ export type RouteHook<
     InputTypeCookie<R> &
     InputTypeForm<R> &
     InputTypeJson<R>,
-  P extends string = ConvertPathType<R['path']>
+  P extends string = ConvertPathType<R['path']>,
 > = Hook<
   I,
   E,
@@ -371,7 +367,7 @@ export type OpenAPIObjectConfigure<E extends Env, P extends string> =
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
-  BasePath extends string = '/'
+  BasePath extends string = '/',
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
@@ -421,7 +417,7 @@ export class OpenAPIHono<
       InputTypeCookie<R> &
       InputTypeForm<R> &
       InputTypeJson<R>,
-    P extends string = ConvertPathType<R['path']>
+    P extends string = ConvertPathType<R['path']>,
   >(
     { middleware: routeMiddleware, hide, ...route }: R,
     handler: Handler<
@@ -609,7 +605,7 @@ export class OpenAPIHono<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
-    SubBasePath extends string
+    SubBasePath extends string,
   >(
     path: SubPath,
     app: Hono<SubEnv, SubSchema, SubBasePath>
@@ -619,7 +615,7 @@ export class OpenAPIHono<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
-    SubBasePath extends string
+    SubBasePath extends string,
   >(
     path: SubPath,
     app?: Hono<SubEnv, SubSchema, SubBasePath>

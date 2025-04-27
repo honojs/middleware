@@ -9,9 +9,8 @@ import * as zodSchemas from './__schemas__/zod'
 import { sValidator } from '.'
 
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
-type MergeDiscriminatedUnion<U> = UnionToIntersection<U> extends infer O
-  ? { [K in keyof O]: O[K] }
-  : never
+type MergeDiscriminatedUnion<U> =
+  UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
 
 const libs = ['valibot', 'zod', 'arktype'] as const
 const schemasByLibrary = {
