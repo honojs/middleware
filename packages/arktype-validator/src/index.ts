@@ -23,7 +23,7 @@ export const arktypeValidator = <
   } = {
     in: HasUndefined<I> extends true ? { [K in Target]?: I } : { [K in Target]: I }
     out: { [K in Target]: O }
-  }
+  },
 >(
   target: Target,
   schema: T,

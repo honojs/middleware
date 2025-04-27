@@ -32,7 +32,7 @@ export const conformValidator = <
       form: { [K in keyof In]: FormTargetValue }
     }
     out: { form: GetSuccessSubmission<Out> }
-  }
+  },
 >(
   parse: F,
   hook?: Hook<F, E, P>

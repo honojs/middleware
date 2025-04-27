@@ -64,7 +64,7 @@ type Hook<
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
-  O = object
+  O = object,
 > = (
   result: ({ success: true } | { success: false; errors: ValidationError[] }) & {
     data: T
@@ -119,19 +119,19 @@ export const classValidator = <
           [K in Target]?: K extends 'json'
             ? In
             : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+              ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+              : { [K2 in keyof In]: ValidationTargets[K][K2] }
         }
       : {
           [K in Target]: K extends 'json'
             ? In
             : HasUndefined<keyof ValidationTargets[K]> extends true
-            ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+              ? { [K2 in keyof In]?: ValidationTargets[K][K2] }
+              : { [K2 in keyof In]: ValidationTargets[K][K2] }
         }
     out: { [K in Target]: Output }
   },
-  V extends I = I
+  V extends I = I,
 >(
   target: Target,
   dataType: T,

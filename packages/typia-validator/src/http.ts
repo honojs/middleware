@@ -11,54 +11,57 @@ interface IFailure<T> {
 type BaseType<T> = T extends string
   ? string
   : T extends number
-  ? number
-  : T extends boolean
-  ? boolean
-  : T extends symbol
-  ? symbol
-  : T extends bigint
-  ? bigint
-  : T
-type Parsed<T> = T extends Record<string | number, any>
-  ? {
-      [K in keyof T]-?: T[K] extends (infer U)[]
-        ? (BaseType<U> | null | undefined)[] | undefined
-        : BaseType<T[K]> | null | undefined
-    }
-  : BaseType<T>
+    ? number
+    : T extends boolean
+      ? boolean
+      : T extends symbol
+        ? symbol
+        : T extends bigint
+          ? bigint
+          : T
+type Parsed<T> =
+  T extends Record<string | number, any>
+    ? {
+        [K in keyof T]-?: T[K] extends (infer U)[]
+          ? (BaseType<U> | null | undefined)[] | undefined
+          : BaseType<T[K]> | null | undefined
+      }
+    : BaseType<T>
 
 export type QueryValidation<O extends Record<string | number, any> = any> = (
   input: string | URLSearchParams
 ) => IValidation<O>
 export type QueryOutputType<T> = T extends QueryValidation<infer O> ? O : never
-type QueryStringify<T> = T extends Record<string | number, any>
-  ? {
-      // Suppress to split union types
-      [K in keyof T]: [T[K]] extends [bigint | number | boolean]
-        ? `${T[K]}`
-        : T[K] extends (infer U)[]
-        ? [U] extends [bigint | number | boolean]
-          ? `${U}`[]
-          : T[K]
-        : T[K]
-    }
-  : T
+type QueryStringify<T> =
+  T extends Record<string | number, any>
+    ? {
+        // Suppress to split union types
+        [K in keyof T]: [T[K]] extends [bigint | number | boolean]
+          ? `${T[K]}`
+          : T[K] extends (infer U)[]
+            ? [U] extends [bigint | number | boolean]
+              ? `${U}`[]
+              : T[K]
+            : T[K]
+      }
+    : T
 export type HeaderValidation<O extends Record<string | number, any> = any> = (
   input: Record<string, string | string[] | undefined>
 ) => IValidation<O>
 export type HeaderOutputType<T> = T extends HeaderValidation<infer O> ? O : never
-type HeaderStringify<T> = T extends Record<string | number, any>
-  ? {
-      // Suppress to split union types
-      [K in keyof T]: [T[K]] extends [bigint | number | boolean]
-        ? `${T[K]}`
-        : T[K] extends (infer U)[]
-        ? [U] extends [bigint | number | boolean]
-          ? `${U}`
-          : U
-        : T[K]
-    }
-  : T
+type HeaderStringify<T> =
+  T extends Record<string | number, any>
+    ? {
+        // Suppress to split union types
+        [K in keyof T]: [T[K]] extends [bigint | number | boolean]
+          ? `${T[K]}`
+          : T[K] extends (infer U)[]
+            ? [U] extends [bigint | number | boolean]
+              ? `${U}`
+              : U
+            : T[K]
+      }
+    : T
 
 export type HttpHook<T, E extends Env, P extends string, O = {}> = (
   result: IValidation.ISuccess<T> | IFailure<Parsed<T>>,
@@ -82,7 +85,7 @@ interface TypiaValidator {
     V extends { in: { query: QueryStringify<O> }; out: { query: O } } = {
       in: { query: QueryStringify<O> }
       out: { query: O }
-    }
+    },
   >(
     target: 'query',
     validate: T,
@@ -97,7 +100,7 @@ interface TypiaValidator {
     V extends { in: { header: HeaderStringify<O> }; out: { header: O } } = {
       in: { header: HeaderStringify<O> }
       out: { header: O }
-    }
+    },
   >(
     target: 'header',
     validate: T,
@@ -116,7 +119,7 @@ interface TypiaValidator {
     } = {
       in: { [K in Target]: O }
       out: { [K in Target]: O }
-    }
+    },
   >(
     target: Target,
     validate: T,

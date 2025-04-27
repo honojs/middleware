@@ -14,7 +14,7 @@ export type Hook<
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
-  O = {}
+  O = {},
 > = (
   result: SafeParseResult<T> & {
     target: Target
@@ -45,7 +45,7 @@ export const vValidator = <
         }
     out: { [K in Target]: Out }
   },
-  V extends I = I
+  V extends I = I,
 >(
   target: Target,
   schema: T,

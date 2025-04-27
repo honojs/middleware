@@ -8,7 +8,7 @@ export type Hook<
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
-  O = {}
+  O = {},
 > = (
   result: ({ success: true; data: T } | { success: false; error: ZodError; data: T }) & {
     target: Target
@@ -39,7 +39,7 @@ export const zValidator = <
         }
     out: { [K in Target]: Out }
   },
-  V extends I = I
+  V extends I = I,
 >(
   target: Target,
   schema: T,

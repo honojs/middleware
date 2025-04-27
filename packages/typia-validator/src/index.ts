@@ -23,7 +23,7 @@ export const typiaValidator = <
   } = {
     in: { [K in Target]: O }
     out: { [K in Target]: O }
-  }
+  },
 >(
   target: Target,
   validate: T,

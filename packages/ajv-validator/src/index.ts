@@ -67,7 +67,7 @@ export function ajvValidator<
   T,
   Target extends keyof ValidationTargets,
   E extends Env = Env,
-  P extends string = string
+  P extends string = string,
 >(
   target: Target,
   schema: JSONSchemaType<T>,
