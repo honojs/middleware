@@ -148,7 +148,7 @@ export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions) => {
           return ''
       }
     })
-    .filter(item => item !== '')
+    .filter((item) => item !== '')
     .join(',')
 
   return optionsStrings

@@ -44,7 +44,7 @@ const getMetricConstructor = (type: MetricOptions['type']) =>
   ({
     counter: Counter,
     histogram: Histogram,
-  }[type])
+  })[type]
 
 export const createStandardMetrics = ({
   registry,

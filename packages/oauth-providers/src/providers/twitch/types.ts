@@ -162,7 +162,7 @@ export interface TwitchUserResponse {
       view_count: number
       email: string
       created_at: string
-    }
+    },
   ]
 }
 

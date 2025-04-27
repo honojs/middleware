@@ -225,7 +225,7 @@ export function SessionProvider(props: SessionProviderProps) {
           }
           return updatedSession
         },
-      } as SessionContextValue),
+      }) as SessionContextValue,
     [session, loading, setSession]
   )
 

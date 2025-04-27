@@ -35,7 +35,7 @@ export interface Emitter<EPMap extends EventPayloadMap> {
 export const defineHandler = <
   EPMap extends EventPayloadMap,
   Key extends keyof EPMap,
-  E extends Env = Env
+  E extends Env = Env,
 >(
   handler: EventHandler<EPMap[Key], E>
 ): EventHandler<EPMap[Key], E> => {

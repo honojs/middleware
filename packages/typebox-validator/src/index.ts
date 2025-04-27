@@ -68,7 +68,7 @@ export function tbValidator<
   V extends {
     in: { [K in Target]: Static<T> }
     out: { [K in Target]: ExcludeResponseType<Static<T>> }
-  }
+  },
 >(
   target: Target,
   schema: T,
