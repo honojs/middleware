@@ -170,18 +170,21 @@ describe('WebSocket helper', () => {
   })
 
   it('CloseEvent should be executed without crash', async () => {
+    const testCode = 3001
+    const testReason = 'Test!'
     app.get(
       '/',
       upgradeWebSocket(() => ({
-        onClose() {
-          // doing some stuff here
+        onClose(event) {
+          expect(event.code).toBe(testCode)
+          expect(event.reason).toBe(testReason)
         },
       }))
     )
 
     const ws = new WebSocket('ws://localhost:3030/')
     await new Promise<void>((resolve) => ws.on('open', resolve))
-    ws.close()
+    ws.close(testCode, testReason)
   })
 
   it('Should be able to send and receive binary content with good length', async () => {
