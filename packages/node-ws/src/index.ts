@@ -146,9 +146,9 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
               }
             }
           })
-          ws.on('close', () => {
+          ws.on('close', (code, reason) => {
             try {
-              events?.onClose?.(new CloseEvent('close'), ctx)
+              events?.onClose?.(new CloseEvent('close', { code, reason: reason.toString() }), ctx)
             } catch (e) {
               ;(options?.onError ?? console.error)(e)
             }
