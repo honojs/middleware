@@ -28,7 +28,7 @@ describe('WebSocket helper', () => {
     server.close()
   })
 
-  /*it('Should be inited WebSocket Context even if upgrading process is asynchronous', async () => {
+  it('Should be inited WebSocket Context even if upgrading process is asynchronous', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
@@ -245,7 +245,7 @@ describe('WebSocket helper', () => {
       createNodeWebSocket({ app })
     })
   })
-*/
+
   it('Should client can connect when use cors()', async () => {
     app.use(cors())
     const mainPromise = new Promise<boolean>((resolve) =>
