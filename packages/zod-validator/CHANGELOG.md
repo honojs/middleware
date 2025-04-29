@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.5.0
+
+### Minor Changes
+
+- [#1140](https://github.com/honojs/middleware/pull/1140) [`8ed99d9d791ed6bd8b897c705289b0464947e632`](https://github.com/honojs/middleware/commit/8ed99d9d791ed6bd8b897c705289b0464947e632) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: add `validationFunction` option
+
 ## 0.4.3
 
 ### Patch Changes
