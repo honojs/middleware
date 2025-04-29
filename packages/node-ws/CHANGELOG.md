@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.4
+
+### Patch Changes
+
+- [#1146](https://github.com/honojs/middleware/pull/1146) [`b8453438b66fc9a6af58e33593e9fa21a96c02a7`](https://github.com/honojs/middleware/commit/b8453438b66fc9a6af58e33593e9fa21a96c02a7) Thanks [@nakasyou](https://github.com/nakasyou)! - enhance WebSocket connection handling with CORS support and connection symbols
+
 ## 1.1.3
 
 ### Patch Changes
