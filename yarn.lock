@@ -1962,21 +1962,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/effect@workspace:packages/effect":
-  version: 0.0.0-use.local
-  resolution: "@hono/effect@workspace:packages/effect"
-  dependencies:
-    "@arethetypeswrong/cli": "npm:^0.17.4"
-    effect: "npm:^3.14.11"
-    publint: "npm:^0.3.9"
-    tsup: "npm:^8.4.0"
-    typescript: "npm:^5.8.2"
-    vitest: "npm:^3.0.8"
-  peerDependencies:
-    hono: "*"
-  languageName: unknown
-  linkType: soft
-
 "@hono/esbuild-transpiler@workspace:packages/esbuild-transpiler":
   version: 0.0.0-use.local
   resolution: "@hono/esbuild-transpiler@workspace:packages/esbuild-transpiler"
@@ -3736,7 +3721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standard-schema/spec@npm:1.0.0, @standard-schema/spec@npm:^1.0.0":
+"@standard-schema/spec@npm:1.0.0":
   version: 1.0.0
   resolution: "@standard-schema/spec@npm:1.0.0"
   checksum: a1ab9a8bdc09b5b47aa8365d0e0ec40cc2df6437be02853696a0e377321653b0d3ac6f079a8c67d5ddbe9821025584b1fb71d9cc041a6666a96f1fadf2ece15f
@@ -6286,16 +6271,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:^3.14.11":
-  version: 3.14.11
-  resolution: "effect@npm:3.14.11"
-  dependencies:
-    "@standard-schema/spec": "npm:^1.0.0"
-    fast-check: "npm:^3.23.1"
-  checksum: 1a1055845fdedc18713746ea600ffdddd6417f753c91b8f6ba0867cc058d4c99507dd0019be73d52cf01003dae14efe79d8092da0b4dd1e22bdf6ef84398b8b4
-  languageName: node
-  linkType: hard
-
 "electron-to-chromium@npm:^1.5.73":
   version: 1.5.123
   resolution: "electron-to-chromium@npm:1.5.123"
@@ -7360,7 +7335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^3.21.0, fast-check@npm:^3.23.1":
+"fast-check@npm:^3.21.0":
   version: 3.23.2
   resolution: "fast-check@npm:3.23.2"
   dependencies:
