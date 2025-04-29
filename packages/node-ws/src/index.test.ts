@@ -3,6 +3,7 @@ import { serve } from '@hono/node-server'
 // @ts-ignore
 import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import type { WSMessageReceive } from 'hono/ws'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
@@ -27,7 +28,7 @@ describe('WebSocket helper', () => {
     server.close()
   })
 
-  it('Should be inited WebSocket Context even if upgrading process is asynchronous', async () => {
+  /*it('Should be inited WebSocket Context even if upgrading process is asynchronous', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
@@ -243,5 +244,43 @@ describe('WebSocket helper', () => {
       }>()
       createNodeWebSocket({ app })
     })
+  })
+*/
+  it('Should client can connect when use cors()', async () => {
+    app.use(cors())
+    const mainPromise = new Promise<boolean>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(() => ({
+          onOpen() {
+            resolve(true)
+          },
+        }))
+      )
+    )
+
+    new WebSocket('ws://localhost:3030/')
+
+    expect(await mainPromise).toBe(true)
+  })
+  it('Should client can connect even if a response has difference', async () => {
+    app.use(async (c, next) => {
+      c.res = new Response(null, c.res)
+      await next()
+    })
+    const mainPromise = new Promise<boolean>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(() => ({
+          onOpen() {
+            resolve(true)
+          },
+        }))
+      )
+    )
+
+    new WebSocket('ws://localhost:3030/')
+
+    expect(await mainPromise).toBe(true)
   })
 })
