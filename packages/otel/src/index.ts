@@ -8,7 +8,7 @@ import {
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
-import type { Env, HonoRequest, Input } from 'hono'
+import type { Env, Input } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import metadata from '../package.json' with { type: 'json' }
 
