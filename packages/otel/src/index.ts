@@ -1,5 +1,5 @@
 import type { TracerProvider } from '@opentelemetry/api'
-import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,
@@ -8,7 +8,7 @@ import {
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
-import type { Env, Input } from 'hono'
+import type { Env, HonoRequest, Input } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import metadata from '../package.json' with { type: 'json' }
 
@@ -42,6 +42,12 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
   return createMiddleware<E, P, I>(async (c, next) => {
+    // Handle propagation of trace context from a request using the W3C Trace Context format
+    let activeContext = context.active()
+    if (c.req.header('traceparent')) {
+      activeContext = propagation.extract(context.active(), c.req.header())
+    }
+
     const routePath = c.req.routePath
     await tracer.startActiveSpan(
       `${c.req.method} ${c.req.routePath}`,
@@ -53,6 +59,7 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
           [ATTR_HTTP_ROUTE]: routePath,
         },
       },
+      activeContext,
       async (span) => {
         for (const [name, value] of Object.entries(c.req.header())) {
           span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
