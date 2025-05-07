@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1151](https://github.com/honojs/middleware/pull/1151) [`414f0a6c9502de4135d50a4f80698a8d2f09a81d`](https://github.com/honojs/middleware/commit/414f0a6c9502de4135d50a4f80698a8d2f09a81d) Thanks [@nrdobie](https://github.com/nrdobie)! - Added support for W3C Trace Context format
+
 ## 0.1.1
 
 ### Patch Changes
