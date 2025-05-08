@@ -1,6 +1,6 @@
 # Bun Compress Middleware for Hono
 
-Bun does not currently support the [CompressionStream API](https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream) so this middlware replicates the behavor of [`hono/compress`](https://hono.dev/docs/middleware/builtin/compress) using the Zlib library. This middleware will be depreacted once [Bun adds support for `CompressionStream`](https://github.com/oven-sh/bun/issues/1723).
+Bun does not currently support the [CompressionStream API](https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream) so this middleware replicates the behavior of [`hono/compress`](https://hono.dev/docs/middleware/builtin/compress) using the Zlib library. This middleware will be deprecated once [Bun adds support for `CompressionStream`](https://github.com/oven-sh/bun/issues/1723).
 
 This middleware will use `hono/compress` if CompressionStream is available so you can use this middleware in Bun and Node.js without any changes.
 
