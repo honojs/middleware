@@ -35,7 +35,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
-    "directory": "packages/hello"
+    "directory": "packages/bun-compress"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
