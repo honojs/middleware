@@ -1,6 +1,6 @@
 {
   "name": "@hono/bun-compress",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Hono middleware for compressing responses using Bun's built-in compression.",
   "type": "module",
   "module": "dist/index.js",
