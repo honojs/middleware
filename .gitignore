@@ -3,7 +3,7 @@ dist
 node_modules
 *.tgz
 coverage
-
+.eslintcache
 .yarn/*
 !.yarn/cache
 !.yarn/patches
