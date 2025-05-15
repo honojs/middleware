@@ -4,6 +4,9 @@ import importX from 'eslint-plugin-import-x'
 import nodePlugin from 'eslint-plugin-n'
 import tseslint from 'typescript-eslint'
 
+/**
+ * @type {import("eslint").Linter.Config[]}
+ */
 export default [
   js.configs.recommended,
   nodePlugin.configs['flat/recommended'],
