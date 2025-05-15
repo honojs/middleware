@@ -10,7 +10,7 @@
   "scripts": {
     "build": "yarn workspaces foreach --all --topological --verbose run build",
     "publint": "yarn workspaces foreach --all --topological --verbose run publint",
-    "publish": "yarn workspaces foreach --all --no-private --topological --verbose npm publish --tolerate-republish",
+    "publish": "yarn workspaces foreach --all --no-private --topological --verbose npm publish --tolerate-republish && changeset tag",
     "typecheck": "yarn tsc --build",
     "typecheck:clean": "yarn tsc --build --clean",
     "typecheck:watch": "yarn tsc --build --watch",
