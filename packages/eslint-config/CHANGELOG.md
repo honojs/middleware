@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 2.0.1
+
+### Patch Changes
+
+- [#1162](https://github.com/honojs/middleware/pull/1162) [`74d0fe0cb46b3aca7bac6c017a162bae272c7e3b`](https://github.com/honojs/middleware/commit/74d0fe0cb46b3aca7bac6c017a162bae272c7e3b) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add type declaration
+
 ## 2.0.0
 
 ### Major Changes
