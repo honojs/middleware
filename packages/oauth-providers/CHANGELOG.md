@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.0
+
+### Minor Changes
+
+- [#1163](https://github.com/honojs/middleware/pull/1163) [`cf48336cbd123a45b461caaa41325d2302182901`](https://github.com/honojs/middleware/commit/cf48336cbd123a45b461caaa41325d2302182901) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - The PR adds Microsoft Entra (AzureAD) to the list of supported 3rd-party OAuth providers.
+
 ## 0.7.1
 
 ### Patch Changes
