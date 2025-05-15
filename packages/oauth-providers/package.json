@@ -60,6 +60,9 @@
       ],
       "twitch": [
         "./dist/providers/twitch/index.d.ts"
+      ],
+      "msentra": [
+        "./dist/providers/msentra/index.d.ts"
       ]
     }
   },

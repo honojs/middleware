@@ -1087,6 +1087,128 @@ The validation endpoint helps your application detect when tokens become invalid
 
 > For security and compliance, make sure to implement regular token validation in your application. If a token becomes invalid, promptly sign out the user and terminate their OAuth session.
 
+### MSEntra
+
+```ts
+import { Hono } from 'hono'
+import { msentraAuth } from '@hono/oauth-providers/msentra'
+
+const app = new Hono()
+
+app.use(
+  '/msentra',
+  msentraAuth({
+    client_id: process.env.MSENTRA_ID,
+    client_secret: process.env.MSENTRA_SECRET,
+    tenant_id: process.env.MSENTRA_TENANT_ID
+    scope: [
+      'openid',
+      'profile',
+      'email',
+      'https;//graph.microsoft.com/.default',
+    ]
+  })
+)
+
+export default app
+```
+
+### Parameters
+
+- `client_id`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client Id. You can find this in your Azure Portal.
+- `client_secret`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client secret. You can find this in your Azure Portal.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
+- `tenant_id`:
+  - Type: `string`
+  - `Required`.
+  - Your Microsoft Tenant's Id. You can find this in your Azure Portal.
+- `scope`:
+  - Type: `string[]`.
+  - `Required`.
+  - Set of **permissions** to request the user's authorization to access your app for retrieving
+    user information and performing actions on their behalf.
+
+#### Authentication Flow
+
+After the completion of the MSEntra OAuth flow, essential data has been prepared for use in the
+subsequent steps that your app needs to take.
+
+`msentraAuth` method provides 4 set key data:
+
+- `token`:
+  - Access token to make requests to the MSEntra API for retrieving user information and
+    performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+      refresh_token: string
+    }
+    ```
+- `granted-scopes`:
+  - Scopes for which the user has granted permissions.
+  - Type: `string[]`.
+- `user-msentra`:
+  - User basic info retrieved from MSEntra
+  - Type:
+    ```
+    {
+      businessPhones: string[],
+      displayName: string
+      givenName: string
+      jobTitle: string
+      mail: string
+      mobilePhone: string
+      officeLocation: string
+      surname: string
+      userPrincipalName: string
+      id: string
+    }
+    ```
+
+> [!NOTE]
+> To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request
+> handler.
+
+```ts
+app.get('/msentra', (c) => {
+  const token = c.get('token')
+  const grantedScopes = c.get('granted-scopes')
+  const user = c.get('user-msentra')
+
+  return c.json({
+    token,
+    grantedScopes,
+    user,
+  })
+})
+```
+
+#### Refresh Token
+
+Once the user token expires you can refresh their token without the need to prompt the user again
+for access. In such scenario, you can utilize the `refreshToken` method, which accepts the
+`client_id`, `client_secret`, `tenant_id`, and `refresh_token` as parameters.
+
+> [!NOTE]
+> The `refresh_token` can be used once. Once the token is refreshed MSEntra gives you a new
+> `refresh_token` along with the new token.
+
+```ts
+import { msentraAuth, refreshToken } from '@hono/oauth-providers/msentra'
+
+app.get('/msentra/refresh', (c, next) => {
+  const newTokens = await refreshToken({ client_id, client_secret, tenant_id, refresh_token })
+})
+```
+
 ## Advance Usage
 
 ### Customize `redirect_uri`
