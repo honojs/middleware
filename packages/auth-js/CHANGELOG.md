@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.16
+
+### Patch Changes
+
+- [#1170](https://github.com/honojs/middleware/pull/1170) [`7585969171ad4876e7620c7369eb9b638849d0eb`](https://github.com/honojs/middleware/commit/7585969171ad4876e7620c7369eb9b638849d0eb) Thanks [@hambergerpls](https://github.com/hambergerpls)! - fix(auth-js): use HonoRequest.blob() instead of HonoRequest.raw.body()
+
 ## 1.0.15
 
 ### Patch Changes
