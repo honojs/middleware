@@ -2,10 +2,10 @@ import { skipCSRFCheck } from '@auth/core'
 import type { Adapter } from '@auth/core/adapters'
 import Credentials from '@auth/core/providers/credentials'
 import { Hono } from 'hono'
+import { validator } from 'hono/validator'
 import { describe, expect, it, vi } from 'vitest'
 import type { AuthConfig } from '.'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '.'
-import { validator } from 'hono/validator'
 
 describe('Config', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {
@@ -183,9 +183,8 @@ describe('reqWithEnvUrl()', async () => {
 
     csrfRes = await app.request('http://localhost/api/auth/csrf', {
       method: 'GET',
-    });
-
-    ({ csrfToken } = await csrfRes.json())
+    })
+    ;({ csrfToken } = await csrfRes.json())
 
     cookie = csrfRes.headers.getSetCookie()
 
