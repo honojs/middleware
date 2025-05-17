@@ -135,7 +135,27 @@ export function authHandler(): MiddlewareHandler {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const res = await Auth(reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL), config)
+    const body = c.req.raw.body ? await c.req.blob() : undefined
+    const res = await Auth(
+      reqWithEnvUrl(
+        new Request(c.req.raw.url, {
+          body,
+          cache: c.req.raw.cache,
+          credentials: c.req.raw.credentials,
+          headers: c.req.raw.headers,
+          integrity: c.req.raw.integrity,
+          keepalive: c.req.raw.keepalive,
+          method: c.req.raw.method,
+          mode: c.req.raw.mode,
+          redirect: c.req.raw.redirect,
+          referrer: c.req.raw.referrer,
+          referrerPolicy: c.req.raw.referrerPolicy,
+          signal: c.req.raw.signal,
+        }),
+        ctxEnv.AUTH_URL
+      ),
+      config
+    )
     return new Response(res.body, res)
   }
 }
