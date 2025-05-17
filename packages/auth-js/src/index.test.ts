@@ -5,6 +5,7 @@ import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
 import type { AuthConfig } from '.'
 import { authHandler, verifyAuth, initAuthConfig, reqWithEnvUrl } from '.'
+import { validator } from 'hono/validator'
 
 describe('Config', () => {
   it('Should return 500 if AUTH_SECRET is missing', async () => {
@@ -79,6 +80,129 @@ describe('reqWithEnvUrl()', async () => {
   const newReq = await reqWithEnvUrl(req, 'https://auth-url-base/auth-url-path')
   it('Should rewrite the base path', () => {
     expect(newReq.url.toString()).toBe('https://auth-url-base/request-path')
+  })
+
+  const mockAdapter: Adapter = {
+    createVerificationToken: vi.fn(),
+    useVerificationToken: vi.fn(),
+    getUserByEmail: vi.fn(),
+    createUser: vi.fn(),
+    getUser: vi.fn(),
+    getUserByAccount: vi.fn(),
+    updateUser: vi.fn(),
+    linkAccount: vi.fn(),
+    createSession: vi.fn(),
+    getSessionAndUser: vi.fn(),
+    updateSession: vi.fn(),
+    deleteSession: vi.fn(),
+  }
+
+  globalThis.process.env = {
+    AUTH_SECRET: 'secret',
+  }
+
+  const user = { email: 'hono@hono.hono', name: 'Hono' }
+
+  const credentials = Credentials({
+    credentials: {
+      password: {},
+    },
+    authorize: (credentials) => {
+      if (credentials.password === 'password') {
+        return user
+      }
+      return null
+    },
+  })
+
+  function getAuthConfig(): AuthConfig {
+    return {
+      secret: 'secret',
+      providers: [credentials],
+      adapter: mockAdapter,
+      basePath: '/api/auth',
+      callbacks: {
+        jwt: ({ token, user }) => {
+          if (user) {
+            token.id = user.id
+          }
+          return token
+        },
+      },
+      session: {
+        strategy: 'jwt',
+      },
+    }
+  }
+
+  let cookie = ['']
+
+  it('Should be able to instantiate new Request after passing through validator', async () => {
+    const app = new Hono()
+
+    app.use('*', initAuthConfig(getAuthConfig))
+    app.use(
+      '/api/auth/*',
+      validator('form', (value, _) => {
+        const csrfToken = value['csrfToken']
+        return {
+          csrfToken,
+        }
+      }),
+      authHandler()
+    )
+
+    let csrfRes = await app.request('http://localhost/api/auth/csrf', {
+      method: 'GET',
+    })
+    let { csrfToken } = await csrfRes.json()
+
+    cookie = csrfRes.headers.getSetCookie()
+
+    let headers = new Headers()
+    headers.append('cookie', cookie[0])
+
+    const signInRes = await app.request('http://localhost/api/auth/callback/credentials', {
+      method: 'POST',
+      headers,
+      body: new URLSearchParams({
+        csrfToken,
+        password: 'password',
+      }),
+    })
+    expect(signInRes.status).toBe(302)
+    expect(signInRes.headers.get('location')).toBe('http://localhost')
+
+    cookie = signInRes.headers.getSetCookie()
+
+    const sessionCookie = cookie[1]
+
+    headers = new Headers()
+    headers.append('cookie', cookie[1])
+    headers.append('Content-Type', 'application/json')
+
+    csrfRes = await app.request('http://localhost/api/auth/csrf', {
+      method: 'GET',
+    });
+
+    ({ csrfToken } = await csrfRes.json())
+
+    cookie = csrfRes.headers.getSetCookie()
+
+    headers = new Headers()
+    headers.append('cookie', cookie[0])
+    headers.append('cookie', sessionCookie)
+
+    const req = new Request('http://localhost/api/auth/signout', {
+      method: 'POST',
+      body: new URLSearchParams({
+        csrfToken,
+        password: 'password',
+      }),
+      headers,
+    })
+    const res = await app.request(req)
+    expect(res.status).toBe(302)
   })
 })
 
