@@ -14,7 +14,7 @@ type Hook<
 > = (
   result: (
     | { success: true; data: T }
-    | { success: false; error: ReadonlyArray<StandardSchemaV1.Issue>; data: T }
+    | { success: false; error: readonly StandardSchemaV1.Issue[]; data: T }
   ) & {
     target: Target
   },

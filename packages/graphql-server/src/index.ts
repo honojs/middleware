@@ -32,7 +32,7 @@ type Options<E extends Env = any, P extends string = any, I extends Input = {}> 
   schema: GraphQLSchema
   rootResolver?: RootResolver<E, P, I>
   pretty?: boolean
-  validationRules?: ReadonlyArray<ValidationRule>
+  validationRules?: readonly ValidationRule[]
   graphiql?: boolean
 }
 

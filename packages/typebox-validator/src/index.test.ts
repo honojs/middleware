@@ -313,7 +313,7 @@ describe('Remove non schema items', () => {
     })
 
     const res = await app.request(req)
-    const { message, success } = (await res.json()) as { success: boolean; message: Array<any> }
+    const { message, success } = (await res.json()) as { success: boolean; message: any[] }
     expect(res.status).toBe(200)
     expect(success).toBe(true)
     expect(message).toEqual([

@@ -17,7 +17,6 @@ export default defineConfig(globalIgnores(['.yarn', '**/coverage', '**/dist']), 
   },
 
   rules: {
-    '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/await-thenable': 'off',
     '@typescript-eslint/consistent-indexed-object-style': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
