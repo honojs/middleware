@@ -66,7 +66,7 @@ export const zValidator = <
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
-    let validatorValue: unknown = value
+    let validatorValue = value
 
     // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
     // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
