@@ -51,10 +51,11 @@ export const zValidator = <
     out: { [K in Target]: Out }
   },
   V extends I = I,
+  InferredValue = zInfer<T>,
 >(
   target: Target,
   schema: T,
-  hook?: Hook<zInfer<T>, E, P, Target>,
+  hook?: Hook<InferredValue, E, P, Target>,
   options?: {
     validationFunction: (
       schema: T,
