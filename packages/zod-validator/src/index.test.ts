@@ -398,7 +398,6 @@ describe('With options + validationFunction', () => {
       '/extended',
       zValidator('json', jsonSchema, undefined, {
         validationFunction: async (schema, value) => {
-          const result = await schema.passthrough().safeParseAsync(value)
           return await schema.passthrough().safeParseAsync(value)
         },
       }),
