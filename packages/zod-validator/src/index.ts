@@ -48,21 +48,8 @@ export const zValidator = <
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
-    ) =>
-      | ZodSafeParseResult<
-          {
-            name: string
-            age: number
-          } & Record<string, unknown>
-        >
-      | Promise<
-          ZodSafeParseResult<
-            {
-              name: string
-              age: number
-            } & Record<string, unknown>
-          >
-        >
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) => ZodSafeParseResult<any> | Promise<ZodSafeParseResult<any>>
   }
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
