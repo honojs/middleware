@@ -163,6 +163,7 @@ describe('With Hook', () => {
     '/post',
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
+        type verify = Expect<Equal<number, typeof result.data.id>>
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),

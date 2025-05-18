@@ -15,7 +15,7 @@ type zOutput<T> = T extends v3.ZodType ? v3.output<T> : T extends v4.$ZodType ? 
 type zInfer<T> = T extends v3.ZodType ? v3.infer<T> : T extends v4.$ZodType ? v4.infer<T> : never
 
 export type Hook<
-  T extends ZodSchema,
+  T,
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
@@ -54,8 +54,6 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore avoid the type error on build
   hook?: Hook<zInfer<T>, E, P, Target>,
   options?: {
     validationFunction: (
