@@ -3,18 +3,28 @@
   "version": "0.5.0",
   "description": "Validator middleware using Zod",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/v3/index.js",
+  "types": "dist/v3/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/v3/index.d.ts",
+        "default": "./dist/v3/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/v3/index.d.cts",
+        "default": "./dist/v3/index.cjs"
+      }
+    },
+    "./v4": {
+      "import": {
+        "types": "./dist/v4/index.d.ts",
+        "default": "./dist/v4/index.js"
+      },
+      "require": {
+        "types": "./dist/v4/index.d.cts",
+        "default": "./dist/v4/index.cjs"
       }
     }
   },
@@ -22,7 +32,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsup ./src/v3/index.ts ./src/v4/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -49,6 +59,6 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
-    "zod": "^3.22.4"
+    "zod": "3.25.0-beta.20250516T044623"
   }
 }

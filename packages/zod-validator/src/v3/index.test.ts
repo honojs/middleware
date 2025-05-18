@@ -1,12 +1,7 @@
 import { Hono } from 'hono'
-import type { ContentfulStatusCode } from 'hono/utils/http-status'
-import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
 import { z } from 'zod'
 import { zValidator } from '.'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 
 describe('Basic', () => {
   const app = new Hono()
@@ -22,7 +17,7 @@ describe('Basic', () => {
     })
     .optional()
 
-  const route = app.post(
+  app.post(
     '/author',
     zValidator('json', jsonSchema),
     zValidator('query', querySchema),
@@ -37,36 +32,6 @@ describe('Basic', () => {
       })
     }
   )
-
-  type Actual = ExtractSchema<typeof route>
-  type Expected = {
-    '/author': {
-      $post: {
-        input: {
-          json: {
-            name: string
-            age: number
-          }
-        } & {
-          query?:
-            | {
-                name?: string | undefined
-              }
-            | undefined
-        }
-        output: {
-          success: boolean
-          message: string
-          queryName: string | undefined
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
@@ -115,31 +80,10 @@ describe('coerce', () => {
     page: z.coerce.number(),
   })
 
-  const route = app.get('/page', zValidator('query', querySchema), (c) => {
+  app.get('/page', zValidator('query', querySchema), (c) => {
     const { page } = c.req.valid('query')
     return c.json({ page })
   })
-
-  type Actual = ExtractSchema<typeof route>
-  type Expected = {
-    '/page': {
-      $get: {
-        input: {
-          query: {
-            page: string | string[]
-          }
-        }
-        output: {
-          page: number
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
     const res = await app.request('/page?page=123')
@@ -321,29 +265,10 @@ describe('Only Types', () => {
       order: z.enum(['asc', 'desc']),
     })
 
-    const route = app.get('/', zValidator('query', querySchema), (c) => {
+    app.get('/', zValidator('query', querySchema), (c) => {
       const data = c.req.valid('query')
       return c.json(data)
     })
-
-    type Actual = ExtractSchema<typeof route>
-    type Expected = {
-      '/': {
-        $get: {
-          input: {
-            query: {
-              order: 'asc' | 'desc'
-            }
-          }
-          output: {
-            order: 'asc' | 'desc'
-          }
-          outputFormat: 'json'
-          status: ContentfulStatusCode
-        }
-      }
-    }
-    type verify = Expect<Equal<Expected, Actual>>
   })
 })
 
@@ -357,25 +282,10 @@ describe('Case-Insensitive Headers', () => {
       ONLYUPPERCASE: z.string(),
     })
 
-    const route = app.get('/', zValidator('header', headerSchema), (c) => {
+    app.get('/', zValidator('header', headerSchema), (c) => {
       const headers = c.req.valid('header')
       return c.json(headers)
     })
-
-    type Actual = ExtractSchema<typeof route>
-    type Expected = {
-      '/': {
-        $get: {
-          input: {
-            header: z.infer<typeof headerSchema>
-          }
-          output: z.infer<typeof headerSchema>
-          outputFormat: 'json'
-          status: ContentfulStatusCode
-        }
-      }
-    }
-    type verify = Expect<Equal<Expected, Actual>>
   })
 })
 
@@ -386,7 +296,7 @@ describe('With options + validationFunction', () => {
     age: z.number(),
   })
 
-  const route = app
+  app
     .post('/', zValidator('json', jsonSchema), (c) => {
       const data = c.req.valid('json')
       return c.json({

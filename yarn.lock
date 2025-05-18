@@ -2402,7 +2402,7 @@ __metadata:
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
-    zod: "npm:^3.22.4"
+    zod: "npm:3.25.0-beta.20250516T044623"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.19.1
@@ -15153,7 +15153,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3, zod@npm:^3.22.4":
+"zod@npm:3.25.0-beta.20250516T044623":
+  version: 3.25.0-beta.20250516T044623
+  resolution: "zod@npm:3.25.0-beta.20250516T044623"
+  checksum: c05a7724f04dbb38522f2812e5a7df8b45a99ce392511c997e01acc333beeab80dad08ada5e67fc25340ade43991eae17bb145a4a1d2ef57857686eca9c1d41c
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565
