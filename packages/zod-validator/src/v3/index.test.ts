@@ -17,21 +17,16 @@ describe('Basic', () => {
     })
     .optional()
 
-  app.post(
-    '/author',
-    zValidator('json', jsonSchema),
-    zValidator('query', querySchema),
-    (c) => {
-      const data = c.req.valid('json')
-      const query = c.req.valid('query')
+  app.post('/author', zValidator('json', jsonSchema), zValidator('query', querySchema), (c) => {
+    const data = c.req.valid('json')
+    const query = c.req.valid('query')
 
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}`,
-        queryName: query?.name,
-      })
-    }
-  )
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+      queryName: query?.name,
+    })
+  })
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
