@@ -1,22 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type * as z3 from 'zod/v3'
+import type * as v3 from 'zod/v3'
+import { ZodObject as v3ZodObject } from 'zod/v3'
+import { ZodObject as v4ZodObject } from 'zod/v4'
 import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
+import type * as v4 from 'zod/v4/core'
 
-import type * as z4 from 'zod/v4/core'
-
-type ZodSchema = z3.ZodSchema | z4.$ZodType
-type ZodError = z3.ZodError | z4.$ZodError
-type ZodSafeParseResult<T, T2> = z3.SafeParseReturnType<T, T2> | v4ZodSafeParseResult<T>
-type zInput<T> =
-  T extends z3.ZodType<any, any, any> ? z3.input<T> : T extends z4.$ZodType ? z4.input<T> : never
-type zOutput<T> =
-  T extends z3.ZodType<any, any, any> ? z3.output<T> : T extends z4.$ZodType ? z4.output<T> : never
-type zInfer<T> =
-  T extends z3.ZodType<any, any, any> ? z3.infer<T> : T extends z4.$ZodType ? z4.infer<T> : never
+type ZodSchema = v3.ZodType | v4.$ZodType
+type ZodError = v3.ZodError | v4.$ZodError
+type ZodSafeParseResult<T, T2> = v3.SafeParseReturnType<T, T2> | v4ZodSafeParseResult<T>
+type zInput<T> = T extends v3.ZodType ? v3.input<T> : T extends v4.$ZodType ? v4.input<T> : never
+type zOutput<T> = T extends v3.ZodType ? v3.output<T> : T extends v4.$ZodType ? v4.output<T> : never
+type zInfer<T> = T extends v3.ZodType ? v3.infer<T> : T extends v4.$ZodType ? v4.infer<T> : never
 
 export type Hook<
-  T,
+  T extends ZodSchema,
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
@@ -60,17 +59,19 @@ export const zValidator = <
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) => ZodSafeParseResult<any, any> | Promise<ZodSafeParseResult<any, any>>
   }
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
-    let validatorValue = value
+    let validatorValue: unknown = value
 
     // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
     // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
-    if (target === 'header' && schema instanceof ZodObject) {
+    if (
+      (target === 'header' && schema instanceof v3ZodObject) ||
+      (target === 'header' && schema instanceof v4ZodObject)
+    ) {
       // create an object that maps lowercase schema keys to lowercase
       const schemaKeys = Object.keys(schema.shape)
       const caseInsensitiveKeymap = Object.fromEntries(
@@ -84,8 +85,10 @@ export const zValidator = <
 
     const result =
       options && options.validationFunction
-        ? await options.validationFunction(schema, validatorValue)
-        : await schema.safeParseAsync(validatorValue)
+        ? // @ts-expect-error schema is not type well
+          await options.validationFunction(schema, validatorValue)
+        : // @ts-expect-error z4.$ZodType has safeParseAsync
+          await schema.safeParseAsync(validatorValue)
 
     if (hook) {
       const hookResult = await hook({ data: validatorValue, ...result, target }, c)
