@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { zValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -398,6 +398,7 @@ describe('With options + validationFunction', () => {
       '/extended',
       zValidator('json', jsonSchema, undefined, {
         validationFunction: async (schema, value) => {
+          const result = await schema.passthrough().safeParseAsync(value)
           return await schema.passthrough().safeParseAsync(value)
         },
       }),

@@ -1,7 +1,7 @@
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import { ZodObject } from 'zod'
-import type { SafeParseReturnType, ZodError, ZodSchema, z } from 'zod'
+import type { ZodError, ZodSafeParseResult, ZodSchema, z } from 'zod/v4'
+import { ZodObject } from 'zod/v4'
 
 export type Hook<
   T,
@@ -48,8 +48,21 @@ export const zValidator = <
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ) => SafeParseReturnType<any, any> | Promise<SafeParseReturnType<any, any>>
+    ) =>
+      | ZodSafeParseResult<
+          {
+            name: string
+            age: number
+          } & Record<string, unknown>
+        >
+      | Promise<
+          ZodSafeParseResult<
+            {
+              name: string
+              age: number
+            } & Record<string, unknown>
+          >
+        >
   }
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
