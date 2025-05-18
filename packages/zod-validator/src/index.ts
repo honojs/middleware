@@ -54,6 +54,8 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore avoid the type error on build
   hook?: Hook<zInfer<T>, E, P, Target>,
   options?: {
     validationFunction: (
