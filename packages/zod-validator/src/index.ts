@@ -1,7 +1,19 @@
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
-import type { ZodError, ZodSafeParseResult, ZodSchema, z } from 'zod/v4'
-import { ZodObject } from 'zod/v4'
+import type * as z3 from 'zod/v3'
+import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
+
+import type * as z4 from 'zod/v4/core'
+
+type ZodSchema = z3.ZodSchema | z4.$ZodType
+type ZodError = z3.ZodError | z4.$ZodError
+type ZodSafeParseResult<T, T2> = z3.SafeParseReturnType<T, T2> | v4ZodSafeParseResult<T>
+type zInput<T> =
+  T extends z3.ZodType<any, any, any> ? z3.input<T> : T extends z4.$ZodType ? z4.input<T> : never
+type zOutput<T> =
+  T extends z3.ZodType<any, any, any> ? z3.output<T> : T extends z4.$ZodType ? z4.output<T> : never
+type zInfer<T> =
+  T extends z3.ZodType<any, any, any> ? z3.infer<T> : T extends z4.$ZodType ? z4.infer<T> : never
 
 export type Hook<
   T,
@@ -23,8 +35,8 @@ export const zValidator = <
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
-  In = z.input<T>,
-  Out = z.output<T>,
+  In = zInput<T>,
+  Out = zOutput<T>,
   I extends Input = {
     in: HasUndefined<In> extends true
       ? {
@@ -43,13 +55,13 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
-  hook?: Hook<z.infer<T>, E, P, Target>,
+  hook?: Hook<zInfer<T>, E, P, Target>,
   options?: {
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ) => ZodSafeParseResult<any> | Promise<ZodSafeParseResult<any>>
+    ) => ZodSafeParseResult<any, any> | Promise<ZodSafeParseResult<any, any>>
   }
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well
@@ -92,5 +104,5 @@ export const zValidator = <
       return c.json(result, 400)
     }
 
-    return result.data as z.infer<T>
+    return result.data as zInfer<T>
   })
