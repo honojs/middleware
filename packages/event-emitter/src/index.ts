@@ -145,7 +145,7 @@ export const createEmitter = <EPMap extends EventPayloadMap>(
       if (!handlers.has(key as EventKey)) {
         handlers.set(key as EventKey, [])
       }
-      const handlerArray = handlers.get(key as EventKey) as Array<EventHandler<EPMap[Key]>>
+      const handlerArray = handlers.get(key as EventKey) as EventHandler<EPMap[Key]>[]
       const limit = options?.maxHandlers ?? 10
       if (handlerArray.length >= limit) {
         throw new RangeError(

@@ -183,9 +183,7 @@ describe('Standard Schema Validation', () => {
           '/post',
           sValidator('json', schema, (result, c) => {
             if (!result.success) {
-              type verify = Expect<
-                Equal<ReadonlyArray<StandardSchemaV1.Issue>, typeof result.error>
-              >
+              type verify = Expect<Equal<readonly StandardSchemaV1.Issue[], typeof result.error>>
               return c.text(`${result.data.id} is invalid!`, 400)
             }
           }),
