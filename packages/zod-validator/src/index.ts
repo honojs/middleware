@@ -2,8 +2,6 @@
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 import type * as v3 from 'zod/v3'
-import { ZodObject as v3ZodObject } from 'zod/v3'
-import { ZodObject as v4ZodObject } from 'zod/v4'
 import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
 
@@ -69,11 +67,9 @@ export const zValidator = <
 
     // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
     // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
-    if (
-      (target === 'header' && schema instanceof v3ZodObject) ||
-      (target === 'header' && schema instanceof v4ZodObject)
-    ) {
+    if ((target === 'header' && '_def' in schema) || (target === 'header' && '_zod' in schema)) {
       // create an object that maps lowercase schema keys to lowercase
+      // @ts-expect-error the schema is a Zod Schema
       const schemaKeys = Object.keys(schema.shape)
       const caseInsensitiveKeymap = Object.fromEntries(
         schemaKeys.map((key) => [key.toLowerCase(), key])
@@ -86,8 +82,7 @@ export const zValidator = <
 
     const result =
       options && options.validationFunction
-        ? // @ts-expect-error schema is not type well
-          await options.validationFunction(schema, validatorValue)
+        ? await options.validationFunction(schema, validatorValue)
         : // @ts-expect-error z4.$ZodType has safeParseAsync
           await schema.safeParseAsync(validatorValue)
 
