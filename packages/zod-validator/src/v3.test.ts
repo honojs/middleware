@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 import { zValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -163,6 +163,8 @@ describe('With Hook', () => {
     '/post',
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
+        type verify = Expect<Equal<number, typeof result.data.id>>
+        type verify2 = Expect<Equal<z.ZodError, typeof result.error>>
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),

@@ -2,8 +2,7 @@
 
 [![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=zod-validator)](https://codecov.io/github/honojs/middleware)
 
-The validator middleware using [Zod](https://zod.dev) for [Hono](https://honojs.dev) applications.
-You can write a schema with Zod and validate the incoming values.
+The validator middleware using [Zod](https://zod.dev) for [Hono](https://honojs.dev) applications. You can write a schema with Zod and validate the incoming values.
 
 ## Usage
 
