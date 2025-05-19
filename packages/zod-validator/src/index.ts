@@ -5,9 +5,11 @@ import type * as v3 from 'zod'
 import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
 
-type ZodSchema = v3.ZodType | v4.$ZodType
-type ZodError = v3.ZodError | v4.$ZodError
-type ZodSafeParseResult<T, T2> = v3.SafeParseReturnType<T, T2> | v4ZodSafeParseResult<T>
+type ZodSchema = any extends v4.$ZodType ? v3.ZodType : v4.$ZodType
+type ZodError = any extends v4.$ZodError ? v3.ZodError : v4.$ZodError
+type ZodSafeParseResult<T, T2> = undefined extends T2
+  ? v4ZodSafeParseResult<T>
+  : v3.SafeParseReturnType<T, T2>
 type zInput<T> = T extends v3.ZodType ? v3.input<T> : T extends v4.$ZodType ? v4.input<T> : never
 type zOutput<T> = T extends v3.ZodType ? v3.output<T> : T extends v4.$ZodType ? v4.output<T> : never
 type zInfer<T> = T extends v3.ZodType ? v3.infer<T> : T extends v4.$ZodType ? v4.infer<T> : never
