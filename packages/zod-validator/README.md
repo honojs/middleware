@@ -4,9 +4,6 @@
 
 The validator middleware using [Zod](https://zod.dev) for [Hono](https://honojs.dev) applications. You can write a schema with Zod and validate the incoming values.
 
-> [!IMPORTANT]
-> Zod validator supports both Zod v4 and v3. If you want to continue using v3, use `^3.25.0`.
-
 ## Usage
 
 ```ts
