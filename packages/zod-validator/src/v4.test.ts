@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { vi } from 'vitest'
+import type z4 from 'zod/v4'
 import { z } from 'zod/v4'
 import { zValidator } from '.'
 
@@ -164,6 +165,7 @@ describe('With Hook', () => {
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
         type verify = Expect<Equal<number, typeof result.data.id>>
+        type verify2 = Expect<Equal<z4.core.$ZodError, typeof result.error>>
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),

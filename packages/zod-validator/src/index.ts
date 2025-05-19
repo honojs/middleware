@@ -6,8 +6,8 @@ import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
 
 type ZodSchema = any extends v4.$ZodType ? v3.ZodType | v4.$ZodType : v4.$ZodType
-type ZodError = any extends v4.$ZodError ? v3.ZodError | v4.$ZodError : v4.$ZodError
-type ZodSafeParseResult<T, T2> = undefined extends T2
+type ZodError<T extends ZodSchema> = T extends v4.$ZodType ? v4.$ZodError : v3.ZodError
+type ZodSafeParseResult<T, T2, T3 extends ZodSchema> = T3 extends v4.$ZodType
   ? v4ZodSafeParseResult<T>
   : v3.SafeParseReturnType<T, T2>
 type zInput<T> = T extends v3.ZodType ? v3.input<T> : T extends v4.$ZodType ? v4.input<T> : never
@@ -20,8 +20,9 @@ export type Hook<
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
   O = {},
+  Schema extends ZodSchema = any,
 > = (
-  result: ({ success: true; data: T } | { success: false; error: ZodError; data: T }) & {
+  result: ({ success: true; data: T } | { success: false; error: ZodError<Schema>; data: T }) & {
     target: Target
   },
   c: Context<E, P>
@@ -55,12 +56,12 @@ export const zValidator = <
 >(
   target: Target,
   schema: T,
-  hook?: Hook<InferredValue, E, P, Target>,
+  hook?: Hook<InferredValue, E, P, Target, {}, T>,
   options?: {
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
-    ) => ZodSafeParseResult<any, any> | Promise<ZodSafeParseResult<any, any>>
+    ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
   }
 ): MiddlewareHandler<E, P, V> =>
   // @ts-expect-error not typed well

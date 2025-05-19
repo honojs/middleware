@@ -164,6 +164,7 @@ describe('With Hook', () => {
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
         type verify = Expect<Equal<number, typeof result.data.id>>
+        type verify2 = Expect<Equal<z.ZodError, typeof result.error>>
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),
