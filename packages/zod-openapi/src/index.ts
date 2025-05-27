@@ -503,7 +503,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook as any)
+          const validator = zValidator('json', schema, hook)
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
