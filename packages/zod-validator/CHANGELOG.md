@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.6.0
+
+### Minor Changes
+
+- [#1173](https://github.com/honojs/middleware/pull/1173) [`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support Zod v4
+
 ## 0.5.0
 
 ### Minor Changes

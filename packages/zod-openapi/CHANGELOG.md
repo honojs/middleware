@@ -1,5 +1,14 @@
 # @hono/zod-openapi
 
+## 0.19.7
+
+### Patch Changes
+
+- [#1173](https://github.com/honojs/middleware/pull/1173) [`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: ignore the type error from Zod Validator
+
+- Updated dependencies [[`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01)]:
+  - @hono/zod-validator@0.6.0
+
 ## 0.19.6
 
 ### Patch Changes
