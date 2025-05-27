@@ -2402,7 +2402,7 @@ __metadata:
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
-    zod: "npm:^3.22.4"
+    zod: "npm:~3.25.6"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.19.1
@@ -15153,7 +15153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3, zod@npm:^3.22.4":
+"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565
@@ -15171,6 +15171,13 @@ __metadata:
   version: 3.24.1
   resolution: "zod@npm:3.24.1"
   checksum: 0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
+  languageName: node
+  linkType: hard
+
+"zod@npm:~3.25.6":
+  version: 3.25.6
+  resolution: "zod@npm:3.25.6"
+  checksum: b7be69c76baa317e55496d9b4aab0090534bc2fd5ec65f8099ffb9fb460b4885dff60b1bed62cdd23e8a710e2cc82798c99f69283031b2bd8cb3cdbb9ce08399
   languageName: node
   linkType: hard
 
