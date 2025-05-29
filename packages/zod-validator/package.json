@@ -41,7 +41,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "zod": "^3.19.1"
+    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
