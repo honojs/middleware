@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc/packages/ai-robots-txt",
+    "types": ["vitest/globals"]
+  },
+  "include": ["**/*.test.ts", "vitest.config.ts"],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ]
+}
