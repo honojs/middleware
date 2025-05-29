@@ -12,7 +12,7 @@ import { bots, botslist } from './robots'
  * @returns A string representing the PCRE-like regex group.
  */
 function listToRegex(list: string[]): string {
-  const formatted = list.map((item) => escape(item).toUpperCase()).join('|')
+  const formatted = list.map((item) => escape(item.toUpperCase())).join('|')
   return `(${formatted})`
 }
 
@@ -28,7 +28,7 @@ export function blockAiBots(params = { allowRespecting: false }) {
     let b = bots
 
     if (params.allowRespecting) {
-      b = Object.fromEntries(botslist.filter(([, value]) => value.respect !== 'Yes'))
+      b = Object.fromEntries(botslist.filter(([, value]) => value?.respect !== 'Yes'))
     }
 
     const userAgentRegex = listToRegex(Object.keys(b))
