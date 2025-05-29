@@ -16,3 +16,7 @@ yarn-error.log
 # for debug or playing
 sandbox
 *.log
+
+# Claude Code local files
+CLAUDE.local.md
+settings.local.json
