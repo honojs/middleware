@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.7.0
+
+### Minor Changes
+
+- [#1180](https://github.com/honojs/middleware/pull/1180) [`5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3`](https://github.com/honojs/middleware/commit/5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: update peerDependency to Zod `^3.25.0` and fix the types
+
 ## 0.6.0
 
 ### Minor Changes
