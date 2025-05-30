@@ -1,0 +1,54 @@
+{
+  "name": "@hono/ai-robots-txt",
+  "version": "0.1.0",
+  "description": "AI bot blocker for Hono",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "yarn run getrobotstxt && tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "yarn run getrobotstxt && tsc -b tsconfig.json && echo 'Type checking completed'",
+    "test": "yarn run getrobotstxt && vitest",
+    "getrobotstxt": "tsx ./src/get-robots-txt.ts"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/hello"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@types/node": "^22.15.24",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}
