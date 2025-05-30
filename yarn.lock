@@ -2405,7 +2405,7 @@ __metadata:
     zod: "npm:~3.25.6"
   peerDependencies:
     hono: ">=3.9.0"
-    zod: ^3.19.1
+    zod: ^3.25.0
   languageName: unknown
   linkType: soft
 
@@ -15175,9 +15175,9 @@ __metadata:
   linkType: hard
 
 "zod@npm:~3.25.6":
-  version: 3.25.6
-  resolution: "zod@npm:3.25.6"
-  checksum: b7be69c76baa317e55496d9b4aab0090534bc2fd5ec65f8099ffb9fb460b4885dff60b1bed62cdd23e8a710e2cc82798c99f69283031b2bd8cb3cdbb9ce08399
+  version: 3.25.36
+  resolution: "zod@npm:3.25.36"
+  checksum: 9ad8ca759d1a5d19c86d6e49a1bda817b3c0566ea0a8726d45994b9fcaac8d569db45a65218a7b4067ca18b07c5fc636a587a94cd05f76793174ace8b81742e3
   languageName: node
   linkType: hard
 
