@@ -1,0 +1,32 @@
+name: ci-stytch-auth
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/stytch-auth/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/stytch-auth/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn workspaces focus hono-middleware @hono/stytch-auth
+      - run: yarn workspace @hono/stytch-auth build
+      - run: yarn workspace @hono/stytch-auth publint
+      - run: yarn workspace @hono/stytch-auth typecheck
+      - run: yarn eslint packages/stytch-auth
+      - run: yarn test --coverage --project @hono/stytch-auth
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: stytch-auth
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
