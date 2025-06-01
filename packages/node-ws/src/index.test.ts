@@ -283,4 +283,27 @@ describe('WebSocket helper', () => {
 
     expect(await mainPromise).toBe(true)
   })
+
+  it('Should not async processes to create events affect message handling', async () => {
+    const mainPromise = new Promise<boolean>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(async () => {
+          await new Promise((resolve) => setTimeout(resolve, 100))
+          return {
+            onMessage() {
+              resolve(true)
+            },
+          }
+        })
+      )
+    )
+
+    const ws = new WebSocket('ws://localhost:3030/')
+    ws.onopen = () => {
+      ws.send('Hello')
+    }
+
+    expect(await mainPromise).toBe(true)
+  })
 })

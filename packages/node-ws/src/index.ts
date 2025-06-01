@@ -106,6 +106,14 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         c.env[CONNECTION_SYMBOL_KEY] = connectionSymbol
         ;(async () => {
           const ws = await nodeUpgradeWebSocket(c.env.incoming, connectionSymbol)
+
+          // buffer messages to handle messages received before the events are set up
+          const messagesReceivedInStarting: [data: WebSocket.RawData, isBinary: boolean][] = []
+          const bufferMessage = (data: WebSocket.RawData, isBinary: boolean) => {
+            messagesReceivedInStarting.push([data, isBinary])
+          }
+          ws.on('message', bufferMessage)
+
           let events: WSEvents<WebSocket>
           try {
             events = await createEvents(c)
@@ -137,7 +145,8 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           } catch (e) {
             ;(options?.onError ?? console.error)(e)
           }
-          ws.on('message', (data, isBinary) => {
+
+          const handleMessage = (data: WebSocket.RawData, isBinary: boolean) => {
             const datas = Array.isArray(data) ? data : [data]
             for (const data of datas) {
               try {
@@ -155,6 +164,14 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
                 ;(options?.onError ?? console.error)(e)
               }
             }
+          }
+          ws.off('message', bufferMessage)
+          for (const message of messagesReceivedInStarting) {
+            handleMessage(...message)
+          }
+
+          ws.on('message', (data, isBinary) => {
+            handleMessage(data, isBinary)
           })
           ws.on('close', (code, reason) => {
             try {
