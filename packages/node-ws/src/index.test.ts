@@ -284,7 +284,7 @@ describe('WebSocket helper', () => {
     expect(await mainPromise).toBe(true)
   })
 
-  it ('Should not async processes to create events affect message handling', async () => {
+  it('Should not async processes to create events affect message handling', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
