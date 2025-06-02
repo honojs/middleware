@@ -19,6 +19,10 @@ import {
   linkedInCodeError,
   linkedInToken,
   linkedInUser,
+  msentraCodeError,
+  msentraRefreshToken,
+  msentraToken,
+  msentraUser,
   xCodeError,
   xRefreshToken,
   xRefreshTokenError,
@@ -48,6 +52,8 @@ import { googleAuth } from './providers/google'
 import type { GoogleUser } from './providers/google'
 import { linkedinAuth } from './providers/linkedin'
 import type { LinkedInUser } from './providers/linkedin'
+import type { MSEntraUser } from './providers/msentra'
+import { msentraAuth, refreshToken as msentraRefresh } from './providers/msentra'
 import type { TwitchUser } from './providers/twitch'
 import {
   twitchAuth,
@@ -418,6 +424,55 @@ describe('OAuth Middleware', () => {
   })
   app.get('/twitch/revoke/error', async (c) => {
     const response = await twitchRevoke(client_id, 'wrong-token')
+    return c.json(response)
+  })
+
+  // MSEntra
+  app.use(
+    '/msentra',
+    msentraAuth({
+      client_id,
+      client_secret,
+      tenant_id: 'fake-tenant-id',
+      scope: ['openid', 'email', 'profile'],
+    })
+  )
+  app.use('/msentra-custom-redirect', (c, next) => {
+    return msentraAuth({
+      client_id,
+      client_secret,
+      tenant_id: 'fake-tenant-id',
+      scope: ['openid', 'email', 'profile'],
+      redirect_uri: 'http://localhost:3000/msentra',
+    })(c, next)
+  })
+  app.get('/msentra', (c) => {
+    const user = c.get('user-msentra')
+    const token = c.get('token')
+    const grantedScopes = c.get('granted-scopes')
+
+    return c.json({
+      user,
+      token,
+      grantedScopes,
+    })
+  })
+  app.get('/msentra/refresh', async (c) => {
+    const response = await msentraRefresh({
+      client_id,
+      client_secret,
+      tenant_id: 'fake-tenant-id',
+      refresh_token: msentraRefreshToken,
+    })
+    return c.json(response)
+  })
+  app.get('/msentra/refresh/error', async (c) => {
+    const response = await msentraRefresh({
+      client_id,
+      client_secret,
+      tenant_id: 'fake-tenant-id',
+      refresh_token: 'wrong-refresh-token',
+    })
     return c.json(response)
   })
 
@@ -970,6 +1025,79 @@ describe('OAuth Middleware', () => {
       it('Should throw error for invalid token', async () => {
         const res = twitchValidate('invalid-token')
         await expect(res).rejects.toThrow(twitchValidateError.message)
+      })
+    })
+  })
+
+  describe('msentraAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should redirect', async () => {
+        const res = await app.request('/msentra')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+        expect(res.headers)
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/msentra-custom-redirect')
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/msentra')
+      })
+
+      it('Prevent CSRF attack', async () => {
+        const res = await app.request(`/msentra?code=${dummyCode}&state=malware-state`)
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
+      it('Should throw error for invalid code', async () => {
+        const res = await app.request('/msentra?code=9348ffdsd-sdsdbad-code')
+        const text = await res.text()
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(text).toBe(msentraCodeError.error)
+      })
+
+      it('Should work with received code', async () => {
+        const res = await app.request(`/msentra?code=${dummyCode}`)
+        const response = (await res.json()) as {
+          token: Token
+          user: MSEntraUser
+          grantedScopes: string[]
+        }
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(response.user).toEqual(msentraUser)
+        expect(response.grantedScopes).toEqual(msentraToken.scope.split(' '))
+        expect(response.token).toEqual({
+          token: msentraToken.access_token,
+          expires_in: msentraToken.expires_in,
+          refresh_token: msentraToken.refresh_token,
+        })
+      })
+    })
+
+    describe('Refresh Token', () => {
+      it('Should refresh token', async () => {
+        const res = await app.request('/msentra/refresh')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(msentraToken)
+      })
+
+      it('Should return error for refresh', async () => {
+        const res = await app.request('/msentra/refresh/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(msentraCodeError.error)
       })
     })
   })

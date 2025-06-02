@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.5
+
+### Patch Changes
+
+- [#1183](https://github.com/honojs/middleware/pull/1183) [`ccc49dd50842d578ae1aff06a1c8224462e37299`](https://github.com/honojs/middleware/commit/ccc49dd50842d578ae1aff06a1c8224462e37299) Thanks [@nakasyou](https://github.com/nakasyou)! - fix a bug if upgrading process uses async function
+
 ## 1.1.4
 
 ### Patch Changes

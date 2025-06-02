@@ -1845,6 +1845,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/bun-compress@workspace:packages/bun-compress":
+  version: 0.0.0-use.local
+  resolution: "@hono/bun-compress@workspace:packages/bun-compress"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@types/bun": "npm:^1.2.12"
+    "@types/node": "npm:^22.15.15"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.0.8"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/bun-transpiler@workspace:packages/bun-transpiler":
   version: 0.0.0-use.local
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
@@ -2386,10 +2402,10 @@ __metadata:
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
-    zod: "npm:^3.22.4"
+    zod: "npm:~3.25.6"
   peerDependencies:
     hono: ">=3.9.0"
-    zod: ^3.19.1
+    zod: ^3.25.0
   languageName: unknown
   linkType: soft
 
@@ -3776,6 +3792,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bun@npm:^1.2.12":
+  version: 1.2.12
+  resolution: "@types/bun@npm:1.2.12"
+  dependencies:
+    bun-types: "npm:1.2.12"
+  checksum: 168578a09e9408792c44363957b45d6f574b684a87cfb1ec350131a868e5001b6ce5006a1503846ff1afb7cd827911c5538ec27ba24cbc287e5f200b748ebe30
+  languageName: node
+  linkType: hard
+
 "@types/caseless@npm:*":
   version: 0.12.5
   resolution: "@types/caseless@npm:0.12.5"
@@ -3914,6 +3939,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: d77214e54d8f303d0a79fc896f8c4267b057fbc774448f6d09d24874d521293cd6036292e79b2791a6aef18895bd80dc58c1853bd8a0cf261b08500083f07273
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.15.15":
+  version: 22.15.15
+  resolution: "@types/node@npm:22.15.15"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 3b0c12531c9057ddcbe1cdd869ca6c2f3ea753f1cb3de0a482ca70c3d86f0dbb1d28339aecd8a0c133febda4f4355c012ed9be6ab866297fc23db360fa218dde
   languageName: node
   linkType: hard
 
@@ -4998,6 +5032,15 @@ __metadata:
     base64-js: "npm:^1.3.1"
     ieee754: "npm:^1.2.1"
   checksum: 2a905fbbcde73cc5d8bd18d1caa23715d5f83a5935867c2329f0ac06104204ba7947be098fe1317fbd8830e26090ff8e764f08cd14fefc977bb248c3487bcbd0
+  languageName: node
+  linkType: hard
+
+"bun-types@npm:1.2.12":
+  version: 1.2.12
+  resolution: "bun-types@npm:1.2.12"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 9e6f421f82164f39ada25f202969f267609e477286817395420cf2b0f4d9e98d2243ec5e73f564a4448941d6706a53329e2fbdbdac7e2e6a32f6882ec63eddae
   languageName: node
   linkType: hard
 
@@ -8280,7 +8323,7 @@ __metadata:
     "@types/ws": "npm:^8.18.0"
     "@vitest/coverage-istanbul": "npm:^3.0.8"
     eslint: "npm:^9.23.0"
-    hono: "npm:^4.7.5"
+    hono: "npm:^4.7.11"
     prettier: "npm:^3.5.3"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -8288,10 +8331,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"hono@npm:^4.7.5":
-  version: 4.7.5
-  resolution: "hono@npm:4.7.5"
-  checksum: 01ea7ae684224afd5b27989adb1bd7efe6cde89a9da3f3f15bfb106c4d8d8a63c82d87c2a4a383184a25b40946b086b088ae9e0679c9975e2dd93ce8220c44fe
+"hono@npm:^4.7.11":
+  version: 4.7.11
+  resolution: "hono@npm:4.7.11"
+  checksum: 2821471b09f2e9f7bab5ad7412e2e44df5f07b7098508d70dd6e368b933580f03a06c30e20dd764b53e0121e1b1ff2132ae98cffa7fd1b286e299f9054effd6a
   languageName: node
   linkType: hard
 
@@ -14038,6 +14081,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
 "undici@npm:*":
   version: 7.5.0
   resolution: "undici@npm:7.5.0"
@@ -15103,7 +15153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3, zod@npm:^3.22.4":
+"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565
@@ -15121,6 +15171,13 @@ __metadata:
   version: 3.24.1
   resolution: "zod@npm:3.24.1"
   checksum: 0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
+  languageName: node
+  linkType: hard
+
+"zod@npm:~3.25.6":
+  version: 3.25.36
+  resolution: "zod@npm:3.25.36"
+  checksum: 9ad8ca759d1a5d19c86d6e49a1bda817b3c0566ea0a8726d45994b9fcaac8d569db45a65218a7b4067ca18b07c5fc636a587a94cd05f76793174ace8b81742e3
   languageName: node
   linkType: hard
 

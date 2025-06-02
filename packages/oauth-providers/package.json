@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "type": "module",
   "main": "dist/index.js",
@@ -38,6 +38,11 @@
       }
     }
   },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "typesVersions": {
     "*": {
       "facebook": [
@@ -60,6 +65,9 @@
       ],
       "twitch": [
         "./dist/providers/twitch/index.d.ts"
+      ],
+      "msentra": [
+        "./dist/providers/msentra/index.d.ts"
       ]
     }
   },

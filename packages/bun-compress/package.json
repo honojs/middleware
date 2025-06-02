@@ -1,9 +1,8 @@
 {
-  "name": "@hono/node-ws",
-  "version": "1.1.5",
-  "description": "WebSocket helper for Node.js",
+  "name": "@hono/bun-compress",
+  "version": "0.1.0",
+  "description": "A Hono middleware for compressing responses using Bun's built-in compression.",
   "type": "module",
-  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -14,7 +13,7 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "bun test"
   },
   "exports": {
     ".": {
@@ -36,25 +35,19 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
-    "directory": "packages/node-ws"
+    "directory": "packages/bun-compress"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@hono/node-server": "^1.11.1",
+    "@types/bun": "^1.2.12",
+    "@types/node": "^22.15.15",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8"
-  },
-  "dependencies": {
-    "ws": "^8.17.0"
-  },
-  "peerDependencies": {
-    "@hono/node-server": "^1.11.1",
-    "hono": "^4.6.0"
-  },
-  "engines": {
-    "node": ">=18.14.1"
   }
 }
