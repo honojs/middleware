@@ -2276,7 +2276,7 @@ __metadata:
     vitest: "npm:^3.0.8"
   peerDependencies:
     hono: ">=3.*"
-    stytch: ^1.0.0
+    stytch: ^12.19.0
   languageName: unknown
   linkType: soft
 
