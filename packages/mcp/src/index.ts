@@ -91,96 +91,118 @@ export class StreamableHTTPHonoTransport implements Transport {
 	 * Handles GET requests for SSE stream
 	 */
 	private async handleGetRequest(ctx: Context) {
-		// The client MUST include an Accept header, listing text/event-stream as a supported content type.
-		const acceptHeader = ctx.req.header("Accept");
-		if (!acceptHeader?.includes("text/event-stream")) {
-			throw new HTTPException(406, {
-				res: Response.json({
-					jsonrpc: "2.0",
-					error: {
-						code: -32000,
-						message: "Not Acceptable: Client must accept text/event-stream",
-					},
-					id: null,
-				}),
-			});
-		}
-
-		// If an Mcp-Session-Id is returned by the server during initialization,
-		// clients using the Streamable HTTP transport MUST include it
-		// in the Mcp-Session-Id header on all of their subsequent HTTP requests.
-		this.validateSession(ctx);
-
-		// After initialization, always include the session ID if we have one
-		if (this.sessionId !== undefined) {
-			ctx.header("mcp-session-id", this.sessionId);
-		}
-
-		// Handle resumability: check for Last-Event-ID header
-		if (this.#eventStore) {
-			const lastEventId = ctx.req.header("last-event-id");
-			if (lastEventId) {
-				return streamSSE(
-					ctx,
-					async (stream) => {
-						const streamId = await this.#eventStore!.replayEventsAfter(
-							lastEventId,
-							{
-								send: async (eventId: string, message: JSONRPCMessage) => {
-									try {
-										await stream.writeSSE({
-											id: eventId,
-											event: "message",
-											data: JSON.stringify(message),
-										});
-									} catch {
-										this.onerror?.(new Error("Failed replay events"));
-										throw new HTTPException(500, {
-											message: "Failed replay events",
-										});
-									}
-								},
-							},
-						);
-
-						this.#streamMapping.set(streamId, {
-							ctx,
-							stream,
-						});
-					},
-					async (error) => {
-						this.onerror?.(error);
-					},
-				);
+		try {
+			// The client MUST include an Accept header, listing text/event-stream as a supported content type.
+			const acceptHeader = ctx.req.header("Accept");
+			if (!acceptHeader?.includes("text/event-stream")) {
+				throw new HTTPException(406, {
+					res: Response.json({
+						jsonrpc: "2.0",
+						error: {
+							code: -32000,
+							message: "Not Acceptable: Client must accept text/event-stream",
+						},
+						id: null,
+					}),
+				});
 			}
-		}
 
-		// Check if there's already an active standalone SSE stream for this session
-		if (this.#streamMapping.get(this.#standaloneSseStreamId) !== undefined) {
-			// Only one GET SSE stream is allowed per session
-			throw new HTTPException(409, {
+			// If an Mcp-Session-Id is returned by the server during initialization,
+			// clients using the Streamable HTTP transport MUST include it
+			// in the Mcp-Session-Id header on all of their subsequent HTTP requests.
+			this.validateSession(ctx);
+
+			// After initialization, always include the session ID if we have one
+			if (this.sessionId !== undefined) {
+				ctx.header("mcp-session-id", this.sessionId);
+			}
+
+			// Handle resumability: check for Last-Event-ID header
+			if (this.#eventStore) {
+				const lastEventId = ctx.req.header("last-event-id");
+				if (lastEventId) {
+					return streamSSE(
+						ctx,
+						async (stream) => {
+							const streamId = await this.#eventStore!.replayEventsAfter(
+								lastEventId,
+								{
+									send: async (eventId: string, message: JSONRPCMessage) => {
+										try {
+											await stream.writeSSE({
+												id: eventId,
+												event: "message",
+												data: JSON.stringify(message),
+											});
+										} catch {
+											this.onerror?.(new Error("Failed replay events"));
+											throw new HTTPException(500, {
+												message: "Failed replay events",
+											});
+										}
+									},
+								},
+							);
+
+							this.#streamMapping.set(streamId, {
+								ctx,
+								stream,
+							});
+						},
+						async (error) => {
+							this.onerror?.(error);
+						},
+					);
+				}
+			}
+
+			// Check if there's already an active standalone SSE stream for this session
+			if (this.#streamMapping.get(this.#standaloneSseStreamId) !== undefined) {
+				console.log()
+				// Only one GET SSE stream is allowed per session
+				throw new HTTPException(409, {
+					res: Response.json({
+						jsonrpc: "2.0",
+						error: {
+							code: -32000,
+							message: "Conflict: Only one SSE stream is allowed per session",
+						},
+						id: null,
+					}),
+				});
+			}
+
+			return streamSSE(ctx, async (stream) => {
+				// Assign the response to the standalone SSE stream
+				this.#streamMapping.set(this.#standaloneSseStreamId, {
+					ctx,
+					stream,
+				});
+				// Set up close handler for client disconnects
+				stream.onAbort(() => {
+					this.#streamMapping.delete(this.#standaloneSseStreamId);
+				});
+			});
+		} catch (error) {
+			if (error instanceof HTTPException) {
+				throw error;
+			}
+
+			this.onerror?.(error as Error);
+
+			// return JSON-RPC formatted error
+			throw new HTTPException(400, {
 				res: Response.json({
 					jsonrpc: "2.0",
 					error: {
-						code: -32000,
-						message: "Conflict: Only one SSE stream is allowed per session",
+						code: -32700,
+						message: "Parse error",
+						data: String(error),
 					},
 					id: null,
 				}),
 			});
 		}
-
-		return streamSSE(ctx, async (stream) => {
-			// Assign the response to the standalone SSE stream
-			this.#streamMapping.set(this.#standaloneSseStreamId, {
-				ctx,
-				stream,
-			});
-			// Set up close handler for client disconnects
-			stream.onAbort(() => {
-				this.#streamMapping.delete(this.#standaloneSseStreamId);
-			});
-		});
 	}
 
 	/**
