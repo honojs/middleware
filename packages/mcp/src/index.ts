@@ -158,7 +158,6 @@ export class StreamableHTTPHonoTransport implements Transport {
 
 			// Check if there's already an active standalone SSE stream for this session
 			if (this.#streamMapping.get(this.#standaloneSseStreamId) !== undefined) {
-				console.log()
 				// Only one GET SSE stream is allowed per session
 				throw new HTTPException(409, {
 					res: Response.json({
@@ -340,7 +339,7 @@ export class StreamableHTTPHonoTransport implements Transport {
 							if (isJSONRPCRequest(message)) {
 								this.#streamMapping.set(streamId, {
 									ctx: {
-										header: (name, value) => ctx.header(name, value),
+										header: ctx.header,
 										json: resolve,
 									},
 								});
