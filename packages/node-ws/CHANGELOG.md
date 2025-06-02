@@ -1,5 +1,13 @@
 # @hono/node-ws
 
+## 1.1.6
+
+### Patch Changes
+
+- [#1187](https://github.com/honojs/middleware/pull/1187) [`69a0a586f5e144f00b1714a157fa43ff269c975a`](https://github.com/honojs/middleware/commit/69a0a586f5e144f00b1714a157fa43ff269c975a) Thanks [@nakasyou](https://github.com/nakasyou)! - use defineWebSocket helper
+
+- [#1187](https://github.com/honojs/middleware/pull/1187) [`69a0a586f5e144f00b1714a157fa43ff269c975a`](https://github.com/honojs/middleware/commit/69a0a586f5e144f00b1714a157fa43ff269c975a) Thanks [@nakasyou](https://github.com/nakasyou)! - fix a bug if upgrading process uses async function
+
 ## 1.1.5
 
 ### Patch Changes
