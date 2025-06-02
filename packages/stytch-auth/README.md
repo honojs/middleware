@@ -4,24 +4,7 @@
 
 A third-party [Stytch](https://stytch.com) authentication middleware for [Hono](https://github.com/honojs/hono). Supports both [Consumer](https://stytch.com/b2c) and [B2B](https://stytch.com/b2b) authentication with flexible configuration options.
 
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Consumer Authentication](#consumer-authentication)
-  - [Basic Session Auth](#basic-consumer-session-auth)
-  - [OAuth Bearer Token Auth](#consumer-oauth-auth)
-  - [Custom Configuration](#consumer-custom-configuration)
-  - [Error Handling](#consumer-error-handling)
-- [B2B Authentication](#b2b-authentication)
-  - [Basic Session Auth](#basic-b2b-session-auth)
-  - [OAuth Bearer Token Auth](#b2b-oauth-auth)
-  - [Organization Access](#b2b-organization-access)
-  - [Custom Configuration](#b2b-custom-configuration)
-  - [Error Handling](#b2b-error-handling)
-- [API Reference](#api-reference)
-- [Advanced Usage](#advanced-usage)
+> 💡 This package works with [Stytch Frontend SDKs](https://stytch.com/docs/guides/sessions/frontend-guide) and validates sessions they create. By default, it reads JWTs from the `stytch_session_jwt` cookie. See the [Session JWTs guide](https://stytch.com/docs/guides/sessions/using-jwts) for more details.
 
 ## Quick Start
 
@@ -59,7 +42,20 @@ STYTCH_PROJECT_ID=project-live-xxx-xxx-xxx
 STYTCH_PROJECT_SECRET=secret-live-xxx-xxx-xxx
 ```
 
-> 💡 This package works with [Stytch Frontend SDKs](https://stytch.com/docs/guides/sessions/frontend-guide) and validates sessions they create. By default, it reads JWTs from the `stytch_session_jwt` cookie. See the [Session JWTs guide](https://stytch.com/docs/guides/sessions/using-jwts) for more details.
+## Table of Contents
+- [Consumer Authentication](#consumer-authentication)
+  - [Basic Session Auth](#basic-consumer-session-auth)
+  - [OAuth Bearer Token Auth](#consumer-oauth-auth)
+  - [Custom Configuration](#consumer-custom-configuration)
+  - [Error Handling](#consumer-error-handling)
+- [B2B Authentication](#b2b-authentication)
+  - [Basic Session Auth](#basic-b2b-session-auth)
+  - [OAuth Bearer Token Auth](#b2b-oauth-auth)
+  - [Organization Access](#b2b-organization-access)
+  - [Custom Configuration](#b2b-custom-configuration)
+  - [Error Handling](#b2b-error-handling)
+- [API Reference](#api-reference)
+- [Advanced Usage](#advanced-usage)
 
 ## Consumer Authentication
 
@@ -105,9 +101,9 @@ import { Consumer } from '@hono/stytch-auth'
 app.use('*', Consumer.authenticateOAuth())
 
 app.get('/api/data', (c) => {
-  const { tokenRes, token } = Consumer.getStytchOAuth(c)
+  const { claims, token } = Consumer.getStytchOAuth(c)
   return c.json({ 
-    subject: tokenRes.subject,
+    subject: claims.subject,
     hasValidToken: !!token 
   })
 })
@@ -131,7 +127,7 @@ app.use('*', Consumer.authenticateSessionLocal({
 
 ```ts
 app.use('*', Consumer.authenticateSessionLocal({
-  maxTokenAgeSeconds: 3600 // 1 hour
+  maxTokenAgeSeconds: 60 // 1 minute
 }))
 ```
 
@@ -213,9 +209,9 @@ import { B2B } from '@hono/stytch-auth'
 app.use('*', B2B.authenticateOAuth())
 
 app.get('/api/org-data', (c) => {
-  const { tokenRes, token } = B2B.getStytchB2BOAuth(c)
+  const { claims, token } = B2B.getStytchB2BOAuth(c)
   return c.json({ 
-    subject: tokenRes.subject,
+    subject: claims.subject,
     hasValidToken: !!token 
   })
 })
@@ -305,7 +301,7 @@ app.use('*', B2B.authenticateOAuth({
 | `Consumer.authenticateOAuth(opts?)` | OAuth bearer token middleware | `MiddlewareHandler` |
 | `Consumer.getStytchSession(c)` | Get session from context | `Session` |
 | `Consumer.getStytchUser(c)` | Get user from context* | `User` |
-| `Consumer.getStytchOAuth(c)` | Get OAuth data from context** | `{ tokenRes: any, token: string }` |
+| `Consumer.getStytchOAuth(c)` | Get OAuth data from context** | `{ claims: ConsumerTokenClaims, token: string }` |
 
 *Only available after `authenticateSessionRemote`  
 **Only available after `authenticateOAuth`
@@ -321,7 +317,7 @@ app.use('*', B2B.authenticateOAuth({
 | `B2B.getStytchSession(c)` | Get B2B session from context | `MemberSession` |
 | `B2B.getStytchMember(c)` | Get member from context* | `Member` |
 | `B2B.getStytchOrganization(c)` | Get organization from context* | `Organization` |
-| `B2B.getStytchB2BOAuth(c)` | Get B2B OAuth data from context** | `{ tokenRes: any, token: string }` |
+| `B2B.getStytchB2BOAuth(c)` | Get B2B OAuth data from context** | `{ claims: B2BTokenClaims, token: string }` |
 
 *Only available after `authenticateSessionRemote`  
 **Only available after `authenticateOAuth`
@@ -399,8 +395,8 @@ app.get('/b2b/dashboard', (c) => {
 // OAuth API routes
 app.use('/api/*', Consumer.authenticateOAuth())
 app.get('/api/data', (c) => {
-  const { tokenRes } = Consumer.getStytchOAuth(c)
-  return c.json({ subject: tokenRes.subject })
+  const { claims } = Consumer.getStytchOAuth(c)
+  return c.json({ subject: claims.subject })
 })
 ```
 
