@@ -6,7 +6,7 @@ Connect Hono with a Model Context Protocol (MCP) server over HTTP Streaming Tran
 
 ```ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPHonoTransport } from '@hono/mcp'
+import { StreamableHTTPTransport } from '@hono/mcp'
 import { Hono } from 'hono'
 
 const app = new Hono();
@@ -18,7 +18,7 @@ const mcpServer = new McpServer({
 });
 
 app.all("/mcp", async (c) => {
- const transport = new StreamableHTTPHonoTransport();
+ const transport = new StreamableHTTPTransport();
  await mcpServer.connect(transport);
  return transport.handleRequest(c);
 });
