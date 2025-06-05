@@ -21,7 +21,7 @@ import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
 import { streamSSE } from './streaming'
 
-export class StreamableHTTPHonoTransport implements Transport {
+export class StreamableHTTPTransport implements Transport {
   #started = false
   #initialized = false
   #onsessioninitialized?: (sessionId: string) => void

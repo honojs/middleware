@@ -10,7 +10,7 @@ import { Hono } from 'hono'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
-import { StreamableHTTPHonoTransport } from './index'
+import { StreamableHTTPTransport } from './index'
 
 /**
  * Test server configuration for StreamableHTTPServerTransport tests
@@ -29,7 +29,7 @@ async function createTestServer(
   config: TestServerConfig = { sessionIdGenerator: () => crypto.randomUUID() }
 ): Promise<{
   server: Hono
-  transport: StreamableHTTPHonoTransport
+  transport: StreamableHTTPTransport
   mcpServer: McpServer
 }> {
   const mcpServer = new McpServer(
@@ -46,7 +46,7 @@ async function createTestServer(
     }
   )
 
-  const transport = new StreamableHTTPHonoTransport({
+  const transport = new StreamableHTTPTransport({
     sessionIdGenerator: config.sessionIdGenerator,
     enableJsonResponse: config.enableJsonResponse ?? false,
     eventStore: config.eventStore,
@@ -81,7 +81,7 @@ async function createTestAuthServer(
   config: TestServerConfig = { sessionIdGenerator: () => crypto.randomUUID() }
 ): Promise<{
   server: Hono<{ Variables: { auth: AuthInfo } }>
-  transport: StreamableHTTPHonoTransport
+  transport: StreamableHTTPTransport
   mcpServer: McpServer
 }> {
   const mcpServer = new McpServer(
@@ -105,7 +105,7 @@ async function createTestAuthServer(
     }
   )
 
-  const transport = new StreamableHTTPHonoTransport({
+  const transport = new StreamableHTTPTransport({
     sessionIdGenerator: config.sessionIdGenerator,
     enableJsonResponse: config.enableJsonResponse ?? false,
     eventStore: config.eventStore,
@@ -142,7 +142,7 @@ async function createTestAuthServer(
 async function stopTestServer({
   transport,
 }: {
-  transport: StreamableHTTPHonoTransport
+  transport: StreamableHTTPTransport
 }): Promise<void> {
   // First close the transport to ensure all SSE streams are closed
   await transport.close()
@@ -254,7 +254,7 @@ function expectErrorResponse(
 
 describe('MCP helper', () => {
   let server: Hono
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
   let sessionId: string
 
   beforeEach(async () => {
@@ -784,7 +784,7 @@ describe('MCP helper', () => {
 
 describe('StreamableHTTPServerTransport with AuthInfo', () => {
   let server: Hono<{ Variables: { auth: AuthInfo } }>
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
   let sessionId: string
 
   beforeEach(async () => {
@@ -884,7 +884,7 @@ describe('StreamableHTTPServerTransport with AuthInfo', () => {
 // Test JSON Response Mode
 describe('StreamableHTTPServerTransport with JSON Response Mode', () => {
   let server: Hono
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
   let sessionId: string
 
   beforeEach(async () => {
@@ -979,7 +979,7 @@ describe('StreamableHTTPServerTransport with JSON Response Mode', () => {
 // Test pre-parsed body handling
 describe('StreamableHTTPServerTransport with pre-parsed body', () => {
   let server: Hono
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
   let sessionId: string
   let parsedBody: unknown = null
 
@@ -1118,7 +1118,7 @@ describe('StreamableHTTPServerTransport with pre-parsed body', () => {
 // Test resumability support
 describe('StreamableHTTPServerTransport with resumability', () => {
   let server: Hono
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
   let sessionId: string
   let mcpServer: McpServer
   const storedEvents = new Map<string, { eventId: string; message: JSONRPCMessage }>()
@@ -1281,7 +1281,7 @@ describe('StreamableHTTPServerTransport with resumability', () => {
 // Test stateless mode
 describe('StreamableHTTPServerTransport in stateless mode', () => {
   let server: Hono
-  let transport: StreamableHTTPHonoTransport
+  let transport: StreamableHTTPTransport
 
   beforeEach(async () => {
     const result = await createTestServer({ sessionIdGenerator: undefined })
