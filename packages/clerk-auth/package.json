@@ -40,14 +40,15 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
-    "@clerk/backend": "^2.0.0",
     "@clerk/types": "^4.60.0"
   },
   "peerDependencies": {
+    "@clerk/backend": "^1.0.0 || ^2.0.0",
     "hono": ">=3.*"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "@clerk/backend": "^2.0.0",
     "@types/react": "^18",
     "publint": "^0.3.9",
     "react": "^18.2.0",

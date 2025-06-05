@@ -1922,6 +1922,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.8"
   peerDependencies:
+    "@clerk/backend": ^1.0.0 || ^2.0.0
     hono: ">=3.*"
   languageName: unknown
   linkType: soft
