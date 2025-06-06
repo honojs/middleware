@@ -1,9 +1,10 @@
 import { createClerkClient } from '@clerk/backend'
 import type { ClerkClient } from '@clerk/backend'
-import type {
+import {
   AuthenticateRequestOptions,
   SignedInAuthObject,
   SignedOutAuthObject,
+  TokenType,
 } from '@clerk/backend/internal'
 import type { PendingSessionOptions } from '@clerk/types'
 import type { Context, MiddlewareHandler } from 'hono'
@@ -61,7 +62,7 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
       ...rest,
       secretKey,
       publishableKey,
-      acceptsToken: 'session_token',
+      acceptsToken: TokenType.SessionToken,
     })
 
     if (requestState.headers) {
