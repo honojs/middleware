@@ -1,6 +1,6 @@
 import { createClerkClient } from '@clerk/backend'
-import type { ClerkClient, ClerkOptions } from '@clerk/backend'
-import type { SignedInAuthObject, SignedOutAuthObject } from '@clerk/backend/internal'
+import type { ClerkClient } from '@clerk/backend'
+import type { AuthenticateRequestOptions, SignedInAuthObject, SignedOutAuthObject } from '@clerk/backend/internal'
 import type { PendingSessionOptions } from '@clerk/types'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
@@ -26,7 +26,9 @@ type ClerkEnv = {
   CLERK_API_VERSION: string
 }
 
-export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
+type ClerkMiddlewareOptions = Omit<AuthenticateRequestOptions, 'acceptsToken'>
+
+export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHandler => {
   return async (c, next) => {
     const clerkEnv = env<ClerkEnv>(c)
     const { secretKey, publishableKey, apiUrl, apiVersion, ...rest } = options || {
@@ -55,6 +57,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       ...rest,
       secretKey,
       publishableKey,
+      acceptsToken: 'session_token',
     })
 
     if (requestState.headers) {
