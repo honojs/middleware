@@ -75,9 +75,13 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
             span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
           }
           if (c.error) {
+            span.recordException(c.error)
             span.setStatus({ code: SpanStatusCode.ERROR, message: String(c.error) })
           }
         } catch (e) {
+          if (e instanceof Error) {
+            span.recordException(e)
+          }
           span.setStatus({ code: SpanStatusCode.ERROR, message: String(e) })
           throw e
         } finally {
