@@ -14,7 +14,7 @@
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json && echo 'Type checking completed'",
     "test": "vitest",
-    "getrobotstxt": "tsx ./src/get-robots-txt.ts"
+    "getrobotstxt": "node ./src/get-robots-txt.js"
   },
   "exports": {
     ".": {

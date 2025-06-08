@@ -1,0 +1,33 @@
+name: Sync robots.json
+
+on:
+  schedule:
+    # Runs every day at midnight
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js and Yarn
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Fetch latest robots.json
+        run: yarn run getrobotstxt
+
+      - name: Create Pull Request if changes exist
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'feat: update robots.json from upstream'
+          title: 'Update robots.json'
+          body: 'This PR was automatically created after detecting changes in the upstream `robots.json` file.'
+          branch: 'chore/sync-robots-json'
+          delete-branch: true
