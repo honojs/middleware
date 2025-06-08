@@ -1,0 +1,32 @@
+name: ci-ai-robots-txt
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/ai-robots-txt/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/ai-robots-txt/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn workspaces focus hono-middleware @hono/ai-robots-txt
+      - run: yarn workspace @hono/ai-robots-txt build
+      - run: yarn workspace @hono/ai-robots-txt publint
+      - run: yarn workspace @hono/ai-robots-txt typecheck
+      - run: yarn eslint packages/ai-robots-txt
+      - run: yarn test --coverage --project @hono/ai-robots-txt
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: ai-robots-txt
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
