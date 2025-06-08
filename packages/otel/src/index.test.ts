@@ -7,6 +7,9 @@ import {
   ATTR_HTTP_RESPONSE_STATUS_CODE,
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
+  ATTR_EXCEPTION_MESSAGE,
+  ATTR_EXCEPTION_TYPE,
+  ATTR_EXCEPTION_STACKTRACE,
 } from '@opentelemetry/semantic-conventions'
 import { Hono } from 'hono'
 import { otel } from '.'
@@ -65,6 +68,15 @@ describe('OpenTelemetry middleware', () => {
     expect(span.attributes[ATTR_HTTP_REQUEST_METHOD]).toBe('POST')
     expect(span.attributes[ATTR_URL_FULL]).toBe('http://localhost/error')
     expect(span.attributes[ATTR_HTTP_ROUTE]).toBe('/error')
+    expect(span.events.length).toBe(1)
+    const [event] = span.events
+    expect(event.attributes).toBeDefined()
+    const attributes = event.attributes!
+    expect(attributes[ATTR_EXCEPTION_TYPE]).toBe('Error')
+    expect(attributes[ATTR_EXCEPTION_MESSAGE]).toBe('error message')
+    expect(attributes[ATTR_EXCEPTION_STACKTRACE]).toEqual(
+      expect.stringMatching(/Error: error message\n.*at \S+\/src\/index.test.ts:\d+:\d+\n/)
+    )
   })
 
   it('Should update the active span', async () => {
