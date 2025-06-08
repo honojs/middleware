@@ -9,7 +9,7 @@ This middleware can be used to inject the active Clerk session into the request 
 ## Installation
 
 ```plain
-npm i hono @hono/clerk-auth @clerk/backend
+npm i hono @hono/clerk-auth
 ```
 
 ## Configuration

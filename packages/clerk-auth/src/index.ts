@@ -1,19 +1,27 @@
 import { createClerkClient } from '@clerk/backend'
-import type { ClerkClient, ClerkOptions } from '@clerk/backend'
+import type { ClerkClient } from '@clerk/backend'
+import type {
+  AuthenticateRequestOptions,
+  SignedInAuthObject,
+  SignedOutAuthObject,
+} from '@clerk/backend/internal'
+import { TokenType } from '@clerk/backend/internal'
+import type { PendingSessionOptions } from '@clerk/types'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 
-type ClerkAuth = ReturnType<Awaited<ReturnType<ClerkClient['authenticateRequest']>>['toAuth']>
+type GetAuthOptions = PendingSessionOptions
 
 declare module 'hono' {
   interface ContextVariableMap {
     clerk: ClerkClient
-    clerkAuth: ClerkAuth
+    clerkAuth: (options?: GetAuthOptions) => SignedInAuthObject | SignedOutAuthObject | null
   }
 }
 
-export const getAuth = (c: Context) => {
-  return c.get('clerkAuth')
+export const getAuth = (c: Context, options?: GetAuthOptions) => {
+  const authFn = c.get('clerkAuth')
+  return authFn(options)
 }
 
 type ClerkEnv = {
@@ -23,7 +31,9 @@ type ClerkEnv = {
   CLERK_API_VERSION: string
 }
 
-export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
+type ClerkMiddlewareOptions = Omit<AuthenticateRequestOptions, 'acceptsToken'>
+
+export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHandler => {
   return async (c, next) => {
     const clerkEnv = env<ClerkEnv>(c)
     const { secretKey, publishableKey, apiUrl, apiVersion, ...rest } = options || {
@@ -52,6 +62,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       ...rest,
       secretKey,
       publishableKey,
+      acceptsToken: TokenType.SessionToken,
     })
 
     if (requestState.headers) {
@@ -66,7 +77,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       }
     }
 
-    c.set('clerkAuth', requestState.toAuth())
+    c.set('clerkAuth', (options) => requestState.toAuth(options))
     c.set('clerk', clerkClient)
 
     await next()
