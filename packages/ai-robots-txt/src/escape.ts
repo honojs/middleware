@@ -43,6 +43,9 @@ function _escapeChar(char: string): string {
   return char
 }
 
+/**
+ * `RegExp.escape` polyfill inspired by core-js
+ */
 function $escape(S: string): string {
   const length = S.length
   if (length === 0) {
