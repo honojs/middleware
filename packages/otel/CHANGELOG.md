@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1191](https://github.com/honojs/middleware/pull/1191) [`a70d91950f8c66201711ffc5d8505979f0403332`](https://github.com/honojs/middleware/commit/a70d91950f8c66201711ffc5d8505979f0403332) Thanks [@Kazy](https://github.com/Kazy)! - Record uncaught exceptions as events attached to the request span
+
 ## 0.2.0
 
 ### Minor Changes
