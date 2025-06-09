@@ -1,4 +1,5 @@
 import Bun from 'bun'
+import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 
 type BunTranspilerOptions = {
@@ -16,7 +17,7 @@ export const defaultOptions: Required<BunTranspilerOptions> = {
   },
 }
 
-export const bunTranspiler = (options?: BunTranspilerOptions) => {
+export const bunTranspiler = (options?: BunTranspilerOptions): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
     await next()
     const url = new URL(c.req.url)
