@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.6.1
+
+### Patch Changes
+
+- [#1197](https://github.com/honojs/middleware/pull/1197) [`ab390305fba1d9bd99da46537f28763f7d5df8df`](https://github.com/honojs/middleware/commit/ab390305fba1d9bd99da46537f28763f7d5df8df) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `Response` return type
+
 ## 0.6.0
 
 ### Minor Changes

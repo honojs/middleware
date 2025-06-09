@@ -1,6 +1,6 @@
 {
   "name": "@hono/medley-router",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Router using @medley/router",
   "type": "module",
   "main": "dist/index.js",

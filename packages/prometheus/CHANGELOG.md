@@ -1,5 +1,11 @@
 # @hono/prometheus
 
+## 1.0.2
+
+### Patch Changes
+
+- [#1204](https://github.com/honojs/middleware/pull/1204) [`1cdfdbd292ce6f7628f67da5e4479003b0f0fd57`](https://github.com/honojs/middleware/commit/1cdfdbd292ce6f7628f67da5e4479003b0f0fd57) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 1.0.1
 
 ### Patch Changes

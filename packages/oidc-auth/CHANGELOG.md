@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.6.1
+
+### Patch Changes
+
+- [#1202](https://github.com/honojs/middleware/pull/1202) [`aaf90c39e673b64547922f6fc2aefa5716fbf5f8`](https://github.com/honojs/middleware/commit/aaf90c39e673b64547922f6fc2aefa5716fbf5f8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
 ## 1.6.0
 
 ### Minor Changes
