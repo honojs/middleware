@@ -104,7 +104,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     await this.getTokenFromCode()
 
     await this.getUserId()

@@ -12,7 +12,7 @@ export async function refreshToken({
   client_secret: string
   tenant_id: string
   refresh_token: string
-}) {
+}): Promise<MSEntraTokenResponse> {
   if (!refresh_token) {
     throw new HTTPException(400, { message: 'missing refresh token' })
   }

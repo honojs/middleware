@@ -82,7 +82,7 @@ export class AuthFlow {
     return `https://accounts.google.com/o/oauth2/v2/auth?${parsedOptions}`
   }
 
-  async getTokenFromCode() {
+  async getTokenFromCode(): Promise<void> {
     const response = (await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
@@ -112,7 +112,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     await this.getTokenFromCode()
 
     const response = (await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {

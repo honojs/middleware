@@ -4,7 +4,8 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "isolatedDeclarations": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["**/*.test.ts"],
