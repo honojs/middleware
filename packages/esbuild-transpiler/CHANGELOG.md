@@ -1,5 +1,11 @@
 # @hono/esbuild-transpiler
 
+## 0.1.4
+
+### Patch Changes
+
+- [#1196](https://github.com/honojs/middleware/pull/1196) [`3a9920a258dbe7ae5fa578f1d7ba8c2e252c60d8`](https://github.com/honojs/middleware/commit/3a9920a258dbe7ae5fa578f1d7ba8c2e252c60d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
 ## 0.1.3
 
 ### Patch Changes

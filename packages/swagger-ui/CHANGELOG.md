@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.5.2
+
+### Patch Changes
+
+- [#1208](https://github.com/honojs/middleware/pull/1208) [`b8802e01b716843f1f9e913805a6a5abae22b0d8`](https://github.com/honojs/middleware/commit/b8802e01b716843f1f9e913805a6a5abae22b0d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 0.5.1
 
 ### Patch Changes

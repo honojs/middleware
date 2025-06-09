@@ -1,5 +1,11 @@
 # @hono/clerk-auth
 
+## 2.0.1
+
+### Patch Changes
+
+- [#1194](https://github.com/honojs/middleware/pull/1194) [`683455895d35de50bd5c4cc60c0d764b99a8c8ec`](https://github.com/honojs/middleware/commit/683455895d35de50bd5c4cc60c0d764b99a8c8ec) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
 ## 2.0.0
 
 ### Major Changes
