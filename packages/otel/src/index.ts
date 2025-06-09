@@ -8,7 +8,7 @@ import {
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
-import type { Env, Input } from 'hono'
+import type { Env, Input, MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import metadata from '../package.json' with { type: 'json' }
 
@@ -26,7 +26,7 @@ export type OtelOptions =
 
 export const otel = <E extends Env = any, P extends string = any, I extends Input = {}>(
   options: OtelOptions = {}
-) => {
+): MiddlewareHandler<E, P, I> => {
   if (options.augmentSpan) {
     return createMiddleware<E, P, I>(async (c, next) => {
       const result = await next()
