@@ -2,7 +2,7 @@
  * OpenID Connect authentication middleware for hono
  */
 
-import type { Context, MiddlewareHandler, OidcAuthClaims } from 'hono'
+import type { Context, MiddlewareHandler, OidcAuthClaims, TypedResponse } from 'hono'
 import { env } from 'hono/adapter'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
@@ -66,7 +66,7 @@ export type OidcAuthEnv = {
  * If used, should be called before any other OIDC middleware or functions for the Hono context.
  * Unconfigured values will fallback to environment variables.
  */
-export const initOidcAuthMiddleware = (config: Partial<OidcAuthEnv>) => {
+export const initOidcAuthMiddleware = (config: Partial<OidcAuthEnv>): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
     setOidcAuthEnv(c, config)
     await next()
@@ -356,7 +356,9 @@ const generateAuthorizationRequestUrl = async (
 /**
  * Processes the OAuth2 callback request.
  */
-export const processOAuthCallback = async (c: Context) => {
+export const processOAuthCallback = async (
+  c: Context
+): Promise<Response & TypedResponse<undefined, 302, 'redirect'>> => {
   const env = getOidcAuthEnv(c)
   const as = await getAuthorizationServer(c)
   const client = getClient(c)
