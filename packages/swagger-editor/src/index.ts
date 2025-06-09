@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { Context, MiddlewareHandler } from 'hono'
 import type { CustomSwaggerUIOptions } from './types'
 
 const DEFAULT_VERSION = '4.13.1'
@@ -136,7 +136,7 @@ export interface SwaggerEditorOptions extends CustomSwaggerUIOptions {
   version?: string
 }
 
-export function swaggerEditor(options: SwaggerEditorOptions = {}) {
+export function swaggerEditor(options: SwaggerEditorOptions = {}): MiddlewareHandler {
   const url = getUrl()
 
   options.layout = 'StandaloneLayout'
