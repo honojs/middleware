@@ -113,7 +113,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     await this.getTokenFromCode()
     const response = (await fetch('https://discord.com/api/oauth2/@me', {
       headers: {

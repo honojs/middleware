@@ -70,7 +70,7 @@ export class AuthFlow {
     return `https://login.microsoft.com/${this.tenant_id}/oauth2/v2.0/authorize?${parsedOptions}`
   }
 
-  async getTokenFromCode() {
+  async getTokenFromCode(): Promise<void> {
     const parsedOptions = toQueryParams({
       client_id: this.client_id,
       client_secret: this.client_secret,
@@ -104,7 +104,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     await this.getTokenFromCode()
     //TODO: add support for extra fields
     const response = (await fetch('https://graph.microsoft.com/v1.0/me', {
