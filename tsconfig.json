@@ -8,6 +8,7 @@
     { "path": "packages/ajv-validator" },
     { "path": "packages/arktype-validator" },
     { "path": "packages/auth-js" },
+    { "path": "packages/bun-compress" },
     { "path": "packages/bun-transpiler" },
     { "path": "packages/casbin" },
     { "path": "packages/class-validator" },
