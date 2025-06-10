@@ -139,8 +139,6 @@ export class StreamableHTTPTransport implements Transport {
                 ctx,
                 stream,
               })
-
-              stream.close();
             },
             async (error) => {
               this.onerror?.(error)
