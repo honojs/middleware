@@ -297,7 +297,10 @@ describe('WebSocket helper', () => {
       })
     )
 
-    app.get('/', upgradeWebSocket(() => ({})))
+    app.get(
+      '/',
+      upgradeWebSocket(() => ({}))
+    )
     new WebSocket('ws://localhost:3030/')
 
     await mainPromise
