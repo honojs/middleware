@@ -5,7 +5,7 @@ const data = await fetch(
 ).then((res) => res.json())
 
 // check if data directory exists
-const dataDir = 'src'
+const dataDir = 'src/data'
 await mkdir(dataDir, { recursive: true })
 
 // write json file

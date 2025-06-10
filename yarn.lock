@@ -1969,22 +1969,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/ai-robots-txt@workspace:packages/ai-robots-txt":
-  version: 0.0.0-use.local
-  resolution: "@hono/ai-robots-txt@workspace:packages/ai-robots-txt"
-  dependencies:
-    "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@types/node": "npm:^22.15.24"
-    publint: "npm:^0.3.9"
-    tsup: "npm:^8.4.0"
-    tsx: "npm:^4.19.4"
-    typescript: "npm:^5.8.2"
-    vitest: "npm:^3.0.8"
-  peerDependencies:
-    hono: "*"
-  languageName: unknown
-  linkType: soft
-
 "@hono/ajv-validator@workspace:packages/ajv-validator":
   version: 0.0.0-use.local
   resolution: "@hono/ajv-validator@workspace:packages/ajv-validator"
@@ -2546,6 +2530,22 @@ __metadata:
   peerDependencies:
     hono: ">=3.9.0"
     typia: ^7.0.0 || ^8.0.0
+  languageName: unknown
+  linkType: soft
+
+"@hono/ua-blocker@workspace:packages/ua-blocker":
+  version: 0.0.0-use.local
+  resolution: "@hono/ua-blocker@workspace:packages/ua-blocker"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@types/node": "npm:^22.15.24"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    tsx: "npm:^4.19.4"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.0.8"
+  peerDependencies:
+    hono: "*"
   languageName: unknown
   linkType: soft
 

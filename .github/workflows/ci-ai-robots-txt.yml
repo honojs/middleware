@@ -1,13 +1,13 @@
-name: ci-ai-robots-txt
+name: ci-ua-blocker
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/ai-robots-txt/**'
+      - 'packages/ua-blocker/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/ai-robots-txt/**'
+      - 'packages/ua-blocker/**'
 
 jobs:
   ci:
@@ -17,16 +17,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: yarn workspaces focus hono-middleware @hono/ai-robots-txt
-      - run: yarn workspace @hono/ai-robots-txt build
-      - run: yarn workspace @hono/ai-robots-txt publint
-      - run: yarn workspace @hono/ai-robots-txt typecheck
-      - run: yarn eslint packages/ai-robots-txt
-      - run: yarn test --coverage --project @hono/ai-robots-txt
+      - run: yarn workspaces focus hono-middleware @hono/ua-blocker
+      - run: yarn workspace @hono/ua-blocker build
+      - run: yarn workspace @hono/ua-blocker publint
+      - run: yarn workspace @hono/ua-blocker typecheck
+      - run: yarn eslint packages/ua-blocker
+      - run: yarn test --coverage --project @hono/ua-blocker
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
           directory: ./coverage
-          flags: ai-robots-txt
+          flags: ua-blocker
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

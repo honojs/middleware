@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist/out-tsc/packages/ai-robots-txt",
+    "outDir": "./dist/out-tsc/packages/ua-blocker",
     "types": ["vitest/globals"]
   },
   "include": ["**/*.test.ts", "vitest.config.ts"],

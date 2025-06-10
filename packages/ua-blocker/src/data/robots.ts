@@ -13,7 +13,7 @@ type BotsList = Record<keyof typeof robotsJson, BotEntry>
 /**
  * Raw robots.json data, properly typed
  */
-export const bots = robotsJson as Partial<BotsList>
+export const bots: BotsList = robotsJson
 
 /**
  * robots.json data as an array of [name, entry] tuples

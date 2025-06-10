@@ -1,7 +1,7 @@
 {
-  "name": "@hono/ai-robots-txt",
+  "name": "@hono/ua-blocker",
   "version": "0.0.0",
-  "description": "AI bot blocker for Hono",
+  "description": "User agent-based blocker for Hono",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,12 +9,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "prebuild": "tsx ./src/script/prebuild.ts",
+    "build": "yarn prebuild && tsup ./src/index.ts ./src/ai-bots.ts",
     "prepack": "yarn build",
-    "publint": "attw --pack && publint",
-    "typecheck": "tsc -b tsconfig.json && echo 'Type checking completed'",
-    "test": "vitest",
-    "getrobotstxt": "node ./src/get-robots-txt.js"
+    "publint": "yarn prebuild && attw --pack && publint",
+    "typecheck": "yarn prebuild && tsc -b tsconfig.json && echo 'Type checking completed'",
+    "test": "yarn prebuild && vitest",
+    "getrobotstxt": "tsx ./src/script/get-robots-txt.ts"
   },
   "exports": {
     ".": {
@@ -26,6 +27,16 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./ai-bots": {
+      "import": {
+        "types": "./dist/ai-bots.d.ts",
+        "default": "./dist/ai-bots.js"
+      },
+      "require": {
+        "types": "./dist/ai-bots.d.cts",
+        "default": "./dist/ai-bots.cjs"
+      }
     }
   },
   "license": "MIT",
@@ -36,7 +47,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
-    "directory": "packages/ai-robots-txt"
+    "directory": "packages/ua-blocker"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
