@@ -139,6 +139,8 @@ export class StreamableHTTPTransport implements Transport {
                 ctx,
                 stream,
               })
+
+              stream.close();
             },
             async (error) => {
               this.onerror?.(error)
@@ -566,7 +568,7 @@ export class StreamableHTTPTransport implements Transport {
 
       if (response) {
         // Write the event to the response stream
-        response.stream?.writeSSE({
+        await response.stream?.writeSSE({
           id: eventId,
           event: 'message',
           data: JSON.stringify(message),
@@ -598,8 +600,7 @@ export class StreamableHTTPTransport implements Transport {
           response.ctx.json(responses.length === 1 ? responses[0] : responses)
           return
         } else {
-          // TODO: End the SSE stream
-          // response.stream?.close()
+          response.stream?.close()
         }
         // Clean up
         for (const id of relatedIds) {
