@@ -1,8 +1,15 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { XErrorResponse, XFields, XMeResponse, XScopes, XTokenResponse, XUser } from './types'
+import type { Token } from '../../types.ts'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type {
+  XErrorResponse,
+  XFields,
+  XMeResponse,
+  XScopes,
+  XTokenResponse,
+  XUser,
+} from './types.ts'
 
 type XAuthFlow = {
   client_id: string

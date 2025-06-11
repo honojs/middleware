@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { TwitchRefreshResponse } from './types'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type { TwitchRefreshResponse } from './types.ts'
 
 export async function refreshToken(
   client_id: string,

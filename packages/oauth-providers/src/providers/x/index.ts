@@ -1,9 +1,9 @@
-export { xAuth } from './xAuth'
-export { refreshToken } from './refreshToken'
-export { revokeToken } from './revokeToken'
-export * from './types'
-import type { OAuthVariables } from '../../types'
-import type { XUser } from './types'
+export { xAuth } from './xAuth.ts'
+export { refreshToken } from './refreshToken.ts'
+export { revokeToken } from './revokeToken.ts'
+export * from './types.ts'
+import type { OAuthVariables } from '../../types.ts'
+import type { XUser } from './types.ts'
 
 declare module 'hono' {
   interface ContextVariableMap extends OAuthVariables {

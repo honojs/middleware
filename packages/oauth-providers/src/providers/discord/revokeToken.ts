@@ -1,5 +1,5 @@
 import { HTTPException } from 'hono/http-exception'
-import { toQueryParams } from '../../utils/objectToQuery'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
 
 export async function revokeToken(
   client_id: string,

@@ -3,8 +3,8 @@ import { createMiddleware } from 'hono/factory'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client'
 import { Registry, collectDefaultMetrics as promCollectDefaultMetrics } from 'prom-client'
-import { createStandardMetrics } from './standardMetrics'
-import type { MetricOptions, CustomMetricsOptions } from './standardMetrics'
+import { createStandardMetrics } from './standardMetrics.ts'
+import type { MetricOptions, CustomMetricsOptions } from './standardMetrics.ts'
 
 interface PrometheusOptions {
   registry?: Registry

@@ -1,8 +1,8 @@
 import * as esbuild from 'esbuild-wasm'
 import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
-import { esbuildTranspiler as baseTranspiler } from '../transpiler'
-import type { EsbuildTranspilerOptions } from '../transpiler'
+import { esbuildTranspiler as baseTranspiler } from '../transpiler.ts'
+import type { EsbuildTranspilerOptions } from '../transpiler.ts'
 
 let initialized = false
 

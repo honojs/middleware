@@ -1,4 +1,4 @@
-export * from './react-renderer'
+export * from './react-renderer.ts'
 
 export interface Props {}
 

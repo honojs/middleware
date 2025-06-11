@@ -1,4 +1,4 @@
-import type { Token } from '../../types'
+import type { Token } from '../../types.ts'
 
 export type MSEntraErrorResponse = {
   error: string

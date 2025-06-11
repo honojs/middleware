@@ -1,2 +1,2 @@
-export * from './jwt'
-export * from './basic-auth'
+export * from './jwt.ts'
+export * from './basic-auth.ts'

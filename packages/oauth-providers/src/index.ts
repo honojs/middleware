@@ -1,1 +1,1 @@
-export { OAuthVariables } from './types'
+export type { OAuthVariables } from './types.ts'

@@ -1,8 +1,8 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from './types'
+import type { Token } from '../../types.ts'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type { GoogleErrorResponse, GoogleTokenResponse, GoogleUser } from './types.ts'
 
 type GoogleAuthFlow = {
   client_id: string

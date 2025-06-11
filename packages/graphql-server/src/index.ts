@@ -18,7 +18,7 @@ import type {
 } from 'graphql'
 
 import type { Context, Env, Input, MiddlewareHandler } from 'hono'
-import { parseBody } from './parse-body'
+import { parseBody } from './parse-body.ts'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RootResolver<E extends Env = any, P extends string = any, I extends Input = {}> = (

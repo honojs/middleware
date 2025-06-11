@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { XErrorResponse, XRevokeResponse } from './types'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type { XErrorResponse, XRevokeResponse } from './types.ts'
 
 export async function revokeToken(
   client_id: string,

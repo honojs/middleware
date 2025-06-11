@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { TwitchRevokingResponse } from './types'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type { TwitchRevokingResponse } from './types.ts'
 
 export async function revokeToken(client_id: string, token: string): Promise<boolean> {
   const params = toQueryParams({

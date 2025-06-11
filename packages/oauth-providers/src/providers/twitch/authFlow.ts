@@ -1,14 +1,14 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
-import { toQueryParams } from '../../utils/objectToQuery'
+import type { Token } from '../../types.ts'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
 import type {
   TwitchErrorResponse,
   TwitchUserResponse,
   TwitchTokenResponse,
   TwitchUser,
   Scopes,
-} from './types'
+} from './types.ts'
 
 type TwitchAuthFlow = {
   client_id: string

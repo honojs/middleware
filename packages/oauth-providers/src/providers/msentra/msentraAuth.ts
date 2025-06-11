@@ -3,8 +3,8 @@ import { env } from 'hono/adapter'
 import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
-import { getRandomState } from '../../utils/getRandomState'
-import { AuthFlow } from './authFlow'
+import { getRandomState } from '../../utils/getRandomState.ts'
+import { AuthFlow } from './authFlow.ts'
 
 export function msentraAuth(options: {
   client_id?: string

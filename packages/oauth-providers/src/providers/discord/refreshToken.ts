@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception'
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { DiscordTokenResponse } from './types'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type { DiscordTokenResponse } from './types.ts'
 
 export async function refreshToken(
   client_id: string,

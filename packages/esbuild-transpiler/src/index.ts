@@ -1,1 +1,1 @@
-export { esbuildTranspiler } from './transpiler'
+export { esbuildTranspiler } from './transpiler.ts'

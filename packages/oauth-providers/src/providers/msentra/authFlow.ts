@@ -1,7 +1,12 @@
 import { HTTPException } from 'hono/http-exception'
 
-import { toQueryParams } from '../../utils/objectToQuery'
-import type { MSEntraErrorResponse, MSEntraToken, MSEntraTokenResponse, MSEntraUser } from './types'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
+import type {
+  MSEntraErrorResponse,
+  MSEntraToken,
+  MSEntraTokenResponse,
+  MSEntraUser,
+} from './types.ts'
 
 type MSEntraAuthFlow = {
   client_id: string

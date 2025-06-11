@@ -1,8 +1,8 @@
-export { googleAuth } from './googleAuth'
-export { revokeToken } from './revokeToken'
-export * from './types'
-import type { OAuthVariables } from '../../types'
-import type { GoogleUser } from './types'
+export { googleAuth } from './googleAuth.ts'
+export { revokeToken } from './revokeToken.ts'
+export * from './types.ts'
+import type { OAuthVariables } from '../../types.ts'
+import type { GoogleUser } from './types.ts'
 
 declare module 'hono' {
   interface ContextVariableMap extends OAuthVariables {

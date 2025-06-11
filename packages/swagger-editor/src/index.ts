@@ -1,5 +1,5 @@
 import type { Context, MiddlewareHandler } from 'hono'
-import type { CustomSwaggerUIOptions } from './types'
+import type { CustomSwaggerUIOptions } from './types.ts'
 
 const DEFAULT_VERSION = '4.13.1'
 

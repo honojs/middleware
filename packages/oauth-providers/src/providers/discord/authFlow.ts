@@ -1,14 +1,14 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
-import { toQueryParams } from '../../utils/objectToQuery'
+import type { Token } from '../../types.ts'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
 import type {
   DiscordErrorResponse,
   DiscordMeResponse,
   DiscordTokenResponse,
   DiscordUser,
   Scopes,
-} from './types'
+} from './types.ts'
 
 type FacebookAuthFlow = {
   client_id: string

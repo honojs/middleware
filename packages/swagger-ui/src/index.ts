@@ -1,9 +1,9 @@
 import type { Env, MiddlewareHandler } from 'hono'
 import { html } from 'hono/html'
-import type { DistSwaggerUIOptions } from './swagger/renderer'
-import { renderSwaggerUIOptions } from './swagger/renderer'
-import type { AssetURLs } from './swagger/resource'
-import { remoteAssets } from './swagger/resource'
+import type { DistSwaggerUIOptions } from './swagger/renderer.ts'
+import { renderSwaggerUIOptions } from './swagger/renderer.ts'
+import type { AssetURLs } from './swagger/resource.ts'
+import { remoteAssets } from './swagger/resource.ts'
 
 type OriginalSwaggerUIOptions = {
   version?: string
@@ -86,4 +86,4 @@ const middleware =
   }
 
 export { middleware as swaggerUI, SwaggerUI }
-export { SwaggerUIOptions }
+export type { SwaggerUIOptions }

@@ -1,13 +1,13 @@
 import { HTTPException } from 'hono/http-exception'
 
-import { toQueryParams } from '../../utils/objectToQuery'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
 import type {
   GitHubEmailResponse,
   GitHubErrorResponse,
   GitHubScope,
   GitHubTokenResponse,
   GitHubUser,
-} from './types'
+} from './types.ts'
 
 type GithubAuthFlow = {
   client_id: string

@@ -1,1 +1,1 @@
-export { MedleyRouter } from './router'
+export { MedleyRouter } from './router.ts'

@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
-import type { transform, initialize } from './types.esbuild'
+import type { transform, initialize } from './types.esbuild.ts'
 
 export type EsbuildLike = {
   transform: typeof transform

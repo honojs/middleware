@@ -3,9 +3,9 @@ import { env } from 'hono/adapter'
 import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
-import { getRandomState } from '../../utils/getRandomState'
-import { AuthFlow } from './authFlow'
-import type { LinkedInScope } from './types'
+import { getRandomState } from '../../utils/getRandomState.ts'
+import { AuthFlow } from './authFlow.ts'
+import type { LinkedInScope } from './types.ts'
 
 export function linkedinAuth(options: {
   client_id?: string

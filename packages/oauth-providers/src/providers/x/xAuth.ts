@@ -3,10 +3,10 @@ import { env } from 'hono/adapter'
 import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
-import { getCodeChallenge } from '../../utils/getCodeChallenge'
-import { getRandomState } from '../../utils/getRandomState'
-import { AuthFlow } from './authFlow'
-import type { XFields, XScopes } from './types'
+import { getCodeChallenge } from '../../utils/getCodeChallenge.ts'
+import { getRandomState } from '../../utils/getRandomState.ts'
+import { AuthFlow } from './authFlow.ts'
+import type { XFields, XScopes } from './types.ts'
 
 export function xAuth(options: {
   scope: XScopes[]

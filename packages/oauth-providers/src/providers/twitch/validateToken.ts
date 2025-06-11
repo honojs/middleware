@@ -1,5 +1,5 @@
 import { HTTPException } from 'hono/http-exception'
-import type { TwitchValidateResponse } from './types'
+import type { TwitchValidateResponse } from './types.ts'
 
 export async function validateToken(token: string): Promise<TwitchValidateResponse> {
   const response = await fetch('https://id.twitch.tv/oauth2/validate', {

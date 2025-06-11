@@ -1,13 +1,13 @@
 import { HTTPException } from 'hono/http-exception'
 
-import type { Token } from '../../types'
-import { toQueryParams } from '../../utils/objectToQuery'
+import type { Token } from '../../types.ts'
+import { toQueryParams } from '../../utils/objectToQuery.ts'
 import type {
   LinkedInErrorResponse,
   LinkedInScope,
   LinkedInTokenResponse,
   LinkedInUser,
-} from './types'
+} from './types.ts'
 
 export type LinkedInAuthFlow = {
   client_id: string
