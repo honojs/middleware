@@ -46,16 +46,13 @@ STYTCH_PROJECT_SECRET=secret-live-xxx-xxx-xxx
 - [Consumer Authentication](#consumer-authentication)
   - [Basic Session Auth](#basic-consumer-session-auth)
   - [OAuth Bearer Token Auth](#consumer-oauth-auth)
-  - [Custom Configuration](#consumer-custom-configuration)
-  - [Error Handling](#consumer-error-handling)
 - [B2B Authentication](#b2b-authentication)
   - [Basic Session Auth](#basic-b2b-session-auth)
   - [OAuth Bearer Token Auth](#b2b-oauth-auth)
-  - [Organization Access](#b2b-organization-access)
-  - [Custom Configuration](#b2b-custom-configuration)
-  - [Error Handling](#b2b-error-handling)
 - [API Reference](#api-reference)
 - [Advanced Usage](#advanced-usage)
+  - [Custom Configuration](#custom-configuration)
+  - [Error Handling](#custom-error-handling)
 
 ## Consumer Authentication
 
@@ -98,67 +95,15 @@ app.get('/profile', (c) => {
 ```ts
 import { Consumer } from '@hono/stytch-auth'
 
-app.use('*', Consumer.authenticateOAuth())
+app.use('*', Consumer.authenticateOAuthToken())
 
 app.get('/api/data', (c) => {
-  const { claims, token } = Consumer.getStytchOAuth(c)
+  const { claims, token } = Consumer.getOAuthData(c)
   return c.json({ 
     subject: claims.subject,
     hasValidToken: !!token 
   })
 })
-```
-
-### Consumer Custom Configuration
-
-**Custom Cookie Name:**
-
-```ts
-import { getCookie } from 'hono/cookie'
-
-app.use('*', Consumer.authenticateSessionLocal({
-  getCredential: (c) => ({ 
-    session_jwt: getCookie(c, 'my_session_cookie') ?? '' 
-  })
-}))
-```
-
-**Custom Token Age:**
-
-```ts
-app.use('*', Consumer.authenticateSessionLocal({
-  maxTokenAgeSeconds: 60 // 1 minute
-}))
-```
-
-### Consumer Error Handling
-
-**Redirect to Login:**
-
-```ts
-app.use('*', Consumer.authenticateSessionLocal({
-  onError: (c, error) => {
-    return c.redirect('/login')
-  }
-}))
-```
-
-**Custom Error Response:**
-
-```ts
-import { HTTPException } from 'hono/http-exception'
-
-app.use('*', Consumer.authenticateOAuth({
-  onError: (c, error) => {
-    const errorResponse = new Response('Unauthorized', {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"'
-      }
-    })
-    throw new HTTPException(401, { res: errorResponse })
-  }
-}))
 ```
 
 ## B2B Authentication
@@ -206,10 +151,10 @@ app.get('/dashboard', (c) => {
 ```ts
 import { B2B } from '@hono/stytch-auth'
 
-app.use('*', B2B.authenticateOAuth())
+app.use('*', B2B.authenticateOAuthToken())
 
 app.get('/api/org-data', (c) => {
-  const { claims, token } = B2B.getStytchB2BOAuth(c)
+  const { claims, token } = B2B.getOAuthData(c)
   return c.json({ 
     subject: claims.subject,
     hasValidToken: !!token 
@@ -235,60 +180,6 @@ app.get('/org-settings', (c) => {
 })
 ```
 
-### B2B Custom Configuration
-
-**Organization-Specific Cookie:**
-
-```ts
-import { getCookie } from 'hono/cookie'
-
-app.use('*', B2B.authenticateSessionLocal({
-  getCredential: (c) => ({ 
-    session_jwt: getCookie(c, 'b2b_session_jwt') ?? '' 
-  })
-}))
-```
-
-**Custom API Key Header:**
-
-```ts
-app.use('*', B2B.authenticateOAuth({
-  getCredential: (c) => ({ 
-    access_token: c.req.header('X-B2B-API-Key') ?? '' 
-  })
-}))
-```
-
-### B2B Error Handling
-
-**Redirect to B2B Login:**
-
-```ts
-app.use('*', B2B.authenticateSessionLocal({
-  onError: (c, error) => {
-    return c.redirect('/b2b/login')
-  }
-}))
-```
-
-**Custom B2B Error Response:**
-
-```ts
-import { HTTPException } from 'hono/http-exception'
-
-app.use('*', B2B.authenticateOAuth({
-  onError: (c, error) => {
-    const errorResponse = new Response('B2B Unauthorized', {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Bearer realm="b2b-api", error="invalid_token"'
-      }
-    })
-    throw new HTTPException(401, { res: errorResponse })
-  }
-}))
-```
-
 ## API Reference
 
 ### Consumer Methods
@@ -298,13 +189,13 @@ app.use('*', B2B.authenticateOAuth({
 | `Consumer.getClient(c)` | Get Consumer Stytch client | `Client` |
 | `Consumer.authenticateSessionLocal(opts?)` | JWT-only auth middleware | `MiddlewareHandler` |
 | `Consumer.authenticateSessionRemote(opts?)` | Remote session auth middleware | `MiddlewareHandler` |
-| `Consumer.authenticateOAuth(opts?)` | OAuth bearer token middleware | `MiddlewareHandler` |
+| `Consumer.authenticateOAuthToken(opts?)` | OAuth bearer token middleware | `MiddlewareHandler` |
 | `Consumer.getStytchSession(c)` | Get session from context | `Session` |
 | `Consumer.getStytchUser(c)` | Get user from context* | `User` |
-| `Consumer.getStytchOAuth(c)` | Get OAuth data from context** | `{ claims: ConsumerTokenClaims, token: string }` |
+| `Consumer.getOAuthData(c)` | Get OAuth data from context** | `{ claims: ConsumerTokenClaims, token: string }` |
 
 *Only available after `authenticateSessionRemote`  
-**Only available after `authenticateOAuth`
+**Only available after `authenticateOAuthToken`
 
 ### B2B Methods
 
@@ -313,14 +204,14 @@ app.use('*', B2B.authenticateOAuth({
 | `B2B.getClient(c)` | Get B2B Stytch client | `B2BClient` |
 | `B2B.authenticateSessionLocal(opts?)` | JWT-only auth middleware | `MiddlewareHandler` |
 | `B2B.authenticateSessionRemote(opts?)` | Remote session auth middleware | `MiddlewareHandler` |
-| `B2B.authenticateOAuth(opts?)` | B2B OAuth bearer token middleware | `MiddlewareHandler` |
+| `B2B.authenticateOAuthToken(opts?)` | B2B OAuth bearer token middleware | `MiddlewareHandler` |
 | `B2B.getStytchSession(c)` | Get B2B session from context | `MemberSession` |
 | `B2B.getStytchMember(c)` | Get member from context* | `Member` |
 | `B2B.getStytchOrganization(c)` | Get organization from context* | `Organization` |
-| `B2B.getStytchB2BOAuth(c)` | Get B2B OAuth data from context** | `{ claims: B2BTokenClaims, token: string }` |
+| `B2B.getOAuthData(c)` | Get B2B OAuth data from context** | `{ claims: B2BTokenClaims, token: string }` |
 
 *Only available after `authenticateSessionRemote`  
-**Only available after `authenticateOAuth`
+**Only available after `authenticateOAuthToken`
 
 ### Configuration Options
 
@@ -367,6 +258,58 @@ app.get('/advanced-org-ops', async (c) => {
 })
 ```
 
+### Custom Configuration
+
+**Custom Cookie Name:**
+
+```ts
+import { getCookie } from 'hono/cookie'
+
+app.use('*', Consumer.authenticateSessionLocal({
+  getCredential: (c) => ({ 
+    session_jwt: getCookie(c, 'my_session_cookie') ?? '' 
+  })
+}))
+```
+
+**Custom Token Age:**
+
+```ts
+app.use('*', Consumer.authenticateSessionLocal({
+  maxTokenAgeSeconds: 60 // 1 minute
+}))
+```
+
+### Custom Error Handling
+
+**Redirect to Login:**
+
+```ts
+app.use('*', Consumer.authenticateSessionLocal({
+  onError: (c, error) => {
+    return c.redirect('/login')
+  }
+}))
+```
+
+**Custom Error Response:**
+
+```ts
+import { HTTPException } from 'hono/http-exception'
+
+app.use('*', Consumer.authenticateOAuthToken({
+  onError: (c, error) => {
+    const errorResponse = new Response('Unauthorized', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"'
+      }
+    })
+    throw new HTTPException(401, { res: errorResponse })
+  }
+}))
+```
+
 ### Multiple Authentication Methods
 
 You can use different auth methods for different routes:
@@ -377,25 +320,23 @@ const app = new Hono()
 // Public routes (no auth)
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
-// Consumer auth routes
-app.use('/consumer/*', Consumer.authenticateSessionLocal())
-app.get('/consumer/profile', (c) => {
+// Less-sensitive routes use local authentication against cached JWT / JWKS
+app.get('/profile', Consumer.authenticateSessionLocal(), (c) => {
   const session = Consumer.getStytchSession(c)
   return c.json({ session })
 })
 
-// B2B auth routes
-app.use('/b2b/*', B2B.authenticateSessionRemote())
-app.get('/b2b/dashboard', (c) => {
+// More sensitive routes use remote authentication
+app.get('/paymentinfo',  Consumer.authenticateSessionRemote(), (c) => {
   const member = B2B.getStytchMember(c)
   const organization = B2B.getStytchOrganization(c)
   return c.json({ member, organization })
 })
 
 // OAuth API routes
-app.use('/api/*', Consumer.authenticateOAuth())
+app.use('/api/*', Consumer.authenticateOAuthToken())
 app.get('/api/data', (c) => {
-  const { claims } = Consumer.getStytchOAuth(c)
+  const { claims } = Consumer.getOAuthData(c)
   return c.json({ subject: claims.subject })
 })
 ```

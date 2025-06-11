@@ -324,7 +324,7 @@ export const Consumer = {
    * @param opts - Optional configuration for OAuth authentication
    * @returns Hono middleware handler
    */
-  authenticateOAuth:
+  authenticateOAuthToken:
     (opts?: OAuthMiddlewareOpts): MiddlewareHandler =>
     async (c, next) => {
       const stytchClient = Consumer.getClient(c)
@@ -355,11 +355,11 @@ export const Consumer = {
    * @returns Object containing OAuth token response and access token
    * @throws Error if no OAuth data is found in context
    */
-  getStytchOAuth: (c: Context): { claims: ConsumerTokenClaims; token: string } => {
+  getOAuthData: (c: Context): { claims: ConsumerTokenClaims; token: string } => {
     const claims = c.get('stytchOAuthClaims')
     const token = c.get('stytchOAuthToken')
     if (!claims || !token) {
-      throw Error('No OAuth data in context. Was Consumer.authenticateOAuth called?')
+      throw Error('No OAuth data in context. Was Consumer.authenticateOAuthToken called?')
     }
     return { claims, token }
   },
@@ -486,7 +486,7 @@ export const B2B = {
    * @param opts - Optional configuration for OAuth authentication
    * @returns Hono middleware handler
    */
-  authenticateOAuth:
+  authenticateOAuthToken:
     (opts?: B2BOAuthMiddlewareOpts): MiddlewareHandler =>
     async (c, next) => {
       const stytchClient = B2B.getClient(c)
@@ -517,11 +517,11 @@ export const B2B = {
    * @returns Object containing OAuth token response and access token
    * @throws Error if no OAuth data is found in context
    */
-  getStytchB2BOAuth: (c: Context): { claims: B2BTokenClaims; token: string } => {
+  getOAuthData: (c: Context): { claims: B2BTokenClaims; token: string } => {
     const claims = c.get('stytchB2BOAuthClaims')
     const token = c.get('stytchB2BOAuthToken')
     if (!claims || !token) {
-      throw Error('No B2B OAuth data in context. Was B2B.authenticateOAuth called?')
+      throw Error('No B2B OAuth data in context. Was B2B.authenticateOAuthToken called?')
     }
     return { claims, token }
   },

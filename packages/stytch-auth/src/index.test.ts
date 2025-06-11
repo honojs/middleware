@@ -361,15 +361,15 @@ describe('Consumer', () => {
     })
   })
 
-  describe('authenticateOAuth', () => {
+  describe('authenticateOAuthToken', () => {
     it('authenticates with bearer token and stores subject and token', async () => {
       const mockClaims = { subject: 'user_oauth_123' }
       oauthMock.introspectTokenLocal.mockResolvedValue(mockClaims)
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateOAuth())
+      app.use('*', Consumer.authenticateOAuthToken())
       app.get('/', (c) => {
-        const oauthData = Consumer.getStytchOAuth(c)
+        const oauthData = Consumer.getOAuthData(c)
         return c.json({ subject: oauthData.claims.subject, hasToken: !!oauthData.token })
       })
 
@@ -388,7 +388,7 @@ describe('Consumer', () => {
       const app = new Hono()
       app.use(
         '*',
-        Consumer.authenticateOAuth({
+        Consumer.authenticateOAuthToken({
           onError: mockOnError,
         })
       )
@@ -408,7 +408,7 @@ describe('Consumer', () => {
       const app = new Hono()
       app.use(
         '*',
-        Consumer.authenticateOAuth({
+        Consumer.authenticateOAuthToken({
           onError: mockOnError,
         })
       )
@@ -427,7 +427,7 @@ describe('Consumer', () => {
       const app = new Hono()
       app.use(
         '*',
-        Consumer.authenticateOAuth({
+        Consumer.authenticateOAuthToken({
           onError: () => {
             const errorResponse = new Response('Unauthorized', {
               status: 401,
@@ -452,7 +452,7 @@ describe('Consumer', () => {
 
     it('returns 401 when Authorization header does not start with Bearer', async () => {
       const app = new Hono()
-      app.use('*', Consumer.authenticateOAuth())
+      app.use('*', Consumer.authenticateOAuthToken())
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -464,12 +464,12 @@ describe('Consumer', () => {
     })
   })
 
-  describe('getStytchOAuth', () => {
+  describe('getOAuthData', () => {
     it('throws error when no OAuth data in context', () => {
       const app = new Hono()
       app.get('/', (c) => {
-        expect(() => Consumer.getStytchOAuth(c)).toThrow(
-          'No OAuth data in context. Was Consumer.authenticateOAuth called?'
+        expect(() => Consumer.getOAuthData(c)).toThrow(
+          'No OAuth data in context. Was Consumer.authenticateOAuthToken called?'
         )
         return c.json({ ok: true })
       })
@@ -830,15 +830,15 @@ describe('B2B', () => {
     })
   })
 
-  describe('authenticateOAuth', () => {
+  describe('authenticateOAuthToken', () => {
     it('authenticates with bearer token and stores subject and token', async () => {
       const mockClaims = { subject: 'b2b_user_oauth_123' }
       b2bIdpMock.introspectTokenLocal.mockResolvedValue(mockClaims)
 
       const app = new Hono()
-      app.use('*', B2B.authenticateOAuth())
+      app.use('*', B2B.authenticateOAuthToken())
       app.get('/', (c) => {
-        const oauthData = B2B.getStytchB2BOAuth(c)
+        const oauthData = B2B.getOAuthData(c)
         return c.json({ subject: oauthData.claims.subject, hasToken: !!oauthData.token })
       })
 
@@ -857,7 +857,7 @@ describe('B2B', () => {
       const app = new Hono()
       app.use(
         '*',
-        B2B.authenticateOAuth({
+        B2B.authenticateOAuthToken({
           onError: mockOnError,
         })
       )
@@ -877,7 +877,7 @@ describe('B2B', () => {
       const app = new Hono()
       app.use(
         '*',
-        B2B.authenticateOAuth({
+        B2B.authenticateOAuthToken({
           onError: mockOnError,
         })
       )
@@ -896,7 +896,7 @@ describe('B2B', () => {
       const app = new Hono()
       app.use(
         '*',
-        B2B.authenticateOAuth({
+        B2B.authenticateOAuthToken({
           onError: () => {
             const errorResponse = new Response('Unauthorized', {
               status: 401,
@@ -921,7 +921,7 @@ describe('B2B', () => {
 
     it('returns 401 when Authorization header does not start with Bearer', async () => {
       const app = new Hono()
-      app.use('*', B2B.authenticateOAuth())
+      app.use('*', B2B.authenticateOAuthToken())
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -933,12 +933,12 @@ describe('B2B', () => {
     })
   })
 
-  describe('getStytchB2BOAuth', () => {
+  describe('getOAuthData', () => {
     it('throws error when no B2B OAuth data in context', () => {
       const app = new Hono()
       app.get('/', (c) => {
-        expect(() => B2B.getStytchB2BOAuth(c)).toThrow(
-          'No B2B OAuth data in context. Was B2B.authenticateOAuth called?'
+        expect(() => B2B.getOAuthData(c)).toThrow(
+          'No B2B OAuth data in context. Was B2B.authenticateOAuthToken called?'
         )
         return c.json({ ok: true })
       })
