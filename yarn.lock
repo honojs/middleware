@@ -2267,9 +2267,7 @@ __metadata:
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@types/react": "npm:^18"
     publint: "npm:^0.3.9"
-    react: "npm:^18.2.0"
     stytch: "npm:^12.19.0"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"

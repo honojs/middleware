@@ -24,29 +24,29 @@ type B2BTokenClaims = Awaited<ReturnType<B2BClient['idp']['introspectTokenLocal'
 type LocalMiddlewareOpts = {
   /** Maximum age of the JWT token in seconds */
   maxTokenAgeSeconds?: number
-  /** 
+  /**
    * Custom function to extract session JWT from the request context.
    * @example
    * // Read from a custom cookie name
    * getCredential: (c) => ({ session_jwt: getCookie(c, 'my_custom_jwt') ?? '' })
-   * 
+   *
    * @example
    * // Read from Authorization header
    * getCredential: (c) => ({ session_jwt: c.req.header('Authorization')?.replace('Bearer ', '') ?? '' })
-   * 
+   *
    * @example
    * // Read from custom header
    * getCredential: (c) => ({ session_jwt: c.req.header('X-Session-JWT') ?? '' })
    */
   getCredential?: (c: Context) => { session_jwt: string }
-  /** 
+  /**
    * Custom error handler for authentication failures.
    * @example
    * // Redirect to login page
    * onError: (c, error) => {
    *   return c.redirect('/login')
    * }
-   * 
+   *
    * @example
    * // Return custom error response
    * onError: (c, error) => {
@@ -105,22 +105,22 @@ type OnlineMiddlewareOpts = {
  * Configuration options for OAuth2 bearer token authentication
  */
 type OAuthMiddlewareOpts = {
-  /** 
+  /**
    * Custom function to extract bearer token from the request context.
    * @example
    * // Read from custom header instead of Authorization
    * getCredential: (c) => ({ access_token: c.req.header('X-API-Token') ?? '' })
-   * 
+   *
    * @example
    * // Read from cookie
    * getCredential: (c) => ({ access_token: getCookie(c, 'oauth_token') ?? '' })
-   * 
+   *
    * @example
    * // Read from query parameter
    * getCredential: (c) => ({ access_token: c.req.query('access_token') ?? '' })
    */
   getCredential?: (c: Context) => { access_token: string }
-  /** 
+  /**
    * Custom error handler for OAuth authentication failures.
    * @example
    * // Set WWW-Authenticate header
@@ -139,22 +139,22 @@ type OAuthMiddlewareOpts = {
  * Configuration options for B2B OAuth2 bearer token authentication
  */
 type B2BOAuthMiddlewareOpts = {
-  /** 
+  /**
    * Custom function to extract bearer token from the request context.
    * @example
    * // Read from B2B-specific API key header
    * getCredential: (c) => ({ access_token: c.req.header('X-B2B-API-Key') ?? '' })
-   * 
+   *
    * @example
    * // Read from organization-scoped cookie
    * getCredential: (c) => ({ access_token: getCookie(c, 'b2b_oauth_token') ?? '' })
-   * 
+   *
    * @example
    * // Read from custom Authorization scheme
    * getCredential: (c) => ({ access_token: c.req.header('Authorization')?.replace('B2B-Bearer ', '') ?? '' })
    */
   getCredential?: (c: Context) => { access_token: string }
-  /** 
+  /**
    * Custom error handler for B2B OAuth authentication failures.
    * @example
    * // Set WWW-Authenticate header for B2B
@@ -173,7 +173,7 @@ type B2BOAuthMiddlewareOpts = {
  * Default credential extractor for session JWT from standard cookie
  */
 const defaultSessionCredential = (c: Context) => ({
-  session_jwt: getCookie(c, 'stytch_session_jwt') ?? ''
+  session_jwt: getCookie(c, 'stytch_session_jwt') ?? '',
 })
 
 /**
@@ -496,7 +496,7 @@ export const B2B = {
         if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
           throw new Error('Missing or invalid access token')
         }
-        const bearerToken = authHeader.substring(7);
+        const bearerToken = authHeader.substring(7)
         const claims = await stytchClient.idp.introspectTokenLocal(bearerToken)
 
         c.set('stytchB2BOAuthClaims', claims)

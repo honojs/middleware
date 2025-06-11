@@ -1,4 +1,3 @@
-
 import { Hono } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
@@ -230,7 +229,6 @@ describe('Consumer', () => {
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({ user_id: 'user_token_456' })
     })
-
   })
 
   describe('authenticateSessionLocal onError', () => {
@@ -239,9 +237,12 @@ describe('Consumer', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateSessionLocal({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateSessionLocal({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -257,11 +258,14 @@ describe('Consumer', () => {
       sessionMock.authenticateJwt.mockRejectedValue(new Error('Invalid JWT'))
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateSessionLocal({
-        onError: (c) => {
-          return c.redirect('/login')
-        }
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateSessionLocal({
+          onError: (c) => {
+            return c.redirect('/login')
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -280,9 +284,12 @@ describe('Consumer', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateSessionRemote({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateSessionRemote({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -298,17 +305,20 @@ describe('Consumer', () => {
       sessionMock.authenticate.mockRejectedValue(new Error('Session expired'))
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateSessionRemote({
-        onError: () => {
-          const errorResponse = new Response('Session expired', {
-            status: 401,
-            headers: {
-              'WWW-Authenticate': 'Bearer realm="app"',
-            },
-          })
-          throw new HTTPException(401, { res: errorResponse })
-        }
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateSessionRemote({
+          onError: () => {
+            const errorResponse = new Response('Session expired', {
+              status: 401,
+              headers: {
+                'WWW-Authenticate': 'Bearer realm="app"',
+              },
+            })
+            throw new HTTPException(401, { res: errorResponse })
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -364,7 +374,7 @@ describe('Consumer', () => {
       })
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Bearer oauth_token_123' }
+        headers: { Authorization: 'Bearer oauth_token_123' },
       })
       const response = await app.request(req)
 
@@ -376,14 +386,17 @@ describe('Consumer', () => {
     it('calls onError callback when no Authorization header', async () => {
       const mockOnError = vi.fn()
       const app = new Hono()
-      app.use('*', Consumer.authenticateOAuth({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateOAuth({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/')
       const response = await app.request(req)
-      
+
       expect(mockOnError).toHaveBeenCalled()
       expect(response.status).toBe(401)
     })
@@ -393,40 +406,48 @@ describe('Consumer', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', Consumer.authenticateOAuth({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateOAuth({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Bearer invalid_token' }
+        headers: { Authorization: 'Bearer invalid_token' },
       })
       const response = await app.request(req)
-      
+
       expect(mockOnError).toHaveBeenCalled()
       expect(response.status).toBe(401)
     })
 
     it('demonstrates using onError to set WWW-Authenticate header', async () => {
       const app = new Hono()
-      app.use('*', Consumer.authenticateOAuth({
-        onError: () => {
-          const errorResponse = new Response('Unauthorized', {
-            status: 401,
-            headers: {
-              'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"',
-            },
-          })
-          throw new HTTPException(401, { res: errorResponse })
-        }
-      }))
+      app.use(
+        '*',
+        Consumer.authenticateOAuth({
+          onError: () => {
+            const errorResponse = new Response('Unauthorized', {
+              status: 401,
+              headers: {
+                'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"',
+              },
+            })
+            throw new HTTPException(401, { res: errorResponse })
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/')
       const response = await app.request(req)
-      
+
       expect(response.status).toBe(401)
-      expect(response.headers.get('WWW-Authenticate')).toBe('Bearer realm="api", error="invalid_token"')
+      expect(response.headers.get('WWW-Authenticate')).toBe(
+        'Bearer realm="api", error="invalid_token"'
+      )
     })
 
     it('returns 401 when Authorization header does not start with Bearer', async () => {
@@ -435,10 +456,10 @@ describe('Consumer', () => {
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Basic dXNlcjpwYXNz' }
+        headers: { Authorization: 'Basic dXNlcjpwYXNz' },
       })
       const response = await app.request(req)
-      
+
       expect(response.status).toBe(401)
     })
   })
@@ -564,9 +585,15 @@ describe('B2B', () => {
 
   describe('authenticateSessionRemote', () => {
     it('authenticates with default cookie, stores session and member, and retrieves via getStytchSession/getStytchMember', async () => {
-      const mockSession = { member_session_id: 'b2b_session_remote_123', organization_id: 'org_remote_123' }
+      const mockSession = {
+        member_session_id: 'b2b_session_remote_123',
+        organization_id: 'org_remote_123',
+      }
       const mockMember = { member_id: 'member_remote_123', email_address: 'john@company.com' }
-      b2bSessionMock.authenticate.mockResolvedValue({ member_session: mockSession, member: mockMember })
+      b2bSessionMock.authenticate.mockResolvedValue({
+        member_session: mockSession,
+        member: mockMember,
+      })
 
       const app = new Hono()
       app.use('*', B2B.authenticateSessionRemote())
@@ -592,9 +619,15 @@ describe('B2B', () => {
     })
 
     it('uses custom getCredential with session_token', async () => {
-      const mockSession = { member_session_id: 'b2b_session_token_456', organization_id: 'org_token_456' }
+      const mockSession = {
+        member_session_id: 'b2b_session_token_456',
+        organization_id: 'org_token_456',
+      }
       const mockMember = { member_id: 'member_token_456', email_address: 'jane@company.com' }
-      b2bSessionMock.authenticate.mockResolvedValue({ member_session: mockSession, member: mockMember })
+      b2bSessionMock.authenticate.mockResolvedValue({
+        member_session: mockSession,
+        member: mockMember,
+      })
 
       const app = new Hono()
       app.use(
@@ -619,7 +652,6 @@ describe('B2B', () => {
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({ member_id: 'member_token_456' })
     })
-
   })
 
   describe('B2B authenticateSessionLocal onError', () => {
@@ -628,9 +660,12 @@ describe('B2B', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', B2B.authenticateSessionLocal({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        B2B.authenticateSessionLocal({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -646,11 +681,14 @@ describe('B2B', () => {
       b2bSessionMock.authenticateJwt.mockRejectedValue(new Error('Invalid B2B JWT'))
 
       const app = new Hono()
-      app.use('*', B2B.authenticateSessionLocal({
-        onError: (c) => {
-          return c.redirect('/b2b/login')
-        }
-      }))
+      app.use(
+        '*',
+        B2B.authenticateSessionLocal({
+          onError: (c) => {
+            return c.redirect('/b2b/login')
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -669,9 +707,12 @@ describe('B2B', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', B2B.authenticateSessionRemote({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        B2B.authenticateSessionRemote({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -687,17 +728,20 @@ describe('B2B', () => {
       b2bSessionMock.authenticate.mockRejectedValue(new Error('B2B Session expired'))
 
       const app = new Hono()
-      app.use('*', B2B.authenticateSessionRemote({
-        onError: () => {
-          const errorResponse = new Response('B2B Session expired', {
-            status: 401,
-            headers: {
-              'WWW-Authenticate': 'Bearer realm="b2b-app"',
-            },
-          })
-          throw new HTTPException(401, { res: errorResponse })
-        }
-      }))
+      app.use(
+        '*',
+        B2B.authenticateSessionRemote({
+          onError: () => {
+            const errorResponse = new Response('B2B Session expired', {
+              status: 401,
+              headers: {
+                'WWW-Authenticate': 'Bearer realm="b2b-app"',
+              },
+            })
+            throw new HTTPException(401, { res: errorResponse })
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
@@ -712,13 +756,16 @@ describe('B2B', () => {
 
   describe('B2B Organization Support', () => {
     it('stores organization in context during remote authentication', async () => {
-      const mockSession = { member_session_id: 'b2b_session_org_123', organization_id: 'org_org_123' }
+      const mockSession = {
+        member_session_id: 'b2b_session_org_123',
+        organization_id: 'org_org_123',
+      }
       const mockMember = { member_id: 'member_org_123', email_address: 'john@company.com' }
       const mockOrganization = { organization_id: 'org_org_123', organization_name: 'Test Org' }
-      b2bSessionMock.authenticate.mockResolvedValue({ 
-        member_session: mockSession, 
+      b2bSessionMock.authenticate.mockResolvedValue({
+        member_session: mockSession,
         member: mockMember,
-        organization: mockOrganization
+        organization: mockOrganization,
       })
 
       const app = new Hono()
@@ -796,7 +843,7 @@ describe('B2B', () => {
       })
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Bearer b2b_oauth_token_123' }
+        headers: { Authorization: 'Bearer b2b_oauth_token_123' },
       })
       const response = await app.request(req)
 
@@ -808,9 +855,12 @@ describe('B2B', () => {
     it('calls onError callback when no Authorization header', async () => {
       const mockOnError = vi.fn()
       const app = new Hono()
-      app.use('*', B2B.authenticateOAuth({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        B2B.authenticateOAuth({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/')
@@ -825,40 +875,48 @@ describe('B2B', () => {
       const mockOnError = vi.fn()
 
       const app = new Hono()
-      app.use('*', B2B.authenticateOAuth({
-        onError: mockOnError
-      }))
+      app.use(
+        '*',
+        B2B.authenticateOAuth({
+          onError: mockOnError,
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Bearer invalid_b2b_token' }
+        headers: { Authorization: 'Bearer invalid_b2b_token' },
       })
       const response = await app.request(req)
-      
+
       expect(mockOnError).toHaveBeenCalled()
       expect(response.status).toBe(401)
     })
 
     it('demonstrates using onError to set WWW-Authenticate header for B2B', async () => {
       const app = new Hono()
-      app.use('*', B2B.authenticateOAuth({
-        onError: () => {
-          const errorResponse = new Response('Unauthorized', {
-            status: 401,
-            headers: {
-              'WWW-Authenticate': 'Bearer realm="b2b-api", error="invalid_token"',
-            },
-          })
-          throw new HTTPException(401, { res: errorResponse })
-        }
-      }))
+      app.use(
+        '*',
+        B2B.authenticateOAuth({
+          onError: () => {
+            const errorResponse = new Response('Unauthorized', {
+              status: 401,
+              headers: {
+                'WWW-Authenticate': 'Bearer realm="b2b-api", error="invalid_token"',
+              },
+            })
+            throw new HTTPException(401, { res: errorResponse })
+          },
+        })
+      )
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/')
       const response = await app.request(req)
-      
+
       expect(response.status).toBe(401)
-      expect(response.headers.get('WWW-Authenticate')).toBe('Bearer realm="b2b-api", error="invalid_token"')
+      expect(response.headers.get('WWW-Authenticate')).toBe(
+        'Bearer realm="b2b-api", error="invalid_token"'
+      )
     })
 
     it('returns 401 when Authorization header does not start with Bearer', async () => {
@@ -867,10 +925,10 @@ describe('B2B', () => {
       app.get('/', (c) => c.json({ ok: true }))
 
       const req = new Request('http://localhost/', {
-        headers: { Authorization: 'Basic dXNlcjpwYXNz' }
+        headers: { Authorization: 'Basic dXNlcjpwYXNz' },
       })
       const response = await app.request(req)
-      
+
       expect(response.status).toBe(401)
     })
   })
