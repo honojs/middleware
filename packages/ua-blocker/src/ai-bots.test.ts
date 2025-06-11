@@ -52,7 +52,7 @@ describe('AI Bots module', () => {
 
     it('Should include known non-respecting bots', () => {
       expect(nonRespectingAiBots).toContain('Bytespider')
-      expect(nonRespectingAiBots).toContain('ClaudeBot')
+      expect(nonRespectingAiBots).toContain('iaskspider/2.0')
     })
 
     it('Should not include known respecting bots', () => {

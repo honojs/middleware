@@ -224,9 +224,10 @@ describe('uaBlocker middleware', () => {
       { agent: 'AI2Bot', isNonRespecting: false },
       { agent: 'Bytespider', isNonRespecting: true },
       { agent: 'ChatGPT-User', isNonRespecting: false },
-      { agent: 'ClaudeBot', isNonRespecting: true },
+      { agent: 'ClaudeBot', isNonRespecting: false },
       { agent: 'GPTBot', isNonRespecting: false },
-      { agent: 'CCBot', isNonRespecting: true },
+      { agent: 'CCBot', isNonRespecting: false },
+      { agent: 'iaskspider/2.0', isNonRespecting: true },
     ]
 
     testCases.forEach(({ agent, isNonRespecting }) => {

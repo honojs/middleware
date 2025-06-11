@@ -111,7 +111,7 @@ describe('Generated constants', () => {
 
     it('Should include expected non-respecting bots', () => {
       expect(NON_RESPECTING_BOTS).toContain('Bytespider')
-      expect(NON_RESPECTING_BOTS).toContain('ClaudeBot')
+      expect(NON_RESPECTING_BOTS).toContain('iaskspider/2.0')
     })
 
     it('Should not include known respecting bots', () => {
