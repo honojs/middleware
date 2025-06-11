@@ -32,7 +32,7 @@ for (const [key, value] of bots) {
   allBots.push(item)
   allBotsExpressions.push(expression)
 
-  if (value?.respect !== 'Yes') {
+  if (!value?.respect?.includes('Yes')) {
     nonRespectingBots.push(item)
     nonRespectingBotsExpressions.push(expression)
   }
