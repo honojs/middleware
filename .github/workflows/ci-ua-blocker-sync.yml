@@ -31,3 +31,7 @@ jobs:
           body: 'This PR was automatically created after detecting changes in the upstream `robots.json` file.'
           branch: 'chore/sync-robots-json'
           delete-branch: true
+          # Assignee and labels
+          assignees: finxol
+          reviewers: finxol
+          labels: robots.json
