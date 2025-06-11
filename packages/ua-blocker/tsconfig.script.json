@@ -7,7 +7,7 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "src/data/*.json"],
   "exclude": ["**/*.test.ts"],
   "references": []
 }
