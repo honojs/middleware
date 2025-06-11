@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "yarn getrobotstxt",
+    "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
     "build": "yarn prebuild && tsup ./src/index.ts ./src/ai-bots.ts",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
