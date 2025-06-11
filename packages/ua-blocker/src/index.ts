@@ -8,25 +8,31 @@ import { escape } from './escape'
  * parentheses to form a capturing group.
  *
  * @param list An array of strings to include in the regex.
- * @returns A string representing the PCRE-like regex group.
+ * @returns A RegExp matching any of the strings in the capture group.
  */
-function listToRegex(list: string[]): string {
-  const formatted = list.map((item) => escape(item.toUpperCase())).join('|')
-  return `(${formatted})`
+function listToRegex(list: string[]): RegExp | undefined {
+  let regex
+
+  if (list.length > 0) {
+    const formatted = list.map((item) => escape(item.toUpperCase())).join('|')
+    regex = new RegExp(`(${formatted})`)
+  }
+
+  return regex
 }
 
 /**
  *
- * @param params - `blocklist`: An array of user-agents to block.
+ * @param params - `blocklist`: An array of user-agents to block, or a RegExp to match against.
  * @returns the Hono middleware to block requests based on User-Agent header.
  */
-export function uaBlocker(params = { blocklist: [] as string[] }) {
-  const regex = new RegExp(listToRegex(params.blocklist))
+export function uaBlocker(params = { blocklist: [] as string[] | RegExp }) {
+  const regex = Array.isArray(params.blocklist) ? listToRegex(params.blocklist) : params.blocklist
 
   return createMiddleware(async (c, next) => {
     const userAgent = c.req.header('User-Agent')?.toUpperCase()
 
-    if (userAgent && params.blocklist.length > 0 && userAgent.match(regex)) {
+    if (userAgent && regex && userAgent.match(regex)) {
       return c.text('Forbidden', 403)
     }
 

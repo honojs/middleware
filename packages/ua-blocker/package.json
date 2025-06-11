@@ -9,13 +9,13 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "tsx ./src/script/prebuild.ts",
+    "prebuild": "yarn getrobotstxt",
     "build": "yarn prebuild && tsup ./src/index.ts ./src/ai-bots.ts",
     "prepack": "yarn build",
-    "publint": "yarn prebuild && attw --pack && publint",
-    "typecheck": "yarn prebuild && tsc -b tsconfig.json && echo 'Type checking completed'",
+    "publint": "attw --pack --profile node16 && publint",
+    "typecheck": "yarn prebuild && tsc -b tsconfig.json",
     "test": "yarn prebuild && vitest",
-    "getrobotstxt": "tsx ./src/script/get-robots-txt.ts"
+    "getrobotstxt": "node --experimental-strip-types ./script/get-robots-txt.ts"
   },
   "exports": {
     ".": {
@@ -58,7 +58,6 @@
     "@types/node": "^22.15.24",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
-    "tsx": "^4.19.4",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   }
