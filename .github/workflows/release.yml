@@ -11,15 +11,22 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # The OIDC ID token is used for authentication with JSR.
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 18.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
 
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version: v2.x
       - name: Install Dependencies
         run: yarn
 
@@ -35,8 +42,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn run publish
-          version: yarn changeset version
+          publish: yarn run publish && deno install --no-lock && deno publish
+          version: yarn run version:npm && yarn run version:jsr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

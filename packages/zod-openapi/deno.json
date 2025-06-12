@@ -1,0 +1,12 @@
+{
+  "name": "@hono/zod-openapi",
+  "version": "0.19.8",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}
