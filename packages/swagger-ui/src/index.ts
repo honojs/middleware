@@ -86,4 +86,4 @@ const middleware =
   }
 
 export { middleware as swaggerUI, SwaggerUI }
-export { SwaggerUIOptions }
+export type { SwaggerUIOptions }

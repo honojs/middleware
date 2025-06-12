@@ -472,7 +472,7 @@ Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `
 
 If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
 
-When using the `.route()` method to mount a child OpenAPIHono app that uses path parameters, you should use the Hono *:param* syntax in the parent route path, rather than the OpenAPI *{param}* syntax:
+When using the `.route()` method to mount a child OpenAPIHono app that uses path parameters, you should use the Hono _:param_ syntax in the parent route path, rather than the OpenAPI _{param}_ syntax:
 
 ```
 const bookActionsApp = new OpenAPIHono()
