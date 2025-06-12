@@ -10,11 +10,11 @@
   ],
   "scripts": {
     "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
-    "build": "yarn prebuild && tsup ./src/index.ts ./src/ai-bots.ts",
+    "build": "tsup ./src/index.ts ./src/ai-bots.ts",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
-    "typecheck": "yarn prebuild && tsc -b tsconfig.json",
-    "test": "yarn prebuild && vitest",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
     "getrobotstxt": "node --experimental-strip-types ./script/get-robots-txt.ts"
   },
   "exports": {
