@@ -20,7 +20,9 @@ import { Hono } from 'hono'
 const app = new Hono()
 
 app.use('*', uaBlocker({
-    blocklist: [], // Add your custom blocklist here
+    // Add your custom blocklist here
+    // Can be either a list of User Agents or a RegExp directly
+    blocklist: ["ForbiddenBot", "Not You"] // or /(FORBIDDENBOT|NOT YOU)/
 }))
 app.get('/', (c) => c.text('Hello World'))
 
@@ -126,7 +128,8 @@ app.use('/robots.txt', (c) => {
 Middleware that blocks requests based on their User-Agent header.
 
 **Parameters:**
-- `options.blocklist` (`string[]`, default: `[]`) - The list of user-agents to block
+- `options.blocklist` (`string[] | RegExp`, default: `[]`) - The list of user-agents to block.
+  If a RegExp is passed, it should match on UPPERCASE User Agents.
 
 **Returns:** Hono middleware function
 

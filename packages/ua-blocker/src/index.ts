@@ -23,7 +23,7 @@ function listToRegex(list: string[]): RegExp | undefined {
 
 /**
  *
- * @param params - `blocklist`: An array of user-agents to block, or a RegExp to match against.
+ * @param params - `blocklist`: An array of user-agents to block, or a RegExp to match against. NOTE: If passing a RegExp, it should match on UPPERCASE User Agents.
  * @returns the Hono middleware to block requests based on User-Agent header.
  */
 export function uaBlocker(params = { blocklist: [] as string[] | RegExp }) {
@@ -40,3 +40,5 @@ export function uaBlocker(params = { blocklist: [] as string[] | RegExp }) {
     return
   })
 }
+
+export default uaBlocker
