@@ -43,6 +43,7 @@ STYTCH_PROJECT_SECRET=secret-live-xxx-xxx-xxx
 ```
 
 ## Table of Contents
+
 - [Consumer Authentication](#consumer-authentication)
   - [Basic Session Auth](#basic-consumer-session-auth)
   - [OAuth Bearer Token Auth](#consumer-oauth-auth)
@@ -83,9 +84,9 @@ app.use('*', Consumer.authenticateSessionRemote())
 app.get('/profile', (c) => {
   const session = Consumer.getStytchSession(c)
   const user = Consumer.getStytchUser(c)
-  return c.json({ 
+  return c.json({
     sessionId: session.session_id,
-    userId: user.user_id 
+    userId: user.user_id,
   })
 })
 ```
@@ -99,9 +100,9 @@ app.use('*', Consumer.authenticateOAuthToken())
 
 app.get('/api/data', (c) => {
   const { claims, token } = Consumer.getOAuthData(c)
-  return c.json({ 
+  return c.json({
     subject: claims.subject,
-    hasValidToken: !!token 
+    hasValidToken: !!token,
   })
 })
 ```
@@ -119,9 +120,9 @@ app.use('*', B2B.authenticateSessionLocal())
 
 app.get('/dashboard', (c) => {
   const session = B2B.getStytchSession(c)
-  return c.json({ 
+  return c.json({
     sessionId: session.member_session_id,
-    orgId: session.organization_id 
+    orgId: session.organization_id,
   })
 })
 ```
@@ -137,11 +138,11 @@ app.get('/dashboard', (c) => {
   const session = B2B.getStytchSession(c)
   const member = B2B.getStytchMember(c)
   const organization = B2B.getStytchOrganization(c)
-  
-  return c.json({ 
+
+  return c.json({
     sessionId: session.member_session_id,
     memberEmail: member.email_address,
-    orgName: organization.organization_name 
+    orgName: organization.organization_name,
   })
 })
 ```
@@ -155,9 +156,9 @@ app.use('*', B2B.authenticateOAuthToken())
 
 app.get('/api/org-data', (c) => {
   const { claims, token } = B2B.getOAuthData(c)
-  return c.json({ 
+  return c.json({
     subject: claims.subject,
-    hasValidToken: !!token 
+    hasValidToken: !!token,
   })
 })
 ```
@@ -171,7 +172,7 @@ app.use('*', B2B.authenticateSessionRemote())
 
 app.get('/org-settings', (c) => {
   const organization = B2B.getStytchOrganization(c)
-  
+
   return c.json({
     orgId: organization.organization_id,
     orgName: organization.organization_name,
@@ -184,34 +185,34 @@ app.get('/org-settings', (c) => {
 
 ### Consumer Methods
 
-| Method | Description | Returns |
-|--------|-------------|---------|
-| `Consumer.getClient(c)` | Get Consumer Stytch client | `Client` |
-| `Consumer.authenticateSessionLocal(opts?)` | JWT-only auth middleware | `MiddlewareHandler` |
-| `Consumer.authenticateSessionRemote(opts?)` | Remote session auth middleware | `MiddlewareHandler` |
-| `Consumer.authenticateOAuthToken(opts?)` | OAuth bearer token middleware | `MiddlewareHandler` |
-| `Consumer.getStytchSession(c)` | Get session from context | `Session` |
-| `Consumer.getStytchUser(c)` | Get user from context* | `User` |
-| `Consumer.getOAuthData(c)` | Get OAuth data from context** | `{ claims: ConsumerTokenClaims, token: string }` |
+| Method                                      | Description                     | Returns                                          |
+| ------------------------------------------- | ------------------------------- | ------------------------------------------------ |
+| `Consumer.getClient(c)`                     | Get Consumer Stytch client      | `Client`                                         |
+| `Consumer.authenticateSessionLocal(opts?)`  | JWT-only auth middleware        | `MiddlewareHandler`                              |
+| `Consumer.authenticateSessionRemote(opts?)` | Remote session auth middleware  | `MiddlewareHandler`                              |
+| `Consumer.authenticateOAuthToken(opts?)`    | OAuth bearer token middleware   | `MiddlewareHandler`                              |
+| `Consumer.getStytchSession(c)`              | Get session from context        | `Session`                                        |
+| `Consumer.getStytchUser(c)`                 | Get user from context\*         | `User`                                           |
+| `Consumer.getOAuthData(c)`                  | Get OAuth data from context\*\* | `{ claims: ConsumerTokenClaims, token: string }` |
 
-*Only available after `authenticateSessionRemote`  
-**Only available after `authenticateOAuthToken`
+\*Only available after `authenticateSessionRemote`  
+\*\*Only available after `authenticateOAuthToken`
 
 ### B2B Methods
 
-| Method | Description | Returns |
-|--------|-------------|---------|
-| `B2B.getClient(c)` | Get B2B Stytch client | `B2BClient` |
-| `B2B.authenticateSessionLocal(opts?)` | JWT-only auth middleware | `MiddlewareHandler` |
-| `B2B.authenticateSessionRemote(opts?)` | Remote session auth middleware | `MiddlewareHandler` |
-| `B2B.authenticateOAuthToken(opts?)` | B2B OAuth bearer token middleware | `MiddlewareHandler` |
-| `B2B.getStytchSession(c)` | Get B2B session from context | `MemberSession` |
-| `B2B.getStytchMember(c)` | Get member from context* | `Member` |
-| `B2B.getStytchOrganization(c)` | Get organization from context* | `Organization` |
-| `B2B.getOAuthData(c)` | Get B2B OAuth data from context** | `{ claims: B2BTokenClaims, token: string }` |
+| Method                                 | Description                         | Returns                                     |
+| -------------------------------------- | ----------------------------------- | ------------------------------------------- |
+| `B2B.getClient(c)`                     | Get B2B Stytch client               | `B2BClient`                                 |
+| `B2B.authenticateSessionLocal(opts?)`  | JWT-only auth middleware            | `MiddlewareHandler`                         |
+| `B2B.authenticateSessionRemote(opts?)` | Remote session auth middleware      | `MiddlewareHandler`                         |
+| `B2B.authenticateOAuthToken(opts?)`    | B2B OAuth bearer token middleware   | `MiddlewareHandler`                         |
+| `B2B.getStytchSession(c)`              | Get B2B session from context        | `MemberSession`                             |
+| `B2B.getStytchMember(c)`               | Get member from context\*           | `Member`                                    |
+| `B2B.getStytchOrganization(c)`         | Get organization from context\*     | `Organization`                              |
+| `B2B.getOAuthData(c)`                  | Get B2B OAuth data from context\*\* | `{ claims: B2BTokenClaims, token: string }` |
 
-*Only available after `authenticateSessionRemote`  
-**Only available after `authenticateOAuthToken`
+\*Only available after `authenticateSessionRemote`  
+\*\*Only available after `authenticateOAuthToken`
 
 ### Configuration Options
 
@@ -251,8 +252,8 @@ app.get('/advanced-user-ops', async (c) => {
 // B2B operations
 app.get('/advanced-org-ops', async (c) => {
   const stytchClient = B2B.getClient(c)
-  const { organization } = await stytchClient.organizations.get({ 
-    organization_id: 'org-123' 
+  const { organization } = await stytchClient.organizations.get({
+    organization_id: 'org-123',
   })
   return c.json({ organization })
 })
@@ -265,19 +266,25 @@ app.get('/advanced-org-ops', async (c) => {
 ```ts
 import { getCookie } from 'hono/cookie'
 
-app.use('*', Consumer.authenticateSessionLocal({
-  getCredential: (c) => ({ 
-    session_jwt: getCookie(c, 'my_session_cookie') ?? '' 
+app.use(
+  '*',
+  Consumer.authenticateSessionLocal({
+    getCredential: (c) => ({
+      session_jwt: getCookie(c, 'my_session_cookie') ?? '',
+    }),
   })
-}))
+)
 ```
 
 **Custom Token Age:**
 
 ```ts
-app.use('*', Consumer.authenticateSessionLocal({
-  maxTokenAgeSeconds: 60 // 1 minute
-}))
+app.use(
+  '*',
+  Consumer.authenticateSessionLocal({
+    maxTokenAgeSeconds: 60, // 1 minute
+  })
+)
 ```
 
 ### Custom Error Handling
@@ -285,11 +292,14 @@ app.use('*', Consumer.authenticateSessionLocal({
 **Redirect to Login:**
 
 ```ts
-app.use('*', Consumer.authenticateSessionLocal({
-  onError: (c, error) => {
-    return c.redirect('/login')
-  }
-}))
+app.use(
+  '*',
+  Consumer.authenticateSessionLocal({
+    onError: (c, error) => {
+      return c.redirect('/login')
+    },
+  })
+)
 ```
 
 **Custom Error Response:**
@@ -297,17 +307,20 @@ app.use('*', Consumer.authenticateSessionLocal({
 ```ts
 import { HTTPException } from 'hono/http-exception'
 
-app.use('*', Consumer.authenticateOAuthToken({
-  onError: (c, error) => {
-    const errorResponse = new Response('Unauthorized', {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"'
-      }
-    })
-    throw new HTTPException(401, { res: errorResponse })
-  }
-}))
+app.use(
+  '*',
+  Consumer.authenticateOAuthToken({
+    onError: (c, error) => {
+      const errorResponse = new Response('Unauthorized', {
+        status: 401,
+        headers: {
+          'WWW-Authenticate': 'Bearer realm="api", error="invalid_token"',
+        },
+      })
+      throw new HTTPException(401, { res: errorResponse })
+    },
+  })
+)
 ```
 
 ### Multiple Authentication Methods
@@ -327,7 +340,7 @@ app.get('/profile', Consumer.authenticateSessionLocal(), (c) => {
 })
 
 // More sensitive routes use remote authentication
-app.get('/paymentinfo',  Consumer.authenticateSessionRemote(), (c) => {
+app.get('/paymentinfo', Consumer.authenticateSessionRemote(), (c) => {
   const member = B2B.getStytchMember(c)
   const organization = B2B.getStytchOrganization(c)
   return c.json({ member, organization })
@@ -344,23 +357,26 @@ app.get('/api/data', (c) => {
 ### Custom Credential Extraction Examples
 
 **From Authorization Header:**
+
 ```ts
-getCredential: (c) => ({ 
-  session_jwt: c.req.header('Authorization')?.replace('Bearer ', '') ?? '' 
+getCredential: (c) => ({
+  session_jwt: c.req.header('Authorization')?.replace('Bearer ', '') ?? '',
 })
 ```
 
 **From Query Parameter:**
+
 ```ts
-getCredential: (c) => ({ 
-  session_jwt: c.req.query('token') ?? '' 
+getCredential: (c) => ({
+  session_jwt: c.req.query('token') ?? '',
 })
 ```
 
 **From Custom Header:**
+
 ```ts
-getCredential: (c) => ({ 
-  access_token: c.req.header('X-API-Token') ?? '' 
+getCredential: (c) => ({
+  access_token: c.req.header('X-API-Token') ?? '',
 })
 ```
 
