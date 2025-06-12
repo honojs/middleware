@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { Context, MiddlewareHandler } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
@@ -33,7 +33,7 @@ declare module 'hono' {
   }
 }
 
-export const cloudflareAccess = (accessTeamName: string) => {
+export const cloudflareAccess = (accessTeamName: string): MiddlewareHandler => {
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0

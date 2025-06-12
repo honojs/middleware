@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.1
+
+### Patch Changes
+
+- [#1201](https://github.com/honojs/middleware/pull/1201) [`641fd4c3de6d3248f131a09748f55a9007d7f77c`](https://github.com/honojs/middleware/commit/641fd4c3de6d3248f131a09748f55a9007d7f77c) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 0.8.0
 
 ### Minor Changes

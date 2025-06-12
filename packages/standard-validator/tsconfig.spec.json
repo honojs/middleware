@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc/packages/standard-validator",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
+  "include": ["**/*.test.ts", "src/__schemas__/*.ts", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"

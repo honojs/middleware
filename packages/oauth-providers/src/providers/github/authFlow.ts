@@ -49,7 +49,7 @@ export class AuthFlow {
     this.granted_scopes = undefined
   }
 
-  redirect() {
+  redirect(): string {
     const url = 'https://github.com/login/oauth/authorize?'
 
     const queryParams = toQueryParams({
@@ -114,7 +114,7 @@ export class AuthFlow {
     return email as string
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     if (!this.token?.token) {
       await this.getTokenFromCode()
     }

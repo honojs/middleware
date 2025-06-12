@@ -1,5 +1,11 @@
 # @hono/sentry
 
+## 1.2.2
+
+### Patch Changes
+
+- [#1205](https://github.com/honojs/middleware/pull/1205) [`f0475c73240ce5eb56f6170e9d1d1a1aedcfdd43`](https://github.com/honojs/middleware/commit/f0475c73240ce5eb56f6170e9d1d1a1aedcfdd43) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `Toucan` return type
+
 ## 1.2.1
 
 ### Patch Changes

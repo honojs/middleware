@@ -40,7 +40,7 @@ type OriginalSwaggerUIOptions = {
 
 type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
-const SwaggerUI = (options: SwaggerUIOptions) => {
+const SwaggerUI = (options: SwaggerUIOptions): string => {
   const asset = remoteAssets({ version: options?.version })
   delete options.version
 

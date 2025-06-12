@@ -216,7 +216,9 @@ export const getGraphQLParams = async (request: Request): Promise<GraphQLParams>
 export const errorMessages = (
   messages: string[],
   graphqlErrors?: readonly GraphQLError[] | readonly GraphQLFormattedError[]
-) => {
+): {
+  errors: readonly GraphQLError[] | readonly GraphQLFormattedError[]
+} => {
   if (graphqlErrors) {
     return {
       errors: graphqlErrors,
@@ -232,7 +234,7 @@ export const errorMessages = (
   }
 }
 
-export const respondWithGraphiQL = (c: Context) => {
+export const respondWithGraphiQL = (c: Context): Response => {
   // https://github.com/graphql/graphiql/blob/03171d5614c61fb345763636d120da2b536d54a0/examples/graphiql-cdn/index.html
   return c.html(`<!--
  *  Copyright (c) 2021 GraphQL Contributors

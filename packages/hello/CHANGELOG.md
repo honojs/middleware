@@ -1,5 +1,11 @@
 # @hono/hello
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1198](https://github.com/honojs/middleware/pull/1198) [`e1eae2078fc789578520b1c82a1c90eb49c1b7ad`](https://github.com/honojs/middleware/commit/e1eae2078fc789578520b1c82a1c90eb49c1b7ad) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
 ## 0.1.1
 
 ### Patch Changes

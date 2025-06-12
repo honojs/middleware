@@ -12,7 +12,7 @@ declare module 'hono' {
   }
 }
 
-export const getAuth = (c: Context) => {
+export const getAuth = (c: Context): ClerkAuth => {
   return c.get('clerkAuth')
 }
 
