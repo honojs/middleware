@@ -1,67 +1,68 @@
 import { Hono } from 'hono'
 import { aiBots, nonRespectingAiBots, AI_ROBOTS_TXT, useAiRobotsTxt } from './ai-bots'
-import { ALL_BOTS, NON_RESPECTING_BOTS, ROBOTS_TXT } from './generated'
+import {
+  ALL_BOTS,
+  NON_RESPECTING_BOTS,
+  ROBOTS_TXT,
+  ALL_BOTS_REGEX,
+  NON_RESPECTING_BOTS_REGEX,
+} from './generated'
 
 describe('AI Bots module', () => {
   describe('aiBots export', () => {
-    it('Should export ALL_BOTS from generated', () => {
-      expect(aiBots).toBe(ALL_BOTS)
+    it('Should export ALL_BOTS_REGEX from generated', () => {
+      expect(aiBots).toBe(ALL_BOTS_REGEX)
     })
 
-    it('Should be an array of strings', () => {
-      expect(Array.isArray(aiBots)).toBe(true)
-      expect(aiBots.length).toBeGreaterThan(0)
-      aiBots.forEach((bot) => {
-        expect(typeof bot).toBe('string')
-        expect(bot.length).toBeGreaterThan(0)
-      })
+    it('Should be a RegExp object', () => {
+      expect(aiBots instanceof RegExp).toBe(true)
+      expect(aiBots.source.length).toBeGreaterThan(0)
+      expect(aiBots.toString()).toMatch(/^\/.*\/$/)
     })
 
     it('Should include known AI bots', () => {
-      expect(aiBots).toContain('GPTBot')
-      expect(aiBots).toContain('ClaudeBot')
-      expect(aiBots).toContain('Bytespider')
-      expect(aiBots).toContain('ChatGPT-User')
+      expect(aiBots.test('GPTBOT')).toBe(true)
+      expect(aiBots.test('CLAUDEBOT')).toBe(true)
+      expect(aiBots.test('BYTESPIDER')).toBe(true)
+      expect(aiBots.test('CHATGPT-USER')).toBe(true)
     })
 
-    it('Should not contain duplicates', () => {
-      const uniqueBots = [...new Set(aiBots)]
-      expect(uniqueBots.length).toBe(aiBots.length)
+    it('Should be properly formatted as a regex', () => {
+      expect(aiBots.source).toContain('|')
     })
   })
 
   describe('nonRespectingAiBots export', () => {
-    it('Should export NON_RESPECTING_BOTS from generated', () => {
-      expect(nonRespectingAiBots).toBe(NON_RESPECTING_BOTS)
+    it('Should export NON_RESPECTING_BOTS_REGEX from generated', () => {
+      expect(nonRespectingAiBots).toBe(NON_RESPECTING_BOTS_REGEX)
     })
 
-    it('Should be an array of strings', () => {
-      expect(Array.isArray(nonRespectingAiBots)).toBe(true)
-      expect(nonRespectingAiBots.length).toBeGreaterThan(0)
-      nonRespectingAiBots.forEach((bot) => {
-        expect(typeof bot).toBe('string')
-        expect(bot.length).toBeGreaterThan(0)
-      })
+    it('Should be a RegExp object', () => {
+      expect(nonRespectingAiBots instanceof RegExp).toBe(true)
+      expect(nonRespectingAiBots.source.length).toBeGreaterThan(0)
+      expect(nonRespectingAiBots.toString()).toMatch(/^\/.*\/$/)
     })
 
     it('Should be a subset of aiBots', () => {
-      nonRespectingAiBots.forEach((bot) => {
-        expect(aiBots).toContain(bot)
+      // Check if all non-respecting bots are included in the aiBots pattern
+      // by testing the original string array against both regexes
+      NON_RESPECTING_BOTS.forEach((bot) => {
+        expect(aiBots.test(bot.toUpperCase())).toBe(true)
       })
     })
 
     it('Should include known non-respecting bots', () => {
-      expect(nonRespectingAiBots).toContain('Bytespider')
-      expect(nonRespectingAiBots).toContain('iaskspider/2.0')
+      expect(nonRespectingAiBots.test('BYTESPIDER')).toBe(true)
+      expect(nonRespectingAiBots.test('IASKSPIDER/2.0')).toBe(true)
     })
 
     it('Should not include known respecting bots', () => {
-      expect(nonRespectingAiBots).not.toContain('GPTBot')
-      expect(nonRespectingAiBots).not.toContain('ChatGPT-User')
+      expect(nonRespectingAiBots.test('GPTBOT')).toBe(false)
+      expect(nonRespectingAiBots.test('CHATGPT-USER')).toBe(false)
     })
 
-    it('Should be smaller than aiBots list', () => {
-      expect(nonRespectingAiBots.length).toBeLessThan(aiBots.length)
+    it('Should have a pattern that is shorter than aiBots pattern', () => {
+      expect(nonRespectingAiBots.source.length).toBeLessThan(aiBots.source.length)
     })
   })
 
@@ -94,7 +95,7 @@ describe('AI Bots module', () => {
     })
 
     it('Should include all AI bots', () => {
-      aiBots.forEach((bot) => {
+      ALL_BOTS.forEach((bot) => {
         expect(AI_ROBOTS_TXT).toContain(`User-agent: ${bot}`)
       })
     })
@@ -263,7 +264,7 @@ describe('AI Bots module', () => {
         .filter((line) => line.startsWith('User-agent:'))
         .map((line) => line.replace('User-agent: ', ''))
 
-      expect(userAgentLines.sort()).toEqual(aiBots.sort())
+      expect(userAgentLines.sort()).toEqual(ALL_BOTS.sort())
     })
   })
 })
