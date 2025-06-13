@@ -1,3 +1,4 @@
 .changeset
 .vscode
 .yarn
+**/generated.ts

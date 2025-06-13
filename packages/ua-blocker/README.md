@@ -19,11 +19,14 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', uaBlocker({
+app.use(
+  '*',
+  uaBlocker({
     // Add your custom blocklist here
     // Can be either a list of User Agents or a RegExp directly
-    blocklist: ["ForbiddenBot", "Not You"] // or /(FORBIDDENBOT|NOT YOU)/
-}))
+    blocklist: ['ForbiddenBot', 'Not You'], // or /(FORBIDDENBOT|NOT YOU)/
+  })
+)
 app.get('/', (c) => c.text('Hello World'))
 
 export default app
@@ -40,9 +43,12 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', uaBlocker({
+app.use(
+  '*',
+  uaBlocker({
     blocklist: aiBots,
-}))
+  })
+)
 app.get('/', (c) => c.text('Hello World'))
 
 export default app
@@ -59,9 +65,12 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', uaBlocker({
+app.use(
+  '*',
+  uaBlocker({
     blocklist: nonRespectingAiBots,
-}))
+  })
+)
 // serve robots.txt
 app.use('/robots.txt', useAiRobotsTxt())
 app.get('/', (c) => c.text('Hello World'))
@@ -105,17 +114,17 @@ console.log(AI_ROBOTS_TXT)
 const app = new Hono()
 
 app.use('/robots.txt', (c) => {
-    robotsTxt = AI_ROBOTS_TXT + "\nUser-agent: GoogleBot\nAllow: /"
-    return c.text(robotsTxt, 200)
-    // Output:
-    // User-agent: GPTBot
-    // User-agent: ChatGPT-User
-    // User-agent: Bytespider
-    // User-agent: CCBot
-    // ...
-    // Disallow: /
-    // User-agent: GoogleBot
-    // Allow: /
+  robotsTxt = AI_ROBOTS_TXT + '\nUser-agent: GoogleBot\nAllow: /'
+  return c.text(robotsTxt, 200)
+  // Output:
+  // User-agent: GPTBot
+  // User-agent: ChatGPT-User
+  // User-agent: Bytespider
+  // User-agent: CCBot
+  // ...
+  // Disallow: /
+  // User-agent: GoogleBot
+  // Allow: /
 })
 ```
 
@@ -128,11 +137,11 @@ app.use('/robots.txt', (c) => {
 Middleware that blocks requests based on their User-Agent header.
 
 **Parameters:**
+
 - `options.blocklist` (`string[] | RegExp`, default: `[]`) - The list of user-agents to block.
   If a RegExp is passed, it should match on UPPERCASE User Agents.
 
 **Returns:** Hono middleware function
-
 
 ### `@hono/ua-blocker/ai-bots`
 

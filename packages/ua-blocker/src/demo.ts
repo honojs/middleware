@@ -4,9 +4,12 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', uaBlocker({
+app.use(
+  '*',
+  uaBlocker({
     blocklist: nonRespectingAiBots,
-}))
+  })
+)
 // serve robots.txt
 app.use('/robots.txt', useAiRobotsTxt())
 app.get('/', (c) => c.text('Hello World'))
