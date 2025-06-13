@@ -42,3 +42,8 @@ export function uaBlocker(params = { blocklist: [] as string[] | RegExp }) {
 }
 
 export default uaBlocker
+
+// Export for testing purposes
+export const __test = {
+  listToRegex,
+}

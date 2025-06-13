@@ -45,6 +45,15 @@ describe('uaBlocker middleware', () => {
   app.use('/default/*', uaBlocker())
   app.get('/default/test', (c) => c.text('default'))
 
+  // Custom RegExp test
+  app.use(
+    '/custom-regex/*',
+    uaBlocker({
+      blocklist: /BADREGEXBOT|EVILREGEXBOT/,
+    })
+  )
+  app.get('/custom-regex/test', (c) => c.text('custom-regex'))
+
   describe('Custom blocklist', () => {
     it('Should block user agents in custom blocklist', async () => {
       const res = await app.request('http://localhost/custom/test', {
@@ -198,14 +207,19 @@ describe('uaBlocker middleware', () => {
       expect(await res.text()).toBe('empty')
     })
 
-    it('Should allow all requests with empty blocklist', async () => {
-      const res = await app.request('http://localhost/empty/test', {
+    it('Should allow all requests with explicit empty array blocklist', async () => {
+      const emptyBlocklist: string[] = []
+      const testApp = new Hono()
+      testApp.use(uaBlocker({ blocklist: emptyBlocklist }))
+      testApp.get('/', (c) => c.text('success'))
+
+      const res = await testApp.request('/', {
         headers: {
-          'User-Agent': 'AnyBot/1.0',
+          'User-Agent': 'BadBot/1.0',
         },
       })
       expect(res.status).toBe(200)
-      expect(await res.text()).toBe('empty')
+      expect(await res.text()).toBe('success')
     })
 
     it('Should allow all requests with default parameters (empty blocklist)', async () => {
@@ -216,6 +230,66 @@ describe('uaBlocker middleware', () => {
       })
       expect(res.status).toBe(200)
       expect(await res.text()).toBe('default')
+    })
+  })
+
+  describe('Empty blocklist behavior tests', () => {
+    it('Should handle empty blocklist without error', () => {
+      const testApp = new Hono()
+      const emptyMiddleware = uaBlocker({ blocklist: [] })
+      testApp.use(emptyMiddleware)
+      testApp.get('/', (c) => c.text('success'))
+
+      // Implementation should not error when creating middleware with empty blocklist
+      expect(emptyMiddleware).toBeDefined()
+    })
+
+    it('Should allow all user agents when blocklist is empty', async () => {
+      const testApp = new Hono()
+      testApp.use(uaBlocker({ blocklist: [] }))
+      testApp.get('/', (c) => c.text('success'))
+
+      const testBots = ['TestBot', 'CrawlerBot', 'BadBot']
+
+      for (const bot of testBots) {
+        const res = await testApp.request('/', {
+          headers: { 'User-Agent': bot },
+        })
+        expect(res.status).toBe(200)
+        expect(await res.text()).toBe('success')
+      }
+    })
+  })
+
+  describe('Custom RegExp blocklist', () => {
+    it('Should block user agents matching the RegExp pattern', async () => {
+      const res = await app.request('http://localhost/custom-regex/test', {
+        headers: {
+          'User-Agent': 'BadRegexBot/1.0',
+        },
+      })
+      expect(res.status).toBe(403)
+      expect(await res.text()).toBe('Forbidden')
+    })
+
+    it('Should block user agents with case insensitive matching', async () => {
+      const res = await app.request('http://localhost/custom-regex/test', {
+        headers: {
+          'User-Agent': 'badregexbot/2.0',
+        },
+      })
+      expect(res.status).toBe(403)
+      expect(await res.text()).toBe('Forbidden')
+    })
+
+    it('Should allow user agents not matching the RegExp pattern', async () => {
+      const res = await app.request('http://localhost/custom-regex/test', {
+        headers: {
+          'User-Agent': 'GoodBot/1.0',
+        },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.text()).toBe('custom-regex')
     })
   })
 
