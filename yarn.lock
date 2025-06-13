@@ -13393,7 +13393,7 @@ __metadata:
   dependencies:
     jose: "npm:^5.6.3"
     undici: "npm:^6.19.5"
-  checksum: b6bc10f8b2e6424d2fb76fd428ccd03ed55090485c249e621a931013c761af953ed1380f90274dd679642d7f47cd40f049c315d96e120e7d11545ec502b1cd86
+  checksum: 10c0/b6bc10f8b2e6424d2fb76fd428ccd03ed55090485c249e621a931013c761af953ed1380f90274dd679642d7f47cd40f049c315d96e120e7d11545ec502b1cd86
   languageName: node
   linkType: hard
 
@@ -14133,7 +14133,7 @@ __metadata:
 "undici@npm:^6.19.5":
   version: 6.21.3
   resolution: "undici@npm:6.21.3"
-  checksum: 294da109853fad7a6ef5a172ad0ca3fb3f1f60cf34703d062a5ec967daf69ad8c03b52e6d536c5cba3bb65615769bf08e5b30798915cbccdddaca01045173dda
+  checksum: 10c0/294da109853fad7a6ef5a172ad0ca3fb3f1f60cf34703d062a5ec967daf69ad8c03b52e6d536c5cba3bb65615769bf08e5b30798915cbccdddaca01045173dda
   languageName: node
   linkType: hard
 
