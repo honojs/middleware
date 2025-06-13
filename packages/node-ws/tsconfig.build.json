@@ -5,6 +5,7 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
     "emitDeclarationOnly": false,
+    "isolatedDeclarations": true,
     "types": ["node", "ws"]
   },
   "include": ["src/**/*.ts"],

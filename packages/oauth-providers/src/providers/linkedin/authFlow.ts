@@ -97,7 +97,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     if (!this.token) {
       await this.getTokenFromCode()
     }
@@ -117,7 +117,7 @@ export class AuthFlow {
     }
   }
 
-  async getAppToken() {
+  async getAppToken(): Promise<void> {
     const params = toQueryParams({
       grant_type: 'client_credentials',
       client_id: this.client_id,

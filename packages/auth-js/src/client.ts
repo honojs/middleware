@@ -134,7 +134,7 @@ export async function fetchData<T = any>(
   }
 }
 
-export function useOnline() {
+export function useOnline(): boolean {
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : false
   )
@@ -157,11 +157,19 @@ export function useOnline() {
   return isOnline
 }
 
-export function now() {
+export function now(): number {
   return Math.floor(Date.now() / 1000)
 }
 
-export function parseUrl(url?: string) {
+interface ParsedUrl {
+  origin: string
+  host: string
+  path: string
+  base: string
+  toString: () => string
+}
+
+export function parseUrl(url?: string): ParsedUrl {
   const defaultUrl = 'http://localhost:3000/api/auth'
   const parsedUrl = new URL(url ? (url.startsWith('http') ? url : `https://${url}`) : defaultUrl)
   const path = parsedUrl.pathname === '/' ? '/api/auth' : parsedUrl.pathname.replace(/\/$/, '')

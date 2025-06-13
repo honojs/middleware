@@ -123,7 +123,7 @@ const RENDER_TYPE_MAP = {
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]
 >
 
-export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions) => {
+export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions): string => {
   const optionsStrings = Object.entries(options)
     .map(([k, v]) => {
       const key = k as keyof typeof RENDER_TYPE_MAP

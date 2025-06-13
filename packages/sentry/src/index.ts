@@ -55,6 +55,6 @@ export const sentry = (
   }
 }
 
-export const getSentry = (c: Context) => {
+export const getSentry = (c: Context): Toucan => {
   return c.get('sentry')
 }

@@ -22,6 +22,7 @@ jobs:
       - run: yarn workspace @hono/bun-transpiler publint
       - run: yarn workspace @hono/bun-transpiler typecheck
       - run: yarn eslint packages/bun-transpiler
+      - run: yarn prettier --check  . !packages packages/bun-transpiler
       - run: yarn workspace @hono/bun-transpiler test --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@v5
         with:

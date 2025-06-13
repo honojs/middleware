@@ -1,0 +1,75 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['*']
+
+jobs:
+  what-changed:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Get changed packages
+        id: set-packages
+        run: |
+          exclude=(
+            "hono-middleware"
+            "@hono/bun-transpiler"
+          );
+          changed=$(yarn workspaces list --json --since | jq -nc '[inputs.name | select(any(.; inside($ARGS.positional[])) | not) | sub("@hono/"; "")]' --args "${exclude[@]}")
+          echo "packages=${changed}" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [what-changed]
+    if: ${{ needs.what-changed.outputs.packages != '[]' }}
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
+      - run: yarn workspace @hono/${{ matrix.package }} publint
+      - run: yarn workspace @hono/${{ matrix.package }} typecheck
+      - run: yarn eslint packages/${{ matrix.package }}
+      - run: yarn prettier --check . !packages packages/${{ matrix.package }}
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [what-changed]
+    if: ${{ needs.what-changed.outputs.packages != '[]' }}
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
+      - run: yarn test --coverage --project @hono/${{ matrix.package }}
+        id: test
+        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: ${{ matrix.package }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

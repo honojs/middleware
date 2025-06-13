@@ -31,12 +31,12 @@ export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {}
 
 export type ConfigHandler = (c: Context) => AuthConfig
 
-export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
+export function setEnvDefaults(env: AuthEnv, config: AuthConfig): void {
   config.secret ??= env.AUTH_SECRET
   coreSetEnvDefaults(env, config)
 }
 
-export function reqWithEnvUrl(req: Request, authUrl?: string) {
+export function reqWithEnvUrl(req: Request, authUrl?: string): Request {
   if (authUrl) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)

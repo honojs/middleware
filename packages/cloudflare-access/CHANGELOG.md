@@ -1,5 +1,11 @@
 # @hono/cloudflare-access
 
+## 0.3.1
+
+### Patch Changes
+
+- [#1195](https://github.com/honojs/middleware/pull/1195) [`b6f3bc674ba8987e32c0207290fc1230ace4d82b`](https://github.com/honojs/middleware/commit/b6f3bc674ba8987e32c0207290fc1230ace4d82b) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
 ## 0.3.0
 
 ### Minor Changes

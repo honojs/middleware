@@ -1,5 +1,6 @@
-import type { Context } from 'hono'
+import type { Context, MiddlewareHandler, TypedResponse } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client'
 import { Registry, collectDefaultMetrics as promCollectDefaultMetrics } from 'prom-client'
 import { createStandardMetrics } from './standardMetrics'
@@ -22,7 +23,14 @@ const evaluateCustomLabels = (customLabels: MetricOptions['customLabels'], conte
   return labels
 }
 
-export const prometheus = (options?: PrometheusOptions) => {
+export const prometheus = (
+  options?: PrometheusOptions
+): {
+  printMetrics: (
+    c: Context
+  ) => Promise<Response & TypedResponse<string, ContentfulStatusCode, 'text'>>
+  registerMetrics: MiddlewareHandler
+} => {
   const {
     registry = new Registry(),
     collectDefaultMetrics = false,

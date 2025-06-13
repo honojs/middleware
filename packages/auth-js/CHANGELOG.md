@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.0.17
+
+### Patch Changes
+
+- [#1210](https://github.com/honojs/middleware/pull/1210) [`0758fd0af1f213131d0894299e5bec716d284580`](https://github.com/honojs/middleware/commit/0758fd0af1f213131d0894299e5bec716d284580) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 1.0.16
 
 ### Patch Changes
