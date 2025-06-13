@@ -2374,6 +2374,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/ua-blocker@workspace:packages/ua-blocker":
+  version: 0.0.0-use.local
+  resolution: "@hono/ua-blocker@workspace:packages/ua-blocker"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@types/node": "npm:^22.15.24"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.0.8"
+  peerDependencies:
+    hono: "*"
+  languageName: unknown
+  linkType: soft
+
 "@hono/valibot-validator@workspace:packages/valibot-validator":
   version: 0.0.0-use.local
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
@@ -3964,6 +3979,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.21.0"
   checksum: 10c0/3b0c12531c9057ddcbe1cdd869ca6c2f3ea753f1cb3de0a482ca70c3d86f0dbb1d28339aecd8a0c133febda4f4355c012ed9be6ab866297fc23db360fa218dde
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.15.24":
+  version: 22.15.24
+  resolution: "@types/node@npm:22.15.24"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 16c38e98168fa6c3d2f2b6e95f14f80878d969b39093bc5384385a884d73a7fe361c563b36f14bc27536b337f5baad74321f717b31d2c061b9c48074567eb8c6
   languageName: node
   linkType: hard
 

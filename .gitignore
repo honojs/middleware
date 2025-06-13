@@ -20,3 +20,6 @@ sandbox
 # Claude Code local files
 CLAUDE.local.md
 settings.local.json
+
+# Code editor
+.zed
