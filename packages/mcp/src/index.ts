@@ -21,7 +21,7 @@ import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
 import { streamSSE } from './streaming'
 
-export class StreamableHTTPTransport implements Transport {
+export class StreamableHTTPHonoTransport implements Transport {
   #started = false
   #initialized = false
   #onsessioninitialized?: (sessionId: string) => void
@@ -111,44 +111,35 @@ export class StreamableHTTPTransport implements Transport {
         ctx.header('mcp-session-id', this.sessionId)
       }
 
+      let streamId: string | ((stream: SSEStreamingApi) => Promise<string>) =
+        this.#standaloneSseStreamId
+
       // Handle resumability: check for Last-Event-ID header
       if (this.#eventStore) {
         const lastEventId = ctx.req.header('last-event-id')
         if (lastEventId) {
-          return streamSSE(
-            ctx,
-            async (stream) => {
-              const streamId = await this.#eventStore!.replayEventsAfter(lastEventId, {
-                send: async (eventId: string, message: JSONRPCMessage) => {
-                  try {
-                    await stream.writeSSE({
-                      id: eventId,
-                      event: 'message',
-                      data: JSON.stringify(message),
-                    })
-                  } catch {
-                    this.onerror?.(new Error('Failed replay events'))
-                    throw new HTTPException(500, {
-                      message: 'Failed replay events',
-                    })
-                  }
-                },
-              })
-
-              this.#streamMapping.set(streamId, {
-                ctx,
-                stream,
-              })
-            },
-            async (error) => {
-              this.onerror?.(error)
-            }
-          )
+          streamId = (stream) =>
+            this.#eventStore!.replayEventsAfter(lastEventId, {
+              send: async (eventId: string, message: JSONRPCMessage) => {
+                try {
+                  await stream.writeSSE({
+                    id: eventId,
+                    event: 'message',
+                    data: JSON.stringify(message),
+                  })
+                } catch {
+                  this.onerror?.(new Error('Failed replay events'))
+                  throw new HTTPException(500, {
+                    message: 'Failed replay events',
+                  })
+                }
+              },
+            })
         }
       }
 
       // Check if there's already an active standalone SSE stream for this session
-      if (this.#streamMapping.get(this.#standaloneSseStreamId) !== undefined) {
+      if (typeof streamId === 'string' && this.#streamMapping.get(streamId) !== undefined) {
         // Only one GET SSE stream is allowed per session
         throw new HTTPException(409, {
           res: Response.json({
@@ -163,14 +154,25 @@ export class StreamableHTTPTransport implements Transport {
       }
 
       return streamSSE(ctx, async (stream) => {
+        const resolvedStreamId = typeof streamId === 'string' ? streamId : await streamId(stream)
+
         // Assign the response to the standalone SSE stream
-        this.#streamMapping.set(this.#standaloneSseStreamId, {
+        this.#streamMapping.set(resolvedStreamId, {
           ctx,
           stream,
         })
+
+        // Keep connection alive
+        const keepAlive = setInterval(() => {
+          if (!stream.closed) {
+            stream.writeSSE({ data: '', event: 'ping' }).catch(() => clearInterval(keepAlive))
+          }
+        }, 30000)
+
         // Set up close handler for client disconnects
         stream.onAbort(() => {
-          this.#streamMapping.delete(this.#standaloneSseStreamId)
+          this.#streamMapping.delete(resolvedStreamId)
+          clearInterval(keepAlive)
         })
       })
     } catch (error) {
@@ -566,7 +568,7 @@ export class StreamableHTTPTransport implements Transport {
 
       if (response) {
         // Write the event to the response stream
-        await response.stream?.writeSSE({
+        response.stream?.writeSSE({
           id: eventId,
           event: 'message',
           data: JSON.stringify(message),
@@ -598,7 +600,8 @@ export class StreamableHTTPTransport implements Transport {
           response.ctx.json(responses.length === 1 ? responses[0] : responses)
           return
         } else {
-          response.stream?.close()
+          // TODO: End the SSE stream
+          // response.stream?.close()
         }
         // Clean up
         for (const id of relatedIds) {
