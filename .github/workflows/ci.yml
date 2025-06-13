@@ -24,7 +24,7 @@ jobs:
             "hono-middleware"
             "@hono/bun-transpiler"
           );
-          changed=$(yarn workspaces list --json --since | jq -nc --arg exclude "$exclude" '[inputs.name | select(inside($exclude) | not) | sub("@hono/"; "")]')
+          changed=$(yarn workspaces list --json --since | jq -nc '[inputs.name | select(any(.; inside($ARGS.positional[])) | not) | sub("@hono/"; "")]' --args "${exclude[@]}")
           echo "packages=${changed}" >> $GITHUB_OUTPUT
 
   build:
@@ -61,11 +61,12 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
-        if: ${{ matrix.package != 'qwik-city' }}
+        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
       - uses: codecov/codecov-action@v5
-        if: ${{ matrix.package != 'qwik-city' }}
+        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true
           directory: ./coverage
