@@ -13,10 +13,11 @@ describe('WebSocket helper', () => {
   let server: ServerType
   let injectWebSocket: ReturnType<typeof createNodeWebSocket>['injectWebSocket']
   let upgradeWebSocket: ReturnType<typeof createNodeWebSocket>['upgradeWebSocket']
+  let wss: ReturnType<typeof createNodeWebSocket>['wss']
 
   beforeEach(async () => {
     app = new Hono()
-    ;({ injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app }))
+    ;({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
       const server = serve({ fetch: app.fetch, port: 3030 }, () => resolve(server))
@@ -285,5 +286,26 @@ describe('WebSocket helper', () => {
     }
 
     expect(await mainPromise).toBe(true)
+  })
+
+  it('Should return the wss used for the websocket helper', async () => {
+    let clientWs: WebSocket | null = null
+    const mainPromise = new Promise<void>((resolve) =>
+      wss.on('connection', (ws) => {
+        clientWs = ws
+        resolve()
+      })
+    )
+
+    app.get(
+      '/',
+      upgradeWebSocket(() => ({}))
+    )
+    new WebSocket('ws://localhost:3030/')
+
+    await mainPromise
+
+    expect(clientWs).toBeTruthy()
+    expect(wss.clients.size).toBe(1)
   })
 })
