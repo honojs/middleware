@@ -1,6 +1,6 @@
 {
   "name": "@hono/ua-blocker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "User agent-based blocker for Hono",
   "type": "module",
   "module": "dist/index.js",
