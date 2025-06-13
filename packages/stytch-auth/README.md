@@ -54,6 +54,7 @@ STYTCH_PROJECT_SECRET=secret-live-xxx-xxx-xxx
 - [Advanced Usage](#advanced-usage)
   - [Custom Configuration](#custom-configuration)
   - [Error Handling](#custom-error-handling)
+- [Troubleshooting](#troubleshooting)
 
 ## Consumer Authentication
 
@@ -379,6 +380,18 @@ getCredential: (c) => ({
   access_token: c.req.header('X-API-Token') ?? '',
 })
 ```
+
+## Troubleshooting
+
+### Cloudflare Worker Cache Field issues
+
+```
+The 'cache' field on 'RequestInitializerDict' is not implemented.
+```
+
+In Cloudflare Workers the worker `compatibility_date` must be set to `2024-11-11` or later in the `wranger.jsonc`.
+Workers with earlier compatibility dates can set the `cache_option_enabled` flag detailed
+[here](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#enable-cache-no-store-http-standard-api).
 
 ---
 
