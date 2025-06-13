@@ -21,7 +21,7 @@ import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
 import { streamSSE } from './streaming'
 
-export class StreamableHTTPHonoTransport implements Transport {
+export class StreamableHTTPTransport implements Transport {
   #started = false
   #initialized = false
   #onsessioninitialized?: (sessionId: string) => void
@@ -568,7 +568,7 @@ export class StreamableHTTPHonoTransport implements Transport {
 
       if (response) {
         // Write the event to the response stream
-        response.stream?.writeSSE({
+        await response.stream?.writeSSE({
           id: eventId,
           event: 'message',
           data: JSON.stringify(message),
@@ -600,8 +600,7 @@ export class StreamableHTTPHonoTransport implements Transport {
           response.ctx.json(responses.length === 1 ? responses[0] : responses)
           return
         } else {
-          // TODO: End the SSE stream
-          // response.stream?.close()
+          response.stream?.close()
         }
         // Clean up
         for (const id of relatedIds) {
