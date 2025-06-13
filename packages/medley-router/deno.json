@@ -1,0 +1,12 @@
+{
+  "name": "@hono/medley-router",
+  "version": "0.0.4",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}

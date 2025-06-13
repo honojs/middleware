@@ -5,7 +5,7 @@ const DEFAULT_VERSION = '4.13.1'
 
 const CDN_LINK = 'https://cdn.jsdelivr.net/npm/swagger-editor-dist'
 
-export const MODERN_NORMALIZE_CSS = `
+export const MODERN_NORMALIZE_CSS: string = `
 *,
 ::before,
 ::after {

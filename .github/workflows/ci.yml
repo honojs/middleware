@@ -47,6 +47,17 @@ jobs:
       - run: yarn eslint packages/${{ matrix.package }}
       - run: yarn prettier --check . !packages packages/${{ matrix.package }}
 
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version: v2.x
+      - run: deno install --no-lock
+      - run: deno publish --dry-run
+
   test:
     runs-on: ubuntu-latest
     needs: [what-changed]
