@@ -38,6 +38,7 @@
     { "path": "packages/tsyringe" },
     { "path": "packages/typebox-validator" },
     { "path": "packages/typia-validator" },
+    { "path": "packages/ua-blocker" },
     { "path": "packages/valibot-validator" },
     { "path": "packages/zod-openapi" },
     { "path": "packages/zod-validator" },

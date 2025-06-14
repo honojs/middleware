@@ -2262,6 +2262,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/stytch-auth@workspace:packages/stytch-auth":
+  version: 0.0.0-use.local
+  resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    publint: "npm:^0.3.9"
+    stytch: "npm:^12.19.0"
+    tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.0.8"
+  peerDependencies:
+    hono: ">=3.*"
+    stytch: ^12.19.0
+  languageName: unknown
+  linkType: soft
+
 "@hono/swagger-editor@workspace:packages/swagger-editor":
   version: 0.0.0-use.local
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
@@ -2355,6 +2371,21 @@ __metadata:
   peerDependencies:
     hono: ">=3.9.0"
     typia: ^7.0.0 || ^8.0.0
+  languageName: unknown
+  linkType: soft
+
+"@hono/ua-blocker@workspace:packages/ua-blocker":
+  version: 0.0.0-use.local
+  resolution: "@hono/ua-blocker@workspace:packages/ua-blocker"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@types/node": "npm:^22.15.24"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.0.8"
+  peerDependencies:
+    hono: "*"
   languageName: unknown
   linkType: soft
 
@@ -3948,6 +3979,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.21.0"
   checksum: 10c0/3b0c12531c9057ddcbe1cdd869ca6c2f3ea753f1cb3de0a482ca70c3d86f0dbb1d28339aecd8a0c133febda4f4355c012ed9be6ab866297fc23db360fa218dde
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.15.24":
+  version: 22.15.24
+  resolution: "@types/node@npm:22.15.24"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/16c38e98168fa6c3d2f2b6e95f14f80878d969b39093bc5384385a884d73a7fe361c563b36f14bc27536b337f5baad74321f717b31d2c061b9c48074567eb8c6
   languageName: node
   linkType: hard
 
@@ -8974,7 +9014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^5.1.3":
+"jose@npm:^5.1.3, jose@npm:^5.6.3":
   version: 5.10.0
   resolution: "jose@npm:5.10.0"
   checksum: 10c0/e20d9fc58d7e402f2e5f04e824b8897d5579aae60e64cb88ebdea1395311c24537bf4892f7de413fab1acf11e922797fb1b42269bc8fc65089a3749265ccb7b0
@@ -13371,6 +13411,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stytch@npm:^12.19.0":
+  version: 12.19.0
+  resolution: "stytch@npm:12.19.0"
+  dependencies:
+    jose: "npm:^5.6.3"
+    undici: "npm:^6.19.5"
+  checksum: 10c0/b6bc10f8b2e6424d2fb76fd428ccd03ed55090485c249e621a931013c761af953ed1380f90274dd679642d7f47cd40f049c315d96e120e7d11545ec502b1cd86
+  languageName: node
+  linkType: hard
+
 "sucrase@npm:^3.35.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
@@ -14101,6 +14151,13 @@ __metadata:
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
   checksum: 10c0/e4e4d631ca54ee0ad82d2e90e7798fa00a106e27e6c880687e445cc2f13b4bc87c5eba2a88c266c3eecffb18f26e227b778412da74a23acc374fca7caccec49b
+  languageName: node
+  linkType: hard
+
+"undici@npm:^6.19.5":
+  version: 6.21.3
+  resolution: "undici@npm:6.21.3"
+  checksum: 10c0/294da109853fad7a6ef5a172ad0ca3fb3f1f60cf34703d062a5ec967daf69ad8c03b52e6d536c5cba3bb65615769bf08e5b30798915cbccdddaca01045173dda
   languageName: node
   linkType: hard
 
