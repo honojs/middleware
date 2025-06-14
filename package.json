@@ -17,8 +17,8 @@
     "test": "vitest",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
-    "format": "prettier --check 'packages/**/*.{ts,tsx}'",
-    "format:fix": "prettier --write 'packages/**/*.{ts,tsx}'"
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "license": "MIT",
   "private": true,
