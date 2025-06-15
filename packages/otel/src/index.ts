@@ -8,7 +8,7 @@ import {
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
-import type { Env, Input } from 'hono'
+import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import metadata from '../package.json' with { type: 'json' }
 
@@ -24,11 +24,9 @@ export type OtelOptions =
       augmentSpan: true
     }
 
-export const otel = <E extends Env = any, P extends string = any, I extends Input = {}>(
-  options: OtelOptions = {}
-) => {
+export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
   if (options.augmentSpan) {
-    return createMiddleware<E, P, I>(async (c, next) => {
+    return createMiddleware(async (c, next) => {
       const result = await next()
       const span = trace.getActiveSpan()
       if (span != null) {
@@ -41,7 +39,7 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
   }
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
-  return createMiddleware<E, P, I>(async (c, next) => {
+  return createMiddleware(async (c, next) => {
     // Handle propagation of trace context from a request using the W3C Trace Context format
     let activeContext = context.active()
     if (c.req.header('traceparent')) {
@@ -75,9 +73,13 @@ export const otel = <E extends Env = any, P extends string = any, I extends Inpu
             span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
           }
           if (c.error) {
+            span.recordException(c.error)
             span.setStatus({ code: SpanStatusCode.ERROR, message: String(c.error) })
           }
         } catch (e) {
+          if (e instanceof Error) {
+            span.recordException(e)
+          }
           span.setStatus({ code: SpanStatusCode.ERROR, message: String(e) })
           throw e
         } finally {

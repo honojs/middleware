@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.1.7
+
+### Patch Changes
+
+- [#1200](https://github.com/honojs/middleware/pull/1200) [`8303d979f18930fac906917895a2063245ac175c`](https://github.com/honojs/middleware/commit/8303d979f18930fac906917895a2063245ac175c) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `CloseEvent` type
+
 ## 1.1.6
 
 ### Patch Changes

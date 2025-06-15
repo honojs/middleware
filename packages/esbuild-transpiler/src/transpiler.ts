@@ -1,3 +1,4 @@
+import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { transform, initialize } from './types.esbuild'
 
@@ -16,7 +17,7 @@ export type EsbuildTranspilerOptions = {
   transformOptions?: TransformOptions
 }
 
-export const esbuildTranspiler = (options?: EsbuildTranspilerOptions) => {
+export const esbuildTranspiler = (options?: EsbuildTranspilerOptions): MiddlewareHandler => {
   const esbuild: EsbuildLike | undefined = options?.esbuild
 
   return createMiddleware(async (c, next) => {

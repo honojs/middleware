@@ -17,8 +17,8 @@
     "test": "vitest",
     "lint": "eslint 'packages/**/*.{ts,tsx}'",
     "lint:fix": "eslint --fix 'packages/**/*.{ts,tsx}'",
-    "format": "prettier --check 'packages/**/*.{ts,tsx}'",
-    "format:fix": "prettier --write 'packages/**/*.{ts,tsx}'"
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "license": "MIT",
   "private": true,
@@ -44,5 +44,5 @@
     "typescript": "^5.8.2",
     "vitest": "^3.0.8"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.9.2"
 }

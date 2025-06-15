@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild-wasm'
+import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { esbuildTranspiler as baseTranspiler } from '../transpiler'
 import type { EsbuildTranspilerOptions } from '../transpiler'
@@ -10,7 +11,7 @@ const transpiler = (
     wasmModule?: WebAssembly.Module
     wasmURL?: string | URL
   }
-) => {
+): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
     if (!initialized) {
       if (options.wasmModule) {

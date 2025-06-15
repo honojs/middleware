@@ -15,7 +15,7 @@ export class MedleyRouter<T> implements Router<T> {
     this.router = new OriginalRouter()
   }
 
-  add(method: string, path: string, handler: T) {
+  add(method: string, path: string, handler: T): void {
     const store = this.router.register(path)
     store[method] = handler
   }

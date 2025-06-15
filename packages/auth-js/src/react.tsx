@@ -65,9 +65,11 @@ class AuthConfigManager {
   }
 }
 
-export const authConfigManager = AuthConfigManager.getInstance()
+export const authConfigManager: AuthConfigManager = AuthConfigManager.getInstance()
 
-export const SessionContext = React.createContext<SessionContextValue | undefined>(undefined)
+export const SessionContext: React.Context<SessionContextValue | undefined> = React.createContext<
+  SessionContextValue | undefined
+>(undefined)
 
 function useInitializeSession(hasInitialSession: boolean, initialSession: Session | null) {
   const authConfig = authConfigManager.getConfig()
@@ -148,7 +150,7 @@ function useRefetchInterval(
   }, [refetchInterval, shouldRefetch])
 }
 
-export async function getSession(params?: GetSessionParams) {
+export async function getSession(params?: GetSessionParams): Promise<Session | null> {
   const { baseUrl, basePath, credentials } = authConfigManager.getConfig()
   const session = await fetchData<Session>(
     'session',
@@ -163,7 +165,7 @@ export async function getSession(params?: GetSessionParams) {
   return session
 }
 
-export async function getCsrfToken() {
+export async function getCsrfToken(): Promise<string> {
   const { baseUrl, basePath, credentials } = authConfigManager.getConfig()
   const response = await fetchData<{ csrfToken: string }>(
     'csrf',
@@ -177,7 +179,7 @@ export async function getCsrfToken() {
   return response?.csrfToken ?? ''
 }
 
-export function SessionProvider(props: SessionProviderProps) {
+export function SessionProvider(props: SessionProviderProps): React.JSX.Element {
   if (!SessionContext) {
     throw new Error('React Context is unavailable in Server Components')
   }
@@ -274,7 +276,7 @@ export function useSession<R extends boolean>(
 
 type ProvidersType = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
-export async function getProviders() {
+export async function getProviders(): Promise<ProvidersType | null> {
   return fetchData<ProvidersType>('providers', authConfigManager.getConfig(), logger)
 }
 
@@ -395,10 +397,14 @@ interface PopupLoginOptions extends Partial<Omit<WindowProps, 'url'>> {
   callbackUrl?: string
 }
 
+interface LoginState extends AuthState {
+  popUpSignin: () => Promise<void>
+}
+
 export const useOauthPopupLogin = (
   provider: Parameters<typeof signIn>[0],
   options: PopupLoginOptions = {}
-) => {
+): LoginState => {
   const { width = 500, height = 500, title = 'Signin', onSuccess, callbackUrl = '/' } = options
 
   const [externalWindow, setExternalWindow] = useState<Window | null>()

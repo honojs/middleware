@@ -1,5 +1,11 @@
 # @hono/medley-router
 
+## 0.0.4
+
+### Patch Changes
+
+- [#1199](https://github.com/honojs/middleware/pull/1199) [`50aa61d9c202a8854893ddc82bffb03515411c8b`](https://github.com/honojs/middleware/commit/50aa61d9c202a8854893ddc82bffb03515411c8b) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `void` return type
+
 ## 0.0.3
 
 ### Patch Changes
