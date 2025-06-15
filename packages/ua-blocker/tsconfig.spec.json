@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc/packages/ua-blocker",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
+  "include": ["examples/**/*.ts", "**/*.test.ts", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"
