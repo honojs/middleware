@@ -1,9 +1,7 @@
 import { createClerkClient } from '@clerk/backend'
-import type { ClerkClient } from '@clerk/backend'
+import type { ClerkClient, SessionAuthObject } from '@clerk/backend'
 import type {
   AuthenticateRequestOptions,
-  SignedInAuthObject,
-  SignedOutAuthObject,
 } from '@clerk/backend/internal'
 import { TokenType } from '@clerk/backend/internal'
 import type { PendingSessionOptions } from '@clerk/types'
@@ -15,11 +13,11 @@ type GetAuthOptions = PendingSessionOptions
 declare module 'hono' {
   interface ContextVariableMap {
     clerk: ClerkClient
-    clerkAuth: (options?: GetAuthOptions) => SignedInAuthObject | SignedOutAuthObject | null
+    clerkAuth: (options?: GetAuthOptions) => SessionAuthObject | null
   }
 }
 
-export const getAuth = (c: Context, options?: GetAuthOptions) => {
+export const getAuth = (c: Context, options?: GetAuthOptions): SessionAuthObject | null => {
   const authFn = c.get('clerkAuth')
   return authFn(options)
 }
