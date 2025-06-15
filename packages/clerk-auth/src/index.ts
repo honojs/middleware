@@ -4,22 +4,19 @@ import type {
   AuthenticateRequestOptions,
 } from '@clerk/backend/internal'
 import { TokenType } from '@clerk/backend/internal'
-import type { PendingSessionOptions } from '@clerk/types'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
-
-type GetAuthOptions = PendingSessionOptions
 
 declare module 'hono' {
   interface ContextVariableMap {
     clerk: ClerkClient
-    clerkAuth: (options?: GetAuthOptions) => SessionAuthObject | null
+    clerkAuth: () => SessionAuthObject | null
   }
 }
 
-export const getAuth = (c: Context, options?: GetAuthOptions): SessionAuthObject | null => {
+export const getAuth = (c: Context): SessionAuthObject | null => {
   const authFn = c.get('clerkAuth')
-  return authFn(options)
+  return authFn()
 }
 
 type ClerkEnv = {
@@ -75,7 +72,8 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
       }
     }
 
-    c.set('clerkAuth', (options) => requestState.toAuth(options))
+    // Options will be added soon
+    c.set('clerkAuth', () => requestState.toAuth())
     c.set('clerk', clerkClient)
 
     await next()
