@@ -1,6 +1,6 @@
-import { uaBlocker } from '@hono/ua-blocker'
-import { nonRespectingAiBots, useAiRobotsTxt } from '@hono/ua-blocker/ai-bots'
 import { Hono } from 'hono'
+import { uaBlocker } from '../src'
+import { nonRespectingAiBots, useAiRobotsTxt } from '../src/ai-bots'
 
 const app = new Hono()
 

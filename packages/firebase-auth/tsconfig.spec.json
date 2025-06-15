@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc/packages/firebase-auth",
-    "noEmit": true
+    "types": ["@cloudflare/workers-types"]
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
+  "include": ["**/*.test.ts", "firebase-tools.d.ts", "vitest.config.ts"],
   "references": [
     {
       "path": "./tsconfig.build.json"
