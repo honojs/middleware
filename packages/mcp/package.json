@@ -33,7 +33,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
-    "directory": "packages/hello"
+    "directory": "packages/mcp"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
