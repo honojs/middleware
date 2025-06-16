@@ -27,6 +27,24 @@ jobs:
       - name: Generate data
         run: yarn workspace @hono/ua-blocker prebuild
 
+      - name: Generate changeset
+        run: |
+          # Generate a unique changeset filename
+          CHANGESET_ID=$(date +%s | sha256sum | head -c 8)
+          CHANGESET_FILE=".changeset/${CHANGESET_ID}-sync-robots.md"
+
+          # Create the changeset file
+          cat << EOF > "$CHANGESET_FILE"
+          ---
+          '@hono/ua-blocker': patch
+          ---
+
+          chore(ua-blocker): sync \`robots.json\` with upstream
+          EOF
+
+      - name: Format
+        run: yarn prettier --write . !packages packages/ua-blocker
+
       - name: Create Pull Request if changes exist
         uses: peter-evans/create-pull-request@v6
         with:
