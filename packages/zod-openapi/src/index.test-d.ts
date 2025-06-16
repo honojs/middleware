@@ -240,7 +240,7 @@ describe('coerce', () => {
     type Actual = ExtractSchema<typeof routes>['/api/users/:id']['$get']['input']
     type Expected = {
       param: {
-        id: number
+        id: unknown
       }
     }
     type verify = Expect<Equal<Expected, Actual>>
