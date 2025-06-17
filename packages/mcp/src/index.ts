@@ -68,7 +68,7 @@ export class StreamableHTTPTransport implements Transport {
   /**
    * Handles an incoming HTTP request, whether GET or POST
    */
-  async handleRequest(ctx: Context, parsedBody?: unknown) {
+  async handleRequest(ctx: Context, parsedBody?: unknown): Promise<Response | undefined> {
     switch (ctx.req.method) {
       case 'GET':
         return this.handleGetRequest(ctx)
