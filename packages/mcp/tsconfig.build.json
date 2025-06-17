@@ -8,11 +8,7 @@
     "emitDeclarationOnly": true,
     "isolatedDeclarations": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts"],
   "references": []
 }
