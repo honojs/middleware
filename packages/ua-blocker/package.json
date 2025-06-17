@@ -1,0 +1,64 @@
+{
+  "name": "@hono/ua-blocker",
+  "version": "0.1.1",
+  "description": "User agent-based blocker for Hono",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
+    "build": "tsup ./src/index.ts ./src/ai-bots.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack --profile node16 && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "getrobotstxt": "node --experimental-strip-types ./script/get-robots-txt.ts"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./ai-bots": {
+      "import": {
+        "types": "./dist/ai-bots.d.ts",
+        "default": "./dist/ai-bots.js"
+      },
+      "require": {
+        "types": "./dist/ai-bots.d.cts",
+        "default": "./dist/ai-bots.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/ua-blocker"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@types/node": "^22.15.24",
+    "publint": "^0.3.9",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

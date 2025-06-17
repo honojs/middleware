@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "dist/tsconfig.script.tsbuildinfo",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts", "src/data/*.json"],
+  "exclude": ["**/*.test.ts"],
+  "references": []
+}
