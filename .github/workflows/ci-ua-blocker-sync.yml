@@ -3,12 +3,15 @@ name: Sync robots.json
 on:
   schedule:
     # Runs every day at midnight
-    - cron: '0 0 * * *'
+    - cron: '15 0 */3 * *'
   workflow_dispatch:
 
 jobs:
   sync-and-pr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,7 +30,35 @@ jobs:
       - name: Generate data
         run: yarn workspace @hono/ua-blocker prebuild
 
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changeset
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          # Use a static changeset filename to avoid duplicates
+          CHANGESET_FILE=".changeset/auto-sync-robots.md"
+
+          # Create the changeset file
+          cat << EOF > "$CHANGESET_FILE"
+          ---
+          '@hono/ua-blocker': patch
+          ---
+
+          chore(ua-blocker): sync \`robots.json\` with upstream
+          EOF
+
+      - name: Format
+        run: yarn prettier --write . !packages packages/ua-blocker
+
       - name: Create Pull Request if changes exist
+        if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
