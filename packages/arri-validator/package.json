@@ -1,0 +1,54 @@
+{
+  "name": "@hono/arri-validator",
+  "version": "0.1.0",
+  "description": "Validator middleware using Arri Schema",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.ts",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/arri-validator"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "@arrirpc/schema": "^0.79.0",
+    "hono": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.1",
+    "@arrirpc/schema": "^0.79.0",
+    "publint": "^0.3.12",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}
