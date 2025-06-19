@@ -1,5 +1,13 @@
 # @hono/clerk-auth
 
+## 3.0.0
+
+### Major Changes
+
+- [#1190](https://github.com/honojs/middleware/pull/1190) [`6ca78a14dad67d7920a7c70bbfdb752eeaaff9ad`](https://github.com/honojs/middleware/commit/6ca78a14dad67d7920a7c70bbfdb752eeaaff9ad) Thanks [@wobsoriano](https://github.com/wobsoriano)! - Move `@clerk/backend` from peerDependencies to dependencies and bump to `2.x.x`.
+
+  This change ensures the package is directly available without requiring consumers to install it separately. The version bump includes the upcoming machine authentication feature while maintaining backward compatibility.
+
 ## 2.0.1
 
 ### Patch Changes
