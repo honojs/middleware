@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/session",
+    "types": ["@cloudflare/vitest-pool-workers", "vitest/globals"]
+  },
+  "include": ["examples", "src", "vitest.config.ts"],
+  "references": []
+}
