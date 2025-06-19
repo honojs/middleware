@@ -1,19 +1,20 @@
 import { createClerkClient } from '@clerk/backend'
-import type { ClerkClient, ClerkOptions } from '@clerk/backend'
+import type { ClerkClient, SessionAuthObject } from '@clerk/backend'
+import type { AuthenticateRequestOptions } from '@clerk/backend/internal'
+import { TokenType } from '@clerk/backend/internal'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
-
-type ClerkAuth = ReturnType<Awaited<ReturnType<ClerkClient['authenticateRequest']>>['toAuth']>
 
 declare module 'hono' {
   interface ContextVariableMap {
     clerk: ClerkClient
-    clerkAuth: ClerkAuth
+    clerkAuth: () => SessionAuthObject | null
   }
 }
 
-export const getAuth = (c: Context): ClerkAuth => {
-  return c.get('clerkAuth')
+export const getAuth = (c: Context): SessionAuthObject | null => {
+  const authFn = c.get('clerkAuth')
+  return authFn()
 }
 
 type ClerkEnv = {
@@ -23,7 +24,9 @@ type ClerkEnv = {
   CLERK_API_VERSION: string
 }
 
-export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
+type ClerkMiddlewareOptions = Omit<AuthenticateRequestOptions, 'acceptsToken'>
+
+export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHandler => {
   return async (c, next) => {
     const clerkEnv = env<ClerkEnv>(c)
     const { secretKey, publishableKey, apiUrl, apiVersion, ...rest } = options || {
@@ -52,6 +55,7 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       ...rest,
       secretKey,
       publishableKey,
+      acceptsToken: TokenType.SessionToken,
     })
 
     if (requestState.headers) {
@@ -66,7 +70,8 @@ export const clerkMiddleware = (options?: ClerkOptions): MiddlewareHandler => {
       }
     }
 
-    c.set('clerkAuth', requestState.toAuth())
+    // Options will be added soon
+    c.set('clerkAuth', () => requestState.toAuth())
     c.set('clerk', clerkClient)
 
     await next()
