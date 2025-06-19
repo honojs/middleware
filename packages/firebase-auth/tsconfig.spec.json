@@ -1,13 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/firebase-auth",
-    "types": ["@cloudflare/workers-types"]
+    "outDir": "../../dist/packages/firebase-auth",
+    "types": ["@cloudflare/workers-types", "vitest/globals"]
   },
-  "include": ["**/*.test.ts", "firebase-tools.d.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "include": ["src", "firebase-tools.d.ts", "vitest.config.ts"],
+  "references": []
 }

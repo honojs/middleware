@@ -12,7 +12,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
-    "typecheck": "tsc -b tsconfig.json"
+    "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
     ".": {

@@ -3,9 +3,9 @@ import { Hono } from 'hono'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import { vi } from 'vitest'
 
-import * as arktypeSchemas from './__schemas__/arktype'
-import * as valibotSchemas from './__schemas__/valibot'
-import * as zodSchemas from './__schemas__/zod'
+import * as arktypeSchemas from '../__schemas__/arktype'
+import * as valibotSchemas from '../__schemas__/valibot'
+import * as zodSchemas from '../__schemas__/zod'
 import { sValidator } from '.'
 
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never

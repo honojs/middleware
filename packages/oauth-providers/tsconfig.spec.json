@@ -1,13 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/oauth-providers",
+    "outDir": "../../dist/packages/oauth-providers",
     "types": ["vitest/globals"]
   },
-  "include": ["mocks.ts", "**/*.test.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "include": ["src", "mocks.ts", "vitest.config.ts"],
+  "references": []
 }
