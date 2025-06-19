@@ -10,5 +10,6 @@ export default defineConfig({
         autoUpdate: true,
       },
     },
+    projects: ['packages/*', '!packages/bun-transpiler'],
   },
 })
