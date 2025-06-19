@@ -686,7 +686,9 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => {
+): R & {
+  getRoutingPath(): RoutingPath<R['path']>
+} => {
   const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
