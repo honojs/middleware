@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noEmit": true
+    "tsBuildInfoFile": "${configDir}/dist/tsconfig.tsbuildinfo"
   },
   "files": [],
   "references": [

@@ -1,13 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/stytch-auth",
+    "outDir": "../../dist/packages/stytch-auth",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

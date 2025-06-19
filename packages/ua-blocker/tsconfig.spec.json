@@ -1,13 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/ua-blocker",
+    "outDir": "../../dist/packages/ua-blocker",
     "types": ["vitest/globals"]
   },
-  "include": ["examples/**/*.ts", "**/*.test.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "include": ["examples", "src", "src/**/*.json", "vitest.config.ts"],
+  "references": []
 }

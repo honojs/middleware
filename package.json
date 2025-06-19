@@ -8,8 +8,8 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces foreach --all --topological --verbose run build",
-    "publint": "yarn workspaces foreach --all --topological --verbose run publint",
+    "build": "yarn workspaces foreach --all --topological --parallel --verbose run build",
+    "publint": "yarn workspaces foreach --all --topological --parallel --verbose run publint",
     "publish": "yarn workspaces foreach --all --no-private --topological --verbose npm publish --tolerate-republish && changeset tag",
     "typecheck": "yarn tsc --build",
     "typecheck:clean": "yarn tsc --build --clean",

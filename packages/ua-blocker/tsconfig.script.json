@@ -3,10 +3,11 @@
   "compilerOptions": {
     "tsBuildInfoFile": "dist/tsconfig.script.tsbuildinfo",
     "allowImportingTsExtensions": true,
+    "isolatedDeclarations": false,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts", "src/data/*.json"],
-  "exclude": ["**/*.test.ts"],
+  "include": ["script", "src", "src/data/robots.json"],
+  "exclude": ["node_modules", "src/**/*.test.ts"],
   "references": []
 }

@@ -2,11 +2,13 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "esnext",
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
+    "emitDeclarationOnly": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,
@@ -15,5 +17,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "types": []
-  }
+  },
+  "include": ["${configDir}/vitest.config.ts", "${configDir}/package.json", "${configDir}/src"]
 }

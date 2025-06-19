@@ -1,14 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/graphql-server",
+    "outDir": "../../dist/packages/graphql-server",
     "types": ["bun"]
   },
-  "exclude": ["src/**/*.test.ts"],
-  "include": ["bun_test", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "include": ["src", "bun_test"],
+  "exclude": ["node_modules", "src/**/*.test.ts"]
 }
