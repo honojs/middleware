@@ -1,8 +1,6 @@
 import { createClerkClient } from '@clerk/backend'
 import type { ClerkClient, SessionAuthObject } from '@clerk/backend'
-import type {
-  AuthenticateRequestOptions,
-} from '@clerk/backend/internal'
+import type { AuthenticateRequestOptions } from '@clerk/backend/internal'
 import { TokenType } from '@clerk/backend/internal'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
