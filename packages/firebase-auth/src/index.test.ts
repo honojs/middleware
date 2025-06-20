@@ -587,13 +587,15 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
 })
 
 class NopKeyStore implements KeyStorer {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
   get(): Promise<null> {
-    return new Promise((resolve) => resolve(null))
+    return new Promise((resolve) => {
+      resolve(null)
+    })
   }
   put(): Promise<void> {
-    return new Promise((resolve) => resolve())
+    return new Promise((resolve) => {
+      resolve()
+    })
   }
 }
 

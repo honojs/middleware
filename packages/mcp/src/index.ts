@@ -165,7 +165,9 @@ export class StreamableHTTPTransport implements Transport {
         // Keep connection alive
         const keepAlive = setInterval(() => {
           if (!stream.closed) {
-            stream.writeSSE({ data: '', event: 'ping' }).catch(() => clearInterval(keepAlive))
+            stream.writeSSE({ data: '', event: 'ping' }).catch(() => {
+              clearInterval(keepAlive)
+            })
           }
         }, 30000)
 
