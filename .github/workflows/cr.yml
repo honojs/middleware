@@ -11,8 +11,30 @@ concurrency:
   cancel-in-progress: true # Cancel in progress builds for the same PR
 
 jobs:
-  publish:
-    if: github.repository == 'honojs/middleware' && (github.ref == 'refs/heads/main' || contains(github.event.pull_request.labels.*.name, 'cr-tracked'))
+  publish-all:
+    if: github.repository == 'honojs/middleware' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: 'Publish: pkg.pr.new'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn workspaces foreach --all --topological --parallel --no-private run build
+
+      - name: Publish to StackBlitz
+        run: yarn pkg-pr-new publish --compact --no-template './packages/*'
+
+  publish-changed:
+    if: github.repository == 'honojs/middleware' && contains(github.event.pull_request.labels.*.name, 'cr-tracked')
     runs-on: ubuntu-latest
     name: 'Publish: pkg.pr.new'
     steps:
