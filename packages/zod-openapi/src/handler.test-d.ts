@@ -105,7 +105,7 @@ describe('supports async handler', () => {
       if ((new Date().getTime() - session.createdAt.getTime()) / 1000 / 60 / 60 > 1) {
         return c.json({ message: 'Unauthorized' }, 401)
       }
-      return await next()
+      await next()
     }
 
     type Example = MiddlewareToHandlerType<

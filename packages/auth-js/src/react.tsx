@@ -129,7 +129,9 @@ function useVisibilityChangeEventListener(
       signal: abortController.signal,
     })
 
-    return () => abortController.abort()
+    return () => {
+      abortController.abort()
+    }
   }, [refetchOnWindowFocus])
 }
 
@@ -145,7 +147,9 @@ function useRefetchInterval(
           authConfig.fetchSession({ event: 'poll' })
         }
       }, refetchInterval * 1000)
-      return () => clearInterval(intervalId)
+      return () => {
+        clearInterval(intervalId)
+      }
     }
   }, [refetchInterval, shouldRefetch])
 }

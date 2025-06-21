@@ -212,7 +212,9 @@ describe('Event Emitter Middleware', () => {
       }
       const ee = createEmitter<EventPayloadMap>()
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      expect(() => ee.on('test', 'not a function' as any)).toThrow(TypeError)
+      expect(() => {
+        ee.on('test', 'not a function' as any)
+      }).toThrow(TypeError)
     })
 
     it('should throw RangeError when max handlers limit is reached', () => {
@@ -221,7 +223,9 @@ describe('Event Emitter Middleware', () => {
       emitter.on('test', vi.fn())
       emitter.on('test', vi.fn())
       emitter.on('test', vi.fn())
-      expect(() => emitter.on('test', vi.fn())).toThrow(RangeError)
+      expect(() => {
+        emitter.on('test', vi.fn())
+      }).toThrow(RangeError)
     })
 
     it('should use default max handlers limit of 10 when not specified', () => {
@@ -230,7 +234,9 @@ describe('Event Emitter Middleware', () => {
       for (let i = 0; i < 10; i++) {
         emitter.on('testEvent', vi.fn())
       }
-      expect(() => emitter.on('testEvent', vi.fn())).toThrow(RangeError)
+      expect(() => {
+        emitter.on('testEvent', vi.fn())
+      }).toThrow(RangeError)
     })
 
     it('should allow different events to have their own handler counts', () => {
@@ -239,15 +245,21 @@ describe('Event Emitter Middleware', () => {
       emitter.on('test1', vi.fn())
       emitter.on('test1', vi.fn())
       emitter.on('test2', vi.fn())
-      expect(() => emitter.on('test1', vi.fn())).toThrow(RangeError)
-      expect(() => emitter.on('test2', vi.fn())).not.toThrow()
+      expect(() => {
+        emitter.on('test1', vi.fn())
+      }).toThrow(RangeError)
+      expect(() => {
+        emitter.on('test2', vi.fn())
+      }).not.toThrow()
     })
 
     it('should include event key in error message when limit is reached', () => {
       type EventPayloadMap = { specificEvent: string }
       const emitter = createEmitter<EventPayloadMap>({}, { maxHandlers: 1 })
       emitter.on('specificEvent', vi.fn())
-      expect(() => emitter.on('specificEvent', vi.fn())).toThrow(/specificEvent/)
+      expect(() => {
+        emitter.on('specificEvent', vi.fn())
+      }).toThrow(/specificEvent/)
     })
 
     it('should allow setting custom max handlers limit', () => {
@@ -256,7 +268,9 @@ describe('Event Emitter Middleware', () => {
       for (let i = 0; i < 5; i++) {
         emitter.on('test', vi.fn())
       }
-      expect(() => emitter.on('test', vi.fn())).toThrow(RangeError)
+      expect(() => {
+        emitter.on('test', vi.fn())
+      }).toThrow(RangeError)
     })
 
     it('should do nothing when emitting an event with no handlers', () => {
@@ -264,7 +278,9 @@ describe('Event Emitter Middleware', () => {
         test: string
       }
       const ee = createEmitter<EventPayloadMap>()
-      expect(() => ee.emit({} as Context, 'test', 'payload')).not.toThrow()
+      expect(() => {
+        ee.emit({} as Context, 'test', 'payload')
+      }).not.toThrow()
     })
 
     it('should do nothing when emitting an async event with no handlers', async () => {

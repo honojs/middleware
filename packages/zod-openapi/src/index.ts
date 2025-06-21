@@ -634,8 +634,8 @@ export class OpenAPIHono<
         case 'component':
           return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
 
-        case 'route':
-          return this.openAPIRegistry.registerPath({
+        case 'route': {
+          this.openAPIRegistry.registerPath({
             ...def.route,
             path: mergePath(
               pathForOpenAPI,
@@ -644,9 +644,11 @@ export class OpenAPIHono<
               def.route.path
             ),
           })
+          return
+        }
 
-        case 'webhook':
-          return this.openAPIRegistry.registerWebhook({
+        case 'webhook': {
+          this.openAPIRegistry.registerWebhook({
             ...def.webhook,
             path: mergePath(
               pathForOpenAPI,
@@ -655,6 +657,8 @@ export class OpenAPIHono<
               def.webhook.path
             ),
           })
+          return
+        }
 
         case 'schema':
           return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)

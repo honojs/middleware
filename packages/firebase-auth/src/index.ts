@@ -88,7 +88,9 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
 
 const idTokenContextKey = 'firebase-auth-cloudflare-id-token-key'
 
-const setFirebaseToken = (c: Context, idToken: FirebaseIdToken) => c.set(idTokenContextKey, idToken)
+const setFirebaseToken = (c: Context, idToken: FirebaseIdToken) => {
+  c.set(idTokenContextKey, idToken)
+}
 
 export const getFirebaseToken = (c: Context): FirebaseIdToken | null => {
   const idToken = c.get(idTokenContextKey)

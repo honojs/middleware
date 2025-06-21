@@ -43,7 +43,7 @@ describe('Basic', () => {
         'User-Agent': 'string',
       })
     ),
-    (c) => c.json({ success: true, userAgent: c.header('User-Agent') })
+    (c) => c.json({ success: true, userAgent: c.req.header('User-Agent') })
   )
 
   type Actual = ExtractSchema<typeof route>

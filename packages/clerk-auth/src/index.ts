@@ -59,7 +59,9 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
     })
 
     if (requestState.headers) {
-      requestState.headers.forEach((value, key) => c.res.headers.append(key, value))
+      requestState.headers.forEach((value, key) => {
+        c.res.headers.append(key, value)
+      })
 
       const locationHeader = requestState.headers.get('location')
 
