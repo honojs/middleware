@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.6.2
+
+### Patch Changes
+
+- [#1252](https://github.com/honojs/middleware/pull/1252) [`205aced16bc4061277f33a00edee2814063e8a6d`](https://github.com/honojs/middleware/commit/205aced16bc4061277f33a00edee2814063e8a6d) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Update package repository directory, see #1251
+
 ## 0.6.1
 
 ### Patch Changes
