@@ -1,7 +1,11 @@
 {
   "name": "@hono/graphql-server",
   "version": "0.6.1",
-  "repository": "git@github.com:honojs/middleware.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/graphql-server"
+  },
   "author": "Minghe Huang <h.minghe@gmail.com>",
   "type": "module",
   "main": "dist/index.js",
