@@ -20,7 +20,9 @@ describe('WebSocket helper', () => {
     ;({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app }))
 
     server = await new Promise<ServerType>((resolve) => {
-      const server = serve({ fetch: app.fetch, port: 3030 }, () => resolve(server))
+      const server = serve({ fetch: app.fetch, port: 3030 }, () => {
+        resolve(server)
+      })
     })
     injectWebSocket(server)
   })
@@ -36,15 +38,13 @@ describe('WebSocket helper', () => {
         upgradeWebSocket(
           () =>
             new Promise((resolveWS) =>
-              setTimeout(
-                () =>
-                  resolveWS({
-                    onOpen() {
-                      resolve(true)
-                    },
-                  }),
-                100
-              )
+              setTimeout(() => {
+                resolveWS({
+                  onOpen() {
+                    resolve(true)
+                  },
+                })
+              }, 100)
             )
         )
       )
@@ -158,7 +158,9 @@ describe('WebSocket helper', () => {
       connections.map((ws, index) => {
         return new Promise<void>((resolve) => {
           ws.send(`Hello from connection ${index + 1}`)
-          ws.on('message', () => resolve())
+          ws.on('message', () => {
+            resolve()
+          })
         })
       })
     )
@@ -168,7 +170,9 @@ describe('WebSocket helper', () => {
       expect(msg).toBe(`Hello from connection ${index + 1}`)
     })
 
-    connections.forEach((ws) => ws.close())
+    connections.forEach((ws) => {
+      ws.close()
+    })
   })
 
   it('CloseEvent should be executed without crash', async () => {

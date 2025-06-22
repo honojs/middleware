@@ -143,8 +143,12 @@ export function useOnline(): boolean {
     const abortController = new AbortController()
     const { signal } = abortController
 
-    const setOnline = () => setIsOnline(true)
-    const setOffline = () => setIsOnline(false)
+    const setOnline = () => {
+      setIsOnline(true)
+    }
+    const setOffline = () => {
+      setIsOnline(false)
+    }
 
     window.addEventListener('online', setOnline, { signal })
     window.addEventListener('offline', setOffline, { signal })

@@ -27,6 +27,7 @@ export type OtelOptions =
 export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
   if (options.augmentSpan) {
     return createMiddleware(async (c, next) => {
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
       const result = await next()
       const span = trace.getActiveSpan()
       if (span != null) {
