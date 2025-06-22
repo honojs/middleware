@@ -17,6 +17,7 @@ export interface NodeWebSocket {
     }
   >
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
+  wss: WebSocketServer
 }
 export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,6 +57,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   }
 
   return {
+    wss,
     injectWebSocket(server) {
       server.on('upgrade', async (request, socket: Duplex, head) => {
         const url = new URL(request.url ?? '/', init.baseUrl ?? 'http://localhost')
