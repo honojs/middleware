@@ -30,6 +30,9 @@ jobs:
       - name: Generate data
         run: yarn workspace @hono/ua-blocker prebuild
 
+      - name: Format
+        run: yarn prettier --write . !packages packages/ua-blocker
+
       - name: Check for changes
         id: changes
         run: |
@@ -53,9 +56,6 @@ jobs:
 
           chore(ua-blocker): sync \`robots.json\` with upstream
           EOF
-
-      - name: Format
-        run: yarn prettier --write . !packages packages/ua-blocker
 
       - name: Create Pull Request if changes exist
         if: steps.changes.outputs.has_changes == 'true'
