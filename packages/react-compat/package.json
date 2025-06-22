@@ -4,6 +4,11 @@
   "version": "0.0.1",
   "description": "Alias of hono/jsx for replacement of React",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/react-compat"
+  },
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

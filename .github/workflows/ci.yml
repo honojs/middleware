@@ -43,6 +43,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
       - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run publint
       - run: yarn workspace @hono/${{ matrix.package }} typecheck
+        if: ${{ matrix.package != 'eslint-config' }}
       - run: yarn eslint packages/${{ matrix.package }}
       - run: yarn prettier --check . !packages packages/${{ matrix.package }}
 
@@ -63,9 +64,9 @@ jobs:
       - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
-        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
       - uses: codecov/codecov-action@v5
-        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true
           directory: ./coverage
