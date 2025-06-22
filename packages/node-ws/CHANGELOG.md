@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1213](https://github.com/honojs/middleware/pull/1213) [`5178967931d9f9020892d69b9a929469be25c6a7`](https://github.com/honojs/middleware/commit/5178967931d9f9020892d69b9a929469be25c6a7) Thanks [@palmm](https://github.com/palmm)! - Return the WebSocketServer instance used for createNodeWebSocket
+
 ## 1.1.7
 
 ### Patch Changes
