@@ -4,6 +4,10 @@
   "version": "0.0.2",
   "description": "Alias of hono/jsx for replacement of React",
   "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
