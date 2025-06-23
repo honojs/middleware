@@ -1,5 +1,11 @@
 # @hono/react-compat
 
+## 0.0.3
+
+### Patch Changes
+
+- [#1257](https://github.com/honojs/middleware/pull/1257) [`2f89c50aa4ab1b66de6d53f2df3fe6af90fb7aa2`](https://github.com/honojs/middleware/commit/2f89c50aa4ab1b66de6d53f2df3fe6af90fb7aa2) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: publish the package
+
 ## 0.0.2
 
 ### Patch Changes
