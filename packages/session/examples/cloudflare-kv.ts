@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:test'
 import { Hono } from 'hono'
+import type { SessionEnv } from '../src'
 import { useSession, useSessionStorage } from '../src'
 import * as cookies from '../src/cookies'
 
@@ -10,7 +11,7 @@ export const secret = cookies.generateId(16)
  *
  * This example assumes you have a Cloudflare KV namespace named `SESSION_KV`.
  */
-export const app = new Hono()
+export const app = new Hono<SessionEnv>()
   .use(
     useSessionStorage((c) => ({
       delete(sid) {

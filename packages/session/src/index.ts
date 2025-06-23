@@ -42,7 +42,7 @@ export interface SessionOptions<Data> extends SessionEvents<Data> {
   setCookie?: typeof cookie.setCookie
 }
 
-type SessionEnv<Data> = Env & {
+export type SessionEnv<Data = SessionData> = Env & {
   Bindings: {
     AUTH_SECRET?: string
   }

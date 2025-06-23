@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { createStorage } from 'unstorage'
-import type { SessionData } from '../src'
+import type { SessionData, SessionEnv } from '../src'
 import { useSession, useSessionStorage } from '../src'
 import * as cookies from '../src/cookies'
 
@@ -17,7 +17,7 @@ export const secret = cookies.generateId(16)
  *
  * @see {@link https://unstorage.unjs.io/}
  */
-export const app = new Hono()
+export const app = new Hono<SessionEnv<StorageData>>()
   .use(
     useSessionStorage({
       delete(sid) {
