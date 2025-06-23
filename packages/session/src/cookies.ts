@@ -1,4 +1,3 @@
-import { hkdf } from '@panva/hkdf'
 import * as jose from 'jose'
 import { JWTExpired } from 'jose/errors'
 
@@ -17,10 +16,20 @@ const ALG = 'dir' // Direct Encryption Mode with a shared secret
 const ENC = 'A256GCM' // Requires a 256 bit (32 byte) secret
 const BYTE_LENGTH = 32
 /** Digest algorithm */
-const DIGEST = 'sha256'
-/** Additional information to derive the encryption key */
-const ENCRYPTION_INFO = 'session jwe cek'
-const SALT = ''
+const HKDF_ALGORITHM: HkdfParams = {
+  hash: 'SHA-256',
+  /** Additional information to derive the encryption key */
+  info: new TextEncoder().encode('session jwe cek'),
+  name: 'HKDF',
+  salt: new Uint8Array(0),
+}
+
+async function hdkf(secret: string) {
+  const ikm = new TextEncoder().encode(secret)
+  const length = BYTE_LENGTH << 3
+  const key = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits'])
+  return new Uint8Array(await crypto.subtle.deriveBits(HKDF_ALGORITHM, key, length))
+}
 
 export type EncryptionKey = jose.CryptoKey | jose.KeyObject | jose.JWK | Uint8Array
 
@@ -29,7 +38,7 @@ export type EncryptionKey = jose.CryptoKey | jose.KeyObject | jose.JWK | Uint8Ar
  */
 export async function createEncryptionKey(secret: EncryptionKey | string): Promise<EncryptionKey> {
   if (typeof secret === 'string') {
-    return hkdf(DIGEST, secret, SALT, ENCRYPTION_INFO, BYTE_LENGTH)
+    return hdkf(secret)
   }
 
   return secret

@@ -2517,7 +2517,6 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@cloudflare/vitest-pool-workers": "npm:^0.7.8"
-    "@panva/hkdf": "npm:^1.2.1"
     jose: "npm:^6.0.11"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -3583,7 +3582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@panva/hkdf@npm:^1.1.1, @panva/hkdf@npm:^1.2.1":
+"@panva/hkdf@npm:^1.1.1":
   version: 1.2.1
   resolution: "@panva/hkdf@npm:1.2.1"
   checksum: 10c0/1fabdec9bd2c19b8e88a3fa6fd0c25e25823c5000d9efdf4b6dfe32e9f370f8b9603cf776d120d160bec15fba17e079974cc34f0f52cebb24602cd832dfde19c

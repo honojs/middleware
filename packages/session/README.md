@@ -4,10 +4,7 @@
 
 Session middleware for Hono using encrypted JSON Web Tokens.
 
-This middleware depends on the following pacakges:
-
-- [`@panva/hkdf`](https://github.com/panva/hkdf)
-- [`jose`](https://github.com/panva/jose)
+This middleware depends on [`jose`](https://github.com/panva/jose) for JSON Web Encryption.
 
 Other resources worth reading include:
 

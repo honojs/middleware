@@ -62,7 +62,6 @@
     "hono": "*"
   },
   "dependencies": {
-    "@panva/hkdf": "^1.2.1",
     "jose": "^6.0.11"
   },
   "devDependencies": {
