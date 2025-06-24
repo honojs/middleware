@@ -119,7 +119,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   if (!oidcAuthEnv.OIDC_REDIRECT_URI.startsWith('/')) {
     try {
       new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
-    } catch (e) {
+    } catch {
       throw new HTTPException(500, {
         message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path',
       })
@@ -128,7 +128,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   if (oidcAuthEnv.OIDC_AUTH_EXTERNAL_URL) {
     try {
       new URL(oidcAuthEnv.OIDC_AUTH_EXTERNAL_URL)
-    } catch (e) {
+    } catch {
       throw new HTTPException(500, {
         message: 'The OIDC external URL is invalid. It must be a full URL.',
       })
@@ -202,7 +202,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     }
     try {
       auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
-    } catch (e) {
+    } catch {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
     }
@@ -488,7 +488,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
         setCookie(c, 'continue', continueUrl, cookieOptions)
         return c.redirect(url)
       }
-    } catch (e) {
+    } catch {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       throw new HTTPException(500, { message: 'Invalid session' })
     }
