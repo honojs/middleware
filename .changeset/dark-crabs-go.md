@@ -1,5 +1,5 @@
 ---
-'@hono/clerk-auth': minor
+'@hono/clerk-auth': patch
 ---
 
 updated clerk dependency
