@@ -40,8 +40,8 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
-    "@clerk/backend": "^2.1.0",
-    "@clerk/types": "^4.60.1"
+    "@clerk/backend": "^2.2.0",
+    "@clerk/types": "^4.61.0"
   },
   "peerDependencies": {
     "hono": ">=3.*"
