@@ -30,6 +30,7 @@
     { "path": "packages/react-compat" },
     { "path": "packages/react-renderer" },
     { "path": "packages/sentry" },
+    { "path": "packages/session" },
     { "path": "packages/standard-validator" },
     { "path": "packages/swagger-editor" },
     { "path": "packages/swagger-ui" },
