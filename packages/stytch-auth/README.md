@@ -262,6 +262,14 @@ app.get('/advanced-org-ops', async (c) => {
 
 ### Custom Configuration
 
+**Custom Base URL:**
+
+Set `STYTCH_DOMAIN` to instruct the SDK to use your [custom domain](https://stytch.com/docs/guides/custom-domains/overview) for all API calls.
+
+```bash
+STYTCH_DOMAIN=https://login.example.com
+```
+
 **Custom Cookie Name:**
 
 ```ts
