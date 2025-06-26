@@ -1,7 +1,5 @@
 {
   "extends": "../../tsconfig.build.json",
-  "compilerOptions": {
-    "isolatedDeclarations": false
-  },
+  "compilerOptions": {},
   "references": [{ "path": "../zod-validator/tsconfig.build.json" }]
 }
