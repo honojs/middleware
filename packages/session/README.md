@@ -164,23 +164,24 @@ export default app
 
 ```ts
 import { useSession, useSessionStorage } from '@hono/session'
+import type { SessionEnv } from '@hono/session'
 import { Hono } from 'hono'
 
-const app = new Hono()
+const app = new Hono<SessionEnv>()
 
-app
-  .use(
-    useSessionStorage({
-      delete(sid) {},
-      async get(sid) {},
-      set(sid, value) {},
-    }),
-    useSession()
-  )
-  .get('/', async (c) => {
-    const data = await c.var.session.get()
-    return c.json(data)
-  })
+app.use(
+  useSessionStorage({
+    delete(sid) {},
+    async get(sid) {},
+    set(sid, value) {},
+  }),
+  useSession()
+)
+
+app.get('/', async (c) => {
+  const data = await c.var.session.get()
+  return c.json(data)
+})
 
 export default app
 ```
