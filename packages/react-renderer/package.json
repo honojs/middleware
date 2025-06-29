@@ -53,7 +53,7 @@
     "react-dom": "^19.1.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "https://pkg.pr.new/vitest@761beee"
   },
   "engines": {
     "node": ">=18"
