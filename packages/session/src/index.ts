@@ -104,6 +104,9 @@ export const useSession = <Data extends SessionData>(
       get data() {
         return session.data
       },
+      get id() {
+        return session.id
+      },
       delete() {
         session.delete()
       },
