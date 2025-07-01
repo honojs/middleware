@@ -41,7 +41,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $(yarn version:get)"
   },
   "license": "MIT",
   "publishConfig": {

@@ -1,0 +1,10 @@
+{
+  "name": "@hono/esbuild-transpiler",
+  "version": "0.1.4",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./wasm": "./src/transpilers/wasm.ts",
+    "./node": "./src/transpilers/node.ts"
+  }
+}

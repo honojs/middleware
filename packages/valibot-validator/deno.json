@@ -1,0 +1,12 @@
+{
+  "name": "@hono/valibot-validator",
+  "version": "0.5.2",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}

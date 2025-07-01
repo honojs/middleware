@@ -1,0 +1,15 @@
+{
+  "name": "@hono/firebase-auth",
+  "version": "0.0.0",
+  "license": "MIT",
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types"]
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}

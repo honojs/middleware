@@ -1,0 +1,12 @@
+{
+  "name": "@hono/oidc-auth",
+  "version": "1.6.1",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}

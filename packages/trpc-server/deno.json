@@ -1,0 +1,12 @@
+{
+  "name": "@hono/trpc-server",
+  "version": "0.3.4",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}
