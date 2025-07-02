@@ -33,11 +33,6 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Set NPM Auth Token
-        run: yarn config set npmAuthToken ${NPM_TOKEN}
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
@@ -46,4 +41,4 @@ jobs:
           version: yarn run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
