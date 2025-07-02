@@ -42,8 +42,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn run publish && deno install --no-lock && deno publish
-          version: yarn run version:npm && yarn run version:jsr
+          publish: yarn run publish
+          version: yarn run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
