@@ -6,5 +6,8 @@
     ".": "./src/index.ts",
     "./wasm": "./src/transpilers/wasm.ts",
     "./node": "./src/transpilers/node.ts"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3"
   }
 }
