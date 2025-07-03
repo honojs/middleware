@@ -78,7 +78,7 @@
     }
   },
   "peerDependencies": {
-    "hono": ">=3.*"
+    "hono": ">=3.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
