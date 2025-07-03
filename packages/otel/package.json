@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

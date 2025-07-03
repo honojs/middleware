@@ -41,12 +41,12 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "arktype": "^2.0.0-dev.14",
-    "hono": "*"
+    "arktype": ">=2.0.0-dev",
+    "hono": ">=3.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "arktype": "^2.0.0-dev.14",
+    "arktype": "^2.0.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",

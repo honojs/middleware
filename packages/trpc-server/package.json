@@ -41,7 +41,7 @@
   "homepage": "https://honojs.dev",
   "peerDependencies": {
     "@trpc/server": "^10.10.0 || >11.0.0-rc",
-    "hono": ">=4.*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",

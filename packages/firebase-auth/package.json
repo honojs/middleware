@@ -46,7 +46,7 @@
     "firebase-auth-cloudflare-workers": "^2.0.6"
   },
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",

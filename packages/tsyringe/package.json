@@ -40,8 +40,8 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=4.*",
-    "tsyringe": ">=4.*"
+    "hono": ">=4.0.0",
+    "tsyringe": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",

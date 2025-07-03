@@ -42,7 +42,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "author": "David Havl <contact@davidhavl.com> (https://github.com/DavidHavl)",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
