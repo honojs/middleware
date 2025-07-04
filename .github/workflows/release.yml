@@ -26,7 +26,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           cache: true
-          deno-version: v2.x
+          # TODO: Update to v2.x when https://github.com/jsr-io/jsr-npm/issues/129 is resolved
+          deno-version: v2.3.7
       - name: Install Dependencies
         run: yarn
 
