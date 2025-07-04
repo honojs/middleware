@@ -21,6 +21,10 @@ type Hook<
   c: Context<E, P>
 ) => TOrPromiseOfT<Response | void | TypedResponse<O>>
 
+const RESTRICTED_DATA_FIELDS = {
+  header: ['cookie'],
+}
+
 const sValidator = <
   Schema extends StandardSchemaV1,
   Target extends keyof ValidationTargets,
@@ -71,7 +75,32 @@ const sValidator = <
     }
 
     if (result.issues) {
-      return c.json({ data: value, error: result.issues, success: false }, 400)
+      let processedIssues = result.issues
+      
+      // Strip sensitive data for arktype schemas
+      if (schema['~standard'].vendor === 'arktype' && target in RESTRICTED_DATA_FIELDS) {
+        const restrictedFields = RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
+        
+        processedIssues = result.issues.map((issue) => {
+          if (
+            issue &&
+            typeof issue === 'object' &&
+            'data' in issue &&
+            typeof issue.data === 'object' &&
+            issue.data !== null &&
+            !Array.isArray(issue.data)
+          ) {
+            const dataCopy = { ...(issue.data as Record<string, unknown>) }
+            for (const field of restrictedFields) {
+              delete dataCopy[field]
+            }
+            return { ...issue, data: dataCopy }
+          }
+          return issue
+        }) as readonly StandardSchemaV1.Issue[]
+      }
+      
+      return c.json({ data: value, error: processedIssues, success: false }, 400)
     }
 
     return result.value as StandardSchemaV1.InferOutput<Schema>

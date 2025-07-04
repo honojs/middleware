@@ -26,7 +26,12 @@ const querySortSchema = type({
   order: "'asc'|'desc'",
 })
 
+const headerSchema = type({
+  'User-Agent': 'string',
+})
+
 export {
+  headerSchema,
   idJSONSchema,
   personJSONSchema,
   postJSONSchema,

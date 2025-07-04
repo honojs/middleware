@@ -28,7 +28,12 @@ const querySortSchema = object({
   order: picklist(['asc', 'desc']),
 })
 
+const headerSchema = object({
+  'User-Agent': string(),
+})
+
 export {
+  headerSchema,
   idJSONSchema,
   personJSONSchema,
   postJSONSchema,
