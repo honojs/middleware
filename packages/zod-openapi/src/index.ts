@@ -36,6 +36,8 @@ import type {
 } from 'hono/utils/http-status'
 import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
+import type { OpenAPIObject } from 'openapi3-ts/oas30'
+import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import type { ZodError, ZodSchema } from 'zod'
 import { ZodType, z } from 'zod'
 
@@ -555,18 +557,14 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  getOpenAPIDocument = (config: OpenAPIObjectConfig): OpenAPIObject => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  getOpenAPI31Document = (config: OpenAPIObjectConfig): OpenAPIV31bject => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
@@ -690,7 +688,9 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => {
+): R & {
+  getRoutingPath(): RoutingPath<R['path']>
+} => {
   const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {

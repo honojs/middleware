@@ -13,6 +13,8 @@ type StytchEnv = {
   STYTCH_PROJECT_ID: string
   /** The Stytch project secret */
   STYTCH_PROJECT_SECRET: string
+  /** The Stytch Project domain */
+  STYTCH_DOMAIN?: string
 }
 
 type ConsumerTokenClaims = Awaited<ReturnType<Client['idp']['introspectTokenLocal']>>
@@ -193,6 +195,7 @@ const getConsumerClient = (c: Context) => {
     new Client({
       project_id: stytchEnv.STYTCH_PROJECT_ID,
       secret: stytchEnv.STYTCH_PROJECT_SECRET,
+      custom_base_url: stytchEnv.STYTCH_DOMAIN,
     })
   return consumerClients[stytchEnv.STYTCH_PROJECT_ID]
 }
@@ -214,6 +217,7 @@ const getB2BClient = (c: Context) => {
     new B2BClient({
       project_id: stytchEnv.STYTCH_PROJECT_ID,
       secret: stytchEnv.STYTCH_PROJECT_SECRET,
+      custom_base_url: stytchEnv.STYTCH_DOMAIN,
     })
   return b2bClients[stytchEnv.STYTCH_PROJECT_ID]
 }

@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.7.0
+
+### Minor Changes
+
+- [#1248](https://github.com/honojs/middleware/pull/1248) [`6e4ee78e956d72a0f11bd70c56feb5e979fa46ad`](https://github.com/honojs/middleware/commit/6e4ee78e956d72a0f11bd70c56feb5e979fa46ad) Thanks [@hnw](https://github.com/hnw)! - Add OIDC_AUTH_EXTERNAL_URL to support reverse proxies
+
 ## 1.6.1
 
 ### Patch Changes

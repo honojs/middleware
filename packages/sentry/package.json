@@ -13,7 +13,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $(yarn version:get)"
   },
   "exports": {
     ".": {
@@ -40,7 +41,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "hono": ">=3.*"
+    "hono": ">=3.0.0"
   },
   "dependencies": {
     "toucan-js": "^4.0.0"

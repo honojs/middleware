@@ -1,5 +1,11 @@
 # @hono/stytch-auth
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1267](https://github.com/honojs/middleware/pull/1267) [`8196e225e7df1f871e44e54ab287c7087efeb3e6`](https://github.com/honojs/middleware/commit/8196e225e7df1f871e44e54ab287c7087efeb3e6) Thanks [@max-stytch](https://github.com/max-stytch)! - Add support for custom domain usage by setting the STYTCH_DOMAIN environment variable
+
 ## 0.1.0
 
 ### Minor Changes

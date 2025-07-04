@@ -1,6 +1,6 @@
 {
   "name": "@hono/clerk-auth",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A third-party Clerk auth middleware for Hono",
   "type": "module",
   "main": "dist/index.cjs",
@@ -14,7 +14,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $(yarn version:get)"
   },
   "exports": {
     ".": {
@@ -40,11 +41,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
-    "@clerk/backend": "^2.1.0",
-    "@clerk/types": "^4.60.1"
+    "@clerk/backend": "^2.2.0",
+    "@clerk/types": "^4.61.0"
   },
   "peerDependencies": {
-    "hono": ">=3.*"
+    "hono": ">=3.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",

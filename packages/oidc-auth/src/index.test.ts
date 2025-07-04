@@ -197,6 +197,7 @@ beforeEach(() => {
   delete process.env.OIDC_COOKIE_NAME
   delete process.env.OIDC_COOKIE_DOMAIN
   delete process.env.OIDC_AUDIENCE
+  delete process.env.OIDC_AUTH_EXTERNAL_URL
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -402,6 +403,30 @@ describe('oidcAuthMiddleware()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).not.toMatch(/audience=/)
+  })
+  test('Should use external URL for continue cookie when OIDC_AUTH_EXTERNAL_URL is set', async () => {
+    process.env.OIDC_AUTH_EXTERNAL_URL = 'https://public.example.com/app'
+    const req = new Request('http://internal.host/sub/path?q=1#hash', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    const expectedContinueUrl = 'https://public.example.com/app/sub/path?q=1#hash'
+    expect(res.headers.get('set-cookie')).toMatch(
+      `continue=${encodeURIComponent(expectedContinueUrl)}`
+    )
+  })
+  test('Should return an error when OIDC_AUTH_EXTERNAL_URL is an invalid URL', async () => {
+    process.env.OIDC_AUTH_EXTERNAL_URL = 'invalid-url'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(500)
   })
 })
 describe('processOAuthCallback()', () => {

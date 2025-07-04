@@ -46,9 +46,10 @@ vi.mock(import('stytch'), async (importOriginal) => {
   // Forcing the mocked class constructor to be a real type causes tsc to crash
   // e.g. same error as https://github.com/microsoft/TypeScript/issues/52952 but probably different bug
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ConsumerClient: any = vi.fn(function (this: any, { project_id, secret }) {
+  const ConsumerClient: any = vi.fn(function (this: any, { project_id, secret, custom_base_url }) {
     this.project_id = project_id
     this.secret = secret
+    this.custom_base_url = custom_base_url
     this.sessions = ConsumerSessions
     this.idp = ConsumerOAuth
   })
@@ -56,9 +57,10 @@ vi.mock(import('stytch'), async (importOriginal) => {
   // Forcing the mocked class constructor to be a real type causes tsc to crash
   // e.g. same error as https://github.com/microsoft/TypeScript/issues/52952 but probably different bug
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const B2BClientMock: any = vi.fn(function (this: any, { project_id, secret }) {
+  const B2BClientMock: any = vi.fn(function (this: any, { project_id, secret, custom_base_url }) {
     this.project_id = project_id
     this.secret = secret
+    this.custom_base_url = custom_base_url
     this.sessions = B2BSessions
     this.idp = B2BIdp
   })
@@ -77,6 +79,7 @@ describe('Consumer', () => {
   beforeEach(() => {
     vi.stubEnv('STYTCH_PROJECT_ID', 'project-test-xxxxx')
     vi.stubEnv('STYTCH_PROJECT_SECRET', 'secret-key-test-xxxxx')
+    vi.stubEnv('STYTCH_DOMAIN', 'https://login.example.com')
   })
   describe('getClient', () => {
     test('Instantiates client from ctx for handlers to use', async () => {
@@ -86,7 +89,11 @@ describe('Consumer', () => {
       app.get('/', (ctx) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const client = Consumer.getClient(ctx) as any
-        return ctx.json({ project_id: client.project_id, secret: client.secret })
+        return ctx.json({
+          project_id: client.project_id,
+          secret: client.secret,
+          custom_base_url: client.custom_base_url,
+        })
       })
 
       const response = await app.request(req)
@@ -95,6 +102,7 @@ describe('Consumer', () => {
       expect(await response.json()).toEqual({
         project_id: 'project-test-xxxxx',
         secret: 'secret-key-test-xxxxx',
+        custom_base_url: 'https://login.example.com',
       })
     })
   })
@@ -488,6 +496,7 @@ describe('B2B', () => {
   beforeEach(() => {
     vi.stubEnv('STYTCH_PROJECT_ID', 'project-test-b2b-xxxxx')
     vi.stubEnv('STYTCH_PROJECT_SECRET', 'secret-key-test-b2b-xxxxx')
+    vi.stubEnv('STYTCH_DOMAIN', 'https://login.example.com')
   })
   describe('getClient', () => {
     test('Instantiates B2B client from ctx for handlers to use', async () => {
@@ -497,7 +506,11 @@ describe('B2B', () => {
       app.get('/', (ctx) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const client = B2B.getClient(ctx) as any
-        return ctx.json({ project_id: client.project_id, secret: client.secret })
+        return ctx.json({
+          project_id: client.project_id,
+          secret: client.secret,
+          custom_base_url: client.custom_base_url,
+        })
       })
 
       const response = await app.request(req)
@@ -506,6 +519,7 @@ describe('B2B', () => {
       expect(await response.json()).toEqual({
         project_id: 'project-test-b2b-xxxxx',
         secret: 'secret-key-test-b2b-xxxxx',
+        custom_base_url: 'https://login.example.com',
       })
     })
   })

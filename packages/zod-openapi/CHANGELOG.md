@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 0.19.9
+
+### Patch Changes
+
+- [#1217](https://github.com/honojs/middleware/pull/1217) [`9f64138406a2c513462f2a4873b2ef8be36df9d8`](https://github.com/honojs/middleware/commit/9f64138406a2c513462f2a4873b2ef8be36df9d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 0.19.8
 
 ### Patch Changes
