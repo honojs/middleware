@@ -9,21 +9,41 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsup ./src/plugins/*.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
-    ".": {
+    "./sitemap": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/sitemap.d.ts",
+        "default": "./dist/sitemap.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/sitemap.d.cts",
+        "default": "./dist/sitemap.cjs"
+      }
+    },
+    "./robots-txt": {
+      "import": {
+        "types": "./dist/robots-txt.d.ts",
+        "default": "./dist/robots-txt.js"
+      },
+      "require": {
+        "types": "./dist/robots-txt.d.cts",
+        "default": "./dist/robots-txt.cjs"
+      }
+    },
+    "./rss": {
+      "import": {
+        "types": "./dist/rss.d.ts",
+        "default": "./dist/rss.js"
+      },
+      "require": {
+        "types": "./dist/rss.d.cts",
+        "default": "./dist/rss.cjs"
       }
     }
   },
@@ -39,10 +59,11 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.8.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "@types/node": "^24.0.10",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
