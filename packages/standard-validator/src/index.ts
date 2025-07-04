@@ -76,11 +76,12 @@ const sValidator = <
 
     if (result.issues) {
       let processedIssues = result.issues
-      
+
       // Strip sensitive data for arktype schemas
       if (schema['~standard'].vendor === 'arktype' && target in RESTRICTED_DATA_FIELDS) {
-        const restrictedFields = RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
-        
+        const restrictedFields =
+          RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
+
         processedIssues = result.issues.map((issue) => {
           if (
             issue &&
@@ -99,7 +100,7 @@ const sValidator = <
           return issue
         }) as readonly StandardSchemaV1.Issue[]
       }
-      
+
       return c.json({ data: value, error: processedIssues, success: false }, 400)
     }
 

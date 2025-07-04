@@ -359,10 +359,8 @@ describe('Standard Schema Validation', () => {
 
           const schema = schemas.headerSchema
 
-          app.get(
-            '/headers',
-            sValidator('header', schema),
-            (c) => c.json({ success: true, userAgent: c.req.header('User-Agent') })
+          app.get('/headers', sValidator('header', schema), (c) =>
+            c.json({ success: true, userAgent: c.req.header('User-Agent') })
           )
 
           const req = new Request('http://localhost/headers', {
