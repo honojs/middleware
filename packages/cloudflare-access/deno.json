@@ -5,6 +5,9 @@
   "compilerOptions": {
     "types": ["@cloudflare/workers-types"]
   },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3"
+  },
   "exports": {
     ".": "./src/index.ts"
   }
