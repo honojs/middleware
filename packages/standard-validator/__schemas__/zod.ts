@@ -28,7 +28,12 @@ const querySortSchema = z.object({
   order: z.enum(['asc', 'desc']),
 })
 
+const headerSchema = z.object({
+  'User-Agent': z.string(),
+})
+
 export {
+  headerSchema,
   idJSONSchema,
   personJSONSchema,
   postJSONSchema,
