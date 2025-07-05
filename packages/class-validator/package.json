@@ -1,6 +1,5 @@
 {
   "name": "@hono/class-validator",
-  "packageManager": "yarn@4.0.2",
   "description": "Validator middleware using class-validator",
   "version": "1.0.0",
   "type": "module",
@@ -28,7 +27,7 @@
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $(yarn version:get)"
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {

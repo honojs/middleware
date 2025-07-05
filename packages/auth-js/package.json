@@ -42,7 +42,7 @@
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $(yarn version:get)"
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
