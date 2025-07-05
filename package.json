@@ -45,7 +45,7 @@
     "@types/ws": "^8.18.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "eslint": "^9.23.0",
-    "hono": "^4.7.11",
+    "hono": "^4.8.4",
     "pkg-pr-new": "^0.0.51",
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
