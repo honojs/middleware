@@ -55,7 +55,7 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "valibot": "^0.36.0",
-    "vitest": "^3.2.4",
+    "vitest": "https://pkg.pr.new/vitest@761beee",
     "yup": "^1.4.0",
     "zod": "^3.23.8"
   }

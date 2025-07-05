@@ -44,6 +44,6 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "valibot": "^1.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "https://pkg.pr.new/vitest@761beee"
   }
 }
