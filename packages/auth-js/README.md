@@ -117,6 +117,81 @@ const useSession = () => {
 
 For more details on how to Popup Oauth Login see [example](https://github.com/divyam234/next-auth-hono-react)
 
+## Middleware
+
+You can separate this code into another file, say `auth.config.ts`:
+
+```ts
+function getAuthConfig(c: Context): AuthConfig {
+  return {
+    secret: c.env.AUTH_SECRET,
+    providers: [
+      GitHub({
+        clientId: c.env.GITHUB_ID,
+        clientSecret: c.env.GITHUB_SECRET,
+      }),
+    ],
+  }
+}
+```
+
+Use the same config in `middleware.ts`
+
+```ts
+import { getAuthConfig } from '@/auth.config'
+import { getAuthUser, initAuthConfig } from '@hono/auth-js'
+import { Hono } from 'hono'
+import { handle } from 'hono/vercel'
+import { NextResponse } from 'next/server'
+
+const app = new Hono()
+
+// shared config
+app.use('*', initAuthConfig(getAuthConfig))
+
+app.all('*', async (c) => {
+  // Retrieve the user & session
+  const authUser = await getAuthUser(c)
+
+  const pathname = new URL(c.req.url).pathname
+  const isAuthenticated = !!authUser?.session
+
+  // Specific to Auth.js (may vary if customized)
+  const isApiAuthRoute = pathname.startsWith('/api/auth')
+
+  const isPublicRoute = ['/'].includes(pathname)
+  const isAuthRoute = ['/sign-in'].includes(pathname)
+
+  if (isApiAuthRoute) return NextResponse.next()
+
+  if (isAuthRoute) {
+    if (isAuthenticated) {
+      return Response.redirect(new URL('/protected', c.req.url))
+    }
+    return NextResponse.next()
+  }
+
+  if (!isAuthenticated && !isPublicRoute) {
+    return Response.redirect(new URL('/sign-in', c.req.url))
+  }
+
+  return NextResponse.next()
+})
+
+export default handle(app)
+
+export const config = {
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+}
+```
+
+Middleware setup repo: https://github.com/mohit4bug/nextjs-hono-authjs
+
 ## Author
 
 Divyam <https://github.com/divyam234>
+
+## Contributors
+
+-   Mohit <https://github.com/mohit4bug>
+    -   Updated the README.md to include additional details about using middleware.
