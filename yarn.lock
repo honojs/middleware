@@ -2051,6 +2051,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     ajv: "npm:^8.12.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2067,6 +2068,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     arktype: "npm:^2.0.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2084,6 +2086,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@auth/core": "npm:^0.35.3"
     "@types/react": "npm:^18"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     react: "npm:^18.2.0"
     tsup: "npm:^8.4.0"
@@ -2103,6 +2106,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/bun": "npm:^1.2.12"
     "@types/node": "npm:^22.15.15"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2117,6 +2121,7 @@ __metadata:
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2132,6 +2137,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     casbin: "npm:^5.30.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2149,6 +2155,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.4.0"
@@ -2167,6 +2174,7 @@ __metadata:
     "@clerk/backend": "npm:^2.2.0"
     "@clerk/types": "npm:^4.61.0"
     "@types/react": "npm:^18"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     react: "npm:^18.2.0"
     tsup: "npm:^8.4.0"
@@ -2182,6 +2190,7 @@ __metadata:
   resolution: "@hono/cloudflare-access@workspace:packages/cloudflare-access"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2200,6 +2209,7 @@ __metadata:
     "@conform-to/valibot": "npm:^1.0.0"
     "@conform-to/yup": "npm:^1.1.5"
     "@conform-to/zod": "npm:^1.1.5"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2219,6 +2229,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     effect: "npm:3.10.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2236,6 +2247,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     esbuild: "npm:^0.19.9"
     esbuild-wasm: "npm:^0.19.5"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2254,6 +2266,7 @@ __metadata:
     eslint-import-resolver-typescript: "npm:^4.2.2"
     eslint-plugin-import-x: "npm:^4.1.1"
     eslint-plugin-n: "npm:^17.10.2"
+    hono: "npm:^4.8.4"
     typescript-eslint: "npm:^8.27.0"
   peerDependencies:
     eslint: ^9.0.0
@@ -2266,6 +2279,7 @@ __metadata:
   resolution: "@hono/event-emitter@workspace:packages/event-emitter"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2282,6 +2296,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     firebase-auth-cloudflare-workers: "npm:^2.0.6"
     firebase-tools: "npm:^13.29.1"
+    hono: "npm:^4.8.4"
     miniflare: "npm:^3.20240208.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2298,6 +2313,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     graphql: "npm:^16.5.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2312,6 +2328,7 @@ __metadata:
   resolution: "@hono/hello@workspace:packages/hello"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2327,6 +2344,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@modelcontextprotocol/sdk": "npm:^1.12.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2344,6 +2362,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@medley/router": "npm:^0.2.1"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2368,6 +2387,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@hono/node-server": "npm:^1.11.1"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2384,6 +2404,7 @@ __metadata:
   resolution: "@hono/oauth-providers@workspace:packages/oauth-providers"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     msw: "npm:^2.0.11"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2400,6 +2421,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/jsonwebtoken": "npm:^9.0.5"
+    hono: "npm:^4.8.4"
     jsonwebtoken: "npm:^9.0.2"
     oauth4webapi: "npm:^2.6.0"
     publint: "npm:^0.3.9"
@@ -2420,6 +2442,7 @@ __metadata:
     "@opentelemetry/sdk-trace-base": "npm:^1.30.0"
     "@opentelemetry/sdk-trace-node": "npm:^1.30.0"
     "@opentelemetry/semantic-conventions": "npm:^1.28.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2434,6 +2457,7 @@ __metadata:
   resolution: "@hono/prometheus@workspace:packages/prometheus"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     prom-client: "npm:^15.0.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2452,6 +2476,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@builder.io/qwik": "npm:^1.2.0"
     "@builder.io/qwik-city": "npm:^1.2.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2467,6 +2492,7 @@ __metadata:
   resolution: "@hono/react-compat@workspace:packages/react-compat"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2483,6 +2509,7 @@ __metadata:
     "@cloudflare/vitest-pool-workers": "npm:^0.8.38"
     "@types/react": "npm:^19.1.0"
     "@types/react-dom": "npm:^19.1.2"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
@@ -2501,6 +2528,7 @@ __metadata:
   resolution: "@hono/sentry@workspace:packages/sentry"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     toucan-js: "npm:^4.0.0"
     tsup: "npm:^8.4.0"
@@ -2517,6 +2545,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@cloudflare/vitest-pool-workers": "npm:^0.7.8"
+    hono: "npm:^4.8.4"
     jose: "npm:^6.0.11"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2535,6 +2564,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@standard-schema/spec": "npm:1.0.0"
     arktype: "npm:^2.0.0-rc.26"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2552,6 +2582,7 @@ __metadata:
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     stytch: "npm:^12.19.0"
     tsup: "npm:^8.4.0"
@@ -2568,6 +2599,7 @@ __metadata:
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2583,6 +2615,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/swagger-ui-dist": "npm:^3.30.5"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2598,6 +2631,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@trpc/server": "npm:^11.0.0"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2614,6 +2648,7 @@ __metadata:
   resolution: "@hono/tsyringe@workspace:packages/tsyringe"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.4.0"
@@ -2632,6 +2667,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@sinclair/typebox": "npm:^0.31.15"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2648,6 +2684,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@ryoppippi/unplugin-typia": "npm:^2.1.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2665,6 +2702,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@types/node": "npm:^22.15.24"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2679,6 +2717,7 @@ __metadata:
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -2697,6 +2736,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@asteasolutions/zod-to-openapi": "npm:^7.3.0"
     "@hono/zod-validator": "workspace:^"
+    hono: "npm:^4.8.4"
     openapi3-ts: "npm:^4.5.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2715,6 +2755,7 @@ __metadata:
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
+    hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
