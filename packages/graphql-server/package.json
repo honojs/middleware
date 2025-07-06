@@ -37,7 +37,7 @@
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $(yarn version:get)"
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "peerDependencies": {
     "hono": ">=3.0.0"
