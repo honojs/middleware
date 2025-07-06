@@ -3,7 +3,9 @@
   "version": "0.3.1",
   "license": "MIT",
   "compilerOptions": {
-    "types": ["@cloudflare/workers-types"]
+    "types": [
+      "@cloudflare/workers-types"
+    ]
   },
   "imports": {
     "hono": "jsr:@hono/hono@^4.8.3"
