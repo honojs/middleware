@@ -12,8 +12,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write # Used by changests to create releases
       id-token: write # The OIDC ID token is used for authentication with JSR.
+      pull-requests: write # Used by changesets to create a pull request for the release
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
