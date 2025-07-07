@@ -4,7 +4,7 @@ import { defineProject } from 'vitest/config'
 export default defineProject({
   plugins: [
     UnpluginTypia({
-      tsconfig: './tsconfig.json',
+      tsconfig: './tsconfig.build.json',
     }),
   ],
   test: {
