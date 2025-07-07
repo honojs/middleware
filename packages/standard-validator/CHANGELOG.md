@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1291](https://github.com/honojs/middleware/pull/1291) [`a22fbe78e5d3e8aa3790b39bbb590649cc34df2d`](https://github.com/honojs/middleware/commit/a22fbe78e5d3e8aa3790b39bbb590649cc34df2d) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Import `jsr:@standard-schema/spec`
+
 ## 0.1.2
 
 ### Patch Changes
