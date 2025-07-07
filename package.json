@@ -16,7 +16,7 @@
     "version": "yarn version:npm && yarn version:jsr",
     "version:npm": "changeset version",
     "version:jsr": "yarn workspaces foreach --all --no-private --parallel run version:jsr",
-    "version:set": "tmp=$(mktemp) && jq --arg version $0 '.version = $version' $INIT_CWD/deno.json > $tmp && mv $tmp $INIT_CWD/deno.json",
+    "version:set": "tmp=$(mktemp) && jq --arg version $0 '.version = $version' $INIT_CWD/deno.json > $tmp && mv $tmp $INIT_CWD/deno.json && prettier --write $INIT_CWD/deno.json",
     "typecheck": "yarn tsc --build",
     "typecheck:clean": "yarn tsc --build --clean",
     "typecheck:watch": "yarn tsc --build --watch",
