@@ -1,5 +1,11 @@
 # @hono/valibot-validator
 
+## 0.5.3
+
+### Patch Changes
+
+- [#1287](https://github.com/honojs/middleware/pull/1287) [`a843d1c95f35ac965f6849ff82d2c2a81eb95ce8`](https://github.com/honojs/middleware/commit/a843d1c95f35ac965f6849ff82d2c2a81eb95ce8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Import `jsr:@valibot/valibot`
+
 ## 0.5.2
 
 ### Patch Changes

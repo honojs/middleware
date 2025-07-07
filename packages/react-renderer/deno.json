@@ -9,13 +9,7 @@
     "hono": "jsr:@hono/hono@^4.8.3"
   },
   "publish": {
-    "include": [
-      "deno.json",
-      "README.md",
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.test.ts"
-    ]
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
   }
 }
