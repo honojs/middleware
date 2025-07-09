@@ -9,7 +9,6 @@ export default defineConfig({
         autoUpdate: true,
       },
     },
-    dir: 'src',
-    projects: ['packages/*', '!packages/bun-transpiler'],
+    projects: ['packages/*/vitest.config.ts'],
   },
 })
