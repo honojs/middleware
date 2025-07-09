@@ -1,5 +1,11 @@
 # @hono/clerk-auth
 
+## 3.0.2
+
+### Patch Changes
+
+- [#1295](https://github.com/honojs/middleware/pull/1295) [`0f472345c737ed054bf26c2e0ab13d71dc0fcbcd`](https://github.com/honojs/middleware/commit/0f472345c737ed054bf26c2e0ab13d71dc0fcbcd) Thanks [@brkalow](https://github.com/brkalow)! - Upgrade clerk dependencies.
+
 ## 3.0.1
 
 ### Patch Changes
