@@ -9,5 +9,6 @@ export default defineProject({
   ],
   test: {
     globals: true,
+    include: ['src/**/*.test.ts'],
   },
 })

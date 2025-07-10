@@ -3,6 +3,7 @@ import { defineWorkersProject } from '@cloudflare/vitest-pool-workers/config'
 export default defineWorkersProject({
   test: {
     globals: true,
+    include: ['src/**/*.test.ts?(x)'],
     poolOptions: {
       workers: {
         miniflare: {

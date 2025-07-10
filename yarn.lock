@@ -2267,7 +2267,6 @@ __metadata:
     eslint-import-resolver-typescript: "npm:^4.2.2"
     eslint-plugin-import-x: "npm:^4.1.1"
     eslint-plugin-n: "npm:^17.10.2"
-    hono: "npm:^4.8.4"
     typescript-eslint: "npm:^8.27.0"
   peerDependencies:
     eslint: ^9.0.0
