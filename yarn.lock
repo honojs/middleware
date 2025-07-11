@@ -2760,10 +2760,10 @@ __metadata:
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:~3.25.6"
+    zod: "npm:^4.0.5"
   peerDependencies:
     hono: ">=3.9.0"
-    zod: ^3.25.0
+    zod: ^4.0.5
   languageName: unknown
   linkType: soft
 
@@ -16865,10 +16865,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:~3.25.6":
-  version: 3.25.36
-  resolution: "zod@npm:3.25.36"
-  checksum: 10c0/9ad8ca759d1a5d19c86d6e49a1bda817b3c0566ea0a8726d45994b9fcaac8d569db45a65218a7b4067ca18b07c5fc636a587a94cd05f76793174ace8b81742e3
+"zod@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "zod@npm:4.0.5"
+  checksum: 10c0/59449d731ca63849b6bcb14300aa6e2f042d440b3ed294b45c248519aec78780f85a5d1939a62c2ce82e9dc60afca77c8005e0a98d7517b0c2586d6c76940424
   languageName: node
   linkType: hard
 
