@@ -1,0 +1,18 @@
+{
+  "name": "@hono/session",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cookies": "./src/cookies.ts",
+    "./testing": "./src/helper/testing/index.ts"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3",
+    "jose": "jsr:@panva/jose@^6.0.11"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts"]
+  }
+}

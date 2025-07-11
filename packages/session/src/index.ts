@@ -37,9 +37,9 @@ export interface SessionOptions<Data> extends SessionEvents<Data> {
    */
   secret?: string | EncryptionKey
 
-  deleteCookie?: typeof cookie.deleteCookie
-  getCookie?: typeof cookie.getCookie
-  setCookie?: typeof cookie.setCookie
+  deleteCookie?: (c: Context, name: string, opt?: CookieOptions) => void
+  getCookie?: (c: Context, name: string) => string | undefined
+  setCookie?: (c: Context, name: string, value: string, opt?: CookieOptions) => void
 }
 
 export type SessionEnv<Data = SessionData> = Env & {
