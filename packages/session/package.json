@@ -1,6 +1,6 @@
 {
   "name": "@hono/session",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Session middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
