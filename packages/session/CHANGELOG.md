@@ -1,5 +1,11 @@
 # @hono/session
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1272](https://github.com/honojs/middleware/pull/1272) [`68cbb31af43fd5916173f9f6b07c8cedb3dbe706`](https://github.com/honojs/middleware/commit/68cbb31af43fd5916173f9f6b07c8cedb3dbe706) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: enable accessing sid via `c.var.session.id`
+
 ## 0.1.1
 
 ### Patch Changes
