@@ -7,7 +7,7 @@ The validator middleware using [Zod](https://zod.dev) for [Hono](https://honojs.
 ## Usage
 
 ```ts
-import { z } from 'zod'
+import * as z from 'zod'
 import { zValidator } from '@hono/zod-validator'
 
 const schema = z.object({
