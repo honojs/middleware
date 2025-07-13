@@ -27,6 +27,11 @@ export interface Session<Data> {
   readonly data: Data | null
 
   /**
+   * Current session ID.
+   */
+  readonly id: string | null
+
+  /**
    * Delete the current session, removing the session cookie and data from storage.
    */
   delete: () => void
@@ -121,6 +126,17 @@ export function getSession<Data extends SessionData>({
       }
 
       return session.data ?? null
+    },
+    get id() {
+      if (!session) {
+        throw new Error('Session not initialised. Call get() or update() first.')
+      }
+
+      if (session.action === 'destroy') {
+        throw new Error('Session has been destroyed.')
+      }
+
+      return session.payload?.sid ?? null
     },
     delete() {
       if (session) {
