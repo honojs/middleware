@@ -29,7 +29,7 @@ const querySortSchema = z.object({
 })
 
 const headerSchema = z.object({
-  'User-Agent': z.string(),
+  'user-agent': z.string(),
 })
 
 export {

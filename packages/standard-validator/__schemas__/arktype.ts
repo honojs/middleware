@@ -27,7 +27,7 @@ const querySortSchema = type({
 })
 
 const headerSchema = type({
-  'User-Agent': 'string',
+  'user-agent': 'string',
 })
 
 export {

@@ -365,21 +365,18 @@ describe('Standard Schema Validation', () => {
 
           const req = new Request('http://localhost/headers', {
             headers: {
-              'User-Agent': 'invalid',
+              // Not passing the User-Agent header to trigger the validation error
               Cookie: 'SECRET=123',
             },
           })
 
           const res = await app.request(req)
-          expect(res).not.toBeNull()
           expect(res.status).toBe(400)
-          const data = (await res.json()) as { success: false; error: readonly any[] }
+          const data = (await res.json()) as { success: false; error: unknown[] }
           expect(data.success).toBe(false)
           expect(data.error).toBeDefined()
-          // For arktype, ensure cookies are not present in error data
           if (lib === 'arktype') {
-            console.log(data.error)
-            expect(data.error.some((err: any) => err.data && err.data.cookie)).toBe(false)
+            expect((data.error as { data: Record<string,unknown>}[]).some((error) => error.data && error.data.cookie)).toBe(false)
           }
         })
       })
