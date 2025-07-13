@@ -77,7 +77,7 @@ const sValidator = <
     if (result.issues) {
       let processedIssues = result.issues
 
-      // Strip sensitive data for arktype schemas
+      // Strip sensitive data
       if (schema['~standard'].vendor === 'arktype' && target in RESTRICTED_DATA_FIELDS) {
         const restrictedFields =
           RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
@@ -96,6 +96,30 @@ const sValidator = <
               delete dataCopy[field]
             }
             return { ...issue, data: dataCopy }
+          }
+          return issue
+        }) as readonly StandardSchemaV1.Issue[]
+      }
+
+      if (schema['~standard'].vendor === 'valibot' && target in RESTRICTED_DATA_FIELDS) {
+        const restrictedFields =
+          RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
+
+        processedIssues = result.issues.map((issue) => {
+          if (
+            issue &&
+            typeof issue === 'object' &&
+            'path' in issue &&
+            Array.isArray(issue.path)
+          ) {
+            for (const path of issue.path) {
+              if (typeof path === 'object' && 'input' in path && typeof path.input === 'object' && path.input !== null && !Array.isArray(path.input)) {
+                for (const field of restrictedFields) {
+                  delete path.input[field]
+                }
+              }
+            }
+           
           }
           return issue
         }) as readonly StandardSchemaV1.Issue[]

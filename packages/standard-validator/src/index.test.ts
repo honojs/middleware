@@ -375,8 +375,13 @@ describe('Standard Schema Validation', () => {
           const data = (await res.json()) as { success: false; error: unknown[] }
           expect(data.success).toBe(false)
           expect(data.error).toBeDefined()
+          
           if (lib === 'arktype') {
             expect((data.error as { data: Record<string,unknown>}[]).some((error) => error.data && error.data.cookie)).toBe(false)
+          }
+
+          if (lib === 'valibot') {
+            expect((data.error as { path: {input: Record<string, unknown>}[] }[]).some(error => error.path.some(path => path.input.cookie))).toBe(false)
           }
         })
       })
