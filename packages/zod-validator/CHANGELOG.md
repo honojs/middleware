@@ -1,5 +1,13 @@
 # @hono/zod-validator
 
+## 0.7.1
+
+### Patch Changes
+
+- [#1302](https://github.com/honojs/middleware/pull/1302) [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c) Thanks [@kiki-kanri](https://github.com/kiki-kanri)! - correctly set the zod version to follow the official website doc
+
+- [#1302](https://github.com/honojs/middleware/pull/1302) [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c) Thanks [@kiki-kanri](https://github.com/kiki-kanri)! - upgrade zod to v4 and import style to be more tree-shakeable in README.md
+
 ## 0.7.0
 
 ### Minor Changes
