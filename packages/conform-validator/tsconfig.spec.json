@@ -1,13 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/conform-validator",
+    "outDir": "../../dist/packages/conform-validator",
     "types": ["vitest/globals"]
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

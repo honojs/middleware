@@ -7,14 +7,16 @@
     "declarationMap": true,
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "emitDeclarationOnly": true,
     "emitDecoratorMetadata": true,
+    "emitDeclarationOnly": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
     "strict": true,
     "skipLibCheck": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "types": []
-  }
+  },
+  "include": ["${configDir}/vitest.config.ts", "${configDir}/package.json", "${configDir}/src"]
 }

@@ -41,11 +41,22 @@ jobs:
         with:
           node-version: 20.x
       - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
-      - run: yarn workspace @hono/${{ matrix.package }} publint
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run publint
       - run: yarn workspace @hono/${{ matrix.package }} typecheck
+        if: ${{ matrix.package != 'eslint-config' }}
       - run: yarn eslint packages/${{ matrix.package }}
       - run: yarn prettier --check . !packages packages/${{ matrix.package }}
+
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version: v2.x
+      - run: deno install --no-lock
+      - run: deno publish --dry-run
 
   test:
     runs-on: ubuntu-latest
@@ -64,9 +75,9 @@ jobs:
       - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
-        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
       - uses: codecov/codecov-action@v5
-        if: ${{ matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true
           directory: ./coverage

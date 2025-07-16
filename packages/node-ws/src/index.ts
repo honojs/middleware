@@ -3,8 +3,7 @@ import { defineWebSocketHelper } from 'hono/ws'
 import type { UpgradeWebSocket, WSContext, WSEvents } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
-import type { IncomingMessage } from 'http'
-import type { Server } from 'node:http'
+import type { IncomingMessage, Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Duplex } from 'node:stream'
 import { CloseEvent } from './events'
@@ -17,6 +16,7 @@ export interface NodeWebSocket {
     }
   >
   injectWebSocket(server: Server | Http2Server | Http2SecureServer): void
+  wss: WebSocketServer
 }
 export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,6 +56,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   }
 
   return {
+    wss,
     injectWebSocket(server) {
       server.on('upgrade', async (request, socket: Duplex, head) => {
         const url = new URL(request.url ?? '/', init.baseUrl ?? 'http://localhost')

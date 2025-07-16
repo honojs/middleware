@@ -1,6 +1,6 @@
 {
   "name": "@hono/node-ws",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "WebSocket helper for Node.js",
   "type": "module",
   "main": "dist/index.js",
@@ -14,7 +14,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "exports": {
     ".": {
@@ -42,10 +43,11 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@hono/node-server": "^1.11.1",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "ws": "^8.17.0"

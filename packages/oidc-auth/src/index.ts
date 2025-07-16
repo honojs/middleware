@@ -59,6 +59,7 @@ export type OidcAuthEnv = {
   OIDC_COOKIE_NAME?: string
   OIDC_COOKIE_DOMAIN?: string
   OIDC_AUDIENCE?: string
+  OIDC_AUTH_EXTERNAL_URL?: string
 }
 
 /**
@@ -95,6 +96,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
     OIDC_COOKIE_NAME: config?.OIDC_COOKIE_NAME ?? ev.OIDC_COOKIE_NAME,
     OIDC_COOKIE_DOMAIN: config?.OIDC_COOKIE_DOMAIN ?? ev.OIDC_COOKIE_DOMAIN,
     OIDC_AUDIENCE: config?.OIDC_AUDIENCE ?? ev.OIDC_AUDIENCE,
+    OIDC_AUTH_EXTERNAL_URL: config?.OIDC_AUTH_EXTERNAL_URL ?? ev.OIDC_AUTH_EXTERNAL_URL,
   }
   if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
     throw new HTTPException(500, { message: 'Session secret is not provided' })
@@ -117,9 +119,18 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   if (!oidcAuthEnv.OIDC_REDIRECT_URI.startsWith('/')) {
     try {
       new URL(oidcAuthEnv.OIDC_REDIRECT_URI)
-    } catch (e) {
+    } catch {
       throw new HTTPException(500, {
         message: 'The OIDC redirect URI is invalid. It must be a full URL or an absolute path',
+      })
+    }
+  }
+  if (oidcAuthEnv.OIDC_AUTH_EXTERNAL_URL) {
+    try {
+      new URL(oidcAuthEnv.OIDC_AUTH_EXTERNAL_URL)
+    } catch {
+      throw new HTTPException(500, {
+        message: 'The OIDC external URL is invalid. It must be a full URL.',
       })
     }
   }
@@ -191,7 +202,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     }
     try {
       auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
-    } catch (e) {
+    } catch {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
     }
@@ -462,10 +473,22 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
         setCookie(c, 'state', state, cookieOptions)
         setCookie(c, 'nonce', nonce, cookieOptions)
         setCookie(c, 'code_verifier', code_verifier, cookieOptions)
-        setCookie(c, 'continue', c.req.url, cookieOptions)
+        const continueUrl = env.OIDC_AUTH_EXTERNAL_URL
+          ? (() => {
+              const externalUrl = new URL(env.OIDC_AUTH_EXTERNAL_URL)
+              const originalUrl = new URL(c.req.url)
+              externalUrl.pathname = `${externalUrl.pathname.replace(/\/$/, '')}${
+                originalUrl.pathname
+              }`
+              externalUrl.search = originalUrl.search
+              externalUrl.hash = originalUrl.hash
+              return externalUrl.toString()
+            })()
+          : c.req.url
+        setCookie(c, 'continue', continueUrl, cookieOptions)
         return c.redirect(url)
       }
-    } catch (e) {
+    } catch {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       throw new HTTPException(500, { message: 'Invalid session' })
     }

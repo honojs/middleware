@@ -1,14 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/packages/auth-js",
-    "noEmit": true,
+    "outDir": "../../dist/packages/auth-js",
     "jsx": "react"
   },
-  "include": ["**/*.test.ts", "vitest.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

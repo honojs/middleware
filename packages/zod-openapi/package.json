@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "0.19.8",
+  "version": "0.19.10",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "type": "module",
   "module": "dist/index.js",
@@ -13,7 +13,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "exports": {
     ".": {
@@ -44,16 +45,18 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8",
+    "vitest": "^3.2.4",
     "yaml": "^2.4.3",
     "zod": "^3.25.0"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.0.0-beta.3",
-    "@hono/zod-validator": "workspace:^"
+    "@hono/zod-validator": "workspace:^",
+    "openapi3-ts": "^4.5.0"
   },
   "engines": {
     "node": ">=16.0.0"

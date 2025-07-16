@@ -12,7 +12,7 @@
     "build": "tsup ./src/index.ts",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
-    "typecheck": "tsc -b tsconfig.json"
+    "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
     ".": {
@@ -46,6 +46,7 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@builder.io/qwik": "^1.2.0",
     "@builder.io/qwik-city": "^1.2.0",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2"

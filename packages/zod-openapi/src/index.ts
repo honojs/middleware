@@ -37,8 +37,10 @@ import type {
 } from 'hono/utils/http-status'
 import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
-import type { ZodError } from 'zod/v4'
+import type { OpenAPIObject } from 'openapi3-ts/oas30'
+import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import { ZodType, z } from 'zod/v4'
+import type { ZodError } from 'zod/v4'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -557,18 +559,14 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  getOpenAPIDocument = (config: OpenAPIObjectConfig): OpenAPIObject => {
     const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
+  getOpenAPI31Document = (config: OpenAPIObjectConfig): OpenAPIV31bject => {
     const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
     const document = generator.generateDocument(config)
     // @ts-expect-error the _basePath is a private property
@@ -636,8 +634,8 @@ export class OpenAPIHono<
         case 'component':
           return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
 
-        case 'route':
-          return this.openAPIRegistry.registerPath({
+        case 'route': {
+          this.openAPIRegistry.registerPath({
             ...def.route,
             path: mergePath(
               pathForOpenAPI,
@@ -646,9 +644,11 @@ export class OpenAPIHono<
               def.route.path
             ),
           })
+          return
+        }
 
-        case 'webhook':
-          return this.openAPIRegistry.registerWebhook({
+        case 'webhook': {
+          this.openAPIRegistry.registerWebhook({
             ...def.webhook,
             path: mergePath(
               pathForOpenAPI,
@@ -657,6 +657,8 @@ export class OpenAPIHono<
               def.webhook.path
             ),
           })
+          return
+        }
 
         case 'schema':
           return this.openAPIRegistry.register(
@@ -691,7 +693,9 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => {
+): R & {
+  getRoutingPath(): RoutingPath<R['path']>
+} => {
   const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {

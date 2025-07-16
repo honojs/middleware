@@ -1,6 +1,5 @@
 {
   "name": "@hono/class-validator",
-  "packageManager": "yarn@4.0.2",
   "description": "Validator middleware using class-validator",
   "version": "1.0.0",
   "type": "module",
@@ -27,7 +26,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
@@ -45,10 +45,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

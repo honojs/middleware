@@ -25,7 +25,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
@@ -45,9 +46,10 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@sinclair/typebox": "^0.31.15",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   }
 }

@@ -46,15 +46,16 @@
     "firebase-auth-cloudflare-workers": "^2.0.6"
   },
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "firebase-tools": "^13.29.1",
+    "hono": "^4.8.4",
     "miniflare": "^3.20240208.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   }
 }

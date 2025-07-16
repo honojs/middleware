@@ -1,7 +1,6 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "tsBuildInfoFile": "${configDir}/dist/tsconfig.tsbuildinfo"
   },
   "files": [],
   "references": [
@@ -31,6 +30,7 @@
     { "path": "packages/react-compat" },
     { "path": "packages/react-renderer" },
     { "path": "packages/sentry" },
+    { "path": "packages/session" },
     { "path": "packages/standard-validator" },
     { "path": "packages/swagger-editor" },
     { "path": "packages/swagger-ui" },
@@ -38,6 +38,7 @@
     { "path": "packages/tsyringe" },
     { "path": "packages/typebox-validator" },
     { "path": "packages/typia-validator" },
+    { "path": "packages/ua-blocker" },
     { "path": "packages/valibot-validator" },
     { "path": "packages/zod-openapi" },
     { "path": "packages/zod-validator" },

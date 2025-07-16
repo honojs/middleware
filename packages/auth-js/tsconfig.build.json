@@ -1,14 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
-    "emitDeclarationOnly": false,
-    "isolatedDeclarations": true,
     "jsx": "react"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/*.test.ts"],
   "references": []
 }

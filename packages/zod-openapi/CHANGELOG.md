@@ -1,5 +1,18 @@
 # @hono/zod-openapi
 
+## 0.19.10
+
+### Patch Changes
+
+- Updated dependencies [[`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c), [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c)]:
+  - @hono/zod-validator@0.7.1
+
+## 0.19.9
+
+### Patch Changes
+
+- [#1217](https://github.com/honojs/middleware/pull/1217) [`9f64138406a2c513462f2a4873b2ef8be36df9d8`](https://github.com/honojs/middleware/commit/9f64138406a2c513462f2a4873b2ef8be36df9d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
 ## 0.19.8
 
 ### Patch Changes

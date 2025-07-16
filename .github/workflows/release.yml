@@ -11,32 +11,36 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Used by changests to create releases
+      id-token: write # The OIDC ID token is used for authentication with JSR.
+      pull-requests: write # Used by changesets to create a pull request for the release
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 18.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
 
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          # TODO: Update to v2.x when https://github.com/jsr-io/jsr-npm/issues/129 is resolved
+          deno-version: v2.3.7
       - name: Install Dependencies
         run: yarn
 
       - name: Build
         run: yarn build
 
-      - name: Set NPM Auth Token
-        run: yarn config set npmAuthToken ${NPM_TOKEN}
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
           publish: yarn run publish
-          version: yarn changeset version
+          version: yarn run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

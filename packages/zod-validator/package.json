@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-validator",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Validator middleware using Zod",
   "type": "module",
   "main": "dist/index.js",
@@ -26,7 +26,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
@@ -41,14 +42,15 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "zod": "^3.25.0"
+    "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8",
-    "zod": "~3.25.6"
+    "vitest": "^3.2.4",
+    "zod": "^4.0.5"
   }
 }

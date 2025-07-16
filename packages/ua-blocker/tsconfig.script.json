@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "dist/tsconfig.script.tsbuildinfo",
+    "allowImportingTsExtensions": true,
+    "isolatedDeclarations": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["script", "src", "src/data/robots.json"],
+  "exclude": ["node_modules", "src/**/*.test.ts"],
+  "references": []
+}

@@ -1,14 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
-    "emitDeclarationOnly": false,
-    "isolatedDeclarations": true,
     "types": ["node", "bun"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["**/*.test.ts"],
   "references": []
 }

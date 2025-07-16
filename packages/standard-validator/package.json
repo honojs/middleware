@@ -1,6 +1,6 @@
 {
   "name": "@hono/standard-validator",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Validator middleware using Standard Schema",
   "type": "module",
   "main": "dist/index.cjs",
@@ -26,7 +26,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
@@ -47,11 +48,12 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@standard-schema/spec": "1.0.0",
     "arktype": "^2.0.0-rc.26",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "valibot": "^1.0.0-beta.9",
-    "vitest": "^3.0.8",
+    "vitest": "^3.2.4",
     "zod": "^3.24.0"
   }
 }

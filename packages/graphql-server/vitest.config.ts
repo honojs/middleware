@@ -1,9 +1,9 @@
-import { defaultExclude, defineProject } from 'vitest/config'
+import { defineProject } from 'vitest/config'
 
 export default defineProject({
   test: {
-    exclude: [...defaultExclude, 'bun_test'],
     globals: true,
+    include: ['src/**/*.test.ts'],
     restoreMocks: true,
     unstubEnvs: true,
   },

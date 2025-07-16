@@ -41,7 +41,8 @@
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
@@ -55,19 +56,20 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@auth/core": "0.*",
-    "hono": ">=3.*",
+    "@auth/core": ">=0.35.0",
+    "hono": ">=3.0.0",
     "react": "^18 || ^19 || ^19.0.0-rc"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@auth/core": "^0.35.3",
     "@types/react": "^18",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "react": "^18.2.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18.4.0"

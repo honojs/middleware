@@ -39,15 +39,16 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@types/bun": "^1.2.12",
     "@types/node": "^22.15.15",
+    "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.4"
   }
 }

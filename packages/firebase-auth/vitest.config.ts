@@ -23,6 +23,7 @@ const firebasePlugin = {
 export default defineProject({
   test: {
     globals: true,
+    include: ['src/**/*.test.ts'],
   },
 
   plugins: [firebasePlugin],
