@@ -99,14 +99,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asteasolutions/zod-to-openapi@npm:^7.3.0":
-  version: 7.3.0
-  resolution: "@asteasolutions/zod-to-openapi@npm:7.3.0"
+"@asteasolutions/zod-to-openapi@npm:^8":
+  version: 8.0.0
+  resolution: "@asteasolutions/zod-to-openapi@npm:8.0.0"
   dependencies:
     openapi3-ts: "npm:^4.1.2"
   peerDependencies:
-    zod: ^3.20.2
-  checksum: 10c0/f0a68a89929cdeaa3e21d2027489689f982824d676a9332c680e119f60881dd39b571324b24ad4837fda49bf6fe7c3e2af2199268b281bf1aec923d7a7cbfc40
+    zod: ^4.0.0
+  checksum: 10c0/b522d074832fb137dca724c8bd4bb134c7b4d4cad12c247ed3c864f993923b3475fc06580e6e1cbc4fd8641cd361679bbe1dd87c9bb42e142bc056d96d59fbc8
   languageName: node
   linkType: hard
 
@@ -2734,7 +2734,7 @@ __metadata:
   resolution: "@hono/zod-openapi@workspace:packages/zod-openapi"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@asteasolutions/zod-to-openapi": "npm:^7.3.0"
+    "@asteasolutions/zod-to-openapi": "npm:^8"
     "@hono/zod-validator": "workspace:^"
     hono: "npm:^4.8.4"
     openapi3-ts: "npm:^4.5.0"
@@ -2743,10 +2743,10 @@ __metadata:
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
     yaml: "npm:^2.4.3"
-    zod: "npm:^3.22.1"
+    zod: "npm:^4.0.5"
   peerDependencies:
     hono: ">=4.3.6"
-    zod: ">=3.0.0"
+    zod: ^3.25.0 || ^4.0.0
   languageName: unknown
   linkType: soft
 
@@ -16830,7 +16830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.1, zod@npm:^3.22.3":
+"zod@npm:^3.20.2, zod@npm:^3.22.3":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: 10c0/c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565

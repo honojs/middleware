@@ -232,7 +232,7 @@ describe('coerce', () => {
       }),
       (c) => {
         const { id } = c.req.valid('param')
-        assertType<number>(id)
+        assertType<unknown>(id)
         return c.json({ id })
       }
     )
@@ -240,7 +240,7 @@ describe('coerce', () => {
     type Actual = ExtractSchema<typeof routes>['/api/users/:id']['$get']['input']
     type Expected = {
       param: {
-        id: number
+        id: unknown
       }
     }
     type verify = Expect<Equal<Expected, Actual>>
