@@ -11,6 +11,7 @@ import {
   OpenApiGeneratorV3,
   OpenApiGeneratorV31,
   extendZodWithOpenApi,
+  getOpenApiMetadata,
 } from '@asteasolutions/zod-to-openapi'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
@@ -38,8 +39,19 @@ import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import type { ZodError, ZodSchema } from 'zod'
-import { ZodType, z } from 'zod'
+import * as z3 from 'zod/v3'
+import * as z4 from 'zod/v4/core'
+import * as z from 'zod/v4'
+
+type ZodType = z3.ZodTypeAny | z4.$ZodType
+type ZodError<T extends ZodType> = T extends z4.$ZodType ? z4.$ZodError : z3.ZodError
+type ZodInput<T> = T extends z3.ZodType ? z3.input<T> : T extends z4.$ZodType ? z4.input<T> : never
+type ZodOutput<T> = T extends z3.ZodType
+  ? z3.output<T>
+  : T extends z4.$ZodType
+    ? z4.output<T>
+    : never
+type ZodInfer<T> = T extends z3.ZodType ? z3.infer<T> : T extends z4.$ZodType ? z4.infer<T> : never
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -110,13 +122,13 @@ type InputTypeBase<
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
             ? {
-                [K2 in keyof z.input<RequestPart<R, Part>>]?: z.input<RequestPart<R, Part>>[K2]
+                [K2 in keyof ZodInput<RequestPart<R, Part>>]?: ZodInput<RequestPart<R, Part>>[K2]
               }
             : {
-                [K2 in keyof z.input<RequestPart<R, Part>>]: z.input<RequestPart<R, Part>>[K2]
+                [K2 in keyof ZodInput<RequestPart<R, Part>>]: ZodInput<RequestPart<R, Part>>[K2]
               }
         }
-        out: { [K in Type]: z.output<RequestPart<R, Part>> }
+        out: { [K in Type]: ZodOutput<RequestPart<R, Part>> }
       }
     : {}
   : {}
@@ -128,16 +140,16 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodSchema<any>
+              ZodType
             >
           ? {
               in: {
-                json: z.input<
+                json: ZodInput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
               out: {
-                json: z.output<
+                json: ZodOutput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
@@ -154,16 +166,16 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodSchema<any>
+              ZodType
             >
           ? {
               in: {
-                form: z.input<
+                form: ZodInput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
               out: {
-                form: z.output<
+                form: ZodOutput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
@@ -181,8 +193,8 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', ZodSchema>
-    ? z.infer<A['schema']>
+  ? A extends Record<'schema', ZodType>
+    ? ZodInfer<A['schema']>
     : never
   : never
 
@@ -230,7 +242,7 @@ export type Hook<T, E extends Env, P extends string, R> = (
       }
     | {
         success: false
-        error: ZodError
+        error: ZodError<any>
       }
   ),
   c: Context<E, P>
@@ -499,7 +511,7 @@ export class OpenAPIHono<
           continue
         }
         const schema = (bodyContent[mediaType] as ZodMediaTypeObject)['schema']
-        if (!(schema instanceof ZodType)) {
+        if (!(schema instanceof z4.$ZodType || schema instanceof z3.ZodType)) {
           continue
         }
         if (isJSONContentType(mediaType)) {
@@ -659,11 +671,14 @@ export class OpenAPIHono<
         }
 
         case 'schema':
-          return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)
+          return this.openAPIRegistry.register(
+            getOpenApiMetadata(def.schema)._internal?.refId,
+            def.schema
+          )
 
         case 'parameter':
           return this.openAPIRegistry.registerParameter(
-            def.schema._def.openapi._internal.refId,
+            getOpenApiMetadata(def.schema)._internal?.refId,
             def.schema
           )
 
