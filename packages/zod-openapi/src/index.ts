@@ -523,7 +523,6 @@ export class OpenAPIHono<
           }
         }
         if (isFormContentType(mediaType)) {
-          // @ts-expect-error The current zValidator does not accept ZodType
           const validator = zValidator('form', schema, hook as any)
           if (route.request?.body?.required) {
             validators.push(validator)
