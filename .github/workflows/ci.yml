@@ -54,7 +54,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           cache: true
-          deno-version: v2.x
+          deno-version: v2.3.7
       - run: deno install --no-lock
       - run: deno publish --dry-run
 
