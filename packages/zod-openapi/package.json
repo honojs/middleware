@@ -41,7 +41,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=4.3.6",
-    "zod": "^3.25.0"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
@@ -51,7 +51,7 @@
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
     "yaml": "^2.4.3",
-    "zod": "^3.25.0"
+    "zod": "^4.0.0"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.0.0-beta.3",
