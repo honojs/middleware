@@ -11,6 +11,7 @@ import {
   OpenApiGeneratorV3,
   OpenApiGeneratorV31,
   extendZodWithOpenApi,
+  getOpenApiMetadata,
 } from '@asteasolutions/zod-to-openapi'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
@@ -38,8 +39,8 @@ import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import type { ZodError, ZodSchema } from 'zod'
-import { ZodType, z } from 'zod'
+import { ZodType, z } from 'zod/v4'
+import type { ZodError } from 'zod/v4'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -128,7 +129,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodSchema<any>
+              ZodType<any>
             >
           ? {
               in: {
@@ -154,7 +155,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodSchema<any>
+              ZodType<any>
             >
           ? {
               in: {
@@ -181,7 +182,7 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', ZodSchema>
+  ? A extends Record<'schema', ZodType>
     ? z.infer<A['schema']>
     : never
   : never
@@ -659,11 +660,14 @@ export class OpenAPIHono<
         }
 
         case 'schema':
-          return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)
+          return this.openAPIRegistry.register(
+            getOpenApiMetadata(def.schema)._internal?.refId,
+            def.schema
+          )
 
         case 'parameter':
           return this.openAPIRegistry.registerParameter(
-            def.schema._def.openapi._internal.refId,
+            getOpenApiMetadata(def.schema)._internal?.refId,
             def.schema
           )
 
