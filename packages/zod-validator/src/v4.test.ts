@@ -464,3 +464,39 @@ describe('With options + validationFunction', () => {
     })
   })
 })
+
+describe('Transform', () => {
+  const schema = z
+    .object({
+      'user-agent': z.string(),
+    })
+    .transform((data) => ({
+      userAgent: data['user-agent'],
+    }))
+
+  const zValidatorHeader = zValidator('header', schema)
+
+  const app = new Hono()
+
+  app.post('/test', zValidatorHeader, async (c) => {
+    const header = c.req.valid('header')
+    return c.json(header)
+  })
+
+  it('Should return 400 response', async () => {
+    const res = await app.request('/test', {
+      method: 'POST',
+    })
+    expect(res.status).toBe(400)
+  })
+
+  it('Should return 200 response', async () => {
+    const res = await app.request('/test', {
+      method: 'POST',
+      headers: {
+        'user-agent': 'my-agent',
+      },
+    })
+    expect(res.status).toBe(200)
+  })
+})
