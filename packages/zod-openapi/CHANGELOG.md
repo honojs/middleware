@@ -1,5 +1,15 @@
 # @hono/zod-openapi
 
+## 1.0.0
+
+### Major Changes
+
+- [#1223](https://github.com/honojs/middleware/pull/1223) [`845e336ff41d29fa74ec3cf84afc16f5ac0c2c77`](https://github.com/honojs/middleware/commit/845e336ff41d29fa74ec3cf84afc16f5ac0c2c77) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support Zod v4
+
+  Zod OpenAPI has been migrated the Zod version from v3 to v4. As a result, the `zod` in `peerDependencies` has been updated to 4.0.0 or higher.
+
+  Although this is not a breaking change, it is a major change, so it is considered a major version upgrade.
+
 ## 0.19.10
 
 ### Patch Changes
