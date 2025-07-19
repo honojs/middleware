@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.1.4
+
+### Patch Changes
+
+- [#1282](https://github.com/honojs/middleware/pull/1282) [`2a46bfbba0695ae713b58211fd5e83a08b829ad6`](https://github.com/honojs/middleware/commit/2a46bfbba0695ae713b58211fd5e83a08b829ad6) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - Fix cookies output for arktype in standard schema validator
+
 ## 0.1.3
 
 ### Patch Changes
