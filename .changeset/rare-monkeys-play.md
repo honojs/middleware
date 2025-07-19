@@ -1,5 +1,5 @@
 ---
-'@hono/zod-validator': patch
+'@hono/zod-openapi': patch
 ---
 
 fix: correct importing `zod`
