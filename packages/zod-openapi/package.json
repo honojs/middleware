@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "type": "module",
   "module": "dist/index.js",
