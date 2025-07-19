@@ -8,7 +8,12 @@ import type {
   StreamableHTTPServerTransportOptions,
 } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import type { JSONRPCMessage, MessageExtraInfo, RequestId, RequestInfo } from '@modelcontextprotocol/sdk/types.js'
+import type {
+  JSONRPCMessage,
+  MessageExtraInfo,
+  RequestId,
+  RequestInfo,
+} from '@modelcontextprotocol/sdk/types.js'
 import {
   DEFAULT_NEGOTIATED_PROTOCOL_VERSION,
   isInitializeRequest,
@@ -44,9 +49,9 @@ export class StreamableHTTPTransport implements Transport {
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
   #requestResponseMap = new Map<RequestId, JSONRPCMessage>()
-  #allowedHosts?: string[];
-  #allowedOrigins?: string[];
-  #enableDnsRebindingProtection: boolean;
+  #allowedHosts?: string[]
+  #allowedOrigins?: string[]
+  #enableDnsRebindingProtection: boolean
 
   sessionId?: string
   onclose?: () => void
@@ -59,9 +64,9 @@ export class StreamableHTTPTransport implements Transport {
     this.#eventStore = options?.eventStore
     this.#onSessionInitialized = options?.onsessioninitialized
     this.#onSessionClosed = options?.onsessionclosed
-    this.#allowedHosts = options?.allowedHosts;
-    this.#allowedOrigins = options?.allowedOrigins;
-    this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false;
+    this.#allowedHosts = options?.allowedHosts
+    this.#allowedOrigins = options?.allowedOrigins
+    this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false
   }
 
   /**
@@ -82,35 +87,34 @@ export class StreamableHTTPTransport implements Transport {
   #validateRequestHeaders(ctx: Context): string | undefined {
     // Skip validation if protection is not enabled
     if (!this.#enableDnsRebindingProtection) {
-      return undefined;
+      return undefined
     }
 
     // Validate Host header if allowedHosts is configured
     if (this.#allowedHosts && this.#allowedHosts.length > 0) {
-      const hostHeader = ctx.req.header("Host");
+      const hostHeader = ctx.req.header('Host')
       if (!hostHeader || !this.#allowedHosts.includes(hostHeader)) {
-        return `Invalid Host header: ${hostHeader}`;
+        return `Invalid Host header: ${hostHeader}`
       }
     }
 
     // Validate Origin header if allowedOrigins is configured
     if (this.#allowedOrigins && this.#allowedOrigins.length > 0) {
-      const originHeader = ctx.req.header("Origin");
+      const originHeader = ctx.req.header('Origin')
       if (!originHeader || !this.#allowedOrigins.includes(originHeader)) {
-        return `Invalid Origin header: ${originHeader}`;
+        return `Invalid Origin header: ${originHeader}`
       }
     }
 
-    return undefined;
+    return undefined
   }
 
   /**
    * Handles an incoming HTTP request, whether GET or POST
    */
   async handleRequest(ctx: Context, parsedBody?: unknown): Promise<Response | undefined> {
-
     // Validate request headers for DNS rebinding protection
-    const validationError = this.#validateRequestHeaders(ctx);
+    const validationError = this.#validateRequestHeaders(ctx)
     if (validationError) {
       throw new HTTPException(403, {
         res: Response.json({
@@ -563,24 +567,25 @@ export class StreamableHTTPTransport implements Transport {
   }
 
   #validateProtocolVersion(ctx: Context): boolean {
-    let protocolVersion = ctx.req.header("mcp-protocol-version") ?? DEFAULT_NEGOTIATED_PROTOCOL_VERSION;
+    let protocolVersion =
+      ctx.req.header('mcp-protocol-version') ?? DEFAULT_NEGOTIATED_PROTOCOL_VERSION
     if (Array.isArray(protocolVersion)) {
-      protocolVersion = protocolVersion[protocolVersion.length - 1];
+      protocolVersion = protocolVersion[protocolVersion.length - 1]
     }
 
     if (!SUPPORTED_PROTOCOL_VERSIONS.includes(protocolVersion)) {
       throw new HTTPException(404, {
         res: Response.json({
-          jsonrpc: "2.0",
+          jsonrpc: '2.0',
           error: {
             code: -32000,
-            message: `Bad Request: Unsupported protocol version (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`
+            message: `Bad Request: Unsupported protocol version (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(', ')})`,
           },
-          id: null
+          id: null,
         }),
       })
     }
-    return true;
+    return true
   }
 
   async close(): Promise<void> {
