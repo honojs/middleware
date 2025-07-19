@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.0.2
+
+### Patch Changes
+
+- [#1320](https://github.com/honojs/middleware/pull/1320) [`e835cf6183fb4717cfdbe156d9b3d423625a0e15`](https://github.com/honojs/middleware/commit/e835cf6183fb4717cfdbe156d9b3d423625a0e15) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct importing `zod`
+
 ## 1.0.1
 
 ### Patch Changes
