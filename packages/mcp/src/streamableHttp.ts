@@ -8,14 +8,16 @@ import type {
   StreamableHTTPServerTransportOptions,
 } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
+import type { JSONRPCMessage, MessageExtraInfo, RequestId, RequestInfo } from '@modelcontextprotocol/sdk/types.js'
 import {
+  DEFAULT_NEGOTIATED_PROTOCOL_VERSION,
   isInitializeRequest,
   isJSONRPCError,
   isJSONRPCRequest,
   isJSONRPCResponse,
   JSONRPCMessageSchema,
+  SUPPORTED_PROTOCOL_VERSIONS,
 } from '@modelcontextprotocol/sdk/types.js'
-import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
@@ -24,7 +26,8 @@ import { streamSSE } from './streaming'
 export class StreamableHTTPTransport implements Transport {
   #started = false
   #initialized = false
-  #onsessioninitialized?: (sessionId: string) => void
+  #onSessionInitialized?: (sessionId: string) => void | Promise<void>
+  #onSessionClosed?: (sessionId: string) => void | Promise<void>
   #sessionIdGenerator?: () => string
   #eventStore?: EventStore
   #enableJsonResponse = false
@@ -41,17 +44,24 @@ export class StreamableHTTPTransport implements Transport {
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
   #requestResponseMap = new Map<RequestId, JSONRPCMessage>()
+  #allowedHosts?: string[];
+  #allowedOrigins?: string[];
+  #enableDnsRebindingProtection: boolean;
 
-  sessionId?: string | undefined
+  sessionId?: string
   onclose?: () => void
   onerror?: (error: Error) => void
-  onmessage?: (message: JSONRPCMessage, extra?: { authInfo?: AuthInfo }) => void
+  onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void
 
   constructor(options?: StreamableHTTPServerTransportOptions) {
     this.#sessionIdGenerator = options?.sessionIdGenerator
     this.#enableJsonResponse = options?.enableJsonResponse ?? false
     this.#eventStore = options?.eventStore
-    this.#onsessioninitialized = options?.onsessioninitialized
+    this.#onSessionInitialized = options?.onsessioninitialized
+    this.#onSessionClosed = options?.onsessionclosed
+    this.#allowedHosts = options?.allowedHosts;
+    this.#allowedOrigins = options?.allowedOrigins;
+    this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false;
   }
 
   /**
@@ -66,9 +76,54 @@ export class StreamableHTTPTransport implements Transport {
   }
 
   /**
+   * Validates request headers for DNS rebinding protection.
+   * @returns Error message if validation fails, undefined if validation passes.
+   */
+  #validateRequestHeaders(ctx: Context): string | undefined {
+    // Skip validation if protection is not enabled
+    if (!this.#enableDnsRebindingProtection) {
+      return undefined;
+    }
+
+    // Validate Host header if allowedHosts is configured
+    if (this.#allowedHosts && this.#allowedHosts.length > 0) {
+      const hostHeader = ctx.req.header("Host");
+      if (!hostHeader || !this.#allowedHosts.includes(hostHeader)) {
+        return `Invalid Host header: ${hostHeader}`;
+      }
+    }
+
+    // Validate Origin header if allowedOrigins is configured
+    if (this.#allowedOrigins && this.#allowedOrigins.length > 0) {
+      const originHeader = ctx.req.header("Origin");
+      if (!originHeader || !this.#allowedOrigins.includes(originHeader)) {
+        return `Invalid Origin header: ${originHeader}`;
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
    * Handles an incoming HTTP request, whether GET or POST
    */
   async handleRequest(ctx: Context, parsedBody?: unknown): Promise<Response | undefined> {
+
+    // Validate request headers for DNS rebinding protection
+    const validationError = this.#validateRequestHeaders(ctx);
+    if (validationError) {
+      throw new HTTPException(403, {
+        res: Response.json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32000,
+            message: validationError,
+          },
+          id: null,
+        }),
+      })
+    }
+
     switch (ctx.req.method) {
       case 'GET':
         return this.handleGetRequest(ctx)
@@ -104,7 +159,8 @@ export class StreamableHTTPTransport implements Transport {
       // If an Mcp-Session-Id is returned by the server during initialization,
       // clients using the Streamable HTTP transport MUST include it
       // in the Mcp-Session-Id header on all of their subsequent HTTP requests.
-      this.validateSession(ctx)
+      this.#validateSession(ctx)
+      this.#validateProtocolVersion(ctx)
 
       // After initialization, always include the session ID if we have one
       if (this.sessionId !== undefined) {
@@ -239,6 +295,7 @@ export class StreamableHTTPTransport implements Transport {
       }
 
       const authInfo: AuthInfo | undefined = ctx.get('auth')
+      const requestInfo: RequestInfo = { headers: ctx.req.header() }
 
       let rawMessage = parsedBody
       if (rawMessage === undefined) {
@@ -290,16 +347,18 @@ export class StreamableHTTPTransport implements Transport {
 
         // If we have a session ID and an onsessioninitialized handler, call it immediately
         // This is needed in cases where the server needs to keep track of multiple sessions
-        if (this.sessionId && this.#onsessioninitialized) {
-          this.#onsessioninitialized(this.sessionId)
+        if (this.sessionId && this.#onSessionInitialized) {
+          this.#onSessionInitialized(this.sessionId)
         }
       }
 
-      // If an Mcp-Session-Id is returned by the server during initialization,
-      // clients using the Streamable HTTP transport MUST include it
-      // in the Mcp-Session-Id header on all of their subsequent HTTP requests.
       if (!isInitializationRequest) {
-        this.validateSession(ctx)
+        // If an Mcp-Session-Id is returned by the server during initialization,
+        // clients using the Streamable HTTP transport MUST include it
+        // in the Mcp-Session-Id header on all of their subsequent HTTP requests.
+        this.#validateSession(ctx)
+        // Mcp-Protocol-Version header is required for all requests after initialization.
+        this.#validateProtocolVersion(ctx)
       }
 
       // check if it contains requests
@@ -308,7 +367,7 @@ export class StreamableHTTPTransport implements Transport {
       if (!hasRequests) {
         // handle each message
         for (const message of messages) {
-          this.onmessage?.(message, { authInfo })
+          this.onmessage?.(message, { authInfo, requestInfo })
         }
 
         // if it only contains notifications or responses, return 202
@@ -342,7 +401,7 @@ export class StreamableHTTPTransport implements Transport {
 
             // handle each message
             for (const message of messages) {
-              this.onmessage?.(message, { authInfo })
+              this.onmessage?.(message, { authInfo, requestInfo })
             }
           })
 
@@ -401,10 +460,13 @@ export class StreamableHTTPTransport implements Transport {
    * Handles DELETE requests to terminate sessions
    */
   private async handleDeleteRequest(ctx: Context) {
-    this.validateSession(ctx)
+    this.#validateSession(ctx)
+    this.#validateProtocolVersion(ctx)
+
+    if (this.#onSessionClosed && this.sessionId)
+      await Promise.resolve(this.#onSessionClosed(this.sessionId))
 
     await this.close()
-
     return ctx.body(null, 200)
   }
 
@@ -434,7 +496,7 @@ export class StreamableHTTPTransport implements Transport {
    * Validates session ID for non-initialization requests
    * Returns true if the session is valid, false otherwise
    */
-  private validateSession(ctx: Context): boolean {
+  #validateSession(ctx: Context): boolean {
     if (this.#sessionIdGenerator === undefined) {
       // If the sessionIdGenerator ID is not set, the session management is disabled
       // and we don't need to validate the session ID
@@ -498,6 +560,27 @@ export class StreamableHTTPTransport implements Transport {
     }
 
     return true
+  }
+
+  #validateProtocolVersion(ctx: Context): boolean {
+    let protocolVersion = ctx.req.header("mcp-protocol-version") ?? DEFAULT_NEGOTIATED_PROTOCOL_VERSION;
+    if (Array.isArray(protocolVersion)) {
+      protocolVersion = protocolVersion[protocolVersion.length - 1];
+    }
+
+    if (!SUPPORTED_PROTOCOL_VERSIONS.includes(protocolVersion)) {
+      throw new HTTPException(404, {
+        res: Response.json({
+          jsonrpc: "2.0",
+          error: {
+            code: -32000,
+            message: `Bad Request: Unsupported protocol version (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(", ")})`
+          },
+          id: null
+        }),
+      })
+    }
+    return true;
   }
 
   async close(): Promise<void> {
