@@ -73,7 +73,7 @@ export const zValidator = <
     if ((target === 'header' && '_def' in schema) || (target === 'header' && '_zod' in schema)) {
       // create an object that maps lowercase schema keys to lowercase
       // @ts-expect-error the schema is a Zod Schema
-      const schemaKeys = Object.keys(schema.in.shape)
+      const schemaKeys = Object.keys('in' in schema ? schema.in.shape : schema.shape)
       const caseInsensitiveKeymap = Object.fromEntries(
         schemaKeys.map((key) => [key.toLowerCase(), key])
       )
