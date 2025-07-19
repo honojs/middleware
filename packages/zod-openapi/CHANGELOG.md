@@ -1,5 +1,12 @@
 # @hono/zod-openapi
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`c6a16ab7aa8fba2403d4294e7673f96796020c65`](https://github.com/honojs/middleware/commit/c6a16ab7aa8fba2403d4294e7673f96796020c65)]:
+  - @hono/zod-validator@0.7.2
+
 ## 1.0.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.7.2
+
+### Patch Changes
+
+- [#1315](https://github.com/honojs/middleware/pull/1315) [`c6a16ab7aa8fba2403d4294e7673f96796020c65`](https://github.com/honojs/middleware/commit/c6a16ab7aa8fba2403d4294e7673f96796020c65) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support transform
+
 ## 0.7.1
 
 ### Patch Changes
