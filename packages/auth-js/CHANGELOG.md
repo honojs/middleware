@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1324](https://github.com/honojs/middleware/pull/1324) [`d89fed7eecfa151c18b0a8cf95dae1dfe83dfec2`](https://github.com/honojs/middleware/commit/d89fed7eecfa151c18b0a8cf95dae1dfe83dfec2) Thanks [@jamestalmage](https://github.com/jamestalmage)! - Allow async authjs Config
+
 ## 1.0.17
 
 ### Patch Changes
