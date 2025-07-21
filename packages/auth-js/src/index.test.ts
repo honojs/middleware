@@ -47,6 +47,27 @@ describe('Config', () => {
     expect(res.status).toBe(200)
   })
 
+  it('Should allow async ConfigHandler', async () => {
+    globalThis.process.env = { AUTH_SECRET: 'secret' }
+    const app = new Hono()
+
+    app.use(
+      '/*',
+      initAuthConfig(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        return {
+          basePath: '/api/auth',
+          providers: [],
+        }
+      })
+    )
+
+    app.use('/api/auth/*', authHandler())
+    const req = new Request('http://localhost/api/auth/signin')
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+  })
+
   it('Should return 401 is if auth cookie is invalid or missing', async () => {
     const app = new Hono()
 

@@ -29,7 +29,7 @@ export type AuthUser = {
 
 export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {}
 
-export type ConfigHandler = (c: Context) => AuthConfig
+export type ConfigHandler = (c: Context) => AuthConfig | Promise<AuthConfig>
 
 export function setEnvDefaults(env: AuthEnv, config: AuthConfig): void {
   config.secret ??= env.AUTH_SECRET
@@ -118,7 +118,7 @@ export function verifyAuth(): MiddlewareHandler {
 
 export function initAuthConfig(cb: ConfigHandler): MiddlewareHandler {
   return async (c, next) => {
-    const config = cb(c)
+    const config = await cb(c)
     c.set('authConfig', config)
     await next()
   }
