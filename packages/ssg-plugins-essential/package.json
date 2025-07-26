@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/plugins/*.ts",
+    "build": "tsup",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
