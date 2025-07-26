@@ -3,15 +3,13 @@
   "version": "1.0.0",
   "description": "Essential plugins for Hono SSG",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsup",
     "prepack": "yarn build",
-    "publint": "attw --pack && publint",
+    "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
