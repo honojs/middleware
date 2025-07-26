@@ -18,5 +18,10 @@
     "noUnusedParameters": true,
     "types": []
   },
-  "include": ["${configDir}/vitest.config.ts", "${configDir}/package.json", "${configDir}/src"]
+  "include": [
+    "${configDir}/vitest.config.ts",
+    "${configDir}/tsup.config.ts",
+    "${configDir}/package.json",
+    "${configDir}/src"
+  ]
 }
