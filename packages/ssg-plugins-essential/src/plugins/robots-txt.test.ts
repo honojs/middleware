@@ -19,7 +19,7 @@ const executeAfterGenerateHook = async (
   }
 }
 
-describe('robotsTxtPlugin', () => {
+describe('robots.txt Plugin', () => {
   let mockFsModule: FileSystemModule
   let writtenFiles: Record<string, string>
   let dummyResult: ToSSGResult
