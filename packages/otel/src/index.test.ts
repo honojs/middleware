@@ -107,7 +107,7 @@ describe('OpenTelemetry middleware', () => {
     app.use(
       otel({
         tracerProvider,
-        captureRequestHeaders: ['content-type', 'x-custom-header'],
+        captureRequestHeaders: ['Content-Type', 'X-Custom-Header'],
       })
     )
     app.get('/foo', (c) => c.text('foo'))
@@ -133,7 +133,7 @@ describe('OpenTelemetry middleware', () => {
     app.use(
       otel({
         tracerProvider,
-        captureResponseHeaders: ['content-type', 'x-response-header'],
+        captureResponseHeaders: ['Content-Type', 'X-Response-Header'],
       })
     )
     app.get('/foo', (c) => {
@@ -150,5 +150,36 @@ describe('OpenTelemetry middleware', () => {
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('content-type')]).toBe('application/json')
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('x-response-header')]).toBe('response-value')
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('set-cookie')]).toBeUndefined()
+  })
+
+  it('Should handle specified headers whether lowercased or not', async () => {
+    const app = new Hono()
+    app.use(
+      otel({
+        tracerProvider,
+        captureRequestHeaders: ['Accept-Language', 'x-custom-header'],
+        captureResponseHeaders: ['Cache-Control', 'x-response-header'],
+      })
+    )
+    app.get('/foo', (c) => {
+      c.header('Cache-Control', 'no-cache')
+      c.header('X-Response-Header', 'response-value')
+      return c.text('foo')
+    })
+
+    memoryExporter.reset()
+    await app.request('http://localhost/foo', {
+      headers: {
+        'Accept-Language': 'en-US',
+        'X-Custom-Header': 'custom-value',
+      },
+    })
+
+    const spans = memoryExporter.getFinishedSpans()
+    const [span] = spans
+    expect(span.attributes[ATTR_HTTP_REQUEST_HEADER('accept-language')]).toBe('en-US')
+    expect(span.attributes[ATTR_HTTP_REQUEST_HEADER('x-custom-header')]).toBe('custom-value')
+    expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('cache-control')]).toBe('no-cache')
+    expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('x-response-header')]).toBe('response-value')
   })
 })
