@@ -9,6 +9,7 @@ import {
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler } from 'hono'
+import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import { createMiddleware } from 'hono/factory'
 import metadata from '../package.json' with { type: 'json' }
 
@@ -19,6 +20,8 @@ export type OtelOptions =
   | {
       augmentSpan?: false
       tracerProvider?: TracerProvider
+      captureRequestHeaders?: (keyof Record<RequestHeader | (string & {}), string>)[]
+      captureResponseHeaders?: (keyof Record<ResponseHeader | (string & {}), string>)[]
     }
   | {
       augmentSpan: true
@@ -60,8 +63,11 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
       },
       activeContext,
       async (span) => {
+        options.captureRequestHeaders?.push('Traceparent', 'Tracestate')
         for (const [name, value] of Object.entries(c.req.header())) {
-          span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          if (options.captureRequestHeaders?.includes(name)) {
+            span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          }
         }
         try {
           await next()
@@ -71,7 +77,9 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           span.setAttribute(ATTR_HTTP_ROUTE, c.req.routePath)
           span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, c.res.status)
           for (const [name, value] of c.res.headers.entries()) {
-            span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            if (options.captureResponseHeaders?.includes(name)) {
+              span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            }
           }
           if (c.error) {
             span.recordException(c.error)
