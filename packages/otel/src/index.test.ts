@@ -26,7 +26,7 @@ describe('OpenTelemetry middleware', () => {
 
   app.use(otel({ tracerProvider }))
   app.get('/foo', (c) => c.text('foo'))
-  app.post('/error', (_) => {
+  app.post('/error', () => {
     throw new Error('error message')
   })
 

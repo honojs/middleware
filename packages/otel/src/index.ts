@@ -9,8 +9,8 @@ import {
   ATTR_HTTP_ROUTE,
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler } from 'hono'
-import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import { createMiddleware } from 'hono/factory'
+import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import metadata from '../package.json' with { type: 'json' }
 
 const PACKAGE_NAME = metadata.name
