@@ -18,6 +18,7 @@
     // "packages/firebase-auth",
     "packages/graphql-server",
     "packages/hello",
+    "packages/mcp",
     // "packages/medley-router",
     // "packages/node-ws",
     // "packages/oauth-providers",
