@@ -10,6 +10,7 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import metadata from '../package.json' with { type: 'json' }
 
 const PACKAGE_NAME = metadata.name
@@ -19,6 +20,8 @@ export type OtelOptions =
   | {
       augmentSpan?: false
       tracerProvider?: TracerProvider
+      captureRequestHeaders?: (keyof Record<RequestHeader | (string & {}), string>)[]
+      captureResponseHeaders?: (keyof Record<ResponseHeader | (string & {}), string>)[]
     }
   | {
       augmentSpan: true
@@ -60,8 +63,12 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
       },
       activeContext,
       async (span) => {
+        options.captureRequestHeaders?.push('Traceparent', 'Tracestate')
+        const captureRequestHeaders = options.captureRequestHeaders?.map((h) => h.toLowerCase())
         for (const [name, value] of Object.entries(c.req.header())) {
-          span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          if (captureRequestHeaders?.includes(name)) {
+            span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          }
         }
         try {
           await next()
@@ -70,8 +77,11 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           span.updateName(`${c.req.method} ${c.req.routePath}`)
           span.setAttribute(ATTR_HTTP_ROUTE, c.req.routePath)
           span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, c.res.status)
+          const captureResponseHeaders = options.captureResponseHeaders?.map((h) => h.toLowerCase())
           for (const [name, value] of c.res.headers.entries()) {
-            span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            if (captureResponseHeaders?.includes(name)) {
+              span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            }
           }
           if (c.error) {
             span.recordException(c.error)
