@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1332](https://github.com/honojs/middleware/pull/1332) [`a18ed63fba9e57fc89b39d52bf32e58d9f386587`](https://github.com/honojs/middleware/commit/a18ed63fba9e57fc89b39d52bf32e58d9f386587) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: publish to jsr
+
 ## 0.1.0
 
 ### Minor Changes
