@@ -1,7 +1,5 @@
 {
-  "unstable": [
-    "sloppy-imports"
-  ],
+  "unstable": ["sloppy-imports"],
   "workspace": [
     "packages/ajv-validator",
     "packages/arktype-validator",
@@ -40,6 +38,6 @@
     "packages/typia-validator",
     "packages/valibot-validator",
     // "packages/zod-openapi",
-    "packages/zod-validator"
+    "packages/zod-validator",
   ],
 }
