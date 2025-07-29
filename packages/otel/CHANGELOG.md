@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1328](https://github.com/honojs/middleware/pull/1328) [`5416ee700cbc57d686b1174b08da8c541b0a70ba`](https://github.com/honojs/middleware/commit/5416ee700cbc57d686b1174b08da8c541b0a70ba) Thanks [@tsuyuni](https://github.com/tsuyuni)! - Add `captureRequestHeaders` and `captureResponseHeaders` options for selective header collection.
+
 ## 0.2.2
 
 ### Patch Changes
