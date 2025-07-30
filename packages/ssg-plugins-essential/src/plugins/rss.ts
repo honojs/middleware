@@ -90,7 +90,7 @@ ${feedItems
     (item) => `<item>
 <title>${item.title}</title>
 <link>${item.link}</link>
-${item.description ? `<description>${item.description}</description>` : ''}
+<description>${item.description ?? ''}</description>
 </item>`
   )
   .join('\n')}
