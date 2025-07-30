@@ -25,11 +25,19 @@ export const sitemapPlugin = ({ baseUrl }: SitemapPluginOptions): SSGPlugin => {
       const outputDir = options?.dir ?? DEFAULT_OUTPUT_DIR
       const filePath = path.join(outputDir, 'sitemap.xml')
       const normalizedBaseURL = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
-      const urls = result.files.map((file) => {
-        const cleanedFile = file.startsWith('./') ? file.slice(2) : file
-        const encodedFile = encodeURI(cleanedFile)
-        return `${normalizedBaseURL}${encodedFile}`
-      })
+      const outputDirNormalized = outputDir.replace(/^\.\//, '').replace(/\/$/, '')
+
+      const urls = result.files
+        .filter((file) => file.endsWith('.html'))
+        .map((file) => {
+          let cleanedFile = file.replace(/^\.\//, '')
+          if (cleanedFile.startsWith(outputDirNormalized + '/')) {
+            cleanedFile = cleanedFile.slice(outputDirNormalized.length + 1)
+          }
+          const encodedFile = encodeURI(cleanedFile)
+          return `${normalizedBaseURL}${encodedFile}`
+        })
+
       const siteMapText = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((url) => `<url><loc>${url}</loc></url>`).join('\n')}
