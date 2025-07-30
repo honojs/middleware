@@ -22,13 +22,13 @@ type FeedItem = {
 /**
  * RSS plugin options.
  *
- * @property baseURL - The base URL of the site, used to generate full URLs in the RSS feed.
+ * @property baseUrl - The base URL of the site, used to generate full URLs in the RSS feed.
  * @property feedTitle - The title of the RSS feed.
  * @property feedDescription - The description of the RSS feed.
  * @property feedType - The type of RSS feed to generate. Default is RSS 2.0.
  */
 export type RssPluginOptions = {
-  baseURL: string
+  baseUrl: string
   feedTitle: string
   feedDescription: string
   feedType?: FeedType
@@ -60,9 +60,9 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
       const title = extractTitleFromHtml(html)
       const description = extractDescriptionFromHtml(html)
       const path = pendingUrls.shift() ?? ''
-      const normalizedBaseURL = options.baseURL.endsWith('/')
-        ? options.baseURL
-        : `${options.baseURL}/`
+      const normalizedBaseURL = options.baseUrl.endsWith('/')
+        ? options.baseUrl
+        : `${options.baseUrl}/`
       const url = path ? `${normalizedBaseURL}${path.replace(/^\//, '')}` : normalizedBaseURL
       feedItems.push({ title, link: url, description })
       return new Response(html, response)
@@ -74,9 +74,9 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
     const outputDir = ssgOptions?.dir ?? DEFAULT_OUTPUT_DIR
     const fileName = 'rss.xml'
     const filePath = path.join(outputDir, fileName)
-    const normalizedBaseURL = options.baseURL.endsWith('/')
-      ? options.baseURL
-      : `${options.baseURL}/`
+    const normalizedBaseURL = options.baseUrl.endsWith('/')
+      ? options.baseUrl
+      : `${options.baseUrl}/`
     const feedLink = `${normalizedBaseURL}${fileName}`
 
     const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>

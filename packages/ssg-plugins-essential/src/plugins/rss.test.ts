@@ -52,7 +52,7 @@ describe('RSS Plugin', () => {
     )
 
     const plugin = rssPlugin({
-      baseURL: 'https://example.com',
+      baseUrl: 'https://example.com',
       feedTitle: 'Test Feed',
       feedDescription: 'This is a test RSS feed.',
       feedType: 'rss2',

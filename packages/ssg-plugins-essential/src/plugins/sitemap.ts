@@ -5,10 +5,10 @@ import path from 'node:path'
 /**
  * Sitemap plugin options.
  *
- * @property baseURL - The base URL of the site, used to generate full URLs in the sitemap.
+ * @property baseUrl - The base URL of the site, used to generate full URLs in the sitemap.
  */
 export type SitemapPluginOptions = {
-  baseURL: string
+  baseUrl: string
 }
 
 /**
@@ -19,12 +19,12 @@ export type SitemapPluginOptions = {
  * @param options - Options for the sitemap plugin.
  * @returns A SSGPlugin to create the sitemap.
  */
-export const sitemapPlugin = ({ baseURL }: SitemapPluginOptions): SSGPlugin => {
+export const sitemapPlugin = ({ baseUrl }: SitemapPluginOptions): SSGPlugin => {
   return {
     afterGenerateHook: async (result, fsModule, options) => {
       const outputDir = options?.dir ?? DEFAULT_OUTPUT_DIR
       const filePath = path.join(outputDir, 'sitemap.xml')
-      const normalizedBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`
+      const normalizedBaseURL = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
       const urls = result.files.map((file) => {
         const cleanedFile = file.startsWith('./') ? file.slice(2) : file
         const encodedFile = encodeURI(cleanedFile)

@@ -45,7 +45,7 @@ describe('Sitemap Plugin', () => {
   })
 
   it('should generate XML sitemap with all files', async () => {
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com' })
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
     await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
 
@@ -65,7 +65,7 @@ describe('Sitemap Plugin', () => {
   })
 
   it('should use custom output directory from options', async () => {
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com' })
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
     const options: ToSSGOptions = { dir: 'dist' }
 
     await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule, options)
@@ -79,7 +79,7 @@ describe('Sitemap Plugin', () => {
       files: [],
     }
 
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com' })
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
     await executeAfterGenerateHook(plugin.afterGenerateHook, emptyResult, mockFsModule)
 
@@ -99,7 +99,7 @@ describe('Sitemap Plugin', () => {
       files: [`${DEFAULT_OUTPUT_DIR}/hello world.html`, `${DEFAULT_OUTPUT_DIR}/こんにちは.html`],
     }
 
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com' })
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
     await executeAfterGenerateHook(plugin.afterGenerateHook, specialResult, mockFsModule)
 
@@ -110,8 +110,8 @@ describe('Sitemap Plugin', () => {
     expect(sitemapContent).toContain('%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF.html')
   })
 
-  it('should handle baseURL with subdirectory', async () => {
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com/blog' })
+  it('should handle baseUrl with subdirectory', async () => {
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com/blog' })
 
     await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
 
@@ -132,8 +132,8 @@ describe('Sitemap Plugin', () => {
     )
   })
 
-  it('should handle baseURL with trailing slash', async () => {
-    const plugin = sitemapPlugin({ baseURL: 'https://example.com/blog/' })
+  it('should handle baseUrl with trailing slash', async () => {
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com/blog/' })
     await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
