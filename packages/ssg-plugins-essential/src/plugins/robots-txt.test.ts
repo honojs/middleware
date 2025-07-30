@@ -1,35 +1,19 @@
-import { DEFAULT_OUTPUT_DIR } from 'hono/ssg'
-import type { FileSystemModule, ToSSGOptions, SSGPlugin, ToSSGResult } from 'hono/ssg'
+import { Hono } from 'hono'
+import { DEFAULT_OUTPUT_DIR, toSSG } from 'hono/ssg'
+import type { FileSystemModule } from 'hono/ssg'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import path from 'node:path'
 import { robotsTxtPlugin } from './robots-txt'
 
-const executeAfterGenerateHook = async (
-  hook: SSGPlugin['afterGenerateHook'],
-  result: ToSSGResult,
-  fsModule: FileSystemModule,
-  options?: ToSSGOptions
-) => {
-  if (Array.isArray(hook)) {
-    for (const h of hook) {
-      await h(result, fsModule, options)
-    }
-  } else if (hook) {
-    await hook(result, fsModule, options)
-  }
-}
-
 describe('robots.txt Plugin', () => {
-  let mockFsModule: FileSystemModule
   let writtenFiles: Record<string, string>
-  let dummyResult: ToSSGResult
+  let mockFsModule: FileSystemModule
 
   beforeEach(() => {
     writtenFiles = {}
-    dummyResult = { success: true, files: [] }
     mockFsModule = {
-      writeFile: vi.fn((path: string, data: string | Uint8Array) => {
-        writtenFiles[path] = typeof data === 'string' ? data : data.toString()
+      writeFile: vi.fn((filePath: string, data: string | Uint8Array) => {
+        writtenFiles[filePath] = typeof data === 'string' ? data : data.toString()
         return Promise.resolve()
       }),
       mkdir: vi.fn(() => Promise.resolve()),
@@ -37,8 +21,13 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should generate robots.txt with default rule', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({})
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     expect(mockFsModule.writeFile).toHaveBeenCalledWith(expectedPath, expect.any(String))
     const content = writtenFiles[expectedPath]
@@ -46,13 +35,18 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should generate robots.txt with custom rules', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({
       rules: [
         { userAgent: 'Googlebot', allow: ['/'], disallow: ['/private/'] },
         { userAgent: 'Bingbot', disallow: ['/'] },
       ],
     })
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     const content = writtenFiles[expectedPath]
     expect(content).toContain('User-agent: Googlebot')
@@ -63,20 +57,30 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should include sitemap line', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({
       sitemapUrl: 'https://example.com/sitemap.xml',
     })
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     const content = writtenFiles[expectedPath]
     expect(content).toContain('Sitemap: https://example.com/sitemap.xml')
   })
 
   it('should include extra lines', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({
       extraLines: ['# Extra comment', 'Crawl-delay: 10'],
     })
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     const content = writtenFiles[expectedPath]
     expect(content).toContain('# Extra comment')
@@ -84,13 +88,19 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should use custom output directory', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({})
-    const options: ToSSGOptions = { dir: 'dist' }
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule, options)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: 'dist',
+    })
     expect(mockFsModule.writeFile).toHaveBeenCalledWith('dist/robots.txt', expect.any(String))
   })
 
   it('should include extraLines for each user-agent rule', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.text('Hello'))
     const plugin = robotsTxtPlugin({
       rules: [
         {
@@ -105,7 +115,10 @@ describe('robots.txt Plugin', () => {
         },
       ],
     })
-    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     const content = writtenFiles[expectedPath]
     const blocks = content.split(/\n{2,}/)

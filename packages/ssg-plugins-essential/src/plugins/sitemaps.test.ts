@@ -1,53 +1,40 @@
-import { DEFAULT_OUTPUT_DIR } from 'hono/ssg'
-import type { ToSSGResult, FileSystemModule, ToSSGOptions, SSGPlugin } from 'hono/ssg'
+import { Hono } from 'hono'
+import { DEFAULT_OUTPUT_DIR, toSSG } from 'hono/ssg'
+import type { FileSystemModule } from 'hono/ssg'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import path from 'node:path'
 import { sitemapPlugin } from './sitemap'
 
-const executeAfterGenerateHook = async (
-  hook: SSGPlugin['afterGenerateHook'],
-  result: ToSSGResult,
-  fsModule: FileSystemModule,
-  options?: ToSSGOptions
-) => {
-  if (Array.isArray(hook)) {
-    for (const h of hook) {
-      await h(result, fsModule, options)
-    }
-  } else if (hook) {
-    await hook(result, fsModule, options)
-  }
-}
-
 describe('Sitemap Plugin', () => {
-  let mockResult: ToSSGResult
   let mockFsModule: FileSystemModule
   let writtenFiles: Record<string, string>
 
   beforeEach(() => {
     writtenFiles = {}
-    mockResult = {
-      success: true,
-      files: [
-        `${DEFAULT_OUTPUT_DIR}/index.html`,
-        `${DEFAULT_OUTPUT_DIR}/about.html`,
-        `${DEFAULT_OUTPUT_DIR}/blog/post-1.html`,
-      ],
-    }
-
     mockFsModule = {
-      writeFile: vi.fn((path: string, data: string | Uint8Array) => {
-        writtenFiles[path] = typeof data === 'string' ? data : data.toString()
+      writeFile: vi.fn((filePath: string, data: string | Uint8Array) => {
+        writtenFiles[filePath] = typeof data === 'string' ? data : data.toString()
         return Promise.resolve()
       }),
       mkdir: vi.fn(() => Promise.resolve()),
     }
   })
 
-  it('should generate XML sitemap with all files', async () => {
+  it('should generate XML sitemap with all HTML files', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.html('<html><head><title>Home</title></head><body>Home</body></html>'))
+    app.get('/about', (c) =>
+      c.html('<html><head><title>About</title></head><body>About</body></html>')
+    )
+    app.get('/blog/post-1', (c) =>
+      c.html('<html><head><title>Post</title></head><body>Post</body></html>')
+    )
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
-    await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     expect(mockFsModule.writeFile).toHaveBeenCalledWith(expectedPath, expect.any(String))
@@ -55,33 +42,33 @@ describe('Sitemap Plugin', () => {
     const sitemapContent = writtenFiles[expectedPath]
     expect(sitemapContent).toContain('<?xml version="1.0" encoding="UTF-8"?>')
     expect(sitemapContent).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/${path.join(DEFAULT_OUTPUT_DIR, 'index.html')}</loc></url>`
-    )
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/${path.join(DEFAULT_OUTPUT_DIR, 'about.html')}</loc></url>`
-    )
+    expect(sitemapContent).toContain('<url><loc>https://example.com/index.html</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/about.html</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/post-1.html</loc></url>')
     expect(sitemapContent).toContain('</urlset>')
   })
 
   it('should use custom output directory from options', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.html('<html><head><title>Home</title></head><body>Home</body></html>'))
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
-    const options: ToSSGOptions = { dir: 'dist' }
 
-    await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule, options)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: 'dist',
+    })
 
     expect(mockFsModule.writeFile).toHaveBeenCalledWith('dist/sitemap.xml', expect.any(String))
   })
 
   it('should handle empty file list', async () => {
-    const emptyResult: ToSSGResult = {
-      success: true,
-      files: [],
-    }
-
+    const app = new Hono()
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
-    await executeAfterGenerateHook(plugin.afterGenerateHook, emptyResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
@@ -94,14 +81,19 @@ describe('Sitemap Plugin', () => {
   })
 
   it('should handle special characters in URLs', async () => {
-    const specialResult: ToSSGResult = {
-      success: true,
-      files: [`${DEFAULT_OUTPUT_DIR}/hello world.html`, `${DEFAULT_OUTPUT_DIR}/こんにちは.html`],
-    }
-
+    const app = new Hono()
+    app.get('/hello world', (c) =>
+      c.html('<html><head><title>Hello</title></head><body>Hello</body></html>')
+    )
+    app.get('/こんにちは', (c) =>
+      c.html('<html><head><title>こんにちは</title></head><body>こんにちは</body></html>')
+    )
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
 
-    await executeAfterGenerateHook(plugin.afterGenerateHook, specialResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
@@ -111,45 +103,53 @@ describe('Sitemap Plugin', () => {
   })
 
   it('should handle baseUrl with subdirectory', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.html('<html><head><title>Home</title></head><body>Home</body></html>'))
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com/blog' })
 
-    await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/blog/${path.join(
-        DEFAULT_OUTPUT_DIR,
-        'index.html'
-      )}</loc></url>`
-    )
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/blog/${path.join(
-        DEFAULT_OUTPUT_DIR,
-        'about.html'
-      )}</loc></url>`
-    )
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/index.html</loc></url>')
   })
 
   it('should handle baseUrl with trailing slash', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.html('<html><head><title>Home</title></head><body>Home</body></html>'))
     const plugin = sitemapPlugin({ baseUrl: 'https://example.com/blog/' })
-    await executeAfterGenerateHook(plugin.afterGenerateHook, mockResult, mockFsModule)
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
 
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/blog/${path.join(
-        DEFAULT_OUTPUT_DIR,
-        'index.html'
-      )}</loc></url>`
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/index.html</loc></url>')
+  })
+
+  it('should not remove DEFAULT_OUTPUT_DIR from route path if it is part of the route', async () => {
+    const app = new Hono()
+    const normalizedDir = DEFAULT_OUTPUT_DIR.replace(/^\.\//, '').replace(/\/$/, '')
+    app.get(`/${normalizedDir}/about`, (c) =>
+      c.html('<html><head><title>Static About</title></head><body>Static About</body></html>')
     )
-    expect(sitemapContent).toContain(
-      `<url><loc>https://example.com/blog/${path.join(
-        DEFAULT_OUTPUT_DIR,
-        'about.html'
-      )}</loc></url>`
-    )
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com' })
+
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
+
+    const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
+    const sitemapContent = writtenFiles[expectedPath]
+
+    const expectedUrl = `<url><loc>https://example.com/${path.posix.join(normalizedDir, 'about.html')}</loc></url>`
+    expect(sitemapContent).toContain(expectedUrl)
   })
 })
