@@ -37,7 +37,7 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should generate robots.txt with default rule', async () => {
-    const plugin = robotsTxtPlugin()
+    const plugin = robotsTxtPlugin({})
     await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
     expect(mockFsModule.writeFile).toHaveBeenCalledWith(expectedPath, expect.any(String))
@@ -84,9 +84,38 @@ describe('robots.txt Plugin', () => {
   })
 
   it('should use custom output directory', async () => {
-    const plugin = robotsTxtPlugin()
+    const plugin = robotsTxtPlugin({})
     const options: ToSSGOptions = { dir: 'dist' }
     await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule, options)
     expect(mockFsModule.writeFile).toHaveBeenCalledWith('dist/robots.txt', expect.any(String))
+  })
+
+  it('should include extraLines for each user-agent rule', async () => {
+    const plugin = robotsTxtPlugin({
+      rules: [
+        {
+          userAgent: 'Googlebot',
+          allow: ['/'],
+          extraLines: ['# Googlebot specific note'],
+        },
+        {
+          userAgent: 'Bingbot',
+          disallow: ['/'],
+          extraLines: ['Crawl-delay: 5', '# Bingbot only'],
+        },
+      ],
+    })
+    await executeAfterGenerateHook(plugin.afterGenerateHook, dummyResult, mockFsModule)
+    const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'robots.txt')
+    const content = writtenFiles[expectedPath]
+    const blocks = content.split(/\n{2,}/)
+    const googleBlock = blocks.find((b) => b.includes('User-agent: Googlebot')) || ''
+    const bingBlock = blocks.find((b) => b.includes('User-agent: Bingbot')) || ''
+    expect(googleBlock).toContain('User-agent: Googlebot')
+    expect(googleBlock).toContain('# Googlebot specific note')
+    expect(googleBlock).not.toContain('Crawl-delay: 5')
+    expect(bingBlock).toContain('User-agent: Bingbot')
+    expect(bingBlock).toContain('Crawl-delay: 5')
+    expect(bingBlock).toContain('# Bingbot only')
   })
 })

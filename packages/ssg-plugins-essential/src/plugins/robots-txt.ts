@@ -14,6 +14,7 @@ export type RobotsTxtPluginOptions = {
     userAgent: string
     allow?: string[]
     disallow?: string[]
+    extraLines?: string[]
   }[]
   sitemapUrl?: string
   extraLines?: string[]
@@ -27,7 +28,7 @@ export type RobotsTxtPluginOptions = {
  * @param options - Options for the robots.txt plugin.
  * @returns A SSGPlugin to create the `robots.txt`.
  */
-export const robotsTxtPlugin = (options: RobotsTxtPluginOptions = {}): SSGPlugin => {
+export const robotsTxtPlugin = (options: RobotsTxtPluginOptions): SSGPlugin => {
   return {
     afterGenerateHook: async (_result, fsModule, ssgOptions) => {
       const outputDir = ssgOptions?.dir ?? DEFAULT_OUTPUT_DIR
@@ -36,20 +37,30 @@ export const robotsTxtPlugin = (options: RobotsTxtPluginOptions = {}): SSGPlugin
       const lines: string[] = []
 
       if (options.rules && options.rules.length > 0) {
-        for (const rule of options.rules) {
+        for (const [i, rule] of options.rules.entries()) {
           lines.push(`User-agent: ${rule.userAgent}`)
           if (rule.allow) rule.allow.forEach((p) => lines.push(`Allow: ${p}`))
           if (rule.disallow) rule.disallow.forEach((p) => lines.push(`Disallow: ${p}`))
+          if (rule.extraLines) lines.push(...rule.extraLines)
+          if (i !== options.rules.length - 1) {
+            lines.push('')
+          }
         }
       } else {
         lines.push('User-agent: *')
       }
 
       if (options.sitemapUrl) {
+        if (lines.length > 0 && lines[lines.length - 1] !== '') {
+          lines.push('')
+        }
         lines.push(`Sitemap: ${options.sitemapUrl}`)
       }
 
       if (options.extraLines) {
+        if (lines.length > 0 && lines[lines.length - 1] !== '') {
+          lines.push('')
+        }
         lines.push(...options.extraLines)
       }
 
