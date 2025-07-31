@@ -37,6 +37,7 @@ export class StreamableHTTPTransport implements Transport {
         json: (data: unknown) => void
       }
       stream?: SSEStreamingApi
+      cleanup?: () => void
     }
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
@@ -156,12 +157,6 @@ export class StreamableHTTPTransport implements Transport {
       return streamSSE(ctx, async (stream) => {
         const resolvedStreamId = typeof streamId === 'string' ? streamId : await streamId(stream)
 
-        // Assign the response to the standalone SSE stream
-        this.#streamMapping.set(resolvedStreamId, {
-          ctx,
-          stream,
-        })
-
         // Keep connection alive
         const keepAlive = setInterval(() => {
           if (!stream.closed) {
@@ -171,10 +166,24 @@ export class StreamableHTTPTransport implements Transport {
           }
         }, 30000)
 
-        // Set up close handler for client disconnects
-        stream.onAbort(() => {
-          this.#streamMapping.delete(resolvedStreamId)
-          clearInterval(keepAlive)
+        // Assign the response to the standalone SSE stream
+        this.#streamMapping.set(resolvedStreamId, {
+          ctx,
+          stream,
+          cleanup: () => {
+            clearInterval(keepAlive)
+            this.#streamMapping.delete(resolvedStreamId)
+          }
+        })
+
+
+        // hold the callback else streamSSE will close the stream
+        await new Promise<void>((resolve) => {
+          // Set up close handler for client disconnects
+          stream.onAbort(() => {
+            this.#streamMapping.get(resolvedStreamId)?.cleanup?.()
+            resolve()
+          })
         })
       })
     } catch (error) {
@@ -362,17 +371,23 @@ export class StreamableHTTPTransport implements Transport {
             }
           }
 
-          // Set up close handler for client disconnects
-          stream.onAbort(() => {
-            this.#streamMapping.delete(streamId)
-          })
-
+          
           // handle each message
           for (const message of messages) {
             this.onmessage?.(message, { authInfo })
           }
           // The server SHOULD NOT close the SSE stream before sending all JSON-RPC responses
           // This will be handled by the send() method when responses are ready
+
+          // hold the callback else streamSSE will close the stream
+          await new Promise<void>((resolve) => {
+          // Set up close handler for client disconnects
+          stream.onAbort(() => { 
+            this.#streamMapping.get(streamId)?.cleanup?.()
+            this.#streamMapping.delete(streamId)
+            resolve()
+            })
+          })
         })
       }
     } catch (error) {
@@ -503,8 +518,9 @@ export class StreamableHTTPTransport implements Transport {
   async close(): Promise<void> {
     // Close all SSE connections
 
-    for (const { stream } of this.#streamMapping.values()) {
+    for (const { stream, cleanup } of this.#streamMapping.values()) {
       stream?.close()
+      cleanup?.()
     }
 
     this.#streamMapping.clear()
