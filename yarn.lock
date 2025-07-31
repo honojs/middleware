@@ -2343,7 +2343,7 @@ __metadata:
   resolution: "@hono/mcp@workspace:packages/mcp"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@modelcontextprotocol/sdk": "npm:^1.12.0"
+    "@modelcontextprotocol/sdk": "npm:^1.17.1"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -3237,22 +3237,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@modelcontextprotocol/sdk@npm:1.12.0"
+"@modelcontextprotocol/sdk@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@modelcontextprotocol/sdk@npm:1.17.1"
   dependencies:
     ajv: "npm:^6.12.6"
     content-type: "npm:^1.0.5"
     cors: "npm:^2.8.5"
     cross-spawn: "npm:^7.0.5"
     eventsource: "npm:^3.0.2"
+    eventsource-parser: "npm:^3.0.0"
     express: "npm:^5.0.1"
     express-rate-limit: "npm:^7.5.0"
     pkce-challenge: "npm:^5.0.0"
     raw-body: "npm:^3.0.0"
     zod: "npm:^3.23.8"
     zod-to-json-schema: "npm:^3.24.1"
-  checksum: 10c0/daa71d3005dc4f02ca0e251c603cd2894cbde972a07f02c2b5d728e6d4608b141b357160a53c718caed877374a2270e26d228b48b0caf6f5bf1416de713a57e1
+  checksum: 10c0/bddee1c4a90adb2ee3f89f5598f0499841b1ad8b4d9a52b2b0afac3009918570d72240588a17178e319bdfbe70aced190f66b25e14f0a0645eacaf4776d4c15a
   languageName: node
   linkType: hard
 
@@ -8117,6 +8118,13 @@ __metadata:
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: 10c0/d6b6f2adbccbcda74ddbab52ed07db727ef52e31a61ed26db9feb7dc62af7fc8e060defa65e5f8af9449b86b52cc1a1f6a79f2eafcf4e62add2b7a1fa4a432f6
+  languageName: node
+  linkType: hard
+
+"eventsource-parser@npm:^3.0.0":
+  version: 3.0.3
+  resolution: "eventsource-parser@npm:3.0.3"
+  checksum: 10c0/2594011630efba56cafafc8ed6bd9a50db8f6d5dd62089b0950346e7961828c16efe07a588bdea3ba79e568fd9246c8163824a2ffaade767e1fdb2270c1fae0b
   languageName: node
   linkType: hard
 
