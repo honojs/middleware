@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/packages/hello",
+    "outDir": "../../dist/packages/bun-compress",
     "types": ["vitest/globals"]
   },
   "references": []
