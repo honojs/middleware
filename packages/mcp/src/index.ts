@@ -161,7 +161,7 @@ export class StreamableHTTPTransport implements Transport {
         const keepAlive = setInterval(() => {
           if (!stream.closed) {
             stream.writeSSE({ data: '', event: 'ping' }).catch(() => {
-              clearInterval(keepAlive)
+              stream.abort()
             })
           }
         }, 30000)
@@ -516,9 +516,8 @@ export class StreamableHTTPTransport implements Transport {
   async close(): Promise<void> {
     // Close all SSE connections
 
-    for (const { stream, cleanup } of this.#streamMapping.values()) {
-      stream?.close()
-      cleanup?.()
+    for (const { stream } of this.#streamMapping.values()) {
+      stream?.abort()
     }
 
     this.#streamMapping.clear()
@@ -616,7 +615,7 @@ export class StreamableHTTPTransport implements Transport {
           response.ctx.json(responses.length === 1 ? responses[0] : responses)
           return
         } else {
-          response.stream?.close()
+          response.stream?.abort()
         }
         // Clean up
         for (const id of relatedIds) {
