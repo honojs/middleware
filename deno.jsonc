@@ -8,7 +8,7 @@
     // "packages/bun-transpiler",
     // "packages/casbin",
     "packages/class-validator",
-    // "packages/clerk-auth",
+    "packages/clerk-auth",
     // "packages/cloudflare-access",
     "packages/conform-validator",
     "packages/effect-validator",
