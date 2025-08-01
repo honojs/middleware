@@ -1,5 +1,5 @@
 ---
-'@hono/ssg-plugins-essential': major
+'@hono/ssg-plugins-essential': minor
 ---
 
 add essential plugins package for Hono SSG
