@@ -31,8 +31,6 @@ export default [
 
     rules: {
       curly: ['error', 'all'],
-      quotes: ['error', 'single'],
-      semi: ['error', 'never'],
       'no-debugger': ['error'],
 
       'no-empty': [
