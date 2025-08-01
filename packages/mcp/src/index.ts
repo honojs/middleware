@@ -173,9 +173,8 @@ export class StreamableHTTPTransport implements Transport {
           cleanup: () => {
             clearInterval(keepAlive)
             this.#streamMapping.delete(resolvedStreamId)
-          }
+          },
         })
-
 
         // hold the callback else streamSSE will close the stream
         await new Promise<void>((resolve) => {
@@ -371,7 +370,6 @@ export class StreamableHTTPTransport implements Transport {
             }
           }
 
-          
           // handle each message
           for (const message of messages) {
             this.onmessage?.(message, { authInfo })
@@ -381,11 +379,11 @@ export class StreamableHTTPTransport implements Transport {
 
           // hold the callback else streamSSE will close the stream
           await new Promise<void>((resolve) => {
-          // Set up close handler for client disconnects
-          stream.onAbort(() => { 
-            this.#streamMapping.get(streamId)?.cleanup?.()
-            this.#streamMapping.delete(streamId)
-            resolve()
+            // Set up close handler for client disconnects
+            stream.onAbort(() => {
+              this.#streamMapping.get(streamId)?.cleanup?.()
+              this.#streamMapping.delete(streamId)
+              resolve()
             })
           })
         })
