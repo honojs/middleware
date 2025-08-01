@@ -6,6 +6,10 @@ The [tsyringe](https://github.com/microsoft/tsyringe) middleware provides a way 
 
 ## Usage
 
+The middleware creates a request-scoped child container for each request. This ensures that dependencies registered within a request are isolated and not shared across different requests. To resolve dependencies, use `c.var.resolve()` instead of the global `container.resolve()`.
+
+You can still use the global `container` to register shared dependencies before setting up the middleware. These global dependencies will be inherited by all request-scoped containers.
+
 ```ts
 import 'reflect-metadata' // tsyringe requires reflect-metadata or polyfill
 import { container, inject, injectable } from 'tsyringe'
@@ -31,7 +35,7 @@ app.use(
 )
 
 app.get('/', (c) => {
-  const hello = container.resolve(Hello)
+  const hello = c.var.resolve(Hello)
   return c.text(hello.greet())
 })
 
