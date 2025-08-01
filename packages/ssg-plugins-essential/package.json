@@ -1,6 +1,6 @@
 {
   "name": "@hono/ssg-plugins-essential",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Essential plugins for Hono SSG",
   "type": "module",
   "files": [
