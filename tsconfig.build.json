@@ -9,6 +9,7 @@
   "exclude": [
     "${configDir}/node_modules",
     "${configDir}/vitest.config.ts",
+    "${configDir}/tsup.config.ts",
     "${configDir}/src/**/*.test.ts",
     "${configDir}/src/**/*.test.tsx",
     "${configDir}/src/**/*.test-d.ts"
