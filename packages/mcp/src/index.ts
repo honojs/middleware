@@ -37,7 +37,7 @@ export class StreamableHTTPTransport implements Transport {
         json: (data: unknown) => void
       }
       stream?: SSEStreamingApi
-      cleanup?: () => void
+      cleanup: () => void
     }
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
@@ -180,7 +180,7 @@ export class StreamableHTTPTransport implements Transport {
         await new Promise<void>((resolve) => {
           // Set up close handler for client disconnects
           stream.onAbort(() => {
-            this.#streamMapping.get(resolvedStreamId)?.cleanup?.()
+            this.#streamMapping.get(resolvedStreamId)?.cleanup()
             resolve()
           })
         })
@@ -335,13 +335,16 @@ export class StreamableHTTPTransport implements Transport {
         if (this.#enableJsonResponse) {
           // Store the response for this request to send messages back through this connection
           // We need to track by request ID to maintain the connection
-          const result = await new Promise<any>((resolve) => {
+          const result = await new Promise<Response>((resolve) => {
             for (const message of messages) {
               if (isJSONRPCRequest(message)) {
                 this.#streamMapping.set(streamId, {
                   ctx: {
                     header: ctx.header,
                     json: resolve,
+                  },
+                  cleanup: () => {
+                    this.#streamMapping.delete(streamId)
                   },
                 })
                 this.#requestToStreamMapping.set(message.id, streamId)
@@ -365,6 +368,9 @@ export class StreamableHTTPTransport implements Transport {
               this.#streamMapping.set(streamId, {
                 ctx,
                 stream,
+                cleanup: () => {
+                  this.#streamMapping.delete(streamId)
+                },
               })
               this.#requestToStreamMapping.set(message.id, streamId)
             }
@@ -381,8 +387,7 @@ export class StreamableHTTPTransport implements Transport {
           await new Promise<void>((resolve) => {
             // Set up close handler for client disconnects
             stream.onAbort(() => {
-              this.#streamMapping.get(streamId)?.cleanup?.()
-              this.#streamMapping.delete(streamId)
+              this.#streamMapping.get(streamId)?.cleanup()
               resolve()
             })
           })
