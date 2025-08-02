@@ -37,6 +37,7 @@ export class StreamableHTTPTransport implements Transport {
         json: (data: unknown) => void
       }
       stream?: SSEStreamingApi
+      cleanup: () => void
     }
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
@@ -156,25 +157,32 @@ export class StreamableHTTPTransport implements Transport {
       return streamSSE(ctx, async (stream) => {
         const resolvedStreamId = typeof streamId === 'string' ? streamId : await streamId(stream)
 
-        // Assign the response to the standalone SSE stream
-        this.#streamMapping.set(resolvedStreamId, {
-          ctx,
-          stream,
-        })
-
         // Keep connection alive
         const keepAlive = setInterval(() => {
           if (!stream.closed) {
             stream.writeSSE({ data: '', event: 'ping' }).catch(() => {
-              clearInterval(keepAlive)
+              stream.abort()
             })
           }
         }, 30000)
 
-        // Set up close handler for client disconnects
-        stream.onAbort(() => {
-          this.#streamMapping.delete(resolvedStreamId)
-          clearInterval(keepAlive)
+        // Assign the response to the standalone SSE stream
+        this.#streamMapping.set(resolvedStreamId, {
+          ctx,
+          stream,
+          cleanup: () => {
+            clearInterval(keepAlive)
+            this.#streamMapping.delete(resolvedStreamId)
+          },
+        })
+
+        // hold the callback else streamSSE will close the stream
+        await new Promise<void>((resolve) => {
+          // Set up close handler for client disconnects
+          stream.onAbort(() => {
+            this.#streamMapping.get(resolvedStreamId)?.cleanup()
+            resolve()
+          })
         })
       })
     } catch (error) {
@@ -327,13 +335,16 @@ export class StreamableHTTPTransport implements Transport {
         if (this.#enableJsonResponse) {
           // Store the response for this request to send messages back through this connection
           // We need to track by request ID to maintain the connection
-          const result = await new Promise<any>((resolve) => {
+          const result = await new Promise<Response>((resolve) => {
             for (const message of messages) {
               if (isJSONRPCRequest(message)) {
                 this.#streamMapping.set(streamId, {
                   ctx: {
                     header: ctx.header,
                     json: resolve,
+                  },
+                  cleanup: () => {
+                    this.#streamMapping.delete(streamId)
                   },
                 })
                 this.#requestToStreamMapping.set(message.id, streamId)
@@ -357,15 +368,13 @@ export class StreamableHTTPTransport implements Transport {
               this.#streamMapping.set(streamId, {
                 ctx,
                 stream,
+                cleanup: () => {
+                  this.#streamMapping.delete(streamId)
+                },
               })
               this.#requestToStreamMapping.set(message.id, streamId)
             }
           }
-
-          // Set up close handler for client disconnects
-          stream.onAbort(() => {
-            this.#streamMapping.delete(streamId)
-          })
 
           // handle each message
           for (const message of messages) {
@@ -373,6 +382,15 @@ export class StreamableHTTPTransport implements Transport {
           }
           // The server SHOULD NOT close the SSE stream before sending all JSON-RPC responses
           // This will be handled by the send() method when responses are ready
+
+          // hold the callback else streamSSE will close the stream
+          await new Promise<void>((resolve) => {
+            // Set up close handler for client disconnects
+            stream.onAbort(() => {
+              this.#streamMapping.get(streamId)?.cleanup()
+              resolve()
+            })
+          })
         })
       }
     } catch (error) {
@@ -504,7 +522,7 @@ export class StreamableHTTPTransport implements Transport {
     // Close all SSE connections
 
     for (const { stream } of this.#streamMapping.values()) {
-      stream?.close()
+      stream?.abort()
     }
 
     this.#streamMapping.clear()
@@ -602,7 +620,7 @@ export class StreamableHTTPTransport implements Transport {
           response.ctx.json(responses.length === 1 ? responses[0] : responses)
           return
         } else {
-          response.stream?.close()
+          response.stream?.abort()
         }
         // Clean up
         for (const id of relatedIds) {
