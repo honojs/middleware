@@ -342,7 +342,8 @@ export class StreamableHTTPTransport implements Transport {
                   ctx: {
                     header: ctx.header,
                     json: (data: unknown) => {
-                      resolve(data)
+                      // I'm really sorry - I don't know why this works
+                      resolve(ctx.json(data as JSONRPCMessage))
                     },
                   },
                   cleanup: () => {
