@@ -168,7 +168,7 @@ export class StreamableHTTPTransport implements Transport {
 
         // Assign the response to the standalone SSE stream
         this.#streamMapping.set(resolvedStreamId, {
-          ctx,
+          ctx: { header: ctx.header },
           stream,
           cleanup: () => {
             clearInterval(keepAlive)
@@ -342,7 +342,6 @@ export class StreamableHTTPTransport implements Transport {
                   ctx: {
                     header: ctx.header,
                     json: (data: unknown) => {
-                      // I'm really sorry - I don't know why this works
                       resolve(ctx.json(data as JSONRPCMessage))
                     },
                   },
@@ -360,7 +359,7 @@ export class StreamableHTTPTransport implements Transport {
             }
           })
 
-          return ctx.json(result)
+          return result
         }
 
         return streamSSE(ctx, async (stream) => {
@@ -369,7 +368,7 @@ export class StreamableHTTPTransport implements Transport {
           for (const message of messages) {
             if (isJSONRPCRequest(message)) {
               this.#streamMapping.set(streamId, {
-                ctx,
+                ctx: { header: ctx.header },
                 stream,
                 cleanup: () => {
                   this.#streamMapping.delete(streamId)
