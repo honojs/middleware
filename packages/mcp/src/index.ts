@@ -341,7 +341,9 @@ export class StreamableHTTPTransport implements Transport {
                 this.#streamMapping.set(streamId, {
                   ctx: {
                     header: ctx.header,
-                    json: resolve,
+                    json: (data: unknown) => {
+                      resolve(data)
+                    },
                   },
                   cleanup: () => {
                     this.#streamMapping.delete(streamId)
