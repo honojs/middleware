@@ -34,7 +34,7 @@ export class StreamableHTTPTransport implements Transport {
     {
       ctx: {
         header: (name: string, value: string) => void
-        json: (data: unknown) => void
+        json?: (data: unknown) => void
       }
       stream?: SSEStreamingApi
       cleanup: () => void
