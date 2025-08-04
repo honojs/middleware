@@ -619,7 +619,7 @@ export class StreamableHTTPTransport implements Transport {
 
           const responses = relatedIds.map((id) => this.#requestResponseMap.get(id)!)
 
-          response.ctx.json(responses.length === 1 ? responses[0] : responses)
+          response.ctx.json?.(responses.length === 1 ? responses[0] : responses)
           return
         } else {
           response.stream?.abort()
