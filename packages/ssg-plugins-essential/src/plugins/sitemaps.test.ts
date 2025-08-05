@@ -20,7 +20,7 @@ describe('Sitemap Plugin', () => {
     }
   })
 
-  it('should generate XML sitemap with all HTML files', async () => {
+  it('should generate sitemap.xml with canonicalize=true (default)', async () => {
     const app = new Hono()
     app.get('/', (c) => c.html('<html><head><title>Home</title></head><body>Home</body></html>'))
     app.get('/about', (c) =>
@@ -42,10 +42,26 @@ describe('Sitemap Plugin', () => {
     const sitemapContent = writtenFiles[expectedPath]
     expect(sitemapContent).toContain('<?xml version="1.0" encoding="UTF-8"?>')
     expect(sitemapContent).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
-    expect(sitemapContent).toContain('<url><loc>https://example.com/index.html</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/about</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/post-1</loc></url>')
+    expect(sitemapContent).toContain('</urlset>')
+  })
+
+  it('should generate sitemap.xml with canonicalize=false', async () => {
+    const app = new Hono()
+    app.get('/', (c) => c.html('<html><body>Home</body></html>'))
+    app.get('/about', (c) => c.html('<html><body>About</body></html>'))
+    app.get('/blog/post-1', (c) => c.html('<html><body>Post</body></html>'))
+
+    const plugin = sitemapPlugin({ baseUrl: 'https://example.com', canonicalize: false })
+    await toSSG(app, mockFsModule, { plugins: [plugin], dir: DEFAULT_OUTPUT_DIR })
+
+    const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
+    const sitemapContent = writtenFiles[expectedPath]
+    expect(sitemapContent).toContain('<url><loc>https://example.com/</loc></url>')
     expect(sitemapContent).toContain('<url><loc>https://example.com/about.html</loc></url>')
     expect(sitemapContent).toContain('<url><loc>https://example.com/blog/post-1.html</loc></url>')
-    expect(sitemapContent).toContain('</urlset>')
   })
 
   it('should use custom output directory from options', async () => {
@@ -98,8 +114,10 @@ describe('Sitemap Plugin', () => {
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    expect(sitemapContent).toContain('hello%20world.html')
-    expect(sitemapContent).toContain('%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF.html')
+    expect(sitemapContent).toContain('https://example.com/hello%20world')
+    expect(sitemapContent).toContain(
+      'https://example.com/%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF'
+    )
   })
 
   it('should handle baseUrl with subdirectory', async () => {
@@ -115,7 +133,7 @@ describe('Sitemap Plugin', () => {
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/index.html</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/</loc></url>')
   })
 
   it('should handle baseUrl with trailing slash', async () => {
@@ -130,7 +148,7 @@ describe('Sitemap Plugin', () => {
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/index.html</loc></url>')
+    expect(sitemapContent).toContain('<url><loc>https://example.com/blog/</loc></url>')
   })
 
   it('should not remove DEFAULT_OUTPUT_DIR from route path if it is part of the route', async () => {
@@ -149,7 +167,7 @@ describe('Sitemap Plugin', () => {
     const expectedPath = path.join(DEFAULT_OUTPUT_DIR, 'sitemap.xml')
     const sitemapContent = writtenFiles[expectedPath]
 
-    const expectedUrl = `<url><loc>https://example.com/${path.posix.join(normalizedDir, 'about.html')}</loc></url>`
+    const expectedUrl = `<url><loc>https://example.com/${path.posix.join(normalizedDir, 'about')}</loc></url>`
     expect(sitemapContent).toContain(expectedUrl)
   })
 })

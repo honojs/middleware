@@ -6,9 +6,11 @@ import path from 'node:path'
  * Sitemap plugin options.
  *
  * @property baseUrl - The base URL of the site, used to generate full URLs in the sitemap.
+ * @property canonicalize - Whether to canonicalize URLs in the sitemap. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true.
  */
 export type SitemapPluginOptions = {
   baseUrl: string
+  canonicalize?: boolean
 }
 
 /**
@@ -19,7 +21,10 @@ export type SitemapPluginOptions = {
  * @param options - Options for the sitemap plugin.
  * @returns A SSGPlugin to create the sitemap.
  */
-export const sitemapPlugin = ({ baseUrl }: SitemapPluginOptions): SSGPlugin => {
+export const sitemapPlugin = ({
+  baseUrl,
+  canonicalize = true,
+}: SitemapPluginOptions): SSGPlugin => {
   return {
     afterGenerateHook: async (result, fsModule, options) => {
       const outputDir = options?.dir ?? DEFAULT_OUTPUT_DIR
@@ -34,8 +39,14 @@ export const sitemapPlugin = ({ baseUrl }: SitemapPluginOptions): SSGPlugin => {
           if (cleanedFile.startsWith(outputDirNormalized + '/')) {
             cleanedFile = cleanedFile.slice(outputDirNormalized.length + 1)
           }
-          const encodedFile = encodeURI(cleanedFile)
-          return `${normalizedBaseURL}${encodedFile}`
+          if (cleanedFile.endsWith('index.html')) {
+            const dir = cleanedFile.slice(0, -'index.html'.length)
+            return `${normalizedBaseURL}${encodeURI(dir)}`
+          }
+          if (canonicalize && cleanedFile.endsWith('.html')) {
+            return `${normalizedBaseURL}${encodeURI(cleanedFile.slice(0, -'.html'.length))}`
+          }
+          return `${normalizedBaseURL}${encodeURI(cleanedFile)}`
         })
 
       const siteMapText = `<?xml version="1.0" encoding="UTF-8"?>
