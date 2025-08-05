@@ -1,6 +1,7 @@
 import type { AfterGenerateHook, AfterResponseHook, BeforeRequestHook, SSGPlugin } from 'hono/ssg'
 import { DEFAULT_OUTPUT_DIR } from 'hono/ssg'
 import path from 'node:path'
+import { canonicalizeFilePath } from '../utils/canonicalizeFilePath'
 
 const extractTitleFromHtml = (html: string): string => {
   const match = html.match(/<title>(.*?)<\/title>/i)
@@ -77,33 +78,17 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
       ? options.baseUrl
       : `${options.baseUrl}/`
     const feedLink = `${normalizedBaseURL}${fileName}`
-    const normalizedOutputDir = outputDir.replace(/^\.\//, '').replace(/\/$/, '')
 
     const items = result.files
       .filter((file) => file.endsWith('.html'))
       .map((file) => {
-        let cleanedFile = file.replace(/^\.\//, '')
-        if (cleanedFile.startsWith(normalizedOutputDir + '/')) {
-          cleanedFile = cleanedFile.slice(normalizedOutputDir.length + 1)
-        }
-
-        let path = '/' + cleanedFile
-        if (path.endsWith('/index.html')) {
-          path = path.slice(0, -'index.html'.length) || '/'
-        } else if (path.endsWith('.html')) {
-          path = path.slice(0, -'.html'.length)
-        }
-
-        const meta = feedItemMap[path]
-        let url: string
-        if (cleanedFile.endsWith('index.html')) {
-          const dir = cleanedFile.slice(0, -'index.html'.length)
-          url = `${normalizedBaseURL}${encodeURI(dir)}`
-        } else if (canonicalize && cleanedFile.endsWith('.html')) {
-          url = `${normalizedBaseURL}${encodeURI(cleanedFile.slice(0, -'.html'.length))}`
-        } else {
-          url = `${normalizedBaseURL}${encodeURI(cleanedFile)}`
-        }
+        const { routePath, url } = canonicalizeFilePath(
+          file,
+          outputDir,
+          options.baseUrl,
+          canonicalize
+        )
+        const meta = feedItemMap[routePath]
         return {
           title: meta?.title ?? '',
           description: meta?.description ?? '',
