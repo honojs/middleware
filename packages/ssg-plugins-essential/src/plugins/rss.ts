@@ -16,9 +16,9 @@ type FeedType = 'rss2'
 
 type FeedItem = {
   title: string
-  link: string
   description?: string
 }
+
 /**
  * RSS plugin options.
  *
@@ -26,12 +26,14 @@ type FeedItem = {
  * @property feedTitle - The title of the RSS feed.
  * @property feedDescription - The description of the RSS feed.
  * @property feedType - The type of RSS feed to generate. Default is RSS 2.0.
+ * @property canonicalize - Whether to canonicalize URLs in the RSS feed. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true.
  */
 export type RssPluginOptions = {
   baseUrl: string
   feedTitle: string
   feedDescription: string
   feedType?: FeedType
+  canonicalize?: boolean
 }
 
 /**
@@ -44,12 +46,13 @@ export type RssPluginOptions = {
  */
 
 export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
-  const feedItems: FeedItem[] = []
-  const pendingUrls: string[] = []
+  const feedItemMap: Record<string, FeedItem> = {}
+  const pendingPaths: string[] = []
+  const canonicalize = options.canonicalize ?? true
 
   const beforeRequestHook: BeforeRequestHook = async (request) => {
     const url = new URL(request.url)
-    pendingUrls.push(url.pathname)
+    pendingPaths.push(url.pathname)
     return request
   }
 
@@ -59,18 +62,14 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
       const html = await response.text()
       const title = extractTitleFromHtml(html)
       const description = extractDescriptionFromHtml(html)
-      const path = pendingUrls.shift() ?? ''
-      const normalizedBaseURL = options.baseUrl.endsWith('/')
-        ? options.baseUrl
-        : `${options.baseUrl}/`
-      const url = path ? `${normalizedBaseURL}${path.replace(/^\//, '')}` : normalizedBaseURL
-      feedItems.push({ title, link: url, description })
+      const path = pendingPaths.shift() ?? ''
+      feedItemMap[path] = { title, description }
       return new Response(html, response)
     }
     return response
   }
 
-  const afterGenerateHook: AfterGenerateHook = async (_result, fsModule, ssgOptions) => {
+  const afterGenerateHook: AfterGenerateHook = async (result, fsModule, ssgOptions) => {
     const outputDir = ssgOptions?.dir ?? DEFAULT_OUTPUT_DIR
     const fileName = 'rss.xml'
     const filePath = path.join(outputDir, fileName)
@@ -78,6 +77,39 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
       ? options.baseUrl
       : `${options.baseUrl}/`
     const feedLink = `${normalizedBaseURL}${fileName}`
+    const normalizedOutputDir = outputDir.replace(/^\.\//, '').replace(/\/$/, '')
+
+    const items = result.files
+      .filter((file) => file.endsWith('.html'))
+      .map((file) => {
+        let cleanedFile = file.replace(/^\.\//, '')
+        if (cleanedFile.startsWith(normalizedOutputDir + '/')) {
+          cleanedFile = cleanedFile.slice(normalizedOutputDir.length + 1)
+        }
+
+        let path = '/' + cleanedFile
+        if (path.endsWith('/index.html')) {
+          path = path.slice(0, -'index.html'.length) || '/'
+        } else if (path.endsWith('.html')) {
+          path = path.slice(0, -'.html'.length)
+        }
+
+        const meta = feedItemMap[path]
+        let url: string
+        if (cleanedFile.endsWith('index.html')) {
+          const dir = cleanedFile.slice(0, -'index.html'.length)
+          url = `${normalizedBaseURL}${encodeURI(dir)}`
+        } else if (canonicalize && cleanedFile.endsWith('.html')) {
+          url = `${normalizedBaseURL}${encodeURI(cleanedFile.slice(0, -'.html'.length))}`
+        } else {
+          url = `${normalizedBaseURL}${encodeURI(cleanedFile)}`
+        }
+        return {
+          title: meta?.title ?? '',
+          description: meta?.description ?? '',
+          link: url,
+        }
+      })
 
     const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -85,7 +117,7 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
 <title>${options.feedTitle}</title>
 <link>${feedLink}</link>
 <description>${options.feedDescription}</description>
-${feedItems
+${items
   .map(
     (item) => `<item>
 <title>${item.title}</title>
