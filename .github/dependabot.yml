@@ -8,14 +8,6 @@ updates:
 
   - package-ecosystem: npm
     allow:
-      - dependency-type: production
-    directory: /
-    schedule:
-      interval: weekly
-    versioning-strategy: widen
-
-  - package-ecosystem: npm
-    allow:
       - dependency-type: development
     directory: /
     schedule:
