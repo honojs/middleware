@@ -86,7 +86,10 @@ import { sitemapPlugin } from '@hono/ssg-plugins-essential/sitemap'
 toSSG(app, fs, {
   plugins: [
     sitemapPlugin({
+      // The base URL of the site, used to generate full URLs in the sitemap.
       baseUrl: 'https://example.com',
+      // Whether to canonicalize URLs in the sitemap. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true.
+      canonicalize: true,
     }),
   ],
 })
@@ -100,11 +103,14 @@ import { robotsTxtPlugin } from '@hono/ssg-plugins-essential/robots-txt'
 toSSG(app, fs, {
   plugins: [
     robotsTxtPlugin({
+      // An array of rules for user agents.
       rules: [
         { userAgent: '*', allow: ['/'], disallow: ['/private'] },
         { userAgent: 'Googlebot', allow: ['/'] },
       ],
+      // The URL of the sitemap to include in the `robots.txt` file.
       sitemapUrl: 'https://example.com/sitemap.xml',
+      // An array of extra lines to include in the robots.txt file.
       extraLines: ['# This is a comment.'],
     }),
   ],
@@ -119,10 +125,16 @@ import { rssPlugin } from '@hono/ssg-plugins-essential/rss'
 toSSG(app, fs, {
   plugins: [
     rssPlugin({
+      // The base URL of the site, used to generate full URLs in the RSS feed.
       baseUrl: 'https://example.com',
+      // The title of the RSS feed.
       feedTitle: 'My Blog',
+      // The description of the RSS feed.
       feedDescription: 'Latest updates from my blog.',
+      // The type of RSS feed to generate. Default is RSS 2.0.
       feedType: 'rss2',
+      // Whether to canonicalize URLs in the RSS feed. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true.
+      canonicalize: true,
     }),
   ],
 })
