@@ -309,11 +309,18 @@ You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
 app.doc31('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // new endpoint
-app.getOpenAPI31Document({
-  openapi: '3.1.0',
-  info: { title: 'foo', version: '1' },
-}) // schema object
+app.getOpenAPI31Document(
+  {
+    openapi: '3.1.0',
+    info: { title: 'foo', version: '1' },
+  }, // OpenAPI object config
+  {
+    unionPreferredType: 'oneOf',
+  } // Generator options
+) // schema object
 ```
+
+The second parameter is optional and accepts generator options as supported by the `@asteasolutions/zod-to-openapi` library. Refer to their documentation for the complete list of available options and their usage.
 
 ### The Registry
 
