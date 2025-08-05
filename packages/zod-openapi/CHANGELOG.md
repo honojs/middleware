@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1353](https://github.com/honojs/middleware/pull/1353) [`f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0`](https://github.com/honojs/middleware/commit/f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0) Thanks [@yumuranaoki](https://github.com/yumuranaoki)! - Add optional generator options parameter to doc middleware
+
 ## 1.0.2
 
 ### Patch Changes
