@@ -42,9 +42,15 @@ export const robotsTxtPlugin = (options: RobotsTxtPluginOptions): SSGPlugin => {
       if (options.rules && options.rules.length > 0) {
         for (const [i, rule] of options.rules.entries()) {
           lines.push(`User-agent: ${rule.userAgent}`)
-          if (rule.allow) rule.allow.forEach((p) => lines.push(`Allow: ${p}`))
-          if (rule.disallow) rule.disallow.forEach((p) => lines.push(`Disallow: ${p}`))
-          if (rule.extraLines) lines.push(...rule.extraLines)
+          if (rule.allow) {
+            rule.allow.forEach((p) => lines.push(`Allow: ${p}`))
+          }
+          if (rule.disallow) {
+            rule.disallow.forEach((p) => lines.push(`Disallow: ${p}`))
+          }
+          if (rule.extraLines) {
+            lines.push(...rule.extraLines)
+          }
           if (i !== options.rules.length - 1) {
             lines.push('')
           }
