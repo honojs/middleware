@@ -1,3 +1,4 @@
+import { html } from 'hono/html'
 import type { AfterGenerateHook, AfterResponseHook, BeforeRequestHook, SSGPlugin } from 'hono/ssg'
 import { DEFAULT_OUTPUT_DIR } from 'hono/ssg'
 import path from 'node:path'
@@ -98,15 +99,15 @@ export const rssPlugin = (options: RssPluginOptions): SSGPlugin => {
     const rssFeed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-<title>${options.feedTitle}</title>
+<title>${html`${options.feedTitle}`}</title>
 <link>${feedLink}</link>
-<description>${options.feedDescription}</description>
+<description>${html`${options.feedDescription}`}</description>
 ${items
   .map(
     (item) => `<item>
-<title>${item.title}</title>
+<title>${html`${item.title}`}</title>
 <link>${item.link}</link>
-<description>${item.description ?? ''}</description>
+<description>${html`${item.description ?? ''}`}</description>
 </item>`
   )
   .join('\n')}

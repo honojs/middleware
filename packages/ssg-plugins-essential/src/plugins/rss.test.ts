@@ -204,4 +204,31 @@ describe('RSS Plugin', () => {
     const itemMatches = rssContent.match(/<item>[\s\S]*?<\/item>/g)
     expect(itemMatches).toBeNull()
   })
+
+  it('should escape HTML elements in title and description', async () => {
+    const app = new Hono()
+    app.get('/danger', (c) =>
+      c.html(
+        `<html><head><title>Home <b>Page</b> &amp; <foo/></title><meta name="description" content="Description with <bar> &amp; <baz/>." /></head><body><h1>Danger!</h1></body></html>`
+      )
+    )
+
+    const plugin = rssPlugin({
+      baseUrl: 'https://example.com',
+      feedTitle: 'My Blog & <News>',
+      feedDescription: 'This is a blog about <coding> & programming.',
+      feedType: 'rss2',
+    })
+
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
+
+    const rssPath = path.join(DEFAULT_OUTPUT_DIR, 'rss.xml')
+    const rssContent = writtenFiles[rssPath]
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Home &lt;b&gt;Page&lt;\/b&gt; &amp;amp; &lt;foo\/&gt;<\/title>\s*<link>https:\/\/example\.com\/danger<\/link>\s*<description>Description with &lt;bar&gt; &amp;amp; &lt;baz\/&gt;\.<\/description>\s*<\/item>/
+    )
+  })
 })
