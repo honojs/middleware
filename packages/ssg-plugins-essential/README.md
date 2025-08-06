@@ -110,7 +110,7 @@ toSSG(app, fs, {
       ],
       // The URL of the sitemap to include in the `robots.txt` file.
       sitemapUrl: 'https://example.com/sitemap.xml',
-      // An array of extra lines to include in the robots.txt file.
+      // An array of extra lines to include in the `robots.txt` file.
       extraLines: ['# This is a comment.'],
     }),
   ],

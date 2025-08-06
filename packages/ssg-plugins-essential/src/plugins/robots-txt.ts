@@ -4,19 +4,22 @@ import path from 'node:path'
 
 /**
  * Robots.txt plugin options.
- *
- * @property rules - An array of rules for user agents.
- * @property sitemapUrl - The URL of the sitemap to include in the `robots.txt` file.
- * @property extraLines - An array of extra lines to include in the robots.txt file.
  */
 export type RobotsTxtPluginOptions = {
+  /** An array of rules for user agents. */
   rules?: {
+    /** The user agent to apply the rules to. Use `*` for all user agents. */
     userAgent: string
+    /** An array of paths to allow for the user agent. */
     allow?: string[]
+    /** An array of paths to disallow for the user agent. */
     disallow?: string[]
+    /** An array of extra lines to include for the user agent. */
     extraLines?: string[]
   }[]
+  /** The URL of the sitemap to include in the `robots.txt` file. */
   sitemapUrl?: string
+  /** An array of extra lines to include in the `robots.txt` file. */
   extraLines?: string[]
 }
 

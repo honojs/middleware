@@ -22,18 +22,17 @@ type FeedItem = {
 
 /**
  * RSS plugin options.
- *
- * @property baseUrl - The base URL of the site, used to generate full URLs in the RSS feed.
- * @property feedTitle - The title of the RSS feed.
- * @property feedDescription - The description of the RSS feed.
- * @property feedType - The type of RSS feed to generate. Default is RSS 2.0.
- * @property canonicalize - Whether to canonicalize URLs in the RSS feed. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true.
  */
 export type RssPluginOptions = {
+  /** The base URL of the site, used to generate full URLs in the RSS feed. */
   baseUrl: string
+  /** The title of the RSS feed. */
   feedTitle: string
+  /** The description of the RSS feed. */
   feedDescription: string
+  /** The type of RSS feed to generate. Default is RSS 2.0. */
   feedType?: FeedType
+  /** Whether to canonicalize URLs in the RSS feed. If true, URLs ending with `.html` are canonicalized to remove the extension (e.g., `/foo.html` -> `/foo`). URLs ending with `index.html` are always canonicalized. Default is true. */
   canonicalize?: boolean
 }
 
