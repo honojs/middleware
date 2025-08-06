@@ -37,15 +37,6 @@ import { Hono } from 'hono'
 import { toSSG } from 'hono/ssg'
 import fs from 'fs/promises'
 
-declare module 'hono' {
-  interface ContextRenderer {
-    (
-      content: string | Promise<string>,
-      head: { title: string; description?: string }
-    ): Response | Promise<Response>
-  }
-}
-
 const app = new Hono()
 
 app.use('*', async (c, next) => {
