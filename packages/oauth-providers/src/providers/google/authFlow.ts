@@ -23,6 +23,7 @@ export class AuthFlow {
   redirect_uri: string
   code: string | undefined
   token: Token | undefined
+  refresh_token: Token | undefined
   scope: string[]
   state: string | undefined
   login_hint: string | undefined
@@ -109,6 +110,13 @@ export class AuthFlow {
       }
 
       this.granted_scopes = response.scope.split(' ')
+    }
+
+    if ('refresh_token' in response) {
+      this.refresh_token = {
+        token: response.refresh_token,
+        expires_in: response.refresh_token_expires_in,
+      }
     }
   }
 

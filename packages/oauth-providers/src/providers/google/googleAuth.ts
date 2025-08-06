@@ -61,6 +61,7 @@ export function googleAuth(options: {
     c.set('token', auth.token)
     c.set('user-google', auth.user)
     c.set('granted-scopes', auth.granted_scopes)
+    c.set('refresh-token', auth.refresh_token)
 
     await next()
   }
