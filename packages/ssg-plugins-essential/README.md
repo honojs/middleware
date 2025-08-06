@@ -48,29 +48,36 @@ declare module 'hono' {
 
 const app = new Hono()
 
-app.use('/*', async (c, next) => {
-  c.setRenderer((content, head) => {
+app.use('*', async (c, next) => {
+  c.setRenderer((content) => {
     return c.html(
       <html>
-        <head>
-          <title>{head.title ?? ''}</title>
-          {head.description && <meta name='description' content={head.description} />}
-        </head>
-        <body>
-          <p>{content}</p>
-        </body>
+        <head></head>
+        <body>{content}</body>
       </html>
     )
   })
   await next()
 })
 
-app.get('/', (c) => c.render('home page content', { title: 'Home Page' }))
+app.get('/', (c) => {
+  return c.render(
+    <>
+      <title>Home Page</title>
+      <meta name='description' content='This is the home page.' />
+      home page content
+    </>
+  )
+})
+
 app.get('/about', (c) => {
-  return c.render('about page content', {
-    title: 'About Page',
-    description: 'This is the about page.',
-  })
+  return c.render(
+    <>
+      <title>About Page</title>
+      <meta name='description' content='This is the about page.' />
+      about page content
+    </>
+  )
 })
 
 toSSG(app, fs, {
