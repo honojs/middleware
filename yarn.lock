@@ -9347,7 +9347,7 @@ __metadata:
     "@vitest/coverage-istanbul": "npm:^3.2.4"
     eslint: "npm:^9.23.0"
     hono: "npm:^4.8.4"
-    pkg-pr-new: "npm:^0.0.51"
+    pkg-pr-new: "npm:^0.0.54"
     prettier: "npm:^3.5.3"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
@@ -12597,9 +12597,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-pr-new@npm:^0.0.51":
-  version: 0.0.51
-  resolution: "pkg-pr-new@npm:0.0.51"
+"pkg-pr-new@npm:^0.0.54":
+  version: 0.0.54
+  resolution: "pkg-pr-new@npm:0.0.54"
   dependencies:
     "@jsdevtools/ez-spawn": "npm:^3.0.4"
     "@octokit/action": "npm:^6.1.0"
@@ -12610,7 +12610,7 @@ __metadata:
     tinyglobby: "npm:^0.2.9"
   bin:
     pkg-pr-new: bin/cli.js
-  checksum: 10c0/e1cba5a2d23431de47f77184a3d78c0d1f30e3f783b41b4e93e3aeb8c97c7aae2dc0fefb6fe4977e9aa3f57318eca390f55e8d9d125264a6724b400c8d14dc29
+  checksum: 10c0/9e1893596a8310b032e13090b31110f91c0e15dde0e74d8b0a732e875b5837b02f9ac06074754516376d24fdb40335f6c7b672fe15ee19687ce0a6832b9b123f
   languageName: node
   linkType: hard
 
