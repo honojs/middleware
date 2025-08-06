@@ -28,11 +28,11 @@ export const canonicalizeFilePath = (
   let url: string
   if (cleanedFile.endsWith('index.html')) {
     const dir = cleanedFile.slice(0, -'index.html'.length)
-    url = `${canonicalBaseUrl}${encodeURI(dir)}`
+    url = new URL(dir, canonicalBaseUrl).toString()
   } else if (canonicalize && cleanedFile.endsWith('.html')) {
-    url = `${canonicalBaseUrl}${encodeURI(cleanedFile.slice(0, -'.html'.length))}`
+    url = new URL(cleanedFile.slice(0, -'.html'.length), canonicalBaseUrl).toString()
   } else {
-    url = `${canonicalBaseUrl}${encodeURI(cleanedFile)}`
+    url = new URL(cleanedFile, canonicalBaseUrl).toString()
   }
   return { routePath, url }
 }
