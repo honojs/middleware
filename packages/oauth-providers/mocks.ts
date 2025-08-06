@@ -242,6 +242,8 @@ export const dummyToken = {
   access_token: '15d42a4d-1948-4de4-ba78-b8a893feaf45',
   expires_in: 60000,
   scope: 'openid email profile',
+  refresh_token: '1//04dX-1234567890abcdef-567890abcdef1234',
+  refresh_token_expires_in: 3600,
 }
 
 export const googleUser = {
