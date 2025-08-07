@@ -1,5 +1,5 @@
-import type { TracerProvider } from '@opentelemetry/api'
-import { SpanKind, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api'
+import type { TracerProvider, MeterProvider } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode, trace, context, propagation, metrics } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,
@@ -12,6 +12,7 @@ import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import metadata from '../package.json' with { type: 'json' }
+import { createOtelMetrics, observeOtelMetrics } from './metrics'
 
 const PACKAGE_NAME = metadata.name
 const PACKAGE_VERSION = metadata.version
@@ -20,6 +21,7 @@ export type OtelOptions =
   | {
       augmentSpan?: false
       tracerProvider?: TracerProvider
+      meterProvider?: MeterProvider
       captureRequestHeaders?: (keyof Record<RequestHeader | (string & {}), string>)[]
       captureResponseHeaders?: (keyof Record<ResponseHeader | (string & {}), string>)[]
     }
@@ -43,6 +45,10 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
   }
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
+  const meterProvider = options.meterProvider ?? metrics.getMeterProvider()
+  const meter = meterProvider.getMeter(PACKAGE_NAME, PACKAGE_VERSION)
+  const otelMetrics = createOtelMetrics(meter)
+
   return createMiddleware(async (c, next) => {
     // Handle propagation of trace context from a request using the W3C Trace Context format
     let activeContext = context.active()
@@ -51,6 +57,8 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
     }
 
     const routePath = c.req.routePath
+    const startTime = performance.now()
+
     await tracer.startActiveSpan(
       `${c.req.method} ${c.req.routePath}`,
       {
@@ -95,6 +103,7 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           throw e
         } finally {
           span.end()
+          observeOtelMetrics(otelMetrics, c, { startTime })
         }
       }
     )

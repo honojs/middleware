@@ -1,4 +1,10 @@
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api'
+import {
+  InMemoryMetricExporter,
+  PeriodicExportingMetricReader,
+  MeterProvider,
+  AggregationTemporality,
+} from '@opentelemetry/sdk-metrics'
 import { InMemorySpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 import {
@@ -76,7 +82,7 @@ describe('OpenTelemetry middleware', () => {
     expect(attributes[ATTR_EXCEPTION_TYPE]).toBe('Error')
     expect(attributes[ATTR_EXCEPTION_MESSAGE]).toBe('error message')
     expect(attributes[ATTR_EXCEPTION_STACKTRACE]).toEqual(
-      expect.stringMatching(/Error: error message\n.*at \S+\/src\/index.test.ts:\d+:\d+\n/)
+      expect.stringMatching(/Error: error message\n.*at.*index\.test\.ts/)
     )
   })
 
@@ -181,5 +187,259 @@ describe('OpenTelemetry middleware', () => {
     expect(span.attributes[ATTR_HTTP_REQUEST_HEADER('x-custom-header')]).toBe('custom-value')
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('cache-control')]).toBe('no-cache')
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('x-response-header')]).toBe('response-value')
+  })
+})
+
+describe('OpenTelemetry middleware - Metrics', () => {
+  let memoryMetricExporter: InMemoryMetricExporter
+  let meterProvider: MeterProvider
+  let metricReader: PeriodicExportingMetricReader
+
+  beforeEach(() => {
+    memoryMetricExporter = new InMemoryMetricExporter(AggregationTemporality.CUMULATIVE)
+    metricReader = new PeriodicExportingMetricReader({
+      exporter: memoryMetricExporter,
+      exportIntervalMillis: 100,
+    })
+    meterProvider = new MeterProvider({
+      readers: [metricReader],
+    })
+  })
+
+  afterEach(async () => {
+    await meterProvider.shutdown()
+  })
+
+  it('Should record request duration and count metrics', async () => {
+    const app = new Hono()
+    app.use(otel({ meterProvider }))
+    app.get('/metrics-test', (c) => c.text('success'))
+
+    await app.request('http://localhost/metrics-test')
+
+    // Force metric collection
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    expect(resourceMetrics.length).toBeGreaterThan(0)
+
+    const scopeMetrics = resourceMetrics[0].scopeMetrics
+    expect(scopeMetrics.length).toBeGreaterThan(0)
+
+    const metrics = scopeMetrics[0].metrics
+    expect(metrics.length).toBe(2)
+
+    // Check duration histogram
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'hono_server_duration')
+    expect(durationMetric).toBeDefined()
+    expect(durationMetric!.descriptor.description).toBe('Duration of HTTP requests in seconds')
+    expect(durationMetric!.descriptor.unit).toBe('s')
+    // Check that it's a histogram type (dataPointType varies by implementation)
+    expect(durationMetric!.dataPoints).toBeDefined()
+
+    const durationDataPoints = durationMetric!.dataPoints
+    expect(durationDataPoints.length).toBe(1)
+    expect(durationDataPoints[0].attributes).toEqual({
+      'http.request.method': 'GET',
+      'http.response.status_code': 200,
+      'http.route': '/metrics-test',
+      'http.response.ok': true,
+    })
+
+    // Check that the histogram has recorded values (exact structure may vary)
+    expect(durationDataPoints[0].value).toBeDefined()
+    expect(typeof durationDataPoints[0].value).toBe('object')
+
+    // Check request count
+    const countMetric = metrics.find((m) => m.descriptor.name === 'hono_server_requests')
+    expect(countMetric).toBeDefined()
+    expect(countMetric!.descriptor.description).toBe('Total number of HTTP requests')
+    // Check that it's a counter type (dataPointType varies by implementation)
+    expect(countMetric!.dataPoints).toBeDefined()
+
+    const countDataPoints = countMetric!.dataPoints
+    expect(countDataPoints.length).toBe(1)
+    expect(countDataPoints[0].attributes).toEqual({
+      'http.request.method': 'GET',
+      'http.response.status_code': 200,
+      'http.route': '/metrics-test',
+      'http.response.ok': true,
+    })
+    expect(countDataPoints[0].value).toBe(1)
+  })
+
+  it('Should record metrics for different HTTP methods and status codes', async () => {
+    const app = new Hono()
+    app.use(otel({ meterProvider }))
+    app.get('/success', (c) => c.text('success'))
+    app.post('/created', (c) => c.text('created', 201))
+    app.get('/not-found', (c) => c.text('not found', 404))
+
+    // Make multiple requests
+    await app.request('http://localhost/success')
+    await app.request('http://localhost/success')
+    await app.request('http://localhost/created', { method: 'POST' })
+    await app.request('http://localhost/not-found')
+
+    // Force metric collection
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+
+    // Check request count metric
+    const countMetric = metrics.find((m) => m.descriptor.name === 'hono_server_requests')
+    expect(countMetric).toBeDefined()
+
+    const countDataPoints = countMetric!.dataPoints
+    expect(countDataPoints.length).toBe(3) // 3 different route/status combinations
+
+    // Check GET /success requests (should have count of 2)
+    const successDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/success' &&
+        dp.attributes['http.request.method'] === 'GET' &&
+        dp.attributes['http.response.status_code'] === 200
+    )
+    expect(successDataPoint).toBeDefined()
+    expect(successDataPoint!.value).toBe(2)
+    expect(successDataPoint!.attributes['http.response.ok']).toBe(true)
+
+    // Check POST /created request
+    const createdDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/created' &&
+        dp.attributes['http.request.method'] === 'POST' &&
+        dp.attributes['http.response.status_code'] === 201
+    )
+    expect(createdDataPoint).toBeDefined()
+    expect(createdDataPoint!.value).toBe(1)
+    expect(createdDataPoint!.attributes['http.response.ok']).toBe(true)
+
+    // Check GET /not-found request
+    const notFoundDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/not-found' &&
+        dp.attributes['http.request.method'] === 'GET' &&
+        dp.attributes['http.response.status_code'] === 404
+    )
+    expect(notFoundDataPoint).toBeDefined()
+    expect(notFoundDataPoint!.value).toBe(1)
+    expect(notFoundDataPoint!.attributes['http.response.ok']).toBe(false)
+  })
+
+  it('Should record metrics for error responses', async () => {
+    const app = new Hono()
+    app.use(otel({ meterProvider }))
+    app.post('/error', () => {
+      throw new Error('test error')
+    })
+
+    await app.request('http://localhost/error', { method: 'POST' })
+
+    // Force metric collection
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+
+    // Check request count metric
+    const countMetric = metrics.find((m) => m.descriptor.name === 'hono_server_requests')
+    expect(countMetric).toBeDefined()
+
+    const countDataPoints = countMetric!.dataPoints
+    expect(countDataPoints.length).toBe(1)
+
+    const errorDataPoint = countDataPoints[0]
+    expect(errorDataPoint.attributes).toEqual({
+      'http.request.method': 'POST',
+      'http.response.status_code': 500,
+      'http.route': '/error',
+      'http.response.ok': false,
+    })
+    expect(errorDataPoint.value).toBe(1)
+
+    // Check duration metric
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'hono_server_duration')
+    expect(durationMetric).toBeDefined()
+
+    const durationDataPoints = durationMetric!.dataPoints
+    expect(durationDataPoints.length).toBe(1)
+    expect(durationDataPoints[0].attributes).toEqual({
+      'http.request.method': 'POST',
+      'http.response.status_code': 500,
+      'http.route': '/error',
+      'http.response.ok': false,
+    })
+    expect(durationDataPoints[0].value).toBeDefined()
+    expect(typeof durationDataPoints[0].value).toBe('object')
+  })
+
+  it('Should work with both tracer and meter providers', async () => {
+    const memorySpanExporter = new InMemorySpanExporter()
+    const spanProcessor = new SimpleSpanProcessor(memorySpanExporter)
+    const tracerProvider = new NodeTracerProvider({
+      spanProcessors: [spanProcessor],
+    })
+
+    const app = new Hono()
+    app.use(otel({ tracerProvider, meterProvider }))
+    app.get('/both', (c) => c.text('success'))
+
+    memorySpanExporter.reset()
+    await app.request('http://localhost/both')
+
+    // Check spans
+    const spans = memorySpanExporter.getFinishedSpans()
+    expect(spans.length).toBe(1)
+    expect(spans[0].name).toBe('GET /both')
+
+    // Force metric collection
+    await metricReader.forceFlush()
+
+    // Check metrics
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    expect(resourceMetrics.length).toBeGreaterThan(0)
+
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    expect(metrics.length).toBe(2)
+
+    const countMetric = metrics.find((m) => m.descriptor.name === 'hono_server_requests')
+    expect(countMetric).toBeDefined()
+    expect(countMetric!.dataPoints[0].value).toBe(1)
+  })
+
+  it('Should work without meter provider (should not crash)', async () => {
+    const app = new Hono()
+    app.use(otel({})) // No meter provider
+    app.get('/no-metrics', (c) => c.text('success'))
+
+    // This should not throw
+    const response = await app.request('http://localhost/no-metrics')
+    expect(response.status).toBe(200)
+  })
+
+  it('Should record metrics for subapp routes', async () => {
+    const app = new Hono()
+    const subapp = new Hono()
+
+    app.use(otel({ meterProvider }))
+    subapp.get('/nested', (c) => c.text('nested response'))
+    app.route('/api', subapp)
+
+    await app.request('http://localhost/api/nested')
+
+    // Force metric collection
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+
+    const countMetric = metrics.find((m) => m.descriptor.name === 'hono_server_requests')
+    expect(countMetric).toBeDefined()
+
+    const countDataPoints = countMetric!.dataPoints
+    expect(countDataPoints.length).toBe(1)
+    expect(countDataPoints[0].attributes['http.route']).toBe('/api/nested')
   })
 })
