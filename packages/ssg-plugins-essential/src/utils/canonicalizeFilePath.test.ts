@@ -89,4 +89,23 @@ describe('canonicalizeFilePath', () => {
     const withoutDot = canonicalizeFilePath('static/about.html', 'static', 'https://example.com')
     expect(withoutDot.url).toBe('https://example.com/about')
   })
+
+  it('should handle Windows-style paths', () => {
+    const result = canonicalizeFilePath(
+      '.\\static\\about\\index.html',
+      './static',
+      'https://example.com'
+    )
+    expect(result.routePath).toBe('/about/')
+    expect(result.url).toBe('https://example.com/about/')
+
+    const file = canonicalizeFilePath(
+      'static\\blog\\post-1.html',
+      './static',
+      'https://example.com',
+      true
+    )
+    expect(file.routePath).toBe('/blog/post-1')
+    expect(file.url).toBe('https://example.com/blog/post-1')
+  })
 })
