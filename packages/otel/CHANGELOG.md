@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.4.0
+
+### Minor Changes
+
+- [#1365](https://github.com/honojs/middleware/pull/1365) [`3864bdb4b0277967951ca983cd429f54929f3e52`](https://github.com/honojs/middleware/commit/3864bdb4b0277967951ca983cd429f54929f3e52) Thanks [@zwpaper](https://github.com/zwpaper)! - Support otel metrics instrument
+
 ## 0.3.0
 
 ### Minor Changes
