@@ -1,5 +1,10 @@
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api'
-import { InMemoryMetricExporter, PeriodicExportingMetricReader, MeterProvider, AggregationTemporality } from '@opentelemetry/sdk-metrics'
+import {
+  InMemoryMetricExporter,
+  PeriodicExportingMetricReader,
+  MeterProvider,
+  AggregationTemporality,
+} from '@opentelemetry/sdk-metrics'
 import { InMemorySpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 import {
@@ -240,7 +245,7 @@ describe('OpenTelemetry middleware - Metrics', () => {
       'http.route': '/metrics-test',
       'http.response.ok': true,
     })
-    
+
     // Check that the histogram has recorded values (exact structure may vary)
     expect(durationDataPoints[0].value).toBeDefined()
     expect(typeof durationDataPoints[0].value).toBe('object')
@@ -290,30 +295,33 @@ describe('OpenTelemetry middleware - Metrics', () => {
     expect(countDataPoints.length).toBe(3) // 3 different route/status combinations
 
     // Check GET /success requests (should have count of 2)
-    const successDataPoint = countDataPoints.find((dp) =>
-      dp.attributes['http.route'] === '/success' &&
-      dp.attributes['http.request.method'] === 'GET' &&
-      dp.attributes['http.response.status_code'] === 200
+    const successDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/success' &&
+        dp.attributes['http.request.method'] === 'GET' &&
+        dp.attributes['http.response.status_code'] === 200
     )
     expect(successDataPoint).toBeDefined()
     expect(successDataPoint!.value).toBe(2)
     expect(successDataPoint!.attributes['http.response.ok']).toBe(true)
 
     // Check POST /created request
-    const createdDataPoint = countDataPoints.find((dp) =>
-      dp.attributes['http.route'] === '/created' &&
-      dp.attributes['http.request.method'] === 'POST' &&
-      dp.attributes['http.response.status_code'] === 201
+    const createdDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/created' &&
+        dp.attributes['http.request.method'] === 'POST' &&
+        dp.attributes['http.response.status_code'] === 201
     )
     expect(createdDataPoint).toBeDefined()
     expect(createdDataPoint!.value).toBe(1)
     expect(createdDataPoint!.attributes['http.response.ok']).toBe(true)
 
     // Check GET /not-found request
-    const notFoundDataPoint = countDataPoints.find((dp) =>
-      dp.attributes['http.route'] === '/not-found' &&
-      dp.attributes['http.request.method'] === 'GET' &&
-      dp.attributes['http.response.status_code'] === 404
+    const notFoundDataPoint = countDataPoints.find(
+      (dp) =>
+        dp.attributes['http.route'] === '/not-found' &&
+        dp.attributes['http.request.method'] === 'GET' &&
+        dp.attributes['http.response.status_code'] === 404
     )
     expect(notFoundDataPoint).toBeDefined()
     expect(notFoundDataPoint!.value).toBe(1)
@@ -414,7 +422,7 @@ describe('OpenTelemetry middleware - Metrics', () => {
   it('Should record metrics for subapp routes', async () => {
     const app = new Hono()
     const subapp = new Hono()
-    
+
     app.use(otel({ meterProvider }))
     subapp.get('/nested', (c) => c.text('nested response'))
     app.route('/api', subapp)

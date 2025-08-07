@@ -38,10 +38,7 @@ export const createOtelMetrics = (meter: Meter): OtelMetrics => {
 }
 
 export const observeOtelMetrics = (
-  {
-    requestDuration,
-    requestsTotal,
-  }: OtelMetrics,
+  { requestDuration, requestsTotal }: OtelMetrics,
   context: Context,
   { startTime }: { startTime: number }
 ): void => {
