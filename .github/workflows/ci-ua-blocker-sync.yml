@@ -59,7 +59,7 @@ jobs:
 
       - name: Create Pull Request if changes exist
         if: steps.changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(ua-blocker): update robots.json from upstream'
