@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.3
+
+### Patch Changes
+
+- [#1364](https://github.com/honojs/middleware/pull/1364) [`ba19e66f6d086089e15b04bc866c7ebf9cd43409`](https://github.com/honojs/middleware/commit/ba19e66f6d086089e15b04bc866c7ebf9cd43409) Thanks [@rxliuli](https://github.com/rxliuli)! - handle refersh_token on googleAuth
+
 ## 0.8.2
 
 ### Patch Changes
