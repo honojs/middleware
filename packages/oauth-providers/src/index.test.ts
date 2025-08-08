@@ -107,11 +107,13 @@ describe('OAuth Middleware', () => {
     const user = c.get('user-google')
     const token = c.get('token')
     const grantedScopes = c.get('granted-scopes')
+    const refreshToken = c.get('refresh-token')
 
     return c.json({
       user,
       token,
       grantedScopes,
+      refreshToken,
     })
   })
 
@@ -538,6 +540,7 @@ describe('OAuth Middleware', () => {
       const res = await app.request(`/google?code=${dummyCode}`)
       const response = (await res.json()) as {
         token: Token
+        refreshToken: Token
         user: GoogleUser
         grantedScopes: string[]
       }
@@ -549,6 +552,10 @@ describe('OAuth Middleware', () => {
       expect(response.token).toEqual({
         token: dummyToken.access_token,
         expires_in: dummyToken.expires_in,
+      })
+      expect(response.refreshToken).toEqual({
+        token: dummyToken.refresh_token,
+        expires_in: dummyToken.refresh_token_expires_in,
       })
     })
   })
