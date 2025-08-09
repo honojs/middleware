@@ -28,6 +28,7 @@
     "packages/react-compat",
     // "packages/react-renderer",
     // "packages/sentry",
+    "packages/ssg-plugins-essential",
     "packages/standard-validator",
     "packages/swagger-editor",
     "packages/swagger-ui",
