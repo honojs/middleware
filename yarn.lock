@@ -2558,6 +2558,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/ssg-plugins-essential@workspace:packages/ssg-plugins-essential":
+  version: 0.0.0-use.local
+  resolution: "@hono/ssg-plugins-essential@workspace:packages/ssg-plugins-essential"
+  dependencies:
+    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@types/node": "npm:^24.0.10"
+    publint: "npm:^0.3.9"
+    tsup: "npm:^8.4.0"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^3.2.4"
+  peerDependencies:
+    hono: ">=4.8.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/standard-validator@workspace:packages/standard-validator":
   version: 0.0.0-use.local
   resolution: "@hono/standard-validator@workspace:packages/standard-validator"
@@ -4696,6 +4711,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.21.0"
   checksum: 10c0/16c38e98168fa6c3d2f2b6e95f14f80878d969b39093bc5384385a884d73a7fe361c563b36f14bc27536b337f5baad74321f717b31d2c061b9c48074567eb8c6
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^24.0.10":
+  version: 24.0.10
+  resolution: "@types/node@npm:24.0.10"
+  dependencies:
+    undici-types: "npm:~7.8.0"
+  checksum: 10c0/11dbd869d3e12ee7b7818113588950e538783e45d227122174c763cb05977defbd1e01b44b5ccd4b8997e42c3df7f7b83c6ee05cfa43d924c8882886bc5f6582
   languageName: node
   linkType: hard
 
@@ -15549,6 +15573,13 @@ __metadata:
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.8.0":
+  version: 7.8.0
+  resolution: "undici-types@npm:7.8.0"
+  checksum: 10c0/9d9d246d1dc32f318d46116efe3cfca5a72d4f16828febc1918d94e58f6ffcf39c158aa28bf5b4fc52f410446bc7858f35151367bd7a49f21746cab6497b709b
   languageName: node
   linkType: hard
 
