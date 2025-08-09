@@ -24,7 +24,7 @@ type Token = {
 
 const userAgent = 'Hono-Auth-App'
 
-export class AuthFlow {
+export class AuthFlow {π
   client_id: string
   client_secret: string
   scope: GitHubScope[] | undefined
@@ -99,6 +99,8 @@ export class AuthFlow {
       headers: {
         Authorization: `Bearer ${this.token?.token}`,
         'User-Agent': userAgent,
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
     }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
 
