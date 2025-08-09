@@ -24,7 +24,7 @@ type Token = {
 
 const userAgent = 'Hono-Auth-App'
 
-export class AuthFlow {π
+export class AuthFlow {
   client_id: string
   client_secret: string
   scope: GitHubScope[] | undefined
