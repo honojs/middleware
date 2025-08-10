@@ -1,4 +1,4 @@
 bun 1.1.32
 # TODO: Update to v2.x when https://github.com/jsr-io/jsr-npm/issues/129 is resolved
 deno 2.3.7
-node 20.19.4
+node 22.18.0
