@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@trpc/server": "^11.0.0",
+    "@trpc/server": "^11.4.4",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
