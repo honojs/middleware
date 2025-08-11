@@ -491,12 +491,12 @@ describe('JSON', () => {
       expect(res.status).toBe(400)
     })
 
-    it('Should return 200 response without a content-type', async () => {
+    it('Should return 400 response without a content-type (security fix)', async () => {
       const req = new Request('http://localhost/posts', {
         method: 'POST',
       })
       const res = await app.request(req)
-      expect(res.status).toBe(200)
+      expect(res.status).toBe(400) // Now validates by default for security
     })
   })
 
@@ -683,12 +683,12 @@ describe('Form', () => {
     })
   })
 
-  it('Should return 200 response without a content-type', async () => {
+  it('Should return 400 response without a content-type (security fix)', async () => {
     const req = new Request('http://localhost/posts', {
       method: 'POST',
     })
     const res = await app.request(req)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(400) // Now validates by default for security
   })
 
   describe('required', () => {

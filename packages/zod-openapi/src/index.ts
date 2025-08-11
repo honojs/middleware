@@ -501,6 +501,13 @@ export class OpenAPIHono<
     const bodyContent = route.request?.body?.content
 
     if (bodyContent) {
+      // Check if multiple content types are supported
+      const supportedContentTypes = Object.keys(bodyContent).filter(mediaType => {
+        const schema = (bodyContent[mediaType] as ZodMediaTypeObject)?.['schema']
+        return schema instanceof ZodType
+      })
+      const hasMultipleContentTypes = supportedContentTypes.length > 1
+
       for (const mediaType of Object.keys(bodyContent)) {
         if (!bodyContent[mediaType]) {
           continue
@@ -513,34 +520,116 @@ export class OpenAPIHono<
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
           const validator = zValidator('json', schema, hook)
-          if (route.request?.body?.required) {
-            validators.push(validator)
-          } else {
+          if (route.request?.body?.required === false) {
+            // Only bypass validation if explicitly set to false
             const mw: MiddlewareHandler = async (c, next) => {
-              if (c.req.header('content-type')) {
-                if (isJSONContentType(c.req.header('content-type')!)) {
-                  return await validator(c, next)
-                }
+              const contentType = c.req.header('content-type')
+              
+              if (!contentType) {
+                // No content-type header - allow empty body only if required is explicitly false
+                c.req.addValidatedData('json', {})
+                await next()
+              } else if (isJSONContentType(contentType)) {
+                // Content-type matches - always validate
+                return await validator(c, next)
+              } else if (!hasMultipleContentTypes) {
+                // Content-type doesn't match and no other content types - return 400
+                return c.json(
+                  { 
+                    success: false, 
+                    error: {
+                      message: 'Invalid content-type. Expected application/json'
+                    }
+                  }, 
+                  400
+                )
+              } else {
+                // Multiple content types supported - skip this validator
+                await next()
               }
-              c.req.addValidatedData('json', {})
-              await next()
+            }
+            validators.push(mw)
+          } else {
+            // Default behavior: validate strictly but check content-type
+            const mw: MiddlewareHandler = async (c, next) => {
+              const contentType = c.req.header('content-type')
+              
+              if (!contentType || isJSONContentType(contentType)) {
+                // No content-type or matching content-type - validate
+                return await validator(c, next)
+              } else if (!hasMultipleContentTypes) {
+                // Content-type doesn't match and no other content types - return 400
+                return c.json(
+                  { 
+                    success: false, 
+                    error: {
+                      message: 'Invalid content-type. Expected application/json'
+                    }
+                  }, 
+                  400
+                )
+              } else {
+                // Multiple content types supported - skip this validator
+                await next()
+              }
             }
             validators.push(mw)
           }
         }
         if (isFormContentType(mediaType)) {
           const validator = zValidator('form', schema, hook as any)
-          if (route.request?.body?.required) {
-            validators.push(validator)
-          } else {
+          if (route.request?.body?.required === false) {
+            // Only bypass validation if explicitly set to false
             const mw: MiddlewareHandler = async (c, next) => {
-              if (c.req.header('content-type')) {
-                if (isFormContentType(c.req.header('content-type')!)) {
-                  return await validator(c, next)
-                }
+              const contentType = c.req.header('content-type')
+              
+              if (!contentType) {
+                // No content-type header - allow empty body only if required is explicitly false
+                c.req.addValidatedData('form', {})
+                await next()
+              } else if (isFormContentType(contentType)) {
+                // Content-type matches - always validate
+                return await validator(c, next)
+              } else if (!hasMultipleContentTypes) {
+                // Content-type doesn't match and no other content types - return 400
+                return c.json(
+                  { 
+                    success: false, 
+                    error: {
+                      message: 'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded'
+                    }
+                  }, 
+                  400
+                )
+              } else {
+                // Multiple content types supported - skip this validator
+                await next()
               }
-              c.req.addValidatedData('form', {})
-              await next()
+            }
+            validators.push(mw)
+          } else {
+            // Default behavior: validate strictly but check content-type
+            const mw: MiddlewareHandler = async (c, next) => {
+              const contentType = c.req.header('content-type')
+              
+              if (!contentType || isFormContentType(contentType)) {
+                // No content-type or matching content-type - validate
+                return await validator(c, next)
+              } else if (!hasMultipleContentTypes) {
+                // Content-type doesn't match and no other content types - return 400
+                return c.json(
+                  { 
+                    success: false, 
+                    error: {
+                      message: 'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded'
+                    }
+                  }, 
+                  400
+                )
+              } else {
+                // Multiple content types supported - skip this validator
+                await next()
+              }
             }
             validators.push(mw)
           }
