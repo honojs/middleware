@@ -2668,7 +2668,7 @@ __metadata:
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.4.0"
-    tsyringe: "npm:^4.8.0"
+    tsyringe: "npm:^4.10.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
@@ -15305,12 +15305,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsyringe@npm:^4.8.0":
-  version: 4.8.0
-  resolution: "tsyringe@npm:4.8.0"
+"tsyringe@npm:^4.10.0":
+  version: 4.10.0
+  resolution: "tsyringe@npm:4.10.0"
   dependencies:
     tslib: "npm:^1.9.3"
-  checksum: 10c0/e13810e8ff39c4093acd0649bc5db3c164825827631e1522cd9d5ca8694a018447fa1c24f059ea54e93b1020767b1131b9dc9ce598dabfc9aa41c11544bbfe19
+  checksum: 10c0/918594b4dfac97beb8be2c041c6ec45f078ef3768ed4edfe35ae2c709ab503e2e6b454b2b37e692c658572d1972a428fbfdbc0a2b42fee727a83c1c685fbe5e1
   languageName: node
   linkType: hard
 
