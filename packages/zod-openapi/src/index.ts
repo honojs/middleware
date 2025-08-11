@@ -502,7 +502,7 @@ export class OpenAPIHono<
 
     if (bodyContent) {
       // Check if multiple content types are supported
-      const supportedContentTypes = Object.keys(bodyContent).filter(mediaType => {
+      const supportedContentTypes = Object.keys(bodyContent).filter((mediaType) => {
         const schema = (bodyContent[mediaType] as ZodMediaTypeObject)?.['schema']
         return schema instanceof ZodType
       })
@@ -524,7 +524,7 @@ export class OpenAPIHono<
             // Only bypass validation if explicitly set to false
             const mw: MiddlewareHandler = async (c, next) => {
               const contentType = c.req.header('content-type')
-              
+
               if (!contentType) {
                 // No content-type header - allow empty body only if required is explicitly false
                 c.req.addValidatedData('json', {})
@@ -535,12 +535,12 @@ export class OpenAPIHono<
               } else if (!hasMultipleContentTypes) {
                 // Content-type doesn't match and no other content types - return 400
                 return c.json(
-                  { 
-                    success: false, 
+                  {
+                    success: false,
                     error: {
-                      message: 'Invalid content-type. Expected application/json'
-                    }
-                  }, 
+                      message: 'Invalid content-type. Expected application/json',
+                    },
+                  },
                   400
                 )
               } else {
@@ -553,19 +553,19 @@ export class OpenAPIHono<
             // Default behavior: validate strictly but check content-type
             const mw: MiddlewareHandler = async (c, next) => {
               const contentType = c.req.header('content-type')
-              
+
               if (!contentType || isJSONContentType(contentType)) {
                 // No content-type or matching content-type - validate
                 return await validator(c, next)
               } else if (!hasMultipleContentTypes) {
                 // Content-type doesn't match and no other content types - return 400
                 return c.json(
-                  { 
-                    success: false, 
+                  {
+                    success: false,
                     error: {
-                      message: 'Invalid content-type. Expected application/json'
-                    }
-                  }, 
+                      message: 'Invalid content-type. Expected application/json',
+                    },
+                  },
                   400
                 )
               } else {
@@ -582,7 +582,7 @@ export class OpenAPIHono<
             // Only bypass validation if explicitly set to false
             const mw: MiddlewareHandler = async (c, next) => {
               const contentType = c.req.header('content-type')
-              
+
               if (!contentType) {
                 // No content-type header - allow empty body only if required is explicitly false
                 c.req.addValidatedData('form', {})
@@ -593,12 +593,13 @@ export class OpenAPIHono<
               } else if (!hasMultipleContentTypes) {
                 // Content-type doesn't match and no other content types - return 400
                 return c.json(
-                  { 
-                    success: false, 
+                  {
+                    success: false,
                     error: {
-                      message: 'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded'
-                    }
-                  }, 
+                      message:
+                        'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded',
+                    },
+                  },
                   400
                 )
               } else {
@@ -611,19 +612,20 @@ export class OpenAPIHono<
             // Default behavior: validate strictly but check content-type
             const mw: MiddlewareHandler = async (c, next) => {
               const contentType = c.req.header('content-type')
-              
+
               if (!contentType || isFormContentType(contentType)) {
                 // No content-type or matching content-type - validate
                 return await validator(c, next)
               } else if (!hasMultipleContentTypes) {
                 // Content-type doesn't match and no other content types - return 400
                 return c.json(
-                  { 
-                    success: false, 
+                  {
+                    success: false,
                     error: {
-                      message: 'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded'
-                    }
-                  }, 
+                      message:
+                        'Invalid content-type. Expected multipart/form-data or application/x-www-form-urlencoded',
+                    },
+                  },
                   400
                 )
               } else {

@@ -4,7 +4,7 @@ import { OpenAPIHono, createRoute, z } from './index'
 describe('Validation Security - Body Required Behavior', () => {
   const PostSchema = z.object({
     title: z.string().min(5),
-    content: z.string()
+    content: z.string(),
   })
 
   describe('JSON body validation', () => {
@@ -16,22 +16,22 @@ describe('Validation Security - Body Required Behavior', () => {
           body: {
             content: {
               'application/json': {
-                schema: PostSchema
-              }
-            }
+                schema: PostSchema,
+              },
+            },
             // required is not specified - should default to strict validation
-          }
+          },
         },
         responses: {
           200: {
             description: 'Success',
             content: {
               'application/json': {
-                schema: z.object({ success: z.boolean() })
-              }
-            }
-          }
-        }
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
       })
 
       const app = new OpenAPIHono()
@@ -44,7 +44,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: JSON.stringify({ title: 'Valid Title', content: 'Content' }),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(200)
       })
@@ -53,7 +53,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: JSON.stringify({ title: 'Bad' }), // title too short
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(400)
       })
@@ -61,7 +61,7 @@ describe('Validation Security - Body Required Behavior', () => {
       it('should reject request without content-type (security fix)', async () => {
         const res = await app.request('/posts', {
           method: 'POST',
-          body: JSON.stringify({ title: 'Bad' })
+          body: JSON.stringify({ title: 'Bad' }),
         })
         expect(res.status).toBe(400) // Should validate by default
       })
@@ -70,7 +70,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: JSON.stringify({ title: 'Valid Title', content: 'Content' }),
-          headers: { 'Content-Type': 'text/plain' }
+          headers: { 'Content-Type': 'text/plain' },
         })
         expect(res.status).toBe(400)
         const json = await res.json()
@@ -87,22 +87,22 @@ describe('Validation Security - Body Required Behavior', () => {
           body: {
             content: {
               'application/json': {
-                schema: PostSchema
-              }
+                schema: PostSchema,
+              },
             },
-            required: true
-          }
+            required: true,
+          },
         },
         responses: {
           200: {
             description: 'Success',
             content: {
               'application/json': {
-                schema: z.object({ success: z.boolean() })
-              }
-            }
-          }
-        }
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
       })
 
       const app = new OpenAPIHono()
@@ -115,14 +115,14 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: JSON.stringify({ title: 'Bad' }),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(400)
       })
 
       it('should reject request without content-type', async () => {
         const res = await app.request('/posts', {
-          method: 'POST'
+          method: 'POST',
         })
         expect(res.status).toBe(400)
       })
@@ -136,22 +136,22 @@ describe('Validation Security - Body Required Behavior', () => {
           body: {
             content: {
               'application/json': {
-                schema: PostSchema
-              }
+                schema: PostSchema,
+              },
             },
-            required: false
-          }
+            required: false,
+          },
         },
         responses: {
           200: {
             description: 'Success',
             content: {
               'application/json': {
-                schema: z.object({ success: z.boolean() })
-              }
-            }
-          }
-        }
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
       })
 
       const app = new OpenAPIHono()
@@ -164,14 +164,14 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: JSON.stringify({ title: 'Bad' }), // Invalid
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(400)
       })
 
       it('should allow empty body when no content-type is provided', async () => {
         const res = await app.request('/posts', {
-          method: 'POST'
+          method: 'POST',
         })
         expect(res.status).toBe(200)
         const json = await res.json()
@@ -182,7 +182,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/posts', {
           method: 'POST',
           body: 'plain text',
-          headers: { 'Content-Type': 'text/plain' }
+          headers: { 'Content-Type': 'text/plain' },
         })
         expect(res.status).toBe(400)
         const json = await res.json()
@@ -194,7 +194,7 @@ describe('Validation Security - Body Required Behavior', () => {
   describe('Form body validation', () => {
     const FormSchema = z.object({
       username: z.string().min(3),
-      password: z.string().min(8)
+      password: z.string().min(8),
     })
 
     describe('when body.required is not specified (default behavior)', () => {
@@ -205,21 +205,21 @@ describe('Validation Security - Body Required Behavior', () => {
           body: {
             content: {
               'application/x-www-form-urlencoded': {
-                schema: FormSchema
-              }
-            }
-          }
+                schema: FormSchema,
+              },
+            },
+          },
         },
         responses: {
           200: {
             description: 'Success',
             content: {
               'application/json': {
-                schema: z.object({ success: z.boolean() })
-              }
-            }
-          }
-        }
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
       })
 
       const app = new OpenAPIHono()
@@ -232,11 +232,11 @@ describe('Validation Security - Body Required Behavior', () => {
         const params = new URLSearchParams()
         params.append('username', 'john')
         params.append('password', 'password123')
-        
+
         const res = await app.request('/login', {
           method: 'POST',
           body: params,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         })
         expect(res.status).toBe(200)
       })
@@ -245,11 +245,11 @@ describe('Validation Security - Body Required Behavior', () => {
         const params = new URLSearchParams()
         params.append('username', 'jo') // Too short
         params.append('password', 'pass') // Too short
-        
+
         const res = await app.request('/login', {
           method: 'POST',
           body: params,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         })
         expect(res.status).toBe(400)
       })
@@ -257,10 +257,10 @@ describe('Validation Security - Body Required Behavior', () => {
       it('should reject request without content-type (security fix)', async () => {
         const params = new URLSearchParams()
         params.append('username', 'jo')
-        
+
         const res = await app.request('/login', {
           method: 'POST',
-          body: params
+          body: params,
         })
         expect(res.status).toBe(400)
       })
@@ -269,7 +269,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/login', {
           method: 'POST',
           body: JSON.stringify({ username: 'john', password: 'password123' }),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(400)
         const json = await res.json()
@@ -285,22 +285,22 @@ describe('Validation Security - Body Required Behavior', () => {
           body: {
             content: {
               'multipart/form-data': {
-                schema: FormSchema
-              }
+                schema: FormSchema,
+              },
             },
-            required: false
-          }
+            required: false,
+          },
         },
         responses: {
           200: {
             description: 'Success',
             content: {
               'application/json': {
-                schema: z.object({ success: z.boolean() })
-              }
-            }
-          }
-        }
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
       })
 
       const app = new OpenAPIHono()
@@ -311,7 +311,7 @@ describe('Validation Security - Body Required Behavior', () => {
 
       it('should allow empty body when no content-type is provided', async () => {
         const res = await app.request('/login', {
-          method: 'POST'
+          method: 'POST',
         })
         expect(res.status).toBe(200)
         const json = await res.json()
@@ -322,7 +322,7 @@ describe('Validation Security - Body Required Behavior', () => {
         const res = await app.request('/login', {
           method: 'POST',
           body: JSON.stringify({ username: 'john' }),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         })
         expect(res.status).toBe(400)
         const json = await res.json()
