@@ -18,13 +18,10 @@ jobs:
       pull-requests: 'read'
     steps:
       - uses: actions/checkout@v4
-      - uses: nrwl/nx-set-shas@v4
-        id: setSHAs
-
       - uses: ./.github/actions/what-changed
         id: set-packages
         with:
-          since: ${{ steps.setSHAs.outputs.base }}
+          since: main
 
   build:
     runs-on: ubuntu-latest

@@ -28,5 +28,5 @@ runs:
           "hono-middleware"
           "@hono/bun-transpiler"
         );
-        changed=$(yarn workspaces list --json --since ${{ inputs.since }}| jq -nc '[inputs.name | select(any(.; inside($ARGS.positional[])) | not) | sub("@hono/"; "")]' --args "${exclude[@]}")
+        changed=$(yarn workspaces list --json --since=${{ inputs.since }} | jq -nc '[inputs.name | select(any(.; inside($ARGS.positional[])) | not) | sub("@hono/"; "")]' --args "${exclude[@]}")
         echo "packages=${changed}" >> $GITHUB_OUTPUT
