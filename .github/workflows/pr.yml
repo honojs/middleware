@@ -1,8 +1,11 @@
-name: ci
+name: pr
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
 
 jobs:
   what-changed:
@@ -24,16 +27,34 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    needs: [what-changed]
+    if: ${{ needs.what-changed.outputs.packages != '[]' }}
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
-      - run: yarn
-      - run: yarn publint
-      - run: yarn typecheck
-      - run: yarn lint
-      - run: yarn format
+      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run publint
+      - run: yarn workspace @hono/${{ matrix.package }} typecheck
+        if: ${{ matrix.package != 'eslint-config' }}
+      - run: yarn eslint packages/${{ matrix.package }}
+      - run: yarn prettier --check . !packages packages/${{ matrix.package }}
+
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version-file: .tool-versions
+      - run: deno install --no-lock
+      - run: deno publish --dry-run
 
   test:
     runs-on: ubuntu-latest

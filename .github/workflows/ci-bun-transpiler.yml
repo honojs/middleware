@@ -29,5 +29,3 @@ jobs:
           fail_ci_if_error: true
           directory: ./packages/bun-transpiler/coverage
           flags: bun-transpiler
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
