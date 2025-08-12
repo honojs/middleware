@@ -17,6 +17,7 @@ jobs:
       actions: 'read'
       pull-requests: 'read'
     steps:
+      - uses: actions/checkout@v4
       - uses: nrwl/nx-set-shas@v4
         id: setSHAs
 
