@@ -17,7 +17,7 @@ jobs:
       actions: 'read'
       pull-requests: 'read'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/what-changed
         id: set-packages
         with:
@@ -32,7 +32,7 @@ jobs:
         package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
@@ -46,7 +46,7 @@ jobs:
   dry-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: denoland/setup-deno@v2
         with:
           cache: true
@@ -63,7 +63,7 @@ jobs:
         package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
