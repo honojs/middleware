@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.4
+
+### Patch Changes
+
+- [#1372](https://github.com/honojs/middleware/pull/1372) [`1980a66370d4afc8d552ac08bd25af0c87b49112`](https://github.com/honojs/middleware/commit/1980a66370d4afc8d552ac08bd25af0c87b49112) Thanks [@mrdear](https://github.com/mrdear)! - fixed github email request content-type
+
 ## 0.8.3
 
 ### Patch Changes
