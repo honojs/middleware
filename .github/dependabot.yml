@@ -10,6 +10,10 @@ updates:
     allow:
       - dependency-type: development
     directory: /
+    groups:
+      otel:
+        patterns:
+          - '@opentelemetry/*'
     schedule:
       interval: weekly
     versioning-strategy: increase
