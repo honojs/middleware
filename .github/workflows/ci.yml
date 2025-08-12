@@ -14,7 +14,7 @@ jobs:
       actions: 'read'
       pull-requests: 'read'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nrwl/nx-set-shas@v4
         id: setSHAs
 
@@ -26,7 +26,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
@@ -45,7 +45,7 @@ jobs:
         package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
