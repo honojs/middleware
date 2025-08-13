@@ -642,22 +642,23 @@ export class OpenAPIHono<
       if (hasMultipleContentTypes) {
         const finalCheck: MiddlewareHandler = async (c, next) => {
           const contentType = c.req.header('content-type')
-          
+
           // Check if any validator has added validated data
           // We check the internal validated data store
           // @ts-expect-error accessing internal property
           const validatedData = c.req.validatedData
-          const hasValidatedData = validatedData && (validatedData.json !== undefined || validatedData.form !== undefined)
-          
+          const hasValidatedData =
+            validatedData && (validatedData.json !== undefined || validatedData.form !== undefined)
+
           if (!hasValidatedData) {
             if (contentType) {
               // Check if content-type matches any supported type
-              const isSupported = supportedContentTypes.some(type => {
+              const isSupported = supportedContentTypes.some((type) => {
                 if (isJSONContentType(type) && isJSONContentType(contentType)) return true
                 if (isFormContentType(type) && isFormContentType(contentType)) return true
                 return false
               })
-              
+
               if (!isSupported) {
                 // Has content-type but it's not supported
                 const supportedTypes = supportedContentTypes.join(', ')
@@ -665,8 +666,8 @@ export class OpenAPIHono<
                   {
                     success: false,
                     error: {
-                      message: `Invalid content-type. Expected one of: ${supportedTypes}`
-                    }
+                      message: `Invalid content-type. Expected one of: ${supportedTypes}`,
+                    },
                   },
                   400
                 )
@@ -676,7 +677,7 @@ export class OpenAPIHono<
               // Validate with the first available validator
               const firstMediaType = supportedContentTypes[0]
               const schema = (bodyContent[firstMediaType] as ZodMediaTypeObject)['schema']
-              
+
               if (isJSONContentType(firstMediaType)) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore

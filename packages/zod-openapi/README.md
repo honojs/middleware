@@ -117,18 +117,17 @@ You can start your app just like you would with Hono. For Cloudflare Workers and
 export default app
 ```
 
-> [!IMPORTANT]
-> **Security Notice**: Body validation is now strict by default to prevent validation bypass vulnerabilities.
+> [!IMPORTANT] > **Security Notice**: Body validation is now strict by default to prevent validation bypass vulnerabilities.
 >
 > ### Request Body Validation Behavior
 >
 > The validation behavior depends on the `required` field in `request.body`:
 >
-> | `required` value | Content-Type present | Content-Type missing | Wrong Content-Type |
-> |------------------|----------------------|----------------------|--------------------|
-> | Not specified (default) | ✅ Validates | ✅ Validates | ❌ Returns 400 |
-> | `true` | ✅ Validates | ✅ Validates | ❌ Returns 400 |
-> | `false` | ✅ Validates | ⚠️ Allows empty body | ❌ Returns 400 |
+> | `required` value        | Content-Type present | Content-Type missing | Wrong Content-Type |
+> | ----------------------- | -------------------- | -------------------- | ------------------ |
+> | Not specified (default) | ✅ Validates         | ✅ Validates         | ❌ Returns 400     |
+> | `true`                  | ✅ Validates         | ✅ Validates         | ❌ Returns 400     |
+> | `false`                 | ✅ Validates         | ⚠️ Allows empty body | ❌ Returns 400     |
 >
 > ### Default Behavior (Secure)
 >
