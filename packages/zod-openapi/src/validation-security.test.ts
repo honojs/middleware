@@ -331,4 +331,181 @@ describe('Validation Security - Body Required Behavior', () => {
       })
     })
   })
+
+  describe('Multiple content-type support scenarios', () => {
+    const PostSchema = z.object({
+      title: z.string().min(5),
+      content: z.string(),
+    })
+
+    const FormSchema = z.object({
+      username: z.string().min(3),
+      password: z.string().min(8),
+    })
+
+    describe('when both JSON and Form content-types are supported', () => {
+      const route = createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: PostSchema,
+              },
+              'application/x-www-form-urlencoded': {
+                schema: FormSchema,
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
+      })
+
+      const app = new OpenAPIHono()
+      app.openapi(route, async (c) => {
+        const jsonBody = c.req.valid('json')
+        const formBody = c.req.valid('form')
+        return c.json({ success: true, jsonBody, formBody }, 200)
+      })
+
+      it('should validate JSON when content-type is application/json', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Valid Title', content: 'Content' }),
+          headers: { 'Content-Type': 'application/json' },
+        })
+        expect(res.status).toBe(200)
+      })
+
+      it('should validate Form when content-type is application/x-www-form-urlencoded', async () => {
+        const params = new URLSearchParams()
+        params.append('username', 'validuser')
+        params.append('password', 'password123')
+
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: params,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+        expect(res.status).toBe(200)
+      })
+
+      it('should reject invalid JSON data', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Bad' }), // title too short
+          headers: { 'Content-Type': 'application/json' },
+        })
+        expect(res.status).toBe(400)
+      })
+
+      it('should reject invalid Form data', async () => {
+        const params = new URLSearchParams()
+        params.append('username', 'ab') // username too short
+        params.append('password', 'short') // password too short
+
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: params,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 400 for unsupported content-type even with multiple content-types', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Valid Title', content: 'Content' }),
+          headers: { 'Content-Type': 'text/plain' },
+        })
+        expect(res.status).toBe(400)
+        const json = await res.json()
+        expect(json).toHaveProperty('error')
+        expect(json.error.message).toContain('content-type')
+      })
+
+      it('should reject when no content-type is provided even with valid data (security test)', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Valid Title', content: 'Valid Content' }), // Valid data
+        })
+        expect(res.status).toBe(400)
+      })
+    })
+
+    describe('when multiple content-types are supported with required: false', () => {
+      const route = createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: PostSchema,
+              },
+              'multipart/form-data': {
+                schema: FormSchema,
+              },
+            },
+            required: false,
+          },
+        },
+        responses: {
+          200: {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: z.object({ success: z.boolean() }),
+              },
+            },
+          },
+        },
+      })
+
+      const app = new OpenAPIHono()
+      app.openapi(route, async (c) => {
+        const jsonBody = c.req.valid('json')
+        const formBody = c.req.valid('form')
+        return c.json({ success: true, jsonBody, formBody }, 200)
+      })
+
+      it('should allow empty body when no content-type is provided', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+        })
+        expect(res.status).toBe(200)
+      })
+
+      it('should validate when matching content-type is provided', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Bad' }), // Invalid
+          headers: { 'Content-Type': 'application/json' },
+        })
+        expect(res.status).toBe(400) // Should validate
+      })
+
+      it('should return 400 for unrecognized content-type even with required: false and multiple content-types', async () => {
+        const res = await app.request('/posts', {
+          method: 'POST',
+          body: 'plain text',
+          headers: { 'Content-Type': 'text/plain' },
+        })
+        expect(res.status).toBe(400)
+        const json = await res.json()
+        expect(json).toHaveProperty('error')
+        expect(json.error.message).toContain('content-type')
+      })
+    })
+  })
 })

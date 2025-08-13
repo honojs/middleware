@@ -637,6 +637,61 @@ export class OpenAPIHono<
           }
         }
       }
+
+      // Add a final validator to handle cases where no validator matched (for multiple content-types)
+      if (hasMultipleContentTypes) {
+        const finalCheck: MiddlewareHandler = async (c, next) => {
+          const contentType = c.req.header('content-type')
+          
+          // Check if any validator has added validated data
+          // We check the internal validated data store
+          // @ts-expect-error accessing internal property
+          const validatedData = c.req.validatedData
+          const hasValidatedData = validatedData && (validatedData.json !== undefined || validatedData.form !== undefined)
+          
+          if (!hasValidatedData) {
+            if (contentType) {
+              // Check if content-type matches any supported type
+              const isSupported = supportedContentTypes.some(type => {
+                if (isJSONContentType(type) && isJSONContentType(contentType)) return true
+                if (isFormContentType(type) && isFormContentType(contentType)) return true
+                return false
+              })
+              
+              if (!isSupported) {
+                // Has content-type but it's not supported
+                const supportedTypes = supportedContentTypes.join(', ')
+                return c.json(
+                  {
+                    success: false,
+                    error: {
+                      message: `Invalid content-type. Expected one of: ${supportedTypes}`
+                    }
+                  },
+                  400
+                )
+              }
+            } else if (route.request?.body?.required !== false) {
+              // No content-type and body is required (default or explicitly true)
+              // Validate with the first available validator
+              const firstMediaType = supportedContentTypes[0]
+              const schema = (bodyContent[firstMediaType] as ZodMediaTypeObject)['schema']
+              
+              if (isJSONContentType(firstMediaType)) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const validator = zValidator('json', schema, hook)
+                return await validator(c, next)
+              } else if (isFormContentType(firstMediaType)) {
+                const validator = zValidator('form', schema as any, hook as any)
+                return await validator(c, next)
+              }
+            }
+          }
+          await next()
+        }
+        validators.push(finalCheck)
+      }
     }
 
     const middleware = routeMiddleware
