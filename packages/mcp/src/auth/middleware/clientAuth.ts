@@ -1,5 +1,6 @@
 import type { OAuthRegisteredClientsStore } from "@modelcontextprotocol/sdk/server/auth/clients.js";
 import { InvalidClientError, InvalidRequestError, OAuthError, ServerError } from "@modelcontextprotocol/sdk/server/auth/errors.js";
+import type { OAuthClientInformationFull } from "@modelcontextprotocol/sdk/shared/auth.js";
 import type { MiddlewareHandler } from "hono";
 import { z } from "zod";
 
@@ -15,16 +16,16 @@ const ClientAuthenticatedRequestSchema = z.object({
   client_secret: z.string().optional(),
 });
 
-// declare module "express-serve-static-core" {
-//   interface Request {
-//     /**
-//      * The authenticated client for this request, if the `authenticateClient` middleware was used.
-//      */
-//     client?: OAuthClientInformationFull;
-//   }
-// }
+export type ClientAuthenticationEnv = {
+  Variables: {
+    /**
+     * The authenticated client for this request, if the `authenticateClient` middleware was used.
+     */
+    client: OAuthClientInformationFull;
+  }
+}
 
-export function authenticateClient({ clientsStore }: ClientAuthenticationMiddlewareOptions): MiddlewareHandler {
+export function authenticateClient({ clientsStore }: ClientAuthenticationMiddlewareOptions): MiddlewareHandler<ClientAuthenticationEnv> {
   return async (c, next) => {
     try {
       const result = ClientAuthenticatedRequestSchema.safeParse(await c.req.json());
@@ -57,6 +58,7 @@ export function authenticateClient({ clientsStore }: ClientAuthenticationMiddlew
       }
 
       c.set("client", client);
+
       await next();
     } catch (error) {
       if (error instanceof OAuthError) {
