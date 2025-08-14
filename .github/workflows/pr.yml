@@ -18,10 +18,14 @@ jobs:
       pull-requests: 'read'
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: yarn workspaces focus what-changed
       - uses: ./.github/actions/what-changed
         id: set-packages
-        with:
-          since: main
 
   build:
     runs-on: ubuntu-latest
