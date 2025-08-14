@@ -777,7 +777,7 @@ describe('MCP helper', () => {
     // Verify the response is an SSE stream (the reader is consuming it)
     expect(sseResponse.headers.get('content-type')).toBe('text/event-stream')
     expect(sseResponse.status).toBe(200)
-    
+
     // Clean up
     reader?.cancel()
     await readPromise.catch(() => {}) // Ignore errors during cleanup

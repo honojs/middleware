@@ -8,14 +8,12 @@ import type {
   StreamableHTTPServerTransportOptions,
 } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import type {
-  JSONRPCMessage,
-  MessageExtraInfo,
-  RequestId,
-  RequestInfo,
-} from '@modelcontextprotocol/sdk/types.js'
+import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js'
+
+// Fallback types if not available in current SDK version
+type MessageExtraInfo = { authInfo?: any; requestInfo?: any }
+type RequestInfo = { headers: Record<string, string | string[] | undefined> }
 import {
-  DEFAULT_NEGOTIATED_PROTOCOL_VERSION,
   isInitializeRequest,
   isJSONRPCError,
   isJSONRPCRequest,
@@ -23,6 +21,9 @@ import {
   JSONRPCMessageSchema,
   SUPPORTED_PROTOCOL_VERSIONS,
 } from '@modelcontextprotocol/sdk/types.js'
+
+// Fallback constant if not available in current SDK version
+const DEFAULT_NEGOTIATED_PROTOCOL_VERSION = '2025-03-26'
 import type { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
@@ -45,6 +46,7 @@ export class StreamableHTTPTransport implements Transport {
         json: (data: unknown) => void
       }
       stream?: SSEStreamingApi
+      writeQueue?: Promise<void>
     }
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
@@ -52,14 +54,24 @@ export class StreamableHTTPTransport implements Transport {
   #allowedHosts?: string[]
   #allowedOrigins?: string[]
   #enableDnsRebindingProtection: boolean
-  #writeQueue = new Map<string, Promise<void>>()
+  #maxQueueSize: number
+  #maxMessageSize: number
 
   sessionId?: string
   onclose?: () => void
   onerror?: (error: Error) => void
   onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void
 
-  constructor(options?: StreamableHTTPServerTransportOptions) {
+  constructor(
+    options?: StreamableHTTPServerTransportOptions & {
+      maxQueueSize?: number
+      maxMessageSize?: number
+      onsessionclosed?: (sessionId: string) => void
+      allowedHosts?: string[]
+      allowedOrigins?: string[]
+      enableDnsRebindingProtection?: boolean
+    }
+  ) {
     this.#sessionIdGenerator = options?.sessionIdGenerator
     this.#enableJsonResponse = options?.enableJsonResponse ?? false
     this.#eventStore = options?.eventStore
@@ -68,6 +80,8 @@ export class StreamableHTTPTransport implements Transport {
     this.#allowedHosts = options?.allowedHosts
     this.#allowedOrigins = options?.allowedOrigins
     this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false
+    this.#maxQueueSize = options?.maxQueueSize ?? 100
+    this.#maxMessageSize = options?.maxMessageSize ?? 1024 * 1024 // 1MB
   }
 
   /**
@@ -85,27 +99,29 @@ export class StreamableHTTPTransport implements Transport {
    * Queues SSE writes to prevent concurrent write issues
    */
   async #queueWrite(streamId: string, writeFn: () => Promise<void>): Promise<void> {
-    const currentWrite = this.#writeQueue.get(streamId) || Promise.resolve()
-    const startTime = Date.now()
-    
+    const streamEntry = this.#streamMapping.get(streamId)
+    if (!streamEntry) {
+      throw new Error(`Stream ${streamId} not found`)
+    }
+
+    const currentWrite = streamEntry.writeQueue || Promise.resolve()
+
     const newWrite = currentWrite
       .then(async () => {
-        console.debug(`[SSE] Starting write for stream ${streamId}`)
         await writeFn()
-        console.debug(`[SSE] Completed write for stream ${streamId} in ${Date.now() - startTime}ms`)
       })
       .catch((error) => {
-        console.error(`[SSE] Write error for stream ${streamId}:`, error)
         this.onerror?.(error as Error)
       })
       .finally(() => {
         // Clean up completed write if it's the current one
-        if (this.#writeQueue.get(streamId) === newWrite) {
-          this.#writeQueue.delete(streamId)
+        const currentEntry = this.#streamMapping.get(streamId)
+        if (currentEntry && currentEntry.writeQueue === newWrite) {
+          delete currentEntry.writeQueue
         }
       })
-    
-    this.#writeQueue.set(streamId, newWrite)
+
+    streamEntry.writeQueue = newWrite
     await newWrite
   }
 
@@ -370,7 +386,37 @@ export class StreamableHTTPTransport implements Transport {
 
       let rawMessage = parsedBody
       if (rawMessage === undefined) {
-        rawMessage = await ctx.req.json()
+        const bodyText = await ctx.req.text()
+
+        // Check message size limit
+        if (bodyText.length > this.#maxMessageSize) {
+          throw new HTTPException(413, {
+            res: Response.json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Request entity too large',
+              },
+              id: null,
+            }),
+          })
+        }
+
+        try {
+          rawMessage = JSON.parse(bodyText)
+        } catch (error) {
+          throw new HTTPException(400, {
+            res: Response.json({
+              jsonrpc: '2.0',
+              error: {
+                code: -32700,
+                message: 'Parse error',
+                data: String(error),
+              },
+              id: null,
+            }),
+          })
+        }
       }
 
       let messages: JSONRPCMessage[]
@@ -479,7 +525,7 @@ export class StreamableHTTPTransport implements Transport {
                 this.#streamMapping.set(streamId, {
                   ctx: {
                     header: ctx.header,
-                    json: resolve,
+                    json: resolve as (data: unknown) => void,
                   },
                 })
                 this.#requestToStreamMapping.set(message.id, streamId)
@@ -511,6 +557,15 @@ export class StreamableHTTPTransport implements Transport {
           // Set up close handler for client disconnects
           stream.onAbort(() => {
             this.#streamMapping.delete(streamId)
+            // Clean up request mappings for this stream
+            const relatedIds = Array.from(this.#requestToStreamMapping.entries())
+              .filter(([, sid]) => sid === streamId)
+              .map(([id]) => id)
+
+            for (const id of relatedIds) {
+              this.#requestToStreamMapping.delete(id)
+              this.#requestResponseMap.delete(id)
+            }
           })
 
           // handle each message
@@ -674,7 +729,7 @@ export class StreamableHTTPTransport implements Transport {
     }
 
     if (!SUPPORTED_PROTOCOL_VERSIONS.includes(protocolVersion)) {
-      throw new HTTPException(404, {
+      throw new HTTPException(400, {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
@@ -700,12 +755,16 @@ export class StreamableHTTPTransport implements Transport {
     initialized: boolean
     sessionId?: string
   } {
+    const writeQueueCount = Array.from(this.#streamMapping.values()).filter(
+      (entry) => entry.writeQueue
+    ).length
+
     return {
       hasEventStore: !!this.#eventStore,
       streamCount: this.#streamMapping.size,
       requestMappingCount: this.#requestToStreamMapping.size,
       responseMapCount: this.#requestResponseMap.size,
-      writeQueueCount: this.#writeQueue.size,
+      writeQueueCount,
       initialized: this.#initialized,
       sessionId: this.sessionId,
     }
@@ -722,10 +781,7 @@ export class StreamableHTTPTransport implements Transport {
 
     // Clear any pending responses
     this.#requestResponseMap.clear()
-    
-    // Clear write queues
-    this.#writeQueue.clear()
-    
+
     this.onclose?.()
   }
 
@@ -764,17 +820,14 @@ export class StreamableHTTPTransport implements Transport {
 
         // Send the message to the standalone SSE stream
         if (standaloneSse.stream?.closed) {
-          console.debug(`[SSE] Stream ${this.#standaloneSseStreamId} is closed, skipping write`)
           return
         }
-        
-        console.debug(`[SSE] Writing to stream ${this.#standaloneSseStreamId}:`, JSON.stringify(message))
+
         await standaloneSse.stream?.writeSSE({
           id: eventId,
           event: 'message',
           data: JSON.stringify(message),
         })
-        console.debug(`[SSE] Successfully wrote to stream ${this.#standaloneSseStreamId}`)
       })
     }
 
