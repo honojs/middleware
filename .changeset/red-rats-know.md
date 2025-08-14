@@ -4,6 +4,11 @@
 
 Enhance MCP HTTP Streaming Transport reliability and performance
 
+**SDK Update:**
+- Upgrade @modelcontextprotocol/sdk from v1.12.0 to v1.17.2
+- Remove fallback type definitions and use official MessageExtraInfo and RequestInfo types
+- Improve type safety and compatibility with latest MCP specification
+
 **SSE Write Concurrency Fixes:**
 - Implement queue-based write management to prevent stream corruption
 - Add `#queueWrite` method for sequential async write processing

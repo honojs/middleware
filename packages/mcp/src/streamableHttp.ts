@@ -8,11 +8,12 @@ import type {
   StreamableHTTPServerTransportOptions,
 } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js'
-
-// Fallback types if not available in current SDK version
-type MessageExtraInfo = { authInfo?: any; requestInfo?: any }
-type RequestInfo = { headers: Record<string, string | string[] | undefined> }
+import type {
+  JSONRPCMessage,
+  MessageExtraInfo,
+  RequestId,
+  RequestInfo,
+} from '@modelcontextprotocol/sdk/types.js'
 import {
   isInitializeRequest,
   isJSONRPCError,
