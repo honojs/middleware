@@ -1764,7 +1764,6 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
 describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
   let server: Hono
   let transport: StreamableHTTPTransport
-  let baseUrl: URL
 
   afterEach(async () => {
     if (server && transport) {
@@ -1782,13 +1781,13 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
       server = result.server
       transport = result.transport
 
-      // Note: fetch() automatically sets Host header to match the URL
-      // Since we're connecting to localhost:3001 and that's in allowedHosts, this should work
+      // Explicitly set Host header for testing
       const response = await server.request('/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: 'localhost',
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
       })
@@ -1927,12 +1926,13 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
       server = result.server
       transport = result.transport
 
-      // Test with invalid origin (host will be automatically correct via fetch)
+      // Test with invalid origin but valid host
       const response1 = await server.request('/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: 'localhost',
           Origin: 'http://evil.com',
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
@@ -1942,12 +1942,13 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
       const body1 = await response1.json()
       expect(body1.error.message).toBe('Invalid Origin header: http://evil.com')
 
-      // Test with valid origin
+      // Test with valid origin and valid host
       const response2 = await server.request('/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: 'localhost',
           Origin: 'http://localhost:3001',
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
@@ -1976,15 +1977,7 @@ async function createTestServerWithDnsProtection(config: {
     { capabilities: { logging: {} } }
   )
 
-  if (config.allowedHosts) {
-    config.allowedHosts = config.allowedHosts.map((host) => {
-      if (host.includes(':')) {
-        return host
-      }
-      console.log(host)
-      return 'localhost:3000'
-    })
-  }
+  // Remove the automatic port mapping - let the tests specify exact hosts
 
   const transport = new StreamableHTTPTransport({
     sessionIdGenerator: config.sessionIdGenerator,

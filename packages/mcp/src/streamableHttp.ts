@@ -81,6 +81,38 @@ export class StreamableHTTPTransport implements Transport {
   }
 
   /**
+   * Normalizes a host header value for comparison
+   */
+  #normalizeHost(host: string | undefined): string | undefined {
+    if (!host) {
+      return undefined
+    }
+
+    let normalized = host.trim().toLowerCase()
+
+    // Remove trailing dot
+    if (normalized.endsWith('.')) {
+      normalized = normalized.slice(0, -1)
+    }
+
+    // Handle IPv6 addresses
+    if (normalized.startsWith('[') && normalized.includes(']:')) {
+      const bracketEnd = normalized.lastIndexOf(']:')
+      const address = normalized.slice(1, bracketEnd)
+      const port = normalized.slice(bracketEnd + 2)
+      // Normalize IPv6-mapped IPv4 addresses
+      if (address.startsWith('::ffff:')) {
+        const ipv4Part = address.slice(7)
+        normalized = `${ipv4Part}:${port}`
+      } else {
+        normalized = `[${address}]:${port}`
+      }
+    }
+
+    return normalized
+  }
+
+  /**
    * Validates request headers for DNS rebinding protection.
    * @returns Error message if validation fails, undefined if validation passes.
    */
@@ -93,7 +125,10 @@ export class StreamableHTTPTransport implements Transport {
     // Validate Host header if allowedHosts is configured
     if (this.#allowedHosts && this.#allowedHosts.length > 0) {
       const hostHeader = ctx.req.header('Host')
-      if (!hostHeader || !this.#allowedHosts.includes(hostHeader)) {
+      const normalizedHost = this.#normalizeHost(hostHeader)
+      const normalizedAllowedHosts = this.#allowedHosts.map((h) => this.#normalizeHost(h))
+
+      if (!normalizedHost || !normalizedAllowedHosts.includes(normalizedHost)) {
         return `Invalid Host header: ${hostHeader}`
       }
     }
@@ -164,7 +199,10 @@ export class StreamableHTTPTransport implements Transport {
       // clients using the Streamable HTTP transport MUST include it
       // in the Mcp-Session-Id header on all of their subsequent HTTP requests.
       this.#validateSession(ctx)
-      this.#validateProtocolVersion(ctx)
+      // Only validate protocol version if session management is enabled
+      if (this.#sessionIdGenerator !== undefined) {
+        this.#validateProtocolVersion(ctx)
+      }
 
       // After initialization, always include the session ID if we have one
       if (this.sessionId !== undefined) {
@@ -352,7 +390,21 @@ export class StreamableHTTPTransport implements Transport {
         // If we have a session ID and an onsessioninitialized handler, call it immediately
         // This is needed in cases where the server needs to keep track of multiple sessions
         if (this.sessionId && this.#onSessionInitialized) {
-          this.#onSessionInitialized(this.sessionId)
+          try {
+            await Promise.resolve(this.#onSessionInitialized(this.sessionId))
+          } catch (error) {
+            throw new HTTPException(400, {
+              res: Response.json({
+                jsonrpc: '2.0',
+                error: {
+                  code: -32000,
+                  message: 'Bad Request: Session initialization failed',
+                  data: String(error),
+                },
+                id: null,
+              }),
+            })
+          }
         }
       }
 
@@ -362,7 +414,9 @@ export class StreamableHTTPTransport implements Transport {
         // in the Mcp-Session-Id header on all of their subsequent HTTP requests.
         this.#validateSession(ctx)
         // Mcp-Protocol-Version header is required for all requests after initialization.
-        this.#validateProtocolVersion(ctx)
+        if (this.#sessionIdGenerator !== undefined) {
+          this.#validateProtocolVersion(ctx)
+        }
       }
 
       // check if it contains requests
@@ -390,7 +444,7 @@ export class StreamableHTTPTransport implements Transport {
         if (this.#enableJsonResponse) {
           // Store the response for this request to send messages back through this connection
           // We need to track by request ID to maintain the connection
-          const result = await new Promise<any>((resolve) => {
+          const result = await new Promise<JSONRPCMessage | JSONRPCMessage[]>((resolve) => {
             for (const message of messages) {
               if (isJSONRPCRequest(message)) {
                 this.#streamMapping.set(streamId, {
@@ -465,10 +519,27 @@ export class StreamableHTTPTransport implements Transport {
    */
   private async handleDeleteRequest(ctx: Context) {
     this.#validateSession(ctx)
-    this.#validateProtocolVersion(ctx)
+    if (this.#sessionIdGenerator !== undefined) {
+      this.#validateProtocolVersion(ctx)
+    }
 
-    if (this.#onSessionClosed && this.sessionId)
-      await Promise.resolve(this.#onSessionClosed(this.sessionId))
+    if (this.#onSessionClosed && this.sessionId) {
+      try {
+        await Promise.resolve(this.#onSessionClosed(this.sessionId))
+      } catch (error) {
+        throw new HTTPException(500, {
+          res: Response.json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Internal Server Error: Session closure failed',
+              data: String(error),
+            },
+            id: null,
+          }),
+        })
+      }
+    }
 
     await this.close()
     return ctx.body(null, 200)
