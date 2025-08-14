@@ -52,6 +52,7 @@ export class StreamableHTTPTransport implements Transport {
   #allowedHosts?: string[]
   #allowedOrigins?: string[]
   #enableDnsRebindingProtection: boolean
+  #writeQueue = new Map<string, Promise<void>>()
 
   sessionId?: string
   onclose?: () => void
@@ -78,6 +79,34 @@ export class StreamableHTTPTransport implements Transport {
       throw new Error('Transport already started')
     }
     this.#started = true
+  }
+
+  /**
+   * Queues SSE writes to prevent concurrent write issues
+   */
+  async #queueWrite(streamId: string, writeFn: () => Promise<void>): Promise<void> {
+    const currentWrite = this.#writeQueue.get(streamId) || Promise.resolve()
+    const startTime = Date.now()
+    
+    const newWrite = currentWrite
+      .then(async () => {
+        console.debug(`[SSE] Starting write for stream ${streamId}`)
+        await writeFn()
+        console.debug(`[SSE] Completed write for stream ${streamId} in ${Date.now() - startTime}ms`)
+      })
+      .catch((error) => {
+        console.error(`[SSE] Write error for stream ${streamId}:`, error)
+        this.onerror?.(error as Error)
+      })
+      .finally(() => {
+        // Clean up completed write if it's the current one
+        if (this.#writeQueue.get(streamId) === newWrite) {
+          this.#writeQueue.delete(streamId)
+        }
+      })
+    
+    this.#writeQueue.set(streamId, newWrite)
+    await newWrite
   }
 
   /**
@@ -659,6 +688,29 @@ export class StreamableHTTPTransport implements Transport {
     return true
   }
 
+  /**
+   * Gets debug information about the transport state (for testing purposes)
+   */
+  getDebugInfo(): {
+    hasEventStore: boolean
+    streamCount: number
+    requestMappingCount: number
+    responseMapCount: number
+    writeQueueCount: number
+    initialized: boolean
+    sessionId?: string
+  } {
+    return {
+      hasEventStore: !!this.#eventStore,
+      streamCount: this.#streamMapping.size,
+      requestMappingCount: this.#requestToStreamMapping.size,
+      responseMapCount: this.#requestResponseMap.size,
+      writeQueueCount: this.#writeQueue.size,
+      initialized: this.#initialized,
+      sessionId: this.sessionId,
+    }
+  }
+
   async close(): Promise<void> {
     // Close all SSE connections
 
@@ -670,6 +722,10 @@ export class StreamableHTTPTransport implements Transport {
 
     // Clear any pending responses
     this.#requestResponseMap.clear()
+    
+    // Clear write queues
+    this.#writeQueue.clear()
+    
     this.onclose?.()
   }
 
@@ -697,18 +753,28 @@ export class StreamableHTTPTransport implements Transport {
         return
       }
 
-      // Generate and store event ID if event store is provided
-      let eventId: string | undefined
-      if (this.#eventStore) {
-        // Stores the event and gets the generated event ID
-        eventId = await this.#eventStore.storeEvent(this.#standaloneSseStreamId, message)
-      }
+      // Queue the write to prevent concurrent write issues
+      return this.#queueWrite(this.#standaloneSseStreamId, async () => {
+        // Generate and store event ID if event store is provided
+        let eventId: string | undefined
+        if (this.#eventStore) {
+          // Stores the event and gets the generated event ID
+          eventId = await this.#eventStore.storeEvent(this.#standaloneSseStreamId, message)
+        }
 
-      // Send the message to the standalone SSE stream
-      return standaloneSse.stream?.writeSSE({
-        id: eventId,
-        event: 'message',
-        data: JSON.stringify(message),
+        // Send the message to the standalone SSE stream
+        if (standaloneSse.stream?.closed) {
+          console.debug(`[SSE] Stream ${this.#standaloneSseStreamId} is closed, skipping write`)
+          return
+        }
+        
+        console.debug(`[SSE] Writing to stream ${this.#standaloneSseStreamId}:`, JSON.stringify(message))
+        await standaloneSse.stream?.writeSSE({
+          id: eventId,
+          event: 'message',
+          data: JSON.stringify(message),
+        })
+        console.debug(`[SSE] Successfully wrote to stream ${this.#standaloneSseStreamId}`)
       })
     }
 
@@ -720,19 +786,24 @@ export class StreamableHTTPTransport implements Transport {
     }
 
     if (!this.#enableJsonResponse) {
-      // For SSE responses, generate event ID if event store is provided
-      let eventId: string | undefined
-
-      if (this.#eventStore) {
-        eventId = await this.#eventStore.storeEvent(streamId, message)
-      }
-
       if (response) {
-        // Write the event to the response stream
-        await response.stream?.writeSSE({
-          id: eventId,
-          event: 'message',
-          data: JSON.stringify(message),
+        // Queue the write to prevent concurrent write issues
+        await this.#queueWrite(streamId, async () => {
+          // For SSE responses, generate event ID if event store is provided
+          let eventId: string | undefined
+
+          if (this.#eventStore) {
+            eventId = await this.#eventStore.storeEvent(streamId, message)
+          }
+
+          // Write the event to the response stream
+          if (!response.stream?.closed) {
+            await response.stream?.writeSSE({
+              id: eventId,
+              event: 'message',
+              data: JSON.stringify(message),
+            })
+          }
         })
       }
     }
