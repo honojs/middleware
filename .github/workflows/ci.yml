@@ -15,9 +15,14 @@ jobs:
       pull-requests: 'read'
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: nrwl/nx-set-shas@v4
         id: setSHAs
-
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+      - run: yarn workspaces focus what-changed
       - uses: ./.github/actions/what-changed
         id: set-packages
         with:

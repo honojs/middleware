@@ -4,29 +4,11 @@ description: Get a list of changed packages
 inputs:
   since:
     description: Only include workspaces that have been changed since the specified ref.
-    default: main
 
 outputs:
   packages:
     description: A JSON array of changed package names
-    value: ${{ steps.set-packages.outputs.packages }}
 
 runs:
-  using: composite
-  steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: .tool-versions
-    - name: Get changed packages
-      id: set-packages
-      shell: bash
-      run: |
-        exclude=(
-          "hono-middleware"
-          "@hono/bun-transpiler"
-        );
-        changed=$(yarn workspaces list --json --since=${{ inputs.since }} | jq -nc '[inputs.name | select(any(.; inside($ARGS.positional[])) | not) | sub("@hono/"; "")]' --args "${exclude[@]}")
-        echo "packages=${changed}" >> $GITHUB_OUTPUT
+  using: node24
+  main: main.ts

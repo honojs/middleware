@@ -1,0 +1,10 @@
+{
+  "name": "what-changed",
+  "type": "module",
+  "bin": "main.ts",
+  "private": true,
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1"
+  }
+}
