@@ -47,6 +47,9 @@ export class StreamableHTTPTransport implements Transport {
       }
       stream?: SSEStreamingApi
       writeQueue?: Promise<void>
+      queueCount: number
+      writing: boolean
+      cleaned: boolean
     }
   >()
   #requestToStreamMapping = new Map<RequestId, string>()
@@ -104,20 +107,46 @@ export class StreamableHTTPTransport implements Transport {
       throw new Error(`Stream ${streamId} not found`)
     }
 
+    // Check queue size limit
+    if (streamEntry.queueCount >= this.#maxQueueSize) {
+      throw new Error(`Queue size limit exceeded for stream ${streamId}`)
+    }
+
+    // Prevent reentrancy - if already writing, wait for current write to complete
+    if (streamEntry.writing) {
+      console.debug(`[SSE] Write already in progress for stream ${streamId}, queueing`)
+    }
+
+    streamEntry.queueCount = (streamEntry.queueCount || 0) + 1
+
     const currentWrite = streamEntry.writeQueue || Promise.resolve()
+    const startTime = Date.now()
 
     const newWrite = currentWrite
       .then(async () => {
+        // Set writing flag to prevent reentrancy
+        const entry = this.#streamMapping.get(streamId)
+        if (entry) {
+          entry.writing = true
+        }
+
+        console.debug(`[SSE] Starting write for stream ${streamId}`)
         await writeFn()
+        console.debug(`[SSE] Completed write for stream ${streamId} in ${Date.now() - startTime}ms`)
       })
       .catch((error) => {
+        console.error(`[SSE] Write error for stream ${streamId}:`, error)
         this.onerror?.(error as Error)
       })
       .finally(() => {
         // Clean up completed write if it's the current one
         const currentEntry = this.#streamMapping.get(streamId)
-        if (currentEntry && currentEntry.writeQueue === newWrite) {
-          delete currentEntry.writeQueue
+        if (currentEntry) {
+          currentEntry.writing = false
+          currentEntry.queueCount = Math.max(0, (currentEntry.queueCount || 0) - 1)
+          if (currentEntry.writeQueue === newWrite) {
+            delete currentEntry.writeQueue
+          }
         }
       })
 
@@ -303,6 +332,9 @@ export class StreamableHTTPTransport implements Transport {
         this.#streamMapping.set(resolvedStreamId, {
           ctx,
           stream,
+          queueCount: 0,
+          writing: false,
+          cleaned: false,
         })
 
         // Keep connection alive
@@ -388,8 +420,9 @@ export class StreamableHTTPTransport implements Transport {
       if (rawMessage === undefined) {
         const bodyText = await ctx.req.text()
 
-        // Check message size limit
-        if (bodyText.length > this.#maxMessageSize) {
+        // Check message size limit (using TextEncoder for accurate multi-byte character measurement)
+        const bodyBytes = new TextEncoder().encode(bodyText).length
+        if (bodyBytes > this.#maxMessageSize) {
           throw new HTTPException(413, {
             res: Response.json({
               jsonrpc: '2.0',
@@ -527,6 +560,9 @@ export class StreamableHTTPTransport implements Transport {
                     header: ctx.header,
                     json: resolve as (data: unknown) => void,
                   },
+                  queueCount: 0,
+                  writing: false,
+                  cleaned: false,
                 })
                 this.#requestToStreamMapping.set(message.id, streamId)
               }
@@ -549,6 +585,9 @@ export class StreamableHTTPTransport implements Transport {
               this.#streamMapping.set(streamId, {
                 ctx,
                 stream,
+                queueCount: 0,
+                writing: false,
+                cleaned: false,
               })
               this.#requestToStreamMapping.set(message.id, streamId)
             }
@@ -556,15 +595,19 @@ export class StreamableHTTPTransport implements Transport {
 
           // Set up close handler for client disconnects
           stream.onAbort(() => {
-            this.#streamMapping.delete(streamId)
-            // Clean up request mappings for this stream
-            const relatedIds = Array.from(this.#requestToStreamMapping.entries())
-              .filter(([, sid]) => sid === streamId)
-              .map(([id]) => id)
+            const entry = this.#streamMapping.get(streamId)
+            if (entry && !entry.cleaned) {
+              entry.cleaned = true
+              this.#streamMapping.delete(streamId)
+              // Clean up request mappings for this stream
+              const relatedIds = Array.from(this.#requestToStreamMapping.entries())
+                .filter(([, sid]) => sid === streamId)
+                .map(([id]) => id)
 
-            for (const id of relatedIds) {
-              this.#requestToStreamMapping.delete(id)
-              this.#requestResponseMap.delete(id)
+              for (const id of relatedIds) {
+                this.#requestToStreamMapping.delete(id)
+                this.#requestResponseMap.delete(id)
+              }
             }
           })
 
@@ -820,14 +863,20 @@ export class StreamableHTTPTransport implements Transport {
 
         // Send the message to the standalone SSE stream
         if (standaloneSse.stream?.closed) {
+          console.debug(`[SSE] Stream ${this.#standaloneSseStreamId} is closed, skipping write`)
           return
         }
 
+        console.debug(
+          `[SSE] Writing to stream ${this.#standaloneSseStreamId}:`,
+          JSON.stringify(message)
+        )
         await standaloneSse.stream?.writeSSE({
           id: eventId,
           event: 'message',
           data: JSON.stringify(message),
         })
+        console.debug(`[SSE] Successfully wrote to stream ${this.#standaloneSseStreamId}`)
       })
     }
 
