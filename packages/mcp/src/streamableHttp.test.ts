@@ -10,7 +10,7 @@ import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
-import { StreamableHTTPTransport } from '.'
+import { StreamableHTTPTransport } from './streamableHttp'
 
 /**
  * Test server configuration for StreamableHTTPServerTransport tests
