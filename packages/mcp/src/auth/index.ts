@@ -1,15 +1,14 @@
+import type { AuthorizationHandlerOptions } from "@modelcontextprotocol/sdk/server/auth/handlers/authorize.js";
+import type { ClientRegistrationHandlerOptions } from "@modelcontextprotocol/sdk/server/auth/handlers/register.js";
+import type { RevocationHandlerOptions } from "@modelcontextprotocol/sdk/server/auth/handlers/revoke.js";
+import type { TokenHandlerOptions } from "@modelcontextprotocol/sdk/server/auth/handlers/token.js";
 import type { OAuthServerProvider } from "@modelcontextprotocol/sdk/server/auth/provider.js";
-import type { OAuthMetadata, OAuthProtectedResourceMetadata } from "@modelcontextprotocol/sdk/shared/auth.js";
+import type { OAuthMetadata } from "@modelcontextprotocol/sdk/shared/auth.js";
 import { Hono } from "hono";
-import type { AuthorizationHandlerOptions } from "./handlers/authorize.js";
-import { authorizationHandler } from "./handlers/authorize.js";
-import { metadataHandler } from "./handlers/metadata.js";
-import type { ClientRegistrationHandlerOptions } from "./handlers/register.js";
-import { clientRegistrationHandler } from "./handlers/register.js";
-import type { RevocationHandlerOptions } from "./handlers/revoke.js";
-import { revocationHandler } from "./handlers/revoke.js";
-import type { TokenHandlerOptions } from "./handlers/token.js";
-import { tokenHandler } from "./handlers/token.js";
+import { cors } from "hono/cors";
+import { authorizeHandler, checkIssuerUrl, clientRegistrationHandler, revokeHandler, tokenHandler } from "./helpers";
+import { wellKnownRouter } from "./helpers/wellknown";
+import { authenticateClient } from "./middleware/clientAuth";
 
 export type AuthRouterOptions = {
   /**
@@ -51,19 +50,6 @@ export type AuthRouterOptions = {
   revocationOptions?: Omit<RevocationHandlerOptions, "provider">;
   tokenOptions?: Omit<TokenHandlerOptions, "provider">;
 };
-
-const checkIssuerUrl = (issuer: URL): void => {
-  // Technically RFC 8414 does not permit a localhost HTTPS exemption, but this will be necessary for ease of testing
-  if (issuer.protocol !== "https:" && issuer.hostname !== "localhost" && issuer.hostname !== "127.0.0.1") {
-    throw new Error("Issuer URL must be HTTPS");
-  }
-  if (issuer.hash) {
-    throw new Error(`Issuer URL must not have a fragment: ${issuer}`);
-  }
-  if (issuer.search) {
-    throw new Error(`Issuer URL must not have a query string: ${issuer}`);
-  }
-}
 
 export const createOAuthMetadata = (options: {
   provider: OAuthServerProvider,
@@ -120,19 +106,22 @@ export const createOAuthMetadata = (options: {
 export function mcpAuthRouter(options: AuthRouterOptions): Hono {
   const oauthMetadata = createOAuthMetadata(options);
 
-  const router = new Hono();
+  const router = new Hono().use(cors());
 
-  router.route(
+  router.post(
     new URL(oauthMetadata.authorization_endpoint).pathname,
-    authorizationHandler({ provider: options.provider, ...options.authorizationOptions })
+    authorizeHandler(options.provider)
   );
 
-  router.route(
+  const authenticateClientMiddleware = authenticateClient({ clientsStore: options.provider.clientsStore });
+
+  router.post(
     new URL(oauthMetadata.token_endpoint).pathname,
-    tokenHandler({ provider: options.provider, ...options.tokenOptions })
+    authenticateClientMiddleware,
+    tokenHandler(options.provider)
   );
 
-  router.route("/", mcpAuthMetadataRouter({
+  router.route("/", wellKnownRouter({
     oauthMetadata,
     // This router is used for AS+RS combo's, so the issuer is also the resource server
     resourceServerUrl: new URL(oauthMetadata.issuer),
@@ -142,7 +131,7 @@ export function mcpAuthRouter(options: AuthRouterOptions): Hono {
   }));
 
   if (oauthMetadata.registration_endpoint) {
-    router.route(
+    router.post(
       new URL(oauthMetadata.registration_endpoint).pathname,
       clientRegistrationHandler({
         clientsStore: options.provider.clientsStore,
@@ -152,79 +141,12 @@ export function mcpAuthRouter(options: AuthRouterOptions): Hono {
   }
 
   if (oauthMetadata.revocation_endpoint) {
-    router.route(
+    router.post(
       new URL(oauthMetadata.revocation_endpoint).pathname,
-      revocationHandler({ provider: options.provider, ...options.revocationOptions })
+      authenticateClientMiddleware,
+      revokeHandler(options.provider)
     );
   }
 
   return router;
-}
-
-export type AuthMetadataOptions = {
-  /**
-   * OAuth Metadata as would be returned from the authorization server
-   * this MCP server relies on
-   */
-  oauthMetadata: OAuthMetadata;
-
-  /**
-   * The url of the MCP server, for use in protected resource metadata
-   */
-  resourceServerUrl: URL;
-
-  /**
-   * The url for documentation for the MCP server
-   */
-  serviceDocumentationUrl?: URL;
-
-  /**
-   * An optional list of scopes supported by this MCP server
-   */
-  scopesSupported?: string[];
-
-  /**
-   * An optional resource name to display in resource metadata
-   */
-  resourceName?: string;
-}
-
-export function mcpAuthMetadataRouter(options: AuthMetadataOptions): Hono {
-  checkIssuerUrl(new URL(options.oauthMetadata.issuer));
-
-  const router = new Hono();
-
-  const protectedResourceMetadata: OAuthProtectedResourceMetadata = {
-    resource: options.resourceServerUrl.href,
-
-    authorization_servers: [
-      options.oauthMetadata.issuer
-    ],
-
-    scopes_supported: options.scopesSupported,
-    resource_name: options.resourceName,
-    resource_documentation: options.serviceDocumentationUrl?.href,
-  };
-
-  router.route("/.well-known/oauth-protected-resource", metadataHandler(protectedResourceMetadata));
-
-  // Always add this for backwards compatibility
-  router.route("/.well-known/oauth-authorization-server", metadataHandler(options.oauthMetadata));
-
-  return router;
-}
-
-/**
- * Helper function to construct the OAuth 2.0 Protected Resource Metadata URL
- * from a given server URL. This replaces the path with the standard metadata endpoint.
- *
- * @param serverUrl - The base URL of the protected resource server
- * @returns The URL for the OAuth protected resource metadata endpoint
- *
- * @example
- * getOAuthProtectedResourceMetadataUrl(new URL('https://api.example.com/mcp'))
- * // Returns: 'https://api.example.com/.well-known/oauth-protected-resource'
- */
-export function getOAuthProtectedResourceMetadataUrl(serverUrl: URL): string {
-  return new URL('/.well-known/oauth-protected-resource', serverUrl).href;
 }
