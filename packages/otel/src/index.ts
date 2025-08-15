@@ -1,4 +1,4 @@
-import type { TracerProvider, MeterProvider } from '@opentelemetry/api'
+import type { TracerProvider, MeterProvider, TimeInput } from '@opentelemetry/api'
 import { SpanKind, SpanStatusCode, trace, context, propagation, metrics } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
@@ -24,6 +24,7 @@ export type OtelOptions =
       meterProvider?: MeterProvider
       captureRequestHeaders?: (keyof Record<RequestHeader | (string & {}), string>)[]
       captureResponseHeaders?: (keyof Record<ResponseHeader | (string & {}), string>)[]
+      getTime?(): TimeInput
     }
   | {
       augmentSpan: true
@@ -68,6 +69,7 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           [ATTR_URL_FULL]: c.req.url,
           [ATTR_HTTP_ROUTE]: routePath,
         },
+        startTime: options.getTime?.()
       },
       activeContext,
       async (span) => {
@@ -102,7 +104,7 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           span.setStatus({ code: SpanStatusCode.ERROR, message: String(e) })
           throw e
         } finally {
-          span.end()
+          span.end(options.getTime?.())
           observeOtelMetrics(otelMetrics, c, { startTime })
         }
       }
