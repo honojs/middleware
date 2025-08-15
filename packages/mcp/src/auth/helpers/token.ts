@@ -1,62 +1,70 @@
-import { InvalidGrantError, InvalidRequestError, OAuthError, ServerError, UnsupportedGrantTypeError } from "@modelcontextprotocol/sdk/server/auth/errors.js";
-import type { OAuthServerProvider } from "@modelcontextprotocol/sdk/server/auth/provider.js";
-import type { MiddlewareHandler } from "hono";
-import { verifyChallenge } from "pkce-challenge";
-import { z } from "zod";
-import type { ClientAuthenticationEnv } from "../middleware/clientAuth";
+import {
+  InvalidGrantError,
+  InvalidRequestError,
+  OAuthError,
+  ServerError,
+  UnsupportedGrantTypeError,
+} from '@modelcontextprotocol/sdk/server/auth/errors.js'
+import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
+import type { MiddlewareHandler } from 'hono'
+import { verifyChallenge } from 'pkce-challenge'
+import { z } from 'zod'
+import type { ClientAuthenticationEnv } from '../middleware/clientAuth'
 
 const TokenRequestSchema = z.object({
   grant_type: z.string(),
-});
+})
 
 const AuthorizationCodeGrantSchema = z.object({
   code: z.string(),
   code_verifier: z.string(),
   redirect_uri: z.string().optional(),
   resource: z.string().url().optional(),
-});
+})
 
 const RefreshTokenGrantSchema = z.object({
   refresh_token: z.string(),
   scope: z.string().optional(),
   resource: z.string().url().optional(),
-});
+})
 
-export function tokenHandler(provider: OAuthServerProvider): MiddlewareHandler<ClientAuthenticationEnv> {
+export function tokenHandler(
+  provider: OAuthServerProvider
+): MiddlewareHandler<ClientAuthenticationEnv> {
   return async (c) => {
-    c.header("Cache-Control", "no-store");
+    c.header('Cache-Control', 'no-store')
 
     try {
-      const parseResult = TokenRequestSchema.safeParse(await c.req.json());
+      const parseResult = TokenRequestSchema.safeParse(await c.req.json())
       if (!parseResult.success) {
-        throw new InvalidRequestError(parseResult.error.message);
+        throw new InvalidRequestError(parseResult.error.message)
       }
 
-      const { grant_type } = parseResult.data;
+      const { grant_type } = parseResult.data
 
-      const client = c.get("client");
+      const client = c.get('client')
       if (!client) {
         // This should never happen
-        throw new ServerError("Internal Server Error");
+        throw new ServerError('Internal Server Error')
       }
 
       switch (grant_type) {
-        case "authorization_code": {
-          const parseResult = AuthorizationCodeGrantSchema.safeParse(await c.req.json());
+        case 'authorization_code': {
+          const parseResult = AuthorizationCodeGrantSchema.safeParse(await c.req.json())
           if (!parseResult.success) {
-            throw new InvalidRequestError(parseResult.error.message);
+            throw new InvalidRequestError(parseResult.error.message)
           }
 
-          const { code, code_verifier, redirect_uri, resource } = parseResult.data;
+          const { code, code_verifier, redirect_uri, resource } = parseResult.data
 
-          const skipLocalPkceValidation = provider.skipLocalPkceValidation;
+          const skipLocalPkceValidation = provider.skipLocalPkceValidation
 
-          // Perform local PKCE validation unless explicitly skipped 
+          // Perform local PKCE validation unless explicitly skipped
           // (e.g. to validate code_verifier in upstream server)
           if (!skipLocalPkceValidation) {
-            const codeChallenge = await provider.challengeForAuthorizationCode(client, code);
+            const codeChallenge = await provider.challengeForAuthorizationCode(client, code)
             if (!(await verifyChallenge(code_verifier, codeChallenge))) {
-              throw new InvalidGrantError("code_verifier does not match the challenge");
+              throw new InvalidGrantError('code_verifier does not match the challenge')
             }
           }
 
@@ -67,23 +75,28 @@ export function tokenHandler(provider: OAuthServerProvider): MiddlewareHandler<C
             skipLocalPkceValidation ? code_verifier : undefined,
             redirect_uri,
             resource ? new URL(resource) : undefined
-          );
-          return c.json(tokens, 200);
-          break;
+          )
+          return c.json(tokens, 200)
+          break
         }
 
-        case "refresh_token": {
-          const parseResult = RefreshTokenGrantSchema.safeParse(await c.req.json());
+        case 'refresh_token': {
+          const parseResult = RefreshTokenGrantSchema.safeParse(await c.req.json())
           if (!parseResult.success) {
-            throw new InvalidRequestError(parseResult.error.message);
+            throw new InvalidRequestError(parseResult.error.message)
           }
 
-          const { refresh_token, scope, resource } = parseResult.data;
+          const { refresh_token, scope, resource } = parseResult.data
 
-          const scopes = scope?.split(" ");
-          const tokens = await provider.exchangeRefreshToken(client, refresh_token, scopes, resource ? new URL(resource) : undefined);
-          return c.json(tokens);
-          break;
+          const scopes = scope?.split(' ')
+          const tokens = await provider.exchangeRefreshToken(
+            client,
+            refresh_token,
+            scopes,
+            resource ? new URL(resource) : undefined
+          )
+          return c.json(tokens)
+          break
         }
 
         // Not supported right now
@@ -91,17 +104,17 @@ export function tokenHandler(provider: OAuthServerProvider): MiddlewareHandler<C
 
         default:
           throw new UnsupportedGrantTypeError(
-            "The grant type is not supported by this authorization server."
-          );
+            'The grant type is not supported by this authorization server.'
+          )
       }
     } catch (error) {
       if (error instanceof OAuthError) {
-        const status = error instanceof ServerError ? 500 : 400;
-        return c.json(error.toResponseObject(), status);
+        const status = error instanceof ServerError ? 500 : 400
+        return c.json(error.toResponseObject(), status)
       } else {
-        const serverError = new ServerError("Internal Server Error");
-        return c.json(serverError.toResponseObject(), 500);
+        const serverError = new ServerError('Internal Server Error')
+        return c.json(serverError.toResponseObject(), 500)
       }
     }
-  };
+  }
 }

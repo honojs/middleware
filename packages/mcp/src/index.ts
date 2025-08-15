@@ -1,2 +1,2 @@
 export { StreamableHTTPTransport } from './streamableHttp'
-export { streamSSE } from "./streaming"
+export { streamSSE } from './streaming'
