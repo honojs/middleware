@@ -1657,7 +1657,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
   })
 
   it('should propagate errors from async onsessioninitialized callback', async () => {
-    const consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => { })
+    const consoleErrorSpy = vitest.spyOn(console, 'error')
 
     // Create server with async onsessioninitialized callback that throws
     const result = await createTestServer({

@@ -352,7 +352,7 @@ export class StreamableHTTPTransport implements Transport {
         // If we have a session ID and an onsessioninitialized handler, call it immediately
         // This is needed in cases where the server needs to keep track of multiple sessions
         if (this.sessionId && this.#onSessionInitialized) {
-          this.#onSessionInitialized(this.sessionId)
+          await this.#onSessionInitialized(this.sessionId)
         }
       }
 
