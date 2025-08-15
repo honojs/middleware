@@ -46,7 +46,7 @@ describe('Authorization Handler', () => {
     clientsStore: mockClientStore,
 
     async authorize(
-      client: OAuthClientInformationFull,
+      _client: OAuthClientInformationFull,
       params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {

@@ -37,9 +37,10 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "hono": "*",
-    "hono-rate-limiter": "^0.4.2"
+    "hono-rate-limiter": "^0.4.2",
+    "pkce-challenge": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "hono-rate-limiter": {
@@ -56,8 +57,5 @@
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
     "zod": "^3.25.34"
-  },
-  "dependencies": {
-    "pkce-challenge": "^5.0.0"
   }
 }

@@ -41,7 +41,7 @@ describe('MCP Auth Router', () => {
     clientsStore: mockClientStore,
 
     async authorize(
-      client: OAuthClientInformationFull,
+      _client: OAuthClientInformationFull,
       params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {
@@ -111,7 +111,7 @@ describe('MCP Auth Router', () => {
     },
 
     async authorize(
-      client: OAuthClientInformationFull,
+      _client: OAuthClientInformationFull,
       params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {

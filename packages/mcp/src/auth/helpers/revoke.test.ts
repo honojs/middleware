@@ -39,8 +39,8 @@ describe('Revocation Handler', () => {
     clientsStore: mockClientStore,
 
     async authorize(
-      client: OAuthClientInformationFull,
-      params: AuthorizationParams,
+      _client: OAuthClientInformationFull,
+      _params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {
       ctx.res = ctx.redirect('https://example.com/callback?code=mock_auth_code')
@@ -93,8 +93,8 @@ describe('Revocation Handler', () => {
     clientsStore: mockClientStore,
 
     async authorize(
-      client: OAuthClientInformationFull,
-      params: AuthorizationParams,
+      _client: OAuthClientInformationFull,
+      _params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {
       ctx.res = ctx.redirect('https://example.com/callback?code=mock_auth_code')

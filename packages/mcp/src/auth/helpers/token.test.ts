@@ -69,15 +69,15 @@ describe('Token Handler', () => {
       clientsStore: mockClientStore,
 
       async authorize(
-        client: OAuthClientInformationFull,
-        params: AuthorizationParams,
+        _client: OAuthClientInformationFull,
+        _params: AuthorizationParams,
         ctx: Context
       ): Promise<void> {
         ctx.redirect('https://example.com/callback?code=mock_auth_code')
       },
 
       async challengeForAuthorizationCode(
-        client: OAuthClientInformationFull,
+        _client: OAuthClientInformationFull,
         authorizationCode: string
       ): Promise<string> {
         if (authorizationCode === 'valid_code') {
@@ -89,7 +89,7 @@ describe('Token Handler', () => {
       },
 
       async exchangeAuthorizationCode(
-        client: OAuthClientInformationFull,
+        _client: OAuthClientInformationFull,
         authorizationCode: string
       ): Promise<OAuthTokens> {
         if (authorizationCode === 'valid_code') {
@@ -99,7 +99,7 @@ describe('Token Handler', () => {
       },
 
       async exchangeRefreshToken(
-        client: OAuthClientInformationFull,
+        _client: OAuthClientInformationFull,
         refreshToken: string,
         scopes?: string[]
       ): Promise<OAuthTokens> {
@@ -330,7 +330,7 @@ describe('Token Handler', () => {
 
     it('returns id token in code exchange if provided', async () => {
       mockProvider.exchangeAuthorizationCode = async (
-        client: OAuthClientInformationFull,
+        _client: OAuthClientInformationFull,
         authorizationCode: string
       ): Promise<OAuthTokens> => {
         if (authorizationCode === 'valid_code') {
