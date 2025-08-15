@@ -1789,6 +1789,7 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: "localhost:3000", // Need this because we are using hono.request()
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
       })
@@ -1933,6 +1934,7 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: "localhost:3000", // Need this because we are using hono.request()
           Origin: 'http://evil.com',
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
@@ -1948,6 +1950,7 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json, text/event-stream',
+          Host: "localhost:3000", // Need this because we are using hono.request()
           Origin: 'http://localhost:3001',
         },
         body: JSON.stringify(TEST_MESSAGES.initialize),
