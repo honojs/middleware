@@ -12,10 +12,11 @@ export function linkedinAuth(options: {
   client_secret?: string
   scope?: LinkedInScope[]
   appAuth?: boolean
+  state?: string
   redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
-    const newState = getRandomState()
+    const newState = options.state || getRandomState()
     // Create new Auth instance
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).LINKEDIN_ID as string),
