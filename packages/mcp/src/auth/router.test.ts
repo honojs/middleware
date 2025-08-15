@@ -1,6 +1,9 @@
 import type { OAuthRegisteredClientsStore } from '@modelcontextprotocol/sdk/server/auth/clients.js'
 import { InvalidTokenError } from '@modelcontextprotocol/sdk/server/auth/errors.js'
-import type { OAuthServerProvider, AuthorizationParams } from '@modelcontextprotocol/sdk/server/auth/provider.js'
+import type {
+  OAuthServerProvider,
+  AuthorizationParams,
+} from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import type { AuthMetadataOptions } from '@modelcontextprotocol/sdk/server/auth/router.js'
 import type { AuthInfo } from '@modelcontextprotocol/sdk/server/auth/types.js'
 import type {
@@ -9,11 +12,11 @@ import type {
   OAuthTokenRevocationRequest,
   OAuthTokens,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
-import type { Context } from "hono";
-import { Hono } from "hono";
-import { wellKnownRouter, WellKnownRouterOptions } from "./helpers/wellknown"
+import type { Context } from 'hono'
+import { Hono } from 'hono'
+import { wellKnownRouter, WellKnownRouterOptions } from './helpers/wellknown'
 import { mcpAuthRouter } from './router'
-import type { AuthRouterOptions } from './router';
+import type { AuthRouterOptions } from './router'
 
 describe('MCP Auth Router', () => {
   // Setup mock provider with full capabilities
@@ -235,9 +238,7 @@ describe('MCP Auth Router', () => {
       expect(body.grant_types_supported).toEqual(['authorization_code', 'refresh_token'])
       expect(body.code_challenge_methods_supported).toEqual(['S256'])
       expect(body.token_endpoint_auth_methods_supported).toEqual(['client_secret_post'])
-      expect(body.revocation_endpoint_auth_methods_supported).toEqual([
-        'client_secret_post',
-      ])
+      expect(body.revocation_endpoint_auth_methods_supported).toEqual(['client_secret_post'])
 
       // Verify optional fields
       expect(body.service_documentation).toBe('https://docs.example.com/')
@@ -306,7 +307,7 @@ describe('MCP Auth Router', () => {
         issuerUrl: new URL('https://auth.example.com'),
       }
       app.route('/', mcpAuthRouter(options))
-      vi.spyOn(console, 'error').mockImplementation(() => { })
+      vi.spyOn(console, 'error').mockImplementation(() => {})
     })
 
     afterEach(() => {
