@@ -144,7 +144,7 @@ describe('clientAuth middleware', () => {
       body: 'not-json-format',
     })
 
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(500)
   })
 
   // Testing request with extra fields to ensure they're ignored

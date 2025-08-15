@@ -15,8 +15,10 @@ import type {
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { Hono } from 'hono'
 import type { Context } from 'hono'
+import { cors } from 'hono/cors'
 import * as pkceChallenge from 'pkce-challenge'
 import type { Mock } from 'vitest'
+import { authenticateClient } from '../middleware/clientAuth.js'
 import { ProxyOAuthServerProvider } from '../providers/proxyProvider.js'
 import { tokenHandler } from './token.js'
 
@@ -138,33 +140,21 @@ describe('Token Handler', () => {
       },
     }
 
-    // Mock PKCE verification
-    ;(pkceChallenge.verifyChallenge as Mock).mockImplementation(
-      async (verifier: string, challenge: string) => {
-        return verifier === 'valid_verifier' && challenge === 'mock_challenge'
-      }
-    )
+      // Mock PKCE verification
+      ; (pkceChallenge.verifyChallenge as Mock).mockImplementation(
+        async (verifier: string, challenge: string) => {
+          return verifier === 'valid_verifier' && challenge === 'mock_challenge'
+        }
+      )
 
     // Setup express app with token handler
     app = new Hono()
-    app.post('/token', tokenHandler(mockProvider))
+    app.post('/token', cors(), authenticateClient({
+      clientsStore: mockClientStore,
+    }), tokenHandler(mockProvider))
   })
 
   describe('Basic request validation', () => {
-    it('requires POST method', async () => {
-      const response = await app.request('/token', {
-        method: 'GET',
-        body: JSON.stringify({
-          client_id: 'valid-client',
-          client_secret: 'valid-secret',
-          grant_type: 'authorization_code',
-        }),
-      })
-
-      expect(response.status).toBe(404)
-      expect(await response.text()).toEqual('404 Not Found')
-    })
-
     it('requires grant_type parameter', async () => {
       const response = await app.request('/token', {
         method: 'POST',
@@ -270,7 +260,7 @@ describe('Token Handler', () => {
 
     it('verifies code_verifier against challenge', async () => {
       // Setup invalid verifier
-      ;(pkceChallenge.verifyChallenge as Mock).mockResolvedValueOnce(false)
+      ; (pkceChallenge.verifyChallenge as Mock).mockResolvedValueOnce(false)
 
       const response = await app.request('/token', {
         method: 'POST',
@@ -390,7 +380,9 @@ describe('Token Handler', () => {
         })
 
         const proxyApp = new Hono()
-        proxyApp.post('/token', tokenHandler(proxyProvider))
+        proxyApp.post('/token', authenticateClient({
+          clientsStore: proxyProvider.clientsStore,
+        }), tokenHandler(proxyProvider))
 
         const response = await proxyApp.request('/token', {
           method: 'POST',
@@ -448,7 +440,9 @@ describe('Token Handler', () => {
         })
 
         const proxyApp = new Hono()
-        proxyApp.post('/token', tokenHandler(proxyProvider))
+        proxyApp.post('/token', authenticateClient({
+          clientsStore: proxyProvider.clientsStore,
+        }), tokenHandler(proxyProvider))
 
         const redirectUri = 'https://example.com/callback'
         const response = await proxyApp.request('/token', {

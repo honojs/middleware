@@ -14,7 +14,7 @@ import type {
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
-import { wellKnownRouter, WellKnownRouterOptions } from './helpers/wellknown'
+import { wellKnownRouter } from './helpers/wellknown'
 import { mcpAuthRouter } from './router'
 import type { AuthRouterOptions } from './router'
 
@@ -50,7 +50,7 @@ describe('MCP Auth Router', () => {
       if (params.state) {
         redirectUrl.searchParams.set('state', params.state)
       }
-      ctx.redirect(redirectUrl.toString())
+      ctx.res = ctx.redirect(redirectUrl.toString())
     },
 
     async challengeForAuthorizationCode(): Promise<string> {
@@ -120,7 +120,7 @@ describe('MCP Auth Router', () => {
       if (params.state) {
         redirectUrl.searchParams.set('state', params.state)
       }
-      ctx.redirect(redirectUrl.toString())
+      ctx.res = ctx.redirect(redirectUrl.toString())
     },
 
     async challengeForAuthorizationCode(): Promise<string> {
@@ -307,7 +307,7 @@ describe('MCP Auth Router', () => {
         issuerUrl: new URL('https://auth.example.com'),
       }
       app.route('/', mcpAuthRouter(options))
-      vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.spyOn(console, 'error').mockImplementation(() => { })
     })
 
     afterEach(() => {
@@ -315,7 +315,7 @@ describe('MCP Auth Router', () => {
     })
 
     it('routes to authorization endpoint', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
 
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('response_type', 'code')

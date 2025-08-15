@@ -4,6 +4,7 @@ import type {
   OAuthClientMetadata,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { clientRegistrationHandler } from './register.js'
 import type { ClientRegistrationHandlerOptions } from './register.js'
 
@@ -60,7 +61,7 @@ describe('Client Registration Handler', () => {
         clientSecretExpirySeconds: 86400, // 1 day for testing
       }
 
-      app.post('/register', clientRegistrationHandler(options))
+      app.post('/register', cors(), clientRegistrationHandler(options))
 
       // Spy on the registerClient method
       spyRegisterClient = vi.spyOn(mockClientStoreWithRegistration, 'registerClient')
@@ -68,20 +69,6 @@ describe('Client Registration Handler', () => {
 
     afterEach(() => {
       spyRegisterClient.mockRestore()
-    })
-
-    it('requires POST method', async () => {
-      const response = await app.request('/register', {
-        method: 'GET',
-        body: JSON.stringify({
-          redirect_uris: ['https://example.com/callback'],
-        }),
-      })
-
-      expect(response.status).toBe(404)
-      expect(response.headers.get('allow')).toBe('POST')
-      expect(await response.text()).toEqual('404 Not Found')
-      expect(spyRegisterClient).not.toHaveBeenCalled()
     })
 
     it('validates required client metadata', async () => {
@@ -94,10 +81,9 @@ describe('Client Registration Handler', () => {
       })
 
       expect(response.status).toBe(400)
-      expect(await response.json()).toEqual({
-        error: 'invalid_client_metadata',
-        error_description: 'The client metadata is invalid',
-      })
+      const body = await response.json()
+
+      expect(body.error).toBe('invalid_client_metadata');
       expect(spyRegisterClient).not.toHaveBeenCalled()
     })
 

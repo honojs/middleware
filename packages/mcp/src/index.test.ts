@@ -10,7 +10,7 @@ import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
-import { StreamableHTTPTransport } from './streamableHttp'
+import { StreamableHTTPTransport } from '.'
 
 /**
  * Test server configuration for StreamableHTTPServerTransport tests
@@ -1657,7 +1657,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
   })
 
   it('should propagate errors from async onsessioninitialized callback', async () => {
-    const consoleErrorSpy = vitest.spyOn(console, 'error')
+    const consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => { })
 
     // Create server with async onsessioninitialized callback that throws
     const result = await createTestServer({
@@ -1981,7 +1981,7 @@ async function createTestServerWithDnsProtection(config: {
       if (host.includes(':')) {
         return host
       }
-      console.log(host)
+
       return 'localhost:3000'
     })
   }

@@ -39,19 +39,20 @@ export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandl
     // 2. Post-redirect errors (redirect with error parameters)
 
     // Phase 1: Validate client_id and redirect_uri. Any errors here must be direct responses.
-    let client_id, redirect_uri, client
+    let redirect_uri, client
     try {
       const result = ClientAuthorizationParamsSchema.safeParse(
         c.req.method === 'POST' ? await c.req.json() : c.req.query()
       )
+
       if (!result.success) {
         throw new InvalidRequestError(result.error.message)
       }
 
-      client_id = result.data.client_id
       redirect_uri = result.data.redirect_uri
 
-      client = await provider.clientsStore.getClient(client_id)
+      client = await provider.clientsStore.getClient(result.data.client_id)
+
       if (!client) {
         throw new InvalidClientError('Invalid client_id')
       }
@@ -76,13 +77,11 @@ export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandl
       // user anyway.
       if (error instanceof OAuthError) {
         const status = error instanceof ServerError ? 500 : 400
-        c.json(error.toResponseObject(), status)
-      } else {
-        const serverError = new ServerError('Internal Server Error')
-        c.json(serverError.toResponseObject(), 500)
+        return c.json(error.toResponseObject(), status)
       }
 
-      return
+      const serverError = new ServerError('Internal Server Error')
+      return c.json(serverError.toResponseObject(), 500)
     }
 
     // Phase 2: Validate other parameters. Any errors here should go into redirect responses.
@@ -92,6 +91,7 @@ export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandl
       const parseResult = RequestAuthorizationParamsSchema.safeParse(
         c.req.method === 'POST' ? await c.req.json() : c.req.query()
       )
+
       if (!parseResult.success) {
         throw new InvalidRequestError(parseResult.error.message)
       }
@@ -124,17 +124,17 @@ export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandl
           resource: resource ? new URL(resource) : undefined,
         },
         c
-      )
+      );
 
-      return
+      return c.res;
     } catch (error) {
       // Post-redirect errors - redirect with error parameters
       if (error instanceof OAuthError) {
-        c.redirect(createErrorRedirect(redirect_uri, error, state))
-      } else {
-        const serverError = new ServerError('Internal Server Error')
-        c.redirect(createErrorRedirect(redirect_uri, serverError, state), 302)
+        return c.redirect(createErrorRedirect(redirect_uri, error, state))
       }
+
+      const serverError = new ServerError('Internal Server Error')
+      return c.redirect(createErrorRedirect(redirect_uri, serverError, state), 302)
     }
   }
 }

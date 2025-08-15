@@ -56,7 +56,7 @@ describe('Authorization Handler', () => {
       if (params.state) {
         redirectUrl.searchParams.set('state', params.state)
       }
-      ctx.redirect(redirectUrl.toString())
+      ctx.res = ctx.redirect(redirectUrl.toString())
     },
 
     async challengeForAuthorizationCode(): Promise<string> {
@@ -103,7 +103,7 @@ describe('Authorization Handler', () => {
 
   beforeEach(() => {
     app = new Hono()
-    app.post('/authorize', authorizeHandler(mockProvider))
+    app.on(["GET", "POST"], '/authorize', authorizeHandler(mockProvider))
   })
 
   describe('HTTP method validation', () => {
@@ -113,7 +113,7 @@ describe('Authorization Handler', () => {
         body: JSON.stringify({ client_id: 'valid-client' }),
       })
 
-      expect(response.status).toBe(405) // Method not allowed response from handler
+      expect(response.status).toBe(404) // Method not found response from handler
     })
   })
 
@@ -122,11 +122,11 @@ describe('Authorization Handler', () => {
       const response = await app.request('/authorize')
 
       expect(response.status).toBe(400)
-      expect(response.text).toContain('client_id')
+      expect(await response.text()).toContain('client_id')
     })
 
     it('validates that client exists', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'nonexistent-client')
       const response = await app.request(url)
 
@@ -136,7 +136,7 @@ describe('Authorization Handler', () => {
 
   describe('Redirect URI validation', () => {
     it('uses the only redirect_uri if client has just one and none provided', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('response_type', 'code')
       url.searchParams.set('code_challenge', 'challenge123')
@@ -149,7 +149,7 @@ describe('Authorization Handler', () => {
     })
 
     it('requires redirect_uri if client has multiple', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'multi-redirect-client')
       url.searchParams.set('response_type', 'code')
       url.searchParams.set('code_challenge', 'challenge123')
@@ -160,7 +160,7 @@ describe('Authorization Handler', () => {
     })
 
     it('validates redirect_uri against client registered URIs', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://malicious.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -172,7 +172,7 @@ describe('Authorization Handler', () => {
     })
 
     it('accepts valid redirect_uri that client registered with', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -188,7 +188,7 @@ describe('Authorization Handler', () => {
 
   describe('Authorization request validation', () => {
     it('requires response_type=code', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'token') // invalid - we only support code flow
@@ -202,7 +202,7 @@ describe('Authorization Handler', () => {
     })
 
     it('requires code_challenge parameter', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -215,7 +215,7 @@ describe('Authorization Handler', () => {
     })
 
     it('requires code_challenge_method=S256', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -231,7 +231,7 @@ describe('Authorization Handler', () => {
 
   describe('Scope validation', () => {
     it('validates requested scopes against client registered scopes', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -246,7 +246,7 @@ describe('Authorization Handler', () => {
     })
 
     it('accepts valid scopes subset', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -265,7 +265,7 @@ describe('Authorization Handler', () => {
     it('propagates resource parameter', async () => {
       const mockProviderWithResource = vi.spyOn(mockProvider, 'authorize')
 
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -289,7 +289,7 @@ describe('Authorization Handler', () => {
 
   describe('Successful authorization', () => {
     it('handles successful authorization with all parameters', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -307,7 +307,7 @@ describe('Authorization Handler', () => {
     })
 
     it('preserves state parameter in response', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')
@@ -322,7 +322,7 @@ describe('Authorization Handler', () => {
     })
 
     it('handles POST requests the same as GET', async () => {
-      const url = new URL('/authorize')
+      const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
       url.searchParams.set('redirect_uri', 'https://example.com/callback')
       url.searchParams.set('response_type', 'code')

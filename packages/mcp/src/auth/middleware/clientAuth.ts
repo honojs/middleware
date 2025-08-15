@@ -74,10 +74,10 @@ export function authenticateClient({
       if (error instanceof OAuthError) {
         const status = error instanceof ServerError ? 500 : 400
         return c.json(error.toResponseObject(), status)
-      } else {
-        const serverError = new ServerError('Internal Server Error')
-        return c.json(serverError.toResponseObject(), 500)
       }
+
+      const serverError = new ServerError('Internal Server Error')
+      return c.json(serverError.toResponseObject(), 500)
     }
   }
 }

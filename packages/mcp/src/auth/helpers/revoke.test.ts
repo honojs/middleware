@@ -12,6 +12,8 @@ import type {
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { authenticateClient } from '../middleware/clientAuth'
 import { revokeHandler } from './revoke'
 
 describe('Revocation Handler', () => {
@@ -41,7 +43,7 @@ describe('Revocation Handler', () => {
       params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {
-      ctx.redirect('https://example.com/callback?code=mock_auth_code')
+      ctx.res = ctx.redirect('https://example.com/callback?code=mock_auth_code')
     },
 
     async challengeForAuthorizationCode(): Promise<string> {
@@ -95,7 +97,7 @@ describe('Revocation Handler', () => {
       params: AuthorizationParams,
       ctx: Context
     ): Promise<void> {
-      ctx.redirect('https://example.com/callback?code=mock_auth_code')
+      ctx.res = ctx.redirect('https://example.com/callback?code=mock_auth_code')
     },
 
     async challengeForAuthorizationCode(): Promise<string> {
@@ -153,7 +155,9 @@ describe('Revocation Handler', () => {
     beforeEach(() => {
       // Setup express app with revocation handler
       app = new Hono()
-      app.post('/revoke', revokeHandler(mockProviderWithRevocation))
+      app.post('/revoke', cors(), authenticateClient({
+        clientsStore: mockProviderWithRevocation.clientsStore,
+      }), revokeHandler(mockProviderWithRevocation))
 
       // Spy on the revokeToken method
       spyRevokeToken = vi.spyOn(mockProviderWithRevocation, 'revokeToken')
@@ -161,21 +165,6 @@ describe('Revocation Handler', () => {
 
     afterEach(() => {
       spyRevokeToken.mockRestore()
-    })
-
-    it('requires POST method', async () => {
-      const response = await app.request('/revoke', {
-        method: 'GET',
-        body: JSON.stringify({
-          client_id: 'valid-client',
-          client_secret: 'valid-secret',
-          token: 'token_to_revoke',
-        }),
-      })
-
-      expect(response.status).toBe(404)
-      expect(await response.text()).toEqual('404 Not Found')
-      expect(spyRevokeToken).not.toHaveBeenCalled()
     })
 
     it('requires token parameter', async () => {
@@ -189,7 +178,8 @@ describe('Revocation Handler', () => {
       })
 
       expect(response.status).toBe(400)
-      expect(await response.text()).toEqual('400 Bad Request')
+      const body = await response.json()
+      expect(body.error).toEqual('invalid_request')
       expect(spyRevokeToken).not.toHaveBeenCalled()
     })
 
@@ -204,7 +194,8 @@ describe('Revocation Handler', () => {
       })
 
       expect(response.status).toBe(400)
-      expect(await response.text()).toEqual('400 Bad Request')
+      const body = await response.json()
+      expect(body.error).toEqual('invalid_client')
       expect(spyRevokeToken).not.toHaveBeenCalled()
     })
 

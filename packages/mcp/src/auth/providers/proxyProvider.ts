@@ -151,7 +151,7 @@ export class ProxyOAuthServerProvider implements OAuthServerProvider {
     if (params.resource) searchParams.set('resource', params.resource.href)
 
     targetUrl.search = searchParams.toString()
-    c.redirect(targetUrl.toString())
+    c.res = c.redirect(targetUrl.toString())
   }
 
   async challengeForAuthorizationCode(

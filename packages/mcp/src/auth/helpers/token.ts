@@ -77,7 +77,6 @@ export function tokenHandler(
             resource ? new URL(resource) : undefined
           )
           return c.json(tokens, 200)
-          break
         }
 
         case 'refresh_token': {
@@ -96,7 +95,6 @@ export function tokenHandler(
             resource ? new URL(resource) : undefined
           )
           return c.json(tokens)
-          break
         }
 
         // Not supported right now
@@ -111,10 +109,10 @@ export function tokenHandler(
       if (error instanceof OAuthError) {
         const status = error instanceof ServerError ? 500 : 400
         return c.json(error.toResponseObject(), status)
-      } else {
-        const serverError = new ServerError('Internal Server Error')
-        return c.json(serverError.toResponseObject(), 500)
       }
+
+      const serverError = new ServerError('Internal Server Error')
+      return c.json(serverError.toResponseObject(), 500)
     }
   }
 }
