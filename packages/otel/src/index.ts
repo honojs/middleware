@@ -69,7 +69,7 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           [ATTR_URL_FULL]: c.req.url,
           [ATTR_HTTP_ROUTE]: routePath,
         },
-        startTime: options.getTime?.()
+        startTime: options.getTime?.(),
       },
       activeContext,
       async (span) => {

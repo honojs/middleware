@@ -1,4 +1,5 @@
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api'
+import { hrTime, millisToHrTime, timeInputToHrTime } from '@opentelemetry/core'
 import {
   InMemoryMetricExporter,
   PeriodicExportingMetricReader,
@@ -20,7 +21,6 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import { Hono } from 'hono'
 import { otel } from '.'
-import { hrTime, millisToHrTime, timeInputToHrTime } from '@opentelemetry/core'
 
 describe('OpenTelemetry middleware', () => {
   const app = new Hono()
@@ -190,18 +190,22 @@ describe('OpenTelemetry middleware', () => {
     expect(span.attributes[ATTR_HTTP_RESPONSE_HEADER('x-response-header')]).toBe('response-value')
   })
 
-  it("Should support custom time input", async () => {
+  it('Should support custom time input', async () => {
     const mockDate = new Date()
     const mockUnixMilli = Date.now()
     const mockHrTime = hrTime()
-    const mockPerformanceNow = performance.now()    
+    const mockPerformanceNow = performance.now()
 
     const app = new Hono()
 
     app.get('/date', otel({ tracerProvider, getTime: () => mockDate }), (c) => c.json({}))
-    app.get('/unix-milli', otel({ tracerProvider, getTime: () => mockUnixMilli }), (c) => c.json({}))
+    app.get('/unix-milli', otel({ tracerProvider, getTime: () => mockUnixMilli }), (c) =>
+      c.json({})
+    )
     app.get('/hrtime', otel({ tracerProvider, getTime: () => mockHrTime }), (c) => c.json({}))
-    app.get('/performance-now', otel({ tracerProvider, getTime: () => mockPerformanceNow }), (c) => c.json({}))
+    app.get('/performance-now', otel({ tracerProvider, getTime: () => mockPerformanceNow }), (c) =>
+      c.json({})
+    )
 
     memoryExporter.reset()
 
@@ -210,11 +214,9 @@ describe('OpenTelemetry middleware', () => {
     await app.request('http://localhost/hrtime')
     await app.request('http://localhost/performance-now')
 
-
     const spans = memoryExporter.getFinishedSpans()
     const [dateSpan, unixMilliSpan, hrtimeSpan, performanceNowSpan] = spans
 
-    
     expect(dateSpan.startTime).toEqual(timeInputToHrTime(mockDate))
     expect(dateSpan.endTime).toEqual(timeInputToHrTime(mockDate))
     expect(dateSpan.duration).toEqual(millisToHrTime(0))
