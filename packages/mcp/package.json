@@ -42,11 +42,6 @@
     "hono-rate-limiter": "^0.4.2",
     "pkce-challenge": "^5.0.0"
   },
-  "peerDependenciesMeta": {
-    "hono-rate-limiter": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@modelcontextprotocol/sdk": "^1.16.0",
