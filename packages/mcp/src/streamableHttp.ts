@@ -16,6 +16,7 @@ import type {
 } from '@modelcontextprotocol/sdk/types.js'
 import {
   DEFAULT_NEGOTIATED_PROTOCOL_VERSION,
+  ErrorCode,
   isInitializeRequest,
   isJSONRPCError,
   isJSONRPCRequest,
@@ -249,7 +250,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32700,
+            code: ErrorCode.ParseError,
             message: 'Parse error',
             data: String(error),
           },
@@ -275,7 +276,7 @@ export class StreamableHTTPTransport implements Transport {
           res: Response.json({
             jsonrpc: '2.0',
             error: {
-              code: -32000,
+              code: ErrorCode.ConnectionClosed,
               message:
                 'Not Acceptable: Client must accept both application/json and text/event-stream',
             },
@@ -290,7 +291,7 @@ export class StreamableHTTPTransport implements Transport {
           res: Response.json({
             jsonrpc: '2.0',
             error: {
-              code: -32000,
+              code: ErrorCode.ConnectionClosed,
               message: 'Unsupported Media Type: Content-Type must be application/json',
             },
             id: null,
@@ -326,7 +327,7 @@ export class StreamableHTTPTransport implements Transport {
             res: Response.json({
               jsonrpc: '2.0',
               error: {
-                code: -32600,
+                code: ErrorCode.InvalidRequest,
                 message: 'Invalid Request: Server already initialized',
               },
               id: null,
@@ -339,7 +340,7 @@ export class StreamableHTTPTransport implements Transport {
             res: Response.json({
               jsonrpc: '2.0',
               error: {
-                code: -32600,
+                code: ErrorCode.InvalidRequest,
                 message: 'Invalid Request: Only one initialization request is allowed',
               },
               id: null,
@@ -450,7 +451,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32700,
+            code: ErrorCode.ParseError,
             message: 'Parse error',
             data: String(error),
           },
@@ -482,7 +483,7 @@ export class StreamableHTTPTransport implements Transport {
       {
         jsonrpc: '2.0',
         error: {
-          code: -32000,
+          code: ErrorCode.ConnectionClosed,
           message: 'Method not allowed.',
         },
         id: null,
@@ -512,7 +513,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32000,
+            code: ErrorCode.ConnectionClosed,
             message: 'Bad Request: Server not initialized',
           },
           id: null,
@@ -528,7 +529,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32000,
+            code: ErrorCode.ConnectionClosed,
             message: 'Bad Request: Mcp-Session-Id header is required',
           },
           id: null,
@@ -541,7 +542,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32000,
+            code: ErrorCode.ConnectionClosed,
             message: 'Bad Request: Mcp-Session-Id header must be a single value',
           },
           id: null,
@@ -555,7 +556,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32001,
+            code: ErrorCode.RequestTimeout,
             message: 'Session not found',
           },
           id: null,
@@ -578,7 +579,7 @@ export class StreamableHTTPTransport implements Transport {
         res: Response.json({
           jsonrpc: '2.0',
           error: {
-            code: -32000,
+            code: ErrorCode.ConnectionClosed,
             message: `Bad Request: Unsupported protocol version (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(', ')})`,
           },
           id: null,
