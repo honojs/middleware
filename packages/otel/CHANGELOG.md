@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 0.5.0
+
+### Minor Changes
+
+- [#1393](https://github.com/honojs/middleware/pull/1393) [`3eee8ae1dbc8870ca56695ec18c147ef82525049`](https://github.com/honojs/middleware/commit/3eee8ae1dbc8870ca56695ec18c147ef82525049) Thanks [@cs-balazs](https://github.com/cs-balazs)! - Support custom time input for span startTime & endTime
+
 ## 0.4.0
 
 ### Minor Changes
