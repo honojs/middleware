@@ -2286,7 +2286,7 @@ __metadata:
   resolution: "@hono/effect-validator@workspace:packages/effect-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    effect: "npm:3.10.0"
+    effect: "npm:3.17.7"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -4485,7 +4485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standard-schema/spec@npm:1.0.0":
+"@standard-schema/spec@npm:1.0.0, @standard-schema/spec@npm:^1.0.0":
   version: 1.0.0
   resolution: "@standard-schema/spec@npm:1.0.0"
   checksum: 10c0/a1ab9a8bdc09b5b47aa8365d0e0ec40cc2df6437be02853696a0e377321653b0d3ac6f079a8c67d5ddbe9821025584b1fb71d9cc041a6666a96f1fadf2ece15f
@@ -7161,12 +7161,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:3.10.0":
-  version: 3.10.0
-  resolution: "effect@npm:3.10.0"
+"effect@npm:3.17.7":
+  version: 3.17.7
+  resolution: "effect@npm:3.17.7"
   dependencies:
-    fast-check: "npm:^3.21.0"
-  checksum: 10c0/9d59b7c50ece9e9f9b87df587941927f206e863226ebad607a0880aab3287d67d751288e796db138d6682a130c97a92361a881c2fa1b6864810905372ecff159
+    "@standard-schema/spec": "npm:^1.0.0"
+    fast-check: "npm:^3.23.1"
+  checksum: 10c0/f701dcd8b1b1bba3bf8cf2831bd30a3ee2a9a6e0c190154f3800a457ab9f329ec66903f458a378a4da919445a9f7bc675ee4474a19c4d527aa058798985a66d7
   languageName: node
   linkType: hard
 
@@ -8396,7 +8397,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^3.21.0":
+"fast-check@npm:^3.23.1":
   version: 3.23.2
   resolution: "fast-check@npm:3.23.2"
   dependencies:
