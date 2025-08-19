@@ -2273,7 +2273,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     valibot: "npm:^0.36.0"
     vitest: "npm:^3.2.4"
-    yup: "npm:^1.4.0"
+    yup: "npm:^1.7.0"
     zod: "npm:^3.23.8"
   peerDependencies:
     "@conform-to/dom": ">=1.1.5"
@@ -16845,15 +16845,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yup@npm:^1.4.0":
-  version: 1.6.1
-  resolution: "yup@npm:1.6.1"
+"yup@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "yup@npm:1.7.0"
   dependencies:
     property-expr: "npm:^2.0.5"
     tiny-case: "npm:^1.0.3"
     toposort: "npm:^2.0.2"
     type-fest: "npm:^2.19.0"
-  checksum: 10c0/84c2b53996e8001041239cf2719851719f67063ec7cd843067df73562353216f5ad4f8a222319696882d5a6058e528fade1e463c59d70cbffb41b99cd0d7571b
+  checksum: 10c0/76760553b6813705092735ab1fe0049061545673b7cc9a8e554ef59c09db241888bdcca6c42b58bd0f8a707c1d9665ab1adb75a8e4cf380bfc89f17827f2b182
   languageName: node
   linkType: hard
 
