@@ -1,6 +1,6 @@
 {
   "name": "@hono/standard-validator",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Validator middleware using Standard Schema",
   "type": "module",
   "main": "dist/index.cjs",
