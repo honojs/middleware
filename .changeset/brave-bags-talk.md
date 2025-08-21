@@ -1,7 +1,7 @@
 ---
-'@hono/oauth-providers': patch
+'@hono/oauth-providers': minor
 ---
 
-fix: pass missing state param to MSEntra AuthFlow
+fix: enable CSRF protection for MSEntra ID authentication
 
-Fixed a bug where the state parameter was not being passed to the MSEntra AuthFlow constructor, which could cause CSRF protection to fail. The state parameter is now properly passed from the middleware options to the AuthFlow instance.
+Fixed a bug where the state parameter was not being passed to the MSEntra AuthFlow constructor. As a result, CSRF protection now properly works for MSEntra ID authentication, ensuring that authentication requests are protected against Cross-Site Request Forgery attacks.
