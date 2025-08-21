@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.1.5
+
+### Patch Changes
+
+- [#1405](https://github.com/honojs/middleware/pull/1405) [`c467136448139a0c55f57db81e71db86ea1a6f3f`](https://github.com/honojs/middleware/commit/c467136448139a0c55f57db81e71db86ea1a6f3f) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: preserve ArkError prototype chain in sanitizeIssues
+
 ## 0.1.4
 
 ### Patch Changes
