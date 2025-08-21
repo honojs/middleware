@@ -448,6 +448,15 @@ describe('OAuth Middleware', () => {
       redirect_uri: 'http://localhost:3000/msentra',
     })(c, next)
   })
+  app.use('/msentra-custom-state', (c, next) => {
+    return msentraAuth({
+      client_id,
+      client_secret,
+      tenant_id: 'fake-tenant-id',
+      scope: ['openid', 'email', 'profile'],
+      state: 'test-state',
+    })(c, next)
+  })
   app.get('/msentra', (c) => {
     const user = c.get('user-msentra')
     const token = c.get('token')
@@ -1053,6 +1062,15 @@ describe('OAuth Middleware', () => {
         const redirectLocation = res.headers.get('location')!
         const redirectUrl = new URL(redirectLocation)
         expect(redirectUrl.searchParams.get('redirect_uri')).toBe('http://localhost:3000/msentra')
+      })
+
+      it('Should work with custom state', async () => {
+        const res = await app.request('/msentra-custom-state')
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+        const redirectLocation = res.headers.get('location')!
+        const redirectUrl = new URL(redirectLocation)
+        expect(redirectUrl.searchParams.get('state')).toBe('test-state')
       })
 
       it('Prevent CSRF attack', async () => {
