@@ -30,6 +30,7 @@ export function msentraAuth(options: {
         expires_in: Number(c.req.query('expires_in')) as number,
       },
       scope: options.scope,
+      state: newState,
     })
 
     // Redirect to login dialog
