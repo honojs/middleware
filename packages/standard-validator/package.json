@@ -47,7 +47,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@standard-schema/spec": "1.0.0",
-    "arktype": "^2.0.0-rc.26",
+    "arktype": "^2.1.20",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
