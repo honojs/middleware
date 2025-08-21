@@ -83,7 +83,7 @@ describe('Client Registration Handler', () => {
       expect(response.status).toBe(400)
       const body = await response.json()
 
-      expect(body.error).toBe('invalid_client_metadata');
+      expect(body.error).toBe('invalid_client_metadata')
       expect(spyRegisterClient).not.toHaveBeenCalled()
     })
 

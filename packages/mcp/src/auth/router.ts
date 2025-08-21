@@ -131,7 +131,8 @@ export function mcpAuthRouter(options: AuthRouterOptions): Hono {
 
   const router = new Hono().use(cors())
 
-  router.on(["GET", "POST"],
+  router.on(
+    ['GET', 'POST'],
     new URL(oauthMetadata.authorization_endpoint).pathname,
     applyRateLimiter(options.authorizationOptions?.rateLimit, {
       windowMs: 15 * 60 * 1000, // 15 minutes

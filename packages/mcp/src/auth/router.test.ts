@@ -307,7 +307,7 @@ describe('MCP Auth Router', () => {
         issuerUrl: new URL('https://auth.example.com'),
       }
       app.route('/', mcpAuthRouter(options))
-      vi.spyOn(console, 'error').mockImplementation(() => { })
+      vi.spyOn(console, 'error').mockImplementation(() => {})
     })
 
     afterEach(() => {

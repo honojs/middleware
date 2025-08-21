@@ -1,11 +1,15 @@
-import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
-import type { SSEServerTransportOptions } from "@modelcontextprotocol/sdk/server/sse.js";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { JSONRPCMessage, MessageExtraInfo, RequestInfo } from "@modelcontextprotocol/sdk/types.js";
-import { JSONRPCMessageSchema } from "@modelcontextprotocol/sdk/types.js";
-import type { Context } from "hono";
-import type { SSEStreamingApi } from "hono/streaming";
-import { randomUUID } from "node:crypto";
+import type { AuthInfo } from '@modelcontextprotocol/sdk/server/auth/types.js'
+import type { SSEServerTransportOptions } from '@modelcontextprotocol/sdk/server/sse.js'
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
+import type {
+  JSONRPCMessage,
+  MessageExtraInfo,
+  RequestInfo,
+} from '@modelcontextprotocol/sdk/types.js'
+import { JSONRPCMessageSchema } from '@modelcontextprotocol/sdk/types.js'
+import type { Context } from 'hono'
+import type { SSEStreamingApi } from 'hono/streaming'
+import { randomUUID } from 'node:crypto'
 
 /**
  * Server transport for SSE: this will send messages over an SSE connection and receive messages from HTTP POST requests.
@@ -14,12 +18,12 @@ import { randomUUID } from "node:crypto";
  * Use with caution.
  */
 export class SSEServerTransport implements Transport {
-  private _sseResponse?: SSEStreamingApi;
-  private _sessionId: string;
-  private _options: SSEServerTransportOptions;
-  onclose?: () => void;
-  onerror?: (error: Error) => void;
-  onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void;
+  private _sseResponse?: SSEStreamingApi
+  private _sessionId: string
+  private _options: SSEServerTransportOptions
+  onclose?: () => void
+  onerror?: (error: Error) => void
+  onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void
 
   /**
    * Creates a new SSE server transport, which will direct the client to POST messages to the relative or absolute URL identified by `_endpoint`.
@@ -27,10 +31,10 @@ export class SSEServerTransport implements Transport {
   constructor(
     private _endpoint: string,
     private ctx: Context,
-    options?: SSEServerTransportOptions,
+    options?: SSEServerTransportOptions
   ) {
-    this._sessionId = randomUUID();
-    this._options = options || { enableDnsRebindingProtection: false };
+    this._sessionId = randomUUID()
+    this._options = options || { enableDnsRebindingProtection: false }
   }
 
   /**
@@ -40,26 +44,26 @@ export class SSEServerTransport implements Transport {
   private validateRequestHeaders(c: Context): string | undefined {
     // Skip validation if protection is not enabled
     if (!this._options.enableDnsRebindingProtection) {
-      return undefined;
+      return undefined
     }
 
     // Validate Host header if allowedHosts is configured
     if (this._options.allowedHosts && this._options.allowedHosts.length > 0) {
-      const hostHeader = c.req.header('Host');
+      const hostHeader = c.req.header('Host')
       if (!hostHeader || !this._options.allowedHosts.includes(hostHeader)) {
-        return `Invalid Host header: ${hostHeader}`;
+        return `Invalid Host header: ${hostHeader}`
       }
     }
 
     // Validate Origin header if allowedOrigins is configured
     if (this._options.allowedOrigins && this._options.allowedOrigins.length > 0) {
-      const originHeader = c.req.header('Origin');
+      const originHeader = c.req.header('Origin')
       if (!originHeader || !this._options.allowedOrigins.includes(originHeader)) {
-        return `Invalid Origin header: ${originHeader}`;
+        return `Invalid Origin header: ${originHeader}`
       }
     }
 
-    return undefined;
+    return undefined
   }
 
   /**
@@ -70,8 +74,8 @@ export class SSEServerTransport implements Transport {
   async start(): Promise<void> {
     if (this._sseResponse) {
       throw new Error(
-        "SSEServerTransport already started! If using Server class, note that connect() calls start() automatically.",
-      );
+        'SSEServerTransport already started! If using Server class, note that connect() calls start() automatically.'
+      )
     }
   }
 
@@ -79,21 +83,21 @@ export class SSEServerTransport implements Transport {
     // Send the endpoint event
     // Use a dummy base URL because this._endpoint is relative.
     // This allows using URL/URLSearchParams for robust parameter handling.
-    const dummyBase = 'http://localhost'; // Any valid base works
-    const endpointUrl = new URL(this._endpoint, dummyBase);
-    endpointUrl.searchParams.set('sessionId', this._sessionId);
+    const dummyBase = 'http://localhost' // Any valid base works
+    const endpointUrl = new URL(this._endpoint, dummyBase)
+    endpointUrl.searchParams.set('sessionId', this._sessionId)
 
     // Reconstruct the relative URL string (pathname + search + hash)
-    const relativeUrlWithSession = endpointUrl.pathname + endpointUrl.search + endpointUrl.hash;
+    const relativeUrlWithSession = endpointUrl.pathname + endpointUrl.search + endpointUrl.hash
 
     return (stream) => {
       stream.writeSSE({ data: relativeUrlWithSession, event: 'endpoint' })
 
-      this._sseResponse = stream;
+      this._sseResponse = stream
 
       stream.onAbort(() => {
-        this._sseResponse = undefined;
-        this.onclose?.();
+        this._sseResponse = undefined
+        this.onclose?.()
       })
     }
   }
@@ -105,72 +109,75 @@ export class SSEServerTransport implements Transport {
    */
   async handlePostMessage(
     c: Context<{ Variables: { auth: AuthInfo } }>,
-    parsedBody?: unknown,
+    parsedBody?: unknown
   ): Promise<Response> {
     if (!this._sseResponse) {
-      const message = "SSE connection not established";
-      return c.text(message, 500);
+      const message = 'SSE connection not established'
+      return c.text(message, 500)
     }
 
     // Validate request headers for DNS rebinding protection
-    const validationError = this.validateRequestHeaders(c);
+    const validationError = this.validateRequestHeaders(c)
     if (validationError) {
-      this.onerror?.(new Error(validationError));
-      return c.text(validationError, 403);
+      this.onerror?.(new Error(validationError))
+      return c.text(validationError, 403)
     }
 
-    const authInfo = c.get('auth');
-    const requestInfo: RequestInfo = { headers: c.req.header() };
+    const authInfo = c.get('auth')
+    const requestInfo: RequestInfo = { headers: c.req.header() }
 
-    let body: string | unknown;
+    let body: string | unknown
     try {
-      const contentType = c.req.header("content-type") ?? "";
-      if (contentType !== "application/json") {
-        throw new Error(`Unsupported content-type: ${contentType}`);
+      const contentType = c.req.header('content-type') ?? ''
+      if (contentType !== 'application/json') {
+        throw new Error(`Unsupported content-type: ${contentType}`)
       }
 
-      body = parsedBody ?? await c.req.json();
+      body = parsedBody ?? (await c.req.json())
     } catch (error) {
-      this.onerror?.(error as Error);
-      return c.text(String(error), 400);
+      this.onerror?.(error as Error)
+      return c.text(String(error), 400)
     }
 
     try {
-      await this.handleMessage(typeof body === 'string' ? JSON.parse(body) : body, { requestInfo, authInfo });
+      await this.handleMessage(typeof body === 'string' ? JSON.parse(body) : body, {
+        requestInfo,
+        authInfo,
+      })
     } catch {
-      return c.text(`Invalid message: ${body}`, 400);
+      return c.text(`Invalid message: ${body}`, 400)
     }
 
-    return c.text("Accepted", 202);
+    return c.text('Accepted', 202)
   }
 
   /**
    * Handle a client message, regardless of how it arrived. This can be used to inform the server of messages that arrive via a means different than HTTP POST.
    */
   async handleMessage(message: unknown, extra?: MessageExtraInfo): Promise<void> {
-    let parsedMessage: JSONRPCMessage;
+    let parsedMessage: JSONRPCMessage
     try {
-      parsedMessage = JSONRPCMessageSchema.parse(message);
+      parsedMessage = JSONRPCMessageSchema.parse(message)
     } catch (error) {
-      this.onerror?.(error as Error);
-      throw error;
+      this.onerror?.(error as Error)
+      throw error
     }
 
-    this.onmessage?.(parsedMessage, extra);
+    this.onmessage?.(parsedMessage, extra)
   }
 
   async close(): Promise<void> {
-    this._sseResponse?.abort();
-    this._sseResponse = undefined;
-    this.onclose?.();
+    this._sseResponse?.abort()
+    this._sseResponse = undefined
+    this.onclose?.()
   }
 
   async send(message: JSONRPCMessage): Promise<void> {
     if (!this._sseResponse) {
-      throw new Error("Not connected");
+      throw new Error('Not connected')
     }
 
-    this._sseResponse.writeSSE({ data: JSON.stringify(message), event: 'message' });
+    this._sseResponse.writeSSE({ data: JSON.stringify(message), event: 'message' })
   }
 
   /**
@@ -179,6 +186,6 @@ export class SSEServerTransport implements Transport {
    * This can be used to route incoming POST requests.
    */
   get sessionId(): string {
-    return this._sessionId;
+    return this._sessionId
   }
 }

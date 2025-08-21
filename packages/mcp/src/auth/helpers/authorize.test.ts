@@ -103,7 +103,7 @@ describe('Authorization Handler', () => {
 
   beforeEach(() => {
     app = new Hono()
-    app.on(["GET", "POST"], '/authorize', authorizeHandler(mockProvider))
+    app.on(['GET', 'POST'], '/authorize', authorizeHandler(mockProvider))
   })
 
   describe('HTTP method validation', () => {

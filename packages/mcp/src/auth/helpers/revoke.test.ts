@@ -155,9 +155,14 @@ describe('Revocation Handler', () => {
     beforeEach(() => {
       // Setup express app with revocation handler
       app = new Hono()
-      app.post('/revoke', cors(), authenticateClient({
-        clientsStore: mockProviderWithRevocation.clientsStore,
-      }), revokeHandler(mockProviderWithRevocation))
+      app.post(
+        '/revoke',
+        cors(),
+        authenticateClient({
+          clientsStore: mockProviderWithRevocation.clientsStore,
+        }),
+        revokeHandler(mockProviderWithRevocation)
+      )
 
       // Spy on the revokeToken method
       spyRevokeToken = vi.spyOn(mockProviderWithRevocation, 'revokeToken')

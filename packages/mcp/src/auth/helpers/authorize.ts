@@ -124,9 +124,9 @@ export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandl
           resource: resource ? new URL(resource) : undefined,
         },
         c
-      );
+      )
 
-      return c.res;
+      return c.res
     } catch (error) {
       // Post-redirect errors - redirect with error parameters
       if (error instanceof OAuthError) {

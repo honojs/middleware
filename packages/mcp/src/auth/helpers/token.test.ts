@@ -140,18 +140,23 @@ describe('Token Handler', () => {
       },
     }
 
-      // Mock PKCE verification
-      ; (pkceChallenge.verifyChallenge as Mock).mockImplementation(
-        async (verifier: string, challenge: string) => {
-          return verifier === 'valid_verifier' && challenge === 'mock_challenge'
-        }
-      )
+    // Mock PKCE verification
+    ;(pkceChallenge.verifyChallenge as Mock).mockImplementation(
+      async (verifier: string, challenge: string) => {
+        return verifier === 'valid_verifier' && challenge === 'mock_challenge'
+      }
+    )
 
     // Setup express app with token handler
     app = new Hono()
-    app.post('/token', cors(), authenticateClient({
-      clientsStore: mockClientStore,
-    }), tokenHandler(mockProvider))
+    app.post(
+      '/token',
+      cors(),
+      authenticateClient({
+        clientsStore: mockClientStore,
+      }),
+      tokenHandler(mockProvider)
+    )
   })
 
   describe('Basic request validation', () => {
@@ -260,7 +265,7 @@ describe('Token Handler', () => {
 
     it('verifies code_verifier against challenge', async () => {
       // Setup invalid verifier
-      ; (pkceChallenge.verifyChallenge as Mock).mockResolvedValueOnce(false)
+      ;(pkceChallenge.verifyChallenge as Mock).mockResolvedValueOnce(false)
 
       const response = await app.request('/token', {
         method: 'POST',
@@ -380,9 +385,13 @@ describe('Token Handler', () => {
         })
 
         const proxyApp = new Hono()
-        proxyApp.post('/token', authenticateClient({
-          clientsStore: proxyProvider.clientsStore,
-        }), tokenHandler(proxyProvider))
+        proxyApp.post(
+          '/token',
+          authenticateClient({
+            clientsStore: proxyProvider.clientsStore,
+          }),
+          tokenHandler(proxyProvider)
+        )
 
         const response = await proxyApp.request('/token', {
           method: 'POST',
@@ -440,9 +449,13 @@ describe('Token Handler', () => {
         })
 
         const proxyApp = new Hono()
-        proxyApp.post('/token', authenticateClient({
-          clientsStore: proxyProvider.clientsStore,
-        }), tokenHandler(proxyProvider))
+        proxyApp.post(
+          '/token',
+          authenticateClient({
+            clientsStore: proxyProvider.clientsStore,
+          }),
+          tokenHandler(proxyProvider)
+        )
 
         const redirectUri = 'https://example.com/callback'
         const response = await proxyApp.request('/token', {
