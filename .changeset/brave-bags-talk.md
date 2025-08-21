@@ -1,5 +1,5 @@
 ---
-'@hono/oauth-providers': minor
+'@hono/oauth-providers': patch
 ---
 
 fix: enable CSRF protection for MSEntra ID authentication
