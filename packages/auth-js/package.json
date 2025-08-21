@@ -1,6 +1,6 @@
 {
   "name": "@hono/auth-js",
-  "version": "1.0.17",
+  "version": "1.1.0",
   "description": "A third-party Auth js middleware for Hono",
   "main": "dist/index.js",
   "type": "module",
@@ -63,10 +63,10 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@auth/core": "^0.35.3",
-    "@types/react": "^18",
+    "@types/react": "^19",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
-    "react": "^18.2.0",
+    "react": "^19.1.1",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"

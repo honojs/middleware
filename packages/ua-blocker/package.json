@@ -1,6 +1,6 @@
 {
   "name": "@hono/ua-blocker",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "User agent-based blocker for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@types/node": "^22.15.24",
+    "@types/node": "^24.2.1",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",

@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.8.2",
+  "version": "0.8.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
@@ -83,7 +83,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.8.4",
-    "msw": "^2.0.11",
+    "msw": "^2.10.5",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",

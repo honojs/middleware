@@ -1,4 +1,11 @@
 {
+  "AddSearchBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Search Crawlers",
+    "frequency": "Unclear at this time.",
+    "description": "AddSearchBot is a web crawler that indexes website content for AddSearch's AI-powered site search solution, collecting data to provide fast and accurate search results. More info can be found at https://darkvisitors.com/agents/agents/addsearchbot"
+  },
   "AI2Bot": {
     "operator": "[Ai2](https://allenai.org/crawler)",
     "respect": "Yes",
@@ -69,6 +76,13 @@
     "frequency": "Unclear at this time.",
     "description": "Connects to and crawls URLs that have been selected for use in a user's AWS bedrock application."
   },
+  "bigsur.ai": {
+    "operator": "Big Sur AI that fetches website content to enable AI-powered web agents, sales assistants, and content marketing solutions for businesses",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unclear at this time.",
+    "description": "bigsur.ai is a web crawler operated by Big Sur AI that fetches website content to enable AI-powered web agents, sales assistants, and content marketing solutions for businesses. More info can be found at https://darkvisitors.com/agents/agents/bigsur-ai"
+  },
   "Brightbot 1.0": {
     "operator": "Browsing.ai",
     "respect": "Unclear at this time.",
@@ -89,6 +103,13 @@
     "function": "Provides open crawl dataset, used for many purposes, including Machine Learning/AI.",
     "frequency": "Monthly at present.",
     "description": "Web archive going back to 2008. [Cited in thousands of research papers per year](https://commoncrawl.org/research-papers)."
+  },
+  "ChatGPT Agent": {
+    "operator": "[OpenAI](https://openai.com)",
+    "respect": "Yes",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "ChatGPT Agent is an AI agent created by OpenAI that can use a web browser. It can intelligently navigate and interact with websites to complete multi-step tasks on behalf of a human user. More info can be found at https://darkvisitors.com/agents/agents/chatgpt-agent"
   },
   "ChatGPT-User": {
     "operator": "[OpenAI](https://openai.com)",
@@ -124,6 +145,13 @@
     "function": "Scrapes data to train Anthropic's AI products.",
     "frequency": "No information provided.",
     "description": "Scrapes data to train LLMs and AI products offered by Anthropic."
+  },
+  "CloudVertexBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Data Scrapers",
+    "frequency": "Unclear at this time.",
+    "description": "CloudVertexBot is a Google-operated crawler available to site owners to request targeted crawls of their own sites for AI training purposes on the Vertex AI platform. More info can be found at https://darkvisitors.com/agents/agents/cloudvertexbot"
   },
   "cohere-ai": {
     "operator": "[Cohere](https://cohere.com)",
@@ -259,11 +287,11 @@
     "description": "GoogleAgent-Mariner is an AI agent created by Google that can use a web browser. It can intelligently navigate and interact with websites to complete multi-step tasks on behalf of a human user. More info can be found at https://darkvisitors.com/agents/agents/googleagent-mariner"
   },
   "GoogleOther": {
-    "description": "\"Used by various product teams for fetching publicly accessible content from sites. For example, it may be used for one-off crawls for internal research and development.\"",
-    "frequency": "No information.",
-    "function": "Scrapes data.",
     "operator": "Google",
-    "respect": "[Yes](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers)"
+    "respect": "[Yes](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers)",
+    "function": "Scrapes data.",
+    "frequency": "No information.",
+    "description": "\"Used by various product teams for fetching publicly accessible content from sites. For example, it may be used for one-off crawls for internal research and development.\""
   },
   "GoogleOther-Image": {
     "description": "\"Used by various product teams for fetching publicly accessible content from sites. For example, it may be used for one-off crawls for internal research and development.\"",
@@ -327,6 +355,13 @@
     "function": "AI Data Scrapers",
     "frequency": "Unclear at this time.",
     "description": "Kangaroo Bot is used by the company Kangaroo LLM to download data to train AI models tailored to Australian language and culture. More info can be found at https://darkvisitors.com/agents/agents/kangaroo-bot"
+  },
+  "LinerBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unclear at this time.",
+    "description": "LinerBot is the web crawler used by Liner AI assistant to gather information from academic sources and websites to provide accurate answers with line-by-line source citations for research and scholarly work. More info can be found at https://darkvisitors.com/agents/agents/linerbot"
   },
   "meta-externalagent": {
     "operator": "[Meta](https://developers.facebook.com/docs/sharing/webmasters/web-crawlers)",
@@ -411,6 +446,13 @@
     "function": "Data is sold.",
     "operator": "[Webz.io](https://webz.io/)",
     "respect": "[Yes](https://web.archive.org/web/20170704003301/http://omgili.com/Crawler.html)"
+  },
+  "OpenAI": {
+    "operator": "[OpenAI](https://openai.com)",
+    "respect": "Yes",
+    "function": "Unclear at this time.",
+    "frequency": "Unclear at this time.",
+    "description": "The purpose of this bot is unclear at this time but it is a member of OpenAI's suite of crawlers."
   },
   "Operator": {
     "operator": "Unclear at this time.",
@@ -531,13 +573,6 @@
     "operator": "[Sidetrade](https://www.sidetrade.com)",
     "respect": "Unclear at this time."
   },
-  "SummalyBot": {
-    "description": "AI input summarization.",
-    "frequency": "No information.",
-    "function": "Extracts data to provide summaries for user; additional usages unclear.",
-    "operator": "Unclear at this time.",
-    "respect": "Unclear at this time."
-  },
   "Thinkbot": {
     "operator": "[Thinkbot](https://www.thinkbot.agency)",
     "respect": "No",
@@ -586,6 +621,13 @@
     "function": "Live chat support and lead generation.",
     "frequency": "Unclear at this time.",
     "description": "wpbot is a used to support the functionality of the AI Chatbot for WordPress plugin. It supports the use of customer models, data collection and customer support."
+  },
+  "YaK": {
+    "operator": "[Meltwater](https://www.meltwater.com/en/suite/consumer-intelligence)",
+    "respect": "Unclear at this time.",
+    "function": "According to the [Meltwater Consumer Intelligence page](https://www.meltwater.com/en/suite/consumer-intelligence) 'By applying AI, data science, and market research expertise to a live feed of global data sources, we transform unstructured data into actionable insights allowing better decision-making'.",
+    "frequency": "Unclear at this time.",
+    "description": "Retrieves data used for Meltwater's AI enabled consumer intelligence suite"
   },
   "YandexAdditional": {
     "operator": "[Yandex](https://yandex.ru)",

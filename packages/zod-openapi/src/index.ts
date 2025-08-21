@@ -39,8 +39,8 @@ import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import { ZodType, z } from 'zod/v4'
-import type { ZodError } from 'zod/v4'
+import { ZodType, z } from 'zod'
+import type { ZodError } from 'zod'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -367,6 +367,12 @@ export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
   | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
+export type OpenAPIGeneratorOptions = ConstructorParameters<typeof OpenApiGeneratorV3>[1]
+
+export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
+  | OpenAPIGeneratorOptions
+  | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -558,28 +564,38 @@ export class OpenAPIHono<
     return this
   }
 
-  getOpenAPIDocument = (config: OpenAPIObjectConfig): OpenAPIObject => {
-    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
-    const document = generator.generateDocument(config)
+  getOpenAPIDocument = (
+    objectConfig: OpenAPIObjectConfig,
+    generatorConfig?: OpenAPIGeneratorOptions
+  ): OpenAPIObject => {
+    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions, generatorConfig)
+    const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
-  getOpenAPI31Document = (config: OpenAPIObjectConfig): OpenAPIV31bject => {
-    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
-    const document = generator.generateDocument(config)
+  getOpenAPI31Document = (
+    objectConfig: OpenAPIObjectConfig,
+    generatorConfig?: OpenAPIGeneratorOptions
+  ): OpenAPIV31bject => {
+    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions, generatorConfig)
+    const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   doc = <P extends string>(
     path: P,
-    configure: OpenAPIObjectConfigure<E, P>
+    configureObject: OpenAPIObjectConfigure<E, P>,
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
-      const config = typeof configure === 'function' ? configure(c) : configure
+      const objectConfig =
+        typeof configureObject === 'function' ? configureObject(c) : configureObject
+      const generatorConfig =
+        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPIDocument(config)
+        const document = this.getOpenAPIDocument(objectConfig, generatorConfig)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -589,12 +605,16 @@ export class OpenAPIHono<
 
   doc31 = <P extends string>(
     path: P,
-    configure: OpenAPIObjectConfigure<E, P>
+    configureObject: OpenAPIObjectConfigure<E, P>,
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
-      const config = typeof configure === 'function' ? configure(c) : configure
+      const objectConfig =
+        typeof configureObject === 'function' ? configureObject(c) : configureObject
+      const generatorConfig =
+        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPI31Document(config)
+        const document = this.getOpenAPI31Document(objectConfig, generatorConfig)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)

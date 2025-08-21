@@ -33,7 +33,6 @@ const createRenderer =
     const node = component ? await component({ children, Layout, c, ...props }) : children
 
     if (options?.stream) {
-      // @ts-expect-error `react-dom/server.edge` is not typed well
       const module = await import('react-dom/server.edge')
       const renderToReadableStream =
         module.renderToReadableStream ?? module.default.renderToReadableStream

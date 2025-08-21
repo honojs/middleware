@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 2.0.3
+
+### Patch Changes
+
+- [#1343](https://github.com/honojs/middleware/pull/1343) [`6fc4326e81e3b0816ef72c33199f287b2241410a`](https://github.com/honojs/middleware/commit/6fc4326e81e3b0816ef72c33199f287b2241410a) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: diable `quotes` and `semi` rules
+
 ## 2.0.2
 
 ### Patch Changes

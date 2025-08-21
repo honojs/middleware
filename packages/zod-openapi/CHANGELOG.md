@@ -1,5 +1,24 @@
 # @hono/zod-openapi
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1353](https://github.com/honojs/middleware/pull/1353) [`f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0`](https://github.com/honojs/middleware/commit/f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0) Thanks [@yumuranaoki](https://github.com/yumuranaoki)! - Add optional generator options parameter to doc middleware
+
+## 1.0.2
+
+### Patch Changes
+
+- [#1320](https://github.com/honojs/middleware/pull/1320) [`e835cf6183fb4717cfdbe156d9b3d423625a0e15`](https://github.com/honojs/middleware/commit/e835cf6183fb4717cfdbe156d9b3d423625a0e15) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct importing `zod`
+
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`c6a16ab7aa8fba2403d4294e7673f96796020c65`](https://github.com/honojs/middleware/commit/c6a16ab7aa8fba2403d4294e7673f96796020c65)]:
+  - @hono/zod-validator@0.7.2
+
 ## 1.0.0
 
 ### Major Changes

@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "type": "module",
   "module": "dist/index.js",
@@ -54,7 +54,7 @@
     "zod": "^4.0.5"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.0.0",
+    "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@hono/zod-validator": "workspace:^",
     "openapi3-ts": "^4.5.0"
   },

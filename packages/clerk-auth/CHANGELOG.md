@@ -1,5 +1,11 @@
 # @hono/clerk-auth
 
+## 3.0.3
+
+### Patch Changes
+
+- [#1336](https://github.com/honojs/middleware/pull/1336) [`59846c9eddf79fae5a288c3aa5c98a1853e406fd`](https://github.com/honojs/middleware/commit/59846c9eddf79fae5a288c3aa5c98a1853e406fd) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Publish to JSR
+
 ## 3.0.2
 
 ### Patch Changes

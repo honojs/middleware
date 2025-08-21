@@ -1,5 +1,5 @@
-import type { TracerProvider } from '@opentelemetry/api'
-import { SpanKind, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api'
+import type { TracerProvider, MeterProvider, TimeInput } from '@opentelemetry/api'
+import { SpanKind, SpanStatusCode, trace, context, propagation, metrics } from '@opentelemetry/api'
 import {
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_REQUEST_METHOD,
@@ -10,7 +10,9 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import metadata from '../package.json' with { type: 'json' }
+import { createOtelMetrics, observeOtelMetrics } from './metrics'
 
 const PACKAGE_NAME = metadata.name
 const PACKAGE_VERSION = metadata.version
@@ -19,6 +21,10 @@ export type OtelOptions =
   | {
       augmentSpan?: false
       tracerProvider?: TracerProvider
+      meterProvider?: MeterProvider
+      captureRequestHeaders?: (keyof Record<RequestHeader | (string & {}), string>)[]
+      captureResponseHeaders?: (keyof Record<ResponseHeader | (string & {}), string>)[]
+      getTime?(): TimeInput
     }
   | {
       augmentSpan: true
@@ -40,6 +46,10 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
   }
   const tracerProvider = options.tracerProvider ?? trace.getTracerProvider()
   const tracer = tracerProvider.getTracer(PACKAGE_NAME, PACKAGE_VERSION)
+  const meterProvider = options.meterProvider ?? metrics.getMeterProvider()
+  const meter = meterProvider.getMeter(PACKAGE_NAME, PACKAGE_VERSION)
+  const otelMetrics = createOtelMetrics(meter)
+
   return createMiddleware(async (c, next) => {
     // Handle propagation of trace context from a request using the W3C Trace Context format
     let activeContext = context.active()
@@ -48,6 +58,8 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
     }
 
     const routePath = c.req.routePath
+    const startTime = performance.now()
+
     await tracer.startActiveSpan(
       `${c.req.method} ${c.req.routePath}`,
       {
@@ -57,11 +69,16 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           [ATTR_URL_FULL]: c.req.url,
           [ATTR_HTTP_ROUTE]: routePath,
         },
+        startTime: options.getTime?.(),
       },
       activeContext,
       async (span) => {
+        options.captureRequestHeaders?.push('Traceparent', 'Tracestate')
+        const captureRequestHeaders = options.captureRequestHeaders?.map((h) => h.toLowerCase())
         for (const [name, value] of Object.entries(c.req.header())) {
-          span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          if (captureRequestHeaders?.includes(name)) {
+            span.setAttribute(ATTR_HTTP_REQUEST_HEADER(name), value)
+          }
         }
         try {
           await next()
@@ -70,8 +87,11 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           span.updateName(`${c.req.method} ${c.req.routePath}`)
           span.setAttribute(ATTR_HTTP_ROUTE, c.req.routePath)
           span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, c.res.status)
+          const captureResponseHeaders = options.captureResponseHeaders?.map((h) => h.toLowerCase())
           for (const [name, value] of c.res.headers.entries()) {
-            span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            if (captureResponseHeaders?.includes(name)) {
+              span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(name), value)
+            }
           }
           if (c.error) {
             span.recordException(c.error)
@@ -84,7 +104,8 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
           span.setStatus({ code: SpanStatusCode.ERROR, message: String(e) })
           throw e
         } finally {
-          span.end()
+          span.end(options.getTime?.())
+          observeOtelMetrics(otelMetrics, c, { startTime })
         }
       }
     )

@@ -1839,6 +1839,55 @@ describe('Handle "Conflicting names for parameter"', () => {
   })
 })
 
+describe('doc31 with generator options', () => {
+  const app = new OpenAPIHono()
+
+  const route = createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.union([z.literal('hello'), z.literal('world')]),
+          },
+        },
+        description: 'Retrieve the user',
+      },
+    },
+  })
+
+  app.openapi(route, (c) => {
+    return c.json('hello' as const, 200)
+  })
+
+  it('Should set the unionPreferredType', async () => {
+    app.doc31(
+      '/doc',
+      {
+        openapi: '3.1.0',
+        info: {
+          version: '1.0.0',
+          title: 'my API',
+        },
+      },
+      { unionPreferredType: 'anyOf' }
+    )
+
+    const res = await app.request('/doc')
+    expect(res.status).toBe(200)
+    const doc = await res.json()
+    expect(
+      doc['paths']['/hello']['get']['responses']['200']['content']['application/json']['schema']
+    ).toEqual({
+      anyOf: [
+        { enum: ['hello'], type: 'string' },
+        { enum: ['world'], type: 'string' },
+      ],
+    })
+  })
+})
+
 describe('Middleware', () => {
   const app = new OpenAPIHono()
   app.openapi(

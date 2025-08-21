@@ -352,6 +352,47 @@ describe('Standard Schema Validation', () => {
           >
         })
       })
+
+      describe('Sensitive Data Removal', () => {
+        it("doesn't return cookies after headers validation", async () => {
+          const app = new Hono()
+
+          const schema = schemas.headerSchema
+
+          app.get('/headers', sValidator('header', schema), (c) =>
+            c.json({ success: true, userAgent: c.req.header('User-Agent') })
+          )
+
+          const req = new Request('http://localhost/headers', {
+            headers: {
+              // Not passing the User-Agent header to trigger the validation error
+              Cookie: 'SECRET=123',
+            },
+          })
+
+          const res = await app.request(req)
+          expect(res.status).toBe(400)
+          const data = (await res.json()) as { success: false; error: unknown[] }
+          expect(data.success).toBe(false)
+          expect(data.error).toBeDefined()
+
+          if (lib === 'arktype') {
+            expect(
+              (data.error as { data: Record<string, unknown> }[]).some(
+                (error) => error.data && error.data.cookie
+              )
+            ).toBe(false)
+          }
+
+          if (lib === 'valibot') {
+            expect(
+              (data.error as { path: { input: Record<string, unknown> }[] }[]).some((error) =>
+                error.path.some((path) => path.input.cookie)
+              )
+            ).toBe(false)
+          }
+        })
+      })
     })
   })
 })

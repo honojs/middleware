@@ -1,6 +1,6 @@
 {
   "name": "@hono/otel",
-  "version": "0.2.2",
+  "version": "0.5.0",
   "description": "OpenTelemetry middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -48,8 +48,10 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@opentelemetry/sdk-trace-base": "^1.30.0",
-    "@opentelemetry/sdk-trace-node": "^1.30.0",
+    "@opentelemetry/core": "^2.0.1",
+    "@opentelemetry/sdk-metrics": "^2.0.1",
+    "@opentelemetry/sdk-trace-base": "^2.0.1",
+    "@opentelemetry/sdk-trace-node": "^2.0.1",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",

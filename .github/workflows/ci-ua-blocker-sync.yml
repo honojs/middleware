@@ -14,12 +14,12 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js and Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version-file: .tool-versions
           cache: 'yarn'
 
       - run: yarn workspaces focus hono-middleware @hono/ua-blocker
@@ -59,7 +59,7 @@ jobs:
 
       - name: Create Pull Request if changes exist
         if: steps.changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(ua-blocker): update robots.json from upstream'

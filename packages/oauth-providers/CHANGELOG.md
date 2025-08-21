@@ -1,5 +1,17 @@
 # @hono/oauth-providers
 
+## 0.8.4
+
+### Patch Changes
+
+- [#1372](https://github.com/honojs/middleware/pull/1372) [`1980a66370d4afc8d552ac08bd25af0c87b49112`](https://github.com/honojs/middleware/commit/1980a66370d4afc8d552ac08bd25af0c87b49112) Thanks [@mrdear](https://github.com/mrdear)! - fixed github email request content-type
+
+## 0.8.3
+
+### Patch Changes
+
+- [#1364](https://github.com/honojs/middleware/pull/1364) [`ba19e66f6d086089e15b04bc866c7ebf9cd43409`](https://github.com/honojs/middleware/commit/ba19e66f6d086089e15b04bc866c7ebf9cd43409) Thanks [@rxliuli](https://github.com/rxliuli)! - handle refersh_token on googleAuth
+
 ## 0.8.2
 
 ### Patch Changes

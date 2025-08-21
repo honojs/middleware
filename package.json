@@ -4,6 +4,7 @@
   "description": "Third-party middleware for Hono",
   "workspaces": {
     "packages": [
+      ".github/actions/*",
       "packages/*"
     ]
   },
@@ -40,12 +41,12 @@
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^1.2.0",
     "@types/bun": "^1.0.0",
-    "@types/node": "^20.17.28",
+    "@types/node": "^24.2.1",
     "@types/ws": "^8.18.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "eslint": "^9.23.0",
     "hono": "^4.8.4",
-    "pkg-pr-new": "^0.0.51",
+    "pkg-pr-new": "^0.0.54",
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
