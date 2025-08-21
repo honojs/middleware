@@ -47,6 +47,7 @@
     "@modelcontextprotocol/sdk": "^1.16.0",
     "@types/node": "^24.2.1",
     "hono-rate-limiter": "^0.4.2",
+    "pkce-challenge": "^5.0.0",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
