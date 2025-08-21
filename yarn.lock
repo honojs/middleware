@@ -2402,6 +2402,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@modelcontextprotocol/sdk": "npm:^1.16.0"
     "@types/node": "npm:^24.2.1"
+    hono: "npm:^4.8.4"
     hono-rate-limiter: "npm:^0.4.2"
     pkce-challenge: "npm:^5.0.0"
     publint: "npm:^0.3.9"
