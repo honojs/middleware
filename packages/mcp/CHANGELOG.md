@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1342](https://github.com/honojs/middleware/pull/1342) [`6658a4e451ab306ba6e14cfc961db6af4d6da844`](https://github.com/honojs/middleware/commit/6658a4e451ab306ba6e14cfc961db6af4d6da844) Thanks [@inverted-capital](https://github.com/inverted-capital)! - SSE keepalive timers cleaned up on close
+
 ## 0.1.1
 
 ### Patch Changes
