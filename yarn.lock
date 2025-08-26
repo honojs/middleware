@@ -2730,7 +2730,7 @@ __metadata:
   resolution: "@hono/trpc-server@workspace:packages/trpc-server"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@trpc/server": "npm:^11.4.4"
+    "@trpc/server": "npm:^11.5.0"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -4573,12 +4573,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^11.4.4":
-  version: 11.4.4
-  resolution: "@trpc/server@npm:11.4.4"
+"@trpc/server@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@trpc/server@npm:11.5.0"
   peerDependencies:
     typescript: ">=5.7.2"
-  checksum: 10c0/94fefaa3538a9c4fe9995dea2563b32d43e7af51014c55ce041282cf008fe3925aa46607c49a68ebe4899cc884a12e96a9f2650c4e744e8aad6d87d09d1ccbba
+  checksum: 10c0/8563d339027b374c13d638e43c27786dee4f0e7cee0d396fc62c03f73e7b6ae624379f173f153046b8937c7e4a5096c7e080e297fbe8f82a5703800c4fd38504
   languageName: node
   linkType: hard
 
