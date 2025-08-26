@@ -1,1 +1,1 @@
-export * from './clientAuth'
+export * from './client-auth'

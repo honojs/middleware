@@ -10,8 +10,8 @@ import type {
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { Context } from 'hono'
 import type { Mock } from 'vitest'
-import { ProxyOAuthServerProvider } from './proxyProvider.js'
-import type { ProxyOptions } from './proxyProvider.js'
+import { ProxyOAuthServerProvider } from './proxy-provider.js'
+import type { ProxyOptions } from './proxy-provider.js'
 
 describe('Proxy OAuth Server Provider', () => {
   // Mock client data

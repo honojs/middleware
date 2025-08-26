@@ -9,7 +9,7 @@ import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/
 import type { MiddlewareHandler } from 'hono'
 import { verifyChallenge } from 'pkce-challenge'
 import { z } from 'zod'
-import type { ClientAuthenticationEnv } from '../middleware/clientAuth'
+import type { ClientAuthenticationEnv } from '../middleware/client-auth'
 
 const TokenRequestSchema = z.object({
   grant_type: z.string(),

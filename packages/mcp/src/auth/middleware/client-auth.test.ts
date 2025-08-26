@@ -1,8 +1,8 @@
 import type { OAuthRegisteredClientsStore } from '@modelcontextprotocol/sdk/server/auth/clients.js'
 import type { OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { Hono } from 'hono'
-import { authenticateClient } from './clientAuth.js'
-import type { ClientAuthenticationMiddlewareOptions } from './clientAuth.js'
+import { authenticateClient } from './client-auth.js'
+import type { ClientAuthenticationMiddlewareOptions } from './client-auth.js'
 
 describe('clientAuth middleware', () => {
   // Mock client store

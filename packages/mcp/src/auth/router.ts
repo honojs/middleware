@@ -14,7 +14,7 @@ import {
   tokenHandler,
 } from './helpers'
 import { wellKnownRouter } from './helpers/wellknown'
-import { authenticateClient } from './middleware/clientAuth'
+import { authenticateClient } from './middleware/client-auth'
 
 export type AuthRouterOptions = {
   /**

@@ -18,8 +18,8 @@ import type { Context } from 'hono'
 import { cors } from 'hono/cors'
 import * as pkceChallenge from 'pkce-challenge'
 import type { Mock } from 'vitest'
-import { authenticateClient } from '../middleware/clientAuth.js'
-import { ProxyOAuthServerProvider } from '../providers/proxyProvider.js'
+import { authenticateClient } from '../middleware/client-auth.js'
+import { ProxyOAuthServerProvider } from '../providers/proxy-provider.js'
 import { tokenHandler } from './token.js'
 
 // Mock pkce-challenge

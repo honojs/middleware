@@ -6,7 +6,7 @@ import {
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import { OAuthTokenRevocationRequestSchema } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { MiddlewareHandler } from 'hono'
-import type { ClientAuthenticationEnv } from '../middleware/clientAuth'
+import type { ClientAuthenticationEnv } from '../middleware/client-auth'
 
 export function revokeHandler(
   provider: OAuthServerProvider
