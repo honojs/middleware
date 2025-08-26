@@ -186,7 +186,7 @@ describe('With Hook', () => {
       {
         type: 'string',
         path: '/title',
-        message: 'Required property',
+        message: 'Expected required property',
       },
       {
         type: 'string',

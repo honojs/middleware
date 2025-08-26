@@ -1,3 +1,9 @@
+declare module 'cloudflare:test' {
+  interface ProvidedEnv {
+    PUBLIC_JWK_CACHE_KV: KVNamespace
+  }
+}
+
 declare module 'firebase-tools' {
   const client: {
     emulators: {

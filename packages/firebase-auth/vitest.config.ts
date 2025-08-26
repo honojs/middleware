@@ -1,5 +1,5 @@
+import { defineWorkersProject } from '@cloudflare/vitest-pool-workers/config'
 import type { Plugin } from 'vitest/config'
-import { defineProject } from 'vitest/config'
 
 const firebasePlugin = {
   name: 'firebase',
@@ -20,10 +20,19 @@ const firebasePlugin = {
   },
 } satisfies Plugin
 
-export default defineProject({
+export default defineWorkersProject({
   test: {
     globals: true,
     include: ['src/**/*.test.ts'],
+    poolOptions: {
+      workers: {
+        miniflare: {
+          compatibilityDate: '2025-03-10',
+          compatibilityFlags: ['nodejs_compat'],
+          kvNamespaces: ['PUBLIC_JWK_CACHE_KV'],
+        },
+      },
+    },
   },
 
   plugins: [firebasePlugin],

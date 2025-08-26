@@ -64,7 +64,10 @@ function sanitizeArktypeIssues(
       for (const field of restrictedFields) {
         delete dataCopy[field]
       }
-      return { ...issue, data: dataCopy }
+      // Preserve prototype chain to maintain toJSON method
+      const sanitizedIssue = Object.create(Object.getPrototypeOf(issue))
+      Object.assign(sanitizedIssue, issue, { data: dataCopy })
+      return sanitizedIssue
     }
     return issue
   }) as readonly StandardSchemaV1.Issue[]

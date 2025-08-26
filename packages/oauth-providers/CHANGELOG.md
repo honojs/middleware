@@ -1,5 +1,13 @@
 # @hono/oauth-providers
 
+## 0.8.5
+
+### Patch Changes
+
+- [#1404](https://github.com/honojs/middleware/pull/1404) [`fce74aeda2958faa4d0ed17dfcfe7cbbb74287fa`](https://github.com/honojs/middleware/commit/fce74aeda2958faa4d0ed17dfcfe7cbbb74287fa) Thanks [@sushichan044](https://github.com/sushichan044)! - fix: enable CSRF protection for MSEntra ID authentication
+
+  Fixed a bug where the state parameter was not being passed to the MSEntra AuthFlow constructor. As a result, CSRF protection now properly works for MSEntra ID authentication, ensuring that authentication requests are protected against Cross-Site Request Forgery attacks.
+
 ## 0.8.4
 
 ### Patch Changes

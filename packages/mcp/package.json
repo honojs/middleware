@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@modelcontextprotocol/sdk": "^1.16.0",
+    "@modelcontextprotocol/sdk": "^1.17.1",
     "@types/node": "^24.2.1",
     "hono": "^4.8.4",
     "hono-rate-limiter": "^0.4.2",
