@@ -25,9 +25,9 @@ const transport = new StreamableHTTPTransport()
 app.all('/mcp', async (c) => {
   if (!mcp.isConnected()) {
     // Connect the mcp with the transport
-    await mcp.connect(transport);
+    await mcp.connect(transport)
   }
-  
+
   return transport.handleRequest(c)
 })
 
@@ -39,7 +39,7 @@ export default app
 ```ts
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { SSEServerTransport } from '@hono/mcp'
-import { streamSSE } from "hono/streaming"
+import { streamSSE } from 'hono/streaming'
 import { Hono } from 'hono'
 
 const app = new Hono()
@@ -51,21 +51,21 @@ const mcpServer = new McpServer({
 })
 
 // Initialize the transport
-transport = new SSEServerTransport("/messages");
+transport = new SSEServerTransport('/messages')
 
-app.get("/sse", async (c) => {
+app.get('/sse', async (c) => {
   if (!mcp.isConnected()) {
     // Connect the mcp with the transport
-    await mcp.connect(transport);
+    await mcp.connect(transport)
   }
 
   return streamSSE(c, transport.handleStream())
-});
+})
 
 /**
  * This is the endpoint where the client will send the messages
  */
-app.post("/messages", (c) => transport.handlePostMessage(c));
+app.post('/messages', (c) => transport.handlePostMessage(c))
 
 export default app
 ```
@@ -75,38 +75,40 @@ You will need to wrap this in a Durable Object to have a persistent connection w
 ## Auth
 
 ```ts
-import { Hono } from 'hono';
-import { ProxyOAuthServerProvider, mcpAuthRouter } from '@hono/mcp';
+import { Hono } from 'hono'
+import { ProxyOAuthServerProvider, mcpAuthRouter } from '@hono/mcp'
 
-const app = new Hono();
+const app = new Hono()
 
 const proxyProvider = new ProxyOAuthServerProvider({
   endpoints: {
-    authorizationUrl: "https://auth.external.com/oauth2/v1/authorize",
-    tokenUrl: "https://auth.external.com/oauth2/v1/token",
-    revocationUrl: "https://auth.external.com/oauth2/v1/revoke",
+    authorizationUrl: 'https://auth.external.com/oauth2/v1/authorize',
+    tokenUrl: 'https://auth.external.com/oauth2/v1/token',
+    revocationUrl: 'https://auth.external.com/oauth2/v1/revoke',
   },
   verifyAccessToken: async (token) => {
     return {
       token,
-      clientId: "123",
-      scopes: ["openid", "email", "profile"],
+      clientId: '123',
+      scopes: ['openid', 'email', 'profile'],
     }
   },
   getClient: async (client_id) => {
     return {
       client_id,
-      redirect_uris: ["http://localhost:3000/callback"],
+      redirect_uris: ['http://localhost:3000/callback'],
     }
-  }
+  },
 })
 
-app.route(mcpAuthRouter({
-  provider: proxyProvider,
-  issuerUrl: new URL("http://auth.external.com"),
-  baseUrl: new URL("http://mcp.example.com"),
-  serviceDocumentationUrl: new URL("https://docs.example.com/"),
-}))
+app.route(
+  mcpAuthRouter({
+    provider: proxyProvider,
+    issuerUrl: new URL('http://auth.external.com'),
+    baseUrl: new URL('http://mcp.example.com'),
+    serviceDocumentationUrl: new URL('https://docs.example.com/'),
+  })
+)
 ```
 
 ## Author
