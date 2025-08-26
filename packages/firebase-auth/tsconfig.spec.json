@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/packages/firebase-auth",
-    "types": ["@cloudflare/workers-types", "vitest/globals"]
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers", "vitest/globals"]
   },
   "include": ["src", "firebase-tools.d.ts", "vitest.config.ts"],
   "references": []

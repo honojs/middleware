@@ -1,24 +1,22 @@
+import { env } from 'cloudflare:test'
 import type { Credential, KeyStorer } from 'firebase-auth-cloudflare-workers'
 import { AdminAuthApiClient, Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { GoogleOAuthAccessToken } from 'firebase-auth-cloudflare-workers/dist/main/credential'
 import { Hono } from 'hono'
 import { setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
-import { Miniflare } from 'miniflare'
 import { describe, it, expect, beforeAll, vi } from 'vitest'
 import type { VerifyFirebaseAuthEnv } from '.'
 import { verifyFirebaseAuth, getFirebaseToken, verifySessionCookieFirebaseAuth } from '.'
 
+beforeEach(() => {
+  // magic to reset state of static object for "firebase-auth-cloudflare-workers"
+  delete Auth['instance']
+})
+
 describe('verifyFirebaseAuth middleware', () => {
   const emulatorHost = '127.0.0.1:9099'
   const validProjectId = 'example-project12345' // see package.json
-
-  const nullScript = 'export default { fetch: () => new Response(null, { status: 404 }) };'
-  const mf = new Miniflare({
-    modules: true,
-    script: nullScript,
-    kvNamespaces: ['PUBLIC_JWK_CACHE_KV'],
-  })
 
   let user: signUpResponse
 
@@ -37,19 +35,17 @@ describe('verifyFirebaseAuth middleware', () => {
     it('valid case, should be 200', async () => {
       const app = new Hono()
 
-      resetAuth()
-
       // This is assumed to be obtained from an environment variable.
       const PUBLIC_JWK_CACHE_KEY = 'testing-cache-key'
-      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
-        'PUBLIC_JWK_CACHE_KV'
-      )) as unknown as KVNamespace
 
       app.use(
         '*',
         verifyFirebaseAuth({
           projectId: validProjectId,
-          keyStore: WorkersKVStoreSingle.getOrInitialize(PUBLIC_JWK_CACHE_KEY, PUBLIC_JWK_CACHE_KV),
+          keyStore: WorkersKVStoreSingle.getOrInitialize(
+            PUBLIC_JWK_CACHE_KEY,
+            env.PUBLIC_JWK_CACHE_KV
+          ),
           disableErrorLog: true,
           firebaseEmulatorHost: emulatorHost,
         })
@@ -120,17 +116,6 @@ describe('verifyFirebaseAuth middleware', () => {
     ])('%s', async (_, { headerKey, config, wantStatus }) => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-      resetAuth()
-
-      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
-        'PUBLIC_JWK_CACHE_KV'
-      )) as unknown as KVNamespace
-      const env: VerifyFirebaseAuthEnv = {
-        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
-        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-        PUBLIC_JWK_CACHE_KV,
-      }
-
       app.use(
         '*',
         verifyFirebaseAuth({
@@ -146,7 +131,11 @@ describe('verifyFirebaseAuth middleware', () => {
         },
       })
 
-      const res = await app.fetch(req, env)
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
+        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
+        PUBLIC_JWK_CACHE_KV: env.PUBLIC_JWK_CACHE_KV,
+      } satisfies VerifyFirebaseAuthEnv)
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(wantStatus)
@@ -160,8 +149,6 @@ describe('verifyFirebaseAuth middleware', () => {
       const putSpy = vi.spyOn(nopKeyStore, 'put')
 
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
-
-      resetAuth()
 
       app.use(
         '*',
@@ -196,8 +183,6 @@ describe('verifyFirebaseAuth middleware', () => {
       const nopKeyStore = new NopKeyStore()
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-      resetAuth()
-
       app.use(
         '*',
         verifyFirebaseAuth({
@@ -228,8 +213,6 @@ describe('verifyFirebaseAuth middleware', () => {
 
     it('invalid PUBLIC_JWK_CACHE_KV is undefined, should be 501', async () => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
-
-      resetAuth()
 
       let gotError: Error | undefined
       app.use(
@@ -268,18 +251,7 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
   const emulatorHost = '127.0.0.1:9099'
   const validProjectId = 'example-project12345' // see package.json
 
-  const nullScript = 'export default { fetch: () => new Response(null, { status: 404 }) };'
-  const mf = new Miniflare({
-    modules: true,
-    script: nullScript,
-    kvNamespaces: ['PUBLIC_JWK_CACHE_KV'],
-  })
-
   let user: signUpResponse
-
-  const env: VerifyFirebaseAuthEnv = {
-    FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
-  }
 
   const expiresIn = 24 * 60 * 60 * 1000
 
@@ -298,13 +270,8 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
     it('valid case, should be 200', async () => {
       const app = new Hono()
 
-      resetAuth()
-
       // This is assumed to be obtained from an environment variable.
       const PUBLIC_JWK_CACHE_KEY = 'testing-cache-key'
-      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
-        'PUBLIC_JWK_CACHE_KV'
-      )) as unknown as KVNamespace
 
       const cookieName = 'session-key'
       app.get(
@@ -312,7 +279,10 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
         verifySessionCookieFirebaseAuth({
           projectId: validProjectId,
           cookieName,
-          keyStore: WorkersKVStoreSingle.getOrInitialize(PUBLIC_JWK_CACHE_KEY, PUBLIC_JWK_CACHE_KV),
+          keyStore: WorkersKVStoreSingle.getOrInitialize(
+            PUBLIC_JWK_CACHE_KEY,
+            env.PUBLIC_JWK_CACHE_KV
+          ),
           firebaseEmulatorHost: emulatorHost,
           redirects: {
             signIn: '/login',
@@ -327,7 +297,9 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
           validProjectId,
           new NopCredential()
         )
-        const sessionCookie = await adminAuthClient.createSessionCookie(idToken, expiresIn, env)
+        const sessionCookie = await adminAuthClient.createSessionCookie(idToken, expiresIn, {
+          FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+        } satisfies VerifyFirebaseAuthEnv)
         setCookie(c, cookieName, sessionCookie, {
           httpOnly: true,
         })
@@ -417,17 +389,6 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
     ])('%s', async (_, { cookieName, config, wantStatus }) => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-      resetAuth()
-
-      const PUBLIC_JWK_CACHE_KV = (await mf.getKVNamespace(
-        'PUBLIC_JWK_CACHE_KV'
-      )) as unknown as KVNamespace
-      const env: VerifyFirebaseAuthEnv = {
-        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
-        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
-        PUBLIC_JWK_CACHE_KV,
-      }
-
       let gotError: Error | undefined
       app.use(
         '*',
@@ -444,7 +405,9 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
       )
       app.get('/hello', (c) => c.text('OK'))
 
-      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, env)
+      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+      } satisfies VerifyFirebaseAuthEnv)
 
       const req = new Request('http://localhost/hello', {
         headers: {
@@ -452,7 +415,11 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
         },
       })
 
-      const res = await app.fetch(req, env)
+      const res = await app.fetch(req, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+        PUBLIC_JWK_CACHE_KEY: 'testing-cache-key',
+        PUBLIC_JWK_CACHE_KV: env.PUBLIC_JWK_CACHE_KV,
+      } satisfies VerifyFirebaseAuthEnv)
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(wantStatus)
@@ -472,8 +439,6 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
 
     //   const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-    //   resetAuth()
-
     //   const signInPath = '/login'
     //   app.use(
     //     '*',
@@ -487,7 +452,9 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
     //   )
     //   app.get('/hello', (c) => c.text('OK'))
 
-    //   const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, env)
+    //   const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, {
+    //     FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+    //   } satisfies VerifyFirebaseAuthEnv)
 
     //   const req = new Request('http://localhost/hello', {
     //     headers: {
@@ -511,8 +478,6 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
       const nopKeyStore = new NopKeyStore()
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-      resetAuth()
-
       app.use(
         '*',
         verifySessionCookieFirebaseAuth({
@@ -525,7 +490,9 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
       )
       app.get('/hello', (c) => c.json(getFirebaseToken(c)))
 
-      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, env)
+      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+      } satisfies VerifyFirebaseAuthEnv)
 
       const req = new Request('http://localhost/hello', {
         headers: {
@@ -548,8 +515,6 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
     it('invalid PUBLIC_JWK_CACHE_KV is undefined, should be 501', async () => {
       const app = new Hono<{ Bindings: VerifyFirebaseAuthEnv }>()
 
-      resetAuth()
-
       let gotError: Error | undefined
       app.use(
         '*',
@@ -566,7 +531,9 @@ describe('verifySessionCookieFirebaseAuth middleware', () => {
       )
       app.get('/hello', (c) => c.text('OK'))
 
-      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, env)
+      const sessionCookie = await adminAuthClient.createSessionCookie(user.idToken, expiresIn, {
+        FIREBASE_AUTH_EMULATOR_HOST: emulatorHost,
+      } satisfies VerifyFirebaseAuthEnv)
 
       const req = new Request('http://localhost/hello', {
         headers: {
@@ -600,9 +567,6 @@ class NopKeyStore implements KeyStorer {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-// magic to reset state of static object for "firebase-auth-cloudflare-workers"
-const resetAuth = () => delete Auth['instance']
 
 const generateDummyJWT = () => {
   const header = JSON.stringify({
