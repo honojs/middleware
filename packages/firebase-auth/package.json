@@ -50,9 +50,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
+    "@cloudflare/vitest-pool-workers": "^0.8.38",
     "firebase-tools": "^13.29.1",
     "hono": "^4.8.4",
-    "miniflare": "^4.20250816.1",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
