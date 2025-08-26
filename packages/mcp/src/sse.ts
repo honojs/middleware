@@ -18,23 +18,22 @@ import { randomUUID } from 'node:crypto'
  * Use with caution.
  */
 export class SSEServerTransport implements Transport {
-  private _sseResponse?: SSEStreamingApi
+  private stream?: SSEStreamingApi
   private _sessionId: string
-  private _options: SSEServerTransportOptions
+  private options: SSEServerTransportOptions
   onclose?: () => void
   onerror?: (error: Error) => void
   onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void
 
   /**
-   * Creates a new SSE server transport, which will direct the client to POST messages to the relative or absolute URL identified by `_endpoint`.
+   * Creates a new SSE server transport, which will direct the client to POST messages to the relative or absolute URL identified by `endpoint`.
    */
   constructor(
-    private _endpoint: string,
-    private ctx: Context,
+    private endpoint: string,
     options?: SSEServerTransportOptions
   ) {
     this._sessionId = randomUUID()
-    this._options = options || { enableDnsRebindingProtection: false }
+    this.options = options || { enableDnsRebindingProtection: false }
   }
 
   /**
@@ -43,22 +42,22 @@ export class SSEServerTransport implements Transport {
    */
   private validateRequestHeaders(c: Context): string | undefined {
     // Skip validation if protection is not enabled
-    if (!this._options.enableDnsRebindingProtection) {
+    if (!this.options.enableDnsRebindingProtection) {
       return undefined
     }
 
     // Validate Host header if allowedHosts is configured
-    if (this._options.allowedHosts && this._options.allowedHosts.length > 0) {
+    if (this.options.allowedHosts && this.options.allowedHosts.length > 0) {
       const hostHeader = c.req.header('Host')
-      if (!hostHeader || !this._options.allowedHosts.includes(hostHeader)) {
+      if (!hostHeader || !this.options.allowedHosts.includes(hostHeader)) {
         return `Invalid Host header: ${hostHeader}`
       }
     }
 
     // Validate Origin header if allowedOrigins is configured
-    if (this._options.allowedOrigins && this._options.allowedOrigins.length > 0) {
+    if (this.options.allowedOrigins && this.options.allowedOrigins.length > 0) {
       const originHeader = c.req.header('Origin')
-      if (!originHeader || !this._options.allowedOrigins.includes(originHeader)) {
+      if (!originHeader || !this.options.allowedOrigins.includes(originHeader)) {
         return `Invalid Origin header: ${originHeader}`
       }
     }
@@ -72,7 +71,7 @@ export class SSEServerTransport implements Transport {
    * This should be called when a GET request is made to establish the SSE stream.
    */
   async start(): Promise<void> {
-    if (this._sseResponse) {
+    if (this.stream) {
       throw new Error(
         'SSEServerTransport already started! If using Server class, note that connect() calls start() automatically.'
       )
@@ -81,10 +80,10 @@ export class SSEServerTransport implements Transport {
 
   handleStream(): (stream: SSEStreamingApi) => void {
     // Send the endpoint event
-    // Use a dummy base URL because this._endpoint is relative.
+    // Use a dummy base URL because this.endpoint is relative.
     // This allows using URL/URLSearchParams for robust parameter handling.
     const dummyBase = 'http://localhost' // Any valid base works
-    const endpointUrl = new URL(this._endpoint, dummyBase)
+    const endpointUrl = new URL(this.endpoint, dummyBase)
     endpointUrl.searchParams.set('sessionId', this._sessionId)
 
     // Reconstruct the relative URL string (pathname + search + hash)
@@ -93,10 +92,10 @@ export class SSEServerTransport implements Transport {
     return (stream) => {
       stream.writeSSE({ data: relativeUrlWithSession, event: 'endpoint' })
 
-      this._sseResponse = stream
+      this.stream = stream
 
       stream.onAbort(() => {
-        this._sseResponse = undefined
+        this.stream = undefined
         this.onclose?.()
       })
     }
@@ -111,7 +110,7 @@ export class SSEServerTransport implements Transport {
     c: Context<{ Variables: { auth: AuthInfo } }>,
     parsedBody?: unknown
   ): Promise<Response> {
-    if (!this._sseResponse) {
+    if (!this.stream) {
       const message = 'SSE connection not established'
       return c.text(message, 500)
     }
@@ -167,17 +166,17 @@ export class SSEServerTransport implements Transport {
   }
 
   async close(): Promise<void> {
-    this._sseResponse?.abort()
-    this._sseResponse = undefined
+    this.stream?.abort()
+    this.stream = undefined
     this.onclose?.()
   }
 
   async send(message: JSONRPCMessage): Promise<void> {
-    if (!this._sseResponse) {
+    if (!this.stream) {
       throw new Error('Not connected')
     }
 
-    this._sseResponse.writeSSE({ data: JSON.stringify(message), event: 'message' })
+    this.stream.writeSSE({ data: JSON.stringify(message), event: 'message' })
   }
 
   /**
