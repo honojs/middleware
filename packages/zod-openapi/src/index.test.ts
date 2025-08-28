@@ -3,6 +3,7 @@ import type { Context, TypedResponse } from 'hono'
 import { accepts } from 'hono/accepts'
 import { bearerAuth } from 'hono/bearer-auth'
 import { hc } from 'hono/client'
+import { createMiddleware } from 'hono/factory'
 import type { ServerErrorStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
@@ -2103,5 +2104,112 @@ describe('Hide Routes', () => {
     const res = await app.request('/books')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([{ title: 'foo' }])
+  })
+})
+
+describe('Chaining', () => {
+  it('Should allow chaining of middleware', async () => {
+    type MiddlewareContext = {
+      Variables: {
+        test: number
+      }
+    }
+
+    const middleware = createMiddleware<MiddlewareContext>(async (c, next) => {
+      c.set('test', 123)
+      await next()
+    })
+
+    const app = new OpenAPIHono().use(middleware).openapi(
+      createRoute({
+        method: 'get',
+        path: '/books',
+        responses: {
+          200: {
+            description: 'Books',
+            content: {
+              'application/json': {
+                schema: z.array(
+                  z.object({
+                    title: z.string(),
+                  })
+                ),
+              },
+            },
+          },
+        },
+      }),
+      (c) => c.json([{ title: `Book ${c.get('test')}` }])
+    )
+
+    const res = await app.request('/books')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ title: 'Book 123' }])
+  })
+
+  it('Should allow chaining of an error handler', async () => {
+    const app = new OpenAPIHono()
+      .onError((err, c) => {
+        return c.json({ message: err.message }, 500)
+      })
+      .openapi(
+        createRoute({
+          method: 'get',
+          path: '/books',
+          responses: {
+            200: {
+              description: 'Books',
+              content: {
+                'application/json': {
+                  schema: z.array(
+                    z.object({
+                      title: z.string(),
+                    })
+                  ),
+                },
+              },
+            },
+          },
+        }),
+        () => {
+          throw new Error('something went wrong')
+        }
+      )
+
+    const res = await app.request('/books')
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({ message: 'something went wrong' })
+  })
+
+  it('Should allow chaining of an not found handler', async () => {
+    const app = new OpenAPIHono()
+      .notFound((c) => {
+        return c.json({ message: 'not found' }, 404)
+      })
+      .openapi(
+        createRoute({
+          method: 'get',
+          path: '/books',
+          responses: {
+            200: {
+              description: 'Books',
+              content: {
+                'application/json': {
+                  schema: z.array(
+                    z.object({
+                      title: z.string(),
+                    })
+                  ),
+                },
+              },
+            },
+          },
+        }),
+        (c) => c.json([{ title: 'foo' }])
+      )
+
+    const res = await app.request('/foo')
+    expect(res.status).toBe(404)
+    expect(await res.json()).toEqual({ message: 'not found' })
   })
 })

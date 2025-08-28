@@ -18,9 +18,11 @@ import { Hono } from 'hono'
 import type {
   Context,
   Env,
+  ErrorHandler,
   Handler,
   Input,
   MiddlewareHandler,
+  NotFoundHandler,
   Schema,
   ToSchema,
   TypedResponse,
@@ -41,6 +43,8 @@ import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import { ZodType, z } from 'zod'
 import type { ZodError } from 'zod'
+
+import type { MiddlewareHandlerInterface } from './types'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -378,6 +382,11 @@ export class OpenAPIHono<
   S extends Schema = {},
   BasePath extends string = '/',
 > extends Hono<E, S, BasePath> {
+  // Override return types to allow chaining.
+  declare use: MiddlewareHandlerInterface<E, S, BasePath>
+  declare onError: (handler: ErrorHandler<E>) => OpenAPIHono<E, S, BasePath>
+  declare notFound: (handler: NotFoundHandler<E>) => OpenAPIHono<E, S, BasePath>
+
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
 
