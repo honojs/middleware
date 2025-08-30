@@ -6,6 +6,7 @@
     "module": "nodenext",
     "moduleResolution": "node16",
     "noEmit": true,
+    "outDir": "dist",
     "rewriteRelativeImportExtensions": true,
     "skipLibCheck": true,
     "strict": true,

@@ -32,6 +32,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts ./src/http.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",

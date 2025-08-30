@@ -5,5 +5,3 @@
 # Casbin
 *.conf
 *.csv
-
-**/generated.ts
