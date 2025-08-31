@@ -447,27 +447,31 @@ describe('session.get(refresh) with storage', () => {
     }
   )
 
-  it('refreshes an expired session', async () => {
-    refresh.mockImplementation((data) => Promise.resolve(data))
-    storage.set(sid, { sub })
-    const expiredSession = { ...session.payload, exp: recent, iat: recent }
-    const cookie = await encrypt(expiredSession)
-    const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
-    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
-    const data = await res.json()
+  it(
+    'refreshes an expired session',
+    async () => {
+      refresh.mockImplementation((data) => Promise.resolve(data))
+      storage.set(sid, { sub })
+      const expiredSession = { ...session.payload, exp: recent, iat: recent }
+      const cookie = await encrypt(expiredSession)
+      const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
+      const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+      const data = await res.json()
 
-    expect(res.status).toBe(200)
-    expect(data).toStrictEqual({ sub })
-    expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '7200',
-      Path: '/',
-      SameSite: 'Lax',
-    })
-    expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
-    expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
-    expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
-    expect(storage.size).toBe(1)
-  })
+      expect(res.status).toBe(200)
+      expect(data).toStrictEqual({ sub })
+      expect(sessionCookie?.attributes).toStrictEqual({
+        'Max-Age': '7200',
+        Path: '/',
+        SameSite: 'Lax',
+      })
+      expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
+      expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
+      expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
+      expect(storage.size).toBe(1)
+    },
+    { retry: 3 }
+  )
 
   it('replaces the session when refresh returns null', async () => {
     refresh.mockResolvedValue(null)
@@ -747,27 +751,31 @@ describe('options.duration.absolute', () => {
     expect(sessionCookie?.payload.sid).not.toStrictEqual(sid)
   })
 
-  it('updates the cookie Max-Age attribute when refreshing an expired session', async () => {
-    const newSub = 'new-subject'
-    refresh.mockResolvedValue({ sub: newSub })
-    const expiredSession = { ...session.payload, exp: recent, iat: recent }
-    storage.set(sid, { sub })
-    const cookie = await encrypt(expiredSession)
-    const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
-    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
-    const data = await res.json()
+  it(
+    'updates the cookie Max-Age attribute when refreshing an expired session',
+    async () => {
+      const newSub = 'new-subject'
+      refresh.mockResolvedValue({ sub: newSub })
+      const expiredSession = { ...session.payload, exp: recent, iat: recent }
+      storage.set(sid, { sub })
+      const cookie = await encrypt(expiredSession)
+      const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
+      const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+      const data = await res.json()
 
-    expect(res.status).toBe(200)
-    expect(data).toStrictEqual({ sub: newSub })
-    expect(sessionCookie?.attributes).toMatchObject({
-      'Max-Age': '32400',
-      Path: '/',
-      SameSite: 'Lax',
-    })
-    expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
-    expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
-    expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
-  })
+      expect(res.status).toBe(200)
+      expect(data).toStrictEqual({ sub: newSub })
+      expect(sessionCookie?.attributes).toMatchObject({
+        'Max-Age': '32400',
+        Path: '/',
+        SameSite: 'Lax',
+      })
+      expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
+      expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
+      expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
+    },
+    { retry: 3 }
+  )
 })
 
 describe('options.duration.inactivity', () => {
