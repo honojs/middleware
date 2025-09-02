@@ -42,7 +42,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@hono/node-server": "^1.11.1",
+    "@hono/node-server": "^1.19.1",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
@@ -53,7 +53,7 @@
     "ws": "^8.17.0"
   },
   "peerDependencies": {
-    "@hono/node-server": "^1.11.1",
+    "@hono/node-server": "^1.19.1",
     "hono": "^4.6.0"
   },
   "engines": {

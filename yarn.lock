@@ -2420,12 +2420,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/node-server@npm:^1.11.1":
-  version: 1.14.0
-  resolution: "@hono/node-server@npm:1.14.0"
+"@hono/node-server@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "@hono/node-server@npm:1.19.1"
   peerDependencies:
     hono: ^4
-  checksum: 10c0/8a012f07afd17afa40b48dc2684e6023233cd84c89cd862b97bae284a979471ce442ccd5709f06a76115e29cee1665b349984b9aa3321bde8be3081a4b043e4f
+  checksum: 10c0/83457ebb15b0d04644c334dbd30036cfbcf3019164c29d8f4b67f070735c6cd21c7d1713e7db47f658530e0bf3c5583434fba03b0bc4dd6b26fc2c2fdf4ea1e5
   languageName: node
   linkType: hard
 
@@ -2434,7 +2434,7 @@ __metadata:
   resolution: "@hono/node-ws@workspace:packages/node-ws"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@hono/node-server": "npm:^1.11.1"
+    "@hono/node-server": "npm:^1.19.1"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -2442,7 +2442,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     ws: "npm:^8.17.0"
   peerDependencies:
-    "@hono/node-server": ^1.11.1
+    "@hono/node-server": ^1.19.1
     hono: ^4.6.0
   languageName: unknown
   linkType: soft
