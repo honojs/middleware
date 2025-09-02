@@ -2649,13 +2649,13 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
-    stytch: "npm:^12.29.0"
+    stytch: "npm:^12.32.0"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
     hono: ">=3.0.0"
-    stytch: ^12.29.0
+    stytch: ^12.32.0
   languageName: unknown
   linkType: soft
 
@@ -14812,13 +14812,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stytch@npm:^12.29.0":
-  version: 12.29.0
-  resolution: "stytch@npm:12.29.0"
+"stytch@npm:^12.32.0":
+  version: 12.32.0
+  resolution: "stytch@npm:12.32.0"
   dependencies:
     jose: "npm:^5.6.3"
     undici: "npm:^6.19.5"
-  checksum: 10c0/e9b2fc6d926b7eaa7fd630cecf40a9eda31ece5d9bd828287ed040a467d3f65ae537c709a52278e46af187005d1c8d61c5fada8ecb952df4b7389e3c25dfe4b2
+  checksum: 10c0/8c956976645a4004aa7b0193352e9c79223f9fb096ba25179f4b5c0ed0b7fb0aee6b5f62c79c218c2bd01c3f82a3c535b44954f0b79ea5d41f680a34d98f42a5
   languageName: node
   linkType: hard
 
