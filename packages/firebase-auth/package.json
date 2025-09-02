@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@cloudflare/vitest-pool-workers": "^0.8.38",
+    "@cloudflare/vitest-pool-workers": "^0.8.68",
     "firebase-tools": "^13.29.1",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
