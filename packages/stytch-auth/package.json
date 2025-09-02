@@ -41,13 +41,13 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.0.0",
-    "stytch": "^12.29.0"
+    "stytch": "^12.32.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
-    "stytch": "^12.29.0",
+    "stytch": "^12.32.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
