@@ -71,7 +71,7 @@
     "publint": "^0.3.9",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
-    "unstorage": "^1.16.0",
+    "unstorage": "^1.17.0",
     "vitest": "^3.2.4"
   }
 }
