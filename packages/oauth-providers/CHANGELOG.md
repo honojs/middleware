@@ -49,7 +49,6 @@
 ### Minor Changes
 
 - [#981](https://github.com/honojs/middleware/pull/981) [`e5f383787c2bd47657f67a99074515eab969963b`](https://github.com/honojs/middleware/commit/e5f383787c2bd47657f67a99074515eab969963b) Thanks [@Younis-Ahmed](https://github.com/Younis-Ahmed)! - These chages introduces a Twitch OAuth provider, expanding the middleware's OAuth offerings. It includes a new middleware for Twitch authentication, a dedicated `AuthFlow` class, token refreshing/revocation/validation, and comprehensive type definitions. Detailed tests ensure correct behavior and error handling.
-
   - **Twitch OAuth Middleware `src/providers/twitch/twitchAuth.ts`:** Implements the core authentication flow, handling state management, redirects, and context variable setting (`token`, `refresh-token`, `user-twitch`, `granted-scopes`).
 
   - **AuthFlow Class `src/providers/twitch/authFlow.ts`:** Encapsulates token exchange and user data retrieval, with robust error handling.
