@@ -42,7 +42,7 @@ export class AuthFlow {
   }: LinkedInAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
-    ;(this.redirect_uri = redirect_uri), (this.scope = scope)
+    ;((this.redirect_uri = redirect_uri), (this.scope = scope))
     this.state = state
     this.code = appAuth ? '' : code
     this.token = undefined
