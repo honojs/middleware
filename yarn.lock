@@ -1869,7 +1869,7 @@ __metadata:
   resolution: "@hono/effect-validator@workspace:packages/effect-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    effect: "npm:3.17.7"
+    effect: "npm:3.17.10"
     hono: "npm:^4.8.4"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
@@ -6791,13 +6791,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:3.17.7":
-  version: 3.17.7
-  resolution: "effect@npm:3.17.7"
+"effect@npm:3.17.10":
+  version: 3.17.10
+  resolution: "effect@npm:3.17.10"
   dependencies:
     "@standard-schema/spec": "npm:^1.0.0"
     fast-check: "npm:^3.23.1"
-  checksum: 10c0/f701dcd8b1b1bba3bf8cf2831bd30a3ee2a9a6e0c190154f3800a457ab9f329ec66903f458a378a4da919445a9f7bc675ee4474a19c4d527aa058798985a66d7
+  checksum: 10c0/209e9bee695a096c22e58ec9a9799283239aff01bf9de28a303749c9fd65d3a4e579fef19fba381ca8436441db73344da5747a518ae7b439df2be9f05aa0d5cd
   languageName: node
   linkType: hard
 
