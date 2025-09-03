@@ -20,6 +20,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-autofix-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-autofix-
+            ${{ runner.os }}-turbo-
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions

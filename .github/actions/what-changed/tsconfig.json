@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "verbatimModuleSyntax": true
   }
 }

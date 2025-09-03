@@ -20,6 +20,8 @@
   ],
   "scripts": {
     "build": "tsup ./src",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json --noEmit"

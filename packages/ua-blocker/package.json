@@ -11,6 +11,8 @@
   "scripts": {
     "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
     "build": "tsup ./src/index.ts ./src/ai-bots.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
