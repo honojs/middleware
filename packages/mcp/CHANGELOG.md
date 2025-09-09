@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.1.4
+
+### Patch Changes
+
+- [#1448](https://github.com/honojs/middleware/pull/1448) [`c7b0602112e2b4f6974f273a97f58de0f88ba191`](https://github.com/honojs/middleware/commit/c7b0602112e2b4f6974f273a97f58de0f88ba191) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: bump the version for jsr
+
 ## 0.1.3
 
 ### Patch Changes
