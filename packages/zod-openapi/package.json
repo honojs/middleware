@@ -52,7 +52,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
-    "yaml": "^2.4.3",
+    "yaml": "^2.8.1",
     "zod": "^4.0.5"
   },
   "dependencies": {
