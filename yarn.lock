@@ -2399,7 +2399,7 @@ __metadata:
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    yaml: "npm:^2.4.3"
+    yaml: "npm:^2.8.1"
     zod: "npm:^4.0.5"
   peerDependencies:
     hono: ">=4.3.6"
@@ -16196,21 +16196,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "yaml@npm:2.4.3"
-  bin:
-    yaml: bin.mjs
-  checksum: 10c0/b4a9dea34265f000402c909144ac310be42c4526dfd16dff1aee2b04a0d94051713651c0cd2b0a3d8109266997422120f16a7934629d12f22dc215839ebbeccf
-  languageName: node
-  linkType: hard
-
 "yaml@npm:^2.8.0":
   version: 2.8.0
   resolution: "yaml@npm:2.8.0"
   bin:
     yaml: bin.mjs
   checksum: 10c0/f6f7310cf7264a8107e72c1376f4de37389945d2fb4656f8060eca83f01d2d703f9d1b925dd8f39852a57034fafefde6225409ddd9f22aebfda16c6141b71858
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "yaml@npm:2.8.1"
+  bin:
+    yaml: bin.mjs
+  checksum: 10c0/7c587be00d9303d2ae1566e03bc5bc7fe978ba0d9bf39cc418c3139d37929dfcb93a230d9749f2cb578b6aa5d9ebebc322415e4b653cb83acd8bc0bc321707f3
   languageName: node
   linkType: hard
 
