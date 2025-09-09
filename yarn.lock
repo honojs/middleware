@@ -1854,7 +1854,7 @@ __metadata:
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
-    valibot: "npm:^0.36.0"
+    valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
     yup: "npm:^1.7.0"
     zod: "npm:^3.23.8"
@@ -2225,7 +2225,7 @@ __metadata:
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
-    valibot: "npm:^1.0.0-beta.9"
+    valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
     zod: "npm:^3.24.0"
   peerDependencies:
@@ -2378,7 +2378,7 @@ __metadata:
     publint: "npm:^0.3.9"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.8.2"
-    valibot: "npm:^1.0.0"
+    valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
   peerDependencies:
     hono: ">=3.9.0"
@@ -15499,7 +15499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valibot@npm:>=0.36.0 <2, valibot@npm:^1.0.0":
+"valibot@npm:>=0.36.0 <2":
   version: 1.0.0
   resolution: "valibot@npm:1.0.0"
   peerDependencies:
@@ -15511,22 +15511,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valibot@npm:^0.36.0":
-  version: 0.36.0
-  resolution: "valibot@npm:0.36.0"
-  checksum: 10c0/deff84cdcdc324d5010c2087e553cd26b07752ac18912c9152eccd241b507a49a9ad77fed57501d45bcbef9bec6a7a6707b17d9bef8d35e681d45f098a70e466
-  languageName: node
-  linkType: hard
-
-"valibot@npm:^1.0.0-beta.9":
-  version: 1.0.0-beta.9
-  resolution: "valibot@npm:1.0.0-beta.9"
+"valibot@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "valibot@npm:1.1.0"
   peerDependencies:
     typescript: ">=5"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/ecd20ec024f5f05985002b385f624d9218c839a54c23f3dbf3e193161207c049859d99069b257334756b3a07e2734e93456061600dd1101aec121828df3ab286
+  checksum: 10c0/39580b4e4683cc44398fb775e88c03639dbaa7e6f587df416125916cb6307292d45df18f656054e8846093ced13a2d2fdc98659da6dd104d1d20180edcbd99d4
   languageName: node
   linkType: hard
 
