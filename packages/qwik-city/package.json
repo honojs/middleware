@@ -50,7 +50,7 @@
     "@builder.io/qwik-city": "^1.16.0",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2"
   },
   "engines": {
