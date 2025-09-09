@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1446](https://github.com/honojs/middleware/pull/1446) [`4093da0964fde4983d9be797769bde9cf56f7e56`](https://github.com/honojs/middleware/commit/4093da0964fde4983d9be797769bde9cf56f7e56) Thanks [@yusukebe](https://github.com/yusukebe)! - chore(mcp): fix the version mismatch beween jsr and npm
+
 ## 0.1.2
 
 ### Patch Changes
