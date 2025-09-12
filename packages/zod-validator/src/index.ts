@@ -42,12 +42,20 @@ export const zValidator = <
       ? {
           [K in Target]?: In extends ValidationTargets[K]
             ? In
-            : { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : {
+                [K2 in keyof In]?: In[K2] extends ValidationTargets[K][K2]
+                  ? In[K2]
+                  : ValidationTargets[K][K2]
+              }
         }
       : {
           [K in Target]: In extends ValidationTargets[K]
             ? In
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+            : {
+                [K2 in keyof In]: In[K2] extends ValidationTargets[K][K2]
+                  ? In[K2]
+                  : ValidationTargets[K][K2]
+              }
         }
     out: { [K in Target]: Out }
   },
