@@ -75,7 +75,7 @@
     "hono": ">=3.9.2"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "esbuild": "^0.25.9",
     "esbuild-wasm": "^0.19.5",
     "hono": "^4.8.4",

@@ -47,7 +47,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@cloudflare/vitest-pool-workers": "^0.8.70",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.9",

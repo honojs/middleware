@@ -45,7 +45,7 @@
     "hono": "^3.1.5"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@builder.io/qwik": "^1.2.0",
     "@builder.io/qwik-city": "^1.16.0",
     "hono": "^4.8.4",

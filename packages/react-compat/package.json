@@ -40,7 +40,7 @@
     "hono": ">=4.5.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "hono": "^4.8.4",
     "publint": "^0.3.9",
     "tsup": "^8.5.0",
