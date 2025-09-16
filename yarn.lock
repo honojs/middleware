@@ -854,7 +854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/dom@npm:1.3.0, @conform-to/dom@npm:^1.1.5":
+"@conform-to/dom@npm:1.3.0":
   version: 1.3.0
   resolution: "@conform-to/dom@npm:1.3.0"
   checksum: 10c0/1b00c9a072c27484efb2832fd5e04e791fe8926cd551732108889979cae1e3bef88a420cae0a8f813370d686d5b44dfff910c4638a486223ccac654574c68a04
@@ -865,6 +865,13 @@ __metadata:
   version: 1.8.2
   resolution: "@conform-to/dom@npm:1.8.2"
   checksum: 10c0/5a349638e5574bdf7e7ebb23fd72bc52c7615439728af1c6d97023373e49dd03e21e25f823ec53e2f0b8f4102a459e75c01e67f3e0ceb8f909d12b42f227d846
+  languageName: node
+  linkType: hard
+
+"@conform-to/dom@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@conform-to/dom@npm:1.10.0"
+  checksum: 10c0/57d9e33dd350d7c44689f5a89beda198bbb4e82d6dbd72db3d511fd574e6f678e93841e08b267d5f7700b9bc99520fd58af99565ac562ccc55a55ce869bae057
   languageName: node
   linkType: hard
 
@@ -1846,7 +1853,7 @@ __metadata:
   resolution: "@hono/conform-validator@workspace:packages/conform-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    "@conform-to/dom": "npm:^1.1.5"
+    "@conform-to/dom": "npm:^1.10.0"
     "@conform-to/valibot": "npm:^1.8.2"
     "@conform-to/yup": "npm:^1.1.5"
     "@conform-to/zod": "npm:^1.1.5"
