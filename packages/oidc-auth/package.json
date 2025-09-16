@@ -45,7 +45,7 @@
     "hono": ">=3.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@types/jsonwebtoken": "^9.0.10",
     "hono": "^4.8.4",
     "jsonwebtoken": "^9.0.2",

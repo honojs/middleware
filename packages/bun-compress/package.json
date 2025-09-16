@@ -44,7 +44,7 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@types/bun": "^1.2.12",
     "@types/node": "^24.2.1",
     "hono": "^4.8.4",

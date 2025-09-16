@@ -51,7 +51,7 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@cloudflare/vitest-pool-workers": "^0.8.70",
     "firebase-tools": "^13.29.1",
     "hono": "^4.8.4",

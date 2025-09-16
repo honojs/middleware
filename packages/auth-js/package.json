@@ -63,7 +63,7 @@
     "react": "^18 || ^19 || ^19.0.0-rc"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@auth/core": "^0.35.3",
     "@types/react": "^19",
     "hono": "^4.8.4",
