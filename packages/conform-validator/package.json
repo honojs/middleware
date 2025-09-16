@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@conform-to/dom": "^1.1.5",
+    "@conform-to/dom": "^1.10.0",
     "@conform-to/valibot": "^1.8.2",
     "@conform-to/yup": "^1.1.5",
     "@conform-to/zod": "^1.1.5",
