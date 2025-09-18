@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.1.2
+
+### Patch Changes
+
+- [#1465](https://github.com/honojs/middleware/pull/1465) [`5eddc2c0fb7991357ef958c1a5eae9714e0139a8`](https://github.com/honojs/middleware/commit/5eddc2c0fb7991357ef958c1a5eae9714e0139a8) Thanks [@eric-poitras](https://github.com/eric-poitras)! - Use a typeguard for zod to avoid issues when bundling with esbuild.
+
 ## 1.1.1
 
 ### Patch Changes
