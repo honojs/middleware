@@ -39,7 +39,7 @@ import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import type { ZodType, ZodError  } from 'zod'
+import type { ZodType, ZodError } from 'zod'
 import { z } from 'zod'
 import { isZod } from './zod-typeguard'
 
