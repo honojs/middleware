@@ -178,8 +178,8 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
 async function validateSingleKey(
   key: CryptoKey,
-  signature: Uint8Array,
-  data: Uint8Array
+  signature: BufferSource,
+  data: BufferSource
 ): Promise<boolean> {
   return crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, data)
 }

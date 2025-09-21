@@ -20,10 +20,10 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .tool-versions
-      - run: yarn workspaces focus what-changed
+          bun-version-file: .tool-versions
+      - run: bun install --filter ./ --filter ./github/actions/what-changed
       - uses: ./.github/actions/what-changed
         id: set-packages
 
@@ -37,14 +37,14 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - uses: actions/setup-node@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .tool-versions
-      - run: yarn
-      - run: yarn publint
-      - run: yarn typecheck
-      - run: yarn lint
-      - run: yarn format
+          bun-version-file: .tool-versions
+      - run: bun install
+      - run: bun run publint
+      - run: bun run typecheck
+      - run: bun run lint
+      - run: bun run format
 
   dry-run:
     runs-on: ubuntu-latest
@@ -67,12 +67,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .tool-versions
-      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
-      - run: yarn test --coverage --project @hono/${{ matrix.package }}
+          bun-version-file: .tool-versions
+      - run: bun install --filter ./ ${{ matrix.package.path }}
+      - run: bun run build --filter ${{ matrix.package.path }}
+      - run: bun run test --coverage --project ${{ matrix.package.name }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
       - uses: codecov/codecov-action@v5
@@ -80,4 +80,4 @@ jobs:
         with:
           fail_ci_if_error: true
           directory: ./coverage
-          flags: ${{ matrix.package }}
+          flags: ${{ matrix.package.name }}

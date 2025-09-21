@@ -1,10 +1,6 @@
 name: What Changed
 description: Get a list of changed packages
 
-inputs:
-  since:
-    description: Only include workspaces that have been changed since the specified ref.
-
 outputs:
   packages:
     description: A JSON array of changed package names
