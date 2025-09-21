@@ -27,12 +27,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-autofix-
             ${{ runner.os }}-turbo-
-      - uses: actions/setup-node@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .tool-versions
-      - run: yarn install
-      - run: yarn format:fix
-      - run: yarn lint:fix
+          bun-version-file: .tool-versions
+      - run: bun install
+      - run: bun format:fix
+      - run: bun lint:fix
       - name: Apply fixes
         uses: autofix-ci/action@v1
         with:

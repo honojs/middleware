@@ -12,11 +12,11 @@
     "build": "tsup ./src/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
+    "prepack": "bun run build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "bun run --cwd=../.. version:set $npm_package_version"
   },
   "exports": {
     ".": {

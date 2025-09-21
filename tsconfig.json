@@ -4,7 +4,6 @@
   },
   "files": [],
   "references": [
-    { "path": ".github/actions/what-changed" },
     { "path": "packages/ajv-validator" },
     { "path": "packages/arktype-validator" },
     { "path": "packages/auth-js" },
@@ -44,6 +43,7 @@
     { "path": "packages/valibot-validator" },
     { "path": "packages/zod-openapi" },
     { "path": "packages/zod-validator" },
+    { "path": "scripts/what-changed" },
     { "path": "./tsconfig.repo-config-files.json" }
   ]
 }

@@ -15,6 +15,9 @@
     "publint": {
       "dependsOn": ["^publint"]
     },
+    "publish:npm": {
+      "dependsOn": ["^publish:npm"]
+    },
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
