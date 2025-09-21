@@ -35,7 +35,7 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
-import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
+import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
@@ -81,15 +81,7 @@ type ReturnJsonOrTextOrResponse<
 > = ContentType extends string
   ? ContentType extends `application/${infer Start}json${infer _End}`
     ? Start extends '' | `${string}+` | `vnd.${string}+`
-      ? TypedResponse<
-          SimplifyDeepArray<Content> extends JSONValue
-            ? JSONValue extends SimplifyDeepArray<Content>
-              ? never
-              : JSONParsed<Content>
-            : never,
-          ExtractStatusCode<Status>,
-          'json'
-        >
+      ? TypedResponse<JSONParsed<Content>, ExtractStatusCode<Status>, 'json'>
       : never
     : ContentType extends `text/plain${infer _Rest}`
       ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>

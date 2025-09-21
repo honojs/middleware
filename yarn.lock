@@ -1699,7 +1699,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     ajv: "npm:^8.12.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1716,7 +1716,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     arktype: "npm:^2.1.20"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1734,7 +1734,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@auth/core": "npm:^0.35.3"
     "@types/react": "npm:^19"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     react: "npm:^19.1.1"
     tsup: "npm:^8.5.0"
@@ -1754,7 +1754,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/bun": "npm:^1.2.12"
     "@types/node": "npm:^24.2.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1769,7 +1769,7 @@ __metadata:
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1785,7 +1785,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     casbin: "npm:^5.30.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1803,7 +1803,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.5.0"
@@ -1822,7 +1822,7 @@ __metadata:
     "@clerk/backend": "npm:^2.4.1"
     "@clerk/types": "npm:^4.64.0"
     "@types/react": "npm:^19"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     react: "npm:^19.1.1"
     tsup: "npm:^8.5.0"
@@ -1838,7 +1838,7 @@ __metadata:
   resolution: "@hono/cloudflare-access@workspace:packages/cloudflare-access"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1857,7 +1857,7 @@ __metadata:
     "@conform-to/valibot": "npm:^1.8.2"
     "@conform-to/yup": "npm:^1.1.5"
     "@conform-to/zod": "npm:^1.1.5"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1877,7 +1877,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     effect: "npm:3.17.10"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1895,7 +1895,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     esbuild: "npm:^0.25.9"
     esbuild-wasm: "npm:^0.19.5"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1926,7 +1926,7 @@ __metadata:
   resolution: "@hono/event-emitter@workspace:packages/event-emitter"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1944,7 +1944,7 @@ __metadata:
     "@cloudflare/vitest-pool-workers": "npm:^0.8.70"
     firebase-auth-cloudflare-workers: "npm:^2.0.6"
     firebase-tools: "npm:^13.29.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1960,7 +1960,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     graphql: "npm:^16.5.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1975,7 +1975,7 @@ __metadata:
   resolution: "@hono/hello@workspace:packages/hello"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1991,7 +1991,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@modelcontextprotocol/sdk": "npm:^1.17.4"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2009,7 +2009,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@medley/router": "npm:^0.2.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2034,7 +2034,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@hono/node-server": "npm:^1.19.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2051,7 +2051,7 @@ __metadata:
   resolution: "@hono/oauth-providers@workspace:packages/oauth-providers"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     msw: "npm:^2.10.5"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
@@ -2068,7 +2068,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/jsonwebtoken": "npm:^9.0.10"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     jsonwebtoken: "npm:^9.0.2"
     oauth4webapi: "npm:^2.6.0"
     publint: "npm:^0.3.9"
@@ -2091,7 +2091,7 @@ __metadata:
     "@opentelemetry/sdk-trace-base": "npm:^2.1.0"
     "@opentelemetry/sdk-trace-node": "npm:^2.1.0"
     "@opentelemetry/semantic-conventions": "npm:^1.28.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2106,7 +2106,7 @@ __metadata:
   resolution: "@hono/prometheus@workspace:packages/prometheus"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     prom-client: "npm:^15.0.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
@@ -2125,7 +2125,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@builder.io/qwik": "npm:^1.2.0"
     "@builder.io/qwik-city": "npm:^1.16.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2141,7 +2141,7 @@ __metadata:
   resolution: "@hono/react-compat@workspace:packages/react-compat"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2158,7 +2158,7 @@ __metadata:
     "@cloudflare/vitest-pool-workers": "npm:^0.8.70"
     "@types/react": "npm:^19.1.13"
     "@types/react-dom": "npm:^19.1.9"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     react: "npm:^19.1.1"
     react-dom: "npm:^19.1.1"
@@ -2177,7 +2177,7 @@ __metadata:
   resolution: "@hono/sentry@workspace:packages/sentry"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     toucan-js: "npm:^4.0.0"
     tsup: "npm:^8.5.0"
@@ -2194,7 +2194,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@cloudflare/vitest-pool-workers": "npm:^0.8.70"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     jose: "npm:^6.0.11"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
@@ -2228,7 +2228,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@standard-schema/spec": "npm:1.0.0"
     arktype: "npm:^2.1.20"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2246,7 +2246,7 @@ __metadata:
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     stytch: "npm:^12.32.0"
     tsup: "npm:^8.5.0"
@@ -2263,7 +2263,7 @@ __metadata:
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2279,7 +2279,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/swagger-ui-dist": "npm:^3.30.6"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2295,7 +2295,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@trpc/server": "npm:^11.5.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2312,7 +2312,7 @@ __metadata:
   resolution: "@hono/tsyringe@workspace:packages/tsyringe"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.5.0"
@@ -2331,7 +2331,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@sinclair/typebox": "npm:^0.34.40"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2348,7 +2348,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@ryoppippi/unplugin-typia": "npm:^2.1.4"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2366,7 +2366,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/node": "npm:^24.2.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2381,7 +2381,7 @@ __metadata:
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2400,7 +2400,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@asteasolutions/zod-to-openapi": "npm:^8.1.0"
     "@hono/zod-validator": "workspace:^"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     openapi3-ts: "npm:^4.5.0"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
@@ -2419,7 +2419,7 @@ __metadata:
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -8924,7 +8924,7 @@ __metadata:
     "@types/ws": "npm:^8.18.0"
     "@vitest/coverage-istanbul": "npm:^3.2.4"
     eslint: "npm:^9.34.0"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.9.8"
     pkg-pr-new: "npm:^0.0.54"
     prettier: "npm:^3.6.2"
     tsup: "npm:^8.5.0"
@@ -8934,10 +8934,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"hono@npm:^4.8.4":
-  version: 4.8.4
-  resolution: "hono@npm:4.8.4"
-  checksum: 10c0/3712bbb4f7d24b5f4f30d75730ae30111cafdb92132728c92e83c257008cfd64e234a6c0657807cb4dd7bc001e3e1daf2e4dd5eb0a73a32ef3a70eff0415d3b7
+"hono@npm:^4.9.8":
+  version: 4.9.8
+  resolution: "hono@npm:4.9.8"
+  checksum: 10c0/18d007abf1c6b88dd833b0732942bff47913c0f332eeab2bf680b8c647b7025bb64db91a8f22a786138629c02b09fd9819256140a19091eeed7c66a16f19244b
   languageName: node
   linkType: hard
 
