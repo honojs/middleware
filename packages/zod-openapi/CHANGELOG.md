@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.1.3
+
+### Patch Changes
+
+- [#1469](https://github.com/honojs/middleware/pull/1469) [`db68e22a9edee796c8692ef84cdc21be79566718`](https://github.com/honojs/middleware/commit/db68e22a9edee796c8692ef84cdc21be79566718) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Remove `SimplifyDeepArray` usage, see https://github.com/honojs/hono/pull/4406
+
 ## 1.1.2
 
 ### Patch Changes
