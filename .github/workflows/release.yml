@@ -19,27 +19,24 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v5
 
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v5
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: .tool-versions
+          bun-version-file: .tool-versions
 
       - uses: denoland/setup-deno@v2
         with:
           cache: true
           deno-version-file: .tool-versions
       - name: Install Dependencies
-        run: yarn
-
-      - name: Build
-        run: yarn build
+        run: bun install
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn run publish
-          version: yarn run version
+          publish: bun run publish
+          version: bun run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

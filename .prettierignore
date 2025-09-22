@@ -1,6 +1,5 @@
 .changeset
 .vscode
-.yarn
 
 # Casbin
 *.conf
