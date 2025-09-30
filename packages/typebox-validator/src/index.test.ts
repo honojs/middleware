@@ -1,21 +1,44 @@
-import { Type as T } from '@sinclair/typebox'
-import type { ValueError } from '@sinclair/typebox/value'
 import { Hono } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
+
+import { Type } from 'typebox'
+import * as v from 'valibot'
 import { tbValidator } from '.'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 
-describe('Basic', () => {
+// ------------------------------------------------------------------
+// Infer: Structure
+// ------------------------------------------------------------------
+type InferExpect = {
+  '/author': {
+    $post: {
+      input: {
+        json: {
+          name: string
+          age: number
+        }
+      }
+      output: {
+        success: true
+        message: string
+      }
+      outputFormat: 'json'
+      status: ContentfulStatusCode
+    }
+  }
+}
+// ------------------------------------------------------------------
+// Infer: TypeBox
+// ------------------------------------------------------------------
+{
   const app = new Hono()
-
-  const schema = T.Object({
-    name: T.String(),
-    age: T.Number(),
+  const schema = Type.Object({
+    name: Type.String(),
+    age: Type.Number(),
   })
-
   const route = app.post('/author', tbValidator('json', schema), (c) => {
     const data = c.req.valid('json')
     return c.json({
@@ -23,30 +46,70 @@ describe('Basic', () => {
       message: `${data.name} is ${data.age}`,
     })
   })
-
   type Actual = ExtractSchema<typeof route>
-  type Expected = {
-    '/author': {
-      $post: {
-        input: {
-          json: {
-            name: string
-            age: number
-          }
-        }
-        output: {
-          success: boolean
-          message: string
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
-    }
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
-
+  type Result = Expect<Equal<Actual, InferExpect>>
+}
+// ------------------------------------------------------------------
+// Infer: Json Schema
+// ------------------------------------------------------------------
+{
+  const app = new Hono()
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number' },
+    },
+    required: ['name', 'age'],
+  } as const
+  const route = app.post('/author', tbValidator('json', schema), (c) => {
+    const data = c.req.valid('json')
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+    })
+  })
+  type Actual = ExtractSchema<typeof route>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type Result = Expect<Equal<Actual, InferExpect>>
+}
+// ------------------------------------------------------------------
+// Infer: Standard Schema
+// ------------------------------------------------------------------
+{
+  const app = new Hono()
+  const schema = v.object({
+    name: v.string(),
+    age: v.number(),
+  })
+  const route = app.post('/author', tbValidator('json', schema), (c) => {
+    const data = c.req.valid('json')
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+    })
+  })
+  type Actual = ExtractSchema<typeof route>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type Result = Expect<Equal<Actual, InferExpect>>
+}
+// ------------------------------------------------------------------
+// Validation: TypeBox
+// ------------------------------------------------------------------
+describe('With TypeBox', () => {
+  const app = new Hono()
+  const schema = Type.Object({
+    name: Type.String(),
+    age: Type.Number(),
+  })
+  const route = app.post('/author', tbValidator('json', schema), (c) => {
+    const data = c.req.valid('json')
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+    })
+  })
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author', {
       body: JSON.stringify({
@@ -85,13 +148,126 @@ describe('Basic', () => {
     expect(data['success']).toBe(false)
   })
 })
+// ------------------------------------------------------------------
+// Validation: Json Schema
+// ------------------------------------------------------------------
+describe('With Json Schema', () => {
+  const app = new Hono()
+  const schema = {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number' },
+    },
+    required: ['name', 'age'],
+  } as const
+  const route = app.post('/author', tbValidator('json', schema), (c) => {
+    const data = c.req.valid('json')
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+    })
+  })
+  it('Should return 200 response', async () => {
+    const req = new Request('http://localhost/author', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: 20,
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      success: true,
+      message: 'Superman is 20',
+    })
+  })
+  it('Should return 400 response', async () => {
+    const req = new Request('http://localhost/author', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: '20',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    const data = (await res.json()) as { success: boolean }
+    expect(data['success']).toBe(false)
+  })
+})
+// ------------------------------------------------------------------
+// Validation: Standard Schema
+// ------------------------------------------------------------------
+describe('With Standard Schema', () => {
+  const app = new Hono()
+  const schema = v.object({
+    name: v.string(),
+    age: v.number(),
+  })
+  const route = app.post('/author', tbValidator('json', schema), (c) => {
+    const data = c.req.valid('json')
+    return c.json({
+      success: true,
+      message: `${data.name} is ${data.age}`,
+    })
+  })
+  it('Should return 200 response', async () => {
+    const req = new Request('http://localhost/author', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: 20,
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      success: true,
+      message: 'Superman is 20',
+    })
+  })
 
+  it('Should return 400 response', async () => {
+    const req = new Request('http://localhost/author', {
+      body: JSON.stringify({
+        name: 'Superman',
+        age: '20',
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    const data = (await res.json()) as { success: boolean }
+    expect(data['success']).toBe(false)
+  })
+})
+// ------------------------------------------------------------------
+// Hooks
+// ------------------------------------------------------------------
 describe('With Hook', () => {
   const app = new Hono()
 
-  const schema = T.Object({
-    id: T.Number(),
-    title: T.String(),
+  const schema = Type.Object({
+    id: Type.Number(),
+    title: Type.String(),
   })
 
   app
@@ -176,39 +352,32 @@ describe('With Hook', () => {
     const { errors, success } = (await res.json()) as { success: boolean; errors: any[] }
     expect(success).toBe(false)
     expect(Array.isArray(errors)).toBe(true)
-    expect(
-      errors.map((e: ValueError) => ({
-        type: e?.schema?.type,
-        path: e?.path,
-        message: e?.message,
-      }))
-    ).toEqual([
+    expect(errors).toEqual([
       {
-        type: 'string',
-        path: '/title',
-        message: 'Expected required property',
-      },
-      {
-        type: 'string',
-        path: '/title',
-        message: 'Expected string',
-      },
+        keyword: 'required',
+        schemaPath: '#',
+        instancePath: '',
+        params: { requiredProperties: [ 'title' ] },
+        message: 'must have required properties title'
+      }
     ])
   })
 })
-
-describe('Remove non schema items', () => {
+// ------------------------------------------------------------------
+// Clean
+// ------------------------------------------------------------------
+describe('With Clean', () => {
   const app = new Hono()
-  const schema = T.Object({
-    id: T.Number(),
-    title: T.String(),
+  const schema = Type.Object({
+    id: Type.Number(),
+    title: Type.String(),
   })
 
-  const nestedSchema = T.Object({
-    id: T.Number(),
-    itemArray: T.Array(schema),
+  const nestedSchema = Type.Object({
+    id: Type.Number(),
+    itemArray: Type.Array(schema),
     item: schema,
-    itemObject: T.Object({
+    itemObject: Type.Object({
       item1: schema,
       item2: schema,
     }),
@@ -221,7 +390,7 @@ describe('Remove non schema items', () => {
         message: c.req.valid('json'),
       })
     })
-    .post('/stripValuesArray', tbValidator('json', T.Array(schema), undefined, true), (c) => {
+    .post('/stripValuesArray', tbValidator('json', Type.Array(schema), undefined, true), (c) => {
       return c.json({
         success: true,
         message: c.req.valid('json'),
