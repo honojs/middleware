@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@cloudflare/vitest-pool-workers": "^0.8.70",
+    "@cloudflare/vitest-pool-workers": "^0.9.7",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "hono": "^4.9.8",
