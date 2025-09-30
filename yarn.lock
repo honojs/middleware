@@ -2361,7 +2361,7 @@ __metadata:
     publint: "npm:^0.3.9"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
-    typia: "npm:^8.0.3"
+    typia: "npm:^9.7.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
     hono: ">=3.9.0"
@@ -4333,10 +4333,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@samchon/openapi@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "@samchon/openapi@npm:3.1.0"
-  checksum: 10c0/b4321a8cf768fe3edb753f7f1bcd0c921a265dd53a1e92aaf32a0e3b2c69a134ff99a7520539df4d907090d074d2a3d160deeec2eec6fb8dbd8d0a220d44ed5a
+"@samchon/openapi@npm:^4.7.1":
+  version: 4.7.1
+  resolution: "@samchon/openapi@npm:4.7.1"
+  checksum: 10c0/311a2b8030fb21e1ffc9def70b723ca0c83abf6740b0949ac86ad2e22b6e36d55dd52ff53977e08d05ca92c9b3ebc4975e3a916cc5fd721abf6232a4aba1a5b7
   languageName: node
   linkType: hard
 
@@ -15304,22 +15304,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typia@npm:^8.0.3":
-  version: 8.0.3
-  resolution: "typia@npm:8.0.3"
+"typia@npm:^9.7.2":
+  version: 9.7.2
+  resolution: "typia@npm:9.7.2"
   dependencies:
-    "@samchon/openapi": "npm:^3.0.0"
+    "@samchon/openapi": "npm:^4.7.1"
+    "@standard-schema/spec": "npm:^1.0.0"
     commander: "npm:^10.0.0"
     comment-json: "npm:^4.2.3"
     inquirer: "npm:^8.2.5"
     package-manager-detector: "npm:^0.2.0"
     randexp: "npm:^0.5.3"
   peerDependencies:
-    "@samchon/openapi": ">=3.0.0 <4.0.0"
-    typescript: ">=4.8.0 <5.9.0"
+    typescript: ">=4.8.0 <5.10.0"
   bin:
     typia: lib/executable/typia.js
-  checksum: 10c0/fdcb2286575a47ce7b0a685d1828c91caee90f205b7d1f83c68b32b48cdd81235e6fe624a7f784a4d8eb31c141c42318d365f6a79c216d7cbf5a193f431b1a77
+  checksum: 10c0/1b19baddfed46c5032da1b05b92636e13a56572764778913050cfb9690e6b7e833fc220f3bfcfc29502905e0e7aa09c5a8ace14dc8177b88a989d33bf215f6d6
   languageName: node
   linkType: hard
 
