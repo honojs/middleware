@@ -39,7 +39,7 @@
     "@cloudflare/vitest-pool-workers": "^0.9.7",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
-    "@ryoppippi/unplugin-typia": "^1.2.0",
+    "@ryoppippi/unplugin-typia": "^2.6.5",
     "@types/bun": "^1.0.0",
     "@types/node": "^24.5.2",
     "@types/ws": "^8.18.0",
