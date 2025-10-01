@@ -290,7 +290,15 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const env = getOidcAuthEnv(c)
   const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
   if (session_jwt !== undefined) {
+    // Always delete host-only cookie
     deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+    // If domain is set, also delete domain-scoped cookie
+    if (env.OIDC_COOKIE_DOMAIN) {
+      deleteCookie(c, env.OIDC_COOKIE_NAME, {
+        path: env.OIDC_COOKIE_PATH,
+        domain: env.OIDC_COOKIE_DOMAIN,
+      })
+    }
     const auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token

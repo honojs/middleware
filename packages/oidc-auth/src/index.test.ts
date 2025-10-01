@@ -611,6 +611,28 @@ describe('RevokeSession()', () => {
       new RegExp(`oidc-auth=; Max-Age=0; Path=${MOCK_COOKIE_PATH}($|,)`)
     )
   })
+  test('Should revoke domain-scoped session cookie with Domain attribute', async () => {
+    const MOCK_COOKIE_DOMAIN = 'example.com'
+    process.env.OIDC_COOKIE_DOMAIN = MOCK_COOKIE_DOMAIN
+
+    const req = new Request('http://localhost/logout', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+
+    const setCookieHeader = res.headers.get('set-cookie')
+    expect(setCookieHeader).toBeDefined()
+
+    const cookieStrings = setCookieHeader?.split(', ')
+    const domainCookie = cookieStrings?.find((c) => c.includes(`Domain=${MOCK_COOKIE_DOMAIN}`))
+
+    expect(domainCookie).toBeDefined()
+    expect(domainCookie).toContain('Max-Age=0')
+    expect(domainCookie).toContain('Path=/')
+  })
 })
 describe('initOidcAuthMiddleware()', () => {
   test('Should error if not called first in context', async () => {
