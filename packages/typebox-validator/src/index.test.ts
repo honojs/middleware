@@ -19,7 +19,7 @@ type ExpectedJson<T> = {
         json: T
       }
       output: {
-        success: true
+        success: boolean
         message: string
       }
       outputFormat: 'json'
@@ -41,7 +41,7 @@ describe('Inference', () => {
     const route = app.post('/author', tbValidator('json', schema), (c) => {
       const data = c.req.valid('json')
       return c.json({
-        success: true,
+        success: true as boolean, // no-narrow
         message: `${data.name} is ${data.age}`,
       })
     })
@@ -69,7 +69,7 @@ describe('Inference', () => {
     const route = app.post('/author', tbValidator('json', schema), (c) => {
       const data = c.req.valid('json')
       return c.json({
-        success: true,
+        success: true as boolean, // no-narrow
         message: `${data.name} is ${data.age}`,
       })
     })
@@ -93,7 +93,7 @@ describe('Inference', () => {
     const route = app.post('/author', tbValidator('json', schema), (c) => {
       const data = c.req.valid('json')
       return c.json({
-        success: true,
+        success: true as boolean, // no-narrow
         message: `${data.name} is ${data.age}`,
       })
     })
