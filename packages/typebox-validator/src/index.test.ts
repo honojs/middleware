@@ -47,10 +47,15 @@ describe('Inference', () => {
     })
     type Actual = ExtractSchema<typeof route>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type Result = Expect<Equal<Actual, ExpectedJson<{
-      name: string
-      age: number
-    }>>>
+    type Result = Expect<
+      Equal<
+        Actual,
+        ExpectedJson<{
+          name: string
+          age: number
+        }>
+      >
+    >
   })
   // ----------------------------------------------------------------
   // Json Schema
@@ -75,10 +80,15 @@ describe('Inference', () => {
     })
     type Actual = ExtractSchema<typeof route>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type Result = Expect<Equal<Actual, ExpectedJson<{
-      name: string
-      age: number
-    }>>>
+    type Result = Expect<
+      Equal<
+        Actual,
+        ExpectedJson<{
+          name: string
+          age: number
+        }>
+      >
+    >
   })
   // ----------------------------------------------------------------
   // Standard Schema
@@ -99,10 +109,15 @@ describe('Inference', () => {
     })
     type Actual = ExtractSchema<typeof route>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type Result = Expect<Equal<Actual, ExpectedJson<{
-      name: string
-      age: number
-    }>>>
+    type Result = Expect<
+      Equal<
+        Actual,
+        ExpectedJson<{
+          name: string
+          age: number
+        }>
+      >
+    >
   })
 })
 // ------------------------------------------------------------------
@@ -369,9 +384,9 @@ describe('With Hook', () => {
         keyword: 'required',
         schemaPath: '#',
         instancePath: '',
-        params: { requiredProperties: [ 'title' ] },
-        message: 'must have required properties title'
-      }
+        params: { requiredProperties: ['title'] },
+        message: 'must have required properties title',
+      },
     ])
   })
 })

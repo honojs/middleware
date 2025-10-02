@@ -83,14 +83,12 @@ export function tbValidator<
   hook?: Hook<Static<T>, E, P>,
   useClean?: boolean
 ): MiddlewareHandler<E, P, V> {
-  // This function JIT-compiles the given schema. If the environment does NOT support 
-  // the `unsafe-eval` Content-Security-Policy, TypeBox will fall back to dynamic 
+  // This function JIT-compiles the given schema. If the environment does NOT support
+  // the `unsafe-eval` Content-Security-Policy, TypeBox will fall back to dynamic
   // validation using Value.*. Ref: Cloudflare.
   const compiled = Compile(schema)
   return validator(target, (unprocessedData, c) => {
-    const data = useClean
-      ? compiled.Clean(unprocessedData)
-      : unprocessedData
+    const data = useClean ? compiled.Clean(unprocessedData) : unprocessedData
 
     if (compiled.Check(data)) {
       if (hook) {
@@ -113,4 +111,3 @@ export function tbValidator<
     return c.json({ success: false, errors }, 400)
   }) as MiddlewareHandler<E, P, V>
 }
-
