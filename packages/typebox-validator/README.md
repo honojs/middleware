@@ -11,11 +11,11 @@ No Hook:
 
 ```ts
 import { tbValidator } from '@hono/typebox-validator'
-import { Type as T } from '@sinclair/typebox'
+import Type from 'typebox'
 
-const schema = T.Object({
-  name: T.String(),
-  age: T.Number(),
+const schema = Type.Object({
+  name: Type.String(),
+  age: Type.Number(),
 })
 
 const route = app.post('/user', tbValidator('json', schema), (c) => {
@@ -28,11 +28,11 @@ Hook:
 
 ```ts
 import { tbValidator } from '@hono/typebox-validator'
-import { Type as T } from '@sinclair/typebox'
+import Type from 'typebox'
 
-const schema = T.Object({
-  name: T.String(),
-  age: T.Number(),
+const schema = Type.Object({
+  name: Type.String(),
+  age: Type.Number(),
 })
 
 app.post(
