@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.7.1
+
+### Patch Changes
+
+- [#1491](https://github.com/honojs/middleware/pull/1491) [`9350971ad5900e7134239a1c4ae1b0582de74a49`](https://github.com/honojs/middleware/commit/9350971ad5900e7134239a1c4ae1b0582de74a49) Thanks [@SergKam](https://github.com/SergKam)! - fix(oidc-auth): ensure revokeSession clears domain-scoped cookies with Domain attribute
+
 ## 1.7.0
 
 ### Minor Changes
