@@ -9037,6 +9037,7 @@ __metadata:
     tsup: "npm:^8.5.0"
     turbo: "npm:^2.5.6"
     typescript: "npm:^5.8.2"
+    typia: "npm:^9.7.2"
     vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
