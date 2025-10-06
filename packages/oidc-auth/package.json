@@ -49,7 +49,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "hono": "^4.9.10",
     "jsonwebtoken": "^9.0.2",
-    "publint": "^0.3.9",
+    "publint": "^0.3.14",
     "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"

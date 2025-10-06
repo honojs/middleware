@@ -48,7 +48,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "hono": "^4.9.10",
-    "publint": "^0.3.9",
+    "publint": "^0.3.14",
     "reflect-metadata": "^0.2.2",
     "tsup": "^8.5.0",
     "tsyringe": "^4.10.0",

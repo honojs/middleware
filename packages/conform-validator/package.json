@@ -53,7 +53,7 @@
     "@conform-to/yup": "^1.11.0",
     "@conform-to/zod": "^1.11.0",
     "hono": "^4.9.10",
-    "publint": "^0.3.9",
+    "publint": "^0.3.14",
     "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
