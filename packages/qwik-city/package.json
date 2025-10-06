@@ -48,7 +48,7 @@
     "@arethetypeswrong/cli": "^0.18.2",
     "@builder.io/qwik": "^1.2.0",
     "@builder.io/qwik-city": "^1.16.0",
-    "hono": "^4.9.8",
+    "hono": "^4.9.10",
     "publint": "^0.3.9",
     "tsup": "^8.5.0",
     "typescript": "^5.8.2"
