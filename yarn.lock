@@ -2339,15 +2339,15 @@ __metadata:
   resolution: "@hono/typebox-validator@workspace:packages/typebox-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    "@sinclair/typebox": "npm:^0.34.40"
     hono: "npm:^4.9.10"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
+    typebox: "npm:^1.0.30"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
-    "@sinclair/typebox": ">=0.31.15 <1"
     hono: ">=3.9.0"
+    typebox: ^1.0.30
   languageName: unknown
   linkType: soft
 
@@ -4408,13 +4408,6 @@ __metadata:
   dependencies:
     "@sentry/types": "npm:8.9.2"
   checksum: 10c0/d1834aa0aae7b802939475deca9aec7243f022d0fbade87cc912d40c0fc06345309219a9d0046dc778fd2fde240fe5724af7ebe122306acbe853bf324c3ac8d1
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.34.40":
-  version: 0.34.40
-  resolution: "@sinclair/typebox@npm:0.34.40"
-  checksum: 10c0/95d7003d49844b31b1f02e023bf0c5bb13cceb07297b20c4df23fb4ba075bd138c20ad2538b862c50a171c76e4a93b93ae831814a6884a7d50bf7c79b2819efb
   languageName: node
   linkType: hard
 
@@ -15276,6 +15269,13 @@ __metadata:
     media-typer: "npm:0.3.0"
     mime-types: "npm:~2.1.24"
   checksum: 10c0/a23daeb538591b7efbd61ecf06b6feb2501b683ffdc9a19c74ef5baba362b4347e42f1b4ed81f5882a8c96a3bfff7f93ce3ffaf0cbbc879b532b04c97a55db9d
+  languageName: node
+  linkType: hard
+
+"typebox@npm:^1.0.30":
+  version: 1.0.30
+  resolution: "typebox@npm:1.0.30"
+  checksum: 10c0/7ea8a8b1688a627d4c46761b31c83361d57875f91c3663a62736c6671a6dca85bd959f214bdbc666ae984428ec1b7706f69a50fa06524850e777c36b853cd568
   languageName: node
   linkType: hard
 
