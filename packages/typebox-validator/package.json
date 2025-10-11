@@ -42,15 +42,15 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@sinclair/typebox": ">=0.31.15 <1",
-    "hono": ">=3.9.0"
+    "hono": ">=3.9.0",
+    "typebox": "^1.0.30"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@sinclair/typebox": "^0.34.40",
     "hono": "^4.9.10",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
+    "typebox": "^1.0.30",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }
