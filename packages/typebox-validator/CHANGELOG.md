@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 1.0.0
+
+### Major Changes
+
+- [#1501](https://github.com/honojs/middleware/pull/1501) [`f90b6e48f08dfbd8949041e3076b28ba67c25da4`](https://github.com/honojs/middleware/commit/f90b6e48f08dfbd8949041e3076b28ba67c25da4) Thanks [@sinclairzx81](https://github.com/sinclairzx81)! - Upgrade TypeBox Version 1
+
 ## 0.3.3
 
 ### Patch Changes
