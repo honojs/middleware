@@ -1,6 +1,6 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts"
