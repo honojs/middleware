@@ -861,10 +861,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/dom@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@conform-to/dom@npm:1.8.2"
-  checksum: 10c0/5a349638e5574bdf7e7ebb23fd72bc52c7615439728af1c6d97023373e49dd03e21e25f823ec53e2f0b8f4102a459e75c01e67f3e0ceb8f909d12b42f227d846
+"@conform-to/dom@npm:1.12.0":
+  version: 1.12.0
+  resolution: "@conform-to/dom@npm:1.12.0"
+  checksum: 10c0/a5900aa1557a582468137284500179659adf23b72224aaac7818698de9650863b72d6a0c4325eb498737add27f3020d0fc67cd84a7127462dce0d19ec141b6fa
   languageName: node
   linkType: hard
 
@@ -875,14 +875,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/valibot@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@conform-to/valibot@npm:1.8.2"
+"@conform-to/valibot@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@conform-to/valibot@npm:1.12.0"
   dependencies:
-    "@conform-to/dom": "npm:1.8.2"
+    "@conform-to/dom": "npm:1.12.0"
   peerDependencies:
     valibot: ">= 0.32.0"
-  checksum: 10c0/1e39fc7e47c9e7b347bb27cd6f5c875095c80a505097d68c5288e587f21d0aadd2fbeeb2c8916ac3a197e716c0b1dd309354fbeacfabe5c1c41034506063779c
+  checksum: 10c0/af2ba1fb1463b9a14d681dcdef156cbc4199fb6990ccdfdfd10ea4ee3b7af1d6ac78b67b98e9765ff3050c0c7fc023b98b07bb76d0fe46fd86363c819de8776f
   languageName: node
   linkType: hard
 
@@ -1863,7 +1863,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@conform-to/dom": "npm:^1.10.0"
-    "@conform-to/valibot": "npm:^1.8.2"
+    "@conform-to/valibot": "npm:^1.12.0"
     "@conform-to/yup": "npm:^1.11.0"
     "@conform-to/zod": "npm:^1.11.0"
     hono: "npm:^4.9.10"
