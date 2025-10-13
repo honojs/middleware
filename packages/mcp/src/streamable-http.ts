@@ -444,7 +444,7 @@ export class StreamableHTTPTransport implements Transport {
 
           // handle each message
           for (const message of messages) {
-            this.onmessage?.(message, { authInfo })
+            this.onmessage?.(message, { authInfo, requestInfo })
           }
           // The server SHOULD NOT close the SSE stream before sending all JSON-RPC responses
           // This will be handled by the send() method when responses are ready
