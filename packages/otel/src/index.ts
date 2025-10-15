@@ -7,12 +7,15 @@ import {
   ATTR_HTTP_RESPONSE_STATUS_CODE,
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
+  ATTR_URL_PATH,
+  ATTR_URL_SCHEME,
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { RequestHeader, ResponseHeader } from 'hono/utils/headers'
 import metadata from '../package.json' with { type: 'json' }
 import { createOtelMetrics, observeOtelMetrics } from './metrics'
+import { setSpanWithError } from './utils'
 
 const PACKAGE_NAME = metadata.name
 const PACKAGE_VERSION = metadata.version
@@ -60,13 +63,17 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
     const routePath = c.req.routePath
     const startTime = performance.now()
 
+    const url = new URL(c.req.url)
+
     await tracer.startActiveSpan(
       `${c.req.method} ${c.req.routePath}`,
       {
         kind: SpanKind.SERVER,
         attributes: {
           [ATTR_HTTP_REQUEST_METHOD]: c.req.method,
-          [ATTR_URL_FULL]: c.req.url,
+          [ATTR_URL_FULL]: url.href,
+          [ATTR_URL_PATH]: url.pathname,
+          [ATTR_URL_SCHEME]: url.protocol.slice(0, -1),
           [ATTR_HTTP_ROUTE]: routePath,
         },
         startTime: options.getTime?.(),
@@ -94,14 +101,12 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
             }
           }
           if (c.error) {
-            span.recordException(c.error)
-            span.setStatus({ code: SpanStatusCode.ERROR, message: String(c.error) })
+            setSpanWithError(span, c.error)
           }
         } catch (e) {
           if (e instanceof Error) {
-            span.recordException(e)
+            setSpanWithError(span, e)
           }
-          span.setStatus({ code: SpanStatusCode.ERROR, message: String(e) })
           throw e
         } finally {
           span.end(options.getTime?.())
