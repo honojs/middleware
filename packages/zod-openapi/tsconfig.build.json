@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {},
+  "references": [{ "path": "../zod-validator/tsconfig.build.json" }]
+}

@@ -1,5 +1,11 @@
 # @hono/arktype-validator
 
+## 2.0.1
+
+### Patch Changes
+
+- [#1137](https://github.com/honojs/middleware/pull/1137) [`01cd896e9b3c6a00c3c16ed59e0c3d20f5983918`](https://github.com/honojs/middleware/commit/01cd896e9b3c6a00c3c16ed59e0c3d20f5983918) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - Don't return restricted data fields on error responses
+
 ## 2.0.0
 
 ### Major Changes

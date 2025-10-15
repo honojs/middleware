@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineProject } from 'vitest/config'
 
-export default defineConfig({
+export default defineProject({
   test: {
     globals: true,
+    include: ['src/**/*.test.ts'],
   },
 })

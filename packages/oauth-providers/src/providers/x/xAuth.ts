@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 import { getCodeChallenge } from '../../utils/getCodeChallenge'
@@ -13,6 +13,7 @@ export function xAuth(options: {
   fields?: XFields[]
   client_id?: string
   client_secret?: string
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     // Generate encoded "keys"
@@ -22,7 +23,7 @@ export function xAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).X_ID as string),
       client_secret: options.client_secret || (env(c).X_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,
       state: newState,

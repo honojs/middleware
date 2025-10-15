@@ -1,5 +1,6 @@
 import { type } from 'arktype'
 import { Hono } from 'hono'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { arktypeValidator } from '.'
 
@@ -34,6 +35,17 @@ describe('Basic', () => {
     }
   )
 
+  app.get(
+    '/headers',
+    arktypeValidator(
+      'header',
+      type({
+        'User-Agent': 'string',
+      })
+    ),
+    (c) => c.json({ success: true, userAgent: c.req.header('User-Agent') })
+  )
+
   type Actual = ExtractSchema<typeof route>
   type Expected = {
     '/author': {
@@ -53,6 +65,8 @@ describe('Basic', () => {
           message: string
           queryName: string | undefined
         }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
       }
     }
   }
@@ -94,6 +108,22 @@ describe('Basic', () => {
     expect(res.status).toBe(400)
     const data = (await res.json()) as { success: boolean }
     expect(data['success']).toBe(false)
+  })
+
+  it("doesn't return cookies after headers validation", async () => {
+    const req = new Request('http://localhost/headers', {
+      headers: {
+        'User-Agent': 'invalid',
+        Cookie: 'SECRET=123',
+      },
+    })
+
+    const res = await app.request(req)
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(400)
+    const data = (await res.json()) as { succcess: false; errors: type.errors }
+    expect(data.errors).toHaveLength(1)
+    expect(data.errors[0].data).not.toHaveProperty('cookie')
   })
 })
 

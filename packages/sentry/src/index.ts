@@ -16,6 +16,8 @@ class MockContext implements ExecutionContext {
   async waitUntil(promise: Promise<any>): Promise<void> {
     await promise
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any
 }
 
 export type Options = Omit<ToucanOptions, 'request' | 'context'>
@@ -53,6 +55,6 @@ export const sentry = (
   }
 }
 
-export const getSentry = (c: Context) => {
+export const getSentry = (c: Context): Toucan => {
   return c.get('sentry')
 }

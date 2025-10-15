@@ -1,5 +1,7 @@
 # Clerk middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=clerk-auth)](https://codecov.io/github/honojs/middleware)
+
 This is a [Clerk](https://clerk.com) third-party middleware for [Hono](https://github.com/honojs/hono).
 
 This middleware can be used to inject the active Clerk session into the request context.
@@ -7,7 +9,7 @@ This middleware can be used to inject the active Clerk session into the request 
 ## Installation
 
 ```plain
-npm i hono @hono/clerk-auth @clerk/backend
+npm i hono @hono/clerk-auth
 ```
 
 ## Configuration
@@ -33,13 +35,13 @@ app.get('/', (c) => {
 
   if (!auth?.userId) {
     return c.json({
-      message: 'You are not logged in.'
+      message: 'You are not logged in.',
     })
   }
 
   return c.json({
     message: 'You are logged in!',
-    userId: auth.userId
+    userId: auth.userId,
   })
 })
 
@@ -65,9 +67,12 @@ app.get('/', async (c) => {
       user,
     })
   } catch (e) {
-    return c.json({
-      message: 'User not found.'
-    }, 404)
+    return c.json(
+      {
+        message: 'User not found.',
+      },
+      404
+    )
   }
 })
 

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": true
+  },
+  "include": [
+    "eslint.config.mjs",
+    "packages/eslint-config/index.js",
+    "tsup.config.ts",
+    "vitest.config.ts"
+  ]
+}

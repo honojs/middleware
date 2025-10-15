@@ -1,5 +1,7 @@
 # monorepo for Hono third-party middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg)](https://codecov.io/github/honojs/middleware)
+
 This repository is monorepo for third-party middleware of Hono.
 We develop middleware in this repository and manage the issues and pull requests.
 
@@ -14,7 +16,7 @@ Hono has three types of middleware.
 Third-party middleware is maintained in this `github.com/honojs/middleware` repository and published to npm in the `@hono` namespace. For example, a third-party middleware called hello is hosted at `github.com/honojs/middleware/packages/hello` and distributed under the name `@hono/hello`.
 You can install it with the following command.
 
-```
+```plain
 npm install @hono/hello
 ```
 
@@ -26,10 +28,9 @@ import { hello } from 'npm:@hono/hello'
 
 ## How to contribute
 
-Anyone can propose third-party Middleware.
-The Hono maintainers and other contributors will discuss whether we accept the middleware or not.
-If it's OK, it will be maintained in this repository.
-The proposer maintains it.
+Anyone can propose third-party Middleware. The Hono maintainers and other contributors will discuss whether we accept the middleware or not. If it's OK, it will be maintained in this repository. The proposer will be the _author_ for the middleware and maintain it.
+
+The middleware author should respond to issues and review PRs related to the middleware as much as possible. The Hono maintainers sometimes will mention the middleware author using an `@` like `@yusukebe Can you take a look?`.
 
 The specific flow is as follows
 
@@ -37,10 +38,19 @@ The specific flow is as follows
 2. Write your middleware. Refer to [hello Middleware](https://github.com/honojs/middleware/tree/main/packages/hello).
 3. Create the pull request.
 
+We use [Vitest](https://vitest.dev/) to write and run tests.
+Test files should be added to the middleware `src` directory,
+and include `.test.` in their file name, for example; `index.test.ts`.
+Run the following command in the middleware directory to run tests.
+
+```plain
+yarn test
+```
+
 We use [changesets](https://github.com/changesets/changesets) to manage releases and CHANGELOG.
 Run the following command at the top level to describe any changes.
 
-```
+```plain
 yarn changeset
 ```
 
@@ -49,5 +59,5 @@ The Hono maintainers will merge it to release the package at the appropriate tim
 
 ## Author & License
 
-The Author of this repository is Yusuke Wada <<https://github.com/yusukebe>>. However, the code under the `packages/*` is in each Middleware author.
+The Author of this repository is Yusuke Wada <<https://github.com/yusukebe>>. However, the code under the `packages/*` is in each middleware author.
 Basically, distributed under the MIT license.

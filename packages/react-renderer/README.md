@@ -1,5 +1,7 @@
 # React Renderer Middleware
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=react-renderer)](https://codecov.io/github/honojs/middleware)
+
 React Renderer Middleware allows for the easy creation of a renderer based on React for Hono.
 
 ## Installation

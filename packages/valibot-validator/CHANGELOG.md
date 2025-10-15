@@ -1,5 +1,47 @@
 # @hono/valibot-validator
 
+## 0.5.3
+
+### Patch Changes
+
+- [#1287](https://github.com/honojs/middleware/pull/1287) [`a843d1c95f35ac965f6849ff82d2c2a81eb95ce8`](https://github.com/honojs/middleware/commit/a843d1c95f35ac965f6849ff82d2c2a81eb95ce8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Import `jsr:@valibot/valibot`
+
+## 0.5.2
+
+### Patch Changes
+
+- [#914](https://github.com/honojs/middleware/pull/914) [`c5abbc993d8e3663dfd4f2af7ba921acd5bd83ed`](https://github.com/honojs/middleware/commit/c5abbc993d8e3663dfd4f2af7ba921acd5bd83ed) Thanks [@ajotaos](https://github.com/ajotaos)! - Fix request query types for valibot schemas
+
+## 0.5.1
+
+### Patch Changes
+
+- [#821](https://github.com/honojs/middleware/pull/821) [`553112c2c6440f3326e9fde839681620acb3090e`](https://github.com/honojs/middleware/commit/553112c2c6440f3326e9fde839681620acb3090e) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - exported the Hook type
+
+## 0.5.0
+
+### Minor Changes
+
+- [#819](https://github.com/honojs/middleware/pull/819) [`d6fcbbd3366b356616fd188d9943ddb3e8294e5b`](https://github.com/honojs/middleware/commit/d6fcbbd3366b356616fd188d9943ddb3e8294e5b) Thanks [@fabian-hiller](https://github.com/fabian-hiller)! - Upgrade Valibot peer dependency to >=v1.0.0-beta.4
+
+## 0.4.1
+
+### Patch Changes
+
+- [#797](https://github.com/honojs/middleware/pull/797) [`0ff894aeb11da0713d461099ee68521cbe37f99a`](https://github.com/honojs/middleware/commit/0ff894aeb11da0713d461099ee68521cbe37f99a) Thanks [@fabian-hiller](https://github.com/fabian-hiller)! - Fix Valibot peer dependency to support dist-tags
+
+## 0.4.0
+
+### Minor Changes
+
+- [#762](https://github.com/honojs/middleware/pull/762) [`05610f520e4dda7290f2b4a6fe7c4dba9d41be1a`](https://github.com/honojs/middleware/commit/05610f520e4dda7290f2b4a6fe7c4dba9d41be1a) Thanks [@fabian-hiller](https://github.com/fabian-hiller)! - Upgrade Valibot peer dependency to v1.0.0
+
+## 0.3.1
+
+### Patch Changes
+
+- [#753](https://github.com/honojs/middleware/pull/753) [`9639103a9ae711707f240376ee7fed4d0e77b121`](https://github.com/honojs/middleware/commit/9639103a9ae711707f240376ee7fed4d0e77b121) Thanks [@MonsterDeveloper](https://github.com/MonsterDeveloper)! - Fix ESM/CJS exports and use `tsup` for building
+
 ## 0.3.0
 
 ### Minor Changes

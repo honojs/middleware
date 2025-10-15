@@ -1,0 +1,19 @@
+{
+  "name": "@hono/oauth-providers",
+  "version": "0.8.5",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./discord": "./src/providers/discord/index.ts",
+    "./facebook": "./src/providers/facebook/index.ts",
+    "./github": "./src/providers/github/index.ts",
+    "./google": "./src/providers/google/index.ts",
+    "./linkedin": "./src/providers/linkedin/index.ts",
+    "./msentra": "./src/providers/msentra/index.ts",
+    "./twitch": "./src/providers/twitch/index.ts",
+    "./x": "./src/providers/x/index.ts"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3"
+  }
+}

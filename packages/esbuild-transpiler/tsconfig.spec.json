@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/esbuild-transpiler",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

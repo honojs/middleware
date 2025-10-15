@@ -11,8 +11,8 @@ import {
   OpenApiGeneratorV3,
   OpenApiGeneratorV31,
   extendZodWithOpenApi,
+  getOpenApiMetadata,
 } from '@asteasolutions/zod-to-openapi'
-import type { OpenAPIObjectConfig } from '@asteasolutions/zod-to-openapi/dist/v3.0/openapi-generator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import type {
@@ -27,7 +27,6 @@ import type {
   ValidationTargets,
 } from 'hono'
 import type { MergePath, MergeSchemaPath } from 'hono/types'
-import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -36,14 +35,19 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
+import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
-import type { ZodError, ZodSchema } from 'zod'
-import { ZodType, z } from 'zod'
+import type { OpenAPIObject } from 'openapi3-ts/oas30'
+import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
+import type { ZodType, ZodError } from 'zod'
+import { z } from 'zod'
+import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
 
 export type RouteConfig = RouteConfigBase & {
   middleware?: MiddlewareHandler | MiddlewareHandler[]
+  hide?: boolean
 }
 
 type RequestTypes = {
@@ -55,8 +59,10 @@ type RequestTypes = {
 }
 
 type IsJson<T> = T extends string
-  ? T extends `application/json${infer _Rest}`
-    ? 'json'
+  ? T extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? 'json'
+      : never
     : never
   : never
 
@@ -68,6 +74,20 @@ type IsForm<T> = T extends string
     : never
   : never
 
+type ReturnJsonOrTextOrResponse<
+  ContentType,
+  Content,
+  Status extends keyof StatusCodeRangeDefinitions | StatusCode,
+> = ContentType extends string
+  ? ContentType extends `application/${infer Start}json${infer _End}`
+    ? Start extends '' | `${string}+` | `vnd.${string}+`
+      ? TypedResponse<JSONParsed<Content>, ExtractStatusCode<Status>, 'json'>
+      : never
+    : ContentType extends `text/plain${infer _Rest}`
+      ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
+      : Response
+  : never
+
 type RequestPart<R extends RouteConfig, Part extends string> = Part extends keyof R['request']
   ? R['request'][Part]
   : {}
@@ -77,17 +97,17 @@ type HasUndefined<T> = undefined extends T ? true : false
 type InputTypeBase<
   R extends RouteConfig,
   Part extends string,
-  Type extends keyof ValidationTargets
+  Type extends keyof ValidationTargets,
 > = R['request'] extends RequestTypes
   ? RequestPart<R, Part> extends ZodType
     ? {
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
             ? {
-                [K2 in keyof z.input<RequestPart<R, Part>>]?: ValidationTargets[K][K2]
+                [K2 in keyof z.input<RequestPart<R, Part>>]?: z.input<RequestPart<R, Part>>[K2]
               }
             : {
-                [K2 in keyof z.input<RequestPart<R, Part>>]: ValidationTargets[K][K2]
+                [K2 in keyof z.input<RequestPart<R, Part>>]: z.input<RequestPart<R, Part>>[K2]
               }
         }
         out: { [K in Type]: z.output<RequestPart<R, Part>> }
@@ -101,22 +121,22 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
       ? IsJson<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-            'schema',
-            ZodSchema<any>
-          >
-        ? {
-            in: {
-              json: z.input<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
+              'schema',
+              ZodType<any>
+            >
+          ? {
+              in: {
+                json: z.input<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
+              out: {
+                json: z.output<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
             }
-            out: {
-              json: z.output<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
-            }
-          }
-        : {}
+          : {}
       : {}
     : {}
   : {}
@@ -127,22 +147,22 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
       ? IsForm<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-            'schema',
-            ZodSchema<any>
-          >
-        ? {
-            in: {
-              form: z.input<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
+              'schema',
+              ZodType<any>
+            >
+          ? {
+              in: {
+                form: z.input<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
+              out: {
+                form: z.output<
+                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
+                >
+              }
             }
-            out: {
-              form: z.output<
-                R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-              >
-            }
-          }
-        : {}
+          : {}
       : {}
     : {}
   : {}
@@ -155,7 +175,7 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', ZodSchema>
+  ? A extends Record<'schema', ZodType>
     ? z.infer<A['schema']>
     : never
   : never
@@ -171,20 +191,33 @@ type RouteConfigStatusCode = keyof StatusCodeRangeDefinitions | StatusCode
 type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof StatusCodeRangeDefinitions
   ? StatusCodeRangeDefinitions[T]
   : T
-export type RouteConfigToTypedResponse<R extends RouteConfig> = {
-  [Status in keyof R['responses'] & RouteConfigStatusCode]: IsJson<
-    keyof R['responses'][Status]['content']
-  > extends never
-    ? TypedResponse<{}, ExtractStatusCode<Status>, string>
-    : TypedResponse<
-        JSONParsed<ExtractContent<R['responses'][Status]['content']>>,
-        ExtractStatusCode<Status>,
-        'json'
-      >
-}[keyof R['responses'] & RouteConfigStatusCode]
+type DefinedStatusCodes<R extends RouteConfig> = keyof R['responses'] & RouteConfigStatusCode
+export type RouteConfigToTypedResponse<R extends RouteConfig> =
+  | {
+      [Status in DefinedStatusCodes<R>]: R['responses'][Status] extends { content: infer Content }
+        ? undefined extends Content
+          ? never
+          : ReturnJsonOrTextOrResponse<
+              keyof R['responses'][Status]['content'],
+              ExtractContent<R['responses'][Status]['content']>,
+              Status
+            >
+        : TypedResponse<{}, ExtractStatusCode<Status>, string>
+    }[DefinedStatusCodes<R>]
+  | ('default' extends keyof R['responses']
+      ? R['responses']['default'] extends { content: infer Content }
+        ? undefined extends Content
+          ? never
+          : ReturnJsonOrTextOrResponse<
+              keyof Content,
+              ExtractContent<Content>,
+              Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>
+            >
+        : TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
+      : never)
 
 export type Hook<T, E extends Env, P extends string, R> = (
-  result:
+  result: { target: keyof ValidationTargets } & (
     | {
         success: true
         data: T
@@ -192,7 +225,8 @@ export type Hook<T, E extends Env, P extends string, R> = (
     | {
         success: false
         error: ZodError
-      },
+      }
+  ),
   c: Context<E, P>
 ) => R
 
@@ -205,16 +239,84 @@ export type OpenAPIHonoOptions<E extends Env> = {
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
+/**
+ * Turns `T | T[] | undefined` into `T[]`
+ */
+type AsArray<T> = T extends undefined // TODO move to utils?
+  ? []
+  : T extends any[]
+    ? T
+    : [T]
+
+/**
+ * Like simplify but recursive
+ */
+export type DeepSimplify<T> = {
+  // TODO move to utils?
+  [KeyType in keyof T]: T[KeyType] extends Record<string, unknown>
+    ? DeepSimplify<T[KeyType]>
+    : T[KeyType]
+} & {}
+
+/**
+ * Helper to infer generics from {@link MiddlewareHandler}
+ */
+export type OfHandlerType<T extends MiddlewareHandler> =
+  T extends MiddlewareHandler<infer E, infer P, infer I>
+    ? {
+        env: E
+        path: P
+        input: I
+      }
+    : never
+
+/**
+ * Reduce a tuple of middleware handlers into a single
+ * handler representing the composition of all
+ * handlers.
+ */
+export type MiddlewareToHandlerType<M extends MiddlewareHandler<any, any, any>[]> = M extends [
+  infer First,
+  infer Second,
+  ...infer Rest,
+]
+  ? First extends MiddlewareHandler<any, any, any>
+    ? Second extends MiddlewareHandler<any, any, any>
+      ? Rest extends MiddlewareHandler<any, any, any>[] // Ensure Rest is an array of MiddlewareHandler
+        ? MiddlewareToHandlerType<
+            [
+              MiddlewareHandler<
+                DeepSimplify<OfHandlerType<First>['env'] & OfHandlerType<Second>['env']>, // Combine envs
+                OfHandlerType<First>['path'], // Keep path from First
+                OfHandlerType<First>['input'] // Keep input from First
+              >,
+              ...Rest,
+            ]
+          >
+        : never
+      : never
+    : never
+  : M extends [infer Last]
+    ? Last // Return the last remaining handler in the array
+    : MiddlewareHandler<Env>
+
+type RouteMiddlewareParams<R extends RouteConfig> = OfHandlerType<
+  MiddlewareToHandlerType<AsArray<R['middleware']>>
+>
+
+export type RouteConfigToEnv<R extends RouteConfig> =
+  RouteMiddlewareParams<R> extends never ? Env : RouteMiddlewareParams<R>['env']
+
 export type RouteHandler<
   R extends RouteConfig,
-  E extends Env = Env,
+  E extends Env = RouteConfigToEnv<R>,
   I extends Input = InputTypeParam<R> &
     InputTypeQuery<R> &
     InputTypeHeader<R> &
     InputTypeCookie<R> &
     InputTypeForm<R> &
     InputTypeJson<R>,
-  P extends string = ConvertPathType<R['path']>
+  P extends string = ConvertPathType<R['path']>,
 > = Handler<
   E,
   P,
@@ -235,14 +337,14 @@ export type RouteHandler<
 
 export type RouteHook<
   R extends RouteConfig,
-  E extends Env = Env,
+  E extends Env = RouteConfigToEnv<R>,
   I extends Input = InputTypeParam<R> &
     InputTypeQuery<R> &
     InputTypeHeader<R> &
     InputTypeCookie<R> &
     InputTypeForm<R> &
     InputTypeJson<R>,
-  P extends string = ConvertPathType<R['path']>
+  P extends string = ConvertPathType<R['path']>,
 > = Hook<
   I,
   E,
@@ -250,14 +352,24 @@ export type RouteHook<
   RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
 >
 
+type OpenAPIObjectConfig = Parameters<
+  InstanceType<typeof OpenApiGeneratorV3>['generateDocument']
+>[0]
+
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   | OpenAPIObjectConfig
   | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
+export type OpenAPIGeneratorOptions = ConstructorParameters<typeof OpenApiGeneratorV3>[1]
+
+export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
+  | OpenAPIGeneratorOptions
+  | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
-  BasePath extends string = '/'
+  BasePath extends string = '/',
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
@@ -307,11 +419,14 @@ export class OpenAPIHono<
       InputTypeCookie<R> &
       InputTypeForm<R> &
       InputTypeJson<R>,
-    P extends string = ConvertPathType<R['path']>
+    P extends string = ConvertPathType<R['path']>,
   >(
-    { middleware: routeMiddleware, ...route }: R,
+    { middleware: routeMiddleware, hide, ...route }: R,
     handler: Handler<
-      E,
+      // use the env from the middleware if it's defined
+      R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
+        ? RouteMiddlewareParams<R>['env'] & E
+        : E,
       P,
       I,
       // If response type is defined, only TypedResponse is allowed.
@@ -350,7 +465,9 @@ export class OpenAPIHono<
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
     BasePath
   > => {
-    this.openAPIRegistry.registerPath(route)
+    if (!hide) {
+      this.openAPIRegistry.registerPath(route)
+    }
 
     const validators: MiddlewareHandler[] = []
 
@@ -382,19 +499,44 @@ export class OpenAPIHono<
           continue
         }
         const schema = (bodyContent[mediaType] as ZodMediaTypeObject)['schema']
-        if (!(schema instanceof ZodType)) {
+        if (!isZod(schema)) {
           continue
         }
-        if (mediaType.startsWith('application/json')) {
-          const validator = zValidator('json', schema, hook as any)
-          validators.push(validator as any)
+        if (isJSONContentType(mediaType)) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore we can ignore the type error since Zod Validator's types are not used
+          const validator = zValidator('json', schema, hook)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isJSONContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
+              }
+              c.req.addValidatedData('json', {})
+              await next()
+            }
+            validators.push(mw)
+          }
         }
-        if (
-          mediaType.startsWith('multipart/form-data') ||
-          mediaType.startsWith('application/x-www-form-urlencoded')
-        ) {
+        if (isFormContentType(mediaType)) {
           const validator = zValidator('form', schema, hook as any)
-          validators.push(validator as any)
+          if (route.request?.body?.required) {
+            validators.push(validator)
+          } else {
+            const mw: MiddlewareHandler = async (c, next) => {
+              if (c.req.header('content-type')) {
+                if (isFormContentType(c.req.header('content-type')!)) {
+                  return await validator(c, next)
+                }
+              }
+              c.req.addValidatedData('form', {})
+              await next()
+            }
+            validators.push(mw)
+          }
         }
       }
     }
@@ -416,31 +558,37 @@ export class OpenAPIHono<
   }
 
   getOpenAPIDocument = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
-    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions)
-    const document = generator.generateDocument(config)
+    objectConfig: OpenAPIObjectConfig,
+    generatorConfig?: OpenAPIGeneratorOptions
+  ): OpenAPIObject => {
+    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions, generatorConfig)
+    const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   getOpenAPI31Document = (
-    config: OpenAPIObjectConfig
-  ): ReturnType<typeof generator.generateDocument> => {
-    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions)
-    const document = generator.generateDocument(config)
+    objectConfig: OpenAPIObjectConfig,
+    generatorConfig?: OpenAPIGeneratorOptions
+  ): OpenAPIV31bject => {
+    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions, generatorConfig)
+    const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
   }
 
   doc = <P extends string>(
     path: P,
-    configure: OpenAPIObjectConfigure<E, P>
+    configureObject: OpenAPIObjectConfigure<E, P>,
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
-      const config = typeof configure === 'function' ? configure(c) : configure
+      const objectConfig =
+        typeof configureObject === 'function' ? configureObject(c) : configureObject
+      const generatorConfig =
+        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPIDocument(config)
+        const document = this.getOpenAPIDocument(objectConfig, generatorConfig)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -450,12 +598,16 @@ export class OpenAPIHono<
 
   doc31 = <P extends string>(
     path: P,
-    configure: OpenAPIObjectConfigure<E, P>
+    configureObject: OpenAPIObjectConfigure<E, P>,
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
-      const config = typeof configure === 'function' ? configure(c) : configure
+      const objectConfig =
+        typeof configureObject === 'function' ? configureObject(c) : configureObject
+      const generatorConfig =
+        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPI31Document(config)
+        const document = this.getOpenAPI31Document(objectConfig, generatorConfig)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -467,7 +619,7 @@ export class OpenAPIHono<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
-    SubBasePath extends string
+    SubBasePath extends string,
   >(
     path: SubPath,
     app: Hono<SubEnv, SubSchema, SubBasePath>
@@ -477,7 +629,7 @@ export class OpenAPIHono<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
-    SubBasePath extends string
+    SubBasePath extends string,
   >(
     path: SubPath,
     app?: Hono<SubEnv, SubSchema, SubBasePath>
@@ -494,24 +646,41 @@ export class OpenAPIHono<
         case 'component':
           return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
 
-        case 'route':
-          return this.openAPIRegistry.registerPath({
+        case 'route': {
+          this.openAPIRegistry.registerPath({
             ...def.route,
-            path: mergePath(pathForOpenAPI, def.route.path),
+            path: mergePath(
+              pathForOpenAPI,
+              // @ts-expect-error _basePath is private
+              app._basePath.replaceAll(/:([^\/]+)/g, '{$1}'),
+              def.route.path
+            ),
           })
+          return
+        }
 
-        case 'webhook':
-          return this.openAPIRegistry.registerWebhook({
+        case 'webhook': {
+          this.openAPIRegistry.registerWebhook({
             ...def.webhook,
-            path: mergePath(pathForOpenAPI, def.webhook.path),
+            path: mergePath(
+              pathForOpenAPI,
+              // @ts-expect-error _basePath is private
+              app._basePath.replaceAll(/:([^\/]+)/g, '{$1}'),
+              def.webhook.path
+            ),
           })
+          return
+        }
 
         case 'schema':
-          return this.openAPIRegistry.register(def.schema._def.openapi._internal.refId, def.schema)
+          return this.openAPIRegistry.register(
+            getOpenApiMetadata(def.schema)._internal?.refId,
+            def.schema
+          )
 
         case 'parameter':
           return this.openAPIRegistry.registerParameter(
-            def.schema._def.openapi._internal.refId,
+            getOpenApiMetadata(def.schema)._internal?.refId,
             def.schema
           )
 
@@ -522,7 +691,6 @@ export class OpenAPIHono<
       }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this as any
   }
 
@@ -537,7 +705,9 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
 
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
-) => {
+): R & {
+  getRoutingPath(): RoutingPath<R['path']>
+} => {
   const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
@@ -548,17 +718,28 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 }
 
 extendZodWithOpenApi(z)
-export { z }
+export { extendZodWithOpenApi, z }
 
 function addBasePathToDocument(document: Record<string, any>, basePath: string) {
   const updatedPaths: Record<string, any> = {}
 
   Object.keys(document.paths).forEach((path) => {
-    updatedPaths[mergePath(basePath, path)] = document.paths[path]
+    updatedPaths[mergePath(basePath.replaceAll(/:([^\/]+)/g, '{$1}'), path)] = document.paths[path]
   })
 
   return {
     ...document,
     paths: updatedPaths,
   }
+}
+
+function isJSONContentType(contentType: string) {
+  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+}
+
+function isFormContentType(contentType: string) {
+  return (
+    contentType.startsWith('multipart/form-data') ||
+    contentType.startsWith('application/x-www-form-urlencoded')
+  )
 }

@@ -13,7 +13,7 @@ type GoogleAuthFlow = {
   state?: string
   login_hint?: string
   prompt?: 'none' | 'consent' | 'select_account'
-  access_type?: 'online' | 'offline'
+  access_type?: 'offline' | 'online'
 }
 
 export class AuthFlow {
@@ -22,6 +22,7 @@ export class AuthFlow {
   redirect_uri: string
   code: string | undefined
   token: Token | undefined
+  refresh_token: Token | undefined
   scope: string[]
   state: string | undefined
   login_hint: string | undefined
@@ -29,6 +30,7 @@ export class AuthFlow {
   access_type: 'online' | 'offline' | undefined
   user: Partial<GoogleUser> | undefined
   granted_scopes: string[] | undefined
+  access_type: 'offline' | 'online' | undefined
 
   constructor({
     client_id,
@@ -40,7 +42,7 @@ export class AuthFlow {
     state,
     code,
     token,
-    access_type
+    access_type,
   }: GoogleAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
@@ -54,6 +56,7 @@ export class AuthFlow {
     this.access_type = access_type
     this.user = undefined
     this.granted_scopes = undefined
+    this.access_type = access_type
 
     if (
       this.client_id === undefined ||
@@ -74,12 +77,14 @@ export class AuthFlow {
       include_granted_scopes: true,
       scope: this.scope.join(' '),
       state: this.state,
-      access_type: this.access_type
+      prompt: this.prompt,
+      login_hint: this.login_hint,
+      access_type: this.access_type,
     })
     return `https://accounts.google.com/o/oauth2/v2/auth?${parsedOptions}`
   }
 
-  async getTokenFromCode() {
+  async getTokenFromCode(): Promise<void> {
     const response = (await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
@@ -107,6 +112,13 @@ export class AuthFlow {
       }
 
       this.granted_scopes = response.scope.split(' ')
+    }
+
+    if ('refresh_token' in response) {
+      this.refresh_token = {
+        token: response.refresh_token,
+        expires_in: response.refresh_token_expires_in,
+      }
     }
   }
 

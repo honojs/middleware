@@ -1,5 +1,53 @@
 # @hono/auth-js
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1324](https://github.com/honojs/middleware/pull/1324) [`d89fed7eecfa151c18b0a8cf95dae1dfe83dfec2`](https://github.com/honojs/middleware/commit/d89fed7eecfa151c18b0a8cf95dae1dfe83dfec2) Thanks [@jamestalmage](https://github.com/jamestalmage)! - Allow async authjs Config
+
+## 1.0.17
+
+### Patch Changes
+
+- [#1210](https://github.com/honojs/middleware/pull/1210) [`0758fd0af1f213131d0894299e5bec716d284580`](https://github.com/honojs/middleware/commit/0758fd0af1f213131d0894299e5bec716d284580) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
+## 1.0.16
+
+### Patch Changes
+
+- [#1170](https://github.com/honojs/middleware/pull/1170) [`7585969171ad4876e7620c7369eb9b638849d0eb`](https://github.com/honojs/middleware/commit/7585969171ad4876e7620c7369eb9b638849d0eb) Thanks [@hambergerpls](https://github.com/hambergerpls)! - fix(auth-js): use HonoRequest.blob() instead of HonoRequest.raw.body()
+
+## 1.0.15
+
+### Patch Changes
+
+- [#813](https://github.com/honojs/middleware/pull/813) [`b1c812e50c9388cf7cda893e7c554cedeb24d803`](https://github.com/honojs/middleware/commit/b1c812e50c9388cf7cda893e7c554cedeb24d803) Thanks [@divyam234](https://github.com/divyam234)! - add react 19 in peer dependencies
+
+## 1.0.14
+
+### Patch Changes
+
+- [#806](https://github.com/honojs/middleware/pull/806) [`9a2cf452c7000aee4193502da755b2c4352b077d`](https://github.com/honojs/middleware/commit/9a2cf452c7000aee4193502da755b2c4352b077d) Thanks [@985563349](https://github.com/985563349)! - fix cloned request causing request body to be unavailable in middleware
+
+## 1.0.13
+
+### Patch Changes
+
+- [#790](https://github.com/honojs/middleware/pull/790) [`ed31c680f7cb4d08985c820e8e1bf051ddc57acd`](https://github.com/honojs/middleware/commit/ed31c680f7cb4d08985c820e8e1bf051ddc57acd) Thanks [@divyam234](https://github.com/divyam234)! - clone request directly for bun
+
+## 1.0.12
+
+### Patch Changes
+
+- [#775](https://github.com/honojs/middleware/pull/775) [`c19b51baaf396647f2d6b021e38f083768328b74`](https://github.com/honojs/middleware/commit/c19b51baaf396647f2d6b021e38f083768328b74) Thanks [@divyam234](https://github.com/divyam234)! - refactor session provider
+
+## 1.0.11
+
+### Patch Changes
+
+- [#769](https://github.com/honojs/middleware/pull/769) [`c2d661aa697bc3800a1b4b6c10ed3589d6d85cf2`](https://github.com/honojs/middleware/commit/c2d661aa697bc3800a1b4b6c10ed3589d6d85cf2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: remove config.basePath
+
 ## 1.0.10
 
 ### Patch Changes

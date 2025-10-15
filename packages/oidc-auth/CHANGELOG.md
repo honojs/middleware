@@ -1,5 +1,69 @@
 # @hono/oidc-auth
 
+## 1.7.1
+
+### Patch Changes
+
+- [#1491](https://github.com/honojs/middleware/pull/1491) [`9350971ad5900e7134239a1c4ae1b0582de74a49`](https://github.com/honojs/middleware/commit/9350971ad5900e7134239a1c4ae1b0582de74a49) Thanks [@SergKam](https://github.com/SergKam)! - fix(oidc-auth): ensure revokeSession clears domain-scoped cookies with Domain attribute
+
+## 1.7.0
+
+### Minor Changes
+
+- [#1248](https://github.com/honojs/middleware/pull/1248) [`6e4ee78e956d72a0f11bd70c56feb5e979fa46ad`](https://github.com/honojs/middleware/commit/6e4ee78e956d72a0f11bd70c56feb5e979fa46ad) Thanks [@hnw](https://github.com/hnw)! - Add OIDC_AUTH_EXTERNAL_URL to support reverse proxies
+
+## 1.6.1
+
+### Patch Changes
+
+- [#1202](https://github.com/honojs/middleware/pull/1202) [`aaf90c39e673b64547922f6fc2aefa5716fbf5f8`](https://github.com/honojs/middleware/commit/aaf90c39e673b64547922f6fc2aefa5716fbf5f8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `MiddlewareHandler` return type
+
+## 1.6.0
+
+### Minor Changes
+
+- [#1010](https://github.com/honojs/middleware/pull/1010) [`e6160a2f94d65b1a72df06b667b8c8d0c21d00e5`](https://github.com/honojs/middleware/commit/e6160a2f94d65b1a72df06b667b8c8d0c21d00e5) Thanks [@wayofthepie](https://github.com/wayofthepie)! - Add support for setting audience in the OIDC_AUDIENCE environment variable
+
+## 1.5.0
+
+### Minor Changes
+
+- [#980](https://github.com/honojs/middleware/pull/980) [`87be44000987c41209fbb79c1a0c95dcf31fadfa`](https://github.com/honojs/middleware/commit/87be44000987c41209fbb79c1a0c95dcf31fadfa) Thanks [@rajsite](https://github.com/rajsite)! - Add initOidcAuthMiddleware() and avoid mutating environment variables
+
+## 1.4.1
+
+### Patch Changes
+
+- [#936](https://github.com/honojs/middleware/pull/936) [`be34f6908f1ecc22171d302edb10036b3bba9fe9`](https://github.com/honojs/middleware/commit/be34f6908f1ecc22171d302edb10036b3bba9fe9) Thanks [@hnw](https://github.com/hnw)! - Fix type error
+
+## 1.4.0
+
+### Minor Changes
+
+- [#926](https://github.com/honojs/middleware/pull/926) [`2f716d619d9e61df3f12427ef6cdebaf0888569e`](https://github.com/honojs/middleware/commit/2f716d619d9e61df3f12427ef6cdebaf0888569e) Thanks [@hnw](https://github.com/hnw)! - Add support for absolute path in OIDC_REDIRECT_URI and set its default value to '/callback'
+
+## 1.3.0
+
+### Minor Changes
+
+- [#919](https://github.com/honojs/middleware/pull/919) [`4a0606f774022097bf7de69077fe366280bf4f49`](https://github.com/honojs/middleware/commit/4a0606f774022097bf7de69077fe366280bf4f49) Thanks [@maemaemae3](https://github.com/maemaemae3)! - Optionally specify a custom cookie domain using the OIDC_COOKIE_DOMAIN environment variable (default is domain of the request)
+
+## 1.2.0
+
+### Minor Changes
+
+- [#789](https://github.com/honojs/middleware/pull/789) [`68eec9e2bc9aedbf3d631a2c6a4c7f55417d661c`](https://github.com/honojs/middleware/commit/68eec9e2bc9aedbf3d631a2c6a4c7f55417d661c) Thanks [@maemaemae3](https://github.com/maemaemae3)! - Optionally specify a custom cookie name using the OIDC_COOKIE_NAME environment variable (default is 'oidc-auth')
+
+## 1.1.0
+
+### Minor Changes
+
+- [#711](https://github.com/honojs/middleware/pull/711) [`5675a5fc323a007447f077b97273938baddba59c`](https://github.com/honojs/middleware/commit/5675a5fc323a007447f077b97273938baddba59c) Thanks [@ameinhardt](https://github.com/ameinhardt)! - define custom scope, access oauth response and set custom session claims
+
+- [#709](https://github.com/honojs/middleware/pull/709) [`cd99b40177cc3eef706ab37d21f4351e86934cc6`](https://github.com/honojs/middleware/commit/cd99b40177cc3eef706ab37d21f4351e86934cc6) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Optionally restrict cookie path with new envvar OIDC_COOKIE_PATH
+
+- [#709](https://github.com/honojs/middleware/pull/709) [`cd99b40177cc3eef706ab37d21f4351e86934cc6`](https://github.com/honojs/middleware/commit/cd99b40177cc3eef706ab37d21f4351e86934cc6) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Restrict path of callback cookies to pathname of OIDC_REDIRECT_URI
+
 ## 1.0.1
 
 ### Patch Changes

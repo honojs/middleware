@@ -2,11 +2,11 @@ import { HTTPException } from 'hono/http-exception'
 
 import { toQueryParams } from '../../utils/objectToQuery'
 import type {
+  GitHubEmailResponse,
   GitHubErrorResponse,
+  GitHubScope,
   GitHubTokenResponse,
   GitHubUser,
-  GitHubScope,
-  GitHubEmailResponse,
 } from './types'
 
 type GithubAuthFlow = {
@@ -49,7 +49,7 @@ export class AuthFlow {
     this.granted_scopes = undefined
   }
 
-  redirect() {
+  redirect(): string {
     const url = 'https://github.com/login/oauth/authorize?'
 
     const queryParams = toQueryParams({
@@ -99,6 +99,8 @@ export class AuthFlow {
       headers: {
         Authorization: `Bearer ${this.token?.token}`,
         'User-Agent': userAgent,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     }).then((res) => res.json())) as GitHubEmailResponse[] | GitHubErrorResponse
 
@@ -114,7 +116,7 @@ export class AuthFlow {
     return email as string
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     if (!this.token?.token) {
       await this.getTokenFromCode()
     }

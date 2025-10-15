@@ -23,17 +23,18 @@ export const typiaValidator = <
   } = {
     in: { [K in Target]: O }
     out: { [K in Target]: O }
-  }
+  },
 >(
   target: Target,
   validate: T,
   hook?: Hook<O, E, P>
 ): MiddlewareHandler<E, P, V> =>
-  validator(target, (value, c) => {
+  // @ts-expect-error not typed well
+  validator(target, async (value, c) => {
     const result = validate(value)
 
     if (hook) {
-      const hookResult = hook({ ...result, data: value }, c)
+      const hookResult = await hook({ ...result, data: value }, c)
       if (hookResult) {
         if (hookResult instanceof Response || hookResult instanceof Promise) {
           return hookResult

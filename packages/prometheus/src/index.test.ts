@@ -17,7 +17,9 @@ describe('Prometheus middleware', () => {
   app.get('/', (c) => c.text('hello'))
   app.get('/user/:id', (c) => c.text(c.req.param('id')))
 
-  beforeEach(() => registry.resetMetrics())
+  beforeEach(() => {
+    registry.resetMetrics()
+  })
 
   describe('configuration', () => {
     it('prefix - adds the provided prefix to the metric names', async () => {

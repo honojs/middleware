@@ -1,7 +1,8 @@
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import React from 'react'
-import { renderToString, type RenderToReadableStreamOptions } from 'react-dom/server'
+import { renderToString } from 'react-dom/server'
+import type { RenderToReadableStreamOptions } from 'react-dom/server'
 import type { Props } from '.'
 
 type RendererOptions = {
@@ -29,10 +30,12 @@ const createRenderer =
     options?: RendererOptions
   ) =>
   async (children: React.ReactElement, props?: Props) => {
-    const node = component ? component({ children, Layout, c, ...props }) : children
+    const node = component ? await component({ children, Layout, c, ...props }) : children
 
     if (options?.stream) {
-      const { renderToReadableStream } = await import('react-dom/server')
+      const module = await import('react-dom/server.edge')
+      const renderToReadableStream =
+        module.renderToReadableStream ?? module.default.renderToReadableStream
       const stream = await renderToReadableStream(
         React.createElement(RequestContext.Provider, { value: c }, node),
         options.readableStreamOptions
@@ -50,9 +53,9 @@ const createRenderer =
       const docType =
         typeof options?.docType === 'string'
           ? options.docType
-          : options?.docType === true
-          ? '<!DOCTYPE html>'
-          : ''
+          : options?.docType === false
+            ? ''
+            : '<!DOCTYPE html>'
       const body =
         docType + renderToString(React.createElement(RequestContext.Provider, { value: c }, node))
       return c.html(body)
@@ -70,7 +73,7 @@ export const reactRenderer = (
     if (component) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       c.setLayout((props: any) => {
-        return component({ ...props, Layout, c }, c)
+        return component({ ...props, Layout, c })
       })
     }
     c.setRenderer(createRenderer(c, Layout, component, options))

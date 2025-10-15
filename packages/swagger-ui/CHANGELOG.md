@@ -1,5 +1,30 @@
 # @hono/swagger-ui
 
+## 0.5.2
+
+### Patch Changes
+
+- [#1208](https://github.com/honojs/middleware/pull/1208) [`b8802e01b716843f1f9e913805a6a5abae22b0d8`](https://github.com/honojs/middleware/commit/b8802e01b716843f1f9e913805a6a5abae22b0d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
+## 0.5.1
+
+### Patch Changes
+
+- [#988](https://github.com/honojs/middleware/pull/988) [`708aa3510c9847194974e91de9f0f323da945773`](https://github.com/honojs/middleware/commit/708aa3510c9847194974e91de9f0f323da945773) Thanks [@Younis-Ahmed](https://github.com/Younis-Ahmed)! - - fix(swagger-ui): Handle undefined options and improve rendering logic for non-RENDER_TYPE_MAP edge cases
+  - test(option-renderer): Add tests for filtering and handling invalid properties
+
+## 0.5.0
+
+### Minor Changes
+
+- [#845](https://github.com/honojs/middleware/pull/845) [`934b3932c1c3fd54b22ff96ad1f9f8846ba9edc9`](https://github.com/honojs/middleware/commit/934b3932c1c3fd54b22ff96ad1f9f8846ba9edc9) Thanks [@rwv](https://github.com/rwv)! - customize html title for swagger-ui
+
+## 0.4.1
+
+### Patch Changes
+
+- [#701](https://github.com/honojs/middleware/pull/701) [`32abe11a4ad67275e3a5e8767684f750d3f04a7a`](https://github.com/honojs/middleware/commit/32abe11a4ad67275e3a5e8767684f750d3f04a7a) Thanks [@rwv](https://github.com/rwv)! - perf: use jsdelivr instead of unpkg to serve swagger-ui assets
+
 ## 0.4.0
 
 ### Minor Changes

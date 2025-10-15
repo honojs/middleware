@@ -1,5 +1,47 @@
 # @hono/graphql-server
 
+## 0.7.0
+
+### Minor Changes
+
+- [#1454](https://github.com/honojs/middleware/pull/1454) [`81b01fe1314b3da3767445f4d1cdf95e5820efe9`](https://github.com/honojs/middleware/commit/81b01fe1314b3da3767445f4d1cdf95e5820efe9) Thanks [@ThomOrlo](https://github.com/ThomOrlo)! - feat: upgrade GraphiQL
+
+## 0.6.2
+
+### Patch Changes
+
+- [#1252](https://github.com/honojs/middleware/pull/1252) [`205aced16bc4061277f33a00edee2814063e8a6d`](https://github.com/honojs/middleware/commit/205aced16bc4061277f33a00edee2814063e8a6d) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Update package repository directory, see #1251
+
+## 0.6.1
+
+### Patch Changes
+
+- [#1197](https://github.com/honojs/middleware/pull/1197) [`ab390305fba1d9bd99da46537f28763f7d5df8df`](https://github.com/honojs/middleware/commit/ab390305fba1d9bd99da46537f28763f7d5df8df) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit `Response` return type
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1155](https://github.com/honojs/middleware/pull/1155) [`7d3aa32e7987289a6585a0023ff63624ec4430cc`](https://github.com/honojs/middleware/commit/7d3aa32e7987289a6585a0023ff63624ec4430cc) Thanks [@ThomOrlo](https://github.com/ThomOrlo)! - feat: upgrade GraphiQL
+
+## 0.5.1
+
+### Patch Changes
+
+- [#705](https://github.com/honojs/middleware/pull/705) [`9cac146245bc410f328ce59e1b82358464307a88`](https://github.com/honojs/middleware/commit/9cac146245bc410f328ce59e1b82358464307a88) Thanks [@metrue](https://github.com/metrue)! - Make argument (context) for the root resolver function from optional to required.
+
+## 0.5.0
+
+### Minor Changes
+
+- [#670](https://github.com/honojs/middleware/pull/670) [`e3eafbc117103ef408f8b242784b53c9ffdb326e`](https://github.com/honojs/middleware/commit/e3eafbc117103ef408f8b242784b53c9ffdb326e) Thanks [@3w36zj6](https://github.com/3w36zj6)! - feat: add GraphiQL support
+
+## 0.4.4
+
+### Patch Changes
+
+- [#667](https://github.com/honojs/middleware/pull/667) [`41ab4b029d225901b7369d88fb29b64f6c217dda`](https://github.com/honojs/middleware/commit/41ab4b029d225901b7369d88fb29b64f6c217dda) Thanks [@3w36zj6](https://github.com/3w36zj6)! - fix: add type to Middleware Handler
+
 ## 0.4.3
 
 ### Patch Changes

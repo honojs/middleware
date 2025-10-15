@@ -14,7 +14,7 @@ export interface VerifyFirebaseAuthConfig {
   projectId: string
   authorizationHeaderKey?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>) => KeyStorer
   disableErrorLog?: boolean
   firebaseEmulatorHost?: string
 }
@@ -88,7 +88,9 @@ export const verifyFirebaseAuth = (userConfig: VerifyFirebaseAuthConfig): Middle
 
 const idTokenContextKey = 'firebase-auth-cloudflare-id-token-key'
 
-const setFirebaseToken = (c: Context, idToken: FirebaseIdToken) => c.set(idTokenContextKey, idToken)
+const setFirebaseToken = (c: Context, idToken: FirebaseIdToken) => {
+  c.set(idTokenContextKey, idToken)
+}
 
 export const getFirebaseToken = (c: Context): FirebaseIdToken | null => {
   const idToken = c.get(idTokenContextKey)
@@ -102,7 +104,7 @@ export interface VerifySessionCookieFirebaseAuthConfig {
   projectId: string
   cookieName?: string
   keyStore?: KeyStorer
-  keyStoreInitializer?: (c: Context) => KeyStorer
+  keyStoreInitializer?: (c: Context<{ Bindings: VerifyFirebaseAuthEnv }>) => KeyStorer
   firebaseEmulatorHost?: string
   redirects: {
     signIn: string

@@ -1,0 +1,16 @@
+{
+  "name": "@hono/auth-js",
+  "version": "1.1.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+  }
+}

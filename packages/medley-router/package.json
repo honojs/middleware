@@ -1,17 +1,35 @@
 {
   "name": "@hono/medley-router",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Router using @medley/router",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "jest",
-    "build": "rimraf dist && tsc",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "license": "MIT",
   "publishConfig": {
@@ -20,16 +38,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/medley-router"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.8.0"
   },
   "devDependencies": {
-    "hono": "^3.11.7",
-    "jest": "^29.7.0",
-    "rimraf": "^5.0.5"
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.9.10",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@medley/router": "^0.2.1"

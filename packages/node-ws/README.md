@@ -1,5 +1,7 @@
 # WebSocket helper for Node.js
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=node-ws)](https://codecov.io/github/honojs/middleware)
+
 A WebSocket helper for Node.js
 
 ## Usage
@@ -13,9 +15,12 @@ const app = new Hono()
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app })
 
-app.get('/ws', upgradeWebSocket((c) => ({
-  // https://hono.dev/helpers/websocket
-})))
+app.get(
+  '/ws',
+  upgradeWebSocket((c) => ({
+    // https://hono.dev/helpers/websocket
+  }))
+)
 
 const server = serve(app)
 injectWebSocket(server)

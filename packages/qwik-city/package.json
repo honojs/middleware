@@ -2,18 +2,31 @@
   "name": "@hono/qwik-city",
   "version": "0.0.5",
   "description": "Qwik City middleware for Hono",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "rimraf dist && yarn build:cjs && yarn build:esm",
-    "prerelease": "yarn build && yarn test",
-    "release": "yarn publish"
+    "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json --noEmit"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "license": "MIT",
   "publishConfig": {
@@ -22,19 +35,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/qwik-city"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "@builder.io/qwik": "^1.2.0",
-    "@builder.io/qwik-city": "^1.2.0",
+    "@builder.io/qwik-city": "^1.16.0",
     "hono": "^3.1.5"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@builder.io/qwik": "^1.2.0",
-    "@builder.io/qwik-city": "^1.2.0",
-    "hono": "^3.11.7",
-    "rimraf": "^5.0.5"
+    "@builder.io/qwik-city": "^1.16.0",
+    "hono": "^4.9.10",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18"

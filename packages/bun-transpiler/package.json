@@ -1,24 +1,33 @@
 {
   "name": "@hono/bun-transpiler",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Bun Transpiler Middleware for Hono",
+  "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "bun test",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts --external bun",
-    "publint": "publint",
-    "release": "yarn build && yarn test && yarn publint && yarn publish"
+    "build": "tsup ./src/index.ts --external bun",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "bun test"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "license": "MIT",
@@ -28,17 +37,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/bun-transpiler"
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": "*"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.0.0",
-    "hono": "^3.11.7",
-    "tsup": "^8.0.1",
-    "vitest": "^1.0.4"
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.9.10",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18.14.1"

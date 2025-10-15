@@ -1,5 +1,53 @@
 # @hono/typia-validator
 
+## 0.1.2
+
+### Patch Changes
+
+- [#1027](https://github.com/honojs/middleware/pull/1027) [`70bae1d5734bb411b0e9d4ae8f5f010966da8d5c`](https://github.com/honojs/middleware/commit/70bae1d5734bb411b0e9d4ae8f5f010966da8d5c) Thanks [@koteelok](https://github.com/koteelok)! - Move 'default' entry point down to fix imports in ESM environments.
+
+## 0.1.1
+
+### Patch Changes
+
+- [#1024](https://github.com/honojs/middleware/pull/1024) [`4f1782919154946a4105a113884f2ae929dc9317`](https://github.com/honojs/middleware/commit/4f1782919154946a4105a113884f2ae929dc9317) Thanks [@gronxb](https://github.com/gronxb)! - Include `typia@8` as a peer dependency
+
+## 0.1.0
+
+### Minor Changes
+
+- [#888](https://github.com/honojs/middleware/pull/888) [`c63470e4915a0680c624bf97d52487572185a2d5`](https://github.com/honojs/middleware/commit/c63470e4915a0680c624bf97d52487572185a2d5) Thanks [@miyaji255](https://github.com/miyaji255)! - Enables handling of `number`, `boolean`, and `bigint` types in query parameters and headers.
+
+  ```diff
+  - import { typiaValidator } from '@hono/typia-validator';
+  + import { typiaValidator } from '@hono/typia-validator/http';
+    import { Hono } from 'hono';
+    import typia, { type tags } from 'typia';
+
+    interface Schema {
+  -   pages: `${number}`[];
+  +   pages: (number & tags.Type<'uint32'>)[];
+    }
+
+    const app = new Hono()
+      .get(
+        '/books',
+        typiaValidator(
+  -       typia.createValidate<Schema>(),
+  +       typia.http.createValidateQuery<Schema>(),
+          async (result, c) => {
+            if (!result.success)
+              return c.text('Invalid query parameters', 400);
+  -         return { pages: result.data.pages.map(Number) };
+          }
+        ),
+        async c => {
+          const { pages } = c.req.valid('query'); // { pages: number[] }
+          //...
+        }
+      )
+  ```
+
 ## 0.0.5
 
 ### Patch Changes

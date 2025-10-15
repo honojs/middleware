@@ -8,7 +8,9 @@ type ResourceConfig = {
 }
 
 export const remoteAssets = ({ version }: ResourceConfig): AssetURLs => {
-  const url = `https://unpkg.com/swagger-ui-dist${version !== undefined ? `@${version}` : ''}`
+  const url = `https://cdn.jsdelivr.net/npm/swagger-ui-dist${
+    version !== undefined ? `@${version}` : ''
+  }`
 
   return {
     css: [`${url}/swagger-ui.css`],

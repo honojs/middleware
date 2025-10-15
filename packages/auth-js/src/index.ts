@@ -1,12 +1,11 @@
 import type { AuthConfig as AuthConfigCore } from '@auth/core'
-import { Auth } from '@auth/core'
+import { Auth, setEnvDefaults as coreSetEnvDefaults } from '@auth/core'
 import type { AdapterUser } from '@auth/core/adapters'
 import type { JWT } from '@auth/core/jwt'
 import type { Session } from '@auth/core/types'
 import type { Context, MiddlewareHandler } from 'hono'
-import { env, getRuntimeKey } from 'hono/adapter'
+import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
-import { setEnvDefaults as coreSetEnvDefaults } from '@auth/core'
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -30,69 +29,52 @@ export type AuthUser = {
 
 export interface AuthConfig extends Omit<AuthConfigCore, 'raw'> {}
 
-export type ConfigHandler = (c: Context) => AuthConfig
+export type ConfigHandler = (c: Context) => AuthConfig | Promise<AuthConfig>
 
-export function setEnvDefaults(env: AuthEnv, config: AuthConfig) {
+export function setEnvDefaults(env: AuthEnv, config: AuthConfig): void {
   config.secret ??= env.AUTH_SECRET
-  config.basePath ||= '/api/auth'
   coreSetEnvDefaults(env, config)
 }
 
-async function cloneRequest(input: URL | string, request: Request, headers?: Headers) {
-  if (getRuntimeKey() === 'bun') {
-    return new Request(input, {
-      method: request.method,
-      headers: headers ?? new Headers(request.headers),
-      body:
-        request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.blob(),
-      // @ts-ignore: TS2353
-      referrer: 'referrer' in request ? (request.referrer as string) : undefined,
-      // deno-lint-ignore no-explicit-any
-      referrerPolicy: request.referrerPolicy as any,
-      mode: request.mode,
-      credentials: request.credentials,
-      // @ts-ignore: TS2353
-      cache: request.cache,
-      redirect: request.redirect,
-      integrity: request.integrity,
-      keepalive: request.keepalive,
-      signal: request.signal,
-    })
-  }
-  return new Request(input, request)
-}
-
-export async function reqWithEnvUrl(req: Request, authUrl?: string) {
+export function reqWithEnvUrl(req: Request, authUrl?: string): Request {
   if (authUrl) {
     const reqUrlObj = new URL(req.url)
     const authUrlObj = new URL(authUrl)
     const props = ['hostname', 'protocol', 'port', 'password', 'username'] as const
-    props.forEach((prop) => (reqUrlObj[prop] = authUrlObj[prop]))
-    return cloneRequest(reqUrlObj.href, req)
-  } else {
-    const url = new URL(req.url)
-    const headers = new Headers(req.headers)
-    const proto = headers.get('x-forwarded-proto')
-    const host = headers.get('x-forwarded-host') ?? headers.get('host')
-    if (proto != null) url.protocol = proto.endsWith(':') ? proto : proto + ':'
-    if (host != null) {
-      url.host = host
-      const portMatch = host.match(/:(\d+)$/)
-      if (portMatch) url.port = portMatch[1]
-      else url.port = ''
-      headers.delete('x-forwarded-host')
-      headers.delete('Host')
-      headers.set('Host', host)
+    for (const prop of props) {
+      if (authUrlObj[prop]) {
+        reqUrlObj[prop] = authUrlObj[prop]
+      }
     }
-    return cloneRequest(url.href, req, headers)
+    return new Request(reqUrlObj.href, req)
   }
+  const url = new URL(req.url)
+  const newReq = new Request(url.href, req)
+  const proto = newReq.headers.get('x-forwarded-proto')
+  const host = newReq.headers.get('x-forwarded-host') ?? newReq.headers.get('host')
+  if (proto != null) {
+    url.protocol = proto.endsWith(':') ? proto : `${proto}:`
+  }
+  if (host != null) {
+    url.host = host
+    const portMatch = host.match(/:(\d+)$/)
+    if (portMatch) {
+      url.port = portMatch[1]
+    } else {
+      url.port = ''
+    }
+    newReq.headers.delete('x-forwarded-host')
+    newReq.headers.delete('Host')
+    newReq.headers.set('Host', host)
+  }
+  return new Request(url.href, newReq)
 }
 
 export async function getAuthUser(c: Context): Promise<AuthUser | null> {
   const config = c.get('authConfig')
   const ctxEnv = env(c) as AuthEnv
   setEnvDefaults(ctxEnv, config)
-  const authReq = await reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
+  const authReq = reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
   const origin = new URL(authReq.url).origin
   const request = new Request(`${origin}${config.basePath}/session`, {
     headers: { cookie: c.req.header('cookie') ?? '' },
@@ -115,7 +97,7 @@ export async function getAuthUser(c: Context): Promise<AuthUser | null> {
 
   const session = (await response.json()) as Session | null
 
-  return session && session.user ? authUser : null
+  return session?.user ? authUser : null
 }
 
 export function verifyAuth(): MiddlewareHandler {
@@ -127,9 +109,8 @@ export function verifyAuth(): MiddlewareHandler {
         status: 401,
       })
       throw new HTTPException(401, { res })
-    } else {
-      c.set('authUser', authUser)
     }
+    c.set('authUser', authUser)
 
     await next()
   }
@@ -137,7 +118,7 @@ export function verifyAuth(): MiddlewareHandler {
 
 export function initAuthConfig(cb: ConfigHandler): MiddlewareHandler {
   return async (c, next) => {
-    const config = cb(c)
+    const config = await cb(c)
     c.set('authConfig', config)
     await next()
   }
@@ -154,8 +135,27 @@ export function authHandler(): MiddlewareHandler {
       throw new HTTPException(500, { message: 'Missing AUTH_SECRET' })
     }
 
-    const authReq = await reqWithEnvUrl(c.req.raw, ctxEnv.AUTH_URL)
-    const res = await Auth(authReq, config)
+    const body = c.req.raw.body ? await c.req.blob() : undefined
+    const res = await Auth(
+      reqWithEnvUrl(
+        new Request(c.req.raw.url, {
+          body,
+          cache: c.req.raw.cache,
+          credentials: c.req.raw.credentials,
+          headers: c.req.raw.headers,
+          integrity: c.req.raw.integrity,
+          keepalive: c.req.raw.keepalive,
+          method: c.req.raw.method,
+          mode: c.req.raw.mode,
+          redirect: c.req.raw.redirect,
+          referrer: c.req.raw.referrer,
+          referrerPolicy: c.req.raw.referrerPolicy,
+          signal: c.req.raw.signal,
+        }),
+        ctxEnv.AUTH_URL
+      ),
+      config
+    )
     return new Response(res.body, res)
   }
 }

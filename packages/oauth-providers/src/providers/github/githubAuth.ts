@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -12,6 +12,7 @@ export function githubAuth(options: {
   client_secret?: string
   scope?: GitHubScope[]
   oauthApp?: boolean
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -46,7 +47,9 @@ export function githubAuth(options: {
       // As such, we want to make sure we call back to the same location
       // for GitHub apps and not the first configured callbackURL in the app config.
       return c.redirect(
-        auth.redirect().concat(options.oauthApp ? '' : `&redirect_uri=${c.req.url}`)
+        auth
+          .redirect()
+          .concat(options.oauthApp ? '' : `&redirect_uri=${options.redirect_uri || c.req.url}`)
       )
     }
 

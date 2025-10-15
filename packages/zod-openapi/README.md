@@ -1,5 +1,7 @@
 # Zod OpenAPI Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=zod-openapi)](https://codecov.io/github/honojs/middleware)
+
 **Zod OpenAPI Hono** is an extended Hono class that supports OpenAPI. With it, you can validate values and types using [**Zod**](https://zod.dev/) and generate OpenAPI Swagger documentation. This is based on [**Zod to OpenAPI**](https://github.com/asteasolutions/zod-to-openapi) (thanks a lot!). For details on creating schemas and defining routes, please refer to [the "Zod to OpenAPI" resource](https://github.com/asteasolutions/zod-to-openapi).
 
 _Note: This is not standalone middleware but is hosted on the monorepo "[github.com/honojs/middleware](https://github.com/honojs/middleware)"._
@@ -51,7 +53,9 @@ const UserSchema = z
   .openapi('User')
 ```
 
-> [!TIP] > `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
+> [!TIP]
+>
+> `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
 > If you want to register the schema as referenced components, use `.openapi()` method.
 
 Next, create a route:
@@ -112,6 +116,71 @@ You can start your app just like you would with Hono. For Cloudflare Workers and
 ```ts
 export default app
 ```
+
+> [!IMPORTANT]
+> The request must have the proper `Content-Type` to ensure the validation. For example, if you want to validate a JSON body, the request must have the `Content-Type` to `application/json` in the request. Otherwise, the value of `c.req.valid('json')` will be `{}`.
+>
+> ```ts
+> import { createRoute, z, OpenAPIHono } from '@hono/zod-openapi'
+>
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: z.object({
+>             title: z.string(),
+>           }),
+>         },
+>       },
+>     },
+>   },
+>   responses: {
+>     200: {
+>       description: 'Success message',
+>     },
+>   },
+> })
+>
+> const app = new OpenAPIHono()
+>
+> app.openapi(route, (c) => {
+>   const validatedBody = c.req.valid('json')
+>   return c.json(validatedBody) // validatedBody is {}
+> })
+>
+> const res = await app.request('/books', {
+>   method: 'POST',
+>   body: JSON.stringify({ title: 'foo' }),
+>   // The Content-Type header is lacking.
+> })
+>
+> const data = await res.json()
+> console.log(data) // {}
+> ```
+>
+> If you want to force validation of requests that do not have the proper `Content-Type`, set the value of `request.body.required` to `true`.
+>
+> ```ts
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: z.object({
+>             title: z.string(),
+>           }),
+>         },
+>       },
+>       required: true, // <== add
+>     },
+>   },
+> })
+> ```
 
 ### Handling Validation Errors
 
@@ -239,9 +308,19 @@ app.openapi(
 You can generate OpenAPI v3.1 spec using the following methods:
 
 ```ts
-app.doc31('/docs', { openapi: '3.1.0' }) // new endpoint
-app.getOpenAPI31Document({ openapi: '3.1.0' }) // raw json
+app.doc31('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // new endpoint
+app.getOpenAPI31Document(
+  {
+    openapi: '3.1.0',
+    info: { title: 'foo', version: '1' },
+  }, // OpenAPI object config
+  {
+    unionPreferredType: 'oneOf',
+  } // Generator options
+) // schema object
 ```
+
+The second parameter is optional and accepts generator options as supported by the `@asteasolutions/zod-to-openapi` library. Refer to their documentation for the complete list of available options and their usage.
 
 ### The Registry
 
@@ -269,7 +348,7 @@ You can configure middleware for each endpoint from a route created by `createRo
 
 ```ts
 import { prettyJSON } from 'hono/pretty-json'
-import { cache } from 'honoc/cache'
+import { cache } from 'hono/cache'
 
 app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
 app.openapi(route, handler)
@@ -284,7 +363,7 @@ const route = createRoute({
   request: {
     params: ParamsSchema,
   },
-  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })],
+  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })] as const, // Use `as const` to ensure TypeScript infers the middleware's Context.
   responses: {
     200: {
       content: {
@@ -381,6 +460,17 @@ app.doc('/doc', (c) => ({
 }))
 ```
 
+### How to exclude a specific route from OpenAPI docs
+
+You can use `hide` property as follows:
+
+```ts
+const route = createRoute({
+  // ...
+  hide: true,
+})
+```
+
 ## Limitations
 
 ### Combining with `Hono`
@@ -388,6 +478,18 @@ app.doc('/doc', (c) => ({
 Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
 
 If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
+
+When using the `.route()` method to mount a child OpenAPIHono app that uses path parameters, you should use the Hono _:param_ syntax in the parent route path, rather than the OpenAPI _{param}_ syntax:
+
+```
+const bookActionsApp = new OpenAPIHono()
+...
+// ❌ Incorrect: This will not match the route
+app.route('/books/{bookId}', bookActionsApp)
+
+// ✅ Using Hono parameter syntax
+app.route('/books/:bookId', bookActionsApp)
+```
 
 ### Header keys
 

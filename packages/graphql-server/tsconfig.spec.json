@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/graphql-server",
+    "types": ["vitest/globals"]
+  },
+  "exclude": ["node_modules", "bun_test"],
+  "references": []
+}

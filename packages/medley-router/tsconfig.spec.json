@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/medley-router",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

@@ -17,13 +17,13 @@ import type {
   GraphQLFormattedError,
 } from 'graphql'
 
-import type { Context, Env, Input } from 'hono'
+import type { Context, Env, Input, MiddlewareHandler } from 'hono'
 import { parseBody } from './parse-body'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RootResolver<E extends Env = any, P extends string = any, I extends Input = {}> = (
   // eslint-enable-next-line @typescript-eslint/no-explicit-any
-  ctx?: Context<E, P, I>
+  c: Context<E, P, I>
 ) => Promise<unknown> | unknown
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,19 +32,19 @@ type Options<E extends Env = any, P extends string = any, I extends Input = {}> 
   schema: GraphQLSchema
   rootResolver?: RootResolver<E, P, I>
   pretty?: boolean
-  validationRules?: ReadonlyArray<ValidationRule>
-  // graphiql?: boolean
+  validationRules?: readonly ValidationRule[]
+  graphiql?: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const graphqlServer = <E extends Env = any, P extends string = any, I extends Input = {}>(
   // eslint-enable-next-line @typescript-eslint/no-explicit-any
   options: Options<E, P, I>
-) => {
+): MiddlewareHandler => {
   const schema = options.schema
   const pretty = options.pretty ?? false
   const validationRules = options.validationRules ?? []
-  // const showGraphiQL = options.graphiql ?? false
+  const showGraphiQL = options.graphiql ?? false
 
   return async (c: Context<E, P, I>) => {
     // GraphQL HTTP only supports GET and POST methods.
@@ -68,6 +68,9 @@ export const graphqlServer = <E extends Env = any, P extends string = any, I ext
     const { query, variables, operationName } = params
 
     if (query == null) {
+      if (showGraphiQL && c.req.method === 'GET') {
+        return respondWithGraphiQL(c)
+      }
       return c.json(errorMessages(['Must provide query string.']), 400)
     }
 
@@ -107,13 +110,6 @@ export const graphqlServer = <E extends Env = any, P extends string = any, I ext
       // Determine if this GET request will perform a non-query.
       const operationAST = getOperationAST(documentAST, operationName)
       if (operationAST && operationAST.operation !== 'query') {
-        /*
-        Now , does not support GraphiQL
-        if (showGraphiQL) {
-          //return respondWithGraphiQL(response, graphiqlOptions, params)
-        }
-        */
-
         // Otherwise, report a 405: Method Not Allowed error.
         return c.json(
           errorMessages([
@@ -155,12 +151,6 @@ export const graphqlServer = <E extends Env = any, P extends string = any, I ext
         return c.json(errorMessages([result.errors.toString()], result.errors), 500)
       }
     }
-
-    /*
-    Now, does not support GraphiQL
-    if (showGraphiQL) {
-    }
-    */
 
     if (pretty) {
       const payload = JSON.stringify(result, null, pretty ? 2 : 0)
@@ -226,7 +216,9 @@ export const getGraphQLParams = async (request: Request): Promise<GraphQLParams>
 export const errorMessages = (
   messages: string[],
   graphqlErrors?: readonly GraphQLError[] | readonly GraphQLFormattedError[]
-) => {
+): {
+  errors: readonly GraphQLError[] | readonly GraphQLFormattedError[]
+} => {
   if (graphqlErrors) {
     return {
       errors: graphqlErrors,
@@ -242,4 +234,94 @@ export const errorMessages = (
   }
 }
 
-// export const graphiQLResponse = () => {}
+export const respondWithGraphiQL = (c: Context): Response => {
+  // https://github.com/graphql/graphiql/blob/fd3f9e6a91be728a69a136ad8680f6e3c7241198/examples/graphiql-cdn/index.html
+  return c.html(`<!--
+ *  Copyright (c) 2025 GraphQL Contributors
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the license found in the
+ *  LICENSE file in the root directory of this source tree.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GraphiQL</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      #graphiql {
+        height: 100dvh;
+      }
+
+      .loading {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+      }
+    </style>
+    <link rel="stylesheet" href="https://esm.sh/graphiql/dist/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://esm.sh/@graphiql/plugin-explorer/dist/style.css"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.1.0",
+          "react/": "https://esm.sh/react@19.1.0/",
+
+          "react-dom": "https://esm.sh/react-dom@19.1.0",
+          "react-dom/": "https://esm.sh/react-dom@19.1.0/",
+
+          "graphiql": "https://esm.sh/graphiql?standalone&external=react,react-dom,@graphiql/react,graphql",
+          "graphiql/": "https://esm.sh/graphiql/",
+          "@graphiql/plugin-explorer": "https://esm.sh/@graphiql/plugin-explorer?standalone&external=react,@graphiql/react,graphql",
+          "@graphiql/react": "https://esm.sh/@graphiql/react?standalone&external=react,react-dom,graphql,@graphiql/toolkit,@emotion/is-prop-valid",
+
+          "@graphiql/toolkit": "https://esm.sh/@graphiql/toolkit?standalone&external=graphql",
+          "graphql": "https://esm.sh/graphql@16.11.0",
+          "@emotion/is-prop-valid": "data:text/javascript,"
+        }
+      }
+    </script>
+    <script type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import { GraphiQL, HISTORY_PLUGIN } from 'graphiql';
+      import { createGraphiQLFetcher } from '@graphiql/toolkit';
+      import { explorerPlugin } from '@graphiql/plugin-explorer';
+      import 'graphiql/setup-workers/esm.sh';
+
+      const fetcher = createGraphiQLFetcher({
+        url: '${c.req.path}',
+      });
+      const plugins = [HISTORY_PLUGIN, explorerPlugin()];
+
+      function App() {
+        return React.createElement(GraphiQL, {
+          fetcher,
+          plugins,
+          defaultEditorToolsVisibility: true,
+        });
+      }
+
+      const container = document.getElementById('graphiql');
+      const root = ReactDOM.createRoot(container);
+      root.render(React.createElement(App));
+    </script>
+  </head>
+  <body>
+    <div id="graphiql">
+      <div class="loading">Loading…</div>
+    </div>
+  </body>
+</html>
+`)
+}

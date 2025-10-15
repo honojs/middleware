@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
-import { setCookie, getCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -12,6 +12,7 @@ export function facebookAuth(options: {
   fields: Fields[]
   client_id?: string
   client_secret?: string
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -19,7 +20,7 @@ export function facebookAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).FACEBOOK_ID as string),
       client_secret: options.client_secret || (env(c).FACEBOOK_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       fields: options.fields,
       state: newState,
@@ -30,14 +31,6 @@ export function facebookAuth(options: {
       },
     })
 
-    // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
-      const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
-        throw new HTTPException(401)
-      }
-    }
-
     // Redirect to login dialog
     if (!auth.code) {
       setCookie(c, 'state', newState, {
@@ -47,6 +40,14 @@ export function facebookAuth(options: {
         // secure: true,
       })
       return c.redirect(auth.redirect())
+    }
+
+    // Avoid CSRF attack by checking state
+    if (c.req.url.includes('?')) {
+      const storedState = getCookie(c, 'state')
+      if (c.req.query('state') !== storedState) {
+        throw new HTTPException(401)
+      }
     }
 
     // Retrieve user data from facebook

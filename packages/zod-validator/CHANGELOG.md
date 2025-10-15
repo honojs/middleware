@@ -1,5 +1,79 @@
 # @hono/zod-validator
 
+## 0.7.4
+
+### Patch Changes
+
+- [#1502](https://github.com/honojs/middleware/pull/1502) [`d6102352531aa3f030051f0b85065bd1051ebdac`](https://github.com/honojs/middleware/commit/d6102352531aa3f030051f0b85065bd1051ebdac) Thanks [@BThero](https://github.com/BThero)! - Fix a minor Zod v4 error type inference bug
+
+## 0.7.3
+
+### Patch Changes
+
+- [#1436](https://github.com/honojs/middleware/pull/1436) [`713a9392f9adf521920d2d814894c4433ae718bf`](https://github.com/honojs/middleware/commit/713a9392f9adf521920d2d814894c4433ae718bf) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct fallback behavior when using `coerce`
+
+## 0.7.2
+
+### Patch Changes
+
+- [#1315](https://github.com/honojs/middleware/pull/1315) [`c6a16ab7aa8fba2403d4294e7673f96796020c65`](https://github.com/honojs/middleware/commit/c6a16ab7aa8fba2403d4294e7673f96796020c65) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: support transform
+
+## 0.7.1
+
+### Patch Changes
+
+- [#1302](https://github.com/honojs/middleware/pull/1302) [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c) Thanks [@kiki-kanri](https://github.com/kiki-kanri)! - correctly set the zod version to follow the official website doc
+
+- [#1302](https://github.com/honojs/middleware/pull/1302) [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c) Thanks [@kiki-kanri](https://github.com/kiki-kanri)! - upgrade zod to v4 and import style to be more tree-shakeable in README.md
+
+## 0.7.0
+
+### Minor Changes
+
+- [#1180](https://github.com/honojs/middleware/pull/1180) [`5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3`](https://github.com/honojs/middleware/commit/5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: update peerDependency to Zod `^3.25.0` and fix the types
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1173](https://github.com/honojs/middleware/pull/1173) [`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support Zod v4
+
+## 0.5.0
+
+### Minor Changes
+
+- [#1140](https://github.com/honojs/middleware/pull/1140) [`8ed99d9d791ed6bd8b897c705289b0464947e632`](https://github.com/honojs/middleware/commit/8ed99d9d791ed6bd8b897c705289b0464947e632) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: add `validationFunction` option
+
+## 0.4.3
+
+### Patch Changes
+
+- [#968](https://github.com/honojs/middleware/pull/968) [`b65d5a58616f861520047dd08babc9cd1d81cbd1`](https://github.com/honojs/middleware/commit/b65d5a58616f861520047dd08babc9cd1d81cbd1) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: fix commonjs import problem
+
+## 0.4.2
+
+### Patch Changes
+
+- [#860](https://github.com/honojs/middleware/pull/860) [`803f011e41ecb3da503ddb2b3286c6d7606d9c4b`](https://github.com/honojs/middleware/commit/803f011e41ecb3da503ddb2b3286c6d7606d9c4b) Thanks [@askorupskyy](https://github.com/askorupskyy)! - Case-insensitive Zod schemas for headers
+
+## 0.4.1
+
+### Patch Changes
+
+- [#766](https://github.com/honojs/middleware/pull/766) [`ed27af46ecb8a7c3b5399b725feded4feaf6f8a6`](https://github.com/honojs/middleware/commit/ed27af46ecb8a7c3b5399b725feded4feaf6f8a6) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: releasing correctly
+
+## 0.4.0
+
+### Minor Changes
+
+- [#763](https://github.com/honojs/middleware/pull/763) [`2a45247d805520c08501727af0d00fd52d34b429`](https://github.com/honojs/middleware/commit/2a45247d805520c08501727af0d00fd52d34b429) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support enum types for `query`
+
+## 0.3.0
+
+### Minor Changes
+
+- [#695](https://github.com/honojs/middleware/pull/695) [`eda35847916cf7f7e84289eba29a8e5517615c6b`](https://github.com/honojs/middleware/commit/eda35847916cf7f7e84289eba29a8e5517615c6b) Thanks [@bartekbp](https://github.com/bartekbp)! - feat(zod-validator): pass target to a hook
+
 ## 0.2.2
 
 ### Patch Changes

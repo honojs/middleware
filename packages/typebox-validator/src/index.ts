@@ -1,10 +1,12 @@
-import type { TSchema, Static } from '@sinclair/typebox'
-import { Value, type ValueError } from '@sinclair/typebox/value'
-import type { Context, Env, MiddlewareHandler, ValidationTargets } from 'hono'
+import type { Context, Env, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 
-type Hook<T, E extends Env, P extends string> = (
-  result: { success: true; data: T } | { success: false; errors: ValueError[] },
+import type { TSchema, Static } from 'typebox'
+import { Compile } from 'typebox/compile'
+import type { TLocalizedValidationError } from 'typebox/error'
+
+export type Hook<T, E extends Env, P extends string> = (
+  result: { success: true; data: T } | { success: false; errors: TLocalizedValidationError[] },
   c: Context<E, P>
 ) => Response | Promise<Response> | void
 
@@ -17,14 +19,14 @@ type Hook<T, E extends Env, P extends string> = (
  *
  * ```ts
  * import { tbValidator } from '@hono/typebox-validator'
- * import { Type as T } from '@sinclair/typebox'
+ * import { Type } from 'typebox'
  *
- * const schema = T.Object({
- *   name: T.String(),
- *   age: T.Number(),
+ * const User = Type.Object({
+ *   name: Type.String(),
+ *   age: Type.Number(),
  * })
  *
- * const route = app.post('/user', tbValidator('json', schema), (c) => {
+ * const route = app.post('/user', tbValidator('json', User), (c) => {
  *   const user = c.req.valid('json')
  *   return c.json({ success: true, message: `${user.name} is ${user.age}` })
  * })
@@ -35,16 +37,16 @@ type Hook<T, E extends Env, P extends string> = (
  *
  * ```ts
  * import { tbValidator } from '@hono/typebox-validator'
- * import { Type as T } from '@sinclair/typebox'
+ * import { Type } from 'typebox'
  *
- * const schema = T.Object({
- *   name: T.String(),
- *   age: T.Number(),
+ * const User = Type.Object({
+ *   name: Type.String(),
+ *   age: Type.Number(),
  * })
  *
  * app.post(
  *   '/user',
- *   tbValidator('json', schema, (result, c) => {
+ *   tbValidator('json', User, (result, c) => {
  *     if (!result.success) {
  *       return c.text('Invalid!', 400)
  *     }
@@ -53,17 +55,42 @@ type Hook<T, E extends Env, P extends string> = (
  * )
  * ```
  */
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ExcludeResponseType<T> = T extends Response & TypedResponse<any> ? never : T
+
+/**
+ * TypeBox Validator Middleware for Hono with support for JSON Schema.
+ *
+ * @param target - Validation target: 'json', 'query', 'param', 'header', 'cookie', or 'form'.
+ * @param schema - TypeBox type or JSON Schema.
+ * @param hook - Optional hook function for handling validation results.
+ * @param useClean - Removes excess properties (TypeBox types only). Defaults to `false`.
+ * @returns A Hono middleware handler.
+ */
 export function tbValidator<
   T extends TSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
-  V extends { in: { [K in Target]: Static<T> }; out: { [K in Target]: Static<T> } }
->(target: Target, schema: T, hook?: Hook<Static<T>, E, P>): MiddlewareHandler<E, P, V> {
-  // Compile the provided schema once rather than per validation. This could be optimized further using a shared schema
-  // compilation pool similar to the Fastify implementation.
-  return validator(target, (data, c) => {
-    if (Value.Check(schema, data)) {
+  V extends {
+    in: { [K in Target]: Static<T> }
+    out: { [K in Target]: ExcludeResponseType<Static<T>> }
+  },
+>(
+  target: Target,
+  schema: T,
+  hook?: Hook<Static<T>, E, P>,
+  useClean?: boolean
+): MiddlewareHandler<E, P, V> {
+  // This function JIT-compiles the given schema. If the environment does NOT support
+  // the `unsafe-eval` Content-Security-Policy, TypeBox will fall back to dynamic
+  // validation using Value.*. Ref: Cloudflare.
+  const compiled = Compile(schema)
+  return validator(target, (unprocessedData, c) => {
+    const data = useClean ? compiled.Clean(unprocessedData) : unprocessedData
+
+    if (compiled.Check(data)) {
       if (hook) {
         const hookResult = hook({ success: true, data }, c)
         if (hookResult instanceof Response || hookResult instanceof Promise) {
@@ -72,6 +99,15 @@ export function tbValidator<
       }
       return data
     }
-    return c.json({ success: false, errors: [...Value.Errors(schema, data)] }, 400)
-  })
+
+    const errors = compiled.Errors(data)
+    if (hook) {
+      const hookResult = hook({ success: false, errors }, c)
+      if (hookResult instanceof Response || hookResult instanceof Promise) {
+        return hookResult
+      }
+    }
+
+    return c.json({ success: false, errors }, 400)
+  }) as MiddlewareHandler<E, P, V>
 }

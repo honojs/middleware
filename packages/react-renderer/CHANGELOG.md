@@ -1,5 +1,29 @@
 # @hono/react-renderer
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1122](https://github.com/honojs/middleware/pull/1122) [`944f1989f5fc14f62348427b8f26989bd17fd61c`](https://github.com/honojs/middleware/commit/944f1989f5fc14f62348427b8f26989bd17fd61c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: tweak dynamic importing `renderToReadableStream`
+
+## 1.0.0
+
+### Major Changes
+
+- [#1119](https://github.com/honojs/middleware/pull/1119) [`684ae9a21d2976ad0a42853fd30dc1494494da46`](https://github.com/honojs/middleware/commit/684ae9a21d2976ad0a42853fd30dc1494494da46) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: use React v19 and specify `react-dom/server.edge` for `renderToReadableStream`
+
+## 0.3.0
+
+### Minor Changes
+
+- [#971](https://github.com/honojs/middleware/pull/971) [`be181bfff63298c656b230092fb0dfa700ad30a4`](https://github.com/honojs/middleware/commit/be181bfff63298c656b230092fb0dfa700ad30a4) Thanks [@ghaaj](https://github.com/ghaaj)! - The `doctype` option defaults to true
+
+## 0.2.1
+
+### Patch Changes
+
+- [#668](https://github.com/honojs/middleware/pull/668) [`9c58014a7c5ebadc3345656fe17a83efd55b895b`](https://github.com/honojs/middleware/commit/9c58014a7c5ebadc3345656fe17a83efd55b895b) Thanks [@alexturpin](https://github.com/alexturpin)! - Change renderer Props type to interface to allow merging
+
 ## 0.2.0
 
 ### Minor Changes

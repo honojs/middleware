@@ -1,0 +1,15 @@
+{
+  "name": "@hono/clerk-auth",
+  "version": "3.0.3",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/clerk-auth.ts"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/index.ts", "src/**/*.test.ts"]
+  }
+}

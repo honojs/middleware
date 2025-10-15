@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/casbin",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src", "vitest.config.ts", "vitest.setup.ts"],
+  "references": []
+}

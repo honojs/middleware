@@ -4,9 +4,9 @@ import type { Token } from '../../types'
 import { toQueryParams } from '../../utils/objectToQuery'
 import type {
   LinkedInErrorResponse,
+  LinkedInScope,
   LinkedInTokenResponse,
   LinkedInUser,
-  LinkedInScope,
 } from './types'
 
 export type LinkedInAuthFlow = {
@@ -42,7 +42,7 @@ export class AuthFlow {
   }: LinkedInAuthFlow) {
     this.client_id = client_id
     this.client_secret = client_secret
-    ;(this.redirect_uri = redirect_uri), (this.scope = scope)
+    ;((this.redirect_uri = redirect_uri), (this.scope = scope))
     this.state = state
     this.code = appAuth ? '' : code
     this.token = undefined
@@ -97,7 +97,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     if (!this.token) {
       await this.getTokenFromCode()
     }
@@ -117,7 +117,7 @@ export class AuthFlow {
     }
   }
 
-  async getAppToken() {
+  async getAppToken(): Promise<void> {
     const params = toQueryParams({
       grant_type: 'client_credentials',
       client_id: this.client_id,

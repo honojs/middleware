@@ -1,0 +1,83 @@
+name: pr
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  what-changed:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-packages.outputs.packages }}
+    permissions:
+      contents: 'read'
+      actions: 'read'
+      pull-requests: 'read'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+      - run: yarn workspaces focus what-changed
+      - uses: ./.github/actions/what-changed
+        id: set-packages
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+      - run: yarn
+      - run: yarn publint
+      - run: yarn typecheck
+      - run: yarn lint
+      - run: yarn format
+
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+          deno-version-file: .tool-versions
+      - run: deno install --no-lock
+      - run: deno publish --dry-run
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [what-changed]
+    if: ${{ needs.what-changed.outputs.packages != '[]' }}
+    strategy:
+      matrix:
+        package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
+      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
+      - run: yarn test --coverage --project @hono/${{ matrix.package }}
+        id: test
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: ${{ matrix.package }}

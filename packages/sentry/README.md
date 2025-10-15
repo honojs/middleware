@@ -1,5 +1,7 @@
 # Sentry Middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=sentry)](https://codecov.io/github/honojs/middleware)
+
 This middleware integrates [Hono](https://github.com/honojs/hono) with Sentry. It captures exceptions and sends them to the specified Sentry data source name (DSN) using [toucan-js](https://github.com/robertcepa/toucan-js).
 
 ## Installation

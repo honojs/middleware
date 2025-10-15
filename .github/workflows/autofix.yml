@@ -1,0 +1,39 @@
+name: autofix.ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  autofix:
+    name: autofix
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-autofix-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-autofix-
+            ${{ runner.os }}-turbo-
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+      - run: yarn install
+      - run: yarn format:fix
+      - run: yarn lint:fix
+      - name: Apply fixes
+        uses: autofix-ci/action@v1
+        with:
+          commit-message: 'ci: apply automated fixes'

@@ -74,7 +74,7 @@ export class AuthFlow {
       code_challenge: this.code_challenge,
       code_challenge_method: 'S256',
     })
-    return `https://twitter.com/i/oauth2/authorize?${parsedOptions}`
+    return `https://x.com/i/oauth2/authorize?${parsedOptions}`
   }
 
   private async getTokenFromCode() {
@@ -111,7 +111,7 @@ export class AuthFlow {
     }
   }
 
-  async getUserData() {
+  async getUserData(): Promise<void> {
     await this.getTokenFromCode()
 
     const parsedOptions = toQueryParams({

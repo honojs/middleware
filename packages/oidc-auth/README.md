@@ -1,5 +1,7 @@
 # OpenID Connect Authentication middleware for Hono
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=oidc-auth)](https://codecov.io/github/honojs/middleware)
+
 This is an OpenID Connect (OIDC) authentication third-party middleware for [Hono](https://github.com/honojs/hono), which depends on [oauth4webapi](https://www.npmjs.com/package/oauth4webapi).
 
 This middleware provides storage-less login sessions.
@@ -25,13 +27,13 @@ This middleware requires the following features for the IdP:
 
 Here is a list of the IdPs that I have tested:
 
-| IdP Name | OpenID issuer URL |
-| ---- | ---- |
-| Auth0       | `https://<tenant>.<region>.auth0.com` |
+| IdP Name    | OpenID issuer URL                                         |
+| ----------- | --------------------------------------------------------- |
+| Auth0       | `https://<tenant>.<region>.auth0.com`                     |
 | AWS Cognito | `https://cognito-idp.<region>.amazonaws.com/<userPoolID>` |
-| GitLab      | `https://gitlab.com` |
-| Google      | `https://accounts.google.com` |
-| Slack       | `https://slack.com` |
+| GitLab      | `https://gitlab.com`                                      |
+| Google      | `https://accounts.google.com`                             |
+| Slack       | `https://slack.com`                                       |
 
 ## Installation
 
@@ -41,24 +43,29 @@ npm i hono @hono/oidc-auth
 
 ## Configuration
 
-The middleware requires the following environment variables to be set:
+The middleware requires the following variables to be set as either environment variables or by calling `initOidcAuthMiddleware`:
 
-| Environment Variable | Description | Default Value |
-| ---- | ---- | ---- |
-| OIDC_AUTH_SECRET           | The secret key used for signing the session JWT. It is used to verify the JWT in the cookie and prevent tampering. (Must be at least 32 characters long) | None, must be provided |
-| OIDC_AUTH_REFRESH_INTERVAL | The interval (in seconds) at which the session should be implicitly refreshed. | 15 * 60 (15 minutes) |
-| OIDC_AUTH_EXPIRES          | The interval (in seconds) after which the session should be considered expired. Once expired, the user will be redirected to the IdP for re-authentication. | 60 * 60 * 24 (1 day) |
-| OIDC_ISSUER                | The issuer URL of the OpenID Connect (OIDC) discovery. This URL is used to retrieve the OIDC provider's configuration. | None, must be provided |
-| OIDC_CLIENT_ID             | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider. | None, must be provided |
-| OIDC_CLIENT_SECRET         | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider. | None, must be provided |
-| OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider. | None, must be provided |
+| Variable                   | Description                                                                                                                                                                                                                                                             | Default Value                                                                                                                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OIDC_AUTH_SECRET           | The secret key used for signing the session JWT. It is used to verify the JWT in the cookie and prevent tampering. (Must be at least 32 characters long)                                                                                                                | None, must be provided                                                                                                                                                                                                                    |
+| OIDC_AUTH_REFRESH_INTERVAL | The interval (in seconds) at which the session should be implicitly refreshed.                                                                                                                                                                                          | 15 \* 60 (15 minutes)                                                                                                                                                                                                                     |
+| OIDC_AUTH_EXPIRES          | The interval (in seconds) after which the session should be considered expired. Once expired, the user will be redirected to the IdP for re-authentication.                                                                                                             | 60 _ 60 _ 24 (1 day)                                                                                                                                                                                                                      |
+| OIDC_ISSUER                | The issuer URL of the OpenID Connect (OIDC) discovery. This URL is used to retrieve the OIDC provider's configuration.                                                                                                                                                  | None, must be provided                                                                                                                                                                                                                    |
+| OIDC_CLIENT_ID             | The OAuth 2.0 client ID assigned to your application. This ID is used to identify your application to the OIDC provider.                                                                                                                                                | None, must be provided                                                                                                                                                                                                                    |
+| OIDC_CLIENT_SECRET         | The OAuth 2.0 client secret assigned to your application. This secret is used to authenticate your application to the OIDC provider.                                                                                                                                    | None, must be provided                                                                                                                                                                                                                    |
+| OIDC_REDIRECT_URI          | The URL to which the OIDC provider should redirect the user after authentication. This URL must be registered as a redirect URI in the OIDC provider.                                                                                                                   | `/callback`                                                                                                                                                                                                                               |
+| OIDC_SCOPES                | The scopes that should be used for the OIDC authentication                                                                                                                                                                                                              | The server provided `scopes_supported`                                                                                                                                                                                                    |
+| OIDC_COOKIE_PATH           | The path to which the `oidc-auth` cookie is set. Restrict to not send it with every request to your domain                                                                                                                                                              | /                                                                                                                                                                                                                                         |
+| OIDC_COOKIE_NAME           | The name of the cookie to be set                                                                                                                                                                                                                                        | `oidc-auth`                                                                                                                                                                                                                               |
+| OIDC_COOKIE_DOMAIN         | The custom domain of the cookie. For example, set this like `example.com` to enable authentication across subdomains (e.g., `a.example.com` and `b.example.com`).                                                                                                       | Domain of the request                                                                                                                                                                                                                     |
+| OIDC_AUDIENCE              | The audience for the access token                                                                                                                                                                                                                                       | No default, optional. Primarily intended for use with Auth0. [`audience`](https://community.auth0.com/t/what-is-the-audience/71414) is required by Auth0 to receive a non-opaque access token, for other providers you may not need this. |
+| OIDC_AUTH_EXTERNAL_URL     | The full, public-facing base URL of the application, including the protocol and any path prefixes (e.g., `https://app.example.com` or `https://example.com/myapp`). This is used to construct the correct redirect URL after login when running behind a reverse proxy. | None. The middleware will use the URL from the incoming request.                                                                                                                                                                          |
 
 ## How to Use
 
 ```typescript
 import { Hono } from 'hono'
-import { oidcAuthMiddleware, getAuth, revokeSession, processOAuthCallback } from '@hono/oidc-auth';
-
+import { oidcAuthMiddleware, getAuth, revokeSession, processOAuthCallback } from '@hono/oidc-auth'
 const app = new Hono()
 
 app.get('/logout', async (c) => {
@@ -81,7 +88,7 @@ export default app
 
 ```typescript
 import { Hono } from 'hono'
-import { oidcAuthMiddleware, getAuth } from '@hono/oidc-auth';
+import { oidcAuthMiddleware, getAuth } from '@hono/oidc-auth'
 
 const app = new Hono()
 
@@ -91,18 +98,71 @@ app.get('*', async (c) => {
   if (!auth?.email.endsWith('@example.com')) {
     return c.text('Unauthorized', 401)
   }
-  const response = await c.env.ASSETS.fetch(c.req.raw);
+  const response = await c.env.ASSETS.fetch(c.req.raw)
   // clone the response to return a response with modifiable headers
   const newResponse = new Response(response.body, response)
   return newResponse
-});
+})
 
 export default app
+```
+
+## Using original response or additional claims
+
+```typescript
+import type { IDToken, OidcAuth, TokenEndpointResponses } from '@hono/oidc-auth';
+import { processOAuthCallback } from '@hono/oidc-auth';
+import type { Context, OidcAuthClaims } from 'hono';
+
+declare module 'hono' {
+  interface OidcAuthClaims {
+    name: string
+    sub: string
+  }
+}
+
+const oidcClaimsHook = async (orig: OidcAuth | undefined, claims: IDToken | undefined, _response: TokenEndpointResponses): Promise<OidcAuthClaims> => {
+  /*
+  const { someOtherInfo } = await fetch(c.get('oidcAuthorizationServer').userinfo_endpoint, {
+    header: _response.access_token
+  }).then((res) => res.json())
+  */
+  return {
+    name: claims?.name as string ?? orig?.name ?? '',
+    sub: claims?.sub ?? orig?.sub ?? ''
+  };
+}),
+...
+app.get('/callback', async (c) => {
+  c.set('oidcClaimsHook', oidcClaimsHook); // also assure to set before any getAuth(), in case the token is refreshed
+  return processOAuthCallback(c);
+})
+...
 ```
 
 Note:
 If explicit logout is not required, the logout handler can be omitted.
 If the middleware is applied to the callback URL, the default callback handling in the middleware can be used, so the explicit callback handling is not required.
+
+## Programmatically configure auth variables
+
+```typescript
+// Before other oidc-auth APIs are used
+app.use(initOidcAuthMiddleware(config))
+```
+
+Or to leverage context, use the [`Context access inside Middleware arguments`](https://hono.dev/docs/guides/middleware#context-access-inside-middleware-arguments) pattern.
+
+```typescript
+// Before other oidc-auth APIs are used
+app.use(async (c, next) => {
+  const config = {
+    // Create config using context
+  }
+  const middleware = initOidcAuthMiddleware(config)
+  return middleware(c, next)
+})
+```
 
 ## Author
 

@@ -1,5 +1,222 @@
 # @hono/zod-openapi
 
+## 1.1.3
+
+### Patch Changes
+
+- [#1469](https://github.com/honojs/middleware/pull/1469) [`db68e22a9edee796c8692ef84cdc21be79566718`](https://github.com/honojs/middleware/commit/db68e22a9edee796c8692ef84cdc21be79566718) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Remove `SimplifyDeepArray` usage, see https://github.com/honojs/hono/pull/4406
+
+## 1.1.2
+
+### Patch Changes
+
+- [#1465](https://github.com/honojs/middleware/pull/1465) [`5eddc2c0fb7991357ef958c1a5eae9714e0139a8`](https://github.com/honojs/middleware/commit/5eddc2c0fb7991357ef958c1a5eae9714e0139a8) Thanks [@eric-poitras](https://github.com/eric-poitras)! - Use a typeguard for zod to avoid issues when bundling with esbuild.
+
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`713a9392f9adf521920d2d814894c4433ae718bf`](https://github.com/honojs/middleware/commit/713a9392f9adf521920d2d814894c4433ae718bf)]:
+  - @hono/zod-validator@0.7.3
+
+## 1.1.0
+
+### Minor Changes
+
+- [#1353](https://github.com/honojs/middleware/pull/1353) [`f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0`](https://github.com/honojs/middleware/commit/f42a557f47f6e9cba1cbc40ad0cd8c0d798146c0) Thanks [@yumuranaoki](https://github.com/yumuranaoki)! - Add optional generator options parameter to doc middleware
+
+## 1.0.2
+
+### Patch Changes
+
+- [#1320](https://github.com/honojs/middleware/pull/1320) [`e835cf6183fb4717cfdbe156d9b3d423625a0e15`](https://github.com/honojs/middleware/commit/e835cf6183fb4717cfdbe156d9b3d423625a0e15) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct importing `zod`
+
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`c6a16ab7aa8fba2403d4294e7673f96796020c65`](https://github.com/honojs/middleware/commit/c6a16ab7aa8fba2403d4294e7673f96796020c65)]:
+  - @hono/zod-validator@0.7.2
+
+## 1.0.0
+
+### Major Changes
+
+- [#1223](https://github.com/honojs/middleware/pull/1223) [`845e336ff41d29fa74ec3cf84afc16f5ac0c2c77`](https://github.com/honojs/middleware/commit/845e336ff41d29fa74ec3cf84afc16f5ac0c2c77) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support Zod v4
+
+  Zod OpenAPI has been migrated the Zod version from v3 to v4. As a result, the `zod` in `peerDependencies` has been updated to 4.0.0 or higher.
+
+  Although this is not a breaking change, it is a major change, so it is considered a major version upgrade.
+
+## 0.19.10
+
+### Patch Changes
+
+- Updated dependencies [[`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c), [`9f6278f51c846a171a9baa6335fb8fbd9b42cb1c`](https://github.com/honojs/middleware/commit/9f6278f51c846a171a9baa6335fb8fbd9b42cb1c)]:
+  - @hono/zod-validator@0.7.1
+
+## 0.19.9
+
+### Patch Changes
+
+- [#1217](https://github.com/honojs/middleware/pull/1217) [`9f64138406a2c513462f2a4873b2ef8be36df9d8`](https://github.com/honojs/middleware/commit/9f64138406a2c513462f2a4873b2ef8be36df9d8) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Add explicit return types
+
+## 0.19.8
+
+### Patch Changes
+
+- Updated dependencies [[`5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3`](https://github.com/honojs/middleware/commit/5c3f61f889f5d96f2ff4a79c9df89c03e25dd7f3)]:
+  - @hono/zod-validator@0.7.0
+
+## 0.19.7
+
+### Patch Changes
+
+- [#1173](https://github.com/honojs/middleware/pull/1173) [`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: ignore the type error from Zod Validator
+
+- Updated dependencies [[`a62b59f4505d10f41523a36ad7c02776f9e1cb01`](https://github.com/honojs/middleware/commit/a62b59f4505d10f41523a36ad7c02776f9e1cb01)]:
+  - @hono/zod-validator@0.6.0
+
+## 0.19.6
+
+### Patch Changes
+
+- Updated dependencies [[`8ed99d9d791ed6bd8b897c705289b0464947e632`](https://github.com/honojs/middleware/commit/8ed99d9d791ed6bd8b897c705289b0464947e632)]:
+  - @hono/zod-validator@0.5.0
+
+## 0.19.5
+
+### Patch Changes
+
+- [#1127](https://github.com/honojs/middleware/pull/1127) [`63a9dff2b925a09e8597f327f954f332c3b59b14`](https://github.com/honojs/middleware/commit/63a9dff2b925a09e8597f327f954f332c3b59b14) Thanks [@sigmachirality](https://github.com/sigmachirality)! - chore: lock zod-to-openapi to `^7.3.0` to fix `z.custom`
+
+## 0.19.4
+
+### Patch Changes
+
+- [#1111](https://github.com/honojs/middleware/pull/1111) [`ad4622a8536c8ef9c5feec2e447f36c2629ecbca`](https://github.com/honojs/middleware/commit/ad4622a8536c8ef9c5feec2e447f36c2629ecbca) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Republish v0.19.3 without workspace reference
+
+## 0.19.3
+
+### Patch Changes
+
+- [#1106](https://github.com/honojs/middleware/pull/1106) [`448a8fc687cca2bcab2353ea4237f1293706d5e2`](https://github.com/honojs/middleware/commit/448a8fc687cca2bcab2353ea4237f1293706d5e2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: infer Env correctly if the middleware is `[]`
+
+## 0.19.2
+
+### Patch Changes
+
+- [#995](https://github.com/honojs/middleware/pull/995) [`c279ba2bc5204b1b9effc92c45f129904ea67795`](https://github.com/honojs/middleware/commit/c279ba2bc5204b1b9effc92c45f129904ea67795) Thanks [@luxass](https://github.com/luxass)! - fix(zod-openapi): correctly handle path parameters in basePath
+
+## 0.19.1
+
+### Patch Changes
+
+- [#992](https://github.com/honojs/middleware/pull/992) [`3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373`](https://github.com/honojs/middleware/commit/3c738f5ea44f5f5e5cdc14dfeaba5c04188d6373) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: replace path param strings correctly in basePath
+
+## 0.19.0
+
+### Minor Changes
+
+- [#984](https://github.com/honojs/middleware/pull/984) [`59c6356aac42d360a06cbc9357921283e455ade4`](https://github.com/honojs/middleware/commit/59c6356aac42d360a06cbc9357921283e455ade4) Thanks [@rmichalak](https://github.com/rmichalak)! - Add ability to exclude specific routes from OpenAPI docs
+
+## 0.18.4
+
+### Patch Changes
+
+- [#955](https://github.com/honojs/middleware/pull/955) [`70a564e268cd6350cfb994e5b5c5626b31a3fcc9`](https://github.com/honojs/middleware/commit/70a564e268cd6350cfb994e5b5c5626b31a3fcc9) Thanks [@luxass](https://github.com/luxass)! - fix: use nested app base paths in openapi schema
+
+## 0.18.3
+
+### Patch Changes
+
+- [#855](https://github.com/honojs/middleware/pull/855) [`3f63c46fa66bfb7f1d80174bfb160cccfa69f0bc`](https://github.com/honojs/middleware/commit/3f63c46fa66bfb7f1d80174bfb160cccfa69f0bc) Thanks [@jstri](https://github.com/jstri)! - fix: support default response
+
+## 0.18.2
+
+### Patch Changes
+
+- [#853](https://github.com/honojs/middleware/pull/853) [`a9804afe71fe5876963b3a6f5972a3e5d50dbdca`](https://github.com/honojs/middleware/commit/a9804afe71fe5876963b3a6f5972a3e5d50dbdca) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: return `Response` if response is not text or JSON
+
+## 0.18.1
+
+### Patch Changes
+
+- [#849](https://github.com/honojs/middleware/pull/849) [`4ebecc61420b6bd94b3a44b8ea58a85654f7ec5d`](https://github.com/honojs/middleware/commit/4ebecc61420b6bd94b3a44b8ea58a85654f7ec5d) Thanks [@askorupskyy](https://github.com/askorupskyy)! - Fix multi-middleware complex object type inference
+
+## 0.18.0
+
+### Minor Changes
+
+- [#837](https://github.com/honojs/middleware/pull/837) [`ebd70a0e03c5bb78ba2d39613e10bdc28fe7822b`](https://github.com/honojs/middleware/commit/ebd70a0e03c5bb78ba2d39613e10bdc28fe7822b) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: support `enum`
+
+## 0.17.1
+
+### Patch Changes
+
+- [#828](https://github.com/honojs/middleware/pull/828) [`bbb48ef368d8277b89cb938207093462addf4be3`](https://github.com/honojs/middleware/commit/bbb48ef368d8277b89cb938207093462addf4be3) Thanks [@daniel-pedersen](https://github.com/daniel-pedersen)! - infer env type parameter from middleware
+
+## 0.17.0
+
+### Minor Changes
+
+- [#807](https://github.com/honojs/middleware/pull/807) [`2eec6f6fd90b00e130db5f0b3cfeff806132d98a`](https://github.com/honojs/middleware/commit/2eec6f6fd90b00e130db5f0b3cfeff806132d98a) Thanks [@oberbeck](https://github.com/oberbeck)! - introduce routeMiddleware Env inference
+
+## 0.16.3
+
+### Patch Changes
+
+- [#756](https://github.com/honojs/middleware/pull/756) [`f6d642afddb31ffb379e71398f6fef534a6621f3`](https://github.com/honojs/middleware/commit/f6d642afddb31ffb379e71398f6fef534a6621f3) Thanks [@lucaschultz](https://github.com/lucaschultz)! - fix: add target property to parameter of validation hook
+
+## 0.16.2
+
+### Patch Changes
+
+- [#750](https://github.com/honojs/middleware/pull/750) [`98d4ceab9c3eef30d14a457844ce94c3da95b9e9`](https://github.com/honojs/middleware/commit/98d4ceab9c3eef30d14a457844ce94c3da95b9e9) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: bump `@hono/zod-validator`
+
+## 0.16.1
+
+### Patch Changes
+
+- Updated dependencies [[`eda35847916cf7f7e84289eba29a8e5517615c6b`](https://github.com/honojs/middleware/commit/eda35847916cf7f7e84289eba29a8e5517615c6b)]:
+  - @hono/zod-validator@0.3.0
+
+## 0.16.0
+
+### Minor Changes
+
+- [#710](https://github.com/honojs/middleware/pull/710) [`dadf5ce3c2c134b83420702ca8fe13d6fb8d9390`](https://github.com/honojs/middleware/commit/dadf5ce3c2c134b83420702ca8fe13d6fb8d9390) Thanks [@ameinhardt](https://github.com/ameinhardt)! - Allow multiple mime type response
+
+## 0.15.3
+
+### Patch Changes
+
+- [#689](https://github.com/honojs/middleware/pull/689) [`c3d48868003ebd215074777a4846af208ddab123`](https://github.com/honojs/middleware/commit/c3d48868003ebd215074777a4846af208ddab123) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: supports `required` for JSON and Form body
+
+## 0.15.2
+
+### Patch Changes
+
+- [#686](https://github.com/honojs/middleware/pull/686) [`a6ec008fbd8235368b796d2c0edb6adfe8c03cc5`](https://github.com/honojs/middleware/commit/a6ec008fbd8235368b796d2c0edb6adfe8c03cc5) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: don't validate the body if content-type is mismatched
+
+## 0.15.1
+
+### Patch Changes
+
+- [#656](https://github.com/honojs/middleware/pull/656) [`a04ab70c2c4254eed24efd81d6e5a31553553ec9`](https://github.com/honojs/middleware/commit/a04ab70c2c4254eed24efd81d6e5a31553553ec9) Thanks [@adjsky](https://github.com/adjsky)! - fix(zod-openapi): infer OpenAPIObjectConfig
+
+## 0.15.0
+
+### Minor Changes
+
+- [#645](https://github.com/honojs/middleware/pull/645) [`f38a6166f6ced37ebea3f7cfcefe91d001b0c3b3`](https://github.com/honojs/middleware/commit/f38a6166f6ced37ebea3f7cfcefe91d001b0c3b3) Thanks [@DavidHavl](https://github.com/DavidHavl)! - Support other json content-types such as application/vnd.api+json, application/problem+json, etc.
+
+## 0.14.9
+
+### Patch Changes
+
+- [#632](https://github.com/honojs/middleware/pull/632) [`a405d0870998f131dbc05a44fae0e6df7ff82521`](https://github.com/honojs/middleware/commit/a405d0870998f131dbc05a44fae0e6df7ff82521) Thanks [@paolostyle](https://github.com/paolostyle)! - expose `extendZodWithOpenApi` from `zod-to-openapi`
+
 ## 0.14.8
 
 ### Patch Changes

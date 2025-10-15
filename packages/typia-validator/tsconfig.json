@@ -1,14 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "rootDir": "./src",
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "plugins": [
+  "files": [],
+  "include": [],
+  "references": [
     {
-      "transform": "typia/lib/transform"
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
-  ],
+  ]
 }

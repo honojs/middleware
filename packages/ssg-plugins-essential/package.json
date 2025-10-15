@@ -1,0 +1,72 @@
+{
+  "name": "@hono/ssg-plugins-essential",
+  "version": "0.1.0",
+  "description": "Essential plugins for Hono SSG",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "prepack": "yarn build",
+    "publint": "attw --pack --profile node16 && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest"
+  },
+  "exports": {
+    "./sitemap": {
+      "import": {
+        "types": "./dist/sitemap.d.ts",
+        "default": "./dist/sitemap.js"
+      },
+      "require": {
+        "types": "./dist/sitemap.d.cts",
+        "default": "./dist/sitemap.cjs"
+      }
+    },
+    "./robots-txt": {
+      "import": {
+        "types": "./dist/robots-txt.d.ts",
+        "default": "./dist/robots-txt.js"
+      },
+      "require": {
+        "types": "./dist/robots-txt.d.cts",
+        "default": "./dist/robots-txt.cjs"
+      }
+    },
+    "./rss": {
+      "import": {
+        "types": "./dist/rss.d.ts",
+        "default": "./dist/rss.js"
+      },
+      "require": {
+        "types": "./dist/rss.d.cts",
+        "default": "./dist/rss.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/ssg-plugins-essential"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=4.8.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@types/node": "^24.5.2",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
+  }
+}

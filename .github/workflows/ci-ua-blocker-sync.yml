@@ -1,0 +1,73 @@
+name: Sync robots.json
+
+on:
+  schedule:
+    # Runs every day at midnight
+    - cron: '15 0 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  sync-and-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js and Yarn
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .tool-versions
+          cache: 'yarn'
+
+      - run: yarn workspaces focus hono-middleware @hono/ua-blocker
+
+      - name: Fetch latest robots.json
+        run: yarn workspace @hono/ua-blocker getrobotstxt
+
+      - name: Generate data
+        run: yarn workspace @hono/ua-blocker prebuild
+
+      - name: Format
+        run: yarn prettier --write . !packages packages/ua-blocker
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changeset
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          # Use a static changeset filename to avoid duplicates
+          CHANGESET_FILE=".changeset/auto-sync-robots.md"
+
+          # Create the changeset file
+          cat << EOF > "$CHANGESET_FILE"
+          ---
+          '@hono/ua-blocker': patch
+          ---
+
+          chore(ua-blocker): sync \`robots.json\` with upstream
+          EOF
+
+      - name: Create Pull Request if changes exist
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(ua-blocker): update robots.json from upstream'
+          title: 'chore(ua-blocker): update robots.json from upstream'
+          body: 'This PR was automatically created after detecting changes in the upstream `robots.json` file.'
+          branch: 'chore/sync-robots-json'
+          delete-branch: true
+          # Assignee and labels
+          assignees: finxol
+          reviewers: finxol
+          labels: robots.json

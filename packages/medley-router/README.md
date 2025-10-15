@@ -1,5 +1,7 @@
 # Router using @medley/router
 
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=medley-router)](https://codecov.io/github/honojs/middleware)
+
 Just a PoC.
 
 ## Usage

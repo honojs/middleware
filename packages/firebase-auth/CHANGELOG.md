@@ -1,5 +1,11 @@
 # @hono/firebase-auth
 
+## 1.4.2
+
+### Patch Changes
+
+- [#923](https://github.com/honojs/middleware/pull/923) [`0e4118b09657569f37dee035c9d4c75192d08c06`](https://github.com/honojs/middleware/commit/0e4118b09657569f37dee035c9d4c75192d08c06) Thanks [@Code-Hex](https://github.com/Code-Hex)! - updated firebase-auth-cloudflare-workers version and firebase-tools version
+
 ## 1.4.1
 
 ### Patch Changes

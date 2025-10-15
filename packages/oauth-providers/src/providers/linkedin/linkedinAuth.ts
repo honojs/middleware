@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 
 import { getRandomState } from '../../utils/getRandomState'
@@ -12,6 +12,7 @@ export function linkedinAuth(options: {
   client_secret?: string
   scope?: LinkedInScope[]
   appAuth?: boolean
+  redirect_uri?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     const newState = getRandomState()
@@ -19,20 +20,12 @@ export function linkedinAuth(options: {
     const auth = new AuthFlow({
       client_id: options.client_id || (env(c).LINKEDIN_ID as string),
       client_secret: options.client_secret || (env(c).LINKEDIN_SECRET as string),
-      redirect_uri: c.req.url.split('?')[0],
+      redirect_uri: options.redirect_uri || c.req.url.split('?')[0],
       scope: options.scope,
       state: newState,
       appAuth: options.appAuth || false,
       code: c.req.query('code'),
     })
-
-    // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
-      const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
-        throw new HTTPException(401)
-      }
-    }
 
     // Redirect to login dialog
     if (!auth.code && !options.appAuth) {
@@ -43,6 +36,14 @@ export function linkedinAuth(options: {
         // secure: true,
       })
       return c.redirect(auth.redirect())
+    }
+
+    // Avoid CSRF attack by checking state
+    if (c.req.url.includes('?')) {
+      const storedState = getCookie(c, 'state')
+      if (c.req.query('state') !== storedState) {
+        throw new HTTPException(401)
+      }
     }
 
     if (options.appAuth) {

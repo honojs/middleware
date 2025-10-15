@@ -1,30 +1,40 @@
 {
   "name": "@hono/sentry",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "Sentry Middleware for Hono",
-  "main": "dist/index.js",
-  "type": "commonjs",
-  "module": "dist/index.mjs",
+  "type": "module",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "test": "jest",
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
-    "prerelease": "yarn build && yarn test:all"
+    "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "prepack": "yarn build",
+    "publint": "attw --pack && publint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/honojs/middleware.git"
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/sentry"
   },
   "homepage": "https://github.com/honojs/middleware",
   "author": "Samuel Lippert <samuel@driv.ly> (https://github.com/sam-lippert)",
@@ -33,31 +43,17 @@
     "access": "public"
   },
   "peerDependencies": {
-    "hono": ">=3.*"
+    "hono": ">=3.0.0"
   },
   "dependencies": {
     "toucan-js": "^4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.14.0",
-    "@types/jest": "^28.1.4",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
-    "eslint": "^8.21.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-define-config": "^1.6.0",
-    "eslint-import-resolver-typescript": "^3.4.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-flowtype": "^8.0.3",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "hono": "^3.11.7",
-    "jest": "^28.1.2",
-    "jest-environment-miniflare": "^2.6.0",
-    "prettier": "^2.7.1",
-    "publint": "^0.2.7",
-    "ts-jest": "^28.0.5",
-    "tsup": "^8.0.2",
-    "typescript": "^4.7.4"
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.9.10",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
   }
 }

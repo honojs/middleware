@@ -35,11 +35,12 @@ type OriginalSwaggerUIOptions = {
    * ```
    */
   manuallySwaggerUIHtml?: (asset: AssetURLs) => string
+  title?: string
 }
 
 type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
-const SwaggerUI = (options: SwaggerUIOptions) => {
+const SwaggerUI = (options: SwaggerUIOptions): string => {
   const asset = remoteAssets({ version: options?.version })
   delete options.version
 
@@ -68,13 +69,14 @@ const SwaggerUI = (options: SwaggerUIOptions) => {
 const middleware =
   <E extends Env>(options: SwaggerUIOptions): MiddlewareHandler<E> =>
   async (c) => {
+    const title = options?.title ?? 'SwaggerUI'
     return c.html(/* html */ `
       <html lang="en">
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="description" content="SwaggerUI" />
-          <title>SwaggerUI</title>
+          <title>${title}</title>
         </head>
         <body>
           ${SwaggerUI(options)}
@@ -84,4 +86,4 @@ const middleware =
   }
 
 export { middleware as swaggerUI, SwaggerUI }
-export { SwaggerUIOptions }
+export type { SwaggerUIOptions }

@@ -1,16 +1,25 @@
 import type { Context } from 'hono'
-import type { CounterConfiguration, HistogramConfiguration, Metric } from 'prom-client'
-import { Counter, Histogram, type Registry } from 'prom-client'
+import { Counter, Histogram } from 'prom-client'
+import type { CounterConfiguration, HistogramConfiguration, Metric, Registry } from 'prom-client'
 
-export type MetricOptions = {
+interface CounterOptions<T extends string> extends CounterConfiguration<T> {
+  type: 'counter'
   disabled?: boolean
   customLabels?: Record<string, (c: Context) => string>
-} & (
-  | ({ type: 'counter' } & CounterConfiguration<string>)
-  | ({ type: 'histogram' } & HistogramConfiguration<string>)
-)
+}
 
-const standardMetrics = {
+interface HistogramOptions<T extends string> extends HistogramConfiguration<T> {
+  type: 'histogram'
+  disabled?: boolean
+  customLabels?: Record<string, (c: Context) => string>
+}
+
+export type MetricOptions<T extends string = string> = CounterOptions<T> | HistogramOptions<T>
+
+const standardMetrics: {
+  requestDuration: HistogramOptions<string>
+  requestsTotal: CounterOptions<string>
+} = {
   requestDuration: {
     type: 'histogram',
     name: 'http_request_duration_seconds',
@@ -26,7 +35,7 @@ const standardMetrics = {
     help: 'Total number of HTTP requests',
     labelNames: ['method', 'status', 'ok', 'route'],
   },
-} satisfies Record<string, MetricOptions>
+}
 
 export type MetricName = keyof typeof standardMetrics
 
@@ -44,7 +53,7 @@ const getMetricConstructor = (type: MetricOptions['type']) =>
   ({
     counter: Counter,
     histogram: Histogram,
-  }[type])
+  })[type]
 
 export const createStandardMetrics = ({
   registry,

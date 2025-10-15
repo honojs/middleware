@@ -1,5 +1,47 @@
 # @hono/typebox-validator
 
+## 1.0.0
+
+### Major Changes
+
+- [#1501](https://github.com/honojs/middleware/pull/1501) [`f90b6e48f08dfbd8949041e3076b28ba67c25da4`](https://github.com/honojs/middleware/commit/f90b6e48f08dfbd8949041e3076b28ba67c25da4) Thanks [@sinclairzx81](https://github.com/sinclairzx81)! - Upgrade TypeBox Version 1
+
+## 0.3.3
+
+### Patch Changes
+
+- [#1080](https://github.com/honojs/middleware/pull/1080) [`83ca99d3377380e2e2c4699af14786f1e7d0b7c6`](https://github.com/honojs/middleware/commit/83ca99d3377380e2e2c4699af14786f1e7d0b7c6) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: export modules correctly
+
+## 0.3.2
+
+### Patch Changes
+
+- [#949](https://github.com/honojs/middleware/pull/949) [`401dddc484adab7660efb31586ecb2fbcca03b9b`](https://github.com/honojs/middleware/commit/401dddc484adab7660efb31586ecb2fbcca03b9b) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct exporting in `package.json`
+
+## 0.3.1
+
+### Patch Changes
+
+- [#942](https://github.com/honojs/middleware/pull/942) [`63508a56bba1d39e7dd6d95c15f85622ed832133`](https://github.com/honojs/middleware/commit/63508a56bba1d39e7dd6d95c15f85622ed832133) Thanks [@cfraz89](https://github.com/cfraz89)! - Fix transiently importing typebox as cjs even when typebox-validator imported as esm
+
+## 0.3.0
+
+### Minor Changes
+
+- [#866](https://github.com/honojs/middleware/pull/866) [`c815055bb6669aff8fccf5f478983906c65aca9d`](https://github.com/honojs/middleware/commit/c815055bb6669aff8fccf5f478983906c65aca9d) Thanks [@Micnubinub](https://github.com/Micnubinub)! - Added ability to remove properties that are not in the schema to emulate other validators like zod
+
+## 0.2.6
+
+### Patch Changes
+
+- [#821](https://github.com/honojs/middleware/pull/821) [`553112c2c6440f3326e9fde839681620acb3090e`](https://github.com/honojs/middleware/commit/553112c2c6440f3326e9fde839681620acb3090e) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - exported the Hook type
+
+## 0.2.5
+
+### Patch Changes
+
+- [#742](https://github.com/honojs/middleware/pull/742) [`39cb252df9a0829b8397b9edbcc1de27e49230e1`](https://github.com/honojs/middleware/commit/39cb252df9a0829b8397b9edbcc1de27e49230e1) Thanks [@Micnubinub](https://github.com/Micnubinub)! - Fix fail case not returning error array in hook
+
 ## 0.2.4
 
 ### Patch Changes
