@@ -1,4 +1,4 @@
-import type { Span} from '@opentelemetry/api';
+import type { Span } from '@opentelemetry/api'
 import { SpanStatusCode } from '@opentelemetry/api'
 import { ATTR_ERROR_TYPE } from '@opentelemetry/semantic-conventions'
 
