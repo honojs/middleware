@@ -7,21 +7,20 @@ This package provides a [Hono](https://hono.dev/) middleware that instruments yo
 ## Usage
 
 ```ts
-import { otel } from '@hono/otel'
 import { NodeSDK } from '@opentelemetry/sdk-node'
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+import { httpInstrumentationMiddleware } from '@hono/otel'
+import { metrics } from '@opentelemetry/api'
 import { Hono } from 'hono'
 
-const sdk = new NodeSDK({
-  traceExporter: new ConsoleSpanExporter(),
+const openTelemetrySDK = new NodeSDK({
+  traceExporter: new OTLPTraceExporter(),
 })
 
-sdk.start()
+openTelemetrySDK.start()
 
 const app = new Hono()
-
-app.use('*', otel())
-app.get('/', (c) => c.text('foo'))
+app.use(httpInstrumentationMiddleware())
 
 export default app
 ```
@@ -29,6 +28,8 @@ export default app
 ## Usage on Cloudflare Workers
 
 Since @opentelemetry/sdk-node is not supported on [Cloudflare Workers](https://workers.cloudflare.com/), you need to use [@microlabs/otel-cf-workers](https://github.com/evanderkoogh/otel-cf-workers) instead.
+
+So far I have not been able to see solid support for metrics in Cloudflare Workers. Any ideas here are very weolcome! Until then - the tracing instrumentation can be used!
 
 The following example shows how to use @microlabs/otel-cf-workers with [Honeycomb](https://www.honeycomb.io/):
 
@@ -39,7 +40,7 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', otel())
+app.use('*', httpInstrumentationMiddleware())
 app.get('/', (c) => c.text('foo'))
 
 const config: ResolveConfigFn = (env: Env, _trigger) => {
@@ -61,6 +62,7 @@ Since this instrumentation is based on Hono's middleware system, it instruments 
 
 ## Author
 
+Joakim Lorentz <https://mrlorentx.dev/>
 Hong Minhee <https://hongminhee.org/>
 
 ## License
