@@ -13,7 +13,8 @@ type GoogleAuthFlow = {
   state?: string
   login_hint?: string
   prompt?: 'none' | 'consent' | 'select_account'
-  access_type?: 'offline' | 'online'
+  access_type?: 'offline' | 'online',
+  refresh_token?: string
 }
 
 export class AuthFlow {
@@ -30,7 +31,6 @@ export class AuthFlow {
   access_type: 'online' | 'offline' | undefined
   user: Partial<GoogleUser> | undefined
   granted_scopes: string[] | undefined
-  access_type: 'offline' | 'online' | undefined
 
   constructor({
     client_id,
@@ -107,8 +107,7 @@ export class AuthFlow {
     if ('access_token' in response) {
       this.token = {
         token: response.access_token,
-        expires_in: response.expires_in,
-		refresh_token: response.refresh_token
+        expires_in: response.expires_in
       }
 
       this.granted_scopes = response.scope.split(' ')
