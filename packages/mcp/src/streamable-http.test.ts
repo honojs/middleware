@@ -401,69 +401,68 @@ describe('MCP helper', () => {
     })
   })
 
-    /***
-     * Test: Tool With Request Info
-     */
-    it('should pass request info to tool callback', async () => {
-        sessionId = await initializeServer();
+  /***
+   * Test: Tool With Request Info
+   */
+  it('should pass request info to tool callback', async () => {
+    sessionId = await initializeServer()
 
-        mcpServer.tool(
-            'test-request-info',
-            'A simple test tool with request info',
-            { name: z.string().describe('Name to greet') },
-          async ({ name }, { requestInfo }): Promise<CallToolResult> => {
-              console.log("REQUEST INFO", requestInfo);
-                return {
-                    content: [
-                        { type: 'text', text: `Hello, ${name}!` },
-                        { type: 'text', text: `${JSON.stringify(requestInfo)}` }
-                    ]
-                };
-            }
-        );
+    mcpServer.tool(
+      'test-request-info',
+      'A simple test tool with request info',
+      { name: z.string().describe('Name to greet') },
+      async ({ name }, { requestInfo }): Promise<CallToolResult> => {
+        return {
+          content: [
+            { type: 'text', text: `Hello, ${name}!` },
+            { type: 'text', text: `${JSON.stringify(requestInfo)}` },
+          ],
+        }
+      }
+    )
 
-        const toolCallMessage: JSONRPCMessage = {
-            jsonrpc: '2.0',
-            method: 'tools/call',
-            params: {
-                name: 'test-request-info',
-                arguments: {
-                    name: 'Test User'
-                }
-            },
-            id: 'call-1'
-        };
+    const toolCallMessage: JSONRPCMessage = {
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: {
+        name: 'test-request-info',
+        arguments: {
+          name: 'Test User',
+        },
+      },
+      id: 'call-1',
+    }
 
-        const response = await sendPostRequest(server, toolCallMessage, sessionId);
-        expect(response.status).toBe(200);
+    const response = await sendPostRequest(server, toolCallMessage, sessionId)
+    expect(response.status).toBe(200)
 
-        const text = await readSSEEvent(response);
-        const eventLines = text.split('\n');
-        const dataLine = eventLines.find(line => line.startsWith('data:'));
-        expect(dataLine).toBeDefined();
+    const text = await readSSEEvent(response)
+    const eventLines = text.split('\n')
+    const dataLine = eventLines.find((line) => line.startsWith('data:'))
+    expect(dataLine).toBeDefined()
 
-        const eventData = JSON.parse(dataLine!.substring(5));
+    const eventData = JSON.parse(dataLine!.substring(5))
 
-        expect(eventData).toMatchObject({
-            jsonrpc: '2.0',
-            result: {
-                content: [
-                    { type: 'text', text: 'Hello, Test User!' },
-                    { type: 'text', text: expect.any(String) }
-                ]
-            },
-            id: 'call-1'
-        });
+    expect(eventData).toMatchObject({
+      jsonrpc: '2.0',
+      result: {
+        content: [
+          { type: 'text', text: 'Hello, Test User!' },
+          { type: 'text', text: expect.any(String) },
+        ],
+      },
+      id: 'call-1',
+    })
 
-        const requestInfo = JSON.parse(eventData.result.content[1].text);
-        expect(requestInfo).toMatchObject({
-            headers: {
-                'content-type': 'application/json',
-                accept: 'application/json, text/event-stream',
-                'mcp-session-id': sessionId,
-            }
-        });
-    });
+    const requestInfo = JSON.parse(eventData.result.content[1].text)
+    expect(requestInfo).toMatchObject({
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+        'mcp-session-id': sessionId,
+      },
+    })
+  })
 
   it('should reject requests without a valid session ID', async () => {
     const response = await sendPostRequest(server, TEST_MESSAGES.toolsList)
@@ -871,112 +870,124 @@ describe('MCP helper', () => {
   })
 
   describe('protocol version header validation', () => {
-        it('should accept requests with matching protocol version', async () => {
-            sessionId = await initializeServer();
+    it('should accept requests with matching protocol version', async () => {
+      sessionId = await initializeServer()
 
-            // Send request with matching protocol version
-            const response = await sendPostRequest(server, TEST_MESSAGES.toolsList, sessionId);
+      // Send request with matching protocol version
+      const response = await sendPostRequest(server, TEST_MESSAGES.toolsList, sessionId)
 
-            expect(response.status).toBe(200);
-        });
+      expect(response.status).toBe(200)
+    })
 
-        it('should accept requests without protocol version header', async () => {
-            sessionId = await initializeServer();
+    it('should accept requests without protocol version header', async () => {
+      sessionId = await initializeServer()
 
-            // Send request without protocol version header
-            const response = await server.request("/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json, text/event-stream',
-                    'mcp-session-id': sessionId
-                    // No mcp-protocol-version header
-                },
-                body: JSON.stringify(TEST_MESSAGES.toolsList)
-            });
+      // Send request without protocol version header
+      const response = await server.request('/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json, text/event-stream',
+          'mcp-session-id': sessionId,
+          // No mcp-protocol-version header
+        },
+        body: JSON.stringify(TEST_MESSAGES.toolsList),
+      })
 
-            expect(response.status).toBe(200);
-        });
+      expect(response.status).toBe(200)
+    })
 
-        it('should reject requests with unsupported protocol version', async () => {
-            sessionId = await initializeServer();
+    it('should reject requests with unsupported protocol version', async () => {
+      sessionId = await initializeServer()
 
-            // Send request with unsupported protocol version
-            const response = await server.request("/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json, text/event-stream',
-                    'mcp-session-id': sessionId,
-                    'mcp-protocol-version': '1999-01-01' // Unsupported version
-                },
-                body: JSON.stringify(TEST_MESSAGES.toolsList)
-            });
+      // Send request with unsupported protocol version
+      const response = await server.request('/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json, text/event-stream',
+          'mcp-session-id': sessionId,
+          'mcp-protocol-version': '1999-01-01', // Unsupported version
+        },
+        body: JSON.stringify(TEST_MESSAGES.toolsList),
+      })
 
-            expect(response.status).toBe(404);
-            const errorData = await response.json();
-            expectErrorResponse(errorData, -32000, /Bad Request: Unsupported protocol version \(supported versions: .+\)/);
-        });
+      expect(response.status).toBe(404)
+      const errorData = await response.json()
+      expectErrorResponse(
+        errorData,
+        -32000,
+        /Bad Request: Unsupported protocol version \(supported versions: .+\)/
+      )
+    })
 
-        it('should accept when protocol version differs from negotiated version', async () => {
-            sessionId = await initializeServer();
+    it('should accept when protocol version differs from negotiated version', async () => {
+      sessionId = await initializeServer()
 
-            // Spy on console.warn to verify warning is logged
-            const warnSpy = vi.spyOn(console, 'warn');
+      // Spy on console.warn to verify warning is logged
+      const warnSpy = vi.spyOn(console, 'warn')
 
-            // Send request with different but supported protocol version
-            const response = await server.request("/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json, text/event-stream',
-                    'mcp-session-id': sessionId,
-                    'mcp-protocol-version': '2024-11-05' // Different but supported version
-                },
-                body: JSON.stringify(TEST_MESSAGES.toolsList)
-            });
+      // Send request with different but supported protocol version
+      const response = await server.request('/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json, text/event-stream',
+          'mcp-session-id': sessionId,
+          'mcp-protocol-version': '2024-11-05', // Different but supported version
+        },
+        body: JSON.stringify(TEST_MESSAGES.toolsList),
+      })
 
-            // Request should still succeed
-            expect(response.status).toBe(200);
+      // Request should still succeed
+      expect(response.status).toBe(200)
 
-            warnSpy.mockRestore();
-        });
+      warnSpy.mockRestore()
+    })
 
-        it('should handle protocol version validation for GET requests', async () => {
-            sessionId = await initializeServer();
+    it('should handle protocol version validation for GET requests', async () => {
+      sessionId = await initializeServer()
 
-            // GET request with unsupported protocol version
-            const response = await server.request("/", {
-                method: 'GET',
-                headers: {
-                    Accept: 'text/event-stream',
-                    'mcp-session-id': sessionId,
-                    'mcp-protocol-version': 'invalid-version'
-                }
-            });
+      // GET request with unsupported protocol version
+      const response = await server.request('/', {
+        method: 'GET',
+        headers: {
+          Accept: 'text/event-stream',
+          'mcp-session-id': sessionId,
+          'mcp-protocol-version': 'invalid-version',
+        },
+      })
 
-            expect(response.status).toBe(404);
-            const errorData = await response.json();
-            expectErrorResponse(errorData, -32000, /Bad Request: Unsupported protocol version \(supported versions: .+\)/);
-        });
+      expect(response.status).toBe(404)
+      const errorData = await response.json()
+      expectErrorResponse(
+        errorData,
+        -32000,
+        /Bad Request: Unsupported protocol version \(supported versions: .+\)/
+      )
+    })
 
-        it('should handle protocol version validation for DELETE requests', async () => {
-            sessionId = await initializeServer();
+    it('should handle protocol version validation for DELETE requests', async () => {
+      sessionId = await initializeServer()
 
-            // DELETE request with unsupported protocol version
-            const response = await server.request("/", {
-                method: 'DELETE',
-                headers: {
-                    'mcp-session-id': sessionId,
-                    'mcp-protocol-version': 'invalid-version'
-                }
-            });
+      // DELETE request with unsupported protocol version
+      const response = await server.request('/', {
+        method: 'DELETE',
+        headers: {
+          'mcp-session-id': sessionId,
+          'mcp-protocol-version': 'invalid-version',
+        },
+      })
 
-            expect(response.status).toBe(404);
-            const errorData = await response.json();
-            expectErrorResponse(errorData, -32000, /Bad Request: Unsupported protocol version \(supported versions: .+\)/);
-        });
-    });
+      expect(response.status).toBe(404)
+      const errorData = await response.json()
+      expectErrorResponse(
+        errorData,
+        -32000,
+        /Bad Request: Unsupported protocol version \(supported versions: .+\)/
+      )
+    })
+  })
 })
 
 describe('StreamableHTTPServerTransport with AuthInfo', () => {
