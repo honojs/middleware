@@ -32,8 +32,8 @@ export function googleAuth(options: {
       token: {
         token: c.req.query('access_token') as string,
         expires_in: Number(c.req.query('expires-in')) as number,
-		refresh_token: c.req.query('refresh_token') as string, 
       },
+      refresh_token: c.req.query('refresh_token') as string, 
     })
 
     // Redirect to login dialog
