@@ -21,8 +21,8 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
-import { httpInstrumentationMiddleware } from './http-instrumentation'
 import { createMockMeterProvider, createTestMeter, createTestTracer } from './test-utils'
+import { httpInstrumentationMiddleware } from './index'
 
 describe('OpenTelemetry middleware - Spans (combined)', () => {
   let app: Hono
