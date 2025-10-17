@@ -1,5 +1,11 @@
 # @hono/ajv-validator
 
+## 0.0.2
+
+### Patch Changes
+
+- [#1514](https://github.com/honojs/middleware/pull/1514) [`565d0e3e89523da773a3570fd1084f3ed7e41036`](https://github.com/honojs/middleware/commit/565d0e3e89523da773a3570fd1084f3ed7e41036) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `hono` and fix the type error
+
 ## 0.0.1
 
 ### Patch Changes
