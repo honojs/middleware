@@ -88,17 +88,17 @@ export function ajvValidator<
     if (valid) {
       if (hook) {
         const hookResult = hook({ success: true, data: data as T }, c)
-        if (hookResult instanceof Response || hookResult instanceof Promise) {
+        if (hookResult) {
           return hookResult
         }
       }
-      return data as T
+      return data
     }
 
     const errors = validate.errors || []
     if (hook) {
       const hookResult = hook({ success: false, errors }, c)
-      if (hookResult instanceof Response || hookResult instanceof Promise) {
+      if (hookResult) {
         return hookResult
       }
     }

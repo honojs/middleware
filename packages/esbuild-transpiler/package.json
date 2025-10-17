@@ -78,7 +78,7 @@
     "@arethetypeswrong/cli": "^0.18.2",
     "esbuild": "^0.25.10",
     "esbuild-wasm": "^0.19.5",
-    "hono": "^4.9.10",
+    "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
     "typescript": "^5.8.2",

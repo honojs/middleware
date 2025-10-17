@@ -26,7 +26,7 @@ import type {
   TypedResponse,
   ValidationTargets,
 } from 'hono'
-import type { MergePath, MergeSchemaPath } from 'hono/types'
+import type { H, MergePath, MergeSchemaPath } from 'hono/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -46,7 +46,7 @@ import { isZod } from './zod-typeguard'
 type MaybePromise<T> = Promise<T> | T
 
 export type RouteConfig = RouteConfigBase & {
-  middleware?: MiddlewareHandler | MiddlewareHandler[]
+  middleware?: H | H[]
   hide?: boolean
 }
 
