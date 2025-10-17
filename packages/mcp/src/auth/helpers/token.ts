@@ -35,7 +35,15 @@ export function tokenHandler(
     c.header('Cache-Control', 'no-store')
 
     try {
-      const parseResult = TokenRequestSchema.safeParse(await c.req.json())
+      let body: any;
+
+      if (c.req.header('Content-Type') === 'application/json') {
+        body = await c.req.json();
+      } else {
+        body = await c.req.parseBody();
+      }
+
+      const parseResult = TokenRequestSchema.safeParse(body)
       if (!parseResult.success) {
         throw new InvalidRequestError(parseResult.error.message)
       }
@@ -50,7 +58,7 @@ export function tokenHandler(
 
       switch (grant_type) {
         case 'authorization_code': {
-          const parseResult = AuthorizationCodeGrantSchema.safeParse(await c.req.json())
+          const parseResult = AuthorizationCodeGrantSchema.safeParse(body)
           if (!parseResult.success) {
             throw new InvalidRequestError(parseResult.error.message)
           }
@@ -80,7 +88,7 @@ export function tokenHandler(
         }
 
         case 'refresh_token': {
-          const parseResult = RefreshTokenGrantSchema.safeParse(await c.req.json())
+          const parseResult = RefreshTokenGrantSchema.safeParse(body)
           if (!parseResult.success) {
             throw new InvalidRequestError(parseResult.error.message)
           }
