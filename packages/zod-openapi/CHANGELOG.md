@@ -1,5 +1,15 @@
 # @hono/zod-openapi
 
+## 1.1.4
+
+### Patch Changes
+
+- [#1514](https://github.com/honojs/middleware/pull/1514) [`565d0e3e89523da773a3570fd1084f3ed7e41036`](https://github.com/honojs/middleware/commit/565d0e3e89523da773a3570fd1084f3ed7e41036) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: change middleware type from MiddlewareHandler to H
+
+  Update RouteConfig middleware field type to use H (Handler | MiddlewareHandler union) instead of MiddlewareHandler. This aligns with Hono's on() method type expectations and resolves type errors introduced in Hono v4.10.0+.
+
+  The H type is the correct type for handlers passed to Hono's on() method, and this change maintains runtime compatibility while fixing TypeScript compilation errors.
+
 ## 1.1.3
 
 ### Patch Changes
