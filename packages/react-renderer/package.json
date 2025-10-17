@@ -54,7 +54,7 @@
     "hono": "^4.9.10",
     "publint": "^0.3.14",
     "react": "^19.2.0",
-    "react-dom": "^19.1.1",
+    "react-dom": "^19.2.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
