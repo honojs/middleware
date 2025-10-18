@@ -92,20 +92,24 @@ describe('Inference', () => {
   it('With Json Schema (Infer Const Generics)', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/author', tbValidator('json', {
+    const route = app.post(
+      '/author',
+      tbValidator('json', {
         type: 'object',
         properties: {
           name: { type: 'string' },
           age: { type: 'number' },
         },
         required: ['name', 'age'],
-      }), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `${data.name} is ${data.age}`,
-      })
-    })
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `${data.name} is ${data.age}`,
+        })
+      }
+    )
     type Actual = ExtractSchema<typeof route>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type Result = Expect<
@@ -137,12 +141,7 @@ describe('Inference', () => {
     })
     type Actual = ExtractSchema<typeof route>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type Result = Expect<
-      Equal<
-        Actual,
-        ExpectedJson<unknown>
-      >
-    >
+    type Result = Expect<Equal<Actual, ExpectedJson<unknown>>>
   })
 })
 // ------------------------------------------------------------------

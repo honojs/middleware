@@ -53,17 +53,21 @@ JSON Schema validation and inference is supported.
 ```typescript
 import { tbValidator } from '@hono/typebox-validator'
 
-const route = app.post('/user', tbValidator('json', {
-  type: 'object',
-  required: ['name', 'age'],
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' }
+const route = app.post(
+  '/user',
+  tbValidator('json', {
+    type: 'object',
+    required: ['name', 'age'],
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number' },
+    },
+  }),
+  (c) => {
+    const user = c.req.valid('json')
+    return c.json({ success: true, message: `${user.name} is ${user.age}` })
   }
-}), (c) => {
-  const user = c.req.valid('json')
-  return c.json({ success: true, message: `${user.name} is ${user.age}` })
-})
+)
 ```
 
 ## Author
