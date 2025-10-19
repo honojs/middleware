@@ -3,9 +3,9 @@
 [![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?typebox-validator)](https://codecov.io/github/honojs/middleware)
 
 Validator middleware using [TypeBox](https://github.com/sinclairzx81/typebox) for [Hono](https://honojs.dev) applications.
-Define your schema with TypeBox and validate incoming requests.
+Use TypeBox or JSON Schema to validate incoming requests.
 
-## Usage
+## TypeBox
 
 No Hook:
 
@@ -43,6 +43,30 @@ app.post(
     }
   })
   //...
+)
+```
+
+## JSON Schema
+
+JSON Schema validation and inference is supported.
+
+```typescript
+import { tbValidator } from '@hono/typebox-validator'
+
+const route = app.post(
+  '/user',
+  tbValidator('json', {
+    type: 'object',
+    required: ['name', 'age'],
+    properties: {
+      name: { type: 'string' },
+      age: { type: 'number' },
+    },
+  }),
+  (c) => {
+    const user = c.req.valid('json')
+    return c.json({ success: true, message: `${user.name} is ${user.age}` })
+  }
 )
 ```
 
