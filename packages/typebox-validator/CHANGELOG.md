@@ -1,5 +1,11 @@
 # @hono/typebox-validator
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1516](https://github.com/honojs/middleware/pull/1516) [`66a73cd55efb0c81a4100207403d563c673832b3`](https://github.com/honojs/middleware/commit/66a73cd55efb0c81a4100207403d563c673832b3) Thanks [@sinclairzx81](https://github.com/sinclairzx81)! - Support Automatic JSON Schema Type Inference
+
 ## 1.0.0
 
 ### Major Changes
