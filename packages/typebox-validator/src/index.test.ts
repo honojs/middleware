@@ -89,6 +89,60 @@ describe('Inference', () => {
       >
     >
   })
+  it('With Json Schema (Infer Const Generics)', () => {
+    const app = new Hono()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const route = app.post(
+      '/author',
+      tbValidator('json', {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          age: { type: 'number' },
+        },
+        required: ['name', 'age'],
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `${data.name} is ${data.age}`,
+        })
+      }
+    )
+    type Actual = ExtractSchema<typeof route>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    type Result = Expect<
+      Equal<
+        Actual,
+        ExpectedJson<{
+          name: string
+          age: number
+        }>
+      >
+    >
+  })
+  it('With Json Schema (Infer Unknown)', () => {
+    const app = new Hono()
+    const schema: object = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+      },
+      required: ['name', 'age'],
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const route = app.post('/author', tbValidator('json', schema), (c) => {
+      return c.json({
+        success: true as boolean, // no-narrow
+        message: `non-schema should infer as unknown`,
+      })
+    })
+    type Actual = ExtractSchema<typeof route>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    type Result = Expect<Equal<Actual, ExpectedJson<unknown>>>
+  })
 })
 // ------------------------------------------------------------------
 // Validate: TypeBox

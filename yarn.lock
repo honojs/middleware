@@ -861,10 +861,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/dom@npm:1.8.2":
-  version: 1.8.2
-  resolution: "@conform-to/dom@npm:1.8.2"
-  checksum: 10c0/5a349638e5574bdf7e7ebb23fd72bc52c7615439728af1c6d97023373e49dd03e21e25f823ec53e2f0b8f4102a459e75c01e67f3e0ceb8f909d12b42f227d846
+"@conform-to/dom@npm:1.12.0":
+  version: 1.12.0
+  resolution: "@conform-to/dom@npm:1.12.0"
+  checksum: 10c0/a5900aa1557a582468137284500179659adf23b72224aaac7818698de9650863b72d6a0c4325eb498737add27f3020d0fc67cd84a7127462dce0d19ec141b6fa
   languageName: node
   linkType: hard
 
@@ -875,14 +875,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/valibot@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@conform-to/valibot@npm:1.8.2"
+"@conform-to/valibot@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@conform-to/valibot@npm:1.12.0"
   dependencies:
-    "@conform-to/dom": "npm:1.8.2"
+    "@conform-to/dom": "npm:1.12.0"
   peerDependencies:
     valibot: ">= 0.32.0"
-  checksum: 10c0/1e39fc7e47c9e7b347bb27cd6f5c875095c80a505097d68c5288e587f21d0aadd2fbeeb2c8916ac3a197e716c0b1dd309354fbeacfabe5c1c41034506063779c
+  checksum: 10c0/af2ba1fb1463b9a14d681dcdef156cbc4199fb6990ccdfdfd10ea4ee3b7af1d6ac78b67b98e9765ff3050c0c7fc023b98b07bb76d0fe46fd86363c819de8776f
   languageName: node
   linkType: hard
 
@@ -1708,7 +1708,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     ajv: "npm:^8.12.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1725,7 +1725,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     arktype: "npm:^2.1.20"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1743,7 +1743,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@auth/core": "npm:^0.35.3"
     "@types/react": "npm:^19"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     react: "npm:^19.2.0"
     tsup: "npm:^8.5.0"
@@ -1763,7 +1763,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/bun": "npm:^1.2.12"
     "@types/node": "npm:^24.5.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1778,7 +1778,7 @@ __metadata:
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1794,7 +1794,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     casbin: "npm:^5.30.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1812,7 +1812,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.5.0"
@@ -1831,7 +1831,7 @@ __metadata:
     "@clerk/backend": "npm:^2.4.1"
     "@clerk/types": "npm:^4.64.0"
     "@types/react": "npm:^19"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     react: "npm:^19.2.0"
     tsup: "npm:^8.5.0"
@@ -1847,7 +1847,7 @@ __metadata:
   resolution: "@hono/cloudflare-access@workspace:packages/cloudflare-access"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1863,10 +1863,10 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@conform-to/dom": "npm:^1.10.0"
-    "@conform-to/valibot": "npm:^1.8.2"
+    "@conform-to/valibot": "npm:^1.12.0"
     "@conform-to/yup": "npm:^1.11.0"
     "@conform-to/zod": "npm:^1.11.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1886,7 +1886,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     effect: "npm:3.17.10"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1904,7 +1904,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     esbuild: "npm:^0.25.10"
     esbuild-wasm: "npm:^0.19.5"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1935,7 +1935,7 @@ __metadata:
   resolution: "@hono/event-emitter@workspace:packages/event-emitter"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1953,7 +1953,7 @@ __metadata:
     "@cloudflare/vitest-pool-workers": "npm:^0.9.7"
     firebase-auth-cloudflare-workers: "npm:^2.0.6"
     firebase-tools: "npm:^14.17.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1969,7 +1969,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     graphql: "npm:^16.5.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -1984,7 +1984,7 @@ __metadata:
   resolution: "@hono/hello@workspace:packages/hello"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2000,7 +2000,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@modelcontextprotocol/sdk": "npm:^1.19.1"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2018,7 +2018,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@medley/router": "npm:^0.2.1"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2043,7 +2043,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@hono/node-server": "npm:^1.19.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2060,7 +2060,7 @@ __metadata:
   resolution: "@hono/oauth-providers@workspace:packages/oauth-providers"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     msw: "npm:^2.10.5"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
@@ -2077,7 +2077,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/jsonwebtoken": "npm:^9.0.10"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     jsonwebtoken: "npm:^9.0.2"
     oauth4webapi: "npm:^2.6.0"
     publint: "npm:^0.3.14"
@@ -2100,7 +2100,7 @@ __metadata:
     "@opentelemetry/sdk-trace-base": "npm:^2.1.0"
     "@opentelemetry/sdk-trace-node": "npm:^2.1.0"
     "@opentelemetry/semantic-conventions": "npm:^1.28.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2115,7 +2115,7 @@ __metadata:
   resolution: "@hono/prometheus@workspace:packages/prometheus"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     prom-client: "npm:^15.0.0"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
@@ -2134,7 +2134,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@builder.io/qwik": "npm:^1.2.0"
     "@builder.io/qwik-city": "npm:^1.16.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2150,7 +2150,7 @@ __metadata:
   resolution: "@hono/react-compat@workspace:packages/react-compat"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2167,7 +2167,7 @@ __metadata:
     "@cloudflare/vitest-pool-workers": "npm:^0.9.7"
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.1.9"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -2186,7 +2186,7 @@ __metadata:
   resolution: "@hono/sentry@workspace:packages/sentry"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     toucan-js: "npm:^4.0.0"
     tsup: "npm:^8.5.0"
@@ -2203,7 +2203,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@cloudflare/vitest-pool-workers": "npm:^0.9.7"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     jose: "npm:^6.0.11"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
@@ -2237,7 +2237,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@standard-schema/spec": "npm:1.0.0"
     arktype: "npm:^2.1.20"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2255,7 +2255,7 @@ __metadata:
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     stytch: "npm:^12.32.0"
     tsup: "npm:^8.5.0"
@@ -2272,7 +2272,7 @@ __metadata:
   resolution: "@hono/swagger-editor@workspace:packages/swagger-editor"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2288,7 +2288,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/swagger-ui-dist": "npm:^3.30.6"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2304,7 +2304,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@trpc/server": "npm:^11.5.1"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2321,7 +2321,7 @@ __metadata:
   resolution: "@hono/tsyringe@workspace:packages/tsyringe"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     reflect-metadata: "npm:^0.2.2"
     tsup: "npm:^8.5.0"
@@ -2339,7 +2339,7 @@ __metadata:
   resolution: "@hono/typebox-validator@workspace:packages/typebox-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typebox: "npm:^1.0.30"
@@ -2357,7 +2357,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@ryoppippi/unplugin-typia": "npm:1.2.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2375,7 +2375,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@types/node": "npm:^24.5.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2390,7 +2390,7 @@ __metadata:
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -2409,7 +2409,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@asteasolutions/zod-to-openapi": "npm:^8.1.0"
     "@hono/zod-validator": "workspace:^"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     openapi3-ts: "npm:^4.5.0"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
@@ -2428,7 +2428,7 @@ __metadata:
   resolution: "@hono/zod-validator@workspace:packages/zod-validator"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
@@ -9236,21 +9236,21 @@ __metadata:
     "@types/ws": "npm:^8.18.0"
     "@vitest/coverage-istanbul": "npm:^3.2.4"
     eslint: "npm:^9.34.0"
-    hono: "npm:^4.9.10"
+    hono: "npm:^4.10.1"
     pkg-pr-new: "npm:^0.0.54"
     prettier: "npm:^3.6.2"
     tsup: "npm:^8.5.0"
-    turbo: "npm:^2.5.6"
+    turbo: "npm:^2.5.8"
     typescript: "npm:^5.8.2"
     typia: "npm:^9.7.2"
     vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
 
-"hono@npm:^4.9.10":
-  version: 4.9.10
-  resolution: "hono@npm:4.9.10"
-  checksum: 10c0/1f547f09599c84f1566a424e58bc18448a1b81016aff5a8248563cfb31b7083cb204502461a165dbe57e25fdf89de9969d22890c190520de73c4de3d123c4a60
+"hono@npm:^4.10.1":
+  version: 4.10.1
+  resolution: "hono@npm:4.10.1"
+  checksum: 10c0/a66e2791f62db07f1b24897a0f6848f5457101be12fd1a0e317b397b487ef2afa7ac6c01373347f3795ccbe09c68cd3fc7d00a43f75cc3a1e0fb6e85bec2e821
   languageName: node
   linkType: hard
 
@@ -15129,58 +15129,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-darwin-64@npm:2.5.6"
+"turbo-darwin-64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-darwin-64@npm:2.5.8"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-darwin-arm64@npm:2.5.6"
+"turbo-darwin-arm64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-darwin-arm64@npm:2.5.8"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-linux-64@npm:2.5.6"
+"turbo-linux-64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-linux-64@npm:2.5.8"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-linux-arm64@npm:2.5.6"
+"turbo-linux-arm64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-linux-arm64@npm:2.5.8"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-windows-64@npm:2.5.6"
+"turbo-windows-64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-windows-64@npm:2.5.8"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:2.5.6":
-  version: 2.5.6
-  resolution: "turbo-windows-arm64@npm:2.5.6"
+"turbo-windows-arm64@npm:2.5.8":
+  version: 2.5.8
+  resolution: "turbo-windows-arm64@npm:2.5.8"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo@npm:^2.5.6":
-  version: 2.5.6
-  resolution: "turbo@npm:2.5.6"
+"turbo@npm:^2.5.8":
+  version: 2.5.8
+  resolution: "turbo@npm:2.5.8"
   dependencies:
-    turbo-darwin-64: "npm:2.5.6"
-    turbo-darwin-arm64: "npm:2.5.6"
-    turbo-linux-64: "npm:2.5.6"
-    turbo-linux-arm64: "npm:2.5.6"
-    turbo-windows-64: "npm:2.5.6"
-    turbo-windows-arm64: "npm:2.5.6"
+    turbo-darwin-64: "npm:2.5.8"
+    turbo-darwin-arm64: "npm:2.5.8"
+    turbo-linux-64: "npm:2.5.8"
+    turbo-linux-arm64: "npm:2.5.8"
+    turbo-windows-64: "npm:2.5.8"
+    turbo-windows-arm64: "npm:2.5.8"
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -15196,7 +15196,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: 10c0/b9657bf211bbcfe3911496e4fee6c9a24526bc37e9cadf7f0c76d0376e9c9dfafaacec27f5a61bb621dfe330600ce68c1b21e4cdc19bdccd3ebfe66766fcf62f
+  checksum: 10c0/34e8dc87fc2c5d63c3cd5aede9068c1123509d88f9bb99283ffec1687de6ad6df7ebfb83a5d348580afb3fdac53af479456e36938a1b6ed80fc1c3416c6dc3f3
   languageName: node
   linkType: hard
 

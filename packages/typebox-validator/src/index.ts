@@ -69,7 +69,7 @@ type ExcludeResponseType<T> = T extends Response & TypedResponse<any> ? never : 
  * @returns A Hono middleware handler.
  */
 export function tbValidator<
-  T extends TSchema,
+  const T extends TSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
