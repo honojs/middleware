@@ -46,7 +46,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@types/bun": "^1.2.12",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.9.0",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
