@@ -36,7 +36,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.29.7",
-    "@cloudflare/vitest-pool-workers": "^0.9.7",
+    "@cloudflare/vitest-pool-workers": "^0.9.13",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^2.6.5",
