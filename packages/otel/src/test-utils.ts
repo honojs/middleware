@@ -10,13 +10,6 @@ import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 
 export const createMockMeterProvider = (overrides: Partial<Meter> = {}): MeterProviderApi => {
   const meter: Meter = {
-    createCounter:
-      overrides.createCounter ??
-      (() => ({
-        add() {
-          return
-        },
-      })),
     createUpDownCounter:
       overrides.createUpDownCounter ??
       (() => ({
@@ -31,29 +24,6 @@ export const createMockMeterProvider = (overrides: Partial<Meter> = {}): MeterPr
           return
         },
       })),
-    createObservableGauge:
-      overrides.createObservableGauge ??
-      (() => ({
-        observation() {
-          return
-        },
-      })),
-    createObservableCounter:
-      overrides.createObservableCounter ??
-      (() => ({
-        observation() {
-          return
-        },
-      })),
-    createObservableUpDownCounter:
-      overrides.createObservableUpDownCounter ??
-      (() => ({
-        observation() {
-          return
-        },
-      })),
-    addBatchObservableCallback: overrides.addBatchObservableCallback ?? (() => {}),
-    removeBatchObservableCallback: overrides.removeBatchObservableCallback ?? (() => {}),
   } as Meter
   return { getMeter: () => meter }
 }
