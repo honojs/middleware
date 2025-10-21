@@ -54,9 +54,7 @@ export const otel = (options: OtelOptions = {}): MiddlewareHandler => {
   const otelMetrics = createOtelMetrics(meter)
   const captureRequestHeaders = options.captureRequestHeaders
     ? new Set(
-        [...options.captureRequestHeaders, 'traceparent', 'tracestate'].map((h) =>
-          h.toLowerCase()
-        )
+        [...options.captureRequestHeaders, 'traceparent', 'tracestate'].map((h) => h.toLowerCase())
       )
     : undefined
   const captureResponseHeaders = options.captureResponseHeaders
