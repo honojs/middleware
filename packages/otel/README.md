@@ -29,7 +29,7 @@ export default app
 
 Since @opentelemetry/sdk-node is not supported on [Cloudflare Workers](https://workers.cloudflare.com/), you need to use [@microlabs/otel-cf-workers](https://github.com/evanderkoogh/otel-cf-workers) instead.
 
-So far I have not been able to see solid support for metrics in Cloudflare Workers. Any ideas here are very weolcome! Until then - the tracing instrumentation can be used!
+So far I have not been able to see solid support for metrics in Cloudflare Workers. Any ideas here are very welcome! Until then - the tracing instrumentation can be used!
 
 The following example shows how to use @microlabs/otel-cf-workers with [Honeycomb](https://www.honeycomb.io/):
 
