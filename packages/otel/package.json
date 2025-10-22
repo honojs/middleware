@@ -1,6 +1,6 @@
 {
   "name": "@hono/otel",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "OpenTelemetry middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
