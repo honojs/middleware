@@ -4,6 +4,6 @@
     "outDir": "../../dist/packages/session",
     "types": ["@cloudflare/vitest-pool-workers", "vitest/globals"]
   },
-  "include": ["examples", "src", "vitest.config.ts"],
+  "include": ["examples", "src", "tsdown.config.ts", "vitest.config.ts"],
   "references": []
 }

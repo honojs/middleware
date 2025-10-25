@@ -20,7 +20,7 @@
   },
   "include": [
     "${configDir}/vitest.config.ts",
-    "${configDir}/tsup.config.ts",
+    "${configDir}/tsdown.config.ts",
     "${configDir}/package.json",
     "${configDir}/src"
   ]

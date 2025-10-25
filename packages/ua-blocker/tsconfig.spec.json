@@ -4,6 +4,6 @@
     "outDir": "../../dist/packages/ua-blocker",
     "types": ["vitest/globals"]
   },
-  "include": ["examples", "src", "src/**/*.json", "vitest.config.ts"],
+  "include": ["examples", "src", "src/**/*.json", "tsdown.config.ts", "vitest.config.ts"],
   "references": []
 }

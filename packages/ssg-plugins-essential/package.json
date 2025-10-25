@@ -7,11 +7,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
@@ -62,10 +60,8 @@
     "hono": ">=4.8.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
     "@types/node": "^24.9.0",
-    "publint": "^0.3.14",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }

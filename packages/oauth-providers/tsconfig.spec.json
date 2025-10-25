@@ -4,6 +4,6 @@
     "outDir": "../../dist/packages/oauth-providers",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "mocks.ts", "vitest.config.ts"],
+  "include": ["src", "mocks.ts", "tsdown.config.ts", "vitest.config.ts"],
   "references": []
 }
