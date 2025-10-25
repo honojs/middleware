@@ -4,6 +4,6 @@
     "outDir": "../../dist/packages/firebase-auth",
     "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers", "vitest/globals"]
   },
-  "include": ["src", "firebase-tools.d.ts", "vitest.config.ts"],
+  "include": ["src", "firebase-tools.d.ts", "tsdown.config.ts", "vitest.config.ts"],
   "references": []
 }
