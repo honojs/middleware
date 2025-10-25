@@ -117,8 +117,21 @@ You can start your app just like you would with Hono. For Cloudflare Workers and
 export default app
 ```
 
-> [!IMPORTANT]
-> The request must have the proper `Content-Type` to ensure the validation. For example, if you want to validate a JSON body, the request must have the `Content-Type` to `application/json` in the request. Otherwise, the value of `c.req.valid('json')` will be `{}`.
+> [!IMPORTANT] > **Security Notice**: Body validation is now strict by default to prevent validation bypass vulnerabilities.
+>
+> ### Request Body Validation Behavior
+>
+> The validation behavior depends on the `required` field in `request.body`:
+>
+> | `required` value        | Content-Type present | Content-Type missing | Wrong Content-Type |
+> | ----------------------- | -------------------- | -------------------- | ------------------ |
+> | Not specified (default) | ✅ Validates         | ✅ Validates         | ❌ Returns 400     |
+> | `true`                  | ✅ Validates         | ✅ Validates         | ❌ Returns 400     |
+> | `false`                 | ✅ Validates         | ⚠️ Allows empty body | ❌ Returns 400     |
+>
+> ### Default Behavior (Secure)
+>
+> By default, requests are always validated to prevent security vulnerabilities:
 >
 > ```ts
 > import { createRoute, z, OpenAPIHono } from '@hono/zod-openapi'
@@ -135,6 +148,7 @@ export default app
 >           }),
 >         },
 >       },
+>       // required is not specified - defaults to strict validation
 >     },
 >   },
 >   responses: {
@@ -148,20 +162,22 @@ export default app
 >
 > app.openapi(route, (c) => {
 >   const validatedBody = c.req.valid('json')
->   return c.json(validatedBody) // validatedBody is {}
+>   return c.json(validatedBody)
 > })
 >
+> // Request without Content-Type will be validated (returns 400 for invalid data)
 > const res = await app.request('/books', {
 >   method: 'POST',
->   body: JSON.stringify({ title: 'foo' }),
->   // The Content-Type header is lacking.
+>   body: JSON.stringify({ title: '' }), // Invalid: empty title
+>   // No Content-Type header
 > })
 >
-> const data = await res.json()
-> console.log(data) // {}
+> console.log(res.status) // 400 - Validation error
 > ```
 >
-> If you want to force validation of requests that do not have the proper `Content-Type`, set the value of `request.body.required` to `true`.
+> ### Optional Body Validation
+>
+> To allow requests without a body (but still validate when body is present), explicitly set `required: false`:
 >
 > ```ts
 > const route = createRoute({
@@ -176,11 +192,50 @@ export default app
 >           }),
 >         },
 >       },
->       required: true, // <== add
+>       required: false, // Explicitly allow empty body
+>     },
+>   },
+> })
+>
+> // Request without Content-Type and body is allowed
+> const res1 = await app.request('/books', {
+>   method: 'POST',
+> })
+> console.log(res1.status) // 200 - Empty body allowed
+>
+> // But if Content-Type is present, body is validated
+> const res2 = await app.request('/books', {
+>   method: 'POST',
+>   body: JSON.stringify({ title: '' }), // Invalid
+>   headers: { 'Content-Type': 'application/json' },
+> })
+> console.log(res2.status) // 400 - Validation error
+> ```
+>
+> ### Multiple Content-Type Support
+>
+> When multiple content types are supported, the appropriate validator is used based on the Content-Type header:
+>
+> ```ts
+> const route = createRoute({
+>   method: 'post',
+>   path: '/data',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: z.object({ jsonField: z.string() }),
+>         },
+>         'application/x-www-form-urlencoded': {
+>           schema: z.object({ formField: z.string() }),
+>         },
+>       },
 >     },
 >   },
 > })
 > ```
+>
+> Unsupported content types will return a 400 error with a descriptive message.
 
 ### Handling Validation Errors
 
