@@ -405,21 +405,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/qwik-city@npm:^1.17.0":
-  version: 1.17.0
-  resolution: "@builder.io/qwik-city@npm:1.17.0"
+"@builder.io/qwik-city@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@builder.io/qwik-city@npm:1.17.1"
   dependencies:
-    "@mdx-js/mdx": "npm:^3.1.0"
+    "@mdx-js/mdx": "npm:^3.1.1"
     "@types/mdx": "npm:^2.0.13"
-    source-map: "npm:^0.7.4"
+    source-map: "npm:^0.7.6"
     svgo: "npm:^3.3.2"
     undici: "npm:*"
     valibot: "npm:>=0.36.0 <2"
     vfile: "npm:6.0.3"
     vite: "npm:>=5 <8"
-    vite-imagetools: "npm:^8.0.0"
+    vite-imagetools: "npm:^9.0.0"
     zod: "npm:3.25.48"
-  checksum: 10c0/0fdf3b41ae75e27d0caf52172096c2a0511218b787f4b8f4caba9556fd2f3f751e65044773b12269007de5f846d6a51be7786bb975c8ba3db569d862431be991
+  checksum: 10c0/cc2dc4a6f5a2c443f4046cc3605efe3c7caf8718121a44256dbb617278e490c284447bb1f66f4972c0fdfda34f1efb6a376db3af8b9d3aafc062806635acb914
   languageName: node
   linkType: hard
 
@@ -2165,14 +2165,14 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@builder.io/qwik": "npm:^1.2.0"
-    "@builder.io/qwik-city": "npm:^1.17.0"
+    "@builder.io/qwik-city": "npm:^1.17.1"
     hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
     typescript: "npm:^5.8.2"
   peerDependencies:
     "@builder.io/qwik": ^1.2.0
-    "@builder.io/qwik-city": ^1.17.0
+    "@builder.io/qwik-city": ^1.17.1
     hono: ^3.1.5
   languageName: unknown
   linkType: soft
@@ -3363,7 +3363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/mdx@npm:^3.1.0":
+"@mdx-js/mdx@npm:^3.1.1":
   version: 3.1.1
   resolution: "@mdx-js/mdx@npm:3.1.1"
   dependencies:
@@ -9711,10 +9711,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imagetools-core@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "imagetools-core@npm:8.0.0"
-  checksum: 10c0/e71882c88017268f03659dc4d65d9921afd1af12dd1abdb2f36802fec524a7d2d0426017e4ca4a1c3416e2cee70754bc7e43392519eac228d5c3da0aefef1269
+"imagetools-core@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "imagetools-core@npm:9.0.0"
+  checksum: 10c0/82544b6e643891ca3bdc628596f9add1cc472cd252da1707ab3d6c58c819bc4f64eb498b9d7a76e3f4a5163cc6174253b8c0a7ae5a1ef0eb0b5141a24af92150
   languageName: node
   linkType: hard
 
@@ -14712,10 +14712,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:^0.7.0, source-map@npm:^0.7.4":
+"source-map@npm:^0.7.0":
   version: 0.7.4
   resolution: "source-map@npm:0.7.4"
   checksum: 10c0/dc0cf3768fe23c345ea8760487f8c97ef6fca8a73c83cd7c9bf2fde8bc2c34adb9c0824d6feb14bc4f9e37fb522e18af621543f1289038a66ac7586da29aa7dc
+  languageName: node
+  linkType: hard
+
+"source-map@npm:^0.7.6":
+  version: 0.7.6
+  resolution: "source-map@npm:0.7.6"
+  checksum: 10c0/59f6f05538539b274ba771d2e9e32f6c65451982510564438e048bc1352f019c6efcdc6dd07909b1968144941c14015c2c7d4369fb7c4d7d53ae769716dcc16c
   languageName: node
   linkType: hard
 
@@ -16451,14 +16458,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-imagetools@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "vite-imagetools@npm:8.0.0"
+"vite-imagetools@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "vite-imagetools@npm:9.0.0"
   dependencies:
     "@rollup/pluginutils": "npm:^5.0.5"
-    imagetools-core: "npm:^8.0.0"
+    imagetools-core: "npm:^9.0.0"
     sharp: "npm:^0.34.1"
-  checksum: 10c0/7a640523287bbf7724475286dcf15e81e05878f4ddff25a60e4ddd9d9d9854f911ad51d3caffcb0350087ed5cb49531b209a596ee2507b8837c7d29de342a078
+  checksum: 10c0/47ae8ec41c12b2ef1b67435ab3599c1915921539f3646bb26c6b36b45e9569bbdc0b752e113f7a4e660c7fa2d382490109329d87ee9de1779f95cbaf31a4530a
   languageName: node
   linkType: hard
 
