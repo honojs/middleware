@@ -165,6 +165,8 @@ export class StreamableHTTPTransport implements Transport {
             })
           }
         }, 30000)
+        // Unref the timer to avoid blocking the server from shutting down
+        keepAlive.unref();
 
         // Assign the response to the standalone SSE stream
         this.#streamMapping.set(resolvedStreamId, {
