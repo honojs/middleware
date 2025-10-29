@@ -36,7 +36,7 @@ export type WellKnownRouterOptions = {
 export function wellKnownRouter(options: WellKnownRouterOptions): Hono {
   checkIssuerUrl(new URL(options.oauthMetadata.issuer))
 
-  const router = new Hono()
+  const router = new Hono().basePath('/.well-known')
 
   const protectedResourceMetadata: OAuthProtectedResourceMetadata = {
     resource: options.resourceServerUrl.href,
@@ -49,11 +49,13 @@ export function wellKnownRouter(options: WellKnownRouterOptions): Hono {
   }
 
   // Serve PRM at the path-specific URL per RFC 9728
-    const rsPath = new URL(options.resourceServerUrl.href).pathname;
-  router.get(`/.well-known/oauth-protected-resource${rsPath === '/' ? '' : rsPath}`, (c) => c.json(protectedResourceMetadata))
+  const rsPath = new URL(options.resourceServerUrl.href).pathname
+  router.get(`/oauth-protected-resource${rsPath === '/' ? '' : rsPath}`, (c) =>
+    c.json(protectedResourceMetadata)
+  )
 
   // Always add this for backwards compatibility
-  router.get('/.well-known/oauth-authorization-server', (c) => c.json(options.oauthMetadata))
+  router.get('/oauth-authorization-server', (c) => c.json(options.oauthMetadata))
 
   return router
 }

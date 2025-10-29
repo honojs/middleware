@@ -1,3 +1,3 @@
 export { StreamableHTTPTransport } from './streamable-http'
 export { streamSSE } from './streaming'
-export * from './auth'
+export { mcpAuthRouter, simpleMcpAuthRouter, ProxyOAuthServerProvider } from './auth'
