@@ -49,7 +49,7 @@
     "url": "git+https://github.com/honojs/middleware.git",
     "directory": "packages/mcp"
   },
-  "homepage": "https://github.com/honojs/middleware",
+  "homepage": "https://honohub.dev/docs/hono-mcp",
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
     "hono": "*",
