@@ -1,4 +1,4 @@
-import type { Hono } from 'hono'
+import type { Env, Hono, Schema } from 'hono'
 import type { WellKnownRouterOptions } from './helpers'
 import { checkIssuerUrl, wellKnownRouter } from './helpers'
 
@@ -6,7 +6,7 @@ export type SimpleMcpAuthRouterOptions = {
   issuer: string
 } & Omit<WellKnownRouterOptions, 'oauthMetadata'>
 
-export function simpleMcpAuthRouter(options: SimpleMcpAuthRouterOptions): Hono {
+export function simpleMcpAuthRouter<E extends Env, S extends Schema, P extends string>(options: SimpleMcpAuthRouterOptions): Hono<E, S, P> {
   const { issuer, ...wellKnownOptions } = options
 
   const _issuer = new URL(issuer)

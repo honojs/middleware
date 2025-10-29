@@ -2,6 +2,7 @@ import type {
   OAuthMetadata,
   OAuthProtectedResourceMetadata,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
+import type { Env, Schema } from 'hono'
 import { Hono } from 'hono'
 import { checkIssuerUrl } from './utils'
 
@@ -33,10 +34,10 @@ export type WellKnownRouterOptions = {
   resourceName?: string
 }
 
-export function wellKnownRouter(options: WellKnownRouterOptions): Hono {
+export function wellKnownRouter<E extends Env, S extends Schema, P extends string>(options: WellKnownRouterOptions): Hono<E, S, P> {
   checkIssuerUrl(new URL(options.oauthMetadata.issuer))
 
-  const router = new Hono().basePath('/.well-known')
+  const router = new Hono<E, S, P>().basePath('/.well-known')
 
   const protectedResourceMetadata: OAuthProtectedResourceMetadata = {
     resource: options.resourceServerUrl.href,

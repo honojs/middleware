@@ -1,7 +1,7 @@
 import { TooManyRequestsError } from '@modelcontextprotocol/sdk/server/auth/errors.js'
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import { createOAuthMetadata } from '@modelcontextprotocol/sdk/server/auth/router.js'
-import type { MiddlewareHandler } from 'hono'
+import type { Env, MiddlewareHandler, Schema } from 'hono'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ConfigType as RateLimitOptions } from 'hono-rate-limiter'
@@ -83,10 +83,10 @@ export type AuthRouterOptions = {
  *  const app = new Hono();
  *  app.route("/", mcpAuthRouter(...));
  */
-export function mcpAuthRouter(options: AuthRouterOptions): Hono {
+export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>(options: AuthRouterOptions): Hono<E, S, P> {
   const oauthMetadata = createOAuthMetadata(options)
 
-  const router = new Hono().use(cors())
+  const router = new Hono<E, S, P>().use(cors())
 
   router.on(
     ['GET', 'POST'],
@@ -172,7 +172,7 @@ export function mcpAuthRouter(options: AuthRouterOptions): Hono {
     )
   }
 
-  return router
+  return router as unknown as Hono<E, S, P>
 }
 
 function applyRateLimiter(
