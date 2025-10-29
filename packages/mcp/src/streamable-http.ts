@@ -228,7 +228,9 @@ export class StreamableHTTPTransport implements Transport {
         }, 30000)
 
         // Unref the timer to avoid blocking the server from shutting down
-        keepAlive.unref()
+        if ('unref' in keepAlive && typeof keepAlive.unref === 'function') {
+          keepAlive.unref()
+        }
 
         // Assign the response to the standalone SSE stream
         this.#streamMapping.set(resolvedStreamId, {
