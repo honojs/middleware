@@ -25,6 +25,7 @@ import {
   SUPPORTED_PROTOCOL_VERSIONS,
 } from '@modelcontextprotocol/sdk/types.js'
 import type { Context } from 'hono'
+import { getRuntimeKey } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
 import { streamSSE } from './streaming'
@@ -228,12 +229,7 @@ export class StreamableHTTPTransport implements Transport {
         }, 30000)
 
         // Unref the timer to avoid blocking the server from shutting down
-        if (
-          typeof keepAlive === 'object' &&
-          'unref' in keepAlive &&
-          // @ts-expect-error - keepAlive is an object with a unref method - this is for deno
-          typeof keepAlive.unref === 'function'
-        ) {
+        if (getRuntimeKey() !== 'deno') {
           keepAlive.unref()
         }
 
