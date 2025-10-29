@@ -228,7 +228,11 @@ export class StreamableHTTPTransport implements Transport {
         }, 30000)
 
         // Unref the timer to avoid blocking the server from shutting down
-        if ('unref' in keepAlive && typeof keepAlive.unref === 'function') {
+        if (
+          typeof keepAlive === 'object' &&
+          'unref' in keepAlive &&
+          typeof keepAlive.unref === 'function'
+        ) {
           keepAlive.unref()
         }
 
