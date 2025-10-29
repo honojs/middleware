@@ -13,7 +13,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "prepack": "yarn build",
-    "publint": "attw --pack && publint",
+    "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
