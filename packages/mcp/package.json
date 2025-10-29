@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsup ./src/index.ts ./src/auth/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "prepack": "yarn build",
