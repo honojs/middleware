@@ -168,7 +168,7 @@ export class StreamableHTTPTransport implements Transport {
         }, 30000)
 
         // Unref the timer to avoid blocking the server from shutting down
-        if (getRuntimeKey() !== 'deno') {
+        if (typeof keepAlive === 'object' && 'unref' in keepAlive) {
           ;(keepAlive as any).unref()
         }
 
