@@ -6,7 +6,9 @@ export type SimpleMcpAuthRouterOptions = {
   issuer: string
 } & Omit<WellKnownRouterOptions, 'oauthMetadata'>
 
-export function simpleMcpAuthRouter<E extends Env, S extends Schema, P extends string>(options: SimpleMcpAuthRouterOptions): Hono<E, S, P> {
+export function simpleMcpAuthRouter<E extends Env, S extends Schema, P extends string>(
+  options: SimpleMcpAuthRouterOptions
+): Hono<E, S, P> {
   const { issuer, ...wellKnownOptions } = options
 
   const _issuer = new URL(issuer)

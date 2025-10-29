@@ -83,7 +83,9 @@ export type AuthRouterOptions = {
  *  const app = new Hono();
  *  app.route("/", mcpAuthRouter(...));
  */
-export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>(options: AuthRouterOptions): Hono<E, S, P> {
+export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>(
+  options: AuthRouterOptions
+): Hono<E, S, P> {
   const oauthMetadata = createOAuthMetadata(options)
 
   const router = new Hono<E, S, P>().use(cors())

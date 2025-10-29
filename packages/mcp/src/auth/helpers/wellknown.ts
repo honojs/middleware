@@ -34,7 +34,9 @@ export type WellKnownRouterOptions = {
   resourceName?: string
 }
 
-export function wellKnownRouter<E extends Env, S extends Schema, P extends string>(options: WellKnownRouterOptions): Hono<E, S, P> {
+export function wellKnownRouter<E extends Env, S extends Schema, P extends string>(
+  options: WellKnownRouterOptions
+): Hono<E, S, P> {
   checkIssuerUrl(new URL(options.oauthMetadata.issuer))
 
   const router = new Hono<E, S, P>().basePath('/.well-known')
