@@ -57,6 +57,9 @@ describe('clientAuth middleware', () => {
         client_id: 'valid-client',
         client_secret: 'valid-secret',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(200)
@@ -72,6 +75,9 @@ describe('clientAuth middleware', () => {
         client_id: 'non-existent-client',
         client_secret: 'some-secret',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(400)
@@ -87,6 +93,9 @@ describe('clientAuth middleware', () => {
         client_id: 'valid-client',
         client_secret: 'wrong-secret',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(400)
@@ -101,6 +110,9 @@ describe('clientAuth middleware', () => {
       body: JSON.stringify({
         client_secret: 'valid-secret',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(400)
@@ -114,6 +126,9 @@ describe('clientAuth middleware', () => {
       body: JSON.stringify({
         client_id: 'expired-client',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     // Since the client has no secret, this should pass without providing one
@@ -130,6 +145,9 @@ describe('clientAuth middleware', () => {
         client_id: 'client-with-expired-secret',
         client_secret: 'expired-secret',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(400)
@@ -142,6 +160,9 @@ describe('clientAuth middleware', () => {
     const response = await app.request('/protected', {
       method: 'POST',
       body: 'not-json-format',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(500)
@@ -156,6 +177,9 @@ describe('clientAuth middleware', () => {
         client_secret: 'valid-secret',
         extra_field: 'should be ignored',
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     expect(response.status).toBe(200)

@@ -196,6 +196,9 @@ describe('Revocation Handler', () => {
           client_secret: 'wrong-secret',
           token: 'token_to_revoke',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       expect(response.status).toBe(400)
@@ -212,6 +215,9 @@ describe('Revocation Handler', () => {
           client_secret: 'valid-secret',
           token: 'token_to_revoke',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       expect(response.status).toBe(200)
@@ -231,6 +237,9 @@ describe('Revocation Handler', () => {
           token: 'token_to_revoke',
           token_type_hint: 'refresh_token',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       expect(response.status).toBe(200)
@@ -245,6 +254,7 @@ describe('Revocation Handler', () => {
         method: 'POST',
         headers: {
           Origin: 'https://example.com',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           client_id: 'valid-client',

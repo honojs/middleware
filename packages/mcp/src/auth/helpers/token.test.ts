@@ -184,6 +184,9 @@ describe('Token Handler', () => {
           client_secret: 'valid-secret',
           grant_type: 'password', // Unsupported grant type
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -202,6 +205,9 @@ describe('Token Handler', () => {
           client_secret: 'wrong-secret',
           grant_type: 'authorization_code',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -220,6 +226,9 @@ describe('Token Handler', () => {
           code: 'valid_code',
           code_verifier: 'valid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       expect(response.status).toBe(200)
@@ -237,6 +246,9 @@ describe('Token Handler', () => {
           // Missing code
           code_verifier: 'valid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -255,6 +267,9 @@ describe('Token Handler', () => {
           code: 'valid_code',
           // Missing code_verifier
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -276,6 +291,9 @@ describe('Token Handler', () => {
           code: 'valid_code',
           code_verifier: 'invalid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -295,6 +313,9 @@ describe('Token Handler', () => {
           code: 'expired_code',
           code_verifier: 'valid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -315,6 +336,9 @@ describe('Token Handler', () => {
           code: 'valid_code',
           code_verifier: 'valid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -353,6 +377,9 @@ describe('Token Handler', () => {
           code: 'valid_code',
           code_verifier: 'valid_verifier',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -403,6 +430,9 @@ describe('Token Handler', () => {
             code_verifier: 'any_verifier',
             redirect_uri: 'https://example.com/callback',
           }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         })
 
         const body = await response.json()
@@ -468,6 +498,9 @@ describe('Token Handler', () => {
             code_verifier: 'any_verifier',
             redirect_uri: redirectUri,
           }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         })
 
         const body = await response.json()
@@ -501,6 +534,9 @@ describe('Token Handler', () => {
           grant_type: 'refresh_token',
           // Missing refresh_token
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -518,6 +554,9 @@ describe('Token Handler', () => {
           grant_type: 'refresh_token',
           refresh_token: 'invalid_refresh_token',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -537,6 +576,9 @@ describe('Token Handler', () => {
           grant_type: 'refresh_token',
           refresh_token: 'valid_refresh_token',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -564,6 +606,9 @@ describe('Token Handler', () => {
           refresh_token: 'valid_refresh_token',
           scope: 'profile email',
         }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
 
       const body = await response.json()
@@ -579,6 +624,7 @@ describe('Token Handler', () => {
         method: 'POST',
         headers: {
           Origin: 'https://example.com',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           client_id: 'valid-client',
