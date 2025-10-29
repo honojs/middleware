@@ -229,8 +229,8 @@ export class StreamableHTTPTransport implements Transport {
         }, 30000)
 
         // Unref the timer to avoid blocking the server from shutting down
-        if (getRuntimeKey() !== 'deno') {
-          keepAlive.unref()
+        if (getRuntimeKey() !== 'deno' && 'unref' in keepAlive) {
+          ;(keepAlive as any).unref()
         }
 
         // Assign the response to the standalone SSE stream
