@@ -93,6 +93,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@arethetypeswrong/cli@npm:^0.17.4":
+  version: 0.17.4
+  resolution: "@arethetypeswrong/cli@npm:0.17.4"
+  dependencies:
+    "@arethetypeswrong/core": "npm:0.17.4"
+    chalk: "npm:^4.1.2"
+    cli-table3: "npm:^0.6.3"
+    commander: "npm:^10.0.1"
+    marked: "npm:^9.1.2"
+    marked-terminal: "npm:^7.1.0"
+    semver: "npm:^7.5.4"
+  bin:
+    attw: dist/index.js
+  checksum: 10c0/561a2a8f88916c776669673119f4b02d0ceab25110c966f8817447e13587967c2935f2d8c468e5d9b19ff3e2617ca9128c43e44ca2abf62741f0a90899511c61
+  languageName: node
+  linkType: hard
+
 "@arethetypeswrong/cli@npm:^0.18.2":
   version: 0.18.2
   resolution: "@arethetypeswrong/cli@npm:0.18.2"
@@ -107,6 +124,22 @@ __metadata:
   bin:
     attw: dist/index.js
   checksum: 10c0/15fa8ee8659aa7b163c08f3d739247fe44d838b1aa5cefe125d8c90c03955fbc1e5a7c76885c354ec217a07c8fdcb5f5dc297188cadf626b303b1ae85232c51e
+  languageName: node
+  linkType: hard
+
+"@arethetypeswrong/core@npm:0.17.4":
+  version: 0.17.4
+  resolution: "@arethetypeswrong/core@npm:0.17.4"
+  dependencies:
+    "@andrewbranch/untar.js": "npm:^1.0.3"
+    "@loaderkit/resolve": "npm:^1.0.2"
+    cjs-module-lexer: "npm:^1.2.3"
+    fflate: "npm:^0.8.2"
+    lru-cache: "npm:^10.4.3"
+    semver: "npm:^7.5.4"
+    typescript: "npm:5.6.1-rc"
+    validate-npm-package-name: "npm:^5.0.0"
+  checksum: 10c0/3414ce50cb5028608b14e78317e18c9617058264c83d110f3561aa6c39680338ca3398ef8bd9ba6966ba15044f89830250a1defe84d732d7758bcf3cca830c99
   languageName: node
   linkType: hard
 
@@ -3430,9 +3463,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.19.1":
-  version: 1.19.1
-  resolution: "@modelcontextprotocol/sdk@npm:1.19.1"
+"@modelcontextprotocol/sdk@npm:^1.17.1":
+  version: 1.20.2
+  resolution: "@modelcontextprotocol/sdk@npm:1.20.2"
   dependencies:
     ajv: "npm:^6.12.6"
     content-type: "npm:^1.0.5"
@@ -3446,7 +3479,7 @@ __metadata:
     raw-body: "npm:^3.0.0"
     zod: "npm:^3.23.8"
     zod-to-json-schema: "npm:^3.24.1"
-  checksum: 10c0/defa7dadf013d794dcb0bcbc2f9a154ad72482e1b6967530d035284242b37384e9d37958c7667eeb7dfa632fd9897fca265e903fdbadf605f3af7b1cbce78a99
+  checksum: 10c0/5e195f207fbf6bc5765df2a2a3b20711ab9dac4ccddb5dbe7e0d6e98bcd9f5b32fa441589e41da78373d3713ada213442dc1983df2dc5946a1ebc91eaf9533f7
   languageName: node
   linkType: hard
 
@@ -4937,6 +4970,15 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: 10c0/3b190bb0410047d489c49bbaab592d2e6630de6a50f00ba3d7d513d59401d279972a8f5a598b5bb8ddc1702f8a2f4ec57a65d93852f9c329639738e7053637d1
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^24.2.1":
+  version: 24.9.2
+  resolution: "@types/node@npm:24.9.2"
+  dependencies:
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/7905d43f65cee72ef475fe76316e10bbf6ac5d08a7f0f6c38f2b6285d7ca3009e8fcafc8f8a1d2bf3f55889c9c278dbb203a9081fd0cf2d6d62161703924c6fa
   languageName: node
   linkType: hard
 
@@ -9584,10 +9626,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^4.10.1":
+  version: 4.10.3
+  resolution: "hono@npm:4.10.3"
+  checksum: 10c0/bdcc4c7066c74ba7cfa63ed6550768a0f43a420286c8f8f74b7012ea4901b8b06778fa8e98264b46f1a86920f056b7ede1f07814da4934912f9945def4977c29
+  languageName: node
+  linkType: hard
+
 "hono@npm:^4.8.4":
   version: 4.8.4
   resolution: "hono@npm:4.8.4"
   checksum: 10c0/3712bbb4f7d24b5f4f30d75730ae30111cafdb92132728c92e83c257008cfd64e234a6c0657807cb4dd7bc001e3e1daf2e4dd5eb0a73a32ef3a70eff0415d3b7
+  languageName: node
+  linkType: hard
+
+"hosted-git-info@npm:^7.0.0":
+  version: 7.0.2
+  resolution: "hosted-git-info@npm:7.0.2"
+  dependencies:
+    lru-cache: "npm:^10.0.1"
+  checksum: 10c0/b19dbd92d3c0b4b0f1513cf79b0fc189f54d6af2129eeb201de2e9baaa711f1936929c848b866d9c8667a0f956f34bf4f07418c12be1ee9ca74fd9246335ca1f
   languageName: node
   linkType: hard
 
@@ -13210,6 +13268,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"publint@npm:^0.3.9":
+  version: 0.3.15
+  resolution: "publint@npm:0.3.15"
+  dependencies:
+    "@publint/pack": "npm:^0.1.2"
+    package-manager-detector: "npm:^1.3.0"
+    picocolors: "npm:^1.1.1"
+    sade: "npm:^1.8.1"
+  bin:
+    publint: src/cli.js
+  checksum: 10c0/2f54a88201c068a4713b431c85c71d4adb4f3e026b97b7682706ebf73d2a52306911f230672819cfe73be8f0ff6185f52f20ed10a65326b58dbf7abff8ad7a45
+  languageName: node
+  linkType: hard
+
 "pump@npm:^3.0.0":
   version: 3.0.2
   resolution: "pump@npm:3.0.2"
@@ -15594,7 +15666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsup@npm:^8.5.0":
+"tsup@npm:^8.4.0, tsup@npm:^8.5.0":
   version: 8.5.0
   resolution: "tsup@npm:8.5.0"
   dependencies:

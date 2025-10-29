@@ -35,12 +35,12 @@ export function tokenHandler(
     c.header('Cache-Control', 'no-store')
 
     try {
-      let body: any;
+      let body: any
 
       if (c.req.header('Content-Type') === 'application/json') {
-        body = await c.req.json();
+        body = await c.req.json()
       } else {
-        body = await c.req.parseBody();
+        body = await c.req.parseBody()
       }
 
       const parseResult = TokenRequestSchema.safeParse(body)
