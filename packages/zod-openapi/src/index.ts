@@ -26,7 +26,7 @@ import type {
   TypedResponse,
   ValidationTargets,
 } from 'hono'
-import type { MergePath, MergeSchemaPath } from 'hono/types'
+import type { H, MergePath, MergeSchemaPath } from 'hono/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -35,17 +35,18 @@ import type {
   StatusCode,
   SuccessStatusCode,
 } from 'hono/utils/http-status'
-import type { JSONParsed, JSONValue, RemoveBlankRecord, SimplifyDeepArray } from 'hono/utils/types'
+import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import { ZodType, z } from 'zod'
-import type { ZodError } from 'zod'
+import type { ZodType, ZodError } from 'zod'
+import { z } from 'zod'
+import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
 
 export type RouteConfig = RouteConfigBase & {
-  middleware?: MiddlewareHandler | MiddlewareHandler[]
+  middleware?: H | H[]
   hide?: boolean
 }
 
@@ -80,15 +81,7 @@ type ReturnJsonOrTextOrResponse<
 > = ContentType extends string
   ? ContentType extends `application/${infer Start}json${infer _End}`
     ? Start extends '' | `${string}+` | `vnd.${string}+`
-      ? TypedResponse<
-          SimplifyDeepArray<Content> extends JSONValue
-            ? JSONValue extends SimplifyDeepArray<Content>
-              ? never
-              : JSONParsed<Content>
-            : never,
-          ExtractStatusCode<Status>,
-          'json'
-        >
+      ? TypedResponse<JSONParsed<Content>, ExtractStatusCode<Status>, 'json'>
       : never
     : ContentType extends `text/plain${infer _Rest}`
       ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
@@ -506,7 +499,7 @@ export class OpenAPIHono<
           continue
         }
         const schema = (bodyContent[mediaType] as ZodMediaTypeObject)['schema']
-        if (!(schema instanceof ZodType)) {
+        if (!isZod(schema)) {
           continue
         }
         if (isJSONContentType(mediaType)) {

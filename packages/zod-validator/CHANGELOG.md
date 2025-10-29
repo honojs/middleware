@@ -1,5 +1,17 @@
 # @hono/zod-validator
 
+## 0.7.4
+
+### Patch Changes
+
+- [#1502](https://github.com/honojs/middleware/pull/1502) [`d6102352531aa3f030051f0b85065bd1051ebdac`](https://github.com/honojs/middleware/commit/d6102352531aa3f030051f0b85065bd1051ebdac) Thanks [@BThero](https://github.com/BThero)! - Fix a minor Zod v4 error type inference bug
+
+## 0.7.3
+
+### Patch Changes
+
+- [#1436](https://github.com/honojs/middleware/pull/1436) [`713a9392f9adf521920d2d814894c4433ae718bf`](https://github.com/honojs/middleware/commit/713a9392f9adf521920d2d814894c4433ae718bf) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct fallback behavior when using `coerce`
+
 ## 0.7.2
 
 ### Patch Changes

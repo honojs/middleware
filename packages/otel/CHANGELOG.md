@@ -1,5 +1,17 @@
 # @hono/otel
 
+## 1.0.0
+
+### Major Changes
+
+- [#1513](https://github.com/honojs/middleware/pull/1513) [`0e15cbe0e4a6700a3131a7384ff3ea7f86bffd8f`](https://github.com/honojs/middleware/commit/0e15cbe0e4a6700a3131a7384ff3ea7f86bffd8f) Thanks [@mrlorentx](https://github.com/mrlorentx)! - Aligns otel middleware with conventions of opentelemetry
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1509](https://github.com/honojs/middleware/pull/1509) [`0df42355b8a66f28014d187846263c0e24cb990e`](https://github.com/honojs/middleware/commit/0df42355b8a66f28014d187846263c0e24cb990e) Thanks [@sugar-cat7](https://github.com/sugar-cat7)! - Support for required attributes based on OpenTelemetry HTTP Server Span specification
+
 ## 0.5.0
 
 ### Minor Changes

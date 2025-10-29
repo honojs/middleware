@@ -21,5 +21,9 @@ sandbox
 CLAUDE.local.md
 settings.local.json
 
+# turbo
+.cache
+.turbo
+
 # Code editor
 .zed

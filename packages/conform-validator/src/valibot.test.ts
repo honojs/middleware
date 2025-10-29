@@ -103,8 +103,8 @@ describe('Validate requests using a Valibot schema', () => {
     expect(json).toMatchObject({
       status: 'error',
       error: {
-        name: ['Invalid type: Expected string but received undefined'],
-        age: ['Invalid type: Expected string but received undefined'],
+        name: ['Invalid key: Expected \"name\" but received undefined'],
+        age: ['Invalid key: Expected \"age\" but received undefined'],
       },
     })
   })

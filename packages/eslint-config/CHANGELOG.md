@@ -23,7 +23,6 @@
 ### Major Changes
 
 - [#1098](https://github.com/honojs/middleware/pull/1098) [`1fd8ebf9b6d8d9f473196266bf63681988dc7979`](https://github.com/honojs/middleware/commit/1fd8ebf9b6d8d9f473196266bf63681988dc7979) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Includes `typescript-eslint` presets for typed linting
-
   - [`strict-type-checked`](https://typescript-eslint.io/users/configs#strict-type-checked)
   - [`stylistic-type-checked`](https://typescript-eslint.io/users/configs#stylistic-type-checked)
 
@@ -40,7 +39,6 @@
 ### Minor Changes
 
 - [#1031](https://github.com/honojs/middleware/pull/1031) [`0d6c13b1a339dc17028548cde10ba7ef9e1dd7fd`](https://github.com/honojs/middleware/commit/0d6c13b1a339dc17028548cde10ba7ef9e1dd7fd) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - feat: updated `@hono/eslint-config` package
-
   - upgrading eslint plugins
   - removing @eslint/eslintrc and the legacy FlatCompat
   - cleanup migration to typescript-eslint

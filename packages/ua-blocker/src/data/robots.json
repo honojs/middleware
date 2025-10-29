@@ -27,6 +27,13 @@
     "frequency": "No information provided.",
     "description": "Scrapes data for AI systems."
   },
+  "amazon-kendra-": {
+    "operator": "Amazon",
+    "respect": "Yes",
+    "function": "Collects data for AI natural language search",
+    "frequency": "No information provided.",
+    "description": "Amazon Kendra is a highly accurate intelligent search service that enables your users to search unstructured data using natural language. It returns specific answers to questions, giving users an experience that's close to interacting with a human expert. It is highly scalable and capable of meeting performance demands, tightly integrated with other AWS services such as Amazon S3 and Amazon Lex, and offers enterprise-grade security."
+  },
   "Amazonbot": {
     "operator": "Amazon",
     "respect": "Yes",
@@ -40,6 +47,13 @@
     "function": "Search engine using generative AI, AI Search Assistant",
     "frequency": "No information provided.",
     "description": "Scrapes website and provides AI summary."
+  },
+  "Anomura": {
+    "operator": "[Direqt](https://direqt.ai)",
+    "respect": "Yes",
+    "function": "Collects data for AI search",
+    "frequency": "No information provided.",
+    "description": "Anomura is Direqt's search crawler, it discovers and indexes pages their customers websites."
   },
   "anthropic-ai": {
     "operator": "[Anthropic](https://www.anthropic.com)",
@@ -83,12 +97,19 @@
     "frequency": "Unclear at this time.",
     "description": "bigsur.ai is a web crawler operated by Big Sur AI that fetches website content to enable AI-powered web agents, sales assistants, and content marketing solutions for businesses. More info can be found at https://darkvisitors.com/agents/agents/bigsur-ai"
   },
+  "Bravebot": {
+    "operator": "https://safe.search.brave.com/help/brave-search-crawler",
+    "respect": "Yes",
+    "function": "Collects data for AI search",
+    "frequency": "Unclear at this time.",
+    "description": "Brave search has a crawler to discover new pages and index their content."
+  },
   "Brightbot 1.0": {
-    "operator": "Browsing.ai",
+    "operator": "https://brightdata.com/brightbot",
     "respect": "Unclear at this time.",
     "function": "LLM/AI training.",
-    "frequency": "Unclear at this time.",
-    "description": "Scrapes data to train LLMs and AI products focused on website customer support."
+    "frequency": "At least one per minute.",
+    "description": "Scrapes data to train LLMs and AI products focused on website customer support, [uses residential IPs and legit-looking user-agents to disguise itself](https://ksol.io/en/blog/posts/brightbot-not-that-bright/)."
   },
   "Bytespider": {
     "operator": "ByteDance",
@@ -146,6 +167,13 @@
     "frequency": "No information provided.",
     "description": "Scrapes data to train LLMs and AI products offered by Anthropic."
   },
+  "Cloudflare-AutoRAG": {
+    "operator": "[Cloudflare](https://developers.cloudflare.com/autorag)",
+    "respect": "Yes",
+    "function": "Collects data for AI search",
+    "frequency": "Unclear at this time.",
+    "description": "AutoRAG is an all-in-one AI search solution."
+  },
   "CloudVertexBot": {
     "operator": "Unclear at this time.",
     "respect": "Unclear at this time.",
@@ -188,12 +216,19 @@
     "frequency": "Unclear at this time.",
     "description": "Datenbank Crawler is an AI data scraper operated by Datenbank. It's not currently known to be artificially intelligent or AI-related. If you think that's incorrect or can provide more detail about its purpose, please contact us. More info can be found at https://darkvisitors.com/agents/agents/datenbank-crawler"
   },
+  "DeepSeekBot": {
+    "operator": "DeepSeek",
+    "respect": "Unclear at this time.",
+    "function": "Training language models and improving AI products",
+    "frequency": "Unclear at this time.",
+    "description": "DeepSeekBot is a web crawler used by DeepSeek to train its language models and improve its AI products."
+  },
   "Devin": {
     "operator": "Devin AI",
-    "respect": "Unclear at this time.",
+    "respect": "Yes",
     "function": "AI Assistants",
     "frequency": "Unclear at this time.",
-    "description": "Devin is an AI assistant operated by Devin AI. It's not currently known to be artificially intelligent or AI-related. If you think that's incorrect or can provide more detail about its purpose, please contact us. More info can be found at https://darkvisitors.com/agents/agents/devin"
+    "description": "Devin is a collaborative AI teammate built to help ambitious engineering teams achieve more."
   },
   "Diffbot": {
     "operator": "[Diffbot](https://www.diffbot.com/)",
@@ -279,8 +314,22 @@
     "frequency": "No information.",
     "description": "Used to train Gemini and Vertex AI generative APIs. Does not impact a site's inclusion or ranking in Google Search."
   },
-  "GoogleAgent-Mariner": {
+  "Google-Firebase": {
+    "operator": "Google",
+    "respect": "Unclear at this time.",
+    "function": "Used as part of AI apps developed by users of Google's Firebase AI products.",
+    "frequency": "Unclear at this time.",
+    "description": "Supports Google's Firebase AI products."
+  },
+  "Google-NotebookLM": {
     "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unclear at this time.",
+    "description": "Google-NotebookLM is an AI-powered research and note-taking assistant that helps users synthesize information from their own uploaded sources, such as documents, transcripts, or web content. It can generate summaries, answer questions, and highlight key themes from the materials you provide, acting like a personalized research companion built on Google's Gemini model. Google-NotebookLM fetches source URLs when users add them to their notebooks, enabling the AI to access and analyze those pages for context and insights. More info can be found at https://darkvisitors.com/agents/agents/google-notebooklm"
+  },
+  "GoogleAgent-Mariner": {
+    "operator": "Google",
     "respect": "Unclear at this time.",
     "function": "AI Agents",
     "frequency": "Unclear at this time.",
@@ -321,6 +370,13 @@
     "operator": "iAsk",
     "respect": "No"
   },
+  "IbouBot": {
+    "operator": "Ibou",
+    "respect": "Yes",
+    "function": "Search result generation.",
+    "frequency": "Unclear at this time.",
+    "description": "Ibou.io operates a crawler service named IbouBot which fuels and updates their graph representation of the World Wide Web. This database and all the metrics are used to provide a search engine."
+  },
   "ICC-Crawler": {
     "operator": "[NICT](https://nict.go.jp)",
     "respect": "Yes",
@@ -329,9 +385,9 @@
     "description": "Use the collected data for artificial intelligence technologies; provide data to third parties, including commercial companies; those companies can use the data for their own business."
   },
   "ImagesiftBot": {
-    "description": "Once images and text are downloaded from a webpage, ImageSift analyzes this data from the page and stores the information in an index. Our web intelligence products use this index to enable search and retrieval of similar images.",
+    "description": "Once images and text are downloaded from a webpage, ImageSift analyzes this data from the page and stores the information in an index. Their web intelligence products use this index to enable search and retrieval of similar images.",
     "frequency": "No information.",
-    "function": "ImageSiftBot is a web crawler that scrapes the internet for publicly available images to support our suite of web intelligence products",
+    "function": "ImageSiftBot is a web crawler that scrapes the internet for publicly available images to support their suite of web intelligence products",
     "operator": "[ImageSift](https://imagesift.com)",
     "respect": "[Yes](https://imagesift.com/about)"
   },
@@ -363,6 +419,13 @@
     "frequency": "Unclear at this time.",
     "description": "LinerBot is the web crawler used by Liner AI assistant to gather information from academic sources and websites to provide accurate answers with line-by-line source citations for research and scholarly work. More info can be found at https://darkvisitors.com/agents/agents/linerbot"
   },
+  "Linguee Bot": {
+    "operator": "[Linguee](https://www.linguee.com)",
+    "respect": "No",
+    "function": "AI powered translation service",
+    "frequency": "Unclear at this time.",
+    "description": "Linguee Bot is a web crawler used by Linguee to gather training data for its AI powered translation service."
+  },
   "meta-externalagent": {
     "operator": "[Meta](https://developers.facebook.com/docs/sharing/webmasters/web-crawlers)",
     "respect": "Yes",
@@ -390,6 +453,13 @@
     "function": "AI Assistants",
     "frequency": "Unclear at this time.",
     "description": "Meta-ExternalFetcher is dispatched by Meta AI products in response to user prompts, when they need to fetch an individual links. More info can be found at https://darkvisitors.com/agents/agents/meta-externalfetcher"
+  },
+  "meta-webindexer": {
+    "operator": "[Meta](https://developers.facebook.com/docs/sharing/webmasters/web-crawlers/)",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unhinged, more than 1 per second.",
+    "description": "As per their documentation, \"The Meta-WebIndexer crawler navigates the web to improve Meta AI search result quality for users. In doing so, Meta analyzes online content to enhance the relevance and accuracy of Meta AI. Allowing Meta-WebIndexer in your robots.txt file helps us cite and link to your content in Meta AI's responses.\""
   },
   "MistralAI-User": {
     "operator": "Mistral",
@@ -566,12 +636,26 @@
     "frequency": "Roughly once every 10 seconds.",
     "description": "Data collected is used for the SEO Writing Assistant tool to check if URL is accessible."
   },
+  "ShapBot": {
+    "operator": "[Parallel](https://parallel.ai)",
+    "respect": "[Yes](https://docs.parallel.ai/features/crawler)",
+    "function": "Collects data for Parallel's web APIs.",
+    "frequency": "Unclear at this time.",
+    "description": "ShapBot helps discover and index websites for Parallel's web APIs."
+  },
   "Sidetrade indexer bot": {
     "description": "AI product training.",
     "frequency": "No information.",
     "function": "Extracts data for a variety of uses including training AI.",
     "operator": "[Sidetrade](https://www.sidetrade.com)",
     "respect": "Unclear at this time."
+  },
+  "TerraCotta": {
+    "operator": "[Ceramic AI](https://ceramic.ai/)",
+    "respect": "[Yes](https://github.com/CeramicTeam/CeramicTerracotta)",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Downloads data to train LLMs."
   },
   "Thinkbot": {
     "operator": "[Thinkbot](https://www.thinkbot.agency)",

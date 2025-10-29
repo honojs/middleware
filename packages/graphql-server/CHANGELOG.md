@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.7.0
+
+### Minor Changes
+
+- [#1454](https://github.com/honojs/middleware/pull/1454) [`81b01fe1314b3da3767445f4d1cdf95e5820efe9`](https://github.com/honojs/middleware/commit/81b01fe1314b3da3767445f4d1cdf95e5820efe9) Thanks [@ThomOrlo](https://github.com/ThomOrlo)! - feat: upgrade GraphiQL
+
 ## 0.6.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "1.1.0",
+  "version": "1.1.4",
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "type": "module",
   "module": "dist/index.js",
@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -44,13 +46,13 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
-    "yaml": "^2.4.3",
+    "yaml": "^2.8.1",
     "zod": "^4.0.5"
   },
   "dependencies": {

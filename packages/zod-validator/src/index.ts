@@ -6,7 +6,9 @@ import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
 
 type ZodSchema = v3.ZodType | v4.$ZodType
-type ZodError<T extends ZodSchema> = T extends v4.$ZodType ? v4.$ZodError : v3.ZodError
+type ZodError<T extends ZodSchema> = T extends v4.$ZodType
+  ? v4.$ZodError<v4.output<T>>
+  : v3.ZodError
 type ZodSafeParseResult<T, T2, T3 extends ZodSchema> = T3 extends v4.$ZodType
   ? v4ZodSafeParseResult<T>
   : v3.SafeParseReturnType<T, T2>
@@ -42,12 +44,20 @@ export const zValidator = <
       ? {
           [K in Target]?: In extends ValidationTargets[K]
             ? In
-            : { [K2 in keyof In]?: ValidationTargets[K][K2] }
+            : {
+                [K2 in keyof In]?: In[K2] extends ValidationTargets[K][K2]
+                  ? In[K2]
+                  : ValidationTargets[K][K2]
+              }
         }
       : {
           [K in Target]: In extends ValidationTargets[K]
             ? In
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+            : {
+                [K2 in keyof In]: In[K2] extends ValidationTargets[K][K2]
+                  ? In[K2]
+                  : ValidationTargets[K][K2]
+              }
         }
     out: { [K in Target]: Out }
   },

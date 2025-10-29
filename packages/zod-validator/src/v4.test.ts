@@ -150,6 +150,49 @@ describe('coerce', () => {
       page: 123,
     })
   })
+
+  it('Should correctly infer literal types for enum and fallback for coerce schemas', () => {
+    // Related to issue #1370: Type inference for coerce and enum schemas
+    const mixedRoute = new Hono().get(
+      '/mixed',
+      zValidator(
+        'query',
+        z.object({
+          tenant: z.enum(['abba', 'baab']), // Should infer as literal union type
+          page: z.coerce.number(), // Should fallback to string | string[]
+        })
+      ),
+      (c) => {
+        const query = c.req.valid('query')
+        return c.json({ query })
+      }
+    )
+
+    type MixedActual = ExtractSchema<typeof mixedRoute>
+    type MixedExpected = {
+      '/mixed': {
+        $get: {
+          input: {
+            query: {
+              tenant: 'abba' | 'baab' // Literal type preserved
+              page: string | string[] // Coerce fallback type
+            }
+          }
+          output: {
+            query: {
+              tenant: 'abba' | 'baab' // Output uses inferred type
+              page: number // Coerce output type
+            }
+          }
+          outputFormat: 'json'
+          status: ContentfulStatusCode
+        }
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    type verifyMixed = Expect<Equal<MixedExpected, MixedActual>>
+  })
 })
 
 describe('With Hook', () => {
@@ -165,7 +208,12 @@ describe('With Hook', () => {
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
         type verify = Expect<Equal<number, typeof result.data.id>>
-        type verify2 = Expect<Equal<z4.core.$ZodError, typeof result.error>>
+        type verify2 = Expect<
+          Equal<z4.core.$ZodError<z4.output<typeof schema>>, typeof result.error>
+        >
+        const flattenedError = z.flattenError(result.error)
+        const fieldErrors = flattenedError.fieldErrors
+        type verify3 = Expect<Equal<{ id?: string[]; title?: string[] }, typeof fieldErrors>>
         return c.text(`${result.data.id} is invalid!`, 400)
       }
     }),

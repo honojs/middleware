@@ -11,6 +11,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -44,10 +46,10 @@
     "hono": ">=3.8.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   },

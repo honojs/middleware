@@ -1,6 +1,6 @@
 {
   "name": "@hono/typebox-validator",
-  "version": "0.3.3",
+  "version": "1.1.0",
   "description": "Validator middleware using TypeBox",
   "type": "module",
   "module": "dist/index.js",
@@ -22,6 +22,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -40,15 +42,15 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@sinclair/typebox": ">=0.31.15 <1",
-    "hono": ">=3.9.0"
+    "hono": ">=3.9.0",
+    "typebox": "^1.0.30"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@sinclair/typebox": "^0.34.40",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
+    "typebox": "^1.0.30",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }

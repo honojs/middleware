@@ -38,6 +38,8 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts src/react.tsx",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -61,13 +63,13 @@
     "react": "^18 || ^19 || ^19.0.0-rc"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@auth/core": "^0.35.3",
     "@types/react": "^19",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "react": "^19.1.1",
-    "tsup": "^8.4.0",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "react": "^19.2.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   },

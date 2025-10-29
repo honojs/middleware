@@ -32,6 +32,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts ./src/http.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -54,13 +56,13 @@
     "typia": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@ryoppippi/unplugin-typia": "^2.1.4",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@ryoppippi/unplugin-typia": "1.2.0",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
-    "typia": "^8.0.3",
+    "typia": "^9.7.2",
     "vitest": "^3.2.4"
   }
 }

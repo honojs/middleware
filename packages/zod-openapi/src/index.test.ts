@@ -4,7 +4,7 @@ import { accepts } from 'hono/accepts'
 import { bearerAuth } from 'hono/bearer-auth'
 import { hc } from 'hono/client'
 import type { ServerErrorStatusCode } from 'hono/utils/http-status'
-import type { Equal, Expect } from 'hono/utils/types'
+import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
 import type { RouteConfigToTypedResponse } from './index'
@@ -1937,6 +1937,7 @@ describe('RouteConfigToTypedResponse', () => {
       age: z.number().openapi({
         example: 42,
       }),
+      hobbies: z.record(z.string(), z.unknown()).array(),
     })
     .openapi('User')
 
@@ -1950,7 +1951,7 @@ describe('RouteConfigToTypedResponse', () => {
 
   it('Should return types correctly', () => {
     const route = {
-      method: 'post' as any,
+      method: 'post',
       path: '/users/{id}',
       request: {
         params: ParamsSchema,
@@ -1981,7 +1982,7 @@ describe('RouteConfigToTypedResponse', () => {
           description: 'Server Error!',
         },
       },
-    }
+    } satisfies RouteConfig
 
     type Actual = RouteConfigToTypedResponse<typeof route>
 
@@ -1990,6 +1991,7 @@ describe('RouteConfigToTypedResponse', () => {
           {
             name: string
             age: number
+            hobbies: Record<string, JSONValue>[]
           },
           200,
           'json'
@@ -2008,7 +2010,7 @@ describe('RouteConfigToTypedResponse', () => {
           ServerErrorStatusCode,
           'json'
         >
-    type verify = Expect<Equal<Expected, Actual>>
+    expectTypeOf<Actual>().toEqualTypeOf<Expected>()
   })
 })
 

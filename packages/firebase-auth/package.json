@@ -15,6 +15,8 @@
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "build": "tsup ./src/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack && publint"
   },
@@ -49,12 +51,12 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@cloudflare/vitest-pool-workers": "^0.8.38",
-    "firebase-tools": "^13.29.1",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@cloudflare/vitest-pool-workers": "^0.9.13",
+    "firebase-tools": "^14.22.0",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }

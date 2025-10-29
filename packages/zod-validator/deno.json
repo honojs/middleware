@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-validator",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts"

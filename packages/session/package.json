@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts ./src/cookies.ts ./src/helper/testing/index.ts",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
     "prepack": "yarn build",
     "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
@@ -65,13 +67,13 @@
     "jose": "^6.0.11"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@cloudflare/vitest-pool-workers": "^0.7.8",
-    "hono": "^4.8.4",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@cloudflare/vitest-pool-workers": "^0.9.13",
+    "hono": "^4.10.1",
+    "publint": "^0.3.14",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.2",
-    "unstorage": "^1.16.0",
+    "unstorage": "^1.17.0",
     "vitest": "^3.2.4"
   }
 }

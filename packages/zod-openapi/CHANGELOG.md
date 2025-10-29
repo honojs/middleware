@@ -1,5 +1,34 @@
 # @hono/zod-openapi
 
+## 1.1.4
+
+### Patch Changes
+
+- [#1514](https://github.com/honojs/middleware/pull/1514) [`565d0e3e89523da773a3570fd1084f3ed7e41036`](https://github.com/honojs/middleware/commit/565d0e3e89523da773a3570fd1084f3ed7e41036) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: change middleware type from MiddlewareHandler to H
+
+  Update RouteConfig middleware field type to use H (Handler | MiddlewareHandler union) instead of MiddlewareHandler. This aligns with Hono's on() method type expectations and resolves type errors introduced in Hono v4.10.0+.
+
+  The H type is the correct type for handlers passed to Hono's on() method, and this change maintains runtime compatibility while fixing TypeScript compilation errors.
+
+## 1.1.3
+
+### Patch Changes
+
+- [#1469](https://github.com/honojs/middleware/pull/1469) [`db68e22a9edee796c8692ef84cdc21be79566718`](https://github.com/honojs/middleware/commit/db68e22a9edee796c8692ef84cdc21be79566718) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Remove `SimplifyDeepArray` usage, see https://github.com/honojs/hono/pull/4406
+
+## 1.1.2
+
+### Patch Changes
+
+- [#1465](https://github.com/honojs/middleware/pull/1465) [`5eddc2c0fb7991357ef958c1a5eae9714e0139a8`](https://github.com/honojs/middleware/commit/5eddc2c0fb7991357ef958c1a5eae9714e0139a8) Thanks [@eric-poitras](https://github.com/eric-poitras)! - Use a typeguard for zod to avoid issues when bundling with esbuild.
+
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`713a9392f9adf521920d2d814894c4433ae718bf`](https://github.com/honojs/middleware/commit/713a9392f9adf521920d2d814894c4433ae718bf)]:
+  - @hono/zod-validator@0.7.3
+
 ## 1.1.0
 
 ### Minor Changes
