@@ -231,7 +231,7 @@ export class StreamableHTTPTransport implements Transport {
         if (
           typeof keepAlive === 'object' &&
           'unref' in keepAlive &&
-          // deno-lint-ignore no-unsafe-optional-chaining
+          // @ts-expect-error - keepAlive is an object with a unref method - this is for deno
           typeof keepAlive.unref === 'function'
         ) {
           keepAlive.unref()
