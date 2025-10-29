@@ -17,6 +17,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js'
 import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js'
 import type { Context } from 'hono'
+import { getRuntimeKey } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import type { SSEStreamingApi } from 'hono/streaming'
 import { streamSSE } from './streaming'
@@ -165,8 +166,11 @@ export class StreamableHTTPTransport implements Transport {
             })
           }
         }, 30000)
+
         // Unref the timer to avoid blocking the server from shutting down
-        keepAlive.unref();
+        if (getRuntimeKey() !== 'deno') {
+          ;(keepAlive as any).unref()
+        }
 
         // Assign the response to the standalone SSE stream
         this.#streamMapping.set(resolvedStreamId, {
