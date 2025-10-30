@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.1.5
+
+### Patch Changes
+
+- [#1535](https://github.com/honojs/middleware/pull/1535) [`ccecb395835fd09c144815052c5bdd01e21743eb`](https://github.com/honojs/middleware/commit/ccecb395835fd09c144815052c5bdd01e21743eb) Thanks [@BYK](https://github.com/BYK)! - unref keepAlive timer to allow server shutdown
+
 ## 0.1.4
 
 ### Patch Changes
