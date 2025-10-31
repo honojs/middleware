@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1536](https://github.com/honojs/middleware/pull/1536) [`aa23285ff3422080ebbde3e4a90d859ae93a336d`](https://github.com/honojs/middleware/commit/aa23285ff3422080ebbde3e4a90d859ae93a336d) Thanks [@amaany3](https://github.com/amaany3)! - fix(otel): Include serviceName and serviceVersion in span attributes
+
 ## 1.0.0
 
 ### Major Changes
