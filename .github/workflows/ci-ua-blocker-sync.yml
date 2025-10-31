@@ -58,7 +58,7 @@ jobs:
           EOF
 
       - name: Create Pull Request if changes exist
-        if: steps.changes.outputs.has_changes == 'true'
+        if: steps.changes.outputs.has_changes == 'true' && !github.event.repository.fork
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
