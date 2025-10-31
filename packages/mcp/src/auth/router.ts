@@ -1,6 +1,6 @@
 import { TooManyRequestsError } from '@modelcontextprotocol/sdk/server/auth/errors.js'
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
-import { createOAuthMetadata } from '@modelcontextprotocol/sdk/server/auth/router.js'
+import type { OAuthMetadata } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { Env, MiddlewareHandler, Schema } from 'hono'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -8,6 +8,7 @@ import type { ConfigType as RateLimitOptions } from 'hono-rate-limiter'
 import { rateLimiter } from 'hono-rate-limiter'
 import {
   authorizeHandler,
+  checkIssuerUrl,
   clientRegistrationHandler,
   revokeHandler,
   tokenHandler,
@@ -69,6 +70,54 @@ export type AuthRouterOptions = {
   tokenOptions?: {
     rateLimit?: Partial<RateLimitOptions> | false
   }
+}
+
+export const createOAuthMetadata = (options: {
+  provider?: OAuthServerProvider
+  issuerUrl: URL
+  baseUrl?: URL
+  serviceDocumentationUrl?: URL
+  scopesSupported?: string[]
+}): OAuthMetadata => {
+  const issuer = options.issuerUrl
+  const baseUrl = options.baseUrl
+
+  checkIssuerUrl(issuer)
+
+  const authorization_endpoint = '/authorize'
+  const token_endpoint = '/token'
+  const registration_endpoint = options.provider?.clientsStore.registerClient
+    ? '/register'
+    : undefined
+  const revocation_endpoint = options.provider?.revokeToken ? '/revoke' : undefined
+
+  const metadata: OAuthMetadata = {
+    issuer: issuer.href,
+    service_documentation: options.serviceDocumentationUrl?.href,
+
+    authorization_endpoint: new URL(authorization_endpoint, baseUrl || issuer).href,
+    response_types_supported: ['code'],
+    code_challenge_methods_supported: ['S256'],
+
+    token_endpoint: new URL(token_endpoint, baseUrl || issuer).href,
+    token_endpoint_auth_methods_supported: ['client_secret_post'],
+    grant_types_supported: ['authorization_code', 'refresh_token'],
+
+    scopes_supported: options.scopesSupported,
+
+    revocation_endpoint: revocation_endpoint
+      ? new URL(revocation_endpoint, baseUrl || issuer).href
+      : undefined,
+    revocation_endpoint_auth_methods_supported: revocation_endpoint
+      ? ['client_secret_post']
+      : undefined,
+
+    registration_endpoint: registration_endpoint
+      ? new URL(registration_endpoint, baseUrl || issuer).href
+      : undefined,
+  }
+
+  return metadata
 }
 
 /**
