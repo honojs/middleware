@@ -7,7 +7,6 @@ import {
 import type { OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js'
 import { OAuthClientMetadataSchema } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { MiddlewareHandler } from 'hono'
-import crypto from 'node:crypto'
 
 export type ClientRegistrationHandlerOptions = {
   /**
@@ -54,7 +53,7 @@ export function clientRegistrationHandler({
       const isPublicClient = clientMetadata.token_endpoint_auth_method === 'none'
 
       // Generate client credentials
-      const clientSecret = isPublicClient ? undefined : crypto.randomBytes(32).toString('hex')
+      const clientSecret = isPublicClient ? undefined : genRanHex(64)
       const clientIdIssuedAt = Math.floor(Date.now() / 1000)
 
       // Calculate client secret expiry time
@@ -86,3 +85,5 @@ export function clientRegistrationHandler({
     }
   }
 }
+
+const genRanHex = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
