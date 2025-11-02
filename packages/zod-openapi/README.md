@@ -484,9 +484,6 @@ When using the `.route()` method to mount a child OpenAPIHono app that uses path
 ```
 const bookActionsApp = new OpenAPIHono()
 ...
-// ❌ Incorrect: This will not match the route
-app.route('/books/{bookId}', bookActionsApp)
-
 // ✅ Using Hono parameter syntax
 app.route('/books/:bookId', bookActionsApp)
 ```
