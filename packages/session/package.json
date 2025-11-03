@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@cloudflare/vitest-pool-workers": "^0.9.13",
+    "@cloudflare/vitest-pool-workers": "^0.10.3",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
