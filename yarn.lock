@@ -2374,12 +2374,12 @@ __metadata:
     hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
-    typebox: "npm:^1.0.30"
+    typebox: "npm:^1.0.49"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
   peerDependencies:
     hono: ">=3.9.0"
-    typebox: ^1.0.30
+    typebox: ^1.0.49
   languageName: unknown
   linkType: soft
 
@@ -15790,10 +15790,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typebox@npm:^1.0.30":
-  version: 1.0.30
-  resolution: "typebox@npm:1.0.30"
-  checksum: 10c0/7ea8a8b1688a627d4c46761b31c83361d57875f91c3663a62736c6671a6dca85bd959f214bdbc666ae984428ec1b7706f69a50fa06524850e777c36b853cd568
+"typebox@npm:^1.0.49":
+  version: 1.0.49
+  resolution: "typebox@npm:1.0.49"
+  checksum: 10c0/83334366fee1cd0773da48106f4071a18dce71fdac4928a8d6122b1fe2bc4430d72bb12a525a47d218cbb696b522bed8191be891618bd1236f5ff9b75e207c70
   languageName: node
   linkType: hard
 
