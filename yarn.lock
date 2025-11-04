@@ -1935,7 +1935,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     esbuild: "npm:^0.25.10"
-    esbuild-wasm: "npm:^0.19.5"
+    esbuild-wasm: "npm:^0.25.12"
     hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
     tsup: "npm:^8.5.0"
@@ -7623,12 +7623,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.19.5":
-  version: 0.19.12
-  resolution: "esbuild-wasm@npm:0.19.12"
+"esbuild-wasm@npm:^0.25.12":
+  version: 0.25.12
+  resolution: "esbuild-wasm@npm:0.25.12"
   bin:
     esbuild: bin/esbuild
-  checksum: 10c0/a4a17a48e68996a1ac951ffc3e22924db9cacc07f5cf0cc22f5a7817114a85d74549167ecbf99f260f96df9329c2849b276177b143c6624a763fc4eba84936ae
+  checksum: 10c0/e1ba7c52bd9f4acfecc1cde0c03ffcc04a03c1487475e2823314b81c5a8bd740e804b659717f8c3ad86cad08a4e81e02170f9037946c5b3ce7e187eb18ed9346
   languageName: node
   linkType: hard
 
