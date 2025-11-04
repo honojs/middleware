@@ -242,13 +242,9 @@ export class StreamableHTTPTransport implements Transport {
           },
         })
 
-        // hold the callback else streamSSE will close the stream
-        await new Promise<void>((resolve) => {
-          // Set up close handler for client disconnects
-          stream.onAbort(() => {
-            this.#streamMapping.get(resolvedStreamId)?.cleanup()
-            resolve()
-          })
+        // Set up close handler for client disconnects
+        stream.onAbort(() => {
+          this.#streamMapping.get(resolvedStreamId)?.cleanup()
         })
       })
     } catch (error) {
@@ -454,13 +450,9 @@ export class StreamableHTTPTransport implements Transport {
           // The server SHOULD NOT close the SSE stream before sending all JSON-RPC responses
           // This will be handled by the send() method when responses are ready
 
-          // Hold the callback else streamSSE will close the stream
-          await new Promise<void>((resolve) => {
-            // Set up close handler for client disconnects
-            stream.onAbort(() => {
-              this.#streamMapping.get(streamId)?.cleanup()
-              resolve()
-            })
+          // Set up close handler for client disconnects
+          stream.onAbort(() => {
+            this.#streamMapping.get(streamId)?.cleanup()
           })
         })
       }
