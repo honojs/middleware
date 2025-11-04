@@ -43,14 +43,14 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "typebox": "^1.0.30"
+    "typebox": "^1.0.49"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
-    "typebox": "^1.0.30",
+    "typebox": "^1.0.49",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }
