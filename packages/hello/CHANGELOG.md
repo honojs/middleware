@@ -1,5 +1,11 @@
 # @hono/hello
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1546](https://github.com/honojs/middleware/pull/1546) [`4be9dfec18c0ace7b26ef7edf0d47f50a2a69b02`](https://github.com/honojs/middleware/commit/4be9dfec18c0ace7b26ef7edf0d47f50a2a69b02) Thanks [@yusukebe](https://github.com/yusukebe)! - chore: bump for testing
+
 ## 0.1.2
 
 ### Patch Changes
