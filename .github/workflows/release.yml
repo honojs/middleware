@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write # Used by changests to create releases
-      id-token: write # The OIDC ID token is used for authentication with JSR.
+      id-token: write # Used for authentication with both npm and jsr registries
       pull-requests: write # Used by changesets to create a pull request for the release
     steps:
       - name: Checkout Repo
@@ -42,4 +42,3 @@ jobs:
           version: yarn run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
