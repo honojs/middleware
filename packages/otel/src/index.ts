@@ -142,7 +142,7 @@ export const httpInstrumentationMiddleware = (
         kind: SpanKind.SERVER,
         startTime: config.getTime?.(),
         attributes: {
-          [ATTR_HTTP_REQUEST_METHOD]: method,
+          ...stableAttrs,
           [ATTR_URL_FULL]: c.req.url,
           [ATTR_HTTP_ROUTE]: routePath(c),
         },

@@ -41,13 +41,13 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "@builder.io/qwik": "^1.2.0",
-    "@builder.io/qwik-city": "^1.17.0",
+    "@builder.io/qwik-city": "^1.17.1",
     "hono": "^3.1.5"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@builder.io/qwik": "^1.2.0",
-    "@builder.io/qwik-city": "^1.17.0",
+    "@builder.io/qwik-city": "^1.17.1",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
