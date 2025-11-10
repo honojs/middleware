@@ -891,6 +891,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@conform-to/dom@npm:1.13.3":
+  version: 1.13.3
+  resolution: "@conform-to/dom@npm:1.13.3"
+  checksum: 10c0/a40bcbf604257b38e1c02b260a571ff1327888ef8c8fdc27a8c8d15aef1a55fb7f649ba009d1eba64db191460b3718ff394813311c17bc3e502f5df82126847c
+  languageName: node
+  linkType: hard
+
 "@conform-to/dom@npm:^1.10.0":
   version: 1.10.0
   resolution: "@conform-to/dom@npm:1.10.0"
@@ -909,14 +916,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/yup@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@conform-to/yup@npm:1.11.0"
+"@conform-to/yup@npm:^1.13.3":
+  version: 1.13.3
+  resolution: "@conform-to/yup@npm:1.13.3"
   dependencies:
-    "@conform-to/dom": "npm:1.11.0"
+    "@conform-to/dom": "npm:1.13.3"
   peerDependencies:
     yup: ">=0.32.0"
-  checksum: 10c0/2a2b99dd149e6e58e786eba9efdc9ec4146731ac36357196e1d22894f4724723c3c7e8af770bb4da0f842529a2b52e24664ca15b6de5914ea402e98fbf7ddf6b
+  checksum: 10c0/0de8b47e4ec45254c51f3e961e03a6e4d98a4db5bd47985bd48a58cf82ea6d1b338c22b08347fe84f2ecf8fe041454089d19a7723097c008eadac55e0dc238ff
   languageName: node
   linkType: hard
 
@@ -1896,7 +1903,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.18.2"
     "@conform-to/dom": "npm:^1.10.0"
     "@conform-to/valibot": "npm:^1.12.0"
-    "@conform-to/yup": "npm:^1.11.0"
+    "@conform-to/yup": "npm:^1.13.3"
     "@conform-to/zod": "npm:^1.11.0"
     hono: "npm:^4.10.1"
     publint: "npm:^0.3.14"
