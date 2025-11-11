@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "casbin": "^5.30.0",
+    "casbin": "^5.40.0",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
     "tsup": "^8.5.0",
