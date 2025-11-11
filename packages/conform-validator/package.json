@@ -50,7 +50,7 @@
     "@arethetypeswrong/cli": "^0.18.2",
     "@conform-to/dom": "^1.10.0",
     "@conform-to/valibot": "^1.12.0",
-    "@conform-to/yup": "^1.11.0",
+    "@conform-to/yup": "^1.13.3",
     "@conform-to/zod": "^1.11.0",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
