@@ -6,6 +6,7 @@
     // "packages/auth-js",
     // "packages/bun-compress",
     // "packages/bun-transpiler",
+    "packages/capnweb",
     // "packages/casbin",
     "packages/class-validator",
     "packages/clerk-auth",
