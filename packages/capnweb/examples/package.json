@@ -1,0 +1,21 @@
+{
+  "name": "capnweb-middleware-examples",
+  "type": "module",
+  "scripts": {
+    "dev:workers": "wrangler dev src/workers",
+    "dev:deno": "deno serve --port 8787 --watch src/deno.ts",
+    "dev:bun": "bun run --watch src/bun.ts",
+    "dev:node": "tsx --watch src/node.ts",
+    "client": "tsx client/client.ts",
+    "client:batch": "tsx client/client-batch.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.4",
+    "@hono/node-ws": "^1.2.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "wrangler": "^4.4.0"
+  },
+  "packageManager": "yarn@4.10.3"
+}
