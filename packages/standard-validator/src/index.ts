@@ -1,17 +1,41 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec'
-import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
+import type { Context, Env, Input, TypedResponse, ValidationTargets } from 'hono'
+import type { Handler, HandlerResponse } from 'hono/types'
 import { validator } from 'hono/validator'
 import { sanitizeIssues } from './sanitize-issues'
 
 type HasUndefined<T> = undefined extends T ? true : false
-type TOrPromiseOfT<T> = T | Promise<T>
+
+type DefaultResponse<T, In> =
+  T extends Promise<infer U>
+    ? Promise<DefaultResponse<U, In>>
+    : T extends HandlerResponse<unknown>
+      ? T
+      : Response &
+          TypedResponse<
+            {
+              readonly success: false
+              readonly error: readonly StandardSchemaV1.Issue[]
+              readonly data: In
+            },
+            400,
+            'json'
+          >
 
 type Hook<
   T,
   E extends Env,
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
-  O = {},
+  R extends
+    | void
+    | Response
+    | TypedResponse<unknown>
+    | Promise<Response | TypedResponse<unknown> | void> =
+    | void
+    | Response
+    | TypedResponse<unknown>
+    | Promise<Response | TypedResponse<unknown> | void>,
 > = (
   result: (
     | { success: true; data: T }
@@ -20,7 +44,7 @@ type Hook<
     target: Target
   },
   c: Context<E, P>
-) => TOrPromiseOfT<Response | void | TypedResponse<O>>
+) => R
 
 /**
  * Validation middleware for libraries that support [Standard Schema](https://standardschema.dev/) specification.
@@ -105,11 +129,19 @@ const sValidator = <
     out: { [K in Target]: Out }
   },
   V extends I = I,
+  R extends
+    | void
+    | Response
+    | TypedResponse<unknown>
+    | Promise<Response | TypedResponse<unknown> | void> = DefaultResponse<
+    void,
+    ValidationTargets[Target]
+  >,
 >(
   target: Target,
   schema: Schema,
   hook?: Hook<StandardSchemaV1.InferOutput<Schema>, E, P, Target>
-): MiddlewareHandler<E, P, V> =>
+): Handler<E, P, V, DefaultResponse<R, ValidationTargets[Target]>> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = await schema['~standard'].validate(value)
