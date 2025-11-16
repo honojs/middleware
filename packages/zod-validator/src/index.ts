@@ -32,50 +32,108 @@ export type Hook<
 
 type HasUndefined<T> = undefined extends T ? true : false
 
-export const zValidator = <
+type ExtractValidationResponse<VF> = VF extends (value: any, c: any) => infer R
+  ? R extends Promise<infer PR>
+    ? PR extends TypedResponse<infer T, infer S, infer F>
+      ? TypedResponse<T, S, F>
+      : PR extends Response
+        ? PR
+        : PR extends undefined
+          ? never
+          : never
+    : R extends TypedResponse<infer T, infer S, infer F>
+      ? TypedResponse<T, S, F>
+      : R extends Response
+        ? R
+        : R extends undefined
+          ? never
+          : never
+  : never
+
+type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
+  in: HasUndefined<In> extends true
+    ? {
+        [K in Target]?: In extends ValidationTargets[K]
+          ? In
+          : {
+              [K2 in keyof In]?: In[K2] extends ValidationTargets[K][K2]
+                ? In[K2]
+                : ValidationTargets[K][K2]
+            }
+      }
+    : {
+        [K in Target]: In extends ValidationTargets[K]
+          ? In
+          : {
+              [K2 in keyof In]: In[K2] extends ValidationTargets[K][K2]
+                ? In[K2]
+                : ValidationTargets[K][K2]
+            }
+      }
+  out: { [K in Target]: Out }
+}
+
+// without hook and options
+function zValidatorFunction<
   T extends ZodSchema,
   Target extends keyof ValidationTargets,
   E extends Env,
   P extends string,
   In = zInput<T>,
   Out = zOutput<T>,
-  I extends Input = {
-    in: HasUndefined<In> extends true
-      ? {
-          [K in Target]?: In extends ValidationTargets[K]
-            ? In
-            : {
-                [K2 in keyof In]?: In[K2] extends ValidationTargets[K][K2]
-                  ? In[K2]
-                  : ValidationTargets[K][K2]
-              }
-        }
-      : {
-          [K in Target]: In extends ValidationTargets[K]
-            ? In
-            : {
-                [K2 in keyof In]: In[K2] extends ValidationTargets[K][K2]
-                  ? In[K2]
-                  : ValidationTargets[K][K2]
-              }
-        }
-    out: { [K in Target]: Out }
-  },
+  I extends Input = DefaultInput<Target, In, Out>,
+  V extends I = I,
+>(target: Target, schema: T): MiddlewareHandler<E, P, V>
+
+// with hook and options
+function zValidatorFunction<
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets,
+  E extends Env,
+  P extends string,
+  HookFn extends Hook<InferredValue, E, P, Target, {}, T>,
+  In = zInput<T>,
+  Out = zOutput<T>,
+  I extends Input = DefaultInput<Target, In, Out>,
   V extends I = I,
   InferredValue = zInfer<T>,
 >(
   target: Target,
   schema: T,
-  hook?: Hook<InferredValue, E, P, Target, {}, T>,
+  hook?: HookFn,
   options?: {
     validationFunction: (
       schema: T,
       value: ValidationTargets[Target]
     ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
   }
-): MiddlewareHandler<E, P, V> =>
+): MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>>
+
+// implementation
+function zValidatorFunction<
+  T extends ZodSchema,
+  Target extends keyof ValidationTargets,
+  E extends Env,
+  P extends string,
+  HookFn extends Hook<InferredValue, E, P, Target, {}, T>,
+  In = zInput<T>,
+  Out = zOutput<T>,
+  I extends Input = DefaultInput<Target, In, Out>,
+  V extends I = I,
+  InferredValue = zInfer<T>,
+>(
+  target: Target,
+  schema: T,
+  hook?: HookFn,
+  options?: {
+    validationFunction: (
+      schema: T,
+      value: ValidationTargets[Target]
+    ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
+  }
+): MiddlewareHandler<E, P, V> | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
   // @ts-expect-error not typed well
-  validator(target, async (value, c) => {
+  return validator(target, async (value: ValidationTargets[Target], c) => {
     let validatorValue = value
 
     // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
@@ -118,3 +176,6 @@ export const zValidator = <
 
     return result.data as zInfer<T>
   })
+}
+
+export const zValidator: typeof zValidatorFunction = zValidatorFunction
