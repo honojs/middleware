@@ -1,5 +1,5 @@
 ---
-'@hono/zod-validator': minor
+'@hono/zod-validator': patch
 ---
 
 Fixed so that the hook's return value is reflected in zValidator's return value.
