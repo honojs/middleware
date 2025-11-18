@@ -220,27 +220,29 @@ describe('With Hook', () => {
   type Actual = ExtractSchema<typeof route>
   type Expected = {
     '/post': {
-      $post: {
-        input: {
-          json: {
-            id: number
-            title: string
+      $post:
+        | {
+            input: {
+              json: {
+                id: number
+                title: string
+              }
+            }
+            output: `${number} is invalid!`
+            outputFormat: 'text'
+            status: 400
           }
-        }
-        output: `${number} is invalid!`;
-            outputFormat: "text";
-        status: 400
-      } | {
-        input: {
-          json: {
-            id: number
-            title: string
+        | {
+            input: {
+              json: {
+                id: number
+                title: string
+              }
+            }
+            output: `${number} is valid!`
+            outputFormat: 'text'
+            status: ContentfulStatusCode
           }
-        }
-        output: `${number} is valid!`;
-            outputFormat: "text";
-        status: ContentfulStatusCode
-      }
     }
   }
 
