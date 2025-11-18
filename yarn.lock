@@ -2066,7 +2066,7 @@ __metadata:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@modelcontextprotocol/sdk": "npm:^1.17.1"
     "@types/node": "npm:^24.2.1"
-    hono: "npm:^4.8.4"
+    hono: "npm:^4.10.6"
     hono-rate-limiter: "npm:^0.4.2"
     pkce-challenge: "npm:^5.0.0"
     publint: "npm:^0.3.9"
@@ -9633,10 +9633,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:^4.8.4":
-  version: 4.8.4
-  resolution: "hono@npm:4.8.4"
-  checksum: 10c0/3712bbb4f7d24b5f4f30d75730ae30111cafdb92132728c92e83c257008cfd64e234a6c0657807cb4dd7bc001e3e1daf2e4dd5eb0a73a32ef3a70eff0415d3b7
+"hono@npm:^4.10.6":
+  version: 4.10.6
+  resolution: "hono@npm:4.10.6"
+  checksum: 10c0/a4df5a44378df640464a468cfa6364cc90fbf0a0d89c1bc8fa704c8450855b17baf7a5837655b1c00d6cf8dcecffc2ee702bf3f2c66dda243fe845b75b4b7f4b
   languageName: node
   linkType: hard
 

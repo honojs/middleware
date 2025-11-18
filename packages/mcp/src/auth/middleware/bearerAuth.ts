@@ -1,8 +1,9 @@
 import type { MiddlewareHandler } from 'hono'
-import { bearerAuth as bearerAuthMiddleware } from './honoBearerAuth'
-import type { BearerAuthOptions } from './honoBearerAuth'
+import { bearerAuth as bearerAuthMiddleware } from 'hono/bearer-auth'
 
-export const bearerAuth = (options: BearerAuthOptions): MiddlewareHandler =>
+export const bearerAuth = (
+  options: Parameters<typeof bearerAuthMiddleware>[0]
+): MiddlewareHandler =>
   bearerAuthMiddleware({
     noAuthenticationHeader: {
       wwwAuthenticateHeader: (c) =>
