@@ -529,7 +529,8 @@ export class OpenAPIHono<
             const mw: MiddlewareHandler = async (c, next) => {
               if (c.req.header('content-type')) {
                 if (isFormContentType(c.req.header('content-type')!)) {
-                  await validator(c, next); return;
+                  await validator(c, next)
+                  return
                 }
               }
               c.req.addValidatedData('form', {})
