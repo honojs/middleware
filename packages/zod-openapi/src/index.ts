@@ -581,7 +581,7 @@ export class OpenAPIHono<
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
@@ -600,7 +600,7 @@ export class OpenAPIHono<
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject

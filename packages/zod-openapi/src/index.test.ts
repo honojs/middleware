@@ -1320,6 +1320,30 @@ describe('basePath()', () => {
       param3: 'baz',
     })
   })
+
+  it('Should include base path in typings for doc()', () => {
+    const routes = new OpenAPIHono().basePath('/api').doc('/doc', {
+      openapi: '3.0.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+    const client = hc<typeof routes>('http://localhost/')
+    expect(client.api.doc.$url().pathname).toBe('/api/doc')
+  })
+
+  it('Should include base path in typings for doc31()', () => {
+    const routes = new OpenAPIHono().basePath('/api').doc31('/doc31', {
+      openapi: '3.1.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+    const client = hc<typeof routes>('http://localhost/')
+    expect(client.api.doc31.$url().pathname).toBe('/api/doc31')
+  })
 })
 
 describe('With hc', () => {
