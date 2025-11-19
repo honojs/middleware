@@ -42,7 +42,6 @@ jobs:
         with:
           node-version-file: .tool-versions
       - run: yarn
-      - run: yarn publint
       - run: yarn typecheck
       - run: yarn lint
       - run: yarn format

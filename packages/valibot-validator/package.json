@@ -15,11 +15,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "version:jsr": "yarn version:set $npm_package_version"
@@ -40,10 +38,8 @@
     "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
     "hono": "^4.10.1",
-    "publint": "^0.3.14",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
     "vitest": "^3.2.4"

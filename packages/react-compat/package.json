@@ -19,11 +19,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
@@ -40,10 +38,8 @@
     "hono": ">=4.5.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
     "hono": "^4.10.1",
-    "publint": "^0.3.14",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2"
   }
 }
