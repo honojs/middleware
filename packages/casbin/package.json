@@ -55,7 +55,7 @@
     "hono": ">=4.5.11"
   },
   "devDependencies": {
-    "casbin": "^5.30.0",
+    "casbin": "^5.40.0",
     "hono": "^4.10.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",

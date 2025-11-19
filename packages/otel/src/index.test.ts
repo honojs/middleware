@@ -18,6 +18,8 @@ import {
   ATTR_HTTP_RESPONSE_HEADER,
   ATTR_EXCEPTION_MESSAGE,
   ATTR_EXCEPTION_TYPE,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
@@ -62,6 +64,23 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo')
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/foo')
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 200)
+  })
+
+  it('Should include serviceName and serviceVersion in span attributes', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        serviceName: 'test-service',
+        serviceVersion: '1.2.3',
+      })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+
+    await app2.request('http://localhost/foo')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_SERVICE_NAME], 'test-service')
+    assert.strictEqual(span.attributes[ATTR_SERVICE_VERSION], '1.2.3')
   })
 
   it('Should make a span with error (thrown)', async () => {
@@ -334,6 +353,33 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     if (dp.attributes['http.response.status_code']) {
       assert.strictEqual(dp.attributes['http.response.status_code'], 200)
     }
+  })
+
+  it('Should include serviceName and serviceVersion in metric attributes', async () => {
+    const app = new Hono()
+    app.use(
+      httpInstrumentationMiddleware({
+        meterProvider,
+        serviceName: 'test-service',
+        serviceVersion: '1.2.3',
+      })
+    )
+    app.get('/metrics-with-service', (c) => c.text('success'))
+
+    await app.request('http://localhost/metrics-with-service')
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    assert.ok(resourceMetrics.length > 0)
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const dp = durationMetric.dataPoints.find(
+      (dp) => dp.attributes['http.route'] === '/metrics-with-service'
+    )
+    assert.ok(dp)
+    assert.strictEqual(dp.attributes['service.name'], 'test-service')
+    assert.strictEqual(dp.attributes['service.version'], '1.2.3')
   })
 
   it('Should record metrics for different HTTP methods and status codes', async () => {

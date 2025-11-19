@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1556](https://github.com/honojs/middleware/pull/1556) [`964472592d7bf580c156da416386d1e8cad107b5`](https://github.com/honojs/middleware/commit/964472592d7bf580c156da416386d1e8cad107b5) Thanks [@miyaji255](https://github.com/miyaji255)! - Fixed the error handling in the validation middleware to respect the type of `Response` returned by the hook.
+
 ## 0.1.5
 
 ### Patch Changes

@@ -44,7 +44,7 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@trpc/server": "^11.5.1",
+    "@trpc/server": "^11.7.1",
     "hono": "^4.10.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
