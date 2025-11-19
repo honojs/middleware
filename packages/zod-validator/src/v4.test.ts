@@ -56,7 +56,7 @@ describe('Basic', () => {
             | undefined
         }
         output: {
-          success: true
+          success: boolean
           message: string
           queryName: string | undefined
         }
@@ -65,7 +65,6 @@ describe('Basic', () => {
       }
     }
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type verify = Expect<Equal<Expected, Actual>>
 

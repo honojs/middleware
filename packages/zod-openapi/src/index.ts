@@ -505,7 +505,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook)
+          const validator = zValidator('json', schema, hook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -522,7 +522,9 @@ export class OpenAPIHono<
           }
         }
         if (isFormContentType(mediaType)) {
-          const validator = zValidator('form', schema, hook as any)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore we can ignore the type error since Zod Validator's types are not used
+          const validator = zValidator('form', schema, hook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
