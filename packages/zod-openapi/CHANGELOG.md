@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.1.5
+
+### Patch Changes
+
+- [#1564](https://github.com/honojs/middleware/pull/1564) [`08be39f7d3be7ab53542a35ca82e4af021de2b5e`](https://github.com/honojs/middleware/commit/08be39f7d3be7ab53542a35ca82e4af021de2b5e) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: correct `basePath` typing for `doc` and `doc31`
+
 ## 1.1.4
 
 ### Patch Changes
