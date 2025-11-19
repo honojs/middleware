@@ -1,5 +1,13 @@
 # @hono/zod-validator
 
+## 0.7.5
+
+### Patch Changes
+
+- [#1558](https://github.com/honojs/middleware/pull/1558) [`5388c3f6ab217293b2d3068c00b3334c1b6569aa`](https://github.com/honojs/middleware/commit/5388c3f6ab217293b2d3068c00b3334c1b6569aa) Thanks [@shoji9x9](https://github.com/shoji9x9)! - Fixed so that the hook's return value is reflected in zValidator's return value.
+
+  Response to #1550.
+
 ## 0.7.4
 
 ### Patch Changes
