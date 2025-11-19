@@ -1,5 +1,6 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { Hono } from 'hono'
+import type { SuccessStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import { vi } from 'vitest'
 
@@ -33,11 +34,14 @@ describe('Standard Schema Validation', () => {
             const data = c.req.valid('json')
             const query = c.req.valid('query')
 
-            return c.json({
-              success: true,
-              message: `${data.name} is ${data.age}`,
-              queryName: query?.name,
-            })
+            return c.json(
+              {
+                success: true,
+                message: `${data.name} is ${data.age}`,
+                queryName: query?.name,
+              },
+              200
+            )
           }
         )
 
@@ -49,7 +53,19 @@ describe('Standard Schema Validation', () => {
               message: string
               queryName: string | undefined
             },
-            MergeDiscriminatedUnion<Actual['/author']['$post']['output']>
+            MergeDiscriminatedUnion<
+              (Actual['/author']['$post'] & { status: SuccessStatusCode })['output']
+            >
+          >
+        >
+        type verifyErrorOutput = Expect<
+          Equal<
+            {
+              readonly success: false
+              readonly error: readonly StandardSchemaV1.Issue[]
+              readonly data: any
+            },
+            MergeDiscriminatedUnion<(Actual['/author']['$post'] & { status: 400 })['output']>
           >
         >
         type verifyJSONInput = Expect<
@@ -123,7 +139,7 @@ describe('Standard Schema Validation', () => {
 
         const route = app.get('/page', sValidator('query', schema), (c) => {
           const { page } = c.req.valid('query')
-          return c.json({ page })
+          return c.json({ page }, 200)
         })
 
         type Actual = ExtractSchema<typeof route>
@@ -160,7 +176,19 @@ describe('Standard Schema Validation', () => {
             {
               page: number
             },
-            MergeDiscriminatedUnion<Actual['/page']['$get']['output']>
+            MergeDiscriminatedUnion<
+              (Actual['/page']['$get'] & { status: SuccessStatusCode })['output']
+            >
+          >
+        >
+        type verifyErrorOutput = Expect<
+          Equal<
+            {
+              readonly success: false
+              readonly error: readonly StandardSchemaV1.Issue[]
+              readonly data: Record<string, string | string[]>
+            },
+            MergeDiscriminatedUnion<(Actual['/page']['$get'] & { status: 400 })['output']>
           >
         >
 
@@ -337,7 +365,7 @@ describe('Standard Schema Validation', () => {
 
           const route = app.get('/', sValidator('query', schema), (c) => {
             const data = c.req.valid('query')
-            return c.json(data)
+            return c.json(data, 200)
           })
 
           type Actual = ExtractSchema<typeof route>
@@ -348,7 +376,22 @@ describe('Standard Schema Validation', () => {
             >
           >
           type verifyOutput = Expect<
-            Equal<{ order: 'asc' | 'desc' }, MergeDiscriminatedUnion<Actual['/']['$get']['output']>>
+            Equal<
+              { order: 'asc' | 'desc' },
+              MergeDiscriminatedUnion<
+                (Actual['/']['$get'] & { status: SuccessStatusCode })['output']
+              >
+            >
+          >
+          type verifyErrorOutput = Expect<
+            Equal<
+              {
+                readonly success: false
+                readonly error: readonly StandardSchemaV1.Issue[]
+                readonly data: Record<string, string | string[]>
+              },
+              MergeDiscriminatedUnion<(Actual['/']['$get'] & { status: 400 })['output']>
+            >
           >
         })
       })

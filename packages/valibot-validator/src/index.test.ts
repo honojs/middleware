@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
+import type { InferIssue } from 'valibot'
 import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
 import { vValidator } from '.'
 
@@ -30,37 +30,115 @@ describe('Basic', () => {
       const data = c.req.valid('json')
       const query = c.req.valid('query')
 
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}, search is ${query?.search}`,
-      })
+      return c.json(
+        {
+          success: true,
+          message: `${data.name} is ${data.age}, search is ${query?.search}`,
+        },
+        200
+      )
     }
   )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
     '/author': {
-      $post: {
-        input: {
-          json: {
-            name: string
-            age: number
-          }
-        } & {
-          query?:
-            | {
-                search?: string | string[] | undefined
-                page?: string | string[] | undefined
+      $post:
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
               }
-            | undefined
-        }
-        output: {
-          success: boolean
-          message: string
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output: {
+              success: boolean
+              message: string
+            }
+            outputFormat: 'json'
+            status: 200
+          }
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
+              }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output:
+              | {
+                  readonly typed: true
+                  readonly success: false
+                  readonly output: {
+                    name: string
+                    age: number
+                  }
+                  readonly issues: [InferIssue<typeof schema>, ...InferIssue<typeof schema>[]]
+                }
+              | {
+                  readonly typed: false
+                  readonly success: false
+                  readonly output: unknown
+                  readonly issues: [InferIssue<typeof schema>, ...InferIssue<typeof schema>[]]
+                }
+            outputFormat: 'json'
+            status: 400
+          }
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
+              }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output:
+              | {
+                  readonly typed: true
+                  readonly success: false
+                  readonly output:
+                    | {
+                        search?: string | undefined
+                        page?: number | undefined
+                      }
+                    | undefined
+                  readonly issues: [
+                    InferIssue<typeof querySchema>,
+                    ...InferIssue<typeof querySchema>[],
+                  ]
+                }
+              | {
+                  readonly typed: false
+                  readonly success: false
+                  readonly output: unknown
+                  readonly issues: [
+                    InferIssue<typeof querySchema>,
+                    ...InferIssue<typeof querySchema>[],
+                  ]
+                }
+            outputFormat: 'json'
+            status: 400
+          }
     }
   }
 
@@ -189,37 +267,121 @@ describe('Async', () => {
       const data = c.req.valid('json')
       const query = c.req.valid('query')
 
-      return c.json({
-        success: true,
-        message: `${data.name} is ${data.age}, search is ${query?.search}`,
-      })
+      return c.json(
+        {
+          success: true,
+          message: `${data.name} is ${data.age}, search is ${query?.search}`,
+        },
+        200
+      )
     }
   )
 
   type Actual = ExtractSchema<typeof route>
   type Expected = {
     '/author': {
-      $post: {
-        input: {
-          json: {
-            name: string
-            age: number
-          }
-        } & {
-          query?:
-            | {
-                search?: string | string[] | undefined
-                page?: string | string[] | undefined
+      $post:
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
               }
-            | undefined
-        }
-        output: {
-          success: boolean
-          message: string
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output: {
+              success: boolean
+              message: string
+            }
+            outputFormat: 'json'
+            status: 200
+          }
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
+              }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output:
+              | {
+                  readonly typed: true
+                  readonly success: false
+                  readonly output: {
+                    name: string
+                    age: number
+                  }
+                  readonly issues: [
+                    InferIssue<typeof schemaAsync>,
+                    ...InferIssue<typeof schemaAsync>[],
+                  ]
+                }
+              | {
+                  readonly typed: false
+                  readonly success: false
+                  readonly output: unknown
+                  readonly issues: [
+                    InferIssue<typeof schemaAsync>,
+                    ...InferIssue<typeof schemaAsync>[],
+                  ]
+                }
+            outputFormat: 'json'
+            status: 400
+          }
+        | {
+            input: {
+              json: {
+                name: string
+                age: number
+              }
+            } & {
+              query?:
+                | {
+                    search?: string | string[] | undefined
+                    page?: string | string[] | undefined
+                  }
+                | undefined
+            }
+            output:
+              | {
+                  readonly typed: true
+                  readonly success: false
+                  readonly output:
+                    | {
+                        search?: string | undefined
+                        page?: number | undefined
+                      }
+                    | undefined
+                  readonly issues: [
+                    InferIssue<typeof querySchemaAsync>,
+                    ...InferIssue<typeof querySchemaAsync>[],
+                  ]
+                }
+              | {
+                  readonly typed: false
+                  readonly success: false
+                  readonly output: unknown
+                  readonly issues: [
+                    InferIssue<typeof querySchemaAsync>,
+                    ...InferIssue<typeof querySchemaAsync>[],
+                  ]
+                }
+            outputFormat: 'json'
+            status: 400
+          }
     }
   }
 
