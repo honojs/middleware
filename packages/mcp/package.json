@@ -61,7 +61,6 @@
     "hono": "^4.10.6",
     "hono-rate-limiter": "^0.4.2",
     "pkce-challenge": "^5.0.0",
-    "hono": "^4.10.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
