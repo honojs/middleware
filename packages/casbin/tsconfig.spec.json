@@ -4,6 +4,6 @@
     "outDir": "../../dist/packages/casbin",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "vitest.config.ts", "vitest.setup.ts"],
+  "include": ["src", "tsdown.config.ts", "vitest.config.ts", "vitest.setup.ts"],
   "references": []
 }

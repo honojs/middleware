@@ -505,7 +505,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook)
+          const validator = zValidator('json', schema, hook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -522,14 +522,17 @@ export class OpenAPIHono<
           }
         }
         if (isFormContentType(mediaType)) {
-          const validator = zValidator('form', schema, hook as any)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore we can ignore the type error since Zod Validator's types are not used
+          const validator = zValidator('form', schema, hook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
             const mw: MiddlewareHandler = async (c, next) => {
               if (c.req.header('content-type')) {
                 if (isFormContentType(c.req.header('content-type')!)) {
-                  return await validator(c, next)
+                  await validator(c, next)
+                  return
                 }
               }
               c.req.addValidatedData('form', {})
@@ -581,7 +584,7 @@ export class OpenAPIHono<
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
@@ -600,7 +603,7 @@ export class OpenAPIHono<
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
-  ): OpenAPIHono<E, S & ToSchema<'get', P, {}, {}>, BasePath> => {
+  ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject

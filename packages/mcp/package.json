@@ -9,11 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts ./src/auth/index.ts",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack --profile node16 && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
@@ -58,13 +56,13 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@modelcontextprotocol/sdk": "^1.17.1",
+    "@modelcontextprotocol/sdk": "^1.19.1",
     "@types/node": "^24.2.1",
     "hono": "^4.10.6",
     "hono-rate-limiter": "^0.4.2",
     "pkce-challenge": "^5.0.0",
-    "publint": "^0.3.9",
-    "tsup": "^8.4.0",
+    "hono": "^4.10.1",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
     "zod": "^3.25.34"

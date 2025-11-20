@@ -9,11 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "version:jsr": "yarn version:set $npm_package_version"
@@ -47,15 +45,13 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
-    "@cloudflare/vitest-pool-workers": "^0.9.13",
+    "@cloudflare/vitest-pool-workers": "^0.10.3",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.1.9",
     "hono": "^4.10.1",
-    "publint": "^0.3.14",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   },

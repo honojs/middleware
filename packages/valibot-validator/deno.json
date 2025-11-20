@@ -1,6 +1,6 @@
 {
   "name": "@hono/valibot-validator",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts"
