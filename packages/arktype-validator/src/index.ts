@@ -1,8 +1,27 @@
+/**
+ * This module provides an ArkType validator middleware for Hono.
+ * It allows you to validate incoming requests (query, JSON, form data, headers, etc.)
+ * using ArkType schemas and provides a flexible hook for custom error handling.
+ *
+ * @module
+ */
 import { type } from 'arktype'
 import type { Type, ArkErrors } from 'arktype'
 import type { Context, MiddlewareHandler, Env, ValidationTargets, TypedResponse } from 'hono'
 import { validator } from 'hono/validator'
 
+/**
+ * Defines a hook function that can be used to customize the response
+ * when validation succeeds or fails.
+ *
+ * @template T The inferred type of the schema.
+ * @template E The environment type.
+ * @template P The path parameters type.
+ * @template O The output type of the response.
+ * @param result The validation result, either success or failure.
+ * @param c The Hono context.
+ * @returns A Hono Response, a Promise of a Response, void, or a TypedResponse.
+ */
 export type Hook<T, E extends Env, P extends string, O = {}> = (
   result: { success: false; data: unknown; errors: ArkErrors } | { success: true; data: T },
   c: Context<E, P>
@@ -10,10 +29,31 @@ export type Hook<T, E extends Env, P extends string, O = {}> = (
 
 type HasUndefined<T> = undefined extends T ? true : false
 
+/**
+ * Specifies fields that should be restricted from error data
+ * for security or privacy reasons, especially for sensitive targets like 'header'.
+ */
 const RESTRICTED_DATA_FIELDS = {
   header: ['cookie'],
 }
 
+/**
+ * Creates a Hono middleware that validates incoming request data using an ArkType schema.
+ * The middleware can target different parts of the request (e.g., 'json', 'query', 'header').
+ * It also supports a custom hook for handling validation results.
+ *
+ * @template T The ArkType schema type.
+ * @template Target The target of the validation (e.g., 'json', 'query', 'header').
+ * @template E The environment type.
+ * @template P The path parameters type.
+ * @template I The inferred input type of the schema.
+ * @template O The inferred output type of the schema.
+ * @template V The validated variables type.
+ * @param target The part of the request to validate (e.g., 'json', 'query', 'form', 'header', 'param', 'cookie').
+ * @param schema The ArkType schema to apply for validation.
+ * @param hook An optional hook function to customize behavior based on validation success or failure.
+ * @returns A Hono middleware handler.
+ */
 export const arktypeValidator = <
   T extends Type,
   Target extends keyof ValidationTargets,
