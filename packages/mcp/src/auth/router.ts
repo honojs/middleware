@@ -5,7 +5,6 @@ import type { Env, MiddlewareHandler, Schema } from 'hono'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ConfigType as RateLimitOptions } from 'hono-rate-limiter'
-import { rateLimiter } from 'hono-rate-limiter'
 import {
   authorizeHandler,
   checkIssuerUrl,
@@ -234,8 +233,16 @@ function applyRateLimiter(
     return (_c, next) => next()
   }
 
-  return rateLimiter({
-    ...defaultOptions,
-    ...options,
-  } as RateLimitOptions)
+  return async (c, next) => {
+    try {
+      const rateLimiter = await import('hono-rate-limiter').then((m) => m.rateLimiter)
+
+      return await rateLimiter({
+        ...defaultOptions,
+        ...options,
+      } as RateLimitOptions)(c, next)
+    } catch {
+      throw new Error('@hono/mcp: Missing dependencies "hono-rate-limiter".')
+    }
+  }
 }
