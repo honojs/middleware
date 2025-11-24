@@ -1,6 +1,6 @@
 {
   "name": "@hono/mcp",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "MCP Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -16,13 +16,25 @@
     "test": "vitest"
   },
   "exports": {
-    "import": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
-    "require": {
-      "types": "./dist/index.d.cts",
-      "default": "./dist/index.cjs"
+    "./auth": {
+      "import": {
+        "types": "./dist/auth/index.d.ts",
+        "default": "./dist/auth/index.js"
+      },
+      "require": {
+        "types": "./dist/auth/index.d.cts",
+        "default": "./dist/auth/index.cjs"
+      }
     }
   },
   "license": "MIT",
@@ -35,14 +47,21 @@
     "url": "git+https://github.com/honojs/middleware.git",
     "directory": "packages/mcp"
   },
-  "homepage": "https://github.com/honojs/middleware",
+  "homepage": "https://honohub.dev/docs/hono-mcp",
+  "dependencies": {
+    "pkce-challenge": "^5.0.0"
+  },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
-    "hono": ">=4.0.0"
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "hono": "*",
+    "hono-rate-limiter": "^0.4.2"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@modelcontextprotocol/sdk": "^1.19.1",
-    "hono": "^4.10.1",
+    "@types/node": "^24.2.1",
+    "hono": "^4.10.6",
+    "hono-rate-limiter": "^0.4.2",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
