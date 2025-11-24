@@ -2102,7 +2102,6 @@ __metadata:
     "@modelcontextprotocol/sdk": ^1.17.3
     hono: "*"
     hono-rate-limiter: ^0.4.2
-    pkce-challenge: ^5.0.0
   languageName: unknown
   linkType: soft
 

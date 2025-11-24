@@ -48,11 +48,13 @@
     "directory": "packages/mcp"
   },
   "homepage": "https://honohub.dev/docs/hono-mcp",
+  "dependencies": {
+    "pkce-challenge": "^5.0.0"
+  },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
     "hono": "*",
-    "hono-rate-limiter": "^0.4.2",
-    "pkce-challenge": "^5.0.0"
+    "hono-rate-limiter": "^0.4.2"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
@@ -60,7 +62,6 @@
     "@types/node": "^24.2.1",
     "hono": "^4.10.6",
     "hono-rate-limiter": "^0.4.2",
-    "pkce-challenge": "^5.0.0",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4",
