@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@ryoppippi/unplugin-typia": "1.2.0",
-    "hono": "^4.10.1",
+    "hono": "^4.10.7",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "typia": "^9.7.2",

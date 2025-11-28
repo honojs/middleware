@@ -60,7 +60,7 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@modelcontextprotocol/sdk": "^1.19.1",
     "@types/node": "^24.2.1",
-    "hono": "^4.10.6",
+    "hono": "^4.10.7",
     "hono-rate-limiter": "^0.4.2",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",

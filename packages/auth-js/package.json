@@ -63,7 +63,7 @@
   "devDependencies": {
     "@auth/core": "^0.35.3",
     "@types/react": "^19",
-    "hono": "^4.10.1",
+    "hono": "^4.10.7",
     "react": "^19.2.0",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
