@@ -38,7 +38,7 @@
     "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.10.7",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
