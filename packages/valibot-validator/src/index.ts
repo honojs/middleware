@@ -1,5 +1,4 @@
 import type { Context, Env, Handler, Input, TypedResponse, ValidationTargets } from 'hono'
-import type { HandlerResponse } from 'hono/types'
 import { validator } from 'hono/validator'
 import type {
   GenericSchema,
@@ -10,15 +9,17 @@ import type {
 } from 'valibot'
 import { safeParseAsync } from 'valibot'
 
-type FailedResult<T extends { readonly success: boolean }> = T extends { readonly success: false }
-  ? T
-  : never
-type DefaultResponse<T, Schema extends GenericSchema | GenericSchemaAsync> =
+export type FailedResponse<T extends GenericSchema | GenericSchemaAsync> =
+  SafeParseResult<T> extends infer U
+    ? Response & TypedResponse<U extends { success: false } ? U : never, 400, 'json'>
+    : never
+
+type MustBeResponse<T, Schema extends GenericSchema | GenericSchemaAsync> =
   T extends Promise<infer U>
-    ? Promise<DefaultResponse<U, Schema>>
-    : T extends HandlerResponse<unknown>
+    ? Promise<MustBeResponse<U, Schema>>
+    : T extends Response | TypedResponse<unknown>
       ? T
-      : Response & TypedResponse<FailedResult<SafeParseResult<Schema>>, 400, 'json'>
+      : never
 
 export type Hook<
   T extends GenericSchema | GenericSchemaAsync,
@@ -69,12 +70,12 @@ export const vValidator = <
     | void
     | Response
     | TypedResponse<unknown>
-    | Promise<Response | TypedResponse<unknown> | void> = DefaultResponse<void, T>,
+    | Promise<Response | TypedResponse<unknown> | void> = FailedResponse<T>,
 >(
   target: Target,
   schema: T,
   hook?: Hook<T, E, P, Target, R>
-): Handler<E, P, V, DefaultResponse<R, T>> =>
+): Handler<E, P, V, MustBeResponse<R, T>> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = await safeParseAsync(schema, value)
