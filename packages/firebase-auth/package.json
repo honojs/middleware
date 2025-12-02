@@ -10,15 +10,13 @@
     "dist"
   ],
   "scripts": {
+    "build": "tsdown",
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "build": "tsup ./src/index.ts",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
-    "prepack": "yarn build",
-    "publint": "attw --pack && publint"
+    "lint": "eslint"
   },
   "exports": {
     ".": {
@@ -51,12 +49,10 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.2",
     "@cloudflare/vitest-pool-workers": "^0.10.3",
     "firebase-tools": "^14.22.0",
     "hono": "^4.10.1",
-    "publint": "^0.3.14",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"
   }

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     name: 'Publish: pkg.pr.new'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -28,7 +28,7 @@ jobs:
         run: yarn
 
       - name: Build
-        run: yarn workspaces foreach --all --topological --parallel --no-private run build
+        run: yarn build
 
       - name: Publish to StackBlitz
         run: yarn pkg-pr-new publish --compact --no-template './packages/*'

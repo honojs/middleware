@@ -13,13 +13,12 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: .tool-versions
       - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
       - run: yarn workspace @hono/bun-transpiler build
-      - run: yarn workspace @hono/bun-transpiler publint
       - run: yarn workspace @hono/bun-transpiler typecheck
       - run: yarn eslint packages/bun-transpiler
       - run: yarn prettier --check  . !packages packages/bun-transpiler

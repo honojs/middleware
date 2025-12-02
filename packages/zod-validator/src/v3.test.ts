@@ -202,7 +202,7 @@ describe('With Hook', () => {
     title: z.string(),
   })
 
-  app.post(
+  const route = app.post(
     '/post',
     zValidator('json', schema, (result, c) => {
       if (!result.success) {
@@ -216,6 +216,38 @@ describe('With Hook', () => {
       return c.text(`${data.id} is valid!`)
     }
   )
+
+  type Actual = ExtractSchema<typeof route>
+  type Expected = {
+    '/post': {
+      $post:
+        | {
+            input: {
+              json: {
+                id: number
+                title: string
+              }
+            }
+            output: `${number} is invalid!`
+            outputFormat: 'text'
+            status: 400
+          }
+        | {
+            input: {
+              json: {
+                id: number
+                title: string
+              }
+            }
+            output: `${number} is valid!`
+            outputFormat: 'text'
+            status: ContentfulStatusCode
+          }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/post', {
