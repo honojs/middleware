@@ -1,8 +1,0 @@
-{
-  "workspace": [],
-  "imports": {
-    "hono": "jsr:@hono/hono@^4.8.3",
-    "hono/": "jsr:@hono/hono@^4.8.3/",
-    "@hono/capnweb": "../src/index.ts"
-  }
-}
