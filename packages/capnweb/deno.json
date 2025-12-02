@@ -10,6 +10,6 @@
   },
   "publish": {
     "include": ["deno.json", "README.md", "src/**/*.ts"],
-    "exclude": ["src/**/*.test.ts", "mock/**/*.ts"]
+    "exclude": ["src/**/*.test.ts"]
   }
 }
