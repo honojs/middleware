@@ -1,5 +1,7 @@
 import { serve } from '@hono/node-server'
 import type { ServerType } from '@hono/node-server'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore @hono/node-ws may not be typed
 import { createNodeWebSocket } from '@hono/node-ws'
 import { RpcTarget, newWebSocketRpcSession } from 'capnweb'
 import { Hono } from 'hono'
