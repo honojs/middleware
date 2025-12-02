@@ -7,7 +7,7 @@ import {
 } from '@modelcontextprotocol/sdk/server/auth/errors.js'
 import type { OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { MiddlewareHandler } from 'hono'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 
 export type ClientAuthenticationMiddlewareOptions = {
   /**

@@ -8,7 +8,7 @@ import {
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import type { MiddlewareHandler } from 'hono'
 import { verifyChallenge } from 'pkce-challenge'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import type { ClientAuthenticationEnv } from '../middleware/client-auth'
 
 const TokenRequestSchema = z.object({
@@ -19,13 +19,13 @@ const AuthorizationCodeGrantSchema = z.object({
   code: z.string(),
   code_verifier: z.string(),
   redirect_uri: z.string().optional(),
-  resource: z.string().url().optional(),
+  resource: z.url().optional(),
 })
 
 const RefreshTokenGrantSchema = z.object({
   refresh_token: z.string(),
   scope: z.string().optional(),
-  resource: z.string().url().optional(),
+  resource: z.url().optional(),
 })
 
 export function tokenHandler(

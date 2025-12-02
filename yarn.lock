@@ -2097,7 +2097,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^3.25.34"
+    zod: "npm:^3.25 || ^4.0"
   peerDependencies:
     "@modelcontextprotocol/sdk": ^1.17.3
     hono: "*"
@@ -17308,10 +17308,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25.34":
-  version: 3.25.34
-  resolution: "zod@npm:3.25.34"
-  checksum: 10c0/29f836f6dacace3ae247318362019937f429146676f6d185dbf62f808bba3783dff11f60d49864c4d9589b3d85c353a9fbd36c2fbe8c91b06447ab600243a6c5
+"zod@npm:^3.25 || ^4.0":
+  version: 4.1.13
+  resolution: "zod@npm:4.1.13"
+  checksum: 10c0/d7e74e82dba81a91ffc3239cd85bc034abe193a28f7087a94ab258a3e48e9a7ca4141920cac979a0d781495b48fc547777394149f26be04c3dc642f58bbc3941
   languageName: node
   linkType: hard
 

@@ -7,7 +7,7 @@ import {
 } from '@modelcontextprotocol/sdk/server/auth/errors.js'
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import type { MiddlewareHandler } from 'hono'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 
 // Parameters that must be validated in order to issue redirects.
 const ClientAuthorizationParamsSchema = z.object({
@@ -27,7 +27,7 @@ const RequestAuthorizationParamsSchema = z.object({
   code_challenge_method: z.literal('S256'),
   scope: z.string().optional(),
   state: z.string().optional(),
-  resource: z.string().url().optional(),
+  resource: z.url().optional(),
 })
 
 export function authorizeHandler(provider: OAuthServerProvider): MiddlewareHandler {
