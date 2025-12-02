@@ -22,14 +22,14 @@ class WebSocketAdapter extends EventTarget {
   }
 }
 
-function createWebSocketAdapter(ws: any): any {
+function createWebSocketAdapter(ws: any) {
   return typeof ws.addEventListener === 'function' ? ws : new WebSocketAdapter(ws)
 }
 
 export function newRpcResponse(
   c: Context,
-  localMain: any,
-  options?: { upgradeWebSocket?: UpgradeWebSocket<any> }
+  localMain: unknown,
+  options?: { upgradeWebSocket?: UpgradeWebSocket }
 ): Response | Promise<Response> {
   if (c.req.header('upgrade')?.toLowerCase() !== 'websocket') {
     return newHttpBatchRpcResponse(c.req.raw, localMain)

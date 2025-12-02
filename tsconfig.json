@@ -10,6 +10,7 @@
     { "path": "packages/auth-js" },
     { "path": "packages/bun-compress" },
     { "path": "packages/bun-transpiler" },
+    { "path": "packages/capnweb" },
     { "path": "packages/casbin" },
     { "path": "packages/class-validator" },
     { "path": "packages/clerk-auth" },

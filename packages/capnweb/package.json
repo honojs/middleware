@@ -9,10 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsdown",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "prepack": "yarn build",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -46,11 +45,16 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.10.12",
+    "@hono/node-server": "^1.19.2",
+    "@hono/node-ws": "workspace:^",
+    "@types/ws": "^8.5.0",
     "capnweb": "^0.2.0",
     "hono": "^4.10.1",
     "publint": "^0.3.14",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "ws": "^8.17.0"
   }
 }

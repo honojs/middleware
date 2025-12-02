@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/packages/capnweb",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "@cloudflare/vitest-pool-workers"]
   },
-  "references": []
+  "references": [],
+  "include": ["./src", "./mock", "vitest.config.ts", "tsdown.config.ts"]
 }
