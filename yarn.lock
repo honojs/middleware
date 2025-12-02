@@ -2102,6 +2102,7 @@ __metadata:
     "@modelcontextprotocol/sdk": ^1.23.0
     hono: "*"
     hono-rate-limiter: ^0.4.2
+    zod: ^3.25.0 || ^4.0.0
   languageName: unknown
   linkType: soft
 
