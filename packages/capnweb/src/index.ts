@@ -37,7 +37,8 @@ export function newRpcResponse(
 
   if (options?.upgradeWebSocket) {
     // Cloudflare Workers uses WebSocketPair directly
-    // @ts-expect-error WebSocketPair is a global in Cloudflare Workers
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore WebSocketPair is a global in Cloudflare Workers
     if (typeof WebSocketPair !== 'undefined') {
       return newWorkersWebSocketRpcResponse(c.req.raw, localMain)
     }
