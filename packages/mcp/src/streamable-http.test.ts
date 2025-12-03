@@ -9,7 +9,7 @@ import type { CallToolResult, JSONRPCMessage } from '@modelcontextprotocol/sdk/t
 import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import { StreamableHTTPTransport } from './streamable-http'
 
 /**
