@@ -5,6 +5,7 @@ import type {
 } from '@trpc/server/adapters/fetch'
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import type { Context, MiddlewareHandler } from 'hono'
+import { routePath } from 'hono/route'
 
 type tRPCOptions = Omit<
   FetchHandlerRequestOptions<AnyRouter>,
@@ -18,7 +19,7 @@ type tRPCOptions = Omit<
   }
 
 export const trpcServer = ({
-  endpoint = '/trpc',
+  endpoint,
   createContext,
   ...rest
 }: tRPCOptions): MiddlewareHandler => {
@@ -26,6 +27,19 @@ export const trpcServer = ({
   type BodyProp = typeof bodyProps extends Set<infer T> ? T : never
   return async (c) => {
     const canWithBody = c.req.method === 'GET' || c.req.method === 'HEAD'
+
+    // Auto-detect endpoint from route path if not explicitly provided
+    let resolvedEndpoint = endpoint
+    if (!endpoint) {
+      const path = routePath(c)
+      if (path) {
+        // Remove wildcard suffix (e.g., "/v1/*" -> "/v1")
+        resolvedEndpoint = path.replace(/\/\*+$/, '') || '/trpc'
+      } else {
+        resolvedEndpoint = '/trpc'
+      }
+    }
+
     const res = fetchRequestHandler({
       ...rest,
       createContext: async (opts) => ({
@@ -33,7 +47,7 @@ export const trpcServer = ({
         // propagate env by default
         env: c.env,
       }),
-      endpoint,
+      endpoint: resolvedEndpoint!,
       req: canWithBody
         ? c.req.raw
         : new Proxy(c.req.raw, {
