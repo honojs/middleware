@@ -3427,29 +3427,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.10.2":
-  version: 1.18.1
-  resolution: "@modelcontextprotocol/sdk@npm:1.18.1"
-  dependencies:
-    ajv: "npm:^6.12.6"
-    content-type: "npm:^1.0.5"
-    cors: "npm:^2.8.5"
-    cross-spawn: "npm:^7.0.5"
-    eventsource: "npm:^3.0.2"
-    eventsource-parser: "npm:^3.0.0"
-    express: "npm:^5.0.1"
-    express-rate-limit: "npm:^7.5.0"
-    pkce-challenge: "npm:^5.0.0"
-    raw-body: "npm:^3.0.0"
-    zod: "npm:^3.23.8"
-    zod-to-json-schema: "npm:^3.24.1"
-  checksum: 10c0/86849684f31932d4f1424f7e86dda6d0a3b308ad828790c0c052f381c57622829f8b86ad5cc0786d80c834ea113d7033398660e7327585db095fcaf6c4bc2ce0
-  languageName: node
-  linkType: hard
-
-"@modelcontextprotocol/sdk@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "@modelcontextprotocol/sdk@npm:1.23.0"
+"@modelcontextprotocol/sdk@npm:^1.10.2, @modelcontextprotocol/sdk@npm:^1.23.0":
+  version: 1.24.1
+  resolution: "@modelcontextprotocol/sdk@npm:1.24.1"
   dependencies:
     ajv: "npm:^8.17.1"
     ajv-formats: "npm:^3.0.1"
@@ -3460,6 +3440,7 @@ __metadata:
     eventsource-parser: "npm:^3.0.0"
     express: "npm:^5.0.1"
     express-rate-limit: "npm:^7.5.0"
+    jose: "npm:^6.1.1"
     pkce-challenge: "npm:^5.0.0"
     raw-body: "npm:^3.0.0"
     zod: "npm:^3.25 || ^4.0"
@@ -3472,7 +3453,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/b0291f921ad9bda06bbf1a61b1bb61ceca1173da5d74d39a411c40428d6ca50a95f0de3a1631f25a44b439220b15c30c1306600bf48bef665ab7ad118d528260
+  checksum: 10c0/b99c2e3acffda7ee16008c88dd7c70f840922ca90a3a7d39d194b7bd99ab3073213ce3169250b613f6eaa066a4d369859e7c9a7b237f133c13bd9ff574fb7fc3
   languageName: node
   linkType: hard
 
@@ -5548,7 +5529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.12.4, ajv@npm:^6.12.6":
+"ajv@npm:^6.12.4":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -10378,6 +10359,13 @@ __metadata:
   version: 6.0.11
   resolution: "jose@npm:6.0.11"
   checksum: 10c0/d290be4532174e7a53730b7fb84c74327531172bd403b196c592b312b73eedb7489949837bfe831fdbd280799bfc5ba778bc807495a73eda08ae6c49414f405a
+  languageName: node
+  linkType: hard
+
+"jose@npm:^6.1.1":
+  version: 6.1.3
+  resolution: "jose@npm:6.1.3"
+  checksum: 10c0/b9577b4a7a5e84131011c23823db9f5951eae3ba796771a6a2401ae5dd50daf71104febc8ded9c38146aa5ebe94a92ac09c725e699e613ef26949b9f5a8bc30f
   languageName: node
   linkType: hard
 
@@ -17255,15 +17243,6 @@ __metadata:
   dependencies:
     zod: "npm:^3.25.64"
   checksum: 10c0/78a2104231c8c60b00adc8cf9acfae0c0c5cfc77f0be9225297a41bd73f52b21d17b1208358e0dfe7bd558fb4ba1cc6743c2bdd111280831be00f0c3ecdfc1f4
-  languageName: node
-  linkType: hard
-
-"zod-to-json-schema@npm:^3.24.1":
-  version: 3.24.5
-  resolution: "zod-to-json-schema@npm:3.24.5"
-  peerDependencies:
-    zod: ^3.24.1
-  checksum: 10c0/0745b94ba53e652d39f262641cdeb2f75d24339fb6076a38ce55bcf53d82dfaea63adf524ebc5f658681005401687f8e9551c4feca7c4c882e123e66091dfb90
   languageName: node
   linkType: hard
 
