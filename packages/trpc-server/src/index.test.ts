@@ -29,8 +29,7 @@ describe('tRPC Adapter Middleware', () => {
       input: JSON.stringify({ '0': 'Hono' }),
       batch: '1',
     })
-    const req = new Request(`http://localhost/trpc/hello?${searchParams.toString()}`)
-    const res = await app.request(req)
+    const res = await app.request(`/trpc/hello?${searchParams.toString()}`)
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([
       {
@@ -39,5 +38,44 @@ describe('tRPC Adapter Middleware', () => {
         },
       },
     ])
+  })
+
+  it('Should auto-detect endpoint from /v1/* route', async () => {
+    const app = new Hono()
+    app.use('/v1/*', trpcServer({ router: appRouter }))
+
+    const searchParams = new URLSearchParams({
+      input: JSON.stringify({ '0': 'World' }),
+      batch: '1',
+    })
+    const res = await app.request(`/v1/hello?${searchParams.toString()}`)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ result: { data: 'Hello World' } }])
+  })
+
+  it('Should handle short path prefixes like /v/*', async () => {
+    const app = new Hono()
+    app.use('/v/*', trpcServer({ router: appRouter }))
+
+    const searchParams = new URLSearchParams({
+      input: JSON.stringify({ '0': 'Test' }),
+      batch: '1',
+    })
+    const res = await app.request(`/v/hello?${searchParams.toString()}`)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ result: { data: 'Hello Test' } }])
+  })
+
+  it('Should respect explicit endpoint parameter', async () => {
+    const app = new Hono()
+    app.use('/api/trpc/*', trpcServer({ router: appRouter, endpoint: '/api/trpc' }))
+
+    const searchParams = new URLSearchParams({
+      input: JSON.stringify({ '0': 'Explicit' }),
+      batch: '1',
+    })
+    const res = await app.request(`/api/trpc/hello?${searchParams.toString()}`)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([{ result: { data: 'Hello Explicit' } }])
   })
 })
