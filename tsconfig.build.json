@@ -7,6 +7,7 @@
     "tsBuildInfoFile": "${configDir}/dist/tsconfig.build.tsbuildinfo"
   },
   "exclude": [
+    "${configDir}/dist",
     "${configDir}/node_modules",
     "${configDir}/vitest.config.ts",
     "${configDir}/tsdown.config.ts",
