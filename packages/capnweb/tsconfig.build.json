@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {},
-  "references": []
+  "references": [{ "path": "../node-ws/tsconfig.build.json" }]
 }
