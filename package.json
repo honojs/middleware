@@ -56,5 +56,8 @@
     "typia": "^9.7.2",
     "vitest": "^3.2.4"
   },
+  "resolutions": {
+    "zod@3.x": "^3.25.0"
+  },
   "packageManager": "yarn@4.10.3"
 }
