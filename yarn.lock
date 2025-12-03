@@ -1974,7 +1974,7 @@ __metadata:
     valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
     yup: "npm:^1.7.0"
-    zod: "npm:^4.0.5"
+    zod: "npm:^4.1.13"
   peerDependencies:
     "@conform-to/dom": ">=1.1.5"
     hono: ">=4.5.1"
@@ -2096,7 +2096,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.0.0"
+    zod: "npm:^4.1.13"
   peerDependencies:
     "@modelcontextprotocol/sdk": ^1.23.0
     hono: "*"
@@ -2310,7 +2310,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
-    zod: "npm:^3.24.0"
+    zod: "npm:^4.1.13"
   peerDependencies:
     "@standard-schema/spec": 1.0.0
     hono: ">=3.9.0"
@@ -2368,7 +2368,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.0.5"
+    zod: "npm:^4.1.13"
   peerDependencies:
     "@trpc/server": ^10.10.0 || >11.0.0-rc
     hono: ">=4.0.0"
@@ -2463,7 +2463,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
     yaml: "npm:^2.8.1"
-    zod: "npm:^4.0.5"
+    zod: "npm:^4.1.13"
   peerDependencies:
     hono: ">=4.3.6"
     zod: ^4.0.0
@@ -2478,7 +2478,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.0.5"
+    zod: "npm:^4.1.13"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.25.0 || ^4.0.0
@@ -17313,13 +17313,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.24.0":
-  version: 3.24.1
-  resolution: "zod@npm:3.24.1"
-  checksum: 10c0/0223d21dbaa15d8928fe0da3b54696391d8e3e1e2d0283a1a070b5980a1dbba945ce631c2d1eccc088fdbad0f2dfa40155590bf83732d3ac4fcca2cc9237591b
-  languageName: node
-  linkType: hard
-
 "zod@npm:^3.24.3":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
@@ -17327,7 +17320,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25 || ^4.0, zod@npm:^4.0.0":
+"zod@npm:^3.25 || ^4.0, zod@npm:^4.1.13":
   version: 4.1.13
   resolution: "zod@npm:4.1.13"
   checksum: 10c0/d7e74e82dba81a91ffc3239cd85bc034abe193a28f7087a94ab258a3e48e9a7ca4141920cac979a0d781495b48fc547777394149f26be04c3dc642f58bbc3941
@@ -17338,13 +17331,6 @@ __metadata:
   version: 3.25.67
   resolution: "zod@npm:3.25.67"
   checksum: 10c0/80a0cab3033272c4ab9312198081f0c4ea88e9673c059aa36dc32024906363729db54bdb78f3dc9d5529bd1601f74974d5a56c0a23e40c6f04a9270c9ff22336
-  languageName: node
-  linkType: hard
-
-"zod@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "zod@npm:4.0.5"
-  checksum: 10c0/59449d731ca63849b6bcb14300aa6e2f042d440b3ed294b45c248519aec78780f85a5d1939a62c2ce82e9dc60afca77c8005e0a98d7517b0c2586d6c76940424
   languageName: node
   linkType: hard
 
