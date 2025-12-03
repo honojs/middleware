@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1596](https://github.com/honojs/middleware/pull/1596) [`0c457fdb6389cb6bc582daa76fc3874242f36c89`](https://github.com/honojs/middleware/commit/0c457fdb6389cb6bc582daa76fc3874242f36c89) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - updated zod and @modelcontextprotocol/sdk versions
+
 ## 0.2.0
 
 ### Minor Changes
