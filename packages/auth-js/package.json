@@ -61,7 +61,7 @@
     "react": "^18 || ^19 || ^19.0.0-rc"
   },
   "devDependencies": {
-    "@auth/core": "^0.35.3",
+    "@auth/core": "^0.41.1",
     "@types/react": "^19",
     "hono": "^4.10.1",
     "react": "^19.2.0",
