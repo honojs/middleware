@@ -1,4 +1,4 @@
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { Hono } from 'hono'
 import { hc } from 'hono/client'
 import type { ExtractSchema, ParsedFormValue } from 'hono/types'
@@ -99,8 +99,8 @@ describe('Validate requests using a Zod schema', () => {
     expect(json).toMatchObject({
       status: 'error',
       error: {
-        name: ['Required'],
-        age: ['Required'],
+        name: ['Invalid input: expected string, received undefined'],
+        age: ['Invalid input: expected string, received undefined'],
       },
     })
   })
