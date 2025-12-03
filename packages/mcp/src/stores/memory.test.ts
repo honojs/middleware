@@ -390,7 +390,7 @@ describe('MemoryEventStore', () => {
 
       const sentEventsStream1: JSONRPCMessage[] = []
       const sender1 = {
-        send: async (id: string, message: JSONRPCMessage) => {
+        send: async (_id: string, message: JSONRPCMessage) => {
           sentEventsStream1.push(message)
         },
       }
@@ -400,7 +400,7 @@ describe('MemoryEventStore', () => {
 
       const sentEventsStream2: JSONRPCMessage[] = []
       const sender2 = {
-        send: async (id: string, message: JSONRPCMessage) => {
+        send: async (_id: string, message: JSONRPCMessage) => {
           sentEventsStream2.push(message)
         },
       }
@@ -423,7 +423,7 @@ describe('MemoryEventStore', () => {
 
       const sentEvents: JSONRPCMessage[] = []
       const sender = {
-        send: async (id: string, message: JSONRPCMessage) => {
+        send: async (_id: string, message: JSONRPCMessage) => {
           sentEvents.push(message)
         },
       }

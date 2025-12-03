@@ -22,6 +22,7 @@
     { "path": "packages/firebase-auth" },
     { "path": "packages/graphql-server" },
     { "path": "packages/hello" },
+    { "path": "packages/mcp" },
     { "path": "packages/medley-router" },
     { "path": "packages/node-ws" },
     { "path": "packages/oauth-providers" },
