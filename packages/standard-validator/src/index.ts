@@ -1,26 +1,27 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { Context, Env, Input, TypedResponse, ValidationTargets } from 'hono'
-import type { Handler, HandlerResponse } from 'hono/types'
+import type { Handler } from 'hono/types'
 import { validator } from 'hono/validator'
 import { sanitizeIssues } from './sanitize-issues'
 
 type HasUndefined<T> = undefined extends T ? true : false
 
-type DefaultResponse<T, In> =
+export type FailedResponse<T> = Response &
+  TypedResponse<
+    {
+      readonly success: false
+      readonly error: readonly StandardSchemaV1.Issue[]
+      readonly data: T
+    },
+    400,
+    'json'
+  >
+type MustBeResponse<T> =
   T extends Promise<infer U>
-    ? Promise<DefaultResponse<U, In>>
-    : T extends HandlerResponse<unknown>
+    ? Promise<MustBeResponse<U>>
+    : T extends Response | TypedResponse
       ? T
-      : Response &
-          TypedResponse<
-            {
-              readonly success: false
-              readonly error: readonly StandardSchemaV1.Issue[]
-              readonly data: In
-            },
-            400,
-            'json'
-          >
+      : never
 
 type Hook<
   T,
@@ -133,15 +134,12 @@ const sValidator = <
     | void
     | Response
     | TypedResponse<unknown>
-    | Promise<Response | TypedResponse<unknown> | void> = DefaultResponse<
-    void,
-    ValidationTargets[Target]
-  >,
+    | Promise<Response | TypedResponse<unknown> | void> = FailedResponse<ValidationTargets[Target]>,
 >(
   target: Target,
   schema: Schema,
-  hook?: Hook<StandardSchemaV1.InferOutput<Schema>, E, P, Target>
-): Handler<E, P, V, DefaultResponse<R, ValidationTargets[Target]>> =>
+  hook?: Hook<StandardSchemaV1.InferOutput<Schema>, E, P, Target, R>
+): Handler<E, P, V, MustBeResponse<R>> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = await schema['~standard'].validate(value)
