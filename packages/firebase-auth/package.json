@@ -40,7 +40,8 @@
   "author": "codehex",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "dependencies": {
     "firebase-auth-cloudflare-workers": "^2.0.6"
