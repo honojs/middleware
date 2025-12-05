@@ -385,7 +385,7 @@ export class StreamableHTTPTransport implements Transport {
         }
 
         // if it only contains notifications or responses, return 202
-        return ctx.body(null, 202)
+        return ctx.json(null, { status: 202 })
       }
 
       if (hasRequests) {

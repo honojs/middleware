@@ -665,6 +665,19 @@ describe('MCP helper', () => {
     expect(response.status).toBe(202)
   })
 
+  it('should return JSON content-type for notification-only requests', async () => {
+    sessionId = await initializeServer()
+
+    const response = await sendPostRequest(server, {
+      jsonrpc: '2.0',
+      method: 'notifications/initialized',
+      params: {},
+    }, sessionId)
+
+    expect(response.status).toBe(202)
+    expect(response.headers.get('content-type')).toBe('application/json')
+  })
+
   it('should handle batch request messages with SSE stream for responses', async () => {
     sessionId = await initializeServer()
 
