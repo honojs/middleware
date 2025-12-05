@@ -37,17 +37,24 @@ describe('Type Inference', () => {
   it('With TypeScript', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', `{ 
+    const route = app.post(
+      '/vector3',
+      tdValidator(
+        'json',
+        `{ 
       x: number,
       y: number,
       z: number
-    }`), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    }`
+      ),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
+      }
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -63,21 +70,25 @@ describe('Type Inference', () => {
   it('With Json Schema', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', {
-      type: 'object',
-      required: ['x', 'y', 'z'],
-      properties: {
-        x: { type: 'number' },
-        y: { type: 'number' },
-        z: { type: 'number' }
+    const route = app.post(
+      '/vector3',
+      tdValidator('json', {
+        type: 'object',
+        required: ['x', 'y', 'z'],
+        properties: {
+          x: { type: 'number' },
+          y: { type: 'number' },
+          z: { type: 'number' },
+        },
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
       }
-    }), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -93,17 +104,24 @@ describe('Type Inference', () => {
   it('With TypeBox', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', Type.Object({
-      x: Type.Number(),
-      y: Type.Number(),
-      z: Type.Number()
-    })), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    const route = app.post(
+      '/vector3',
+      tdValidator(
+        'json',
+        Type.Object({
+          x: Type.Number(),
+          y: Type.Number(),
+          z: Type.Number(),
+        })
+      ),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
+      }
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -119,17 +137,24 @@ describe('Type Inference', () => {
   it('With Zod', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', z.object({
-      x: z.number(),
-      y: z.number(),
-      z: z.number()
-    })), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    const route = app.post(
+      '/vector3',
+      tdValidator(
+        'json',
+        z.object({
+          x: z.number(),
+          y: z.number(),
+          z: z.number(),
+        })
+      ),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
+      }
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -145,17 +170,24 @@ describe('Type Inference', () => {
   it('With Valibot', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', v.object({
-      x: v.number(),
-      y: v.number(),
-      z: v.number()
-    })), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    const route = app.post(
+      '/vector3',
+      tdValidator(
+        'json',
+        v.object({
+          x: v.number(),
+          y: v.number(),
+          z: v.number(),
+        })
+      ),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
+      }
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -171,17 +203,24 @@ describe('Type Inference', () => {
   it('With ArkType', () => {
     const app = new Hono()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const route = app.post('/vector3', tdValidator('json', type({
-      x: 'number',
-      y: 'number',
-      z: 'number'
-    })), (c) => {
-      const data = c.req.valid('json')
-      return c.json({
-        success: true as boolean, // no-narrow
-        message: `(${data.x}, ${data.y}, ${data.z})`,
-      })
-    })
+    const route = app.post(
+      '/vector3',
+      tdValidator(
+        'json',
+        type({
+          x: 'number',
+          y: 'number',
+          z: 'number',
+        })
+      ),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({
+          success: true as boolean, // no-narrow
+          message: `(${data.x}, ${data.y}, ${data.z})`,
+        })
+      }
+    )
     type A = ExtractSchema<typeof route>
     type B = ExpectedJson<{
       x: number
@@ -221,17 +260,24 @@ describe('Type Inference', () => {
 // ------------------------------------------------------------------
 describe('Validate With TypeScript', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', `{
+  app.post(
+    '/vector3',
+    tdValidator(
+      'json',
+      `{
     x: number
     y: number
     z: number  
-  }`), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  }`
+    ),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
+    }
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
@@ -268,17 +314,24 @@ describe('Validate With TypeScript', () => {
 // ------------------------------------------------------------------
 describe('Validate With TypeBox', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', Type.Object({
-    x: Type.Number(),
-    y: Type.Number(),
-    z: Type.Number()
-  })), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  app.post(
+    '/vector3',
+    tdValidator(
+      'json',
+      Type.Object({
+        x: Type.Number(),
+        y: Type.Number(),
+        z: Type.Number(),
+      })
+    ),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
+    }
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
@@ -315,21 +368,25 @@ describe('Validate With TypeBox', () => {
 // ------------------------------------------------------------------
 describe('Validate With JsonSchema', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', {
-    type: 'object',
-    required: ['x', 'y', 'z'],
-    properties: {
-      x: { type: 'number' },
-      y: { type: 'number' },
-      z: { type: 'number' }
+  app.post(
+    '/vector3',
+    tdValidator('json', {
+      type: 'object',
+      required: ['x', 'y', 'z'],
+      properties: {
+        x: { type: 'number' },
+        y: { type: 'number' },
+        z: { type: 'number' },
+      },
+    }),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
     }
-  }), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
@@ -366,17 +423,24 @@ describe('Validate With JsonSchema', () => {
 // ------------------------------------------------------------------
 describe('Validate With Zod', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', z.object({
-    x: z.number(),
-    y: z.number(),
-    z: z.number()
-  })), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  app.post(
+    '/vector3',
+    tdValidator(
+      'json',
+      z.object({
+        x: z.number(),
+        y: z.number(),
+        z: z.number(),
+      })
+    ),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
+    }
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
@@ -413,17 +477,24 @@ describe('Validate With Zod', () => {
 // ------------------------------------------------------------------
 describe('Validate With Valibot', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', v.object({
-    x: v.number(),
-    y: v.number(),
-    z: v.number()
-  })), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  app.post(
+    '/vector3',
+    tdValidator(
+      'json',
+      v.object({
+        x: v.number(),
+        y: v.number(),
+        z: v.number(),
+      })
+    ),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
+    }
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
@@ -460,17 +531,24 @@ describe('Validate With Valibot', () => {
 // ------------------------------------------------------------------
 describe('Validate With ArkType', () => {
   const app = new Hono()
-  app.post('/vector3', tdValidator('json', type({
-    x: 'number',
-    y: 'number',
-    z: 'number'
-  })), (c) => {
-    const data = c.req.valid('json')
-    return c.json({
-      success: true,
-      message: `(${data.x}, ${data.y}, ${data.z})`,
-    })
-  })
+  app.post(
+    '/vector3',
+    tdValidator(
+      'json',
+      type({
+        x: 'number',
+        y: 'number',
+        z: 'number',
+      })
+    ),
+    (c) => {
+      const data = c.req.valid('json')
+      return c.json({
+        success: true,
+        message: `(${data.x}, ${data.y}, ${data.z})`,
+      })
+    }
+  )
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/vector3', {
       body: JSON.stringify({ x: 1, y: 2, z: 3 }),
