@@ -2429,13 +2429,15 @@ __metadata:
     arktype: "npm:^2.0.0"
     hono: "npm:^4.10.1"
     tsdown: "npm:^0.15.9"
+    typebox: "npm:^1.0.49"
     typedriver: "npm:^0.8.6"
     typescript: "npm:^5.8.2"
     valibot: "npm:^1.0.0"
     vitest: "npm:^3.2.4"
+    zod: "npm:^3.25.0"
   peerDependencies:
     hono: ">=3.9.0"
-    typedriver: ^0.8.0
+    typedriver: ^0.8.6
   languageName: unknown
   linkType: soft
 
@@ -17359,7 +17361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.64":
+"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.0, zod@npm:^3.25.64":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
