@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
+          registry-url: https://registry.npmjs.org
 
       - uses: denoland/setup-deno@v2
         with:
