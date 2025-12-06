@@ -151,10 +151,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ark/schema@npm:0.56.0":
+  version: 0.56.0
+  resolution: "@ark/schema@npm:0.56.0"
+  dependencies:
+    "@ark/util": "npm:0.56.0"
+  checksum: 10c0/89fb7e4e1304ea9b34c834a8cb34bc05201b4e3a1b26277f7d74b9505a2d7ed398bb55a77e491e7a14a7f0807424a5467e1d32ee725ee2f7b9d158ae30d8121a
+  languageName: node
+  linkType: hard
+
 "@ark/util@npm:0.46.0":
   version: 0.46.0
   resolution: "@ark/util@npm:0.46.0"
   checksum: 10c0/18fb146510856191ba1924f8ee50aa650b2f8795de7df85301cdd068b4bb9bd6f1548d6f3a8f99e75c3d9036d4c4b6ca245c964ceb4d3fa431ea53653faa2aa8
+  languageName: node
+  linkType: hard
+
+"@ark/util@npm:0.56.0":
+  version: 0.56.0
+  resolution: "@ark/util@npm:0.56.0"
+  checksum: 10c0/dfef779c90f9f814ba97069c63bf91fa67569b87c5cd925d0e2d96b91aa677c019ed1dd5ff95332d9bb0598f785057439074b8cbfcaa2578770616e260fc5761
   languageName: node
   linkType: hard
 
@@ -2403,6 +2419,25 @@ __metadata:
   peerDependencies:
     hono: ">=3.9.0"
     typebox: ^1.0.49
+  languageName: unknown
+  linkType: soft
+
+"@hono/typedriver-validator@workspace:packages/typedriver-validator":
+  version: 0.0.0-use.local
+  resolution: "@hono/typedriver-validator@workspace:packages/typedriver-validator"
+  dependencies:
+    arktype: "npm:^2.0.0"
+    hono: "npm:^4.10.1"
+    tsdown: "npm:^0.15.9"
+    typebox: "npm:^1.0.49"
+    typedriver: "npm:^0.8.6"
+    typescript: "npm:^5.8.2"
+    valibot: "npm:^1.0.0"
+    vitest: "npm:^3.2.4"
+    zod: "npm:^3.25.0"
+  peerDependencies:
+    hono: ">=3.9.0"
+    typedriver: ^0.8.6
   languageName: unknown
   linkType: soft
 
@@ -5703,6 +5738,26 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: 10c0/c5640c2d89045371c7cedd6a70212a04e360fd34d6edeae32f6952c63949e3525ea77dbec0289d8213a99bbaeab5abfa860b5c12cf88a2e6cf8106e90dd27a7e
+  languageName: node
+  linkType: hard
+
+"arkregex@npm:0.0.4":
+  version: 0.0.4
+  resolution: "arkregex@npm:0.0.4"
+  dependencies:
+    "@ark/util": "npm:0.56.0"
+  checksum: 10c0/5cb89ac6482e0ce15aa93e6fa791b22e43b35419ff91965762a33a4cc4a92a039c71e9adf9a2e700b3819074e4b9df04245e38c4010a2baa5f3bcb38a6c66f0b
+  languageName: node
+  linkType: hard
+
+"arktype@npm:^2.0.0":
+  version: 2.1.28
+  resolution: "arktype@npm:2.1.28"
+  dependencies:
+    "@ark/schema": "npm:0.56.0"
+    "@ark/util": "npm:0.56.0"
+    arkregex: "npm:0.0.4"
+  checksum: 10c0/5ca424ecb7acdf426785f95ddb1cf4b6c10123a44b16b71d8a13b0bb1e2573ae91949d2254421cdda0e6b815b603519a5631eeb707ee238bb7fceed1594e5dd0
   languageName: node
   linkType: hard
 
@@ -15837,12 +15892,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typebox@npm:^1.0.61":
+  version: 1.0.61
+  resolution: "typebox@npm:1.0.61"
+  checksum: 10c0/94a1ad9f51b3ad74bef72ebd11765232a162039cb923cd51816110965ab5498ee851c4715fac12b9eed8a03cd0803403f6dd5682b4072a8b37f912233a38b2cd
+  languageName: node
+  linkType: hard
+
 "typedarray-to-buffer@npm:^3.1.5":
   version: 3.1.5
   resolution: "typedarray-to-buffer@npm:3.1.5"
   dependencies:
     is-typedarray: "npm:^1.0.0"
   checksum: 10c0/4ac5b7a93d604edabf3ac58d3a2f7e07487e9f6e98195a080e81dbffdc4127817f470f219d794a843b87052cedef102b53ac9b539855380b8c2172054b7d5027
+  languageName: node
+  linkType: hard
+
+"typedriver@npm:^0.8.6":
+  version: 0.8.6
+  resolution: "typedriver@npm:0.8.6"
+  dependencies:
+    typebox: "npm:^1.0.61"
+  checksum: 10c0/1e41355c440669f3c740a11ff0853d31b5a3732b3bd1130f6aa7929bddc519354deac98c12d545f3c2be5938046528f817dfa784c34c8d0b8d5aae7e0ab780a5
   languageName: node
   linkType: hard
 
@@ -16447,6 +16518,18 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/fd80529ce5445e2340b0a2c3d88a61a86180b652eb6bc24da7d0da476b214d8a04f7621ee355f627a1a2dc2b29f39d179effb60e8067b7cf58e300d77dae8f51
+  languageName: node
+  linkType: hard
+
+"valibot@npm:^1.0.0":
+  version: 1.2.0
+  resolution: "valibot@npm:1.2.0"
+  peerDependencies:
+    typescript: ">=5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/e6897ed2008fc900380a6ce39b62bc5fca45fd5e070f70571c6380ede3ba026d0b7016230215d87f7f3d672a28dbde5a0522d39830b493fdc3dccd1a59ef4ee6
   languageName: node
   linkType: hard
 
@@ -17278,7 +17361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.64":
+"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.0, zod@npm:^3.25.64":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
