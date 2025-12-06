@@ -54,7 +54,7 @@
     "turbo": "^2.5.8",
     "typescript": "^5.8.2",
     "typia": "^9.7.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.15"
   },
   "packageManager": "yarn@4.12.0"
 }
