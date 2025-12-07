@@ -51,7 +51,6 @@ With Hook:
 
 ```ts
 import { tdValidator } from '@hono/typedriver-validator'
-import Type from 'typebox'
 
 app.post(
   '/user',
