@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.2.2
+
+### Patch Changes
+
+- [#1614](https://github.com/honojs/middleware/pull/1614) [`a213ed9af0ecfaac82d9c5654d6d89b09787c60c`](https://github.com/honojs/middleware/commit/a213ed9af0ecfaac82d9c5654d6d89b09787c60c) Thanks [@AielloChan](https://github.com/AielloChan)! - Change mcp content type to json
+
 ## 0.2.1
 
 ### Patch Changes
