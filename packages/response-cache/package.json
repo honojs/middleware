@@ -1,0 +1,47 @@
+{
+  "name": "@hono/redis-cache",
+  "version": "0.0.0",
+  "description": "Redis cache for Hono",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "tsc --noEmit && vitest --run",
+    "build": "tsc",
+    "publint": "publint",
+    "prerelease": "yarn build && yarn test",
+    "release": "yarn publish"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware.git"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=4.7.0"
+  },
+  "dependencies": {
+    "hono": ">=4.7.0"
+  },
+  "devDependencies": {
+    "publint": "^0.2.7",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.3"
+  }
+}
