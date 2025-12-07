@@ -1,7 +1,7 @@
 {
-  "name": "@hono/redis-cache",
+  "name": "@hono/response-cache",
   "version": "0.0.0",
-  "description": "Redis cache for Hono",
+  "description": "Response cache for Hono",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -37,11 +37,12 @@
     "hono": ">=4.7.0"
   },
   "dependencies": {
-    "hono": ">=4.7.0"
+    "hono": "^4.10.1"
   },
   "devDependencies": {
     "publint": "^0.2.7",
     "tsup": "^8.1.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2",
+    "vitest": "^2.0.0"
   }
 }
