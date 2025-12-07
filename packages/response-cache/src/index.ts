@@ -9,13 +9,24 @@ interface CacheStore {
   invalidate(key: string): TOrPromise<void>
 }
 
+const EXCLUDED_RESPONSE_HEADERS = new Set([
+  'set-cookie', 'www-authenticate', 'proxy-authenticate', 'authentication-info',
+  'connection', 'keep-alive', 'upgrade', 'transfer-encoding', 'te', 'trailer',
+  'via', 'age', 'warning', 'date', 'vary'
+])
+
+function filterHeaders(headers: Headers): Record<string, string> {
+  const filtered: Record<string, string> = {}
+  headers.forEach((value, key) => {
+    if (!EXCLUDED_RESPONSE_HEADERS.has(key.toLowerCase())) {
+      filtered[key] = value
+    }
+  })
+  return filtered
+}
+
 interface CacheMiddlewareOptions {
   store: CacheStore;
-  /**
-   * The response type to cache. If not provided, the response will be returned as HTML.
-   * @default 'html'
-   */
-  respond?: 'body' | 'text' | 'json' | 'html';
   /**
    * Function to generate a cache key from the request and context. If not provided, the request path will be used.
    * @param req - The request object.
@@ -30,31 +41,34 @@ interface CacheMiddlewareOptions {
     onError?: (key: string, c: Context, error: unknown) => void;
   };
 }
-const responseCache = ({ store, keyFn, respond = 'html', logging }: CacheMiddlewareOptions) => {
+const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions) => {
   return createMiddleware(async (c, next) => {
     const key = keyFn ? keyFn(c.req, c) : c.req.path
-    const cached = await store.get(key)
     try {
+      const cached = await store.get(key)
       if (cached) {
         if (logging?.enabled) {logging.onHit?.(key, c)}
-        if (respond === 'json') {
-        return c.json(JSON.parse(cached), 200, Object.fromEntries(c.res.headers.entries()))
+
+        const snapshot = JSON.parse(cached)
+        const { body, status, headers } = snapshot
+
+        return new Response(body, {
+          status,
+          headers
+        })
+      } else {
+        if (logging?.enabled) {logging.onMiss?.(key, c)}
+        await next()
+
+        const body = await c.res.clone().text()
+        const status = c.res.status
+        const headers = filterHeaders(c.res.headers)
+
+        const snapshot = JSON.stringify({ body, status, headers })
+        await store.set(key, snapshot)
+
+        return c.res
       }
-      else if (respond === 'html') {
-        return await c.html(JSON.parse(cached), 200, Object.fromEntries(c.res.headers.entries()))
-      }
-      else if (respond === 'text') {
-        return c.text(JSON.parse(cached), 200, Object.fromEntries(c.res.headers.entries()))
-      }
-      else if (respond === 'body') {
-        return c.body(JSON.parse(cached), 200, Object.fromEntries(c.res.headers.entries()))
-      }
-    } else {
-      if (logging?.enabled) {logging.onMiss?.(key, c)}
-      await next()
-      const response = await c.res.clone().text()
-      await store.set(key, JSON.stringify(response))
-    }
     } catch (error) {
       if (logging?.enabled) {logging.onError?.(key, c, error)}
       throw error
