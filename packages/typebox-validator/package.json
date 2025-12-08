@@ -49,6 +49,6 @@
     "tsdown": "^0.15.9",
     "typebox": "^1.0.49",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.15"
   }
 }
