@@ -41,7 +41,7 @@
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^2.6.5",
-    "@types/bun": "^1.0.0",
+    "@types/bun": "^1.3.4",
     "@types/node": "^24.9.0",
     "@types/ws": "^8.18.0",
     "@vitest/coverage-istanbul": "^3.2.4",
