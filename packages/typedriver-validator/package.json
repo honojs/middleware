@@ -1,6 +1,6 @@
 {
   "name": "@hono/typedriver-validator",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Validator middleware using TypeDriver",
   "type": "module",
   "main": "dist/index.js",
