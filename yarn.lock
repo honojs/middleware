@@ -964,14 +964,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/valibot@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "@conform-to/valibot@npm:1.14.0"
+"@conform-to/dom@npm:1.14.1":
+  version: 1.14.1
+  resolution: "@conform-to/dom@npm:1.14.1"
+  checksum: 10c0/1d338d280b364e6cf5deaaef1a6eab9c3f811483eec06d7b64fb8e93ed933936947197acd22d079caf217495afc36d5c3585d66243e10fdf611c11a6bd2581e9
+  languageName: node
+  linkType: hard
+
+"@conform-to/valibot@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "@conform-to/valibot@npm:1.14.1"
   dependencies:
-    "@conform-to/dom": "npm:1.14.0"
+    "@conform-to/dom": "npm:1.14.1"
   peerDependencies:
     valibot: ">= 0.32.0"
-  checksum: 10c0/2009930a9326a6028ea33a4750e0c6dc3b1e4874ff0020489f9818f6f1fc8ca56b601458ba7d1b2f0f7d8f17fde9624a309eab8fac18b12bac4e43e2ebec60f7
+  checksum: 10c0/8c6484c98b5817a76fb3c74b5fb6f4fda1053ac85b5322c9d2fa1f8a18e7402cc4e4fe9f1fa9f9a5eeb21f254973b9405fc88ef3ab3694a70361bf88fd314b80
   languageName: node
   linkType: hard
 
@@ -1981,7 +1988,7 @@ __metadata:
   resolution: "@hono/conform-validator@workspace:packages/conform-validator"
   dependencies:
     "@conform-to/dom": "npm:^1.14.0"
-    "@conform-to/valibot": "npm:^1.14.0"
+    "@conform-to/valibot": "npm:^1.14.1"
     "@conform-to/yup": "npm:^1.14.0"
     "@conform-to/zod": "npm:^1.14.0"
     hono: "npm:^4.10.1"
