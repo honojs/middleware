@@ -36,22 +36,20 @@ const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
-  const waiterMap = new Map<
-    IncomingMessage,
-    { resolve: (ws: WebSocket) => void; connectionSymbol: symbol }
-  >()
+  const upgradeAllowed = new WeakSet<IncomingMessage>()
+  const waiterMap = new Map<IncomingMessage, (ws: WebSocket) => void>()
 
   wss.on('connection', (ws, request) => {
-    const waiter = waiterMap.get(request)
-    if (waiter) {
-      waiter.resolve(ws)
+    const resolve = waiterMap.get(request)
+    if (resolve) {
+      resolve(ws)
       waiterMap.delete(request)
     }
   })
 
-  const nodeUpgradeWebSocket = (request: IncomingMessage, connectionSymbol: symbol) => {
+  const nodeUpgradeWebSocket = (request: IncomingMessage) => {
     return new Promise<WebSocket>((resolve) => {
-      waiterMap.set(request, { resolve, connectionSymbol })
+      waiterMap.set(request, resolve)
     })
   }
 
@@ -72,15 +70,13 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         const env: {
           incoming: IncomingMessage
           outgoing: undefined
-          [CONNECTION_SYMBOL_KEY]?: symbol
         } = {
           incoming: request,
           outgoing: undefined,
         }
         await init.app.request(url, { headers: headers }, env)
-        const waiter = waiterMap.get(request)
 
-        if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
+        if (!upgradeAllowed.has(request)) {
           socket.end(
             'HTTP/1.1 400 Bad Request\r\n' +
               'Connection: close\r\n' +
@@ -90,6 +86,9 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           waiterMap.delete(request)
           return
         }
+
+        // Remove the mark after checking to prevent memory leak
+        upgradeAllowed.delete(request)
 
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit('connection', ws, request)
@@ -102,10 +101,12 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         return
       }
 
-      const connectionSymbol = generateConnectionSymbol()
-      c.env[CONNECTION_SYMBOL_KEY] = connectionSymbol
+      const request = c.env.incoming as IncomingMessage
+
+      // request オブジェクト自体にマーク（c.env への代入ではなく）
+      upgradeAllowed.add(request)
       ;(async () => {
-        const ws = await nodeUpgradeWebSocket(c.env.incoming, connectionSymbol)
+        const ws = await nodeUpgradeWebSocket(request)
 
         // buffer messages to handle messages received before the events are set up
         const messagesReceivedInStarting: [data: WebSocket.RawData, isBinary: boolean][] = []
