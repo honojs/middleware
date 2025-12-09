@@ -103,7 +103,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
 
       const request = c.env.incoming as IncomingMessage
 
-      // request オブジェクト自体にマーク（c.env への代入ではなく）
+      // Instead of writing to c.env, use a WeakSet to track the request object directly
       upgradeAllowed.add(request)
       ;(async () => {
         const ws = await nodeUpgradeWebSocket(request)
