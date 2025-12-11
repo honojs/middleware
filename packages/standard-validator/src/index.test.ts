@@ -394,6 +394,56 @@ describe('Standard Schema Validation', () => {
             >
           >
         })
+
+        it('Should return hook result types with Env', () => {
+          const app = new Hono<{
+            Bindings: {
+              DATABASE_URL: string
+            }
+            Variables: {
+              userId: string
+            }
+          }>()
+
+          const schema = schemas.postJSONSchema
+          const route = app.post(
+            '/post',
+            sValidator('json', schema, (result, c) => {
+              if (!result.success) {
+                return c.text(`Invalid Post ID: ${result.data.id}` as const, 400)
+              }
+            }),
+            (c) => {
+              const data = c.req.valid('json')
+              return c.json(data, 200)
+            }
+          )
+
+          type Actual = ExtractSchema<typeof route>
+          type verifyInput = Expect<
+            Equal<
+              { id: number; title: string },
+              MergeDiscriminatedUnion<Actual['/post']['$post']['input']['json']>
+            >
+          >
+          type verifyOutput = Expect<
+            Equal<
+              {
+                id: number
+                title: string
+              },
+              MergeDiscriminatedUnion<
+                (Actual['/post']['$post'] & { status: SuccessStatusCode })['output']
+              >
+            >
+          >
+          type verifyErrorOutput = Expect<
+            Equal<
+              `Invalid Post ID: ${number}`,
+              MergeDiscriminatedUnion<(Actual['/post']['$post'] & { status: 400 })['output']>
+            >
+          >
+        })
       })
 
       describe('Sensitive Data Removal', () => {
