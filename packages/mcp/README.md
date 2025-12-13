@@ -21,9 +21,9 @@ const mcpServer = new McpServer({
 const transport = new StreamableHTTPTransport()
 
 app.all('/mcp', async (c) => {
-  if (!mcp.isConnected()) {
+  if (!mcpServer.isConnected()) {
     // Connect the mcp with the transport
-    await mcp.connect(transport)
+    await mcpServer.connect(transport)
   }
 
   return transport.handleRequest(c)
