@@ -47,7 +47,7 @@
     "graphql": "^16.5.0"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.11.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^3.2.4"

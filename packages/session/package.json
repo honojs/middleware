@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.10.3",
-    "hono": "^4.10.1",
+    "hono": "^4.11.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "unstorage": "^1.17.0",
