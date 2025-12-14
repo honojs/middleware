@@ -45,7 +45,7 @@
     "prom-client": "^15.0.0"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.11.1",
     "prom-client": "^15.0.0",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
