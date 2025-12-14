@@ -35,6 +35,7 @@ describe('Validate the hook option processing', () => {
   })
 
   it('Should called hook function', async () => {
+    // @ts-ignore client is not typed correctly
     await client.author.$post({ form: { name: 'Space Cat' } })
     expect(hookMockFn).toHaveBeenCalledTimes(1)
   })
@@ -52,6 +53,7 @@ describe('Validate the hook option processing', () => {
 
   describe('When the hook not return Response', () => {
     it('Should return response that the handler function returned', async () => {
+      // @ts-ignore client is not typed correctly
       const res = (await client.author.$post({ form: { name: 'Space Cat' } })).clone()
       const handlerRes = handlerMockFn.mock.results[0].value.clone()
       expect(hookMockFn).not.toHaveReturnedWith(expect.any(Response))
