@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1589](https://github.com/honojs/middleware/pull/1589) [`3b48bdb49793a724f47d2ba6f95866efb48a8328`](https://github.com/honojs/middleware/commit/3b48bdb49793a724f47d2ba6f95866efb48a8328) Thanks [@miyaji255](https://github.com/miyaji255)! - Fix undefined Response type
+
 ## 0.2.0
 
 ### Minor Changes
