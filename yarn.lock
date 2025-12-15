@@ -2008,7 +2008,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/effect-validator@workspace:packages/effect-validator"
   dependencies:
-    effect: "npm:3.17.10"
+    effect: "npm:3.19.12"
     hono: "npm:^4.11.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -7551,13 +7551,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"effect@npm:3.17.10":
-  version: 3.17.10
-  resolution: "effect@npm:3.17.10"
+"effect@npm:3.19.12":
+  version: 3.19.12
+  resolution: "effect@npm:3.19.12"
   dependencies:
     "@standard-schema/spec": "npm:^1.0.0"
     fast-check: "npm:^3.23.1"
-  checksum: 10c0/209e9bee695a096c22e58ec9a9799283239aff01bf9de28a303749c9fd65d3a4e579fef19fba381ca8436441db73344da5747a518ae7b439df2be9f05aa0d5cd
+  checksum: 10c0/4efee01519dae9fd274192d411441337c4c86dd71cd5b77c4174fc5558963965aa77c715c7bca2cc51aee5316e30a3de620ce10d6687e55a3310b207588084eb
   languageName: node
   linkType: hard
 
