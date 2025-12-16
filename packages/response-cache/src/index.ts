@@ -1,5 +1,6 @@
-import type { Context, HonoRequest } from 'hono'
+import type { Context, MiddlewareHandler } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import { encodeBase64, decodeBase64 } from 'hono/utils/encode'
 
 type TOrPromise<T> = T | Promise<T>
 
@@ -33,7 +34,7 @@ interface CacheMiddlewareOptions {
    * @param c - The context object.
    * @returns A string key for the cache.
    */
-  keyFn?: (req: HonoRequest, c: Context) => string;
+  keyFn?: (c: Context) => string;
   logging?: {
     enabled?: boolean;
     onHit?: (key: string, c: Context) => void;
@@ -41,9 +42,9 @@ interface CacheMiddlewareOptions {
     onError?: (key: string, c: Context, error: unknown) => void;
   };
 }
-const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions) => {
+const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
-    const key = keyFn ? keyFn(c.req, c) : c.req.path
+    const key = keyFn ? keyFn(c) : c.req.path
     try {
       const cached = await store.get(key)
       if (cached) {
@@ -52,7 +53,7 @@ const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions) => {
         const snapshot = JSON.parse(cached)
         const { body, status, headers } = snapshot
 
-        return new Response(body, {
+        return new Response(decodeBase64(body), {
           status,
           headers
         })
@@ -60,7 +61,8 @@ const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions) => {
         if (logging?.enabled) {logging.onMiss?.(key, c)}
         await next()
 
-        const body = await c.res.clone().text()
+        const bodyBuffer = await c.res.clone().arrayBuffer()
+        const body = encodeBase64(bodyBuffer)
         const status = c.res.status
         const headers = filterHeaders(c.res.headers)
 
