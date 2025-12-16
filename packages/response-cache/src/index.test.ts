@@ -181,7 +181,7 @@ describe('Response Cache Middleware', () => {
     it('Should use custom keyFn when provided', async () => {
       const store = createMockStore()
       const app = new Hono()
-      const customKeyFn = vi.fn((req, c) => `custom_${c.req.path}`)
+      const customKeyFn = vi.fn((c) => `custom_${c.req.path}`)
 
       app.use('*', responseCache({ store, keyFn: customKeyFn }))
       app.get('/test', (c) => c.text('response'))
@@ -191,23 +191,6 @@ describe('Response Cache Middleware', () => {
       expect(customKeyFn).toHaveBeenCalled()
       expect(store.get).toHaveBeenCalledWith('custom_/test')
       expect(store.set).toHaveBeenCalledWith('custom_/test', expect.any(String))
-    })
-
-    it('Should pass correct arguments to keyFn', async () => {
-      const store = createMockStore()
-      const app = new Hono()
-      const customKeyFn = vi.fn((req, c) => c.req.path)
-
-      app.use('*', responseCache({ store, keyFn: customKeyFn }))
-      app.get('/test', (c) => c.text('response'))
-
-      const req = new Request('http://localhost/test')
-      await app.request(req)
-
-      expect(customKeyFn).toHaveBeenCalledWith(
-        expect.objectContaining({ path: '/test' }),
-        expect.anything()
-      )
     })
 
     it('Should maintain separate cache entries for different keys', async () => {
@@ -395,7 +378,7 @@ describe('Response Cache Middleware', () => {
     it('Should work with query parameters in custom keyFn', async () => {
       const store = createMockStore()
       const app = new Hono()
-      const keyFn = (req: any, c: any) => `${c.req.path}?${c.req.query('id')}`
+      const keyFn = (c: any) => `${c.req.path}?${c.req.query('id')}`
 
       app.use('*', responseCache({ store, keyFn }))
       app.get('/item', (c) => {
