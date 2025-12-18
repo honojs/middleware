@@ -4,6 +4,7 @@ import { validator } from 'hono/validator'
 import type * as v3 from 'zod/v3'
 import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
+import type { InferInput } from './utils'
 
 type ZodSchema = v3.ZodType | v4.$ZodType
 type ZodError<T extends ZodSchema> = T extends v4.$ZodType
@@ -53,22 +54,10 @@ type ExtractValidationResponse<VF> = VF extends (value: any, c: any) => infer R
 type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
   in: HasUndefined<In> extends true
     ? {
-        [K in Target]?: In extends ValidationTargets[K]
-          ? In
-          : {
-              [K2 in keyof In]?: In[K2] extends ValidationTargets[K][K2]
-                ? In[K2]
-                : ValidationTargets[K][K2]
-            }
+        [K in Target]?: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
       }
     : {
-        [K in Target]: In extends ValidationTargets[K]
-          ? In
-          : {
-              [K2 in keyof In]: In[K2] extends ValidationTargets[K][K2]
-                ? In[K2]
-                : ValidationTargets[K][K2]
-            }
+        [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
       }
   out: { [K in Target]: Out }
 }
