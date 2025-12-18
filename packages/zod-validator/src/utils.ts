@@ -1,5 +1,5 @@
-import { FormValue, ParsedFormValue, ValidationTargets } from 'hono/types'
-import { UnionToIntersection } from 'hono/utils/types'
+import type { FormValue, ParsedFormValue, ValidationTargets } from 'hono/types'
+import type { UnionToIntersection } from 'hono/utils/types'
 
 /**
  * Checks if T is a literal union type (e.g., 'asc' | 'desc')
