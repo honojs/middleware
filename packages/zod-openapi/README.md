@@ -400,6 +400,20 @@ const client = hc<typeof appRoutes>('http://localhost:8787/')
 
 ## Tips
 
+### Type utilities
+
+Methods like `get()`, `post()`, etc. return `Hono` type instead of `OpenAPIHono`. This can cause issues when you need the `OpenAPIHono` type. Use the `HonoToOpenAPIHono` utility type to convert the return type:
+
+```ts
+import type { HonoToOpenAPIHono } from '@hono/zod-openapi'
+
+const app = new OpenAPIHono()
+const result = app.get('/hello', (c) => c.json({ message: 'Hello' }))
+
+// `result` is Hono type, convert it to OpenAPIHono
+type MyApp = HonoToOpenAPIHono<typeof result>
+```
+
 ### How to register components
 
 You can register components to the registry as follows:

@@ -368,6 +368,18 @@ export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
   | OpenAPIGeneratorOptions
   | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
 
+/**
+ * Utility type to convert Hono types to OpenAPIHono types.
+ * Replaces Hono return types with OpenAPIHono in function signatures.
+ *
+ * @example
+ * ```ts
+ * type MyOpenAPIHono = HonoToOpenAPIHono<Hono<Env>>
+ * ```
+ */
+export type HonoToOpenAPIHono<T> =
+  T extends Hono<infer E, infer S, infer B> ? OpenAPIHono<E, S, B> : T
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},

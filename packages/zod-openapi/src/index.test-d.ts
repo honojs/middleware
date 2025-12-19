@@ -1,8 +1,10 @@
+import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect } from 'hono/utils/types'
 import { OpenAPIHono, createRoute, z } from './index'
-import type { MiddlewareToHandlerType, OfHandlerType } from './index'
+import type { HonoToOpenAPIHono, MiddlewareToHandlerType, OfHandlerType } from './index'
+import { ContentfulStatusCode } from 'hono/utils/http-status'
 
 describe('Types', () => {
   const RequestSchema = z.object({
@@ -357,5 +359,33 @@ describe('Middleware', () => {
         return c.json({})
       }
     )
+  })
+})
+
+describe('HonoToOpenAPIHono', () => {
+  it('Should convert Hono type to OpenAPIHono type', () => {
+    type MyHono = Hono<{ Variables: { foo: string } }>
+    type MyOpenAPIHono = HonoToOpenAPIHono<MyHono>
+    type MyEnv = MyOpenAPIHono extends OpenAPIHono<infer E, infer _S, infer _B> ? E : never
+    type verify = Expect<Equal<MyEnv, { Variables: { foo: string } }>>
+  })
+
+  it('Should convert return type of get method', () => {
+    const app = new OpenAPIHono()
+    const result = app.get('/hello', (c) => c.json({ message: 'Hello' }))
+
+    type Expected = {
+      '/hello': {
+        $get: {
+          input: {}
+          output: { message: string }
+          outputFormat: 'json'
+          status: ContentfulStatusCode
+        }
+      }
+    }
+
+    type Actual = ExtractSchema<typeof result>
+    type verify = Expect<Equal<Actual, Expected>>
   })
 })
