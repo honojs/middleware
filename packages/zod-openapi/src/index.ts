@@ -18,9 +18,11 @@ import { Hono } from 'hono'
 import type {
   Context,
   Env,
+  ErrorHandler,
   Handler,
   Input,
   MiddlewareHandler,
+  NotFoundHandler,
   Schema,
   ToSchema,
   TypedResponse,
@@ -700,6 +702,10 @@ export class OpenAPIHono<
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
     return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
+
+  // Type overrides to return OpenAPIHono instead of Hono
+  declare onError: (handler: ErrorHandler<E>) => OpenAPIHono<E, S, BasePath>
+  declare notFound: (handler: NotFoundHandler<E>) => OpenAPIHono<E, S, BasePath>
 }
 
 type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`
