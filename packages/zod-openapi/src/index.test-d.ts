@@ -1,10 +1,10 @@
-import { Hono } from 'hono'
+import type { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
+import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { OpenAPIHono, createRoute, z } from './index'
 import type { HonoToOpenAPIHono, MiddlewareToHandlerType, OfHandlerType } from './index'
-import { ContentfulStatusCode } from 'hono/utils/http-status'
 
 describe('Types', () => {
   const RequestSchema = z.object({
