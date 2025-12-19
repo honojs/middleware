@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.1.6
+
+### Patch Changes
+
+- [#1637](https://github.com/honojs/middleware/pull/1637) [`64cc1d9b103194d826e8d559104c1191672741a1`](https://github.com/honojs/middleware/commit/64cc1d9b103194d826e8d559104c1191672741a1) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: return `OpenAPIHono` from onError and onNotFound
+
 ## 1.1.5
 
 ### Patch Changes
