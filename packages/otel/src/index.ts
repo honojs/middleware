@@ -34,6 +34,7 @@ const normalizeConfig = (
     ...config,
     requestHeaderSet,
     responseHeaderSet,
+    captureActiveRequests: config?.captureActiveRequests ?? true,
     captureRequestHeaders: reqHeadersSrc,
     captureResponseHeaders: resHeadersSrc,
   }
@@ -58,7 +59,7 @@ export const httpInstrumentationMiddleware = (
 
   const spanName = (c: Context) => config.spanNameFactory?.(c) ?? `${c.req.method} ${routePath(c)}`
 
-  const activeReqs = createActiveRequestsTracker(config)
+  const activeReqs = config.captureActiveRequests ? createActiveRequestsTracker(config) : undefined
   const requestDuration = createRequestDurationTracker(config)
 
   return createMiddleware(async (c, next) => {
@@ -72,7 +73,7 @@ export const httpInstrumentationMiddleware = (
       [ATTR_SERVICE_VERSION]: config.serviceVersion,
     }
 
-    activeReqs.increment(stableAttrs)
+    activeReqs?.increment(stableAttrs)
     const monotonicStartTime = performance.now()
 
     const deferredRequestHeaderAttributes: Record<string, string> = {}
@@ -112,7 +113,7 @@ export const httpInstrumentationMiddleware = (
           }
         }
       } finally {
-        activeReqs.decrement(stableAttrs)
+        activeReqs?.decrement(stableAttrs)
         // Update route and name since they may have changed after routing finished
         span?.setAttribute(ATTR_HTTP_ROUTE, routePath(c))
 
