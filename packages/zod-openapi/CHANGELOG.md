@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1639](https://github.com/honojs/middleware/pull/1639) [`32bc133a58c2a3a79fe386f542eb71fdc5722931`](https://github.com/honojs/middleware/commit/32bc133a58c2a3a79fe386f542eb71fdc5722931) Thanks [@yusukebe](https://github.com/yusukebe)! - feat: introduce `$` and `HonoToOpenAPIHono`
+
 ## 1.1.6
 
 ### Patch Changes
