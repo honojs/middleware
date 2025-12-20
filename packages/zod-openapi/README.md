@@ -407,9 +407,7 @@ Methods like `get()`, `post()`, `use()`, etc. return `Hono` type instead of `Ope
 ```ts
 import { OpenAPIHono, $ } from '@hono/zod-openapi'
 
-const app = $(
-  new OpenAPIHono().use(middleware)
-)
+const app = $(new OpenAPIHono().use(middleware))
 app.openapi(route, handler)
 ```
 
