@@ -402,7 +402,18 @@ const client = hc<typeof appRoutes>('http://localhost:8787/')
 
 ### Type utilities
 
-Methods like `get()`, `post()`, etc. return `Hono` type instead of `OpenAPIHono`. This can cause issues when you need the `OpenAPIHono` type. Use the `HonoToOpenAPIHono` utility type to convert the return type:
+Methods like `get()`, `post()`, `use()`, etc. return `Hono` type instead of `OpenAPIHono`. This can cause issues when you need the `OpenAPIHono` type. Use the `$()` function to convert the instance back to `OpenAPIHono` type:
+
+```ts
+import { OpenAPIHono, $ } from '@hono/zod-openapi'
+
+const app = $(
+  new OpenAPIHono().use(middleware)
+)
+app.openapi(route, handler)
+```
+
+You can also use the `HonoToOpenAPIHono` utility type to convert the return type at the type level:
 
 ```ts
 import type { HonoToOpenAPIHono } from '@hono/zod-openapi'

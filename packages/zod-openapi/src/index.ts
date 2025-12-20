@@ -380,6 +380,23 @@ export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
 export type HonoToOpenAPIHono<T> =
   T extends Hono<infer E, infer S, infer B> ? OpenAPIHono<E, S, B> : T
 
+/**
+ * Converts a Hono instance to OpenAPIHono type.
+ * Use this function to restore the OpenAPIHono type after chaining methods like `get`, `post`, `use`, etc.
+ * @example
+ * ```ts
+ * import { OpenAPIHono, $ } from '@hono/zod-openapi'
+ *
+ * const app = $(
+ *   new OpenAPIHono().use(middleware)
+ * )
+ * app.openapi(route, handler)
+ * ```
+ */
+export const $ = <T extends Hono<any, any, any>>(app: T): HonoToOpenAPIHono<T> => {
+  return app as HonoToOpenAPIHono<T>
+}
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},

@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
-import { OpenAPIHono, createRoute, z } from './index'
+import { OpenAPIHono, createRoute, z, $ } from './index'
 import type { HonoToOpenAPIHono, MiddlewareToHandlerType, OfHandlerType } from './index'
 
 describe('Types', () => {
@@ -387,5 +387,20 @@ describe('HonoToOpenAPIHono', () => {
 
     type Actual = ExtractSchema<typeof result>
     type verify = Expect<Equal<Actual, Expected>>
+  })
+})
+
+describe('$', () => {
+  it('Should convert Hono instance to OpenAPIHono type', () => {
+    const app = $(
+      new OpenAPIHono().use(async (_c, next) => {
+        await next()
+      })
+    )
+
+    // Verify app has OpenAPIHono methods (openapi, doc, etc.)
+    expectTypeOf(app.openapi).toBeFunction()
+    expectTypeOf(app.doc).toBeFunction()
+    expectTypeOf(app.getOpenAPIDocument).toBeFunction()
   })
 })
