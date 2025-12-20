@@ -2,4 +2,4 @@
 '@hono/zod-openapi': minor
 ---
 
-feat: introduce `HonoToOpenAPIHono` type
+feat: introduce `$` and `HonoToOpenAPIHono`

@@ -397,7 +397,6 @@ describe('$', () => {
         await next()
       })
     )
-
     // Verify app has OpenAPIHono methods (openapi, doc, etc.)
     expectTypeOf(app.openapi).toBeFunction()
     expectTypeOf(app.doc).toBeFunction()
