@@ -8,7 +8,7 @@ import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
 import type { RouteConfigToTypedResponse } from './index'
-import { OpenAPIHono, createRoute, z } from './index'
+import { $, OpenAPIHono, createRoute, z } from './index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -2183,5 +2183,18 @@ describe('Hide Routes', () => {
     const res = await app.request('/books')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([{ title: 'foo' }])
+  })
+})
+
+describe('$', () => {
+  it('Should convert Hono instance to OpenAPIHono type', async () => {
+    const app = $(
+      new OpenAPIHono().get((c) => {
+        return c.json({ message: 'Hello' })
+      })
+    )
+    const res = await app.request('/')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: 'Hello' })
   })
 })
