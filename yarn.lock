@@ -2024,7 +2024,7 @@ __metadata:
   resolution: "@hono/esbuild-transpiler@workspace:packages/esbuild-transpiler"
   dependencies:
     esbuild: "npm:^0.25.10"
-    esbuild-wasm: "npm:^0.25.12"
+    esbuild-wasm: "npm:^0.27.2"
     hono: "npm:^4.11.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -7756,12 +7756,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.25.12":
-  version: 0.25.12
-  resolution: "esbuild-wasm@npm:0.25.12"
+"esbuild-wasm@npm:^0.27.2":
+  version: 0.27.2
+  resolution: "esbuild-wasm@npm:0.27.2"
   bin:
     esbuild: bin/esbuild
-  checksum: 10c0/e1ba7c52bd9f4acfecc1cde0c03ffcc04a03c1487475e2823314b81c5a8bd740e804b659717f8c3ad86cad08a4e81e02170f9037946c5b3ce7e187eb18ed9346
+  checksum: 10c0/118eee581ce483943e1ee947bed664d34dceb64cae2eaf877a71e3e07c0f4a488797081d914e405bf541848b3f598c83a9b2f19501259b0f54b0319ac9b82755
   languageName: node
   linkType: hard
 
