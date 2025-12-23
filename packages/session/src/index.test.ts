@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { testClient } from 'hono/testing'
 import { createTestSession } from './helper/testing'
 import type { Refresh } from './session'
 import type { SessionData } from '.'
@@ -952,6 +953,8 @@ describe('session.id', () => {
       return c.json({ id: c.var.session.id })
     })
 
+  const client = testClient(app)
+
   it('throws an error when session is not initialised', async () => {
     const app = new Hono().get('/session-id', useSession<TestData>({ secret }), (c) => {
       return c.json({ id: c.var.session.id })
@@ -962,28 +965,31 @@ describe('session.id', () => {
   })
 
   it('returns session id after get()', async () => {
-    const res = await app.request('/session-id')
+    const res = await client['session-id'].$get()
     const data = await res.json()
 
     expect(res.status).toBe(200)
     expect(data.id).toBeTypeOf('string')
-    expect(data.id.length).toBeGreaterThan(0)
+    expect(data.id?.length).toBeGreaterThan(0)
   })
 
   it('returns session id after update()', async () => {
-    const res = await app.request('/session-id/test-user', { method: 'PUT' })
+    const res = await client['session-id'][':sub'].$put({ param: { sub: 'test-user' } })
     const data = await res.json()
 
     expect(res.status).toBe(200)
     expect(data.id).toBeTypeOf('string')
-    expect(data.id.length).toBeGreaterThan(0)
+    expect(data.id?.length).toBeGreaterThan(0)
   })
 
   it('returns same session id for existing session', async () => {
     const cookie = await encrypt(session.payload)
-    const res = await app.request('/session-id', {
-      headers: { cookie: `sid=${cookie}` },
-    })
+    const res = await client['session-id'].$get(
+      {},
+      {
+        headers: { cookie: `sid=${cookie}` },
+      }
+    )
     const data = await res.json()
 
     expect(res.status).toBe(200)
@@ -991,8 +997,8 @@ describe('session.id', () => {
   })
 
   it('generates different session ids for new sessions', async () => {
-    const res1 = await app.request('/session-id')
-    const res2 = await app.request('/session-id')
+    const res1 = await client['session-id'].$get()
+    const res2 = await client['session-id'].$get()
     const data1 = await res1.json()
     const data2 = await res2.json()
 
@@ -1005,14 +1011,17 @@ describe('session.id', () => {
 
   it('preserves session id across requests with same cookie', async () => {
     // First request - create session
-    const firstRes = await app.request('/session-id/user1', { method: 'PUT' })
+    const firstRes = await client['session-id'][':sub'].$put({ param: { sub: 'user1' } })
     const sessionCookie = await getSetCookie(firstRes, 'sid', decrypt)
     const firstData = await firstRes.json()
 
     // Second request - use same cookie
-    const secondRes = await app.request('/session-id', {
-      headers: { cookie: `sid=${sessionCookie?.value}` },
-    })
+    const secondRes = await client['session-id'].$get(
+      {},
+      {
+        headers: { cookie: `sid=${sessionCookie?.value}` },
+      }
+    )
     const secondData = await secondRes.json()
 
     expect(firstRes.status).toBe(200)
