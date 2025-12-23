@@ -7,6 +7,7 @@ export type HttpInstrumentationConfig = {
   tracer?: Tracer
   captureRequestHeaders?: string[]
   captureResponseHeaders?: string[]
+  captureActiveRequests?: boolean
   getTime?(): TimeInput
   disableTracing?: boolean
   spanNameFactory?: (c: HonoContext) => string
