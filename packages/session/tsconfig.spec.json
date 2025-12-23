@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/packages/session",
-    "types": ["@cloudflare/vitest-pool-workers", "vitest/globals"]
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers/types", "vitest/globals"]
   },
   "include": ["examples", "src", "tsdown.config.ts", "vitest.config.ts"],
   "references": []

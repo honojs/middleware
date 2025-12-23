@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:test'
+import { env } from 'cloudflare:workers'
 import { Hono } from 'hono'
 import type { SessionEnv } from '../src'
 import { useSession, useSessionStorage } from '../src'
