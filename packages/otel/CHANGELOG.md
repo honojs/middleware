@@ -1,5 +1,13 @@
 # @hono/otel
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1640](https://github.com/honojs/middleware/pull/1640) [`122bf5e363e3d1bac1fcfd2333a2a5024354819e`](https://github.com/honojs/middleware/commit/122bf5e363e3d1bac1fcfd2333a2a5024354819e) Thanks [@mrlorentx](https://github.com/mrlorentx)! - fix: updates type value of activeRequests and allows disabling it
+  This change is made due to Deno not allowing `INT` value types and the current setup can therefore break Deno applications without any proper workaround.
+  There are no code changes required for existing (functional) applications, but if opentelemetry values are used for more than autodetection you might have to make minor changes to calculations or similar.
+
 ## 1.0.1
 
 ### Patch Changes
