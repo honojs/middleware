@@ -464,4 +464,28 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.deepEqual(adds[0].attrs, adds[1].attrs)
     assert.strictEqual(adds[0].attrs['http.request.method'], 'GET')
   })
+
+  it('Should not track active requests when captureActiveRequests is false', async () => {
+    const adds: { value: number; attrs: Record<string, unknown> }[] = []
+    const mockMeterProvider = createMockMeterProvider({
+      createUpDownCounter: () => ({
+        add(value: number, attrs?: Record<string, unknown>) {
+          adds.push({ value, attrs: attrs ?? {} })
+        },
+      }),
+    })
+
+    const app = new Hono()
+    app.use(
+      httpInstrumentationMiddleware({
+        meterProvider: mockMeterProvider,
+        captureActiveRequests: false,
+      })
+    )
+    app.get('/no-active-tracking', (c) => c.text('ok'))
+
+    await app.request('http://localhost/no-active-tracking')
+
+    assert.strictEqual(adds.length, 0)
+  })
 })
