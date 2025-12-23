@@ -1,5 +1,5 @@
 declare namespace Cloudflare {
-	interface Env {
+  interface Env {
     SESSION_KV: KVNamespace
   }
 }
