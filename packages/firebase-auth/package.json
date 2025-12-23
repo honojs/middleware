@@ -50,11 +50,11 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.3",
-    "firebase-tools": "^14.27.0",
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
+    "firebase-tools": "^15.1.0",
     "hono": "^4.11.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }
