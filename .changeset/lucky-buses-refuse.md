@@ -1,5 +1,5 @@
 ---
-'@hono/otel': patch
+'@hono/otel': minor
 ---
 
 fix: updates type value of activeRequests and allows disabling it
