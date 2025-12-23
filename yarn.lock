@@ -1997,7 +1997,7 @@ __metadata:
     valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
     yup: "npm:^1.7.0"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     "@conform-to/dom": ">=1.1.5"
     hono: ">=4.5.1"
@@ -2119,7 +2119,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     "@modelcontextprotocol/sdk": ^1.23.0
     hono: "*"
@@ -2333,7 +2333,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     valibot: "npm:^1.1.0"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     "@standard-schema/spec": 1.0.0
     hono: ">=3.9.0"
@@ -2391,7 +2391,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     "@trpc/server": ^10.10.0 || >11.0.0-rc
     hono: ">=4.0.0"
@@ -2441,7 +2441,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     valibot: "npm:^1.0.0"
     vitest: "npm:^3.2.4"
-    zod: "npm:^3.25.0"
+    zod: "npm:^4.2.1"
   peerDependencies:
     hono: ">=3.9.0"
     typedriver: ^0.8.6
@@ -2505,7 +2505,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
     yaml: "npm:^2.8.2"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     hono: ">=4.3.6"
     zod: ^4.0.0
@@ -2520,7 +2520,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.2.4"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.2.1"
   peerDependencies:
     hono: ">=3.9.0"
     zod: ^3.25.0 || ^4.0.0
@@ -17482,17 +17482,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.0, zod@npm:^3.25.64":
+"zod@npm:^3.22.3, zod@npm:^3.23.8, zod@npm:^3.24.3, zod@npm:^3.25.64":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25 || ^4.0, zod@npm:^4.1.13":
+"zod@npm:^3.25 || ^4.0":
   version: 4.1.13
   resolution: "zod@npm:4.1.13"
   checksum: 10c0/d7e74e82dba81a91ffc3239cd85bc034abe193a28f7087a94ab258a3e48e9a7ca4141920cac979a0d781495b48fc547777394149f26be04c3dc642f58bbc3941
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "zod@npm:4.2.1"
+  checksum: 10c0/ecb5219bddf76a42d092a843fb98ad4cb78f1e1077082772b03ef032ee5cbc80790a4051836b962d26fb4af854323bc784d628bd1b8d9898149eba7af21c5560
   languageName: node
   linkType: hard
 
