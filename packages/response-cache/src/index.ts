@@ -11,9 +11,21 @@ interface CacheStore {
 }
 
 const EXCLUDED_RESPONSE_HEADERS = new Set([
-  'set-cookie', 'www-authenticate', 'proxy-authenticate', 'authentication-info',
-  'connection', 'keep-alive', 'upgrade', 'transfer-encoding', 'te', 'trailer',
-  'via', 'age', 'warning', 'date', 'vary'
+  'set-cookie',
+  'www-authenticate',
+  'proxy-authenticate',
+  'authentication-info',
+  'connection',
+  'keep-alive',
+  'upgrade',
+  'transfer-encoding',
+  'te',
+  'trailer',
+  'via',
+  'age',
+  'warning',
+  'date',
+  'vary',
 ])
 
 function filterHeaders(headers: Headers): Record<string, string> {
@@ -27,20 +39,20 @@ function filterHeaders(headers: Headers): Record<string, string> {
 }
 
 interface CacheMiddlewareOptions {
-  store: CacheStore;
+  store: CacheStore
   /**
    * Function to generate a cache key from the request and context. If not provided, the request path will be used.
    * @param req - The request object.
    * @param c - The context object.
    * @returns A string key for the cache.
    */
-  keyFn?: (c: Context) => string;
+  keyFn?: (c: Context) => string
   logging?: {
-    enabled?: boolean;
-    onHit?: (key: string, c: Context) => void;
-    onMiss?: (key: string, c: Context) => void;
-    onError?: (key: string, c: Context, error: unknown) => void;
-  };
+    enabled?: boolean
+    onHit?: (key: string, c: Context) => void
+    onMiss?: (key: string, c: Context) => void
+    onError?: (key: string, c: Context, error: unknown) => void
+  }
 }
 const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions): MiddlewareHandler => {
   return createMiddleware(async (c, next) => {
@@ -48,17 +60,21 @@ const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions): Middl
     try {
       const cached = await store.get(key)
       if (cached) {
-        if (logging?.enabled) {logging.onHit?.(key, c)}
+        if (logging?.enabled) {
+          logging.onHit?.(key, c)
+        }
 
         const snapshot = JSON.parse(cached)
         const { body, status, headers } = snapshot
 
         return new Response(decodeBase64(body), {
           status,
-          headers
+          headers,
         })
       } else {
-        if (logging?.enabled) {logging.onMiss?.(key, c)}
+        if (logging?.enabled) {
+          logging.onMiss?.(key, c)
+        }
         await next()
 
         const bodyBuffer = await c.res.clone().arrayBuffer()
@@ -72,7 +88,9 @@ const responseCache = ({ store, keyFn, logging }: CacheMiddlewareOptions): Middl
         return c.res
       }
     } catch (error) {
-      if (logging?.enabled) {logging.onError?.(key, c, error)}
+      if (logging?.enabled) {
+        logging.onError?.(key, c, error)
+      }
       throw error
     }
   })

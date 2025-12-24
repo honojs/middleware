@@ -55,10 +55,12 @@ describe('Response Cache Middleware', () => {
       const app = new Hono()
 
       app.use('*', responseCache({ store }))
-      app.get('/test', (c) => c.json({ data: 'test' }, 200, {
-        'X-Request-Id': '12345',
-        'Cache-Control': 'max-age=3600',
-      }))
+      app.get('/test', (c) =>
+        c.json({ data: 'test' }, 200, {
+          'X-Request-Id': '12345',
+          'Cache-Control': 'max-age=3600',
+        })
+      )
 
       const res1 = await app.request(new Request('http://localhost/test'))
       expect(res1.status).toBe(200)

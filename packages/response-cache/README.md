@@ -1,8 +1,11 @@
 # Response Cache for Hono
+
 Response cache for [Hono](https://honojs.dev) with `Bring Your Own` cache store.
 
 ## Usage
+
 ### Basic with `in-memory` cache:
+
 ```ts
 import { Hono } from 'hono'
 import { cacheMiddleware } from '@hono/response-cache'
@@ -25,6 +28,7 @@ app.use('*', cache)
 ```
 
 ### Redis (and custom key function)
+
 ```ts
 import { Hono } from 'hono'
 import { cacheMiddleware } from '@hono/response-cache'
@@ -57,6 +61,7 @@ app.use('*', cache)
 ```
 
 ### Add logging
+
 ```ts
 import { cacheMiddleware } from '@hono/response-cache'
 
