@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:test'
+import { env } from 'cloudflare:workers'
 import type { Credential, KeyStorer } from 'firebase-auth-cloudflare-workers'
 import { AdminAuthApiClient, Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers'
 import type { GoogleOAuthAccessToken } from 'firebase-auth-cloudflare-workers/dist/main/credential'

@@ -1,16 +1,17 @@
-import { defineWorkersProject } from '@cloudflare/vitest-pool-workers/config'
+import { cloudflareTest } from '@cloudflare/vitest-pool-workers'
+import { defineProject } from 'vitest/config'
 
-export default defineWorkersProject({
+export default defineProject({
+  plugins: [
+    cloudflareTest({
+      miniflare: {
+        compatibilityDate: '2024-01-01',
+        compatibilityFlags: ['nodejs_compat'],
+      },
+    }),
+  ],
   test: {
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
-    poolOptions: {
-      workers: {
-        miniflare: {
-          compatibilityDate: '2024-01-01',
-          compatibilityFlags: ['nodejs_compat'],
-        },
-      },
-    },
   },
 })

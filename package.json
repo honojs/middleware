@@ -37,14 +37,14 @@
     "@arethetypeswrong/core": "^0.18.2",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.29.7",
-    "@cloudflare/vitest-pool-workers": "^0.10.3",
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^2.6.5",
     "@types/bun": "^1.0.0",
     "@types/node": "^24.9.0",
     "@types/ws": "^8.18.0",
-    "@vitest/coverage-istanbul": "^3.2.4",
+    "@vitest/coverage-istanbul": "^4.0.16",
     "eslint": "^9.34.0",
     "hono": "^4.11.1",
     "pkg-pr-new": "^0.0.54",
@@ -54,7 +54,7 @@
     "turbo": "^2.5.8",
     "typescript": "^5.8.2",
     "typia": "^9.7.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   },
   "packageManager": "yarn@4.12.0"
 }

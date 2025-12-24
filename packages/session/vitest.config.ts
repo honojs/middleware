@@ -1,18 +1,19 @@
-import { defineWorkersProject } from '@cloudflare/vitest-pool-workers/config'
+import { cloudflareTest } from '@cloudflare/vitest-pool-workers'
+import { defineProject } from 'vitest/config'
 
-export default defineWorkersProject({
+export default defineProject({
+  plugins: [
+    cloudflareTest({
+      miniflare: {
+        compatibilityDate: '2025-03-10',
+        kvNamespaces: ['SESSION_KV'],
+      },
+    }),
+  ],
   test: {
+    clearMocks: true,
     globals: true,
     include: ['examples/**/*.test.ts', 'src/**/*.test.ts'],
     restoreMocks: true,
-    poolOptions: {
-      workers: {
-        singleWorker: true,
-        miniflare: {
-          compatibilityDate: '2025-03-10',
-          kvNamespaces: ['SESSION_KV'],
-        },
-      },
-    },
   },
 })
