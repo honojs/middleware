@@ -48,7 +48,7 @@
     "hono": "^4.11.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.10.16"
+    "vitest": "^4.0.16"
   },
   "engines": {
     "node": ">=18"
