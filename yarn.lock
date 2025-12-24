@@ -2032,7 +2032,7 @@ __metadata:
     "@auth/core": "npm:^0.35.3"
     "@types/react": "npm:^19"
     hono: "npm:^4.11.1"
-    react: "npm:^19.2.0"
+    react: "npm:^19.2.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^4.0.16"
@@ -2130,7 +2130,7 @@ __metadata:
     "@clerk/types": "npm:^4.64.0"
     "@types/react": "npm:^19"
     hono: "npm:^4.11.1"
-    react: "npm:^19.2.0"
+    react: "npm:^19.2.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^4.0.16"
@@ -2436,7 +2436,7 @@ __metadata:
     "@types/react": "npm:^19.2.7"
     "@types/react-dom": "npm:^19.1.9"
     hono: "npm:^4.11.1"
-    react: "npm:^19.2.0"
+    react: "npm:^19.2.3"
     react-dom: "npm:^19.2.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -13706,10 +13706,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.2.0":
-  version: 19.2.0
-  resolution: "react@npm:19.2.0"
-  checksum: 10c0/1b6d64eacb9324725bfe1e7860cb7a6b8a34bc89a482920765ebff5c10578eb487e6b46b2f0df263bd27a25edbdae2c45e5ea5d81ae61404301c1a7192c38330
+"react@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
