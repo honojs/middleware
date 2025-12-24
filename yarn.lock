@@ -2078,7 +2078,7 @@ __metadata:
     "@hono/node-server": "npm:^1.19.2"
     "@hono/node-ws": "npm:^1.2.0"
     "@types/ws": "npm:^8.5.0"
-    capnweb: "npm:^0.2.0"
+    capnweb: "npm:^0.3.0"
     hono: "npm:^4.11.1"
     publint: "npm:^0.3.14"
     tsdown: "npm:^0.15.9"
@@ -6316,10 +6316,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capnweb@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "capnweb@npm:0.2.0"
-  checksum: 10c0/adf0233d9ce514ef58e33a8517e8088d81419cdbe2644f94c50c544fcca2b67957610adda8d6ad745e27878543cf371d6cb35cca683dc6e0b4f1161becb91478
+"capnweb@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "capnweb@npm:0.3.0"
+  checksum: 10c0/dbd8d7a24cde6b5ba0eced9b39e2813f21c7d0346f05e539f333c2410d3be21ea5baf0303269e469b1a79926b0959ca25fc708c4bc1630315ddd68aa3a9ff7cc
   languageName: node
   linkType: hard
 
