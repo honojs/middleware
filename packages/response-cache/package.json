@@ -42,13 +42,13 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=4.7.0"
+    "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "publint": "^0.2.7",
+    "hono": "^4.10.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^2.0.0"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18"
