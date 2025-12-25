@@ -18,9 +18,9 @@ import {
   DEFAULT_NEGOTIATED_PROTOCOL_VERSION,
   ErrorCode,
   isInitializeRequest,
-  isJSONRPCError,
+  isJSONRPCErrorResponse,
   isJSONRPCRequest,
-  isJSONRPCResponse,
+  isJSONRPCResultResponse,
   JSONRPCMessageSchema,
   SUPPORTED_PROTOCOL_VERSIONS,
 } from '@modelcontextprotocol/sdk/types.js'
@@ -622,7 +622,7 @@ export class StreamableHTTPTransport implements Transport {
 
   async send(message: JSONRPCMessage, options?: { relatedRequestId?: RequestId }): Promise<void> {
     let requestId = options?.relatedRequestId
-    if (isJSONRPCResponse(message) || isJSONRPCError(message)) {
+    if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
       // If the message is a response, use the request ID from the message
       requestId = message.id
     }
@@ -632,7 +632,7 @@ export class StreamableHTTPTransport implements Transport {
     // Those will be sent via dedicated response SSE streams
     if (requestId === undefined) {
       // For standalone SSE streams, we can only send requests and notifications
-      if (isJSONRPCResponse(message) || isJSONRPCError(message)) {
+      if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
         throw new Error(
           'Cannot send a response on a standalone SSE stream unless resuming a previous client request'
         )
@@ -684,12 +684,12 @@ export class StreamableHTTPTransport implements Transport {
       }
     }
 
-    if (isJSONRPCResponse(message) || isJSONRPCError(message)) {
+    if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
       this.#requestResponseMap.set(requestId, message)
       const relatedIds = Array.from(this.#requestToStreamMapping.entries())
         .filter(([, streamId]) => this.#streamMapping.get(streamId) === response)
         .map(([id]) => id)
-
+      isJSONRPCResultResponse
       // Check if we have responses for all requests using this connection
       const allResponsesReady = relatedIds.every((id) => this.#requestResponseMap.has(id))
 
