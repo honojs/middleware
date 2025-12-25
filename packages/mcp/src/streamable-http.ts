@@ -689,7 +689,7 @@ export class StreamableHTTPTransport implements Transport {
       const relatedIds = Array.from(this.#requestToStreamMapping.entries())
         .filter(([, streamId]) => this.#streamMapping.get(streamId) === response)
         .map(([id]) => id)
-      isJSONRPCResultResponse
+
       // Check if we have responses for all requests using this connection
       const allResponsesReady = relatedIds.every((id) => this.#requestResponseMap.has(id))
 
