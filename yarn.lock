@@ -2048,7 +2048,7 @@ __metadata:
   resolution: "@hono/bun-compress@workspace:packages/bun-compress"
   dependencies:
     "@types/bun": "npm:^1.2.12"
-    "@types/node": "npm:^24.9.0"
+    "@types/node": "npm:^25.0.3"
     hono: "npm:^4.11.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -2281,7 +2281,7 @@ __metadata:
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
     "@modelcontextprotocol/sdk": "npm:^1.25.1"
-    "@types/node": "npm:^24.2.1"
+    "@types/node": "npm:^25.0.3"
     hono: "npm:^4.11.1"
     hono-rate-limiter: "npm:^0.4.2"
     pkce-challenge: "npm:^5.0.0"
@@ -2491,7 +2491,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/ssg-plugins-essential@workspace:packages/ssg-plugins-essential"
   dependencies:
-    "@types/node": "npm:^24.9.0"
+    "@types/node": "npm:^25.0.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^4.0.16"
@@ -2646,7 +2646,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/ua-blocker@workspace:packages/ua-blocker"
   dependencies:
-    "@types/node": "npm:^24.9.0"
+    "@types/node": "npm:^25.0.3"
     hono: "npm:^4.11.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -5073,21 +5073,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^24.2.1":
-  version: 24.9.2
-  resolution: "@types/node@npm:24.9.2"
+"@types/node@npm:^25.0.3":
+  version: 25.0.3
+  resolution: "@types/node@npm:25.0.3"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10c0/7905d43f65cee72ef475fe76316e10bbf6ac5d08a7f0f6c38f2b6285d7ca3009e8fcafc8f8a1d2bf3f55889c9c278dbb203a9081fd0cf2d6d62161703924c6fa
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^24.9.0":
-  version: 24.9.0
-  resolution: "@types/node@npm:24.9.0"
-  dependencies:
-    undici-types: "npm:~7.16.0"
-  checksum: 10c0/c0129572f2c1528d2d1b7f4ebdbc3c4b40273964d40786c8be3596e7482394ed4882676b2a44362d4b1da5bac0274fdf2cae11dce3d76319cadac541fd76e531
+  checksum: 10c0/b7568f0d765d9469621615e2bb257c7fd1953d95e9acbdb58dffb6627a2c4150d405a4600aa1ad8a40182a94fe5f903cafd3c0a2f5132814debd0e3bfd61f835
   languageName: node
   linkType: hard
 
@@ -9872,7 +9863,7 @@ __metadata:
     "@hono/eslint-config": "workspace:*"
     "@ryoppippi/unplugin-typia": "npm:^2.6.5"
     "@types/bun": "npm:^1.0.0"
-    "@types/node": "npm:^24.9.0"
+    "@types/node": "npm:^25.0.3"
     "@types/ws": "npm:^8.18.0"
     "@vitest/coverage-istanbul": "npm:^4.0.16"
     eslint: "npm:^9.34.0"
