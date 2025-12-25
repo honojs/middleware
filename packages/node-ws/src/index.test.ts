@@ -312,4 +312,61 @@ describe('WebSocket helper', () => {
     expect(clientWs).toBeTruthy()
     expect(wss.clients.size).toBe(1)
   })
+
+  it('Should work with app.route()', async () => {
+    const subApp = new Hono()
+    subApp.get(
+      '/ws',
+      upgradeWebSocket(() => ({
+        onOpen(_, ws) {
+          ws.send('Hello from sub app')
+        },
+      }))
+    )
+
+    app.route('/sub', subApp)
+
+    const ws = new WebSocket('ws://localhost:3030/sub/ws')
+    const mainPromise = new Promise<string>((resolve, reject) => {
+      ws.onmessage = (event) => {
+        resolve(event.data as string)
+      }
+      ws.onerror = () => {
+        reject(new Error('WebSocket error'))
+      }
+    })
+
+    expect(await mainPromise).toBe('Hello from sub app')
+    ws.close()
+  })
+
+  it('Should work with nested app.route()', async () => {
+    const subSubApp = new Hono()
+    subSubApp.get(
+      '/ws',
+      upgradeWebSocket(() => ({
+        onOpen(_, ws) {
+          ws.send('Hello from nested')
+        },
+      }))
+    )
+
+    const subApp = new Hono()
+    subApp.route('/nested', subSubApp)
+
+    app.route('/sub', subApp)
+
+    const ws = new WebSocket('ws://localhost:3030/sub/nested/ws')
+    const mainPromise = new Promise<string>((resolve, reject) => {
+      ws.onmessage = (event) => {
+        resolve(event.data as string)
+      }
+      ws.onerror = () => {
+        reject(new Error('WebSocket error'))
+      }
+    })
+
+    expect(await mainPromise).toBe('Hello from nested')
+    ws.close()
+  })
 })
