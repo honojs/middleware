@@ -1,7 +1,12 @@
 import { createClerkClient } from '@clerk/backend'
 import type { ClerkClient } from '@clerk/backend'
-import type { AuthenticateRequestOptions, AuthOptions, GetAuthFn, GetAuthFnNoRequest } from '@clerk/backend/internal'
-import { getAuthObjectForAcceptedToken  } from '@clerk/backend/internal'
+import type {
+  AuthenticateRequestOptions,
+  AuthOptions,
+  GetAuthFn,
+  GetAuthFnNoRequest,
+} from '@clerk/backend/internal'
+import { getAuthObjectForAcceptedToken } from '@clerk/backend/internal'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 
@@ -10,10 +15,10 @@ export type ClerkAuthVariables = {
   clerkAuth: GetAuthFnNoRequest
 }
 
-export const getAuth: GetAuthFn<Context> = ((c: Context) => {
+export const getAuth: GetAuthFn<Context> = (c: Context) => {
   const authFn = c.get('clerkAuth')
   return authFn()
-})
+}
 
 type ClerkEnv = {
   CLERK_SECRET_KEY: string
@@ -70,10 +75,11 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
       }
     }
 
-    const authObjectFn = ((options?: AuthOptions) => getAuthObjectForAcceptedToken({
-      authObject: authObjectFn(options),
-      acceptsToken: 'any'
-    })) as GetAuthFnNoRequest
+    const authObjectFn = ((options?: AuthOptions) =>
+      getAuthObjectForAcceptedToken({
+        authObject: authObjectFn(options),
+        acceptsToken: 'any',
+      })) as GetAuthFnNoRequest
 
     c.set('clerkAuth', authObjectFn)
     c.set('clerk', clerkClient)
