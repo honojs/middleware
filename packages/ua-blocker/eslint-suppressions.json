@@ -1,0 +1,35 @@
+{
+  "script/get-robots-txt.ts": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    }
+  },
+  "script/prebuild.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "src/ai-bots.test.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    }
+  },
+  "src/ai-bots.ts": {
+    "@typescript-eslint/require-await": {
+      "count": 1
+    }
+  },
+  "src/escape.ts": {
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "src/index.test.ts": {
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 1
+    }
+  }
+}

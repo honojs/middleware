@@ -1,0 +1,26 @@
+{
+  "src/index.ts": {
+    "@typescript-eslint/prefer-function-type": {
+      "count": 1
+    }
+  },
+  "src/react-renderer.test.tsx": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 2
+    }
+  },
+  "src/react-renderer.ts": {
+    "@typescript-eslint/consistent-type-definitions": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  }
+}

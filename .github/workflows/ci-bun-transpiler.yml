@@ -20,8 +20,8 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
       - run: yarn workspace @hono/bun-transpiler build
       - run: yarn workspace @hono/bun-transpiler typecheck
-      - run: yarn eslint packages/bun-transpiler
-      - run: yarn prettier --check  . !packages packages/bun-transpiler
+      - run: yarn turbo run lint --filter @hono/bun-transpiler
+      - run: yarn turbo run format --filter @hono/bun-transpiler
       - run: yarn workspace @hono/bun-transpiler test --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@v5
         with:

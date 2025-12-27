@@ -32,7 +32,8 @@ jobs:
           node-version-file: .tool-versions
       - run: yarn install
       - run: yarn format:fix
-      - run: yarn lint:fix
+      - run: yarn lint:fix --cache-strategy content --suppress-all --pass-on-unpruned-suppressions
+      - run: yarn lint:fix --cache-strategy content --prune-suppressions
       - name: Apply fixes
         uses: autofix-ci/action@v1
         with:

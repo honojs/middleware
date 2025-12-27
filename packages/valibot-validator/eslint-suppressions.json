@@ -1,0 +1,30 @@
+{
+  "src/index.test.ts": {
+    "@typescript-eslint/consistent-type-definitions": {
+      "count": 2
+    },
+    "@typescript-eslint/dot-notation": {
+      "count": 2
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 8
+    }
+  },
+  "src/index.ts": {
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "count": 1
+    },
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unnecessary-type-arguments": {
+      "count": 7
+    },
+    "@typescript-eslint/no-unnecessary-type-parameters": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    }
+  }
+}

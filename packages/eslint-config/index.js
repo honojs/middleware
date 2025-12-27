@@ -5,9 +5,9 @@ import nodePlugin from 'eslint-plugin-n'
 import tseslint from 'typescript-eslint'
 
 /**
- * @type {import("eslint").Linter.Config[]}
+ * @type {import("@eslint/config-helpers").InfiniteConfigArray}
  */
-export default [
+const config = [
   js.configs.recommended,
   nodePlugin.configs['flat/recommended'],
   ...tseslint.configs.strictTypeChecked,
@@ -96,3 +96,5 @@ export default [
   },
   prettier,
 ]
+
+export default config
