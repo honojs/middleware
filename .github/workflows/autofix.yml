@@ -23,16 +23,15 @@ jobs:
       - uses: actions/cache@v5
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-autofix-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-autofix-
             ${{ runner.os }}-turbo-
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
       - run: yarn install
+      - run: yarn lint:fix --cache-strategy content
       - run: yarn format:fix
-      - run: yarn lint:fix
       - name: Apply fixes
         uses: autofix-ci/action@v1
         with:
