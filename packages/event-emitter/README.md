@@ -177,7 +177,7 @@ export default app
 ```ts
 // types.ts
 
-import type { Emitter } from '@hono/event-emitter'
+import type { EmitterEnv } from '@hono/event-emitter'
 
 export type User = {
   id: string
@@ -192,13 +192,7 @@ export type AvailableEvents = {
   foo: { bar: number }
 }
 
-export type Env = {
-  Bindings: {}
-  Variables: {
-    // Define emitter variable type
-    emitter: Emitter<AvailableEvents>
-  }
-}
+export type Env = EmitterEnv<AvailableEvents>
 ```
 
 ```ts
@@ -360,7 +354,7 @@ export default app
 Creates a Hono middleware that adds an event emitter to the context.
 
 ```ts
-function emitter<EPMap extends EventPayloadMap>(
+function emitter<EPMap>(
   eventHandlers?: EventHandlers<EPMap>,
   options?: EventEmitterOptions
 ): MiddlewareHandler
@@ -386,7 +380,7 @@ app.use(emitter(eventHandlers))
 Creates new instance of event emitter with provided handlers. This is usefull when you want to use the emitter as standalone feature instead of Hono middleware.
 
 ```ts
-function createEmitter<EPMap extends EventPayloadMap>(
+function createEmitter<EPMap>(
   eventHandlers?: EventHandlers<EPMap>,
   options?: EventEmitterOptions
 ): Emitter<EPMap>
@@ -412,7 +406,7 @@ const ee = createEmitter(eventHandlers)
 A utility function to define a typed event handler.
 
 ```ts
-function defineHandler<EPMap extends EventPayloadMap, Key extends keyof EPMap, E extends Env = Env>(
+function defineHandler<EPMap, Key extends keyof EPMap, E extends Env = Env>(
   handler: EventHandler<EPMap[Key], E>
 ): EventHandler<EPMap[Key], E>
 ```
@@ -448,7 +442,7 @@ const handler = defineHandler<AvailableEvents, 'user:created'>((c, payload) => {
 A utility function to define multiple typed event handlers.
 
 ```ts
-function defineHandlers<EPMap extends EventPayloadMap, E extends Env = Env>(handlers: {
+function defineHandlers<EPMap, E extends Env = Env>(handlers: {
   [K in keyof EPMap]?: EventHandler<EPMap[K], E>[]
 }): { [K in keyof EPMap]?: EventHandler<EPMap[K], E>[] }
 ```
