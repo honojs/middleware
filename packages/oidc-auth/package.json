@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "hono": "^4.11.1",
+    "hono": "^4.11.3",
     "jsonwebtoken": "^9.0.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
