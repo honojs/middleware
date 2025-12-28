@@ -31,8 +31,8 @@ jobs:
         with:
           node-version-file: .tool-versions
       - run: yarn install
+      - run: yarn lint:fix --cache-strategy content
       - run: yarn format:fix
-      - run: yarn lint:fix
       - name: Apply fixes
         uses: autofix-ci/action@v1
         with:

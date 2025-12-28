@@ -60,7 +60,7 @@ jobs:
         with:
           node-version-file: .tool-versions
       - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
+      - run: yarn turbo --filter @hono/${{ matrix.package }} build
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
