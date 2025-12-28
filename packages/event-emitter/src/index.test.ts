@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { Context } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
 import { createEmitter, defineHandler, defineHandlers, emitter } from './index'
-import type { Emitter } from './index' // Adjust the import path as needed
+import type { Emitter, EmitterEnv } from './index' // Adjust the import path as needed
 
 describe('Event Emitter Middleware', () => {
   describe('createEmitter', () => {
@@ -391,7 +391,7 @@ describe('Event Emitter Middleware', () => {
         'todo:created': { id: string; text: string }
       }
 
-      type Env = { Variables: { emitter: Emitter<EventPayloadMap> } }
+      type Env = EmitterEnv<EventPayloadMap>
 
       const handlers = defineHandlers<EventPayloadMap>({
         'todo:created': [vi.fn((_c, _payload) => {})],
@@ -423,7 +423,7 @@ describe('Event Emitter Middleware', () => {
         'todo:created': { id: string; text: string }
       }
 
-      type Env = { Variables: { emitter: Emitter<EventPayloadMap> } }
+      type Env = EmitterEnv<EventPayloadMap>
 
       const handlers = defineHandlers<EventPayloadMap>({
         'todo:created': [vi.fn(async (_c, _payload) => {})],

@@ -82,7 +82,7 @@ export function ajvValidator<
 > {
   const ajv = new Ajv()
   const validate = ajv.compile(schema)
-
+  // @ts-expect-error not typed well
   return validator(target, (data, c) => {
     const valid = validate(data)
     if (valid) {
