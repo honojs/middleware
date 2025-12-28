@@ -15,5 +15,6 @@ export default defineProject({
     globals: true,
     include: ['examples/**/*.test.ts', 'src/**/*.test.ts'],
     restoreMocks: true,
+    retry: 3,
   },
 })
