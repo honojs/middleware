@@ -2523,13 +2523,13 @@ __metadata:
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
   dependencies:
     hono: "npm:^4.11.3"
-    stytch: "npm:^12.32.0"
+    stytch: "npm:^12.43.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
     vitest: "npm:^4.0.16"
   peerDependencies:
     hono: ">=3.0.0"
-    stytch: ^12.32.0
+    stytch: ^12.43.1
   languageName: unknown
   linkType: soft
 
@@ -15295,13 +15295,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stytch@npm:^12.32.0":
-  version: 12.32.0
-  resolution: "stytch@npm:12.32.0"
+"stytch@npm:^12.43.1":
+  version: 12.43.1
+  resolution: "stytch@npm:12.43.1"
   dependencies:
     jose: "npm:^5.6.3"
     undici: "npm:^6.19.5"
-  checksum: 10c0/8c956976645a4004aa7b0193352e9c79223f9fb096ba25179f4b5c0ed0b7fb0aee6b5f62c79c218c2bd01c3f82a3c535b44954f0b79ea5d41f680a34d98f42a5
+  checksum: 10c0/22fb4fde84e18fda8823d444409451912d4d5d187caa2fff750b74267fdc0bc2f3d3442ec270ca853e02cacaa4c7b06accafb644449b0200fbbbffaa2b555830
   languageName: node
   linkType: hard
 
