@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 2.0.4
+
+### Patch Changes
+
+- [#1675](https://github.com/honojs/middleware/pull/1675) [`98324b4c89c2c2af628ba63ebc4ef00448da4d60`](https://github.com/honojs/middleware/commit/98324b4c89c2c2af628ba63ebc4ef00448da4d60) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Use correct export type
+
 ## 2.0.3
 
 ### Patch Changes
