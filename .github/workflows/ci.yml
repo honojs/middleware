@@ -43,7 +43,7 @@ jobs:
           node-version-file: .tool-versions
       - run: yarn
       - run: yarn typecheck
-      - run: yarn lint
+      - run: yarn lint --cache-strategy content
       - run: yarn format
 
   test:
