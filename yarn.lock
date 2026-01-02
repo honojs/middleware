@@ -2091,7 +2091,7 @@ __metadata:
   resolution: "@hono/capnweb@workspace:packages/capnweb"
   dependencies:
     "@hono/node-server": "npm:^1.19.2"
-    "@hono/node-ws": "npm:^1.2.0"
+    "@hono/node-ws": "workspace:^"
     "@types/ws": "npm:^8.5.0"
     capnweb: "npm:^0.3.0"
     hono: "npm:^4.11.3"
@@ -2344,7 +2344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-ws@npm:^1.2.0, @hono/node-ws@workspace:packages/node-ws":
+"@hono/node-ws@workspace:^, @hono/node-ws@workspace:packages/node-ws":
   version: 0.0.0-use.local
   resolution: "@hono/node-ws@workspace:packages/node-ws"
   dependencies:
