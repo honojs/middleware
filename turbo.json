@@ -10,7 +10,7 @@
       "outputLogs": "new-only"
     },
     "lint": {
-      "outputs": [".cache/.eslintcache"]
+      "outputs": [".cache/.eslintcache", "eslint-suppressions.json"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
