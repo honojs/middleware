@@ -1,1 +1,7 @@
-{}
+{
+  "src/helper/jwt.ts": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    }
+  }
+}
