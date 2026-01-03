@@ -1,1 +1,7 @@
-{}
+{
+  "src/index.test.ts": {
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    }
+  }
+}

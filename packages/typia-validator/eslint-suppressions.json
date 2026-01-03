@@ -1,1 +1,49 @@
-{}
+{
+  "src/http.test.ts": {
+    "@typescript-eslint/require-await": {
+      "count": 3
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 6
+    }
+  },
+  "src/http.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "@typescript-eslint/unified-signatures": {
+      "count": 1
+    }
+  },
+  "src/index.test.ts": {
+    "@typescript-eslint/require-await": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 6
+    }
+  },
+  "src/index.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  }
+}

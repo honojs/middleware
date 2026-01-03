@@ -1,1 +1,31 @@
-{}
+{
+  "src/plugins/robots-txt.test.ts": {
+    "@typescript-eslint/prefer-nullish-coalescing": {
+      "count": 2
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 2
+    }
+  },
+  "src/plugins/rss.test.ts": {
+    "@typescript-eslint/unbound-method": {
+      "count": 3
+    }
+  },
+  "src/plugins/rss.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 4
+    },
+    "@typescript-eslint/require-await": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 4
+    }
+  },
+  "src/plugins/sitemaps.test.ts": {
+    "@typescript-eslint/unbound-method": {
+      "count": 2
+    }
+  }
+}

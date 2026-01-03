@@ -1,1 +1,17 @@
-{}
+{
+  "src/transpiler.ts": {
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    }
+  },
+  "src/transpilers/wasm.ts": {
+    "@typescript-eslint/only-throw-error": {
+      "count": 1
+    }
+  },
+  "src/types.esbuild.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 4
+    }
+  }
+}
