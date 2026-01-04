@@ -1,5 +1,8 @@
 {
   "extends": "../../tsconfig.build.json",
-  "compilerOptions": {},
+  "compilerOptions": {
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false
+  },
   "references": []
 }

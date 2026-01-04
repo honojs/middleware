@@ -41,6 +41,7 @@
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^2.6.5",
+    "@tsconfig/strictest": "^2.0.8",
     "@types/bun": "^1.0.0",
     "@types/node": "^25.0.3",
     "@types/ws": "^8.18.0",

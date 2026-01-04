@@ -36,6 +36,7 @@
     { "path": "packages/session" },
     { "path": "packages/ssg-plugins-essential" },
     { "path": "packages/standard-validator" },
+    { "path": "packages/stytch-auth"},
     { "path": "packages/swagger-editor" },
     { "path": "packages/swagger-ui" },
     { "path": "packages/trpc-server" },
