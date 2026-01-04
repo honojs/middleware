@@ -1,5 +1,12 @@
 {
   "extends": "../../tsconfig.build.json",
-  "compilerOptions": {},
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false
+  },
   "references": [{ "path": "../zod-validator/tsconfig.build.json" }]
 }

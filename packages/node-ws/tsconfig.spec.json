@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noUnusedLocals": false,
     "outDir": "../../dist/packages/node-ws",
     "types": ["vitest/globals"]
   },
