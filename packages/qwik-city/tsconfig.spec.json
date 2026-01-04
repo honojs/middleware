@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noImplicitReturns": false,
     "outDir": "../../dist/packages/quwik-city"
   },
   "include": ["src", "tsdown.config.ts"],

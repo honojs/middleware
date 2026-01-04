@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "isolatedDeclarations": false
+    "exactOptionalPropertyTypes": false,
+    "isolatedDeclarations": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false
   },
   "references": []
 }

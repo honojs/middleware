@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
     "types": ["@cloudflare/workers-types"]
   },
   "references": []

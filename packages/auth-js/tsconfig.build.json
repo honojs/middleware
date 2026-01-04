@@ -1,6 +1,11 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
     "jsx": "react"
   },
   "references": []

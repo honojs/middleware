@@ -1,5 +1,8 @@
 {
   "extends": "../../tsconfig.build.json",
-  "compilerOptions": {},
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false
+  },
   "references": []
 }
