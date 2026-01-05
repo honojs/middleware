@@ -146,9 +146,15 @@ export class ProxyOAuthServerProvider implements OAuthServerProvider {
     })
 
     // Add optional standard OAuth parameters
-    if (params.state) searchParams.set('state', params.state)
-    if (params.scopes?.length) searchParams.set('scope', params.scopes.join(' '))
-    if (params.resource) searchParams.set('resource', params.resource.href)
+    if (params.state) {
+      searchParams.set('state', params.state)
+    }
+    if (params.scopes?.length) {
+      searchParams.set('scope', params.scopes.join(' '))
+    }
+    if (params.resource) {
+      searchParams.set('resource', params.resource.href)
+    }
 
     targetUrl.search = searchParams.toString()
     c.res = c.redirect(targetUrl.toString())
