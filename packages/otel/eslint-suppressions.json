@@ -1,1 +1,10 @@
-{}
+{
+  "src/index.test.ts": {
+    "@typescript-eslint/no-non-null-assertion": {
+      "count": 7
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 3
+    }
+  }
+}

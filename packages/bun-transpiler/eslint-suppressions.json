@@ -1,1 +1,10 @@
-{}
+{
+  "src/index.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 1
+    }
+  }
+}
