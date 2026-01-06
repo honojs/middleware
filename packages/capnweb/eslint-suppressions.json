@@ -6,9 +6,6 @@
     "@typescript-eslint/no-unsafe-argument": {
       "count": 2
     },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 5
-    },
     "@typescript-eslint/unbound-method": {
       "count": 1
     }

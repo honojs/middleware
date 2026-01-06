@@ -2,9 +2,6 @@
   "src/http.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 3
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 6
     }
   },
   "src/http.ts": {
@@ -30,9 +27,6 @@
   "src/index.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 6
     }
   },
   "src/index.ts": {

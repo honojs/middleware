@@ -25,9 +25,6 @@
   "src/v3.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 5
     }
   },
   "src/v4.test.ts": {
@@ -36,9 +33,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 5
     }
   }
 }

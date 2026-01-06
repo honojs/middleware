@@ -9,8 +9,8 @@
       "count": 1
     }
   },
-  "src/index.test.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
+  "src/escape.ts": {
+    "@typescript-eslint/restrict-plus-operands": {
       "count": 1
     }
   }

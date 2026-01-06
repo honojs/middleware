@@ -15,21 +15,11 @@
       "count": 12
     }
   },
-  "src/providers/discord/authFlow.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
-    }
-  },
   "src/providers/discord/discordAuth.ts": {
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 2
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 3
-    }
-  },
-  "src/providers/facebook/authFlow.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
       "count": 3
     }
   },
@@ -44,9 +34,6 @@
   "src/providers/github/authFlow.ts": {
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 2
     }
   },
   "src/providers/github/githubAuth.ts": {
@@ -55,11 +42,6 @@
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 4
-    }
-  },
-  "src/providers/google/authFlow.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/providers/google/googleAuth.ts": {
@@ -72,9 +54,6 @@
   },
   "src/providers/linkedin/authFlow.ts": {
     "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
       "count": 1
     }
   },
@@ -89,9 +68,6 @@
   "src/providers/msentra/authFlow.ts": {
     "@typescript-eslint/no-unsafe-return": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/providers/msentra/msentraAuth.ts": {
@@ -102,27 +78,12 @@
       "count": 5
     }
   },
-  "src/providers/twitch/authFlow.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
-    }
-  },
-  "src/providers/twitch/revokeToken.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
-    }
-  },
   "src/providers/twitch/twitchAuth.ts": {
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 2
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 3
-    }
-  },
-  "src/providers/x/authFlow.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/providers/x/xAuth.ts": {

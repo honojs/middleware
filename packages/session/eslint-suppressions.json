@@ -21,9 +21,6 @@
   "src/index.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   }
 }
