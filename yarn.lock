@@ -2062,7 +2062,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/bun-compress@workspace:packages/bun-compress"
   dependencies:
-    "@types/bun": "npm:^1.2.12"
+    "@types/bun": "npm:^1.3.5"
     "@types/node": "npm:^25.0.3"
     hono: "npm:^4.11.3"
     tsdown: "npm:^0.15.9"
@@ -5090,21 +5090,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/bun@npm:^1.0.0":
-  version: 1.3.1
-  resolution: "@types/bun@npm:1.3.1"
+"@types/bun@npm:^1.3.5":
+  version: 1.3.5
+  resolution: "@types/bun@npm:1.3.5"
   dependencies:
-    bun-types: "npm:1.3.1"
-  checksum: 10c0/048a992fd2b7d87cbeaac3511f224b8b8744bd6fe83a35bd85eff11d16bebe715e8da5e4410f813c686464450049de53fa7d82fe798987f15f68ac7e87dc9aa0
-  languageName: node
-  linkType: hard
-
-"@types/bun@npm:^1.2.12":
-  version: 1.2.12
-  resolution: "@types/bun@npm:1.2.12"
-  dependencies:
-    bun-types: "npm:1.2.12"
-  checksum: 10c0/168578a09e9408792c44363957b45d6f574b684a87cfb1ec350131a868e5001b6ce5006a1503846ff1afb7cd827911c5538ec27ba24cbc287e5f200b748ebe30
+    bun-types: "npm:1.3.5"
+  checksum: 10c0/ec3b364bcad3faeed6e5033f76c3618d4469719d04c5c4f31659953461c6b36509cf9befb05ad3c455f2584f64eff6ff636bca8a36590ae4184caf146ad86601
   languageName: node
   linkType: hard
 
@@ -6381,23 +6372,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bun-types@npm:1.2.12":
-  version: 1.2.12
-  resolution: "bun-types@npm:1.2.12"
+"bun-types@npm:1.3.5":
+  version: 1.3.5
+  resolution: "bun-types@npm:1.3.5"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/9e6f421f82164f39ada25f202969f267609e477286817395420cf2b0f4d9e98d2243ec5e73f564a4448941d6706a53329e2fbdbdac7e2e6a32f6882ec63eddae
-  languageName: node
-  linkType: hard
-
-"bun-types@npm:1.3.1":
-  version: 1.3.1
-  resolution: "bun-types@npm:1.3.1"
-  dependencies:
-    "@types/node": "npm:*"
-  peerDependencies:
-    "@types/react": ^19
-  checksum: 10c0/4429af038fe2807466a0bb30dc2515ddd197d0869237b9b29b8b8ce6d40cca26f21d2afa1ee583f9eb28b94480c08a16d3a4f0e13b3bf3aa3a3807c47df24b6f
+  checksum: 10c0/f46aa39af49cb7f06e101e57c10f80a33df3ddd162e3d22aee87f96923b5b5782dd6a2cf52ef475d84148e0a73a326a4e7df82b7457da5c142a52170c76bce92
   languageName: node
   linkType: hard
 
@@ -10038,7 +10018,7 @@ __metadata:
     "@hono/eslint-config": "workspace:*"
     "@ryoppippi/unplugin-typia": "npm:^2.6.5"
     "@tsconfig/strictest": "npm:^2.0.8"
-    "@types/bun": "npm:^1.0.0"
+    "@types/bun": "npm:^1.3.5"
     "@types/node": "npm:^25.0.3"
     "@types/ws": "npm:^8.18.0"
     "@vitest/coverage-istanbul": "npm:^4.0.16"
