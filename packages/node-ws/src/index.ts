@@ -1,6 +1,6 @@
 import type { Hono } from 'hono'
 import { defineWebSocketHelper } from 'hono/ws'
-import type { UpgradeWebSocket, WSContext, WSEvents } from 'hono/ws'
+import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { STATUS_CODES } from 'node:http'
@@ -83,7 +83,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
 
         if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
           socket.end(
-            `HTTP/1.1 ${response.status} ${STATUS_CODES[response.status]}\r\n` +
+            `HTTP/1.1 ${response.status.toString()} ${STATUS_CODES[response.status] ?? ''}\r\n` +
               'Connection: close\r\n' +
               'Content-Length: 0\r\n' +
               '\r\n'
