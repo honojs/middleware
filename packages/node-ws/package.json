@@ -1,6 +1,6 @@
 {
   "name": "@hono/node-ws",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "WebSocket helper for Node.js",
   "type": "module",
   "main": "dist/index.js",
