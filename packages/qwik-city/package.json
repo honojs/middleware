@@ -29,7 +29,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -38,14 +39,14 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "@builder.io/qwik": "^1.2.0",
+    "@builder.io/qwik": "^1.18.0",
     "@builder.io/qwik-city": "^1.17.1",
     "hono": "^3.1.5"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.2.0",
+    "@builder.io/qwik": "^1.18.0",
     "@builder.io/qwik-city": "^1.17.1",
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2"
   },

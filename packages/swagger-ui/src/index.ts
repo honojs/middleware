@@ -71,6 +71,7 @@ const middleware =
   async (c) => {
     const title = options?.title ?? 'SwaggerUI'
     return c.html(/* html */ `
+      <!doctype html>
       <html lang="en">
         <head>
           <meta charset="utf-8" />

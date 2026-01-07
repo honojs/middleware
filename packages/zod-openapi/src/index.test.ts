@@ -8,7 +8,7 @@ import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
 import type { RouteConfigToTypedResponse } from './index'
-import { OpenAPIHono, createRoute, z } from './index'
+import { $, OpenAPIHono, createRoute, z } from './index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -1346,6 +1346,60 @@ describe('basePath()', () => {
   })
 })
 
+describe('onError() and onNotFound()', () => {
+  const app = new OpenAPIHono()
+
+  const onErrorRoute = app.onError((err, c) => {
+    return c.json(
+      {
+        message: 'Custom error: ' + err.message,
+      },
+      500
+    )
+  })
+  const onNotFoundRoute = app.notFound((c) => {
+    return c.json(
+      {
+        message: 'Custom not found',
+      },
+      404
+    )
+  })
+
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/error',
+      responses: {
+        500: {
+          description: 'An error route',
+        },
+      },
+    }),
+    () => {
+      throw new Error('Something went wrong')
+    }
+  )
+
+  it('Should handle errors with onError handler with correct typings', async () => {
+    expectTypeOf<typeof onErrorRoute>().toEqualTypeOf<OpenAPIHono>()
+    const res = await app.request('/error')
+    expect(res.status).toBe(500)
+    expect(await res.json()).toEqual({
+      message: 'Custom error: Something went wrong',
+    })
+  })
+
+  it('Should handle not found with onNotFound handler with correct typings', async () => {
+    expectTypeOf<typeof onNotFoundRoute>().toEqualTypeOf<OpenAPIHono>()
+    const res = await app.request('/not-found')
+    expect(res.status).toBe(404)
+    expect(await res.json()).toEqual({
+      message: 'Custom not found',
+    })
+  })
+})
+
 describe('With hc', () => {
   describe('Multiple routes', () => {
     const app = new OpenAPIHono()
@@ -2129,5 +2183,18 @@ describe('Hide Routes', () => {
     const res = await app.request('/books')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([{ title: 'foo' }])
+  })
+})
+
+describe('$', () => {
+  it('Should convert Hono instance to OpenAPIHono type', async () => {
+    const app = $(
+      new OpenAPIHono().get((c) => {
+        return c.json({ message: 'Hello' })
+      })
+    )
+    const res = await app.request('/')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: 'Hello' })
   })
 })

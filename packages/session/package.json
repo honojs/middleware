@@ -50,7 +50,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -65,11 +66,11 @@
     "jose": "^6.0.11"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.3",
-    "hono": "^4.10.1",
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "unstorage": "^1.17.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }

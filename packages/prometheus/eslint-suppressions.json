@@ -1,0 +1,12 @@
+{
+  "src/index.test.ts": {
+    "@typescript-eslint/no-non-null-assertion": {
+      "count": 8
+    }
+  },
+  "src/index.ts": {
+    "@typescript-eslint/no-deprecated": {
+      "count": 1
+    }
+  }
+}

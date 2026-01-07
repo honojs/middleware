@@ -31,9 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
-          path: .turbo
+          path: |
+            .turbo
+            packages/*/.cache
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
@@ -42,7 +44,7 @@ jobs:
           node-version-file: .tool-versions
       - run: yarn
       - run: yarn typecheck
-      - run: yarn lint
+      - run: yarn lint --cache-strategy content
       - run: yarn format
 
   dry-run:
@@ -66,11 +68,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/cache@v5
+        with:
+          path: |
+            .turbo
+            packages/*/.cache
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
       - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn workspaces foreach --topological --recursive --from @hono/${{ matrix.package }} run build
+      - run: yarn turbo --filter @hono/${{ matrix.package }} build
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}

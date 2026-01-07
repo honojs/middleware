@@ -1,0 +1,38 @@
+{
+  "src/index.test.ts": {
+    "@typescript-eslint/require-await": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-template-expressions": {
+      "count": 6
+    }
+  },
+  "src/index.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unnecessary-type-parameters": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    }
+  },
+  "src/sanitize-issues.ts": {
+    "@typescript-eslint/no-dynamic-delete": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  }
+}

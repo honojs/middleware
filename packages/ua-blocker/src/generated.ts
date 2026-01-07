@@ -2,17 +2,18 @@
 // prettier-ignore
 export const ROBOTS_TXT = `User-agent: AddSearchBot
 User-agent: AI2Bot
+User-agent: AI2Bot-DeepResearchEval
 User-agent: Ai2Bot-Dolma
 User-agent: aiHitBot
-User-agent: AmazonBuyForMe
-User-agent: atlassian-bot
 User-agent: amazon-kendra
 User-agent: Amazonbot
+User-agent: AmazonBuyForMe
 User-agent: Andibot
 User-agent: Anomura
 User-agent: anthropic-ai
 User-agent: Applebot
 User-agent: Applebot-Extended
+User-agent: atlassian-bot
 User-agent: Awario
 User-agent: bedrockbot
 User-agent: bigsur.ai
@@ -21,6 +22,8 @@ User-agent: Brightbot 1.0
 User-agent: BuddyBot
 User-agent: Bytespider
 User-agent: CCBot
+User-agent: Channel3Bot
+User-agent: ChatGLM-Spider
 User-agent: ChatGPT Agent
 User-agent: ChatGPT-User
 User-agent: Claude-SearchBot
@@ -32,6 +35,7 @@ User-agent: CloudVertexBot
 User-agent: cohere-ai
 User-agent: cohere-training-data-crawler
 User-agent: Cotoyogi
+User-agent: Crawl4AI
 User-agent: Crawlspace
 User-agent: Datenbank Crawler
 User-agent: DeepSeekBot
@@ -55,16 +59,25 @@ User-agent: GoogleOther
 User-agent: GoogleOther-Image
 User-agent: GoogleOther-Video
 User-agent: GPTBot
+User-agent: iAskBot
+User-agent: iaskspider
 User-agent: iaskspider/2.0
 User-agent: IbouBot
 User-agent: ICC-Crawler
 User-agent: ImagesiftBot
+User-agent: imageSpider
 User-agent: img2dataset
 User-agent: ISSCyberRiskCrawler
 User-agent: Kangaroo Bot
 User-agent: KlaviyoAIBot
+User-agent: KunatoCrawler
+User-agent: laion-huggingface-processor
+User-agent: LAIONDownloader
+User-agent: LCC
 User-agent: LinerBot
 User-agent: Linguee Bot
+User-agent: LinkupBot
+User-agent: Manus-User
 User-agent: meta-externalagent
 User-agent: Meta-ExternalAgent
 User-agent: meta-externalfetcher
@@ -88,6 +101,7 @@ User-agent: Perplexity-User
 User-agent: PerplexityBot
 User-agent: PetalBot
 User-agent: PhindBot
+User-agent: Poggio-Citations
 User-agent: Poseidon Research Crawler
 User-agent: QualifiedBot
 User-agent: QuillBot
@@ -98,25 +112,31 @@ User-agent: SemrushBot-OCOB
 User-agent: SemrushBot-SWA
 User-agent: ShapBot
 User-agent: Sidetrade indexer bot
+User-agent: Spider
+User-agent: TavilyBot
 User-agent: TerraCotta
 User-agent: Thinkbot
 User-agent: TikTokSpider
 User-agent: Timpibot
+User-agent: TwinAgent
 User-agent: VelenPublicWebCrawler
 User-agent: WARDBot
 User-agent: Webzio-Extended
+User-agent: webzio-extended
 User-agent: wpbot
+User-agent: WRTNBot
 User-agent: YaK
 User-agent: YandexAdditional
 User-agent: YandexAdditionalBot
 User-agent: YouBot
+User-agent: ZanistaBot
 Disallow: /
 `;
 // prettier-ignore
-export const ALL_BOTS = ["AddSearchBot", "AI2Bot", "Ai2Bot-Dolma", "aiHitBot", "AmazonBuyForMe", "atlassian-bot", "amazon-kendra", "Amazonbot", "Andibot", "Anomura", "anthropic-ai", "Applebot", "Applebot-Extended", "Awario", "bedrockbot", "bigsur.ai", "Bravebot", "Brightbot 1.0", "BuddyBot", "Bytespider", "CCBot", "ChatGPT Agent", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "Claude-Web", "ClaudeBot", "Cloudflare-AutoRAG", "CloudVertexBot", "cohere-ai", "cohere-training-data-crawler", "Cotoyogi", "Crawlspace", "Datenbank Crawler", "DeepSeekBot", "Devin", "Diffbot", "DuckAssistBot", "Echobot Bot", "EchoboxBot", "FacebookBot", "facebookexternalhit", "Factset_spyderbot", "FirecrawlAgent", "FriendlyCrawler", "Gemini-Deep-Research", "Google-CloudVertexBot", "Google-Extended", "Google-Firebase", "Google-NotebookLM", "GoogleAgent-Mariner", "GoogleOther", "GoogleOther-Image", "GoogleOther-Video", "GPTBot", "iaskspider/2.0", "IbouBot", "ICC-Crawler", "ImagesiftBot", "img2dataset", "ISSCyberRiskCrawler", "Kangaroo Bot", "KlaviyoAIBot", "LinerBot", "Linguee Bot", "meta-externalagent", "Meta-ExternalAgent", "meta-externalfetcher", "Meta-ExternalFetcher", "meta-webindexer", "MistralAI-User", "MistralAI-User/1.0", "MyCentralAIScraperBot", "netEstate Imprint Crawler", "NotebookLM", "NovaAct", "OAI-SearchBot", "omgili", "omgilibot", "OpenAI", "Operator", "PanguBot", "Panscient", "panscient.com", "Perplexity-User", "PerplexityBot", "PetalBot", "PhindBot", "Poseidon Research Crawler", "QualifiedBot", "QuillBot", "quillbot.com", "SBIntuitionsBot", "Scrapy", "SemrushBot-OCOB", "SemrushBot-SWA", "ShapBot", "Sidetrade indexer bot", "TerraCotta", "Thinkbot", "TikTokSpider", "Timpibot", "VelenPublicWebCrawler", "WARDBot", "Webzio-Extended", "wpbot", "YaK", "YandexAdditional", "YandexAdditionalBot", "YouBot"];
+export const ALL_BOTS = ["AddSearchBot", "AI2Bot", "AI2Bot-DeepResearchEval", "Ai2Bot-Dolma", "aiHitBot", "amazon-kendra", "Amazonbot", "AmazonBuyForMe", "Andibot", "Anomura", "anthropic-ai", "Applebot", "Applebot-Extended", "atlassian-bot", "Awario", "bedrockbot", "bigsur.ai", "Bravebot", "Brightbot 1.0", "BuddyBot", "Bytespider", "CCBot", "Channel3Bot", "ChatGLM-Spider", "ChatGPT Agent", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "Claude-Web", "ClaudeBot", "Cloudflare-AutoRAG", "CloudVertexBot", "cohere-ai", "cohere-training-data-crawler", "Cotoyogi", "Crawl4AI", "Crawlspace", "Datenbank Crawler", "DeepSeekBot", "Devin", "Diffbot", "DuckAssistBot", "Echobot Bot", "EchoboxBot", "FacebookBot", "facebookexternalhit", "Factset_spyderbot", "FirecrawlAgent", "FriendlyCrawler", "Gemini-Deep-Research", "Google-CloudVertexBot", "Google-Extended", "Google-Firebase", "Google-NotebookLM", "GoogleAgent-Mariner", "GoogleOther", "GoogleOther-Image", "GoogleOther-Video", "GPTBot", "iAskBot", "iaskspider", "iaskspider/2.0", "IbouBot", "ICC-Crawler", "ImagesiftBot", "imageSpider", "img2dataset", "ISSCyberRiskCrawler", "Kangaroo Bot", "KlaviyoAIBot", "KunatoCrawler", "laion-huggingface-processor", "LAIONDownloader", "LCC", "LinerBot", "Linguee Bot", "LinkupBot", "Manus-User", "meta-externalagent", "Meta-ExternalAgent", "meta-externalfetcher", "Meta-ExternalFetcher", "meta-webindexer", "MistralAI-User", "MistralAI-User/1.0", "MyCentralAIScraperBot", "netEstate Imprint Crawler", "NotebookLM", "NovaAct", "OAI-SearchBot", "omgili", "omgilibot", "OpenAI", "Operator", "PanguBot", "Panscient", "panscient.com", "Perplexity-User", "PerplexityBot", "PetalBot", "PhindBot", "Poggio-Citations", "Poseidon Research Crawler", "QualifiedBot", "QuillBot", "quillbot.com", "SBIntuitionsBot", "Scrapy", "SemrushBot-OCOB", "SemrushBot-SWA", "ShapBot", "Sidetrade indexer bot", "Spider", "TavilyBot", "TerraCotta", "Thinkbot", "TikTokSpider", "Timpibot", "TwinAgent", "VelenPublicWebCrawler", "WARDBot", "Webzio-Extended", "webzio-extended", "wpbot", "WRTNBot", "YaK", "YandexAdditional", "YandexAdditionalBot", "YouBot", "ZanistaBot"];
 // prettier-ignore
-export const NON_RESPECTING_BOTS = ["AddSearchBot", "AmazonBuyForMe", "Andibot", "anthropic-ai", "Applebot", "Awario", "bigsur.ai", "Brightbot 1.0", "BuddyBot", "Bytespider", "Claude-Web", "CloudVertexBot", "cohere-ai", "cohere-training-data-crawler", "Datenbank Crawler", "DeepSeekBot", "Diffbot", "DuckAssistBot", "Echobot Bot", "EchoboxBot", "facebookexternalhit", "Factset_spyderbot", "Gemini-Deep-Research", "Google-Firebase", "Google-NotebookLM", "GoogleAgent-Mariner", "iaskspider/2.0", "img2dataset", "ISSCyberRiskCrawler", "Kangaroo Bot", "LinerBot", "Linguee Bot", "Meta-ExternalAgent", "meta-externalfetcher", "Meta-ExternalFetcher", "meta-webindexer", "MistralAI-User", "MyCentralAIScraperBot", "netEstate Imprint Crawler", "NotebookLM", "NovaAct", "Operator", "PanguBot", "Perplexity-User", "PhindBot", "Poseidon Research Crawler", "QualifiedBot", "QuillBot", "quillbot.com", "Scrapy", "Sidetrade indexer bot", "Thinkbot", "TikTokSpider", "Timpibot", "WARDBot", "Webzio-Extended", "wpbot", "YaK"];
+export const NON_RESPECTING_BOTS = ["AddSearchBot", "AI2Bot-DeepResearchEval", "AmazonBuyForMe", "Andibot", "anthropic-ai", "Applebot", "Awario", "bigsur.ai", "Brightbot 1.0", "BuddyBot", "Bytespider", "Channel3Bot", "ChatGLM-Spider", "Claude-Web", "CloudVertexBot", "cohere-ai", "cohere-training-data-crawler", "Crawl4AI", "Datenbank Crawler", "DeepSeekBot", "Diffbot", "DuckAssistBot", "Echobot Bot", "EchoboxBot", "facebookexternalhit", "Factset_spyderbot", "Gemini-Deep-Research", "Google-Firebase", "Google-NotebookLM", "GoogleAgent-Mariner", "iAskBot", "iaskspider", "iaskspider/2.0", "imageSpider", "img2dataset", "ISSCyberRiskCrawler", "Kangaroo Bot", "KunatoCrawler", "laion-huggingface-processor", "LAIONDownloader", "LCC", "LinerBot", "Linguee Bot", "LinkupBot", "Manus-User", "Meta-ExternalAgent", "meta-externalfetcher", "Meta-ExternalFetcher", "meta-webindexer", "MistralAI-User", "MyCentralAIScraperBot", "netEstate Imprint Crawler", "NotebookLM", "NovaAct", "Operator", "PanguBot", "Perplexity-User", "PhindBot", "Poggio-Citations", "Poseidon Research Crawler", "QualifiedBot", "QuillBot", "quillbot.com", "Scrapy", "Sidetrade indexer bot", "Spider", "TavilyBot", "Thinkbot", "TikTokSpider", "Timpibot", "TwinAgent", "WARDBot", "Webzio-Extended", "webzio-extended", "wpbot", "WRTNBot", "YaK", "ZanistaBot"];
 // prettier-ignore
-export const ALL_BOTS_REGEX = /(ADDSEARCHBOT|AI2BOT|AI2BOT-DOLMA|AIHITBOT|AMAZONBUYFORME|ATLASSIAN-BOT|AMAZON-KENDRA|AMAZONBOT|ANDIBOT|ANOMURA|ANTHROPIC-AI|APPLEBOT|APPLEBOT-EXTENDED|AWARIO|BEDROCKBOT|BIGSUR.AI|BRAVEBOT|BRIGHTBOT 1.0|BUDDYBOT|BYTESPIDER|CCBOT|CHATGPT AGENT|CHATGPT-USER|CLAUDE-SEARCHBOT|CLAUDE-USER|CLAUDE-WEB|CLAUDEBOT|CLOUDFLARE-AUTORAG|CLOUDVERTEXBOT|COHERE-AI|COHERE-TRAINING-DATA-CRAWLER|COTOYOGI|CRAWLSPACE|DATENBANK CRAWLER|DEEPSEEKBOT|DEVIN|DIFFBOT|DUCKASSISTBOT|ECHOBOT BOT|ECHOBOXBOT|FACEBOOKBOT|FACEBOOKEXTERNALHIT|FACTSET_SPYDERBOT|FIRECRAWLAGENT|FRIENDLYCRAWLER|GEMINI-DEEP-RESEARCH|GOOGLE-CLOUDVERTEXBOT|GOOGLE-EXTENDED|GOOGLE-FIREBASE|GOOGLE-NOTEBOOKLM|GOOGLEAGENT-MARINER|GOOGLEOTHER|GOOGLEOTHER-IMAGE|GOOGLEOTHER-VIDEO|GPTBOT|IASKSPIDER\/2.0|IBOUBOT|ICC-CRAWLER|IMAGESIFTBOT|IMG2DATASET|ISSCYBERRISKCRAWLER|KANGAROO BOT|KLAVIYOAIBOT|LINERBOT|LINGUEE BOT|META-EXTERNALAGENT|META-EXTERNALAGENT|META-EXTERNALFETCHER|META-EXTERNALFETCHER|META-WEBINDEXER|MISTRALAI-USER|MISTRALAI-USER\/1.0|MYCENTRALAISCRAPERBOT|NETESTATE IMPRINT CRAWLER|NOTEBOOKLM|NOVAACT|OAI-SEARCHBOT|OMGILI|OMGILIBOT|OPENAI|OPERATOR|PANGUBOT|PANSCIENT|PANSCIENT.COM|PERPLEXITY-USER|PERPLEXITYBOT|PETALBOT|PHINDBOT|POSEIDON RESEARCH CRAWLER|QUALIFIEDBOT|QUILLBOT|QUILLBOT.COM|SBINTUITIONSBOT|SCRAPY|SEMRUSHBOT-OCOB|SEMRUSHBOT-SWA|SHAPBOT|SIDETRADE INDEXER BOT|TERRACOTTA|THINKBOT|TIKTOKSPIDER|TIMPIBOT|VELENPUBLICWEBCRAWLER|WARDBOT|WEBZIO-EXTENDED|WPBOT|YAK|YANDEXADDITIONAL|YANDEXADDITIONALBOT|YOUBOT)/;
+export const ALL_BOTS_REGEX = /(ADDSEARCHBOT|AI2BOT|AI2BOT-DEEPRESEARCHEVAL|AI2BOT-DOLMA|AIHITBOT|AMAZON-KENDRA|AMAZONBOT|AMAZONBUYFORME|ANDIBOT|ANOMURA|ANTHROPIC-AI|APPLEBOT|APPLEBOT-EXTENDED|ATLASSIAN-BOT|AWARIO|BEDROCKBOT|BIGSUR.AI|BRAVEBOT|BRIGHTBOT 1.0|BUDDYBOT|BYTESPIDER|CCBOT|CHANNEL3BOT|CHATGLM-SPIDER|CHATGPT AGENT|CHATGPT-USER|CLAUDE-SEARCHBOT|CLAUDE-USER|CLAUDE-WEB|CLAUDEBOT|CLOUDFLARE-AUTORAG|CLOUDVERTEXBOT|COHERE-AI|COHERE-TRAINING-DATA-CRAWLER|COTOYOGI|CRAWL4AI|CRAWLSPACE|DATENBANK CRAWLER|DEEPSEEKBOT|DEVIN|DIFFBOT|DUCKASSISTBOT|ECHOBOT BOT|ECHOBOXBOT|FACEBOOKBOT|FACEBOOKEXTERNALHIT|FACTSET_SPYDERBOT|FIRECRAWLAGENT|FRIENDLYCRAWLER|GEMINI-DEEP-RESEARCH|GOOGLE-CLOUDVERTEXBOT|GOOGLE-EXTENDED|GOOGLE-FIREBASE|GOOGLE-NOTEBOOKLM|GOOGLEAGENT-MARINER|GOOGLEOTHER|GOOGLEOTHER-IMAGE|GOOGLEOTHER-VIDEO|GPTBOT|IASKBOT|IASKSPIDER|IASKSPIDER\/2.0|IBOUBOT|ICC-CRAWLER|IMAGESIFTBOT|IMAGESPIDER|IMG2DATASET|ISSCYBERRISKCRAWLER|KANGAROO BOT|KLAVIYOAIBOT|KUNATOCRAWLER|LAION-HUGGINGFACE-PROCESSOR|LAIONDOWNLOADER|LCC|LINERBOT|LINGUEE BOT|LINKUPBOT|MANUS-USER|META-EXTERNALAGENT|META-EXTERNALAGENT|META-EXTERNALFETCHER|META-EXTERNALFETCHER|META-WEBINDEXER|MISTRALAI-USER|MISTRALAI-USER\/1.0|MYCENTRALAISCRAPERBOT|NETESTATE IMPRINT CRAWLER|NOTEBOOKLM|NOVAACT|OAI-SEARCHBOT|OMGILI|OMGILIBOT|OPENAI|OPERATOR|PANGUBOT|PANSCIENT|PANSCIENT.COM|PERPLEXITY-USER|PERPLEXITYBOT|PETALBOT|PHINDBOT|POGGIO-CITATIONS|POSEIDON RESEARCH CRAWLER|QUALIFIEDBOT|QUILLBOT|QUILLBOT.COM|SBINTUITIONSBOT|SCRAPY|SEMRUSHBOT-OCOB|SEMRUSHBOT-SWA|SHAPBOT|SIDETRADE INDEXER BOT|SPIDER|TAVILYBOT|TERRACOTTA|THINKBOT|TIKTOKSPIDER|TIMPIBOT|TWINAGENT|VELENPUBLICWEBCRAWLER|WARDBOT|WEBZIO-EXTENDED|WEBZIO-EXTENDED|WPBOT|WRTNBOT|YAK|YANDEXADDITIONAL|YANDEXADDITIONALBOT|YOUBOT|ZANISTABOT)/;
 // prettier-ignore
-export const NON_RESPECTING_BOTS_REGEX = /(ADDSEARCHBOT|AMAZONBUYFORME|ANDIBOT|ANTHROPIC-AI|APPLEBOT|AWARIO|BIGSUR.AI|BRIGHTBOT 1.0|BUDDYBOT|BYTESPIDER|CLAUDE-WEB|CLOUDVERTEXBOT|COHERE-AI|COHERE-TRAINING-DATA-CRAWLER|DATENBANK CRAWLER|DEEPSEEKBOT|DIFFBOT|DUCKASSISTBOT|ECHOBOT BOT|ECHOBOXBOT|FACEBOOKEXTERNALHIT|FACTSET_SPYDERBOT|GEMINI-DEEP-RESEARCH|GOOGLE-FIREBASE|GOOGLE-NOTEBOOKLM|GOOGLEAGENT-MARINER|IASKSPIDER\/2.0|IMG2DATASET|ISSCYBERRISKCRAWLER|KANGAROO BOT|LINERBOT|LINGUEE BOT|META-EXTERNALAGENT|META-EXTERNALFETCHER|META-EXTERNALFETCHER|META-WEBINDEXER|MISTRALAI-USER|MYCENTRALAISCRAPERBOT|NETESTATE IMPRINT CRAWLER|NOTEBOOKLM|NOVAACT|OPERATOR|PANGUBOT|PERPLEXITY-USER|PHINDBOT|POSEIDON RESEARCH CRAWLER|QUALIFIEDBOT|QUILLBOT|QUILLBOT.COM|SCRAPY|SIDETRADE INDEXER BOT|THINKBOT|TIKTOKSPIDER|TIMPIBOT|WARDBOT|WEBZIO-EXTENDED|WPBOT|YAK)/;
+export const NON_RESPECTING_BOTS_REGEX = /(ADDSEARCHBOT|AI2BOT-DEEPRESEARCHEVAL|AMAZONBUYFORME|ANDIBOT|ANTHROPIC-AI|APPLEBOT|AWARIO|BIGSUR.AI|BRIGHTBOT 1.0|BUDDYBOT|BYTESPIDER|CHANNEL3BOT|CHATGLM-SPIDER|CLAUDE-WEB|CLOUDVERTEXBOT|COHERE-AI|COHERE-TRAINING-DATA-CRAWLER|CRAWL4AI|DATENBANK CRAWLER|DEEPSEEKBOT|DIFFBOT|DUCKASSISTBOT|ECHOBOT BOT|ECHOBOXBOT|FACEBOOKEXTERNALHIT|FACTSET_SPYDERBOT|GEMINI-DEEP-RESEARCH|GOOGLE-FIREBASE|GOOGLE-NOTEBOOKLM|GOOGLEAGENT-MARINER|IASKBOT|IASKSPIDER|IASKSPIDER\/2.0|IMAGESPIDER|IMG2DATASET|ISSCYBERRISKCRAWLER|KANGAROO BOT|KUNATOCRAWLER|LAION-HUGGINGFACE-PROCESSOR|LAIONDOWNLOADER|LCC|LINERBOT|LINGUEE BOT|LINKUPBOT|MANUS-USER|META-EXTERNALAGENT|META-EXTERNALFETCHER|META-EXTERNALFETCHER|META-WEBINDEXER|MISTRALAI-USER|MYCENTRALAISCRAPERBOT|NETESTATE IMPRINT CRAWLER|NOTEBOOKLM|NOVAACT|OPERATOR|PANGUBOT|PERPLEXITY-USER|PHINDBOT|POGGIO-CITATIONS|POSEIDON RESEARCH CRAWLER|QUALIFIEDBOT|QUILLBOT|QUILLBOT.COM|SCRAPY|SIDETRADE INDEXER BOT|SPIDER|TAVILYBOT|THINKBOT|TIKTOKSPIDER|TIMPIBOT|TWINAGENT|WARDBOT|WEBZIO-EXTENDED|WEBZIO-EXTENDED|WPBOT|WRTNBOT|YAK|ZANISTABOT)/;

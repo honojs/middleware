@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
     "outDir": "../../dist/packages/arktype-validator",
     "types": ["vitest/globals"]
   },

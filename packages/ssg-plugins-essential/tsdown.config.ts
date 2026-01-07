@@ -6,7 +6,11 @@ export default defineConfig({
   },
   clean: true,
   dts: true,
-  entry: 'src/plugins/*.ts',
+  entry: {
+    sitemap: 'src/plugins/sitemap.ts',
+    'robots-txt': 'src/plugins/robots-txt.ts',
+    rss: 'src/plugins/rss.ts',
+  },
   format: ['cjs', 'esm'],
   publint: true,
   tsconfig: 'tsconfig.build.json',

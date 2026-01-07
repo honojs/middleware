@@ -19,6 +19,17 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v6
 
+      - name: Build Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            .turbo
+            packages/*/.cache
+          key: ${{ runner.os }}-turbo-release-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-release-
+            ${{ runner.os }}-turbo-
+
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v6
         with:
@@ -32,7 +43,7 @@ jobs:
         run: yarn
 
       - name: Build
-        run: yarn build
+        run: yarn turbo build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
@@ -42,3 +53,4 @@ jobs:
           version: yarn run version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: '' # https://github.com/changesets/changesets/issues/1152#issuecomment-3190884868

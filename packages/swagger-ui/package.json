@@ -1,6 +1,6 @@
 {
   "name": "@hono/swagger-ui",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A middleware for using SwaggerUI in Hono",
   "type": "module",
   "main": "dist/index.cjs",
@@ -32,7 +32,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -45,9 +46,9 @@
   },
   "devDependencies": {
     "@types/swagger-ui-dist": "^3.30.6",
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }

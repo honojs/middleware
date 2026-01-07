@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/capnweb",
+    "types": ["vitest/globals"]
+  },
+  "references": [{ "path": "../node-ws/tsconfig.build.json" }]
+}

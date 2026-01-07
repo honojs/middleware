@@ -1,6 +1,6 @@
 {
   "name": "@hono/standard-validator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Validator middleware using Standard Schema",
   "type": "module",
   "main": "dist/index.cjs",
@@ -32,7 +32,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -47,11 +48,11 @@
   "devDependencies": {
     "@standard-schema/spec": "1.0.0",
     "arktype": "^2.1.20",
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
-    "vitest": "^3.2.4",
-    "zod": "^3.24.0"
+    "vitest": "^4.0.16",
+    "zod": "^4.2.1"
   }
 }

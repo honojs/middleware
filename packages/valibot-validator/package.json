@@ -1,6 +1,6 @@
 {
   "name": "@hono/valibot-validator",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Validator middleware using Valibot",
   "type": "module",
   "main": "dist/index.js",
@@ -25,7 +25,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -38,10 +39,10 @@
     "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }

@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.7.6
+
+### Patch Changes
+
+- [#1634](https://github.com/honojs/middleware/pull/1634) [`77cfae9f31ba290f81bf47b450a214c791a2944c`](https://github.com/honojs/middleware/commit/77cfae9f31ba290f81bf47b450a214c791a2944c) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: query input supports union / optional types
+
 ## 0.7.5
 
 ### Patch Changes

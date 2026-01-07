@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { testClient } from 'hono/testing'
 import { createTestSession } from './helper/testing'
 import type { Refresh } from './session'
 import type { SessionData } from '.'
@@ -447,31 +448,27 @@ describe('session.get(refresh) with storage', () => {
     }
   )
 
-  it(
-    'refreshes an expired session',
-    async () => {
-      refresh.mockImplementation((data) => Promise.resolve(data))
-      storage.set(sid, { sub })
-      const expiredSession = { ...session.payload, exp: recent, iat: recent }
-      const cookie = await encrypt(expiredSession)
-      const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
-      const sessionCookie = await getSetCookie(res, 'sid', decrypt)
-      const data = await res.json()
+  it('refreshes an expired session', async () => {
+    refresh.mockImplementation((data) => Promise.resolve(data))
+    storage.set(sid, { sub })
+    const expiredSession = { ...session.payload, exp: recent, iat: recent }
+    const cookie = await encrypt(expiredSession)
+    const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
+    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+    const data = await res.json()
 
-      expect(res.status).toBe(200)
-      expect(data).toStrictEqual({ sub })
-      expect(sessionCookie?.attributes).toStrictEqual({
-        'Max-Age': '7200',
-        Path: '/',
-        SameSite: 'Lax',
-      })
-      expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
-      expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
-      expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
-      expect(storage.size).toBe(1)
-    },
-    { retry: 3 }
-  )
+    expect(res.status).toBe(200)
+    expect(data).toStrictEqual({ sub })
+    expect(sessionCookie?.attributes).toStrictEqual({
+      'Max-Age': '7200',
+      Path: '/',
+      SameSite: 'Lax',
+    })
+    expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
+    expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
+    expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
+    expect(storage.size).toBe(1)
+  })
 
   it('replaces the session when refresh returns null', async () => {
     refresh.mockResolvedValue(null)
@@ -751,31 +748,27 @@ describe('options.duration.absolute', () => {
     expect(sessionCookie?.payload.sid).not.toStrictEqual(sid)
   })
 
-  it(
-    'updates the cookie Max-Age attribute when refreshing an expired session',
-    async () => {
-      const newSub = 'new-subject'
-      refresh.mockResolvedValue({ sub: newSub })
-      const expiredSession = { ...session.payload, exp: recent, iat: recent }
-      storage.set(sid, { sub })
-      const cookie = await encrypt(expiredSession)
-      const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
-      const sessionCookie = await getSetCookie(res, 'sid', decrypt)
-      const data = await res.json()
+  it('updates the cookie Max-Age attribute when refreshing an expired session', async () => {
+    const newSub = 'new-subject'
+    refresh.mockResolvedValue({ sub: newSub })
+    const expiredSession = { ...session.payload, exp: recent, iat: recent }
+    storage.set(sid, { sub })
+    const cookie = await encrypt(expiredSession)
+    const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
+    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+    const data = await res.json()
 
-      expect(res.status).toBe(200)
-      expect(data).toStrictEqual({ sub: newSub })
-      expect(sessionCookie?.attributes).toMatchObject({
-        'Max-Age': '32400',
-        Path: '/',
-        SameSite: 'Lax',
-      })
-      expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
-      expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
-      expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
-    },
-    { retry: 3 }
-  )
+    expect(res.status).toBe(200)
+    expect(data).toStrictEqual({ sub: newSub })
+    expect(sessionCookie?.attributes).toMatchObject({
+      'Max-Age': '32400',
+      Path: '/',
+      SameSite: 'Lax',
+    })
+    expect(sessionCookie?.payload.exp).toBeGreaterThan(expiredSession.exp)
+    expect(sessionCookie?.payload.iat).toStrictEqual(expiredSession.iat)
+    expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
+  })
 })
 
 describe('options.duration.inactivity', () => {
@@ -960,6 +953,8 @@ describe('session.id', () => {
       return c.json({ id: c.var.session.id })
     })
 
+  const client = testClient(app)
+
   it('throws an error when session is not initialised', async () => {
     const app = new Hono().get('/session-id', useSession<TestData>({ secret }), (c) => {
       return c.json({ id: c.var.session.id })
@@ -970,28 +965,31 @@ describe('session.id', () => {
   })
 
   it('returns session id after get()', async () => {
-    const res = await app.request('/session-id')
+    const res = await client['session-id'].$get()
     const data = await res.json()
 
     expect(res.status).toBe(200)
     expect(data.id).toBeTypeOf('string')
-    expect(data.id.length).toBeGreaterThan(0)
+    expect(data.id?.length).toBeGreaterThan(0)
   })
 
   it('returns session id after update()', async () => {
-    const res = await app.request('/session-id/test-user', { method: 'PUT' })
+    const res = await client['session-id'][':sub'].$put({ param: { sub: 'test-user' } })
     const data = await res.json()
 
     expect(res.status).toBe(200)
     expect(data.id).toBeTypeOf('string')
-    expect(data.id.length).toBeGreaterThan(0)
+    expect(data.id?.length).toBeGreaterThan(0)
   })
 
   it('returns same session id for existing session', async () => {
     const cookie = await encrypt(session.payload)
-    const res = await app.request('/session-id', {
-      headers: { cookie: `sid=${cookie}` },
-    })
+    const res = await client['session-id'].$get(
+      {},
+      {
+        headers: { cookie: `sid=${cookie}` },
+      }
+    )
     const data = await res.json()
 
     expect(res.status).toBe(200)
@@ -999,8 +997,8 @@ describe('session.id', () => {
   })
 
   it('generates different session ids for new sessions', async () => {
-    const res1 = await app.request('/session-id')
-    const res2 = await app.request('/session-id')
+    const res1 = await client['session-id'].$get()
+    const res2 = await client['session-id'].$get()
     const data1 = await res1.json()
     const data2 = await res2.json()
 
@@ -1013,14 +1011,17 @@ describe('session.id', () => {
 
   it('preserves session id across requests with same cookie', async () => {
     // First request - create session
-    const firstRes = await app.request('/session-id/user1', { method: 'PUT' })
+    const firstRes = await client['session-id'][':sub'].$put({ param: { sub: 'user1' } })
     const sessionCookie = await getSetCookie(firstRes, 'sid', decrypt)
     const firstData = await firstRes.json()
 
     // Second request - use same cookie
-    const secondRes = await app.request('/session-id', {
-      headers: { cookie: `sid=${sessionCookie?.value}` },
-    })
+    const secondRes = await client['session-id'].$get(
+      {},
+      {
+        headers: { cookie: `sid=${sessionCookie?.value}` },
+      }
+    )
     const secondData = await secondRes.json()
 
     expect(firstRes.status).toBe(200)

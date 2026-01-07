@@ -1,6 +1,6 @@
 {
   "name": "@hono/trpc-server",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "tRPC Server Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -31,7 +31,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -45,11 +46,11 @@
   },
   "devDependencies": {
     "@trpc/server": "^11.7.1",
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4",
-    "zod": "^3.20.2"
+    "vitest": "^4.0.16",
+    "zod": "^4.2.1"
   },
   "engines": {
     "node": ">=16.0.0"

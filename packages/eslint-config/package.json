@@ -1,6 +1,6 @@
 {
   "name": "@hono/eslint-config",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "ESLint Config for Hono projects",
   "type": "module",
   "module": "./index.js",
@@ -10,7 +10,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",

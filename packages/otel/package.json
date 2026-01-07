@@ -1,6 +1,6 @@
 {
   "name": "@hono/otel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "OpenTelemetry middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -31,7 +31,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -51,9 +52,9 @@
     "@opentelemetry/sdk-metrics": "^2.2.0",
     "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@opentelemetry/sdk-trace-node": "^2.2.0",
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }

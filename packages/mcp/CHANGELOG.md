@@ -1,5 +1,23 @@
 # @hono/mcp
 
+## 0.2.3
+
+### Patch Changes
+
+- [#1659](https://github.com/honojs/middleware/pull/1659) [`1d51a78dd5ae9d0d1ee5202dfc36dbbf5d94b466`](https://github.com/honojs/middleware/commit/1d51a78dd5ae9d0d1ee5202dfc36dbbf5d94b466) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - Updated import for the latest version of mcp sdk
+
+## 0.2.2
+
+### Patch Changes
+
+- [#1614](https://github.com/honojs/middleware/pull/1614) [`a213ed9af0ecfaac82d9c5654d6d89b09787c60c`](https://github.com/honojs/middleware/commit/a213ed9af0ecfaac82d9c5654d6d89b09787c60c) Thanks [@AielloChan](https://github.com/AielloChan)! - Change mcp content type to json
+
+## 0.2.1
+
+### Patch Changes
+
+- [#1596](https://github.com/honojs/middleware/pull/1596) [`0c457fdb6389cb6bc582daa76fc3874242f36c89`](https://github.com/honojs/middleware/commit/0c457fdb6389cb6bc582daa76fc3874242f36c89) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - updated zod and @modelcontextprotocol/sdk versions
+
 ## 0.2.0
 
 ### Minor Changes

@@ -18,9 +18,11 @@ import { Hono } from 'hono'
 import type {
   Context,
   Env,
+  ErrorHandler,
   Handler,
   Input,
   MiddlewareHandler,
+  NotFoundHandler,
   Schema,
   ToSchema,
   TypedResponse,
@@ -366,6 +368,35 @@ export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
   | OpenAPIGeneratorOptions
   | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
 
+/**
+ * Utility type to convert Hono types to OpenAPIHono types.
+ * Replaces Hono return types with OpenAPIHono in function signatures.
+ *
+ * @example
+ * ```ts
+ * type MyOpenAPIHono = HonoToOpenAPIHono<Hono<Env>>
+ * ```
+ */
+export type HonoToOpenAPIHono<T> =
+  T extends Hono<infer E, infer S, infer B> ? OpenAPIHono<E, S, B> : T
+
+/**
+ * Converts a Hono instance to OpenAPIHono type.
+ * Use this function to restore the OpenAPIHono type after chaining methods like `get`, `post`, `use`, etc.
+ * @example
+ * ```ts
+ * import { OpenAPIHono, $ } from '@hono/zod-openapi'
+ *
+ * const app = $(
+ *   new OpenAPIHono().use(middleware)
+ * )
+ * app.openapi(route, handler)
+ * ```
+ */
+export const $ = <T extends Hono<any, any, any>>(app: T): HonoToOpenAPIHono<T> => {
+  return app as HonoToOpenAPIHono<T>
+}
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -552,7 +583,7 @@ export class OpenAPIHono<
 
     this.on(
       [route.method],
-      route.path.replaceAll(/\/{(.+?)}/g, '/:$1'),
+      [route.path.replaceAll(/\/{(.+?)}/g, '/:$1')],
       ...middleware,
       ...validators,
       handler
@@ -700,6 +731,10 @@ export class OpenAPIHono<
   basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
     return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
+
+  // Type overrides to return OpenAPIHono instead of Hono
+  declare onError: (handler: ErrorHandler<E>) => OpenAPIHono<E, S, BasePath>
+  declare notFound: (handler: NotFoundHandler<E>) => OpenAPIHono<E, S, BasePath>
 }
 
 type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`

@@ -31,7 +31,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -44,11 +45,11 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "hono": "^4.10.1",
-    "jsonwebtoken": "^9.0.2",
+    "hono": "^4.11.3",
+    "jsonwebtoken": "^9.0.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   },
   "dependencies": {
     "oauth4webapi": "^2.6.0"

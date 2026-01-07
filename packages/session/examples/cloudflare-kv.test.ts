@@ -1,4 +1,5 @@
-import { createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test'
+import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test'
+import { env } from 'cloudflare:workers'
 import { createTestSession } from '../src/helper/testing'
 import { app, secret } from './cloudflare-kv'
 

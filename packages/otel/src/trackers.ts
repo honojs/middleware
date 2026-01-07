@@ -34,14 +34,14 @@ export const createActiveRequestsTracker = (
 } => {
   const counter = getMeter(config).createUpDownCounter(METRIC_HTTP_SERVER_ACTIVE_REQUESTS, {
     description: 'Number of active (in-flight) HTTP server requests',
-    valueType: ValueType.INT,
+    valueType: ValueType.DOUBLE,
   })
   return {
     increment(attrs: Attributes) {
-      counter.add(1, attrs)
+      counter.add(1.0, attrs)
     },
     decrement(attrs: Attributes) {
-      counter.add(-1, attrs)
+      counter.add(-1.0, attrs)
     },
   }
 }

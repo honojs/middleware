@@ -401,6 +401,8 @@ describe('Only Types', () => {
 
     const querySchema = z.object({
       order: z.enum(['asc', 'desc']),
+      orderWithDefault: z.enum(['asc', 'desc']).default('asc'),
+      page: z.number(),
     })
 
     const route = app.get('/', zValidator('query', querySchema), (c) => {
@@ -415,10 +417,14 @@ describe('Only Types', () => {
           input: {
             query: {
               order: 'asc' | 'desc'
+              orderWithDefault?: 'asc' | 'desc' | undefined
+              page: string | string[]
             }
           }
           output: {
             order: 'asc' | 'desc'
+            orderWithDefault: 'asc' | 'desc'
+            page: number
           }
           outputFormat: 'json'
           status: ContentfulStatusCode

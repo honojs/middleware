@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "noUnusedLocals": false,
     "types": ["node", "ws"]
   },
   "references": []

@@ -31,7 +31,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -44,11 +45,11 @@
     "tsyringe": ">=4.0.0"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "reflect-metadata": "^0.2.2",
     "tsdown": "^0.15.9",
     "tsyringe": "^4.10.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   }
 }

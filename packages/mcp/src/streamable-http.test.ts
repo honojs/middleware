@@ -9,7 +9,7 @@ import type { CallToolResult, JSONRPCMessage } from '@modelcontextprotocol/sdk/t
 import type { Context } from 'hono'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import { StreamableHTTPTransport } from './streamable-http'
 
 /**
@@ -663,6 +663,23 @@ describe('MCP helper', () => {
     const response = await sendPostRequest(server, batchNotifications, sessionId)
 
     expect(response.status).toBe(202)
+  })
+
+  it('should return JSON content-type for notification-only requests', async () => {
+    sessionId = await initializeServer()
+
+    const response = await sendPostRequest(
+      server,
+      {
+        jsonrpc: '2.0',
+        method: 'notifications/initialized',
+        params: {},
+      },
+      sessionId
+    )
+
+    expect(response.status).toBe(202)
+    expect(response.headers.get('content-type')).toBe('application/json')
   })
 
   it('should handle batch request messages with SSE stream for responses', async () => {

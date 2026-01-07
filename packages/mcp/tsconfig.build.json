@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
     "types": ["node"]
   },
   "references": []

@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.4.1
+
+### Patch Changes
+
+- [#1599](https://github.com/honojs/middleware/pull/1599) [`4defad62ab1de77fa91024d5b0c45ce6389eafa0`](https://github.com/honojs/middleware/commit/4defad62ab1de77fa91024d5b0c45ce6389eafa0) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: auto-detect endpoint from route path
+
 ## 0.4.0
 
 ### Minor Changes

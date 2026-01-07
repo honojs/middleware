@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-validator",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "Validator middleware using Zod",
   "type": "module",
   "main": "dist/index.js",
@@ -32,7 +32,8 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -45,10 +46,10 @@
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
-    "hono": "^4.10.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.2.4",
-    "zod": "^4.0.5"
+    "vitest": "^4.0.16",
+    "zod": "^4.2.1"
   }
 }
