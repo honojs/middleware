@@ -21,11 +21,6 @@
       "count": 6
     }
   },
-  "src/index.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
-    }
-  },
   "src/react.tsx": {
     "@typescript-eslint/no-floating-promises": {
       "count": 3
@@ -41,9 +36,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 4
     }
   }
 }

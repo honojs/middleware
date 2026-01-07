@@ -1,9 +1,4 @@
 {
-  "src/index.test.ts": {
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 4
-    }
-  },
   "src/index.ts": {
     "@typescript-eslint/no-invalid-void-type": {
       "count": 1

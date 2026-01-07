@@ -12,9 +12,6 @@
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 1
     },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 2
-    },
     "@typescript-eslint/unbound-method": {
       "count": 1
     }

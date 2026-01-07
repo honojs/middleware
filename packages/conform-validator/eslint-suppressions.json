@@ -11,9 +11,6 @@
     },
     "@typescript-eslint/no-unsafe-return": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/index.ts": {
@@ -33,9 +30,6 @@
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/yup.test.ts": {
@@ -44,9 +38,6 @@
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/zod.test.ts": {
@@ -54,9 +45,6 @@
       "count": 1
     },
     "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
       "count": 1
     }
   }

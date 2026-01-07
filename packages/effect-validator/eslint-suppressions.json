@@ -5,9 +5,6 @@
     },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 3
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
     }
   },
   "src/index.ts": {

@@ -103,9 +103,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 4
     }
   },
   "src/auth/router.test.ts": {
@@ -133,9 +130,6 @@
   "src/stores/memory.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 8
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 2
     }
   },
   "src/stores/memory.ts": {
@@ -179,9 +173,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 6
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 3
     }
   },
   "src/streamable-http.ts": {
@@ -202,9 +193,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 4
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 2
     }
   },
   "src/streaming.ts": {
