@@ -30,7 +30,6 @@ const config = [
     },
 
     rules: {
-      curly: ['error', 'all'],
       'no-debugger': ['error'],
 
       'no-empty': [
@@ -107,6 +106,13 @@ const config = [
     },
   },
   prettier,
+  {
+    // Special rules that override eslint-config-prettier
+    // See: https://github.com/prettier/eslint-config-prettier#special-rules
+    rules: {
+      curly: ['error', 'all'],
+    },
+  },
 ]
 
 export default config
