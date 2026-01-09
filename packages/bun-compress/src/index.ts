@@ -7,7 +7,6 @@ import type { MiddlewareHandler } from 'hono'
 import { compress as originalCompress } from 'hono/compress'
 import { COMPRESSIBLE_CONTENT_TYPE_REGEX } from 'hono/utils/compress'
 import { Readable } from 'node:stream'
-import type { ReadableStream } from 'node:stream/web'
 import { createDeflate, createGzip } from 'node:zlib'
 
 const ENCODING_TYPES = ['gzip', 'deflate'] as const
@@ -74,14 +73,12 @@ export const compress = (options?: CompressionOptions): MiddlewareHandler => {
     try {
       const compressedStream = encoding === 'gzip' ? createGzip() : createDeflate()
 
-      const readableBody = ctx.res.body as ReadableStream
-      const readableStream = Readable.fromWeb(readableBody)
+      const readableStream = Readable.fromWeb(ctx.res.body)
       const compressedBody = readableStream.pipe(compressedStream)
-      const compressedReadableStream = Readable.toWeb(compressedBody) as ReadableStream<Uint8Array>
+      const compressedReadableStream = Readable.toWeb(compressedBody)
 
       // Create a new response with the compressed body
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ctx.res = new Response(compressedReadableStream as any, ctx.res)
+      ctx.res = new Response(compressedReadableStream, ctx.res)
       ctx.res.headers.delete('Content-Length')
       ctx.res.headers.set('Content-Encoding', encoding)
     } catch (error) {
