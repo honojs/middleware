@@ -8,10 +8,5 @@
     "@typescript-eslint/require-await": {
       "count": 1
     }
-  },
-  "src/escape.ts": {
-    "@typescript-eslint/restrict-plus-operands": {
-      "count": 1
-    }
   }
 }
