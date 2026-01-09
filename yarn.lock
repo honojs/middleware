@@ -448,9 +448,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/qwik-city@npm:^1.17.1":
-  version: 1.17.1
-  resolution: "@builder.io/qwik-city@npm:1.17.1"
+"@builder.io/qwik-city@npm:^1.18.0":
+  version: 1.18.0
+  resolution: "@builder.io/qwik-city@npm:1.18.0"
   dependencies:
     "@mdx-js/mdx": "npm:^3.1.1"
     "@types/mdx": "npm:^2.0.13"
@@ -462,7 +462,7 @@ __metadata:
     vite: "npm:>=5 <8"
     vite-imagetools: "npm:^9.0.0"
     zod: "npm:3.25.48"
-  checksum: 10c0/cc2dc4a6f5a2c443f4046cc3605efe3c7caf8718121a44256dbb617278e490c284447bb1f66f4972c0fdfda34f1efb6a376db3af8b9d3aafc062806635acb914
+  checksum: 10c0/584a05dd65f4cc8e2f08061948c3ee1bbc3282a6f674960359e943ec345e35025e10f3f5018d1759a2b3bcb8252ab6d20c991876a309ecbfe110598f9506142f
   languageName: node
   linkType: hard
 
@@ -2413,13 +2413,13 @@ __metadata:
   resolution: "@hono/qwik-city@workspace:packages/qwik-city"
   dependencies:
     "@builder.io/qwik": "npm:^1.18.0"
-    "@builder.io/qwik-city": "npm:^1.17.1"
+    "@builder.io/qwik-city": "npm:^1.18.0"
     hono: "npm:^4.11.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
   peerDependencies:
     "@builder.io/qwik": ^1.18.0
-    "@builder.io/qwik-city": ^1.17.1
+    "@builder.io/qwik-city": ^1.18.0
     hono: ^3.1.5
   languageName: unknown
   linkType: soft
