@@ -1,5 +1,5 @@
 ---
-'@hono/eslint-config': minor
+'@hono/eslint-config': patch
 ---
 
 enable curly rule explicitly
