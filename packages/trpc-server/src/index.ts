@@ -40,7 +40,7 @@ export const trpcServer = ({
       }
     }
 
-    const res = fetchRequestHandler({
+    const res = await fetchRequestHandler({
       ...rest,
       createContext: async (opts) => ({
         ...(createContext ? await createContext(opts, c) : {}),
@@ -58,10 +58,7 @@ export const trpcServer = ({
               return Reflect.get(t, p, t)
             },
           }),
-    }).then((res) =>
-      // @ts-expect-error c.body accepts both ReadableStream and null but is not typed well
-      c.body(res.body, res)
-    )
+    })
     return res
   }
 }
