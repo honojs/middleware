@@ -116,19 +116,25 @@ describe('tRPC Subscription (SSE)', () => {
       .map((block) => {
         const event: { id?: string; event?: string; data?: string } = {}
         for (const line of block.split('\n')) {
-          if (line.startsWith('id:')) event.id = line.slice(3).trim()
-          else if (line.startsWith('event:')) event.event = line.slice(6).trim()
-          else if (line.startsWith('data:')) event.data = line.slice(5).trim()
+          if (line.startsWith('id:')) {
+            event.id = line.slice(3).trim()
+          } else if (line.startsWith('event:')) {
+            event.event = line.slice(6).trim()
+          } else if (line.startsWith('data:')) {
+            event.data = line.slice(5).trim()
+          }
         }
         return event
       })
 
     // tRPC SSE sends data without event type for subscription data
     // Filter events that have data with count property (actual subscription data)
-    const dataEvents = events.filter((e) => e.data && e.data.includes('"count"'))
+    const dataEvents = events.filter(
+      (e): e is { data: string } => typeof e.data === 'string' && e.data.includes('"count"')
+    )
     expect(dataEvents.length).toBe(4)
 
-    const counts = dataEvents.map((e) => JSON.parse(e.data!).count)
+    const counts = dataEvents.map((e) => (JSON.parse(e.data) as { count: number }).count)
     expect(counts).toEqual([3, 2, 1, 0])
   })
 })
