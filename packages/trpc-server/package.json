@@ -1,6 +1,6 @@
 {
   "name": "@hono/trpc-server",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "tRPC Server Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
