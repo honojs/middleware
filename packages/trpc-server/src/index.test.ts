@@ -79,3 +79,62 @@ describe('tRPC Adapter Middleware', () => {
     expect(await res.json()).toEqual([{ result: { data: 'Hello Explicit' } }])
   })
 })
+
+describe('tRPC Subscription (SSE)', () => {
+  const t = initTRPC.create()
+
+  const appRouter = t.router({
+    countdown: t.procedure.input(z.number()).subscription(async function* ({ input }) {
+      for (let i = input; i >= 0; i--) {
+        yield { count: i }
+      }
+    }),
+  })
+
+  const app = new Hono()
+  app.use('/trpc/*', trpcServer({ router: appRouter }))
+
+  it('Should stream SSE subscription data', async () => {
+    const searchParams = new URLSearchParams({
+      input: JSON.stringify(3),
+    })
+    const res = await app.request(`/trpc/countdown?${searchParams.toString()}`, {
+      headers: {
+        Accept: 'text/event-stream',
+      },
+    })
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/event-stream')
+
+    const text = await res.text()
+
+    // Parse SSE events from text
+    const events = text
+      .split('\n\n')
+      .filter((e) => e.trim())
+      .map((block) => {
+        const event: { id?: string; event?: string; data?: string } = {}
+        for (const line of block.split('\n')) {
+          if (line.startsWith('id:')) {
+            event.id = line.slice(3).trim()
+          } else if (line.startsWith('event:')) {
+            event.event = line.slice(6).trim()
+          } else if (line.startsWith('data:')) {
+            event.data = line.slice(5).trim()
+          }
+        }
+        return event
+      })
+
+    // tRPC SSE sends data without event type for subscription data
+    // Filter events that have data with count property (actual subscription data)
+    const dataEvents = events.filter(
+      (e): e is { data: string } => typeof e.data === 'string' && e.data.includes('"count"')
+    )
+    expect(dataEvents.length).toBe(4)
+
+    const counts = dataEvents.map((e) => (JSON.parse(e.data) as { count: number }).count)
+    expect(counts).toEqual([3, 2, 1, 0])
+  })
+})

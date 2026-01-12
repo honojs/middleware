@@ -4,6 +4,11 @@
       "count": 1
     }
   },
+  "src/index.test.ts": {
+    "@typescript-eslint/require-await": {
+      "count": 1
+    }
+  },
   "src/index.ts": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
