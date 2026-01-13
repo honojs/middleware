@@ -46,6 +46,7 @@
     "hono": ">=3.9.0"
   },
   "devDependencies": {
+    "@standard-schema/spec": "1.1.0",
     "arktype": "^2.1.29",
     "hono": "^4.11.3",
     "tsdown": "^0.15.9",
