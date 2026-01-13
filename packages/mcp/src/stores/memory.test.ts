@@ -377,49 +377,59 @@ describe('MemoryEventStore', () => {
   })
 
   describe('integration tests', () => {
-    // it('should handle complex scenario with multiple streams and replays', async () => {
-    //   const msg1: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg1' }
-    //   const msg2: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg2' }
-    //   const msg3: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg3' }
-    //   const msg4: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg4' }
-    //   const id1 = await store.storeEvent('stream-1', msg1)
-    //   await store.storeEvent('stream-1', msg2)
-    //   const id3 = await store.storeEvent('stream-2', msg3)
-    //   await store.storeEvent('stream-2', msg4)
-    //   const sentEventsStream1: JSONRPCMessage[] = []
-    //   const sender1 = {
-    //     send: async (_id: string, message: JSONRPCMessage) => {
-    //       sentEventsStream1.push(message)
-    //     },
-    //   }
-    //   await store.replayEventsAfter(id1, sender1)
-    //   expect(sentEventsStream1).toEqual([msg2])
-    //   const sentEventsStream2: JSONRPCMessage[] = []
-    //   const sender2 = {
-    //     send: async (_id: string, message: JSONRPCMessage) => {
-    //       sentEventsStream2.push(message)
-    //     },
-    //   }
-    //   await store.replayEventsAfter(id3, sender2)
-    //   expect(sentEventsStream2).toEqual([msg4])
-    // })
+    it('should handle complex scenario with multiple streams and replays', async () => {
+      const msg1: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg1' }
+      const msg2: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg2' }
+      const msg3: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg3' }
+      const msg4: JSONRPCMessage = { jsonrpc: '2.0', method: 'msg4' }
+
+      const id1 = await store.storeEvent('stream-1', msg1)
+      await store.storeEvent('stream-1', msg2)
+      const id3 = await store.storeEvent('stream-2', msg3)
+      await store.storeEvent('stream-2', msg4)
+
+      const sentEventsStream1: JSONRPCMessage[] = []
+      const sender1 = {
+        send: async (_id: string, message: JSONRPCMessage) => {
+          sentEventsStream1.push(message)
+        },
+      }
+
+      await store.replayEventsAfter(id1, sender1)
+      expect(sentEventsStream1).toEqual([msg2])
+
+      const sentEventsStream2: JSONRPCMessage[] = []
+      const sender2 = {
+        send: async (_id: string, message: JSONRPCMessage) => {
+          sentEventsStream2.push(message)
+        },
+      }
+
+      await store.replayEventsAfter(id3, sender2)
+      expect(sentEventsStream2).toEqual([msg4])
+    })
+
     // it('should maintain event order correctly', async () => {
     //   const messages: JSONRPCMessage[] = []
     //   for (let i = 0; i < 10; i++) {
     //     messages.push({ jsonrpc: '2.0', method: `test${i}` })
     //   }
+
     //   const eventIds: string[] = []
     //   for (const msg of messages) {
     //     const id = await store.storeEvent('stream-1', msg)
     //     eventIds.push(id)
     //   }
+
     //   const sentEvents: JSONRPCMessage[] = []
     //   const sender = {
     //     send: async (_id: string, message: JSONRPCMessage) => {
     //       sentEvents.push(message)
     //     },
     //   }
+
     //   await store.replayEventsAfter(eventIds[4], sender)
+
     //   expect(sentEvents).toEqual(messages.slice(5))
     // })
   })
