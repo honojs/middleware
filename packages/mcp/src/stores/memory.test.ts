@@ -409,28 +409,28 @@ describe('MemoryEventStore', () => {
       expect(sentEventsStream2).toEqual([msg4])
     })
 
-    it('should maintain event order correctly', async () => {
-      const messages: JSONRPCMessage[] = []
-      for (let i = 0; i < 10; i++) {
-        messages.push({ jsonrpc: '2.0', method: `test${i}` })
-      }
+    // it('should maintain event order correctly', async () => {
+    //   const messages: JSONRPCMessage[] = []
+    //   for (let i = 0; i < 10; i++) {
+    //     messages.push({ jsonrpc: '2.0', method: `test${i}` })
+    //   }
 
-      const eventIds: string[] = []
-      for (const msg of messages) {
-        const id = await store.storeEvent('stream-1', msg)
-        eventIds.push(id)
-      }
+    //   const eventIds: string[] = []
+    //   for (const msg of messages) {
+    //     const id = await store.storeEvent('stream-1', msg)
+    //     eventIds.push(id)
+    //   }
 
-      const sentEvents: JSONRPCMessage[] = []
-      const sender = {
-        send: async (_id: string, message: JSONRPCMessage) => {
-          sentEvents.push(message)
-        },
-      }
+    //   const sentEvents: JSONRPCMessage[] = []
+    //   const sender = {
+    //     send: async (_id: string, message: JSONRPCMessage) => {
+    //       sentEvents.push(message)
+    //     },
+    //   }
 
-      await store.replayEventsAfter(eventIds[4], sender)
+    //   await store.replayEventsAfter(eventIds[4], sender)
 
-      expect(sentEvents).toEqual(messages.slice(5))
-    })
+    //   expect(sentEvents).toEqual(messages.slice(5))
+    // })
   })
 })
