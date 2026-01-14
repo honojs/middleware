@@ -15,10 +15,10 @@ export type ClerkAuthVariables = {
   clerkAuth: GetAuthFnNoRequest
 }
 
-export const getAuth: GetAuthFn<Context> = (c: Context) => {
+export const getAuth: GetAuthFn<Context> = ((c: Context, options?: AuthOptions) => {
   const authFn = c.get('clerkAuth')
-  return authFn()
-}
+  return authFn(options)
+}) as GetAuthFn<Context>
 
 type ClerkEnv = {
   CLERK_SECRET_KEY: string
@@ -77,7 +77,7 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
 
     const authObjectFn = ((options?: AuthOptions) =>
       getAuthObjectForAcceptedToken({
-        authObject: authObjectFn(options),
+        authObject: requestState.toAuth(options),
         acceptsToken: 'any',
       })) as GetAuthFnNoRequest
 

@@ -6,6 +6,15 @@ const EnvVariables = {
   CLERK_PUBLISHABLE_KEY: 'TEST_API_KEY',
 }
 
+const createMockSessionAuth = () => ({
+  tokenType: 'session_token' as const,
+  userId: 'user_123',
+  sessionId: 'sess_456',
+  orgId: null,
+  orgRole: null,
+  orgSlug: null,
+})
+
 const authenticateRequestMock = vi.fn()
 
 vi.mock(import('@clerk/backend'), async (importOriginal) => {
@@ -31,7 +40,7 @@ describe('clerkMiddleware()', () => {
   test('handles signin with Authorization Bearer', async () => {
     authenticateRequestMock.mockResolvedValueOnce({
       headers: new Headers(),
-      toAuth: () => 'mockedAuth',
+      toAuth: createMockSessionAuth,
     })
     const app = new Hono()
     app.use('*', clerkMiddleware())
@@ -57,7 +66,7 @@ describe('clerkMiddleware()', () => {
     const response = await app.request(req)
 
     expect(response.status).toEqual(200)
-    expect(await response.json()).toEqual({ auth: 'mockedAuth' })
+    expect(await response.json()).toEqual({ auth: createMockSessionAuth() })
     expect(authenticateRequestMock).toHaveBeenCalledWith(
       expect.any(Request),
       expect.objectContaining({
@@ -69,7 +78,7 @@ describe('clerkMiddleware()', () => {
   test('handles signin with cookie', async () => {
     authenticateRequestMock.mockResolvedValueOnce({
       headers: new Headers(),
-      toAuth: () => 'mockedAuth',
+      toAuth: createMockSessionAuth,
     })
     const app = new Hono()
     app.use('*', clerkMiddleware())
@@ -95,7 +104,7 @@ describe('clerkMiddleware()', () => {
     const response = await app.request(req)
 
     expect(response.status).toEqual(200)
-    expect(await response.json()).toEqual({ auth: 'mockedAuth' })
+    expect(await response.json()).toEqual({ auth: createMockSessionAuth() })
     expect(authenticateRequestMock).toHaveBeenCalledWith(
       expect.any(Request),
       expect.objectContaining({
@@ -115,7 +124,7 @@ describe('clerkMiddleware()', () => {
         'x-clerk-auth-reason': 'auth-reason',
         'x-clerk-auth-status': 'handshake',
       }),
-      toAuth: () => 'mockedAuth',
+      toAuth: createMockSessionAuth,
     })
     const app = new Hono()
     app.use('*', clerkMiddleware())
@@ -145,7 +154,7 @@ describe('clerkMiddleware()', () => {
   test('handles signout case by populating the req.auth', async () => {
     authenticateRequestMock.mockResolvedValueOnce({
       headers: new Headers(),
-      toAuth: () => 'mockedAuth',
+      toAuth: createMockSessionAuth,
     })
     const app = new Hono()
     app.use('*', clerkMiddleware())
@@ -164,12 +173,102 @@ describe('clerkMiddleware()', () => {
     const response = await app.request(req)
 
     expect(response.status).toEqual(200)
-    expect(await response.json()).toEqual({ auth: 'mockedAuth' })
+    expect(await response.json()).toEqual({ auth: createMockSessionAuth() })
     expect(authenticateRequestMock).toHaveBeenCalledWith(
       expect.any(Request),
       expect.objectContaining({
         secretKey: EnvVariables.CLERK_SECRET_KEY,
       })
     )
+  })
+
+
+
+  describe('Machine Auth', () => {
+    test('handles machine auth with api_key using acceptsToken as string', async () => {
+      authenticateRequestMock.mockResolvedValueOnce({
+        headers: new Headers(),
+        toAuth: () => ({
+          tokenType: 'api_key',
+          id: 'ak_1234',
+          userId: 'user_456',
+          orgId: null,
+        }),
+      })
+      const app = new Hono()
+      app.use('*', clerkMiddleware())
+
+      app.get('/', (ctx) => {
+        const auth = getAuth(ctx, { acceptsToken: 'api_key' })
+        return ctx.json({ auth })
+      })
+
+      const req = new Request('http://localhost/', {
+        headers: {
+          Authorization: 'Bearer ak_deadbeef',
+        },
+      })
+
+      const response = await app.request(req)
+
+      expect(response.status).toEqual(200)
+      expect(await response.json()).toEqual({
+        auth: {
+          tokenType: 'api_key',
+          id: 'ak_1234',
+          userId: 'user_456',
+          orgId: null,
+        },
+      })
+      expect(authenticateRequestMock).toHaveBeenCalledWith(
+        expect.any(Request),
+        expect.objectContaining({
+          secretKey: EnvVariables.CLERK_SECRET_KEY,
+        })
+      )
+    })
+
+    test('handles machine auth with api_key using acceptsToken as array', async () => {
+      authenticateRequestMock.mockResolvedValueOnce({
+        headers: new Headers(),
+        toAuth: () => ({
+          tokenType: 'api_key',
+          id: 'ak_5678',
+          userId: 'user_789',
+          orgId: null,
+        }),
+      })
+      const app = new Hono()
+      app.use('*', clerkMiddleware())
+
+      app.get('/', (ctx) => {
+        const auth = getAuth(ctx, { acceptsToken: ['api_key', 'session_token'] })
+        return ctx.json({ auth })
+      })
+
+      const req = new Request('http://localhost/', {
+        headers: {
+          Authorization: 'Bearer ak_deadbeef',
+        },
+      })
+
+      const response = await app.request(req)
+
+      expect(response.status).toEqual(200)
+      expect(await response.json()).toEqual({
+        auth: {
+          tokenType: 'api_key',
+          id: 'ak_5678',
+          userId: 'user_789',
+          orgId: null,
+        },
+      })
+      expect(authenticateRequestMock).toHaveBeenCalledWith(
+        expect.any(Request),
+        expect.objectContaining({
+          secretKey: EnvVariables.CLERK_SECRET_KEY,
+        })
+      )
+    })
   })
 })
