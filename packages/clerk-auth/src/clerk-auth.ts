@@ -1,5 +1,5 @@
 import { createClerkClient } from '@clerk/backend'
-import type { ClerkClient } from '@clerk/backend'
+import type { AuthObject, ClerkClient } from '@clerk/backend'
 import type {
   AuthenticateRequestOptions,
   AuthOptions,
@@ -77,7 +77,7 @@ export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHan
 
     const authObjectFn = ((options?: AuthOptions) =>
       getAuthObjectForAcceptedToken({
-        authObject: requestState.toAuth(options),
+        authObject: requestState.toAuth(options) as AuthObject,
         acceptsToken: 'any',
       })) as GetAuthFnNoRequest
 
