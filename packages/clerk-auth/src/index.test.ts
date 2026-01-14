@@ -182,8 +182,6 @@ describe('clerkMiddleware()', () => {
     )
   })
 
-
-
   describe('Machine Auth', () => {
     test('handles machine auth with api_key using acceptsToken as string', async () => {
       authenticateRequestMock.mockResolvedValueOnce({
