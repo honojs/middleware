@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.build.json",
   "compilerOptions": {
-    "types": ["node", "bun"]
+    "lib": [],
+    "types": ["bun"]
   },
   "references": []
 }
