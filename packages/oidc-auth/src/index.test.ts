@@ -109,6 +109,17 @@ const MOCK_JWT_INVALID_ALGORITHM = jwt.sign(
   null,
   { algorithm: 'none', expiresIn: '1h' }
 )
+const MOCK_JWT_HS384_SESSION = jwt.sign(
+  {
+    sub: MOCK_SUBJECT,
+    email: MOCK_EMAIL,
+    rtk: 'DUMMY_REFRESH_TOKEN',
+    rtkexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+    ssnexp: Math.floor(Date.now() / 1000) + 10 * 60, // 10 minutes
+  },
+  MOCK_AUTH_SECRET,
+  { algorithm: 'HS384', expiresIn: '1h' }
+)
 vi.mock(import('oauth4webapi'), async (importOriginal) => {
   const original = await importOriginal()
 
@@ -198,6 +209,7 @@ beforeEach(() => {
   delete process.env.OIDC_COOKIE_DOMAIN
   delete process.env.OIDC_AUDIENCE
   delete process.env.OIDC_AUTH_EXTERNAL_URL
+  delete process.env.OIDC_JWT_ALG
 })
 describe('oidcAuthMiddleware()', () => {
   test('Should respond with 200 OK if session is active', async () => {
@@ -427,6 +439,27 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res).not.toBeNull()
     expect(res.status).toBe(500)
+  })
+  test('Should use HS256 as default algorithm when OIDC_JWT_ALG is not set', async () => {
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_ACTIVE_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(`Hello ${MOCK_EMAIL}! Refresh token: DUMMY_REFRESH_TOKEN`)
+  })
+  test('Should respond with 200 OK when OIDC_JWT_ALG is HS384 and session uses HS384', async () => {
+    process.env.OIDC_JWT_ALG = 'HS384'
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_HS384_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(`Hello ${MOCK_EMAIL}! Refresh token: DUMMY_REFRESH_TOKEN`)
   })
 })
 describe('processOAuthCallback()', () => {
