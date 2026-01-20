@@ -1,6 +1,6 @@
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js'
-import { createClientTransport, createProxy } from './proxy'
+import { createHttpProxy, createStdioProxy } from './proxy'
 
 /**
  * Mock Transport implementation for testing proxy wiring
@@ -69,23 +69,12 @@ const TEST_MESSAGE: JSONRPCMessage = {
   id: 'test-1',
 }
 
-describe('createClientTransport', () => {
-  it('should throw error for unsupported transport type', () => {
-    expect(() =>
-      createClientTransport({
-        type: 'unsupported' as 'stdio',
-        command: 'test',
-      })
-    ).toThrow('[proxy]: Unsupported transport type')
-  })
-})
-
-describe('createProxy', () => {
+describe('createHttpProxy', () => {
   describe('message forwarding', () => {
     it('should forward messages from proxy to MCP transport', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -103,7 +92,7 @@ describe('createProxy', () => {
     it('should forward messages from MCP transport to proxy', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -128,11 +117,11 @@ describe('createProxy', () => {
   })
 
   describe('onMessage callback', () => {
-    it('should call onMessage with type "proxy" for messages from proxy transport', async () => {
+    it('should call onMessage with type "proxy" for messages from proxy transport', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; message: JSONRPCMessage }[] = []
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -148,11 +137,11 @@ describe('createProxy', () => {
       expect(onMessagePayloads[0].message).toEqual(TEST_MESSAGE)
     })
 
-    it('should call onMessage with type "mcp" for messages from MCP transport', async () => {
+    it('should call onMessage with type "mcp" for messages from MCP transport', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; message: JSONRPCMessage }[] = []
 
-      createProxy({
+      createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -168,11 +157,11 @@ describe('createProxy', () => {
       expect(onMessagePayloads[0].message).toEqual(TEST_MESSAGE)
     })
 
-    it('should include sessionId in proxy message payload', async () => {
+    it('should include sessionId in proxy message payload', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; sessionId?: string; message: JSONRPCMessage }[] = []
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -202,7 +191,7 @@ describe('createProxy', () => {
 
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -225,7 +214,7 @@ describe('createProxy', () => {
       const mockMcpTransport = createMockTransport()
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -257,7 +246,7 @@ describe('createProxy', () => {
       const mockMcpTransport = createMockTransport()
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -287,7 +276,7 @@ describe('createProxy', () => {
     it('should close proxy transport when MCP transport closes', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -311,7 +300,7 @@ describe('createProxy', () => {
     it('should close MCP transport when proxy transport closes', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -328,7 +317,7 @@ describe('createProxy', () => {
     it('should prevent double-close infinite loop', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -354,7 +343,7 @@ describe('createProxy', () => {
     it('should prevent double-close when proxy closes first', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -381,7 +370,7 @@ describe('createProxy', () => {
     it('should use provided transport when type is "transport"', () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -394,7 +383,7 @@ describe('createProxy', () => {
     it('should use provided transport when type is undefined', () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxy({
+      const proxyTransport = createHttpProxy({
         transport: mockMcpTransport,
       })
 
@@ -402,5 +391,12 @@ describe('createProxy', () => {
       expect(proxyTransport).toBeDefined()
       expect(proxyTransport.onmessage).toBeDefined()
     })
+  })
+})
+
+describe('createStdioProxy', () => {
+  it('should be an async function', () => {
+    // Verify createStdioProxy returns a Promise
+    expect(createStdioProxy.constructor.name).toBe('AsyncFunction')
   })
 })

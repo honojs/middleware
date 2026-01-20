@@ -1,37 +1,49 @@
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import type { StreamableHTTPServerTransportOptions } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
+import type { WebStandardStreamableHTTPServerTransportOptions } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js'
 import { StreamableHTTPTransport } from './streamable-http'
 
-type onMessagePayload = {
+type OnMessagePayload = {
   type: 'mcp' | 'proxy'
   sessionId?: string
   message: JSONRPCMessage
 }
 
-type onErrorPayload = {
+type OnErrorPayload = {
   type: 'mcp' | 'proxy'
   error: unknown
 }
 
-export type ProxyMCPOptions = (
-  | CreateClientTransportOptions
-  | { type?: 'transport'; transport: Transport }
-) & {
-  onMessage?: (payload: onMessagePayload) => void
-  onError?: (payload: onErrorPayload) => void
-  proxyTransportOptions?: StreamableHTTPServerTransportOptions
+// Base options shared by both proxies
+type BaseProxyOptions = {
+  onMessage?: (payload: OnMessagePayload) => void
+  onError?: (payload: OnErrorPayload) => void
+  proxyTransportOptions?:
+    | StreamableHTTPServerTransportOptions
+    | WebStandardStreamableHTTPServerTransportOptions
 }
 
-export function createProxy(options: ProxyMCPOptions): StreamableHTTPTransport {
-  const mcpTransport =
-    options.type == null || options.type === 'transport'
-      ? options.transport
-      : createClientTransport(options as CreateClientTransportOptions)
-  const proxyTransport = new StreamableHTTPTransport(options.proxyTransportOptions)
+// HTTP proxy options
+export type HttpProxyOptions = BaseProxyOptions &
+  ({ type: 'streamable-http'; url: string } | { type?: 'transport'; transport: Transport })
 
+// Stdio proxy options (Node.js only)
+export type StdioProxyOptions = BaseProxyOptions & {
+  command: string
+  args?: string[]
+  env?: Record<string, string>
+}
+
+/**
+ * Internal helper to wire two transports together for bidirectional message forwarding
+ */
+function wireTransports(
+  mcpTransport: Transport,
+  proxyTransport: StreamableHTTPTransport,
+  options: BaseProxyOptions
+): void {
   function onProxyError(error: unknown) {
     options.onError?.({
       type: 'proxy',
@@ -86,41 +98,43 @@ export function createProxy(options: ProxyMCPOptions): StreamableHTTPTransport {
 
   proxyTransport.onerror = onProxyError
   mcpTransport.onerror = onMCPError
+}
 
+/**
+ * Creates an HTTP proxy that forwards messages between an HTTP-based MCP transport
+ * and a StreamableHTTPTransport. This function is synchronous and cross-runtime compatible.
+ *
+ * @param options - Configuration for the HTTP proxy
+ * @returns A StreamableHTTPTransport that acts as a proxy
+ */
+export function createHttpProxy(options: HttpProxyOptions): StreamableHTTPTransport {
+  const mcpTransport =
+    options.type === 'streamable-http'
+      ? new StreamableHTTPClientTransport(new URL(options.url))
+      : options.transport
+
+  const proxyTransport = new StreamableHTTPTransport(options.proxyTransportOptions)
+  wireTransports(mcpTransport, proxyTransport, options)
   return proxyTransport
 }
 
-export type CreateClientTransportOptions =
-  | {
-      type: 'stdio'
-      command: string
-      args?: string[]
-      env?: Record<string, string>
-    }
-  | {
-      type: 'streamable-http'
-      url: string
-    }
+/**
+ * Creates a stdio proxy that forwards messages between a stdio-based MCP transport
+ * and a StreamableHTTPTransport. This function is async and Node.js only.
+ *
+ * @param options - Configuration for the stdio proxy
+ * @returns A Promise that resolves to a StreamableHTTPTransport that acts as a proxy
+ */
+export async function createStdioProxy(options: StdioProxyOptions): Promise<StreamableHTTPTransport> {
+  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js')
+  const mcpTransport = new StdioClientTransport({
+    command: options.command,
+    args: options.args,
+    env: options.env,
+    stderr: 'pipe',
+  })
 
-export function createClientTransport(
-  options: CreateClientTransportOptions
-): StdioClientTransport | StreamableHTTPClientTransport {
-  let mcpTransport = undefined
-
-  if (options.type === 'stdio') {
-    mcpTransport = new StdioClientTransport({
-      command: options.command,
-      args: options.args,
-      env: options.env,
-      stderr: 'pipe',
-    })
-  } else if (options.type === 'streamable-http') {
-    mcpTransport = new StreamableHTTPClientTransport(new URL(options.url))
-  }
-
-  if (!mcpTransport) {
-    throw new Error('[proxy]: Unsupported transport type')
-  }
-
-  return mcpTransport
+  const proxyTransport = new StreamableHTTPTransport(options.proxyTransportOptions)
+  wireTransports(mcpTransport, proxyTransport, options)
+  return proxyTransport
 }
