@@ -255,7 +255,9 @@ export const Consumer = {
       } catch (error) {
         if (opts?.onError) {
           const result = opts.onError(c, error as Error)
-          if (result) return result
+          if (result) {
+            return result
+          }
         }
         throw new HTTPException(401, { message: 'Unauthenticated' })
       }
@@ -285,7 +287,9 @@ export const Consumer = {
       } catch (error) {
         if (opts?.onError) {
           const result = opts.onError(c, error as Error)
-          if (result) return result
+          if (result) {
+            return result
+          }
         }
         throw new HTTPException(401, { message: 'Unauthenticated' })
       }
@@ -402,7 +406,9 @@ export const B2B = {
       } catch (error) {
         if (opts?.onError) {
           const result = opts.onError(c, error as Error)
-          if (result) return result
+          if (result) {
+            return result
+          }
         }
         throw new HTTPException(401, { message: 'Unauthenticated' })
       }
@@ -433,7 +439,9 @@ export const B2B = {
       } catch (error) {
         if (opts?.onError) {
           const result = opts.onError(c, error as Error)
-          if (result) return result
+          if (result) {
+            return result
+          }
         }
         throw new HTTPException(401, { message: 'Unauthenticated' })
       }

@@ -20,6 +20,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/cache@v5
+        with:
+          path: |
+            .turbo
+            packages/*/.cache
+          key: ${{ runner.os }}-turbo-preview-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-preview-
+            ${{ runner.os }}-turbo-
+              
       - uses: actions/setup-node@v6
         with:
           node-version-file: .tool-versions
@@ -28,7 +38,7 @@ jobs:
         run: yarn
 
       - name: Build
-        run: yarn build
+        run: yarn turbo build
 
       - name: Publish to StackBlitz
         run: yarn pkg-pr-new publish --compact --no-template './packages/*'

@@ -6,8 +6,12 @@ function isObject(x: unknown): x is Record<string, unknown> {
 }
 
 export function isZod(x: unknown): x is ZodTypeV3 | ZodTypeV4 {
-  if (!x) return false
-  if (!isObject(x)) return false
+  if (!x) {
+    return false
+  }
+  if (!isObject(x)) {
+    return false
+  }
   return (
     typeof x.parse === 'function' &&
     typeof x.safeParse === 'function' &&

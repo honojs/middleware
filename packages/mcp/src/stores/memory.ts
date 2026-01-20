@@ -153,7 +153,9 @@ export class RingBuffer<T> {
     for (let i = this.#tail; i < this.#head; i++) {
       const item = this.get(i)
 
-      if (item == null) break
+      if (item == null) {
+        break
+      }
 
       itemsInOrder.push(item)
     }

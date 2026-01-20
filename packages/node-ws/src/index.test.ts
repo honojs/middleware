@@ -4,6 +4,7 @@ import { serve } from '@hono/node-server'
 import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { HTTPException } from 'hono/http-exception'
 import type { WSMessageReceive } from 'hono/ws'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
@@ -311,5 +312,21 @@ describe('WebSocket helper', () => {
 
     expect(clientWs).toBeTruthy()
     expect(wss.clients.size).toBe(1)
+  })
+
+  it('Should allow for custom HTTPException status code', async () => {
+    app.get(
+      '/',
+      upgradeWebSocket(() => {
+        throw new HTTPException(401)
+      })
+    )
+    const ws = new WebSocket('ws://localhost:3030/')
+    await new Promise<void>((resolve) =>
+      ws.on('unexpected-response', (_, response) => {
+        expect(response.statusCode).toEqual(401)
+        resolve()
+      })
+    )
   })
 })

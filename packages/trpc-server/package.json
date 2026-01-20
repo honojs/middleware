@@ -1,6 +1,6 @@
 {
   "name": "@hono/trpc-server",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "tRPC Server Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -45,8 +45,8 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@trpc/server": "^11.7.1",
-    "hono": "^4.11.1",
+    "@trpc/server": "^11.8.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^4.0.16",

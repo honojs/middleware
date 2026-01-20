@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.2.3
+
+### Patch Changes
+
+- [#1659](https://github.com/honojs/middleware/pull/1659) [`1d51a78dd5ae9d0d1ee5202dfc36dbbf5d94b466`](https://github.com/honojs/middleware/commit/1d51a78dd5ae9d0d1ee5202dfc36dbbf5d94b466) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - Updated import for the latest version of mcp sdk
+
 ## 0.2.2
 
 ### Patch Changes

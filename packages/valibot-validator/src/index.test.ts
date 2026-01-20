@@ -48,10 +48,12 @@ describe('Basic', () => {
       }),
       vValidator('json', schema, (result, c) => {
         if (!result.success) {
-          if (!result.typed) return c.text('Invalid data', 400)
-          else
+          if (!result.typed) {
+            return c.text('Invalid data', 400)
+          } else {
             return undefined as unknown as FailedResponse<typeof schema> &
               TypedResponse<{ typed: true }, 400, 'json'>
+          }
         }
       }),
       (c) => {

@@ -1,5 +1,19 @@
 # @hono/eslint-config
 
+## 2.0.5
+
+### Patch Changes
+
+- [#1680](https://github.com/honojs/middleware/pull/1680) [`8e40e64ad151ffdd26764d31ea0ede0c2ad6d28e`](https://github.com/honojs/middleware/commit/8e40e64ad151ffdd26764d31ea0ede0c2ad6d28e) Thanks [@3w36zj6](https://github.com/3w36zj6)! - enable curly rule explicitly
+
+- [#1681](https://github.com/honojs/middleware/pull/1681) [`03a28c5d5c54b6b889d2b8b35d828166b64d92db`](https://github.com/honojs/middleware/commit/03a28c5d5c54b6b889d2b8b35d828166b64d92db) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Allow more types as template expressions
+
+## 2.0.4
+
+### Patch Changes
+
+- [#1675](https://github.com/honojs/middleware/pull/1675) [`98324b4c89c2c2af628ba63ebc4ef00448da4d60`](https://github.com/honojs/middleware/commit/98324b4c89c2c2af628ba63ebc4ef00448da4d60) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Use correct export type
+
 ## 2.0.3
 
 ### Patch Changes

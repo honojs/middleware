@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.2.2
+
+### Patch Changes
+
+- [#1698](https://github.com/honojs/middleware/pull/1698) [`52f0b4c95e87880c4718822b40e83eea2017b5e9`](https://github.com/honojs/middleware/commit/52f0b4c95e87880c4718822b40e83eea2017b5e9) Thanks [@ryuapp](https://github.com/ryuapp)! - fix: update @standard-schema/spec to use ^1.0.0 version range
+
 ## 0.2.1
 
 ### Patch Changes

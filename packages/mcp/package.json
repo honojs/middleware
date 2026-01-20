@@ -1,6 +1,6 @@
 {
   "name": "@hono/mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "MCP Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
@@ -61,8 +61,8 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
     "@modelcontextprotocol/sdk": "^1.25.2",
-    "@types/node": "^24.2.1",
-    "hono": "^4.11.1",
+    "@types/node": "^25.0.3",
+    "hono": "^4.11.3",
     "hono-rate-limiter": "^0.4.2",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",

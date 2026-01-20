@@ -42,7 +42,9 @@ const normalizeConfig = (
 }
 
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
-  if (config.tracer) return config.tracer
+  if (config.tracer) {
+    return config.tracer
+  }
   const provider = config.tracerProvider ?? trace.getTracerProvider()
   return provider.getTracer(INSTRUMENTATION_SCOPE.name, INSTRUMENTATION_SCOPE.version)
 }

@@ -42,11 +42,11 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.0.0",
-    "stytch": "^12.32.0"
+    "stytch": "^12.43.1"
   },
   "devDependencies": {
-    "hono": "^4.11.1",
-    "stytch": "^12.32.0",
+    "hono": "^4.11.3",
+    "stytch": "^12.43.1",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^4.0.16"

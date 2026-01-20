@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.5.3
+
+### Patch Changes
+
+- [#1662](https://github.com/honojs/middleware/pull/1662) [`c30771af4400990af2a30f55d2851a0af4e82206`](https://github.com/honojs/middleware/commit/c30771af4400990af2a30f55d2851a0af4e82206) Thanks [@stefanprobst](https://github.com/stefanprobst)! - serve swagger-ui with `<!doctype html>`
+
 ## 0.5.2
 
 ### Patch Changes

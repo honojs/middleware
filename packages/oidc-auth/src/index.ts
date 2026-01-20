@@ -8,6 +8,7 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
+import type { SignatureAlgorithm } from 'hono/utils/jwt/jwa'
 import * as oauth2 from 'oauth4webapi'
 
 export type IDToken = oauth2.IDToken
@@ -60,6 +61,7 @@ export type OidcAuthEnv = {
   OIDC_COOKIE_DOMAIN?: string
   OIDC_AUDIENCE?: string
   OIDC_AUTH_EXTERNAL_URL?: string
+  OIDC_JWT_ALG?: SignatureAlgorithm
 }
 
 /**
@@ -97,6 +99,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
     OIDC_COOKIE_DOMAIN: config?.OIDC_COOKIE_DOMAIN ?? ev.OIDC_COOKIE_DOMAIN,
     OIDC_AUDIENCE: config?.OIDC_AUDIENCE ?? ev.OIDC_AUDIENCE,
     OIDC_AUTH_EXTERNAL_URL: config?.OIDC_AUTH_EXTERNAL_URL ?? ev.OIDC_AUTH_EXTERNAL_URL,
+    OIDC_JWT_ALG: config?.OIDC_JWT_ALG ?? ev.OIDC_JWT_ALG,
   }
   if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
     throw new HTTPException(500, { message: 'Session secret is not provided' })
@@ -140,6 +143,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
     oidcAuthEnv.OIDC_AUTH_REFRESH_INTERVAL ?? `${defaultRefreshInterval}`
   oidcAuthEnv.OIDC_AUTH_EXPIRES = oidcAuthEnv.OIDC_AUTH_EXPIRES ?? `${defaultExpirationInterval}`
   oidcAuthEnv.OIDC_SCOPES = oidcAuthEnv.OIDC_SCOPES ?? ''
+  oidcAuthEnv.OIDC_JWT_ALG = oidcAuthEnv.OIDC_JWT_ALG ?? 'HS256'
   c.set('oidcAuthEnv', oidcAuthEnv)
 }
 
@@ -201,7 +205,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       return null
     }
     try {
-      auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
+      auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET, env.OIDC_JWT_ALG)) as OidcAuth
     } catch {
       deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
       return null
@@ -273,7 +277,7 @@ const updateAuth = async (
     rtkexp: Math.floor(Date.now() / 1000) + authRefreshInterval,
     ssnexp: orig?.ssnexp || Math.floor(Date.now() / 1000) + authExpires,
   }
-  const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET)
+  const session_jwt = await sign(updated, env.OIDC_AUTH_SECRET, env.OIDC_JWT_ALG)
   const cookieOptions =
     env.OIDC_COOKIE_DOMAIN == null
       ? { path: env.OIDC_COOKIE_PATH, httpOnly: true, secure: true }
@@ -299,7 +303,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
         domain: env.OIDC_COOKIE_DOMAIN,
       })
     }
-    const auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET)) as OidcAuth
+    const auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET, env.OIDC_JWT_ALG)) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
       const as = await getAuthorizationServer(c)

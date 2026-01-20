@@ -47,10 +47,10 @@
   },
   "devDependencies": {
     "@hono/node-server": "^1.19.2",
-    "@hono/node-ws": "^1.2.0",
+    "@hono/node-ws": "workspace:^",
     "@types/ws": "^8.5.0",
     "capnweb": "^0.3.0",
-    "hono": "^4.11.1",
+    "hono": "^4.11.3",
     "publint": "^0.3.16",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",

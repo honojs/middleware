@@ -1,5 +1,12 @@
 # @hono/oidc-auth
 
+## 1.8.0
+
+### Minor Changes
+
+- [#1705](https://github.com/honojs/middleware/pull/1705) [`8831ae19c190a588286ff941cf37f45fd2c89388`](https://github.com/honojs/middleware/commit/8831ae19c190a588286ff941cf37f45fd2c89388) Thanks [@maemaemae3](https://github.com/maemaemae3)! - - Optionally specify a custom algorithm for signing and verifying the session JWT using the `OIDC_JWT_ALG` environment variable.
+  - Fixes issues related to https://github.com/honojs/hono/issues/4625 .
+
 ## 1.7.1
 
 ### Patch Changes

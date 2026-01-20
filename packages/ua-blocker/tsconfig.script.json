@@ -3,7 +3,7 @@
   "compilerOptions": {
     "tsBuildInfoFile": "dist/tsconfig.script.tsbuildinfo",
     "allowImportingTsExtensions": true,
-    "isolatedDeclarations": false,
+    "noUncheckedIndexedAccess": false,
     "noEmit": true,
     "types": ["node"]
   },

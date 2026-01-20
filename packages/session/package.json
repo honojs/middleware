@@ -67,10 +67,10 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
-    "hono": "^4.11.1",
+    "hono": "^4.11.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "unstorage": "^1.17.0",
+    "unstorage": "^1.17.3",
     "vitest": "^4.0.16"
   }
 }

@@ -1,12 +1,16 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
     "format": {
       "outputs": [".cache/.prettiercache"],
       "outputLogs": "new-only"
     },
     "lint": {
-      "outputs": [".cache/.eslintcache"]
+      "outputs": [".cache/.eslintcache", "eslint-suppressions.json"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
