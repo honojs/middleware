@@ -25,7 +25,7 @@ export type ProxyMCPOptions = (
   proxyTransportOptions?: StreamableHTTPServerTransportOptions
 }
 
-export function createProxyMCP(options: ProxyMCPOptions): StreamableHTTPTransport {
+export function createProxy(options: ProxyMCPOptions): StreamableHTTPTransport {
   const mcpTransport =
     options.type == null || options.type === 'transport'
       ? options.transport

@@ -1,6 +1,6 @@
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js'
-import { createClientTransport, createProxyMCP } from './proxy'
+import { createClientTransport, createProxy } from './proxy'
 
 /**
  * Mock Transport implementation for testing proxy wiring
@@ -80,12 +80,12 @@ describe('createClientTransport', () => {
   })
 })
 
-describe('createProxyMCP', () => {
+describe('createProxy', () => {
   describe('message forwarding', () => {
     it('should forward messages from proxy to MCP transport', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -103,7 +103,7 @@ describe('createProxyMCP', () => {
     it('should forward messages from MCP transport to proxy', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -132,7 +132,7 @@ describe('createProxyMCP', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; message: JSONRPCMessage }[] = []
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -152,7 +152,7 @@ describe('createProxyMCP', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; message: JSONRPCMessage }[] = []
 
-      createProxyMCP({
+      createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -172,7 +172,7 @@ describe('createProxyMCP', () => {
       const mockMcpTransport = createMockTransport()
       const onMessagePayloads: { type: string; sessionId?: string; message: JSONRPCMessage }[] = []
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onMessage: (payload) => {
@@ -202,7 +202,7 @@ describe('createProxyMCP', () => {
 
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -225,7 +225,7 @@ describe('createProxyMCP', () => {
       const mockMcpTransport = createMockTransport()
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -257,7 +257,7 @@ describe('createProxyMCP', () => {
       const mockMcpTransport = createMockTransport()
       const onErrorPayloads: { type: string; error: unknown }[] = []
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
         onError: (payload) => {
@@ -287,7 +287,7 @@ describe('createProxyMCP', () => {
     it('should close proxy transport when MCP transport closes', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -311,7 +311,7 @@ describe('createProxyMCP', () => {
     it('should close MCP transport when proxy transport closes', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -328,7 +328,7 @@ describe('createProxyMCP', () => {
     it('should prevent double-close infinite loop', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -354,7 +354,7 @@ describe('createProxyMCP', () => {
     it('should prevent double-close when proxy closes first', async () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -381,7 +381,7 @@ describe('createProxyMCP', () => {
     it('should use provided transport when type is "transport"', () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         type: 'transport',
         transport: mockMcpTransport,
       })
@@ -394,7 +394,7 @@ describe('createProxyMCP', () => {
     it('should use provided transport when type is undefined', () => {
       const mockMcpTransport = createMockTransport()
 
-      const proxyTransport = createProxyMCP({
+      const proxyTransport = createProxy({
         transport: mockMcpTransport,
       })
 
