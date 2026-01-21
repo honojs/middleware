@@ -861,7 +861,7 @@ __metadata:
     "@vitest/runner": 4.0.16
     "@vitest/snapshot": 4.0.16
     vitest: 4.0.16
-  checksum: 10c0/c40589a6aa7e49b1d4af5ee7f93cb6f24e3096b0aee8b9aec5df9cd9589fc547d39217e4d7ff1ba196c617e97876409187fb73859998f0b1829f971c002c6d9a
+  checksum: 10c0/6c826aeb3150a68dc9827bb0bc92c63184d25453f56ca7e8defd6baecfce81f14c681f5e91abdc29f17a14151fe33bb086f0939bf3ced00958d4e12871524386
   languageName: node
   linkType: hard
 
