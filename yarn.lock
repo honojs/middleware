@@ -1914,7 +1914,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/casbin@workspace:packages/casbin"
   dependencies:
-    casbin: "npm:^5.40.0"
+    casbin: "npm:^5.48.0"
     hono: "npm:^4.11.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -6182,16 +6182,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"casbin@npm:^5.40.0":
-  version: 5.40.0
-  resolution: "casbin@npm:5.40.0"
+"casbin@npm:^5.48.0":
+  version: 5.48.0
+  resolution: "casbin@npm:5.48.0"
   dependencies:
     "@casbin/expression-eval": "npm:^5.3.0"
     await-lock: "npm:^2.0.1"
     buffer: "npm:^6.0.3"
     csv-parse: "npm:^5.5.6"
     minimatch: "npm:^7.4.2"
-  checksum: 10c0/41306835c24f035ca40aa0d936d129965c31d59a077bcb56e04e4241e34e3243fd3fa9f763475ca1cc7fbdc41ddc52bce4cfd889c0c6cd5a64f43c8458dbdb44
+  checksum: 10c0/1d855d9c4a59c61a8c5b28ca8ad5ed5dc25f1f7147316cbc9207482853ef51fb3655b08d098f57f2599e79235a67b0daf03d9099b0c9c10dfb5ad8b678e0fb9e
   languageName: node
   linkType: hard
 
