@@ -224,8 +224,6 @@ async function decompressResponse(res: Response): Promise<string> {
   const readableStream = Readable.fromWeb(resBody)
   const decompressedStream = readableStream.pipe(createGunzip())
   const decompressedReadableStream = Readable.toWeb(decompressedStream)
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const decompressedResponse = new Response(decompressedReadableStream as any)
+  const decompressedResponse = new Response(decompressedReadableStream)
   return await decompressedResponse.text()
 }
