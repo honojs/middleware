@@ -45,7 +45,7 @@
     "typebox": "^1.0.49"
   },
   "devDependencies": {
-    "hono": "^4.11.3",
+    "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typebox": "^1.0.49",
     "typescript": "^5.8.2",

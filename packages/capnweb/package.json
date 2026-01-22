@@ -50,7 +50,7 @@
     "@hono/node-ws": "workspace:^",
     "@types/ws": "^8.5.0",
     "capnweb": "^0.3.0",
-    "hono": "^4.11.3",
+    "hono": "^4.11.5",
     "publint": "^0.3.16",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",

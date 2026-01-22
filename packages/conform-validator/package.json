@@ -50,7 +50,7 @@
     "@conform-to/valibot": "^1.15.1",
     "@conform-to/yup": "^1.14.0",
     "@conform-to/zod": "^1.14.0",
-    "hono": "^4.11.3",
+    "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "valibot": "^1.1.0",
