@@ -86,7 +86,7 @@
     "msw": "^2.10.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=18.4.0"
