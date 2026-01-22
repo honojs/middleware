@@ -46,7 +46,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "hono": "^4.11.3",
@@ -54,7 +54,7 @@
     "react-dom": "^19.2.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=18"

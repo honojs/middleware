@@ -54,7 +54,7 @@
     "react": "^19.2.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=16.x.x"
