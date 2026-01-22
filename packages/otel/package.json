@@ -52,7 +52,7 @@
     "@opentelemetry/sdk-metrics": "^2.4.0",
     "@opentelemetry/sdk-trace-base": "^2.4.0",
     "@opentelemetry/sdk-trace-node": "^2.4.0",
-    "hono": "^4.11.3",
+    "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^4.1.0-beta.1"
