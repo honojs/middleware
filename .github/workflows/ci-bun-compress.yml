@@ -1,0 +1,30 @@
+name: ci-bun-compress
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/bun-compress/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/bun-compress/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bun-version: [1.3.2, 1.3.3]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.bun-version }}
+      - run: yarn workspaces focus hono-middleware @hono/bun-compress
+      - run: yarn turbo --filter @hono/bun-compress build
+      - run: bun test packages/bun-compress --coverage --coverage-reporter lcov
+      - uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          flags: bun-compress
