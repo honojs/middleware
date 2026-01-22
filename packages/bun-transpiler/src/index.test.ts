@@ -22,7 +22,7 @@ describe('Bun Transpiler middleware', () => {
   app.get('/bad.ts', (c) => c.text(BAD))
 
   // serve middleware script to test compliance with serveStatic
-  app.get('/index.ts', serveStatic({ root: './src' }))
+  app.get('/index.ts', serveStatic({ root: import.meta.dirname }))
 
   it('Should ignore non typescript content paths', async () => {
     const res = await app.request(`${HOST}/script.js`)
