@@ -583,6 +583,7 @@ describe('Casbin Middleware Tests', () => {
       '*',
       jwt({
         secret: 'secret',
+        alg: 'HS256',
       }),
       casbin({ newEnforcer: enforcer, authorizer: jwtAuthorizer })
     )
