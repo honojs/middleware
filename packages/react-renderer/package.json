@@ -46,7 +46,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
+    "@cloudflare/vitest-pool-workers": "^0.12.6",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "hono": "^4.11.3",

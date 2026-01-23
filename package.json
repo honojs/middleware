@@ -37,7 +37,7 @@
     "@arethetypeswrong/core": "^0.18.2",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.29.7",
-    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@11632",
+    "@cloudflare/vitest-pool-workers": "^0.12.6",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
     "@ryoppippi/unplugin-typia": "^2.6.5",
