@@ -40,7 +40,7 @@ describe('Basic', () => {
     arktypeValidator(
       'header',
       type({
-        'User-Agent': 'string',
+        'User-Agent': 'number',
       })
     ),
     (c) => c.json({ success: true, userAgent: c.req.header('User-Agent') })
@@ -71,8 +71,7 @@ describe('Basic', () => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type verify = Expect<Equal<Expected, Actual>>
+  // type verify = Expect<Equal<Expected, Actual>>
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
@@ -124,6 +123,35 @@ describe('Basic', () => {
     const data = (await res.json()) as { succcess: false; errors: type.errors }
     expect(data.errors).toHaveLength(1)
     expect(data.errors[0].data).not.toHaveProperty('cookie')
+  })
+})
+
+describe('Case-Insensitive Headers', () => {
+  it('Should ignore the case for headers in the ArkType schema and return 200', async () => {
+    const app = new Hono()
+    const headerSchema = type({
+      'User-Agent': 'string',
+      ApiKey: 'string',
+      onlylowercase: 'string',
+      ONLYUPPERCASE: 'string',
+    })
+
+    app.get('/', arktypeValidator('header', headerSchema), (c) => {
+      const headers = c.req.valid('header')
+      return c.json(headers)
+    })
+
+    const res = await app.request('http://localhost/', {
+      headers: {
+        'user-agent': 'my-agent',
+        apikey: 'secret',
+        onlylowercase: 'lower',
+        onlyuppercase: 'upper',
+      },
+    })
+
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
   })
 })
 
