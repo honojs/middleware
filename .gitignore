@@ -27,3 +27,6 @@ settings.local.json
 
 # Code editor
 .zed
+
+# MacOS
+.DS_Store
