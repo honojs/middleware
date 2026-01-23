@@ -91,7 +91,14 @@ const config = [
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-var-requires': 'off',
-      
+
+      '@typescript-eslint/no-base-to-string': [
+        'error',
+        {
+          ignoredTypeNames: ['Error', 'RegExp', 'URL', 'URLSearchParams'],
+        },
+      ],
+
       '@typescript-eslint/restrict-template-expressions': [
         'error',
         {
