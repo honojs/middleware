@@ -76,9 +76,6 @@
     }
   },
   "src/auth/middleware/client-auth.ts": {
-    "@typescript-eslint/no-base-to-string": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 1
     }

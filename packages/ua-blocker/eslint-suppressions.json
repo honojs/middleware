@@ -4,6 +4,11 @@
       "count": 1
     }
   },
+  "src/ai-bots.test.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    }
+  },
   "src/ai-bots.ts": {
     "@typescript-eslint/require-await": {
       "count": 1

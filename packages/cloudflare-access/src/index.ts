@@ -55,7 +55,7 @@ export const cloudflareAccess = (accessTeamName: string): MiddlewareHandler => {
     let token
     try {
       token = decodeJwt(encodedToken)
-    } catch (err) {
+    } catch {
       return c.text('Authentication error: Unable to decode Bearer token', 401)
     }
 
@@ -108,7 +108,7 @@ async function getPublicKeys(accessTeamName: string) {
     })
   }
 
-  const data: any = await result.json()
+  const data = await result.json<{ keys: JsonWebKeyWithKid[] }>()
 
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
   const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
@@ -142,20 +142,16 @@ function getJwt(c: Context) {
 }
 
 function decodeJwt(token: string): DecodedToken {
-  const parts = token.split('.')
-  if (parts.length !== 3) {
+  const [header, payload, signature] = token.split('.')
+  if (!header || !payload || !signature) {
     throw new Error('Invalid token')
   }
 
-  const header = JSON.parse(atob(parts[0] as string))
-  const payload = JSON.parse(atob(parts[1] as string))
-  const signature = atob((parts[2] as string).replace(/_/g, '/').replace(/-/g, '+'))
-
   return {
-    header: header,
-    payload: payload,
-    signature: signature,
-    raw: { header: parts[0], payload: parts[1], signature: parts[2] },
+    header: JSON.parse(atob(header)) as object,
+    payload: JSON.parse(atob(payload)) as CloudflareAccessPayload,
+    signature: atob(signature.replace(/_/g, '/').replace(/-/g, '+')),
+    raw: { header, payload, signature },
   }
 }
 
@@ -178,8 +174,8 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
 async function validateSingleKey(
   key: CryptoKey,
-  signature: Uint8Array,
-  data: Uint8Array
+  signature: BufferSource,
+  data: BufferSource
 ): Promise<boolean> {
   return crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, data)
 }

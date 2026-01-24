@@ -17,6 +17,9 @@
     "@typescript-eslint/await-thenable": {
       "count": 1
     },
+    "@typescript-eslint/no-unnecessary-type-conversion": {
+      "count": 1
+    },
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 6
     }
