@@ -1,5 +1,12 @@
 # @hono/eslint-config
 
+## 2.0.6
+
+### Patch Changes
+
+- [#1715](https://github.com/honojs/middleware/pull/1715) [`f64569eef7dd624b85b52c4a5f75b7cc4e4da3d9`](https://github.com/honojs/middleware/commit/f64569eef7dd624b85b52c4a5f75b7cc4e4da3d9) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Make `@typescript-eslint/no-base-to-string` less strict,
+  allowing `toString()` to be used with `["Error","RegExp","URL","URLSearchParams"]`
+
 ## 2.0.5
 
 ### Patch Changes
