@@ -47,6 +47,6 @@
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.1.0-beta.1"
+    "vitest": "^4.1.0-beta.2"
   }
 }
