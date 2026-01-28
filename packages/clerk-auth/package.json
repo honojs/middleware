@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/react": "^19",
     "hono": "^4.11.5",
-    "react": "^19.2.3",
+    "react": "^19.2.4",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
     "vitest": "^4.1.0-beta.1"
