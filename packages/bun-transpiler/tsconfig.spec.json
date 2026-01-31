@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
     "outDir": "../../dist/packages/bun-transpiler",
     "types": ["vitest/globals"]
   },

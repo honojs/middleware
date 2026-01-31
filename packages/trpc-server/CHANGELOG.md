@@ -1,5 +1,11 @@
 # @hono/trpc-server
 
+## 0.4.2
+
+### Patch Changes
+
+- [`1bdba5477b7cc697fecabd4beb394c6907bd03af`](https://github.com/honojs/middleware/commit/1bdba5477b7cc697fecabd4beb394c6907bd03af) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: return response directly
+
 ## 0.4.1
 
 ### Patch Changes

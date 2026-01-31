@@ -1,6 +1,6 @@
 {
   "name": "@hono/clerk-auth",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "A third-party Clerk auth middleware for Hono",
   "type": "module",
   "main": "dist/index.cjs",
@@ -42,19 +42,19 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "dependencies": {
-    "@clerk/backend": "^2.4.1",
-    "@clerk/types": "^4.64.0"
+    "@clerk/backend": "^2.29.2",
+    "@clerk/shared": "^3.42.0"
   },
   "peerDependencies": {
     "hono": ">=3.0.0"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "hono": "^4.11.1",
-    "react": "^19.2.3",
+    "hono": "^4.11.5",
+    "react": "^19.2.4",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=16.x.x"

@@ -60,7 +60,10 @@ function $escape(S: string): string {
     if (i === 0 && FIRST_DIGIT_OR_ASCII.exec(chr)) {
       result[i] = _escapeChar(chr)
     } else if (Object.prototype.hasOwnProperty.call(ControlEscape, chr)) {
-      result[i] = '\\' + ControlEscape[chr]
+      const escaped = ControlEscape[chr]
+      if (escaped) {
+        result[i] = '\\' + escaped
+      }
     } else if (SYNTAX_SOLIDUS.exec(chr)) {
       result[i] = '\\' + chr
     } else if (OTHER_PUNCTUATORS_AND_WHITESPACES.exec(chr)) {

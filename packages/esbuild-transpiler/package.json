@@ -74,12 +74,12 @@
     "hono": ">=3.9.2"
   },
   "devDependencies": {
-    "esbuild": "^0.25.10",
+    "esbuild": "^0.27.2",
     "esbuild-wasm": "^0.27.2",
-    "hono": "^4.11.1",
+    "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=18.14.1"

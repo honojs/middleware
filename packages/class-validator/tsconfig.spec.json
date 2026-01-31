@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noUnusedLocals": false,
     "outDir": "../../dist/packages/class-validator",
     "types": ["vitest/globals"]
   },

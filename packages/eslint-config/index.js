@@ -5,9 +5,9 @@ import nodePlugin from 'eslint-plugin-n'
 import tseslint from 'typescript-eslint'
 
 /**
- * @type {import("eslint").Linter.Config[]}
+ * @type {import("@eslint/config-helpers").InfiniteConfigArray}
  */
-export default [
+const config = [
   js.configs.recommended,
   nodePlugin.configs['flat/recommended'],
   ...tseslint.configs.strictTypeChecked,
@@ -30,7 +30,6 @@ export default [
     },
 
     rules: {
-      curly: ['error', 'all'],
       'no-debugger': ['error'],
 
       'no-empty': [
@@ -92,7 +91,35 @@ export default [
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-var-requires': 'off',
+
+      '@typescript-eslint/no-base-to-string': [
+        'error',
+        {
+          ignoredTypeNames: ['Error', 'RegExp', 'URL', 'URLSearchParams'],
+        },
+      ],
+
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allow: [{ name: ['Error', 'URL', 'URLSearchParams'], from: 'lib' }],
+          allowAny: true,
+          allowBoolean: true,
+          allowNullish: true,
+          allowNumber: true,
+          allowRegExp: true,
+        },
+      ],
     },
   },
   prettier,
+  {
+    // Special rules that override eslint-config-prettier
+    // See: https://github.com/prettier/eslint-config-prettier#special-rules
+    rules: {
+      curly: ['error', 'all'],
+    },
+  },
 ]
+
+export default config

@@ -485,8 +485,9 @@ export class StreamableHTTPTransport implements Transport {
     this.#validateSession(ctx)
     this.#validateProtocolVersion(ctx)
 
-    if (this.#onSessionClosed && this.sessionId)
+    if (this.#onSessionClosed && this.sessionId) {
       await Promise.resolve(this.#onSessionClosed(this.sessionId))
+    }
 
     await this.close()
     return ctx.body(null, 200)

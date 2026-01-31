@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1583](https://github.com/honojs/middleware/pull/1583) [`56f2f5a6daba0f7526e7875a75c03c5a05195b5e`](https://github.com/honojs/middleware/commit/56f2f5a6daba0f7526e7875a75c03c5a05195b5e) Thanks [@krzysztofciombor-solidstudio](https://github.com/krzysztofciombor-solidstudio)! - Allow custom HTTPException in node-ws upgrade
+
 ## 1.2.0
 
 ### Minor Changes

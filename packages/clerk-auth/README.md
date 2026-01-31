@@ -31,9 +31,9 @@ const app = new Hono()
 
 app.use('*', clerkMiddleware())
 app.get('/', (c) => {
-  const auth = getAuth(c)
+  const { userId } = getAuth(c)
 
-  if (!auth?.userId) {
+  if (!userId) {
     return c.json({
       message: 'You are not logged in.',
     })
@@ -41,7 +41,7 @@ app.get('/', (c) => {
 
   return c.json({
     message: 'You are logged in!',
-    userId: auth.userId,
+    userId,
   })
 })
 
@@ -74,6 +74,33 @@ app.get('/', async (c) => {
       404
     )
   }
+})
+
+export default app
+```
+
+## Using `acceptsToken` to verify other types of token
+
+```ts
+import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
+import { Hono } from 'hono'
+
+const app = new Hono()
+
+app.use('*', clerkMiddleware())
+app.get('/', (c) => {
+  const { userId } = getAuth(c, { acceptsToken: 'api_key' })
+
+  if (!userId) {
+    return c.json({
+      message: 'You are not logged in.',
+    })
+  }
+
+  return c.json({
+    message: 'You are logged in!',
+    userId,
+  })
 })
 
 export default app

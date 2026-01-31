@@ -3,7 +3,7 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 
-const exclude = new Set(['@hono/bun-transpiler'])
+const exclude = new Set(['@hono/bun-compress', '@hono/bun-transpiler'])
 const since = core.getInput('since')
 
 const workspaces = await exec.getExecOutput('yarn workspaces list', [

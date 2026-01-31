@@ -80,7 +80,7 @@ function base64URLEncode(str: string): string {
 
 function generateJWT(
   privateKey: string,
-  payload: Record<string, any>,
+  payload: Record<string, unknown>,
   expiresIn: number = 3600
 ): string {
   // Create header
@@ -120,7 +120,7 @@ describe('Cloudflare Access middleware', async () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.stubGlobal('fetch', async () => {
+    vi.stubGlobal('fetch', () => {
       return Response.json({
         keys: [publicKeyToJWK(keyPair1.publicKey), publicKeyToJWK(keyPair2.publicKey)],
       })
@@ -277,13 +277,13 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.json()).toEqual({
       sub: '1234567890',
       iss: 'https://my-cool-team-name.cloudflareaccess.com',
-      iat: expect.any(Number),
-      exp: expect.any(Number),
+      iat: expect.any(Number) as number,
+      exp: expect.any(Number) as number,
     })
   })
 
   it('Should throw an error, if the access organization does not exist', async () => {
-    vi.stubGlobal('fetch', async () => {
+    vi.stubGlobal('fetch', () => {
       return Response.json({ success: false }, { status: 404 })
     })
 
@@ -300,7 +300,7 @@ describe('Cloudflare Access middleware', async () => {
   })
 
   it('Should throw an error, if the access certs url is unavailable', async () => {
-    vi.stubGlobal('fetch', async () => {
+    vi.stubGlobal('fetch', () => {
       return Response.json({ success: false }, { status: 500 })
     })
 

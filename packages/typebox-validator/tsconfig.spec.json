@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noUnusedLocals": false,
     "outDir": "../../dist/packages/typebox-validator",
     "types": ["vitest/globals"]
   },

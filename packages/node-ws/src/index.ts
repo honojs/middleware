@@ -1,8 +1,9 @@
 import type { Hono } from 'hono'
 import { defineWebSocketHelper } from 'hono/ws'
-import type { UpgradeWebSocket, WSContext, WSEvents } from 'hono/ws'
+import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
+import { STATUS_CODES } from 'node:http'
 import type { IncomingMessage, Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Duplex } from 'node:stream'
@@ -77,12 +78,12 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           incoming: request,
           outgoing: undefined,
         }
-        await init.app.request(url, { headers: headers }, env)
+        const response = await init.app.request(url, { headers: headers }, env)
         const waiter = waiterMap.get(request)
 
         if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
           socket.end(
-            'HTTP/1.1 400 Bad Request\r\n' +
+            `HTTP/1.1 ${response.status.toString()} ${STATUS_CODES[response.status] ?? ''}\r\n` +
               'Connection: close\r\n' +
               'Content-Length: 0\r\n' +
               '\r\n'

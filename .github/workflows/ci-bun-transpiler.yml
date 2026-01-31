@@ -18,13 +18,10 @@ jobs:
         with:
           bun-version-file: .tool-versions
       - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
-      - run: yarn workspace @hono/bun-transpiler build
-      - run: yarn workspace @hono/bun-transpiler typecheck
-      - run: yarn eslint packages/bun-transpiler
-      - run: yarn prettier --check  . !packages packages/bun-transpiler
-      - run: yarn workspace @hono/bun-transpiler test --coverage --coverage-reporter lcov
+      - run: yarn turbo --filter @hono/bun-transpiler build
+      - run: bun test packages/bun-transpiler --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
-          directory: ./packages/bun-transpiler/coverage
+          directory: ./coverage
           flags: bun-transpiler

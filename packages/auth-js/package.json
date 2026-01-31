@@ -64,11 +64,11 @@
   "devDependencies": {
     "@auth/core": "^0.35.3",
     "@types/react": "^19",
-    "hono": "^4.11.1",
-    "react": "^19.2.3",
+    "hono": "^4.11.5",
+    "react": "^19.2.4",
     "tsdown": "^0.15.9",
     "typescript": "^5.8.2",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.0-beta.1"
   },
   "engines": {
     "node": ">=18.4.0"
