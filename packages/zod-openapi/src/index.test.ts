@@ -691,6 +691,32 @@ describe('Form', () => {
     expect(res.status).toBe(200)
   })
 
+  it('Should return 400 response for invalid form body', async () => {
+    const spy = vi.fn()
+
+    const invalidApp = new OpenAPIHono()
+    invalidApp.openapi(route, (c) => {
+      spy()
+      return c.json({ id: 0, title: '' })
+    })
+
+    const searchParams = new URLSearchParams()
+    searchParams.append('id', '123')
+
+    const req = new Request('http://localhost/posts', {
+      method: 'POST',
+      body: searchParams,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+
+    const res = await invalidApp.request(req)
+
+    expect(res.status).toBe(400)
+    expect(spy).not.toHaveBeenCalled()
+  })
+
   describe('required', () => {
     const route = createRoute({
       method: 'post',
