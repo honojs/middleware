@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.2.1
+
+### Patch Changes
+
+- [#1726](https://github.com/honojs/middleware/pull/1726) [`3d5e22509e9cee8379fccbe135fadc3248205f8e`](https://github.com/honojs/middleware/commit/3d5e22509e9cee8379fccbe135fadc3248205f8e) Thanks [@mouhannad-sh](https://github.com/mouhannad-sh)! - fix Incomplete context internal error with x-www-form-urlencoded submissions when the payload is invalid
+
 ## 1.2.0
 
 ### Minor Changes
