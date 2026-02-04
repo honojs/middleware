@@ -2,7 +2,7 @@ import { serve } from '@hono/node-server'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import type { ServerType } from '@hono/node-server/dist/types'
-import { Hono } from 'hono'
+import { Env, Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import type { WSMessageReceive } from 'hono/ws'
@@ -15,10 +15,12 @@ describe('WebSocket helper', () => {
   let injectWebSocket: ReturnType<typeof createNodeWebSocket>['injectWebSocket']
   let upgradeWebSocket: ReturnType<typeof createNodeWebSocket>['upgradeWebSocket']
   let wss: ReturnType<typeof createNodeWebSocket>['wss']
+  let env: Env["Bindings"]
 
   beforeEach(async () => {
     app = new Hono()
-    ;({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app }))
+    env = { customVar: '1' } as Env["Bindings"]
+    ({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app, env }))
 
     server = await new Promise<ServerType>((resolve) => {
       const server = serve({ fetch: app.fetch, port: 3030 }, () => {
@@ -328,5 +330,21 @@ describe('WebSocket helper', () => {
         resolve()
       })
     )
+  })
+
+  it('Should server can obtain environment variables', async () => {
+    const mainPromise = new Promise<string>((resolve) =>
+      app.get(
+        '/',
+        (c, next) => {
+          let ws = upgradeWebSocket((c) => ({}))
+          resolve(c.env.customVar)
+          return ws(c, next)
+        }
+      )
+    )
+
+    new WebSocket('ws://localhost:3030/')
+    expect(await mainPromise).toBe('1')
   })
 })
