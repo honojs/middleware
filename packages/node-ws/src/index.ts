@@ -1,4 +1,4 @@
-import type { Hono } from 'hono'
+import type { Hono, Env } from 'hono'
 import { defineWebSocketHelper } from 'hono/ws'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
@@ -23,6 +23,7 @@ export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app: Hono<any, any, any>
   baseUrl?: string | URL
+  env?: Env["Bindings"]
 }
 
 const generateConnectionSymbol = () => Symbol('connection')
@@ -77,6 +78,7 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         } = {
           incoming: request,
           outgoing: undefined,
+          ...init.env
         }
         const response = await init.app.request(url, { headers: headers }, env)
         const waiter = waiterMap.get(request)
