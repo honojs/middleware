@@ -48,7 +48,7 @@
     "@builder.io/qwik-city": "^1.18.0",
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18"
