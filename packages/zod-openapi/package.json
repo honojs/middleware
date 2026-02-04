@@ -47,7 +47,7 @@
   "devDependencies": {
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
-    "typescript": "^5.8.2",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.0-beta.1",
     "yaml": "^2.8.2",
     "zod": "^4.2.1"
