@@ -2109,7 +2109,7 @@ __metadata:
   resolution: "@hono/mcp@workspace:packages/mcp"
   dependencies:
     "@arethetypeswrong/cli": "npm:^0.17.4"
-    "@modelcontextprotocol/sdk": "npm:^1.25.1"
+    "@modelcontextprotocol/sdk": "npm:^1.25.2"
     "@types/node": "npm:^25.0.3"
     hono: "npm:^4.11.5"
     hono-rate-limiter: "npm:^0.4.2"
@@ -2119,7 +2119,7 @@ __metadata:
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
   peerDependencies:
-    "@modelcontextprotocol/sdk": ^1.25.1
+    "@modelcontextprotocol/sdk": ^1.25.2
     hono: "*"
     hono-rate-limiter: ^0.4.2
     zod: ^3.25.0 || ^4.0.0
@@ -3537,7 +3537,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:^1.24.0":
+"@modelcontextprotocol/sdk@npm:^1.24.0, @modelcontextprotocol/sdk@npm:^1.25.2":
   version: 1.25.2
   resolution: "@modelcontextprotocol/sdk@npm:1.25.2"
   dependencies:
@@ -3566,38 +3566,6 @@ __metadata:
     zod:
       optional: false
   checksum: 10c0/ffc024398e1b7841fb1ff2dc540e2e84f4b97a2a4058ef48e58836ce6077321c536a3858e9155472b7933c4773975b375167815bd4d721c3ca1e92db62e9488c
-  languageName: node
-  linkType: hard
-
-"@modelcontextprotocol/sdk@npm:^1.25.1":
-  version: 1.25.1
-  resolution: "@modelcontextprotocol/sdk@npm:1.25.1"
-  dependencies:
-    "@hono/node-server": "npm:^1.19.7"
-    ajv: "npm:^8.17.1"
-    ajv-formats: "npm:^3.0.1"
-    content-type: "npm:^1.0.5"
-    cors: "npm:^2.8.5"
-    cross-spawn: "npm:^7.0.5"
-    eventsource: "npm:^3.0.2"
-    eventsource-parser: "npm:^3.0.0"
-    express: "npm:^5.0.1"
-    express-rate-limit: "npm:^7.5.0"
-    jose: "npm:^6.1.1"
-    json-schema-typed: "npm:^8.0.2"
-    pkce-challenge: "npm:^5.0.0"
-    raw-body: "npm:^3.0.0"
-    zod: "npm:^3.25 || ^4.0"
-    zod-to-json-schema: "npm:^3.25.0"
-  peerDependencies:
-    "@cfworker/json-schema": ^4.1.1
-    zod: ^3.25 || ^4.0
-  peerDependenciesMeta:
-    "@cfworker/json-schema":
-      optional: true
-    zod:
-      optional: false
-  checksum: 10c0/bca74e841b5c2c534a3c20a760cc1508f0b20dab8d2b37bcb01944fac875704b40de8bf17f2865fb5d22684b261a5472ab339d80736e651639cd44d8edaa83d5
   languageName: node
   linkType: hard
 
