@@ -1873,7 +1873,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/bun-compress@workspace:packages/bun-compress"
   dependencies:
-    "@types/bun": "npm:^1.3.5"
+    "@types/bun": "npm:^1.3.8"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -1887,7 +1887,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/bun-transpiler@workspace:packages/bun-transpiler"
   dependencies:
-    "@types/bun": "npm:^1.3.5"
+    "@types/bun": "npm:^1.3.8"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.8.2"
@@ -2080,7 +2080,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/graphql-server@workspace:packages/graphql-server"
   dependencies:
-    "@types/bun": "npm:^1.3.5"
+    "@types/bun": "npm:^1.3.8"
     graphql: "npm:^16.5.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
@@ -4769,12 +4769,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/bun@npm:^1.3.5":
-  version: 1.3.6
-  resolution: "@types/bun@npm:1.3.6"
+"@types/bun@npm:^1.3.8":
+  version: 1.3.8
+  resolution: "@types/bun@npm:1.3.8"
   dependencies:
-    bun-types: "npm:1.3.6"
-  checksum: 10c0/9a4af2b899b252ba1e09ab99941bd5fa483fbeec5ac2610589dd0741fa54362527bf25ac6749cb9eb974399ede5edb5b592f0e104179be98bd123cfad5b68687
+    bun-types: "npm:1.3.8"
+  checksum: 10c0/31864a6a8a57fb8e33e9734c9e40ac809a9838b53847f281c13d98adf9ac1887447571ab05d459a824d32db9f92deb1c5764b0be4fdb0b09ec17b5a1e9f41b41
   languageName: node
   linkType: hard
 
@@ -6116,12 +6116,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bun-types@npm:1.3.6":
-  version: 1.3.6
-  resolution: "bun-types@npm:1.3.6"
+"bun-types@npm:1.3.8":
+  version: 1.3.8
+  resolution: "bun-types@npm:1.3.8"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/9eef556e07f95f28a85fa5b12c2ae7a63ee55ca856785d6b678ef07c699e2c19c19f07179158df34bd7ce671c67af2a23493fa22fbd56a9848547052b664179a
+  checksum: 10c0/5f16d55c38557be55a64a8cad891bcfd8198291b4687c815985303189eb8321dab9c237ea8c8433e3c78be8c6ec898b3ba9696903861b25f68043195effe333f
   languageName: node
   linkType: hard
 
