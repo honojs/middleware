@@ -17,7 +17,7 @@ Router:
 
 ```ts
 import { initTRPC } from '@trpc/server'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const t = initTRPC.create()
 
@@ -75,7 +75,7 @@ You can also access `c.env` from hono context from the trpc `ctx`. eg. here's an
 
 ```ts
 import { initTRPC } from '@trpc/server'
-import { z } from 'zod'
+import * as z from 'zod'
 
 type Env = {
   DB: D1Database

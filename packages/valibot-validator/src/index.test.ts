@@ -2,7 +2,7 @@ import type { TypedResponse } from 'hono'
 import { Hono } from 'hono'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import type { InferIssue, NumberIssue, ObjectIssue, StringIssue } from 'valibot'
-import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
+import * as v from 'valibot'
 import type { FailedResponse } from '.'
 import { vValidator } from '.'
 
@@ -14,15 +14,15 @@ type MergeDiscriminatedUnion<U> =
 describe('Basic', () => {
   const app = new Hono()
 
-  const schema = object({
-    name: string(),
-    age: number(),
+  const schema = v.object({
+    name: v.string(),
+    age: v.number(),
   })
 
-  const querySchema = optional(
-    object({
-      search: optional(string()),
-      page: optional(number()),
+  const querySchema = v.optional(
+    v.object({
+      search: v.optional(v.string()),
+      page: v.optional(v.number()),
     })
   )
 
@@ -218,9 +218,9 @@ describe('Basic', () => {
 describe('With Hook', () => {
   const app = new Hono()
 
-  const schema = object({
-    id: number(),
-    title: string(),
+  const schema = v.object({
+    id: v.number(),
+    title: v.string(),
   })
 
   app.post(
@@ -278,15 +278,15 @@ describe('With Hook', () => {
 describe('Async', () => {
   const app = new Hono()
 
-  const schemaAsync = objectAsync({
-    name: string(),
-    age: number(),
+  const schemaAsync = v.objectAsync({
+    name: v.string(),
+    age: v.number(),
   })
 
-  const querySchemaAsync = optionalAsync(
-    objectAsync({
-      search: optionalAsync(string()),
-      page: optionalAsync(number()),
+  const querySchemaAsync = v.optionalAsync(
+    v.objectAsync({
+      search: v.optionalAsync(v.string()),
+      page: v.optionalAsync(v.number()),
     })
   )
 
@@ -461,9 +461,9 @@ describe('Async', () => {
 describe('With Hook Async', () => {
   const app = new Hono()
 
-  const schemaAsync = objectAsync({
-    id: number(),
-    title: string(),
+  const schemaAsync = v.objectAsync({
+    id: v.number(),
+    title: v.string(),
   })
 
   app.post(
@@ -526,8 +526,8 @@ describe('Test types', () => {
       '/',
       vValidator(
         'query',
-        object({
-          foo: string(),
+        v.object({
+          foo: v.string(),
         })
       ),
       (c) => {
