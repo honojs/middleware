@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d",
-    "@types/react": "^19.2.10",
+    "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "hono": "^4.11.5",
     "react": "^19.2.4",
