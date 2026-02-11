@@ -32,7 +32,7 @@ jobs:
         run: yarn workspace @hono/ua-blocker prebuild
 
       - name: Format
-        run: yarn prettier --write . !packages packages/ua-blocker
+        run: yarn prettier --write "packages/ua-blocker"
 
       - name: Check for changes
         id: changes
