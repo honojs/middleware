@@ -49,7 +49,7 @@ describe('Standard Schema Validation', () => {
         type verifyOutput = Expect<
           Equal<
             {
-              success: boolean
+              success: true
               message: string
               queryName: string | undefined
             },

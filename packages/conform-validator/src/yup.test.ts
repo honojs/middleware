@@ -45,7 +45,7 @@ describe('Validate requests using a Yup schema', () => {
             }
           }
           output: {
-            success: boolean
+            success: true
             message: string
           }
           outputFormat: 'json'

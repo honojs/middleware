@@ -34,7 +34,7 @@ describe('Basic', () => {
           json: Author
         }
         output: {
-          success: boolean
+          success: true
           message: string
         }
         outputFormat: 'json'

@@ -83,7 +83,7 @@ describe('Basic', () => {
   type withoutHook_verifySuccessOutput = Expect<
     Equal<
       {
-        success: boolean
+        success: true
         message: string
       },
       MergeDiscriminatedUnion<(Actual['/author']['$post'] & { status: 200 })['output']>
@@ -327,7 +327,7 @@ describe('Async', () => {
                 | undefined
             }
             output: {
-              success: boolean
+              success: true
               message: string
             }
             outputFormat: 'json'

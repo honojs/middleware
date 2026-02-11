@@ -55,7 +55,7 @@ describe('Basic', () => {
             | undefined
         }
         output: {
-          success: boolean
+          success: true
           message: string
           queryName: string | undefined
         }
