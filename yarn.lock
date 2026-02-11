@@ -1801,7 +1801,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     ajv: ">=8.12.0"
     hono: ">=3.9.0"
@@ -1816,7 +1816,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     arktype: ">=2.0.0-dev"
     hono: ">=3.0.0"
@@ -1833,7 +1833,7 @@ __metadata:
     react: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     "@auth/core": ">=0.35.0"
     hono: ">=3.0.0"
@@ -1849,7 +1849,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -1863,7 +1863,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -1881,7 +1881,7 @@ __metadata:
     publint: "npm:^0.3.16"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     ws: "npm:^8.17.0"
   peerDependencies:
     capnweb: ">=0.2.0"
@@ -1898,7 +1898,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     casbin: ">=5.30.0"
     hono: ">=4.5.11"
@@ -1915,7 +1915,7 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.9.0"
   languageName: unknown
@@ -1932,7 +1932,7 @@ __metadata:
     react: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
@@ -1946,7 +1946,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -1964,7 +1964,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     valibot: "npm:^1.1.0"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     yup: "npm:^1.7.1"
     zod: "npm:^4.2.1"
   peerDependencies:
@@ -1981,7 +1981,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     effect: ">=3.10.0"
     hono: ">=4.4.13"
@@ -1997,7 +1997,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.9.2"
   languageName: unknown
@@ -2026,7 +2026,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2042,7 +2042,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2057,7 +2057,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
@@ -2070,7 +2070,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2088,7 +2088,7 @@ __metadata:
     pkce-challenge: "npm:^5.0.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     zod: "npm:^4.2.1"
   peerDependencies:
     "@modelcontextprotocol/sdk": ^1.25.1
@@ -2106,7 +2106,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.8.0"
   languageName: unknown
@@ -2139,7 +2139,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     ws: "npm:^8.17.0"
   peerDependencies:
     "@hono/node-server": ^1.19.2
@@ -2155,7 +2155,7 @@ __metadata:
     msw: "npm:^2.12.10"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
@@ -2171,7 +2171,7 @@ __metadata:
     oauth4webapi: "npm:^2.6.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
@@ -2190,7 +2190,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2204,7 +2204,7 @@ __metadata:
     prom-client: "npm:^15.0.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
     prom-client: ^15.0.0
@@ -2251,7 +2251,7 @@ __metadata:
     react-dom: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
     react: ^19.0.0
@@ -2267,7 +2267,7 @@ __metadata:
     toucan-js: "npm:^4.0.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
   languageName: unknown
@@ -2283,7 +2283,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     unstorage: "npm:^1.17.4"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2296,7 +2296,7 @@ __metadata:
     "@types/node": "npm:^25.0.3"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.8.0"
   languageName: unknown
@@ -2312,7 +2312,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     valibot: "npm:^1.1.0"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     zod: "npm:^4.2.1"
   peerDependencies:
     "@standard-schema/spec": ^1.0.0
@@ -2328,7 +2328,7 @@ __metadata:
     stytch: "npm:^12.43.1"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.0.0"
     stytch: ^12.43.1
@@ -2342,7 +2342,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2356,7 +2356,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2370,7 +2370,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     zod: "npm:^4.2.1"
   peerDependencies:
     "@trpc/server": ^10.10.0 || >11.0.0-rc
@@ -2387,7 +2387,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     tsyringe: "npm:^4.10.0"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
     tsyringe: ">=4.0.0"
@@ -2402,7 +2402,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typebox: "npm:^1.0.81"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.9.0"
     typebox: ^1.0.81
@@ -2420,7 +2420,7 @@ __metadata:
     typedriver: "npm:^0.8.6"
     typescript: "npm:^5.9.3"
     valibot: "npm:^1.0.0"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     zod: "npm:^4.2.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -2437,7 +2437,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     typia: "npm:^9.7.2"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.9.0"
     typia: ^7.0.0 || ^8.0.0
@@ -2452,7 +2452,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=4.0.0"
   languageName: unknown
@@ -2466,7 +2466,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     valibot: "npm:^1.1.0"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   peerDependencies:
     hono: ">=3.9.0"
     valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
@@ -2483,7 +2483,7 @@ __metadata:
     openapi3-ts: "npm:^4.5.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     yaml: "npm:^2.8.2"
     zod: "npm:^4.2.1"
   peerDependencies:
@@ -2499,7 +2499,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
     zod: "npm:^4.2.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -5286,25 +5286,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/expect@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/expect@npm:4.1.0-beta.1"
+"@vitest/expect@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/expect@npm:4.1.0-beta.3"
   dependencies:
     "@standard-schema/spec": "npm:^1.1.0"
     "@types/chai": "npm:^5.2.2"
-    "@vitest/spy": "npm:4.1.0-beta.1"
-    "@vitest/utils": "npm:4.1.0-beta.1"
+    "@vitest/spy": "npm:4.1.0-beta.3"
+    "@vitest/utils": "npm:4.1.0-beta.3"
     chai: "npm:^6.2.2"
     tinyrainbow: "npm:^3.0.3"
-  checksum: 10c0/6f44cc467cfc149aa0e772723b9588d2d079ebb823a5eb7243ed8f07594aaa5636da65a270f2b908f9ea115ae5f9921a4cb5faeea95c720db4e387254b06317f
+  checksum: 10c0/1a681102d63f13e5784be23933aba3140787bf9f55ef0b9e2a89160eaf32f0126d1a06e5a958f9d302def70cb3dc4fa171a5938a9b04732a0d2be1ff7ea74ec3
   languageName: node
   linkType: hard
 
-"@vitest/mocker@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/mocker@npm:4.1.0-beta.1"
+"@vitest/mocker@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/mocker@npm:4.1.0-beta.3"
   dependencies:
-    "@vitest/spy": "npm:4.1.0-beta.1"
+    "@vitest/spy": "npm:4.1.0-beta.3"
     estree-walker: "npm:^3.0.3"
     magic-string: "npm:^0.30.21"
   peerDependencies:
@@ -5315,54 +5315,54 @@ __metadata:
       optional: true
     vite:
       optional: true
-  checksum: 10c0/c56718162f39e9b0dfed4c64c1037f41205ef0ac0aab895225611ecf91eac4fa176a8b2c46aa5e33218fb33137ab3a8e52004a314685fd294f63cca2a392bd00
+  checksum: 10c0/3ca5ec08c690bd9e6f4a2e00c445b251c6a62d94f0c341276d31c2512470d838f134b961bc6a063de381c0080edbf8c688787c5a5861831c36315beaab7c132e
   languageName: node
   linkType: hard
 
-"@vitest/pretty-format@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/pretty-format@npm:4.1.0-beta.1"
+"@vitest/pretty-format@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/pretty-format@npm:4.1.0-beta.3"
   dependencies:
     tinyrainbow: "npm:^3.0.3"
-  checksum: 10c0/8ab81a2da414c31afb9c86052f2ad86d94a11c798fa020a31061771be250b1ead0582d1c2941b078416d51337be27c029b9dcba07d649474240b5ac0f5cf5e34
+  checksum: 10c0/7ef0d7a5b0604e371e3135b333913f167aad78b67833337b1984592ed4b3474a0a5fbc0db9e7802810855ce9af8b86d7ef0908ac6b1bd276867edd8e0a0ef130
   languageName: node
   linkType: hard
 
-"@vitest/runner@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/runner@npm:4.1.0-beta.1"
+"@vitest/runner@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/runner@npm:4.1.0-beta.3"
   dependencies:
-    "@vitest/utils": "npm:4.1.0-beta.1"
+    "@vitest/utils": "npm:4.1.0-beta.3"
     pathe: "npm:^2.0.3"
-  checksum: 10c0/e6e0d20fea3763a1562a00f09be0576e622457f0ae6ef9eb1c9b7c511f72cea4bb12900934710623c17c07d5a0eff1beaae54ebaaedc25f327715ca206e4943e
+  checksum: 10c0/9d726cd05275c8f6e263a4c3a6003a6a2046cb9539bfb9b3482e5cbb50228de7984cfa198d7459982208f10b67f575696f34fe66d6a7f63486b0cdc0f9f80058
   languageName: node
   linkType: hard
 
-"@vitest/snapshot@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/snapshot@npm:4.1.0-beta.1"
+"@vitest/snapshot@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/snapshot@npm:4.1.0-beta.3"
   dependencies:
-    "@vitest/pretty-format": "npm:4.1.0-beta.1"
+    "@vitest/pretty-format": "npm:4.1.0-beta.3"
     magic-string: "npm:^0.30.21"
     pathe: "npm:^2.0.3"
-  checksum: 10c0/cd61a101bbbbb2dabef67da12ad173521c19af595e3d1f000e563f9f6ca384144a98071bd950fe9f5cf6fc10c76a123580c3e5eda3c515d9eb6e4fbaebd0c91c
+  checksum: 10c0/f71b08c453908eb89d7defcb5441dc7b6b329af337065492ec0cc7fd1b54a187fbd3708c279e7831ddd86e490c863d83c8373f285f3f3270c28113cf5d1baaf1
   languageName: node
   linkType: hard
 
-"@vitest/spy@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/spy@npm:4.1.0-beta.1"
-  checksum: 10c0/3c7dad285b68e15a8ad52959ff5d60cc71d192702afdf9cf8c9be58fc26cdc02b7bed7506e37a42976c2623c5f94c7b85e804f3e68c5c0bc95325b96b7193468
+"@vitest/spy@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/spy@npm:4.1.0-beta.3"
+  checksum: 10c0/acb77a64aeae31c2eb5e87be10b80d8280acd8c0330e1a30251e316d257c52cdaae236adbe3a9963136c859ec0a0c5e4156ad0b33127c03a0ce81831b7ef9019
   languageName: node
   linkType: hard
 
-"@vitest/utils@npm:4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "@vitest/utils@npm:4.1.0-beta.1"
+"@vitest/utils@npm:4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "@vitest/utils@npm:4.1.0-beta.3"
   dependencies:
-    "@vitest/pretty-format": "npm:4.1.0-beta.1"
+    "@vitest/pretty-format": "npm:4.1.0-beta.3"
     tinyrainbow: "npm:^3.0.3"
-  checksum: 10c0/a8c50557ce43f3e5e0a7d6806ff517ff83dfa65bc0efac43bd619a348624e858510ced7672e75d5b1811832a6f5a020f7c9c30551111eb4db034d25f2cbc132c
+  checksum: 10c0/a23bfbe0ac1a655fffd958f05afcdfef458892517149ae4e5f369ece3d454202ef4ce519794a1922750ff82579da1ed52a7bc5f2ad88a7df084de3e33ea00e66
   languageName: node
   linkType: hard
 
@@ -7569,10 +7569,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "es-module-lexer@npm:1.7.0"
-  checksum: 10c0/4c935affcbfeba7fb4533e1da10fa8568043df1e3574b869385980de9e2d475ddc36769891936dbb07036edb3c3786a8b78ccf44964cd130dedc1f2c984b6c7b
+"es-module-lexer@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "es-module-lexer@npm:2.0.0"
+  checksum: 10c0/ae78dbbd43035a4b972c46cfb6877e374ea290adfc62bc2f5a083fea242c0b2baaab25c5886af86be55f092f4a326741cb94334cd3c478c383fdc8a9ec5ff817
   languageName: node
   linkType: hard
 
@@ -9625,7 +9625,7 @@ __metadata:
     turbo: "npm:^2.5.8"
     typescript: "npm:^5.9.3"
     typia: "npm:^9.7.2"
-    vitest: "npm:^4.1.0-beta.1"
+    vitest: "npm:^4.1.0-beta.3"
   languageName: unknown
   linkType: soft
 
@@ -16434,18 +16434,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.1.0-beta.1":
-  version: 4.1.0-beta.1
-  resolution: "vitest@npm:4.1.0-beta.1"
+"vitest@npm:^4.1.0-beta.3":
+  version: 4.1.0-beta.3
+  resolution: "vitest@npm:4.1.0-beta.3"
   dependencies:
-    "@vitest/expect": "npm:4.1.0-beta.1"
-    "@vitest/mocker": "npm:4.1.0-beta.1"
-    "@vitest/pretty-format": "npm:4.1.0-beta.1"
-    "@vitest/runner": "npm:4.1.0-beta.1"
-    "@vitest/snapshot": "npm:4.1.0-beta.1"
-    "@vitest/spy": "npm:4.1.0-beta.1"
-    "@vitest/utils": "npm:4.1.0-beta.1"
-    es-module-lexer: "npm:^1.7.0"
+    "@vitest/expect": "npm:4.1.0-beta.3"
+    "@vitest/mocker": "npm:4.1.0-beta.3"
+    "@vitest/pretty-format": "npm:4.1.0-beta.3"
+    "@vitest/runner": "npm:4.1.0-beta.3"
+    "@vitest/snapshot": "npm:4.1.0-beta.3"
+    "@vitest/spy": "npm:4.1.0-beta.3"
+    "@vitest/utils": "npm:4.1.0-beta.3"
+    es-module-lexer: "npm:^2.0.0"
     expect-type: "npm:^1.3.0"
     magic-string: "npm:^0.30.21"
     obug: "npm:^2.1.1"
@@ -16462,10 +16462,10 @@ __metadata:
     "@edge-runtime/vm": "*"
     "@opentelemetry/api": ^1.9.0
     "@types/node": ^20.0.0 || ^22.0.0 || >=24.0.0
-    "@vitest/browser-playwright": 4.1.0-beta.1
-    "@vitest/browser-preview": 4.1.0-beta.1
-    "@vitest/browser-webdriverio": 4.1.0-beta.1
-    "@vitest/ui": 4.1.0-beta.1
+    "@vitest/browser-playwright": 4.1.0-beta.3
+    "@vitest/browser-preview": 4.1.0-beta.3
+    "@vitest/browser-webdriverio": 4.1.0-beta.3
+    "@vitest/ui": 4.1.0-beta.3
     happy-dom: "*"
     jsdom: "*"
   peerDependenciesMeta:
@@ -16489,7 +16489,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 10c0/b6e1743359bf877a7fd3b268b14374b7aaa71f1c710d18fe1e98624fcda62b901c675596838abae62674df7857360ee7b4fb2475664b5896f69f77f4d652f5af
+  checksum: 10c0/f7f87e8f2a1cc0950c7cca81686a14a674ecc76ea9eff00dc875eadf5236bb37eb82aa78eb0ca3791122a23bb2a744b95be84395dcc08d43c75176032e997cfb
   languageName: node
   linkType: hard
 
