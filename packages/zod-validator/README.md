@@ -44,11 +44,11 @@ throw a zod validate error instead of directly returning an error response.
 
 ```ts
 // file: validator-wrapper.ts
-import { ZodSchema } from 'zod'
+import * as z from 'zod'
 import type { ValidationTargets } from 'hono'
 import { zValidator as zv } from '@hono/zod-validator'
 
-export const zValidator = <T extends ZodSchema, Target extends keyof ValidationTargets>(
+export const zValidator = <T extends z.ZodSchema, Target extends keyof ValidationTargets>(
   target: Target,
   schema: T
 ) =>

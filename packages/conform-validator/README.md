@@ -9,7 +9,7 @@ The validator middleware using [conform](https://conform.guide) for [Hono](https
 Zod:
 
 ```ts
-import { z } from 'zod'
+import * as z from 'zod'
 import { parseWithZod } from '@conform-to/zod'
 import { conformValidator } from '@hono/conform-validator'
 import { HTTPException } from 'hono/http-exception'
@@ -58,14 +58,14 @@ app.post(
 Valibot:
 
 ```ts
-import { object, string } from 'valibot'
+import * as v from 'valibot'
 import { parseWithValibot } from '@conform-to/valibot'
 import { conformValidator } from '@hono/conform-validator'
 import { HTTPException } from 'hono/http-exception'
 
-const schema = object({
-  name: string(),
-  age: string(),
+const schema = v.object({
+  name: v.string(),
+  age: v.string(),
 })
 
 app.post(
