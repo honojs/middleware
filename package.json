@@ -24,8 +24,8 @@
     "test": "vitest",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
-    "format": "turbo run format --continue -- --check --cache --cache-location .cache/.prettiercache",
-    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache"
+    "format": "prettier --check . --cache --cache-location .cache/.prettiercache",
+    "format:fix": "prettier --write . --cache --cache-location .cache/.prettiercache"
   },
   "license": "MIT",
   "private": true,
