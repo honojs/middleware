@@ -2259,6 +2259,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/response-cache@workspace:packages/response-cache":
+  version: 0.0.0-use.local
+  resolution: "@hono/response-cache@workspace:packages/response-cache"
+  dependencies:
+    hono: "npm:^4.11.1"
+    tsdown: "npm:^0.15.9"
+    typescript: "npm:^5.8.2"
+    vitest: "npm:^4.0.16"
+  peerDependencies:
+    hono: ">=4.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/sentry@workspace:packages/sentry":
   version: 0.0.0-use.local
   resolution: "@hono/sentry@workspace:packages/sentry"
