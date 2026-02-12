@@ -6,7 +6,9 @@ describe('normalizeBasePath', () => {
     const result = normalizeBasePath({ baseUrl: '', basePath: 'http://localhost:8000/api/auth' })
     expect(result.baseUrl).toBe('http://localhost:8000')
     expect(result.basePath).toBe('/api/auth')
-    expect(`${result.baseUrl}${result.basePath}/session`).toBe('http://localhost:8000/api/auth/session')
+    expect(`${result.baseUrl}${result.basePath}/session`).toBe(
+      'http://localhost:8000/api/auth/session'
+    )
   })
 
   it('should split absolute https URL into baseUrl and basePath', () => {
@@ -20,7 +22,9 @@ describe('normalizeBasePath', () => {
     const result = normalizeBasePath({ baseUrl: 'http://localhost:3000', basePath: '/custom/auth' })
     expect(result.baseUrl).toBe('http://localhost:3000')
     expect(result.basePath).toBe('/custom/auth')
-    expect(`${result.baseUrl}${result.basePath}/session`).toBe('http://localhost:3000/custom/auth/session')
+    expect(`${result.baseUrl}${result.basePath}/session`).toBe(
+      'http://localhost:3000/custom/auth/session'
+    )
   })
 
   it('should handle absolute URL without path', () => {
@@ -31,16 +35,23 @@ describe('normalizeBasePath', () => {
   })
 
   it('should override baseUrl when both are absolute URLs', () => {
-    const result = normalizeBasePath({ baseUrl: 'http://localhost:3000', basePath: 'http://localhost:8000/api/auth' })
+    const result = normalizeBasePath({
+      baseUrl: 'http://localhost:3000',
+      basePath: 'http://localhost:8000/api/auth',
+    })
     expect(result.baseUrl).toBe('http://localhost:8000')
     expect(result.basePath).toBe('/api/auth')
-    expect(`${result.baseUrl}${result.basePath}/session`).toBe('http://localhost:8000/api/auth/session')
+    expect(`${result.baseUrl}${result.basePath}/session`).toBe(
+      'http://localhost:8000/api/auth/session'
+    )
   })
 
   it('should handle absolute URL with trailing slash', () => {
     const result = normalizeBasePath({ baseUrl: '', basePath: 'http://localhost:8000/api/auth/' })
     expect(result.baseUrl).toBe('http://localhost:8000')
     expect(result.basePath).toBe('/api/auth')
-    expect(`${result.baseUrl}${result.basePath}/session`).toBe('http://localhost:8000/api/auth/session')
+    expect(`${result.baseUrl}${result.basePath}/session`).toBe(
+      'http://localhost:8000/api/auth/session'
+    )
   })
 })
