@@ -173,7 +173,7 @@ interface ParsedUrl {
   toString: () => string
 }
 
-export function normalizeBasePath<T extends { basePath?: string }>(config: T): T {
+export function normalizeBasePath(config: Partial<AuthClientConfig>): Partial<AuthClientConfig> {
   if (config.basePath && /^https?:\/\//.test(config.basePath)) {
     const url = new URL(config.basePath)
     return {
