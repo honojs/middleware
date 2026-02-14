@@ -173,6 +173,18 @@ interface ParsedUrl {
   toString: () => string
 }
 
+export function normalizeBasePath(config: Partial<AuthClientConfig>): Partial<AuthClientConfig> {
+  if (config.basePath && /^https?:\/\//.test(config.basePath)) {
+    const url = new URL(config.basePath)
+    return {
+      ...config,
+      baseUrl: url.origin,
+      basePath: url.pathname.replace(/\/$/, ''),
+    }
+  }
+  return config
+}
+
 export function parseUrl(url?: string): ParsedUrl {
   const defaultUrl = 'http://localhost:3000/api/auth'
   const parsedUrl = new URL(url ? (url.startsWith('http') ? url : `https://${url}`) : defaultUrl)
