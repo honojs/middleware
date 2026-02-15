@@ -158,14 +158,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asteasolutions/zod-to-openapi@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "@asteasolutions/zod-to-openapi@npm:8.1.0"
+"@asteasolutions/zod-to-openapi@npm:^8.4.1":
+  version: 8.4.1
+  resolution: "@asteasolutions/zod-to-openapi@npm:8.4.1"
   dependencies:
     openapi3-ts: "npm:^4.1.2"
   peerDependencies:
     zod: ^4.0.0
-  checksum: 10c0/974a8b06bc3048406bc13f2cf2c00ce8bc2256af6d1e24b39f3b8b1c6fa6047d64b8a017da5b45e6b3f28ca89b159383f01dabc00a904a705a54ea87712dfda3
+  checksum: 10c0/32f3ea00f2b96c94cde261780adb5a3afa119a0b64d438e43b198a3ed488b6719bd1d054f93186abb9c1742373beb87cc0efdefd5efdffc9943674cfa06f74ce
   languageName: node
   linkType: hard
 
@@ -2477,7 +2477,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/zod-openapi@workspace:packages/zod-openapi"
   dependencies:
-    "@asteasolutions/zod-to-openapi": "npm:^8.1.0"
+    "@asteasolutions/zod-to-openapi": "npm:^8.4.1"
     "@hono/zod-validator": "workspace:^"
     hono: "npm:^4.11.5"
     openapi3-ts: "npm:^4.5.0"
