@@ -8,7 +8,7 @@ import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
 import type { RouteConfigToTypedResponse } from './index'
-import { $, OpenAPIHono, createRoute, z } from './index'
+import { $, OpenAPIHono, createRoute, defineOpenAPIRoute, z } from './index'
 
 describe('Constructor', () => {
   it('Should not require init object', () => {
@@ -2222,5 +2222,743 @@ describe('$', () => {
     const res = await app.request('/')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ message: 'Hello' })
+  })
+})
+
+describe('defineOpenAPIRoute', () => {
+  it('Should return the route definition as-is', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/users/{id}',
+      request: {
+        params: z.object({
+          id: z.string().openapi({
+            param: {
+              name: 'id',
+              in: 'path',
+            },
+          }),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                id: z.string(),
+                name: z.string(),
+              }),
+            },
+          },
+          description: 'Get user',
+        },
+      },
+    })
+
+    const handler = (c: Context) => {
+      return c.json({ id: '1', name: 'John' }, 200)
+    }
+
+    const definition = defineOpenAPIRoute({
+      route,
+      handler,
+    })
+
+    expect(definition).toEqual({ route, handler })
+    expect(definition.route).toBe(route)
+    expect(definition.handler).toBe(handler)
+  })
+
+  it('Should preserve types for route with body and query', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/users',
+      request: {
+        query: z.object({
+          filter: z.string().optional(),
+        }),
+        body: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                name: z.string(),
+                email: z.email(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                id: z.string(),
+              }),
+            },
+          },
+          description: 'User created',
+        },
+      },
+    })
+
+    const definition = defineOpenAPIRoute({
+      route,
+      handler: (c) => {
+        const { name, email } = c.req.valid('json')
+        const { filter } = c.req.valid('query')
+        expectTypeOf(name).toEqualTypeOf<string>()
+        expectTypeOf(email).toEqualTypeOf<string>()
+        expectTypeOf(filter).toEqualTypeOf<string | undefined>()
+        return c.json({ id: '123' }, 201)
+      },
+    })
+
+    expect(definition.route).toBe(route)
+  })
+
+  it('Should work with hook', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/test',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ ok: z.boolean() }),
+            },
+          },
+          description: 'Test response',
+        },
+      },
+    })
+
+    const hook = vi.fn()
+
+    const definition = defineOpenAPIRoute({
+      route,
+      handler: (c) => c.json({ ok: true }, 200),
+      hook,
+    })
+
+    expect(definition.hook).toBe(hook)
+  })
+
+  it('Should work with headers and cookies', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/auth',
+      request: {
+        headers: z.object({
+          authorization: z.string(),
+        }),
+        cookies: z.object({
+          session: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({
+                authenticated: z.boolean(),
+              }),
+            },
+          },
+          description: 'Auth status',
+        },
+      },
+    })
+
+    const definition = defineOpenAPIRoute({
+      route,
+      handler: (c) => {
+        const { authorization } = c.req.valid('header')
+        const { session } = c.req.valid('cookie')
+        expectTypeOf(authorization).toEqualTypeOf<string>()
+        expectTypeOf(session).toEqualTypeOf<string>()
+        return c.json({ authenticated: true }, 200)
+      },
+    })
+
+    expect(definition.route).toBe(route)
+  })
+
+  it('Should preserve middleware in route config', () => {
+    const middleware = bearerAuth({ token: 'secret' })
+    const route = createRoute({
+      method: 'get',
+      path: '/protected',
+      middleware,
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ data: z.string() }),
+            },
+          },
+          description: 'Protected data',
+        },
+      },
+    })
+
+    const definition = defineOpenAPIRoute({
+      route,
+      handler: (c) => c.json({ data: 'secret' }, 200),
+    })
+
+    expect(definition.route.middleware).toBe(middleware)
+  })
+})
+
+describe('openapiRoutes', () => {
+  it('Should register a single route', async () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/hello',
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  message: z.string(),
+                }),
+              },
+            },
+            description: 'Hello response',
+          },
+        },
+      }),
+      handler: (c) => c.json({ message: 'Hello World' }, 200),
+    })
+
+    const app = new OpenAPIHono().openapiRoutes([route])
+
+    const res = await app.request('/hello')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: 'Hello World' })
+  })
+
+  it('Should register multiple routes', async () => {
+    const getRoute = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/users',
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.array(z.object({ id: z.string(), name: z.string() })),
+              },
+            },
+            description: 'List users',
+          },
+        },
+      }),
+      handler: (c) => c.json([{ id: '1', name: 'Alice' }], 200),
+    })
+
+    const postRoute = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'post',
+        path: '/users',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  name: z.string(),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            content: {
+              'application/json': {
+                schema: z.object({ id: z.string() }),
+              },
+            },
+            description: 'User created',
+          },
+        },
+      }),
+      handler: (c) => c.json({ id: '2' }, 201),
+    })
+    const app = new OpenAPIHono().openapiRoutes([getRoute, postRoute])
+
+    const getRes = await app.request('/users')
+    expect(getRes.status).toBe(200)
+    expect(await getRes.json()).toEqual([{ id: '1', name: 'Alice' }])
+
+    const postRes = await app.request('/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: 'Bob' }),
+    })
+    expect(postRes.status).toBe(201)
+    expect(await postRes.json()).toEqual({ id: '2' })
+  })
+
+  it('Should work with different HTTP methods', async () => {
+    const app = new OpenAPIHono().openapiRoutes([
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/resource',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({ data: z.string() }),
+                },
+              },
+              description: 'Get resource',
+            },
+          },
+        }),
+        handler: (c) => c.json({ data: 'get' }, 200),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'post',
+          path: '/resource',
+          responses: {
+            201: {
+              content: {
+                'application/json': {
+                  schema: z.object({ data: z.string() }),
+                },
+              },
+              description: 'Create resource',
+            },
+          },
+        }),
+        handler: (c) => c.json({ data: 'post' }, 201),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'put',
+          path: '/resource',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({ data: z.string() }),
+                },
+              },
+              description: 'Update resource',
+            },
+          },
+        }),
+        handler: (c) => c.json({ data: 'put' }, 200),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'delete',
+          path: '/resource',
+          responses: {
+            204: {
+              description: 'Delete resource',
+            },
+          },
+        }),
+        handler: (c) => c.body(null, 204),
+      }),
+    ] as const)
+
+    const getRes = await app.request('/resource', { method: 'GET' })
+    expect(getRes.status).toBe(200)
+    expect(await getRes.json()).toEqual({ data: 'get' })
+
+    const postRes = await app.request('/resource', { method: 'POST' })
+    expect(postRes.status).toBe(201)
+    expect(await postRes.json()).toEqual({ data: 'post' })
+
+    const putRes = await app.request('/resource', { method: 'PUT' })
+    expect(putRes.status).toBe(200)
+    expect(await putRes.json()).toEqual({ data: 'put' })
+
+    const deleteRes = await app.request('/resource', { method: 'DELETE' })
+    expect(deleteRes.status).toBe(204)
+  })
+
+  it('Should handle routes with parameters', async () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/items/{id}',
+        request: {
+          params: z.object({
+            id: z.string().openapi({
+              param: {
+                name: 'id',
+                in: 'path',
+              },
+            }),
+          }),
+        },
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  id: z.string(),
+                  name: z.string(),
+                }),
+              },
+            },
+            description: 'Get item',
+          },
+        },
+      }),
+      handler: (c) => {
+        const { id } = c.req.valid('param')
+        return c.json({ id, name: `Item ${id}` }, 200)
+      },
+    })
+
+    const app = new OpenAPIHono().openapiRoutes([route])
+
+    const res = await app.request('/items/123')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: '123', name: 'Item 123' })
+  })
+
+  it('Should handle routes with hooks', async () => {
+    const hookFn = vi.fn((result, c) => {
+      if (!result.success) {
+        return c.json({ error: 'Validation failed' }, 400)
+      }
+    })
+
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'post',
+        path: '/validate',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: z.object({
+                  value: z.number().min(1),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ ok: z.boolean() }),
+              },
+            },
+            description: 'Success',
+          },
+        },
+      }),
+      handler: (c) => c.json({ ok: true }, 200),
+      hook: hookFn,
+    })
+
+    const app = new OpenAPIHono().openapiRoutes([route])
+
+    // Valid request
+    const validRes = await app.request('/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value: 5 }),
+    })
+    expect(validRes.status).toBe(200)
+    expect(hookFn).toHaveBeenCalled()
+
+    // Invalid request
+    const invalidRes = await app.request('/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value: 0 }),
+    })
+    expect(invalidRes.status).toBe(400)
+    expect(await invalidRes.json()).toEqual({ error: 'Validation failed' })
+  })
+
+  it('Should register routes in OpenAPI registry', () => {
+    const routes = [
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/api/users',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.array(z.object({ id: z.string() })),
+                },
+              },
+              description: 'List users',
+            },
+          },
+        }),
+        handler: (c) => c.json([], 200),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/api/posts',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.array(z.object({ id: z.string() })),
+                },
+              },
+              description: 'List posts',
+            },
+          },
+        }),
+        handler: (c) => c.json([], 200),
+      }),
+    ] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes)
+
+    const doc = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        title: 'Test API',
+        version: '1.0.0',
+      },
+    })
+
+    expect(doc.paths).toHaveProperty('/api/users')
+    expect(doc.paths).toHaveProperty('/api/posts')
+    expect(doc.paths['/api/users']).toHaveProperty('get')
+    expect(doc.paths['/api/posts']).toHaveProperty('get')
+  })
+
+  it('Should work with RPC client', async () => {
+    const routes = [
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/api/status',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    status: z.string(),
+                    uptime: z.number(),
+                  }),
+                },
+              },
+              description: 'API status',
+            },
+          },
+        }),
+        handler: (c) => c.json({ status: 'ok', uptime: 12345 }, 200),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'post',
+          path: '/api/echo',
+          request: {
+            body: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    message: z.string(),
+                  }),
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    echo: z.string(),
+                  }),
+                },
+              },
+              description: 'Echo response',
+            },
+          },
+        }),
+        handler: (c) => {
+          const { message } = c.req.valid('json')
+          return c.json({ echo: message }, 200)
+        },
+      }),
+    ] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes)
+
+    const client = hc<typeof app>('http://localhost')
+
+    // Type checking for RPC client
+    expectTypeOf(client.api.status.$get).toBeFunction()
+    expectTypeOf(client.api.echo.$post).toBeFunction()
+  })
+
+  it('Should hide routes when hide property is true', () => {
+    const routes = [
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/public',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({ data: z.string() }),
+                },
+              },
+              description: 'Public endpoint',
+            },
+          },
+        }),
+        handler: (c) => c.json({ data: 'public' }, 200),
+      }),
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/hidden',
+          hide: true,
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({ data: z.string() }),
+                },
+              },
+              description: 'Hidden endpoint',
+            },
+          },
+        }),
+        handler: (c) => c.json({ data: 'hidden' }, 200),
+      }),
+    ] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes)
+
+    const doc = app.getOpenAPIDocument({
+      openapi: '3.0.0',
+      info: {
+        title: 'Test API',
+        version: '1.0.0',
+      },
+    })
+
+    expect(doc.paths).toHaveProperty('/public')
+    expect(doc.paths).not.toHaveProperty('/hidden')
+  })
+
+  it('Should still handle hidden routes at runtime', async () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/secret',
+        hide: true,
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ secret: z.string() }),
+              },
+            },
+            description: 'Secret data',
+          },
+        },
+      }),
+      handler: (c) => c.json({ secret: 'confidential' }, 200),
+    })
+
+    const app = new OpenAPIHono().openapiRoutes([route])
+
+    const res = await app.request('/secret')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ secret: 'confidential' })
+  })
+
+  it('Should handle routes with middleware', async () => {
+    const authMiddleware = bearerAuth({ token: 'secret-token' })
+
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/protected',
+        middleware: authMiddleware,
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ data: z.string() }),
+              },
+            },
+            description: 'Protected data',
+          },
+        },
+      }),
+      handler: (c) => c.json({ data: 'protected' }, 200),
+    })
+
+    const app = new OpenAPIHono().openapiRoutes([route])
+
+    // Without auth
+    const unauthedRes = await app.request('/protected')
+    expect(unauthedRes.status).toBe(401)
+
+    // With auth
+    const authedRes = await app.request('/protected', {
+      headers: {
+        Authorization: 'Bearer secret-token',
+      },
+    })
+    expect(authedRes.status).toBe(200)
+    expect(await authedRes.json()).toEqual({ data: 'protected' })
+  })
+
+  it('Should maintain type safety with const assertion', async () => {
+    const routes = [
+      defineOpenAPIRoute({
+        route: createRoute({
+          method: 'get',
+          path: '/typed',
+          responses: {
+            200: {
+              content: {
+                'application/json': {
+                  schema: z.object({
+                    id: z.number(),
+                    name: z.string(),
+                  }),
+                },
+              },
+              description: 'Typed response',
+            },
+          },
+        }),
+        handler: (c) => {
+          const response = c.json({ id: 1, name: 'test' }, 200)
+          expectTypeOf(response).toMatchTypeOf<
+            TypedResponse<{ id: number; name: string }, 200, 'json'>
+          >()
+          return response
+        },
+      }),
+    ] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes)
+
+    const res = await app.request('/typed')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 1, name: 'test' })
   })
 })
