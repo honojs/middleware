@@ -54,7 +54,7 @@
     "tsdown": "^0.15.9",
     "typescript": "^5.9.3",
     "valibot": "^1.1.0",
-    "vitest": "^4.1.0-beta.1",
+    "vitest": "^4.1.0-beta.3",
     "yup": "^1.7.1",
     "zod": "^4.2.1"
   }
