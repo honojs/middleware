@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.2.2
+
+### Patch Changes
+
+- [#1748](https://github.com/honojs/middleware/pull/1748) [`82701be9e1bfd2b0830555119cf89315501386e2`](https://github.com/honojs/middleware/commit/82701be9e1bfd2b0830555119cf89315501386e2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `zod-to-openapi` to fix the memory leak
+
 ## 1.2.1
 
 ### Patch Changes
