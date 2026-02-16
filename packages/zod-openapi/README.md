@@ -398,6 +398,82 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+### Batch Route Registration
+
+For better code organization and type safety, you can use `defineOpenAPIRoute` and `openapiRoutes` to register multiple routes at once.
+
+#### Using `defineOpenAPIRoute`
+
+`defineOpenAPIRoute` provides explicit type safety for route definitions:
+
+```ts
+import { OpenAPIHono, defineOpenAPIRoute, createRoute, z } from '@hono/zod-openapi'
+
+const getUserRoute = defineOpenAPIRoute({
+  route: createRoute({
+    method: 'get',
+    path: '/users/{id}',
+    request: {
+      params: z.object({ id: z.string() }),
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({ id: z.string(), name: z.string() }),
+          },
+        },
+      },
+    },
+  }),
+  handler: (c) => {
+    const { id } = c.req.valid('param')
+    return c.json({ id, name: 'John Doe' }, 200)
+  },
+})
+```
+
+#### Using openapiRoutes for Batch Registration
+
+Register multiple routes at once with full type safety:
+
+const app = new OpenAPIHono()
+
+```ts
+app.openapiRoutes([getUserRoute, createUserRoute, updateUserRoute] as const) // 'as const' is important for type inference
+```
+
+#### Conditional Routes
+
+Use the addRoute flag to conditionally include routes:
+
+```ts
+const debugRoute = defineOpenAPIRoute({
+  route: createRoute({
+    /* ... */
+  }),
+  handler: (c) => {
+    /* ... */
+  },
+  addRoute: process.env.NODE_ENV === 'development', // Only in dev
+})
+```
+
+#### Modular Organization
+
+Organize routes across multiple files:
+
+```ts
+// routes/users.ts
+export const userRoutes = [getUserRoute, createUserRoute, updateUserRoute] as const
+
+// app.ts
+import { userRoutes } from './routes/users'
+import { postRoutes } from './routes/posts'
+
+app.openapiRoutes([...userRoutes, ...postRoutes] as const)
+```
+
 ## Tips
 
 ### Type utilities
