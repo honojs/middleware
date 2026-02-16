@@ -8,13 +8,13 @@ import { HTTPException } from 'hono/http-exception'
 import type { WSMessageReceive } from 'hono/ws'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage } from 'node:http'
 import type { Http2ServerRequest } from 'node:http2'
 
 interface CustomEnv extends Env {
   Bindings: {
     customVar: string
-  };
+  }
 }
 
 describe('WebSocket helper', () => {
@@ -26,8 +26,10 @@ describe('WebSocket helper', () => {
 
   beforeEach(async () => {
     app = new Hono()
-    const getEnv = (req: IncomingMessage | Http2ServerRequest) => { return { customVar: req.headers.upgrade } }
-    ({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app, getEnv }))
+    const getEnv = (req: IncomingMessage | Http2ServerRequest) => {
+      return { customVar: req.headers.upgrade }
+    }
+    ;({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app, getEnv }))
 
     server = await new Promise<ServerType>((resolve) => {
       const server = serve({ fetch: app.fetch, port: 3030 }, () => {
@@ -341,14 +343,11 @@ describe('WebSocket helper', () => {
 
   it('Should server can obtain environment variables', async () => {
     const mainPromise = new Promise<string>((resolve) =>
-      app.get(
-        '/',
-        (c: Context<CustomEnv>, next) => {
-          let ws = upgradeWebSocket((_c) => ({}))
-          resolve(c.env.customVar)
-          return ws(c, next)
-        }
-      )
+      app.get('/', (c: Context<CustomEnv>, next) => {
+        let ws = upgradeWebSocket((_c) => ({}))
+        resolve(c.env.customVar)
+        return ws(c, next)
+      })
     )
 
     new WebSocket('ws://localhost:3030/')
