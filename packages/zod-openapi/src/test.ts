@@ -76,7 +76,40 @@ const postRoute = defineOpenAPIRoute({
   addRoute: false,
 })
 
-const routes = [getRoute, postRoute] as const
+const validatePost = defineOpenAPIRoute({
+  route: createRoute({
+    method: 'post',
+    path: '/validate',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              value: z.number().min(1),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({ ok: z.boolean() }),
+          },
+        },
+        description: 'Success',
+      },
+    },
+  }),
+  handler: (c) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const body = c.req.valid('json')
+    return c.json({ ok: true }, 200)
+  },
+})
+
+const routes = [getRoute, postRoute, validatePost] as const
 
 // Conditionally build the routes array
 const app = new OpenAPIHono().openapiRoutes(routes)
@@ -89,6 +122,9 @@ export async function prodTest(): Promise<{ protected: boolean }> {
   })
   await client.itemz.$post({
     json: { name: 'example', value: 42 },
+  })
+  await client.validate.$post({
+    json: { value: 10 },
   })
   console.log(await getResponse.json())
   return await getResponse.json() // boolean

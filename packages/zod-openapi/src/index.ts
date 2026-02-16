@@ -692,7 +692,18 @@ export class OpenAPIHono<
   >(
     inputs: Inputs
   ): OpenAPIHono<E, S & SchemaFromRoutes<Inputs, BasePath>, BasePath> => {
-    inputs.forEach(({ route, handler, hook, addRoute }) => {
+    type Result = {
+      [K in keyof Inputs]: Inputs[K] extends {
+        route: infer R extends RouteConfig
+        addRoute?: infer AR extends boolean | undefined
+      }
+        ? OpenAPIRoute<R, E, AR>
+        : never
+    }
+
+    const typedInputs = inputs as unknown as Result
+
+    typedInputs.forEach(({ route, handler, hook, addRoute }) => {
       if (addRoute === false) {
         return
       }
