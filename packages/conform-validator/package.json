@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@conform-to/dom": "^1.14.0",
-    "@conform-to/valibot": "^1.15.1",
+    "@conform-to/valibot": "^1.17.1",
     "@conform-to/yup": "^1.14.0",
     "@conform-to/zod": "^1.14.0",
     "hono": "^4.11.5",
