@@ -61,7 +61,7 @@
     "hono": ">=4.8.0"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.2.3",
     "tsdown": "^0.15.9",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0-beta.1"
