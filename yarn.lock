@@ -895,21 +895,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conform-to/dom@npm:1.15.1":
-  version: 1.15.1
-  resolution: "@conform-to/dom@npm:1.15.1"
-  checksum: 10c0/c2025b3d3a3810c3be5746377a9beb745de123867258c424280bfa14110643c87ab0e7a7d8009eeecd99134583bf7aae0af4180cd73fac4e40fc256b370b29b2
+"@conform-to/dom@npm:1.17.1":
+  version: 1.17.1
+  resolution: "@conform-to/dom@npm:1.17.1"
+  checksum: 10c0/9cb76388ee529856e1e8266c7808ac409507b8c55ca1ba456520fa460f15f0d6892f83d180e5ee6c4030cfd4e99df571752507faa1136dc1bf9d411547aa81f5
   languageName: node
   linkType: hard
 
-"@conform-to/valibot@npm:^1.15.1":
-  version: 1.15.1
-  resolution: "@conform-to/valibot@npm:1.15.1"
+"@conform-to/valibot@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@conform-to/valibot@npm:1.17.1"
   dependencies:
-    "@conform-to/dom": "npm:1.15.1"
+    "@conform-to/dom": "npm:1.17.1"
   peerDependencies:
     valibot: ">= 0.32.0"
-  checksum: 10c0/72accc2c691044ca660d7a5e7091a656d8d98a77172cc7f426115bba14319ec1c3a68673ec8828d9c7b795d446b7b0db362d7c47b4d982fb2b3b90eb2f4183ea
+  checksum: 10c0/d0990e09321bd963f374646cff9e6cdbd2cedd1db86c99bd33bfd284504bd295e38d3d5090ced0a450f42cdf08921e6acd0b036f01ab4ff84bb58c5b810a3bdc
   languageName: node
   linkType: hard
 
@@ -1957,7 +1957,7 @@ __metadata:
   resolution: "@hono/conform-validator@workspace:packages/conform-validator"
   dependencies:
     "@conform-to/dom": "npm:^1.14.0"
-    "@conform-to/valibot": "npm:^1.15.1"
+    "@conform-to/valibot": "npm:^1.17.1"
     "@conform-to/yup": "npm:^1.14.0"
     "@conform-to/zod": "npm:^1.14.0"
     hono: "npm:^4.11.5"
