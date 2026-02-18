@@ -615,13 +615,23 @@ export class OpenAPIHono<
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
+    const isStatic =
+      typeof configureObject !== 'function' && typeof configureGenerator !== 'function'
+    let cachedDocument: OpenAPIObject | null = null
+
     return this.get(path, (c) => {
+      if (isStatic && cachedDocument !== null) {
+        return c.json(cachedDocument)
+      }
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
       const generatorConfig =
         typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
         const document = this.getOpenAPIDocument(objectConfig, generatorConfig)
+        if (isStatic) {
+          cachedDocument = document
+        }
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -634,13 +644,23 @@ export class OpenAPIHono<
     configureObject: OpenAPIObjectConfigure<E, P>,
     configureGenerator?: OpenAPIGeneratorConfigure<E, P>
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
+    const isStatic =
+      typeof configureObject !== 'function' && typeof configureGenerator !== 'function'
+    let cachedDocument: OpenAPIV31bject | null = null
     return this.get(path, (c) => {
+      // Return cached document if available and config is static
+      if (isStatic && cachedDocument !== null) {
+        return c.json(cachedDocument)
+      }
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
       const generatorConfig =
         typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
         const document = this.getOpenAPI31Document(objectConfig, generatorConfig)
+        if (isStatic) {
+          cachedDocument = document
+        }
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
