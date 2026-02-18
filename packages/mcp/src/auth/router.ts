@@ -91,7 +91,7 @@ export const createOAuthMetadata = (options: {
   const revocation_endpoint = options.provider?.revokeToken ? '/revoke' : undefined
 
   const metadata: OAuthMetadata = {
-    issuer: issuer.href,
+    issuer: issuer.pathname === '/' ? issuer.origin : issuer.href,
     service_documentation: options.serviceDocumentationUrl?.href,
 
     authorization_endpoint: new URL(authorization_endpoint, baseUrl || issuer).href,
