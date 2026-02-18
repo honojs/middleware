@@ -398,6 +398,18 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+## Community Extensions
+
+### zod-openapi-share
+
+`zod-openapi-share` is a **community-maintained** extension package for `@hono/zod-openapi` that lets you centralize and reuse response definitions across endpoints.
+Normally, `@hono/zod-openapi` requires you to redefine the same responses (e.g., error schemas) for every endpoint, but with `zod-openapi-share`, you can avoid repetition and prevent definition drift, making your backend development using `hono` + `@hono/zod-openapi` cleaner and more consistent.
+
+This project is **not part of the official `@hono` namespace**, but is designed to complement `@hono/zod-openapi` in real-world API development.
+
+- GitHub: https://github.com/Myxogastria0808/zod-openapi-share
+- npm: https://www.npmjs.com/package/zod-openapi-share
+
 ## Tips
 
 ### Type utilities
