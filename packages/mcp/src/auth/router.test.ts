@@ -227,7 +227,7 @@ describe('MCP Auth Router', () => {
       const body = await response.json()
 
       // Verify essential fields
-      expect(body.issuer).toBe('https://auth.example.com/')
+      expect(body.issuer).toBe('https://auth.example.com')
       expect(body.authorization_endpoint).toBe('https://auth.example.com/authorize')
       expect(body.token_endpoint).toBe('https://auth.example.com/token')
       expect(body.registration_endpoint).toBe('https://auth.example.com/register')
@@ -260,7 +260,7 @@ describe('MCP Auth Router', () => {
       const body = await response.json()
 
       // Verify essential endpoints
-      expect(body.issuer).toBe('https://auth.example.com/')
+      expect(body.issuer).toBe('https://auth.example.com')
       expect(body.authorization_endpoint).toBe('https://auth.example.com/authorize')
       expect(body.token_endpoint).toBe('https://auth.example.com/token')
 
@@ -290,7 +290,7 @@ describe('MCP Auth Router', () => {
 
       // Verify protected resource metadata
       expect(body.resource).toBe('https://mcp.example.com/')
-      expect(body.authorization_servers).toContain('https://mcp.example.com/')
+      expect(body.authorization_servers).toContain('https://mcp.example.com')
       expect(body.scopes_supported).toEqual(['read', 'write'])
       expect(body.resource_name).toBe('Test API')
     })
@@ -413,7 +413,7 @@ describe('MCP Auth Router', () => {
 
 describe('MCP Auth Metadata Router', () => {
   const mockOAuthMetadata: OAuthMetadata = {
-    issuer: 'https://auth.example.com/',
+    issuer: 'https://auth.example.com',
     authorization_endpoint: 'https://auth.example.com/authorize',
     token_endpoint: 'https://auth.example.com/token',
     response_types_supported: ['code'],
@@ -455,7 +455,7 @@ describe('MCP Auth Metadata Router', () => {
       const body = await response.json()
 
       // Verify metadata points to authorization server
-      expect(body.issuer).toBe('https://auth.example.com/')
+      expect(body.issuer).toBe('https://auth.example.com')
       expect(body.authorization_endpoint).toBe('https://auth.example.com/authorize')
       expect(body.token_endpoint).toBe('https://auth.example.com/token')
       expect(body.response_types_supported).toEqual(['code'])
@@ -472,7 +472,7 @@ describe('MCP Auth Metadata Router', () => {
 
       // Verify protected resource metadata
       expect(body.resource).toBe('https://api.example.com/')
-      expect(body.authorization_servers).toEqual(['https://auth.example.com/'])
+      expect(body.authorization_servers).toEqual(['https://auth.example.com'])
       expect(body.scopes_supported).toEqual(['read', 'write'])
       expect(body.resource_name).toBe('Test API')
       expect(body.resource_documentation).toBe('https://docs.example.com/')
@@ -491,7 +491,7 @@ describe('MCP Auth Metadata Router', () => {
       const authResponseBody = await authResponse.json()
 
       expect(authResponse.status).toBe(200)
-      expect(authResponseBody.issuer).toBe('https://auth.example.com/')
+      expect(authResponseBody.issuer).toBe('https://auth.example.com')
       expect(authResponseBody.service_documentation).toBeUndefined()
       expect(authResponseBody.scopes_supported).toBeUndefined()
 
@@ -500,7 +500,7 @@ describe('MCP Auth Metadata Router', () => {
 
       expect(resourceResponse.status).toBe(200)
       expect(resourceResponseBody.resource).toBe('https://api.example.com/')
-      expect(resourceResponseBody.authorization_servers).toEqual(['https://auth.example.com/'])
+      expect(resourceResponseBody.authorization_servers).toEqual(['https://auth.example.com'])
       expect(resourceResponseBody.scopes_supported).toBeUndefined()
       expect(resourceResponseBody.resource_name).toBeUndefined()
       expect(resourceResponseBody.resource_documentation).toBeUndefined()
