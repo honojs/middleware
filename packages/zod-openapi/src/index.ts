@@ -397,6 +397,93 @@ export const $ = <T extends Hono<any, any, any>>(app: T): HonoToOpenAPIHono<T> =
   return app as HonoToOpenAPIHono<T>
 }
 
+// Helper: Consolidate all Input types (Query, Param, Json, etc.)
+type ComputeInput<R extends RouteConfig> = InputTypeParam<R> &
+  InputTypeQuery<R> &
+  InputTypeHeader<R> &
+  InputTypeCookie<R> &
+  InputTypeForm<R> &
+  InputTypeJson<R>
+
+// Helper: Calculate the expected Handler type for a specific RouteConfig
+type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
+  E,
+  ConvertPathType<R['path']>,
+  ComputeInput<R>,
+  R extends {
+    responses: {
+      [statusCode: number]: {
+        content: {
+          [mediaType: string]: ZodMediaTypeObject
+        }
+      }
+    }
+  }
+    ? MaybePromise<RouteConfigToTypedResponse<R>>
+    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
+>
+
+type HookFromRoute<R extends RouteConfig, E extends Env> =
+  | Hook<
+      ComputeInput<R>,
+      E,
+      ConvertPathType<R['path']>,
+      R extends {
+        responses: {
+          [statusCode: number]: {
+            content: {
+              [mediaType: string]: ZodMediaTypeObject
+            }
+          }
+        }
+      }
+        ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
+        : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
+    >
+  | undefined
+
+// Recursive Helper: Merge Schemas for the Return Type
+type SchemaFromRoutes<
+  Routes extends readonly { route: RouteConfig; addRoute?: boolean }[],
+  BasePath extends string,
+> = Routes extends readonly [infer Head, ...infer Tail]
+  ? Head extends { route: infer R extends RouteConfig; addRoute?: infer AddRoute }
+    ? ([AddRoute] extends [false]
+        ? {}
+        : ToSchema<
+            R['method'],
+            MergePath<BasePath, ConvertPathType<R['path']>>,
+            ComputeInput<R>,
+            RouteConfigToTypedResponse<R>
+          >) &
+        SchemaFromRoutes<
+          Tail extends readonly { route: RouteConfig; addRoute?: boolean }[] ? Tail : [],
+          BasePath
+        >
+    : {}
+  : {}
+
+export type OpenAPIRoute<
+  R extends RouteConfig = RouteConfig,
+  E extends Env = Env,
+  AddRoute extends boolean | undefined = boolean | undefined,
+> = {
+  route: R
+  handler: HandlerFromRoute<R, E>
+  hook?: HookFromRoute<R, E>
+  addRoute?: AddRoute
+}
+
+export const defineOpenAPIRoute = <
+  R extends RouteConfig,
+  E extends Env = Env,
+  const AddRoute extends boolean | undefined = undefined,
+>(
+  def: OpenAPIRoute<R, E, AddRoute>
+): OpenAPIRoute<R, E, AddRoute> => {
+  return def
+}
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -587,6 +674,41 @@ export class OpenAPIHono<
       ...validators,
       handler
     )
+    return this
+  }
+
+  /**
+   * Register a list of routes with full Type Safety and RPC support.
+   * * @param inputs - An array of objects containing { route, handler, hook }.
+   * Must be defined `as const` or inline to preserve tuple types.
+   */
+  openapiRoutes = <
+    const Inputs extends readonly {
+      route: RouteConfig
+      handler: any
+      hook?: any
+      addRoute?: boolean
+    }[],
+  >(
+    inputs: Inputs
+  ): OpenAPIHono<E, S & SchemaFromRoutes<Inputs, BasePath>, BasePath> => {
+    type Result = {
+      [K in keyof Inputs]: Inputs[K] extends {
+        route: infer R extends RouteConfig
+        addRoute?: infer AR extends boolean | undefined
+      }
+        ? OpenAPIRoute<R, E, AR>
+        : never
+    }
+
+    const typedInputs = inputs as unknown as Result
+
+    typedInputs.forEach(({ route, handler, hook, addRoute }) => {
+      if (addRoute === false) {
+        return
+      }
+      this.openapi(route, handler, hook)
+    })
     return this
   }
 
