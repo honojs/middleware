@@ -50,6 +50,6 @@
     "tsdown": "^0.15.9",
     "tsyringe": "^4.10.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1"
+    "vitest": "^4.1.0-beta.4"
   }
 }

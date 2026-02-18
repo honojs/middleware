@@ -49,6 +49,6 @@
     "prom-client": "^15.0.0",
     "tsdown": "^0.15.9",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1"
+    "vitest": "^4.1.0-beta.4"
   }
 }
