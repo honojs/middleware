@@ -58,7 +58,6 @@ const getStats = cacheFunction(async (id: string) => ({ id, ts: Date.now() }), {
 
 - `cacheMiddleware(options | maxAge)`
 - `cacheDefaults(options)`
-- `cacheConfig(options)` (deprecated alias of `cacheDefaults`)
 - `cacheFunction(fn, options | maxAge)`
 - `setCacheStorage(storage)` / `getCacheStorage()`
 - `setCacheDefaults(options)` / `getCacheDefaults()`

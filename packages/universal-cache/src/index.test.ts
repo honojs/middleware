@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 import type { CacheDefaults } from './types'
 import {
-  cacheConfig,
   cacheDefaults,
   cacheFunction,
   cacheMiddleware,
@@ -264,22 +263,6 @@ describe('@hono/universal-cache', () => {
 
       expect(await res1.text()).toBe('1')
       expect(await res2.text()).toBe('1')
-      expect(count).toBe(1)
-    })
-
-    it('supports deprecated cacheConfig() alias', async () => {
-      const app = new Hono()
-      let count = 0
-
-      app.use('*', cacheConfig({ maxAge: 60, swr: false }))
-      app.get('/items', cacheMiddleware(), (c) => {
-        count += 1
-        return c.text(String(count))
-      })
-
-      await app.request('http://localhost/items')
-      await app.request('http://localhost/items')
-
       expect(count).toBe(1)
     })
 

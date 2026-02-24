@@ -98,12 +98,6 @@ export const cacheDefaults = (options: CacheConfigOptions = {}): MiddlewareHandl
 }
 
 /**
- * @deprecated Use cacheDefaults(options) instead.
- */
-export const cacheConfig = (options: CacheConfigOptions = {}): MiddlewareHandler =>
-  cacheDefaults(options)
-
-/**
  * Create a new in-memory storage instance.
  */
 export const createCacheStorage = (): Storage =>
