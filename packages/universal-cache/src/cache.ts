@@ -1,7 +1,8 @@
 import type { Context, MiddlewareHandler, Next } from 'hono'
 import { getRuntimeKey } from 'hono/adapter'
 import { hash as ohash } from 'ohash'
-import { createStorage, type Storage } from 'unstorage'
+import { createStorage } from 'unstorage'
+import type { Storage } from 'unstorage'
 import memoryDriver from 'unstorage/drivers/memory'
 import type {
   CacheConfigOptions,
@@ -214,7 +215,7 @@ const defaultSerializeResponse = async (
   } satisfies CachedResponseEntry
 }
 
-const defaultDeserializeResponse = async (entry: CachedResponseEntry) => createCachedResponse(entry)
+const defaultDeserializeResponse = (entry: CachedResponseEntry) => createCachedResponse(entry)
 
 interface BufferLike {
   from: (
@@ -570,13 +571,13 @@ export const cacheMiddleware = (
   return handler
 }
 
-const createFunctionEntry = (
-  result: unknown,
+const createFunctionEntry = <TResult>(
+  result: TResult,
   integrity: string,
   maxAge: number,
   staleMaxAge: number,
   now: number
-): CachedFunctionEntry<unknown> => {
+): CachedFunctionEntry<TResult> => {
   return {
     value: result,
     mtime: now,
@@ -586,13 +587,13 @@ const createFunctionEntry = (
   }
 }
 
-const defaultSerializeFunctionEntry = (
-  result: unknown,
+const defaultSerializeFunctionEntry = <TResult>(
+  result: TResult,
   context: { integrity: string; maxAge: number; staleMaxAge: number; now: number }
 ) =>
   createFunctionEntry(result, context.integrity, context.maxAge, context.staleMaxAge, context.now)
 
-const defaultDeserializeFunctionEntry = async <TResult>(entry: CachedFunctionEntry<TResult>) =>
+const defaultDeserializeFunctionEntry = <TResult>(entry: CachedFunctionEntry<TResult>) =>
   entry.value
 
 const shouldBypassFunctionCache = async <TArgs extends unknown[]>(
@@ -722,13 +723,11 @@ export const cacheFunction = <TArgs extends unknown[], TResult>(
     if (integrityCache) {
       return integrityCache
     }
-    if (!integrityPromise) {
-      integrityPromise = (async () => {
-        const integrity = integrityValue ?? (await hashFn(fn.toString()))
-        integrityCache = integrity
-        return integrity
-      })()
-    }
+    integrityPromise ??= (async () => {
+      const integrity = integrityValue ?? (await hashFn(fn.toString()))
+      integrityCache = integrity
+      return integrity
+    })()
     return await integrityPromise
   }
 

@@ -78,7 +78,7 @@ export interface CacheMiddlewareOptions extends CacheBaseOptions {
 
 export interface CacheFunctionOptions<TArgs extends unknown[]> extends CacheBaseOptions {
   /** Deserialize a cached entry back into the function result. */
-  deserialize?: (entry: CachedFunctionEntry<unknown>) => unknown | Promise<unknown>
+  deserialize?: (entry: CachedFunctionEntry<unknown>) => unknown
   /** Provide a custom cache key. */
   getKey?: CacheKeyFn<TArgs>
   /** Serialize the function result into a cached entry. */

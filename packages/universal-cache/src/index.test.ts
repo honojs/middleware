@@ -472,11 +472,16 @@ describe('@hono/universal-cache', () => {
       )
 
       const res = await app.request('http://localhost/items')
-      const cached = await storage.getItem(storageKey)
+      const cachedRaw = await (storage.getItem(storageKey) as Promise<unknown>)
 
       expect(await res.text()).toBe('value-1')
       expect(count).toBe(1)
-      expect(cached).toMatchObject({ value: expect.any(String) })
+      expect(cachedRaw).toBeTypeOf('object')
+      expect(cachedRaw).not.toBeNull()
+      if (!cachedRaw || typeof cachedRaw !== 'object') {
+        throw new Error('Expected cached response entry object')
+      }
+      expect((cachedRaw as { value?: unknown }).value).toBeTypeOf('string')
     })
   })
 
@@ -485,7 +490,7 @@ describe('@hono/universal-cache', () => {
       let count = 0
 
       const fn = cacheFunction(
-        async (id: string) => {
+        (id: string) => {
           count += 1
           return `${id}-${count}`
         },
@@ -533,7 +538,7 @@ describe('@hono/universal-cache', () => {
       let bypass = false
 
       const fn = cacheFunction(
-        async (id: string) => {
+        (id: string) => {
           count += 1
           return `${id}-${count}`
         },
@@ -567,7 +572,7 @@ describe('@hono/universal-cache', () => {
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           if (shouldThrow) {
             throw new Error('boom')
@@ -610,7 +615,7 @@ describe('@hono/universal-cache', () => {
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           if (shouldThrow) {
             throw new Error('boom')
@@ -647,7 +652,7 @@ describe('@hono/universal-cache', () => {
       let count = 0
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           return { value: count }
         },
@@ -662,7 +667,12 @@ describe('@hono/universal-cache', () => {
             staleExpires: context.now + context.maxAge * 1000,
             integrity: context.integrity,
           }),
-          deserialize: (entry) => JSON.parse(String(entry.value)) as { value: number },
+          deserialize: (entry) => {
+            if (typeof entry.value !== 'string') {
+              throw new TypeError('Expected serialized string value')
+            }
+            return JSON.parse(entry.value) as { value: number }
+          },
         }
       )
 
@@ -679,7 +689,7 @@ describe('@hono/universal-cache', () => {
       let valid = true
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           return `v${count}`
         },
@@ -706,7 +716,7 @@ describe('@hono/universal-cache', () => {
       let count = 0
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           return `v${count}`
         },
@@ -734,7 +744,7 @@ describe('@hono/universal-cache', () => {
       let count = 0
 
       const fn = cacheFunction(
-        async () => {
+        () => {
           count += 1
           return count
         },
