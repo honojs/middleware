@@ -23,8 +23,11 @@ export type AuthRouterOptions = {
 
   /**
    * The authorization server's issuer identifier, which is a URL that uses the "https" scheme and has no query or fragment components.
+   *
+   * Pass a string to preserve the exact issuer value in metadata (e.g., without trailing slash normalization).
+   * Pass a URL object for the original behavior (uses URL.href which may normalize the value).
    */
-  issuerUrl: URL
+  issuerUrl: URL | string
 
   /**
    * The base URL of the authorization server to use for the metadata endpoints.
@@ -73,12 +76,15 @@ export type AuthRouterOptions = {
 
 export const createOAuthMetadata = (options: {
   provider?: OAuthServerProvider
-  issuerUrl: URL
+  issuerUrl: URL | string
   baseUrl?: URL
   serviceDocumentationUrl?: URL
   scopesSupported?: string[]
 }): OAuthMetadata => {
-  const issuer = options.issuerUrl
+  const issuerString =
+    typeof options.issuerUrl === 'string' ? options.issuerUrl : options.issuerUrl.href
+  const issuer =
+    typeof options.issuerUrl === 'string' ? new URL(options.issuerUrl) : options.issuerUrl
   const baseUrl = options.baseUrl
 
   checkIssuerUrl(issuer)
@@ -91,7 +97,7 @@ export const createOAuthMetadata = (options: {
   const revocation_endpoint = options.provider?.revokeToken ? '/revoke' : undefined
 
   const metadata: OAuthMetadata = {
-    issuer: issuer.href,
+    issuer: issuerString,
     service_documentation: options.serviceDocumentationUrl?.href,
 
     authorization_endpoint: new URL(authorization_endpoint, baseUrl || issuer).href,
