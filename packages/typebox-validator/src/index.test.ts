@@ -1,12 +1,10 @@
 import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 
 import { Type } from 'typebox'
 import { tbValidator } from '.'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 
 // ------------------------------------------------------------------
 // Inference

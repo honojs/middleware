@@ -1,13 +1,12 @@
 import type { TypedResponse } from 'hono'
 import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import type { InferIssue, NumberIssue, ObjectIssue, StringIssue } from 'valibot'
 import * as v from 'valibot'
 import type { FailedResponse } from '.'
 import { vValidator } from '.'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
 
