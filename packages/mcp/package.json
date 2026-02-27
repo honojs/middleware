@@ -1,6 +1,6 @@
 {
   "name": "@hono/mcp",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "MCP Middleware for Hono",
   "type": "module",
   "module": "dist/index.js",
