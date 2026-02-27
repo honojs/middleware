@@ -34,6 +34,8 @@ const flushPromises = async () => {
 }
 
 describe('@hono/universal-cache', () => {
+  const toBase64 = (value: string) => Buffer.from(value).toString('base64')
+
   beforeEach(() => {
     resetDefaultOptions()
     setCacheStorage(createCacheStorage())
@@ -483,6 +485,204 @@ describe('@hono/universal-cache', () => {
       }
       expect((cachedRaw as { value?: unknown }).value).toBeTypeOf('string')
     })
+
+    it('falls back to safe key prefix when path decoding fails', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('*', cacheMiddleware({ maxAge: 60, swr: false }), (c) => {
+        count += 1
+        return c.text(String(count))
+      })
+
+      const url = 'http://localhost/%E0%A4%A'
+      const res1 = await app.request(url)
+      const res2 = await app.request(url)
+
+      expect(await res1.text()).toBe('1')
+      expect(await res2.text()).toBe('1')
+      expect(count).toBe(1)
+    })
+
+    it('drops cached response entries with integrity mismatch', async () => {
+      const storage = createCacheStorage()
+      const app = new Hono()
+      let count = 0
+
+      const storageKey = 'cache:hono/handlers:items:key.json'
+      await storage.setItem(storageKey, {
+        value: toBase64('stale'),
+        encoding: 'base64',
+        status: 200,
+        headers: { 'content-type': 'text/plain' },
+        mtime: Date.now(),
+        expires: Date.now() + 60_000,
+        staleExpires: Date.now() + 120_000,
+        integrity: 'stale-integrity',
+      })
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          storage,
+          name: 'items',
+          getKey: () => 'key',
+          maxAge: 60,
+          swr: false,
+          integrity: 'fresh-integrity',
+        }),
+        (c) => {
+          count += 1
+          return c.text(`value-${count}`)
+        }
+      )
+
+      const res = await app.request('http://localhost/items')
+      expect(await res.text()).toBe('value-1')
+      expect(count).toBe(1)
+    })
+
+    it('drops cached response entries rejected by validate()', async () => {
+      const storage = createCacheStorage()
+      const app = new Hono()
+      let count = 0
+
+      const storageKey = 'cache:hono/handlers:items:key.json'
+      await storage.setItem(storageKey, {
+        value: toBase64('stale'),
+        encoding: 'base64',
+        status: 200,
+        headers: { 'content-type': 'text/plain' },
+        mtime: Date.now(),
+        expires: Date.now() + 60_000,
+        staleExpires: Date.now() + 120_000,
+        integrity: 'integrity',
+      })
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          storage,
+          name: 'items',
+          getKey: () => 'key',
+          maxAge: 60,
+          swr: false,
+          integrity: 'integrity',
+          validate: () => false,
+        }),
+        (c) => {
+          count += 1
+          return c.text(`value-${count}`)
+        }
+      )
+
+      const res = await app.request('http://localhost/items')
+      expect(await res.text()).toBe('value-1')
+      expect(count).toBe(1)
+    })
+
+    it('treats etag/last-modified header value "undefined" as invalid cache entry', async () => {
+      const storage = createCacheStorage()
+      const app = new Hono()
+      let count = 0
+
+      await storage.setItem('cache:hono/handlers:etag:key.json', {
+        value: toBase64('stale'),
+        encoding: 'base64',
+        status: 200,
+        headers: { etag: 'undefined' },
+        mtime: Date.now(),
+        expires: Date.now() + 60_000,
+        staleExpires: Date.now() + 120_000,
+        integrity: 'integrity',
+      })
+
+      await storage.setItem('cache:hono/handlers:last-mod:key.json', {
+        value: toBase64('stale'),
+        encoding: 'base64',
+        status: 200,
+        headers: { 'last-modified': 'undefined' },
+        mtime: Date.now(),
+        expires: Date.now() + 60_000,
+        staleExpires: Date.now() + 120_000,
+        integrity: 'integrity',
+      })
+
+      app.get(
+        '/etag',
+        cacheMiddleware({
+          storage,
+          name: 'etag',
+          getKey: () => 'key',
+          maxAge: 60,
+          swr: false,
+          integrity: 'integrity',
+        }),
+        (c) => {
+          count += 1
+          return c.text(`value-${count}`)
+        }
+      )
+
+      app.get(
+        '/last-mod',
+        cacheMiddleware({
+          storage,
+          name: 'last-mod',
+          getKey: () => 'key',
+          maxAge: 60,
+          swr: false,
+          integrity: 'integrity',
+        }),
+        (c) => {
+          count += 1
+          return c.text(`value-${count}`)
+        }
+      )
+
+      const etagRes = await app.request('http://localhost/etag')
+      const lastModRes = await app.request('http://localhost/last-mod')
+
+      expect(await etagRes.text()).toBe('value-1')
+      expect(await lastModRes.text()).toBe('value-2')
+      expect(count).toBe(2)
+    })
+
+    it('evicts old cache when invalidated response is non-cacheable with keepPreviousOn5xx=true', async () => {
+      const app = new Hono()
+      let value = 'v1'
+      let noStore = false
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          maxAge: 60,
+          swr: false,
+          keepPreviousOn5xx: true,
+          shouldInvalidateCache: (c) => c.req.header('x-invalidate') === '1',
+        }),
+        (c) => {
+          if (noStore) {
+            c.header('cache-control', 'no-store')
+          }
+          return c.text(value)
+        }
+      )
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('v1')
+
+      value = 'v2'
+      noStore = true
+      const refresh = await app.request('http://localhost/items', {
+        headers: { 'x-cache-revalidate': '1', 'x-invalidate': '1' },
+      })
+      expect(await refresh.text()).toBe('v2')
+
+      value = 'v3'
+      noStore = false
+      const next = await app.request('http://localhost/items')
+      expect(await next.text()).toBe('v3')
+    })
   })
 
   describe('cacheFunction', () => {
@@ -757,6 +957,51 @@ describe('@hono/universal-cache', () => {
       expect(a).toBe(1)
       expect(b).toBe(2)
       expect(count).toBe(2)
+    })
+
+    it('uses default argument hashing when getKey is omitted', async () => {
+      let count = 0
+      const fn = cacheFunction(
+        (input: { id: string }) => {
+          count += 1
+          return `${input.id}-${count}`
+        },
+        { maxAge: 60, swr: false }
+      )
+
+      const a = await fn({ id: 'x' })
+      const b = await fn({ id: 'x' })
+
+      expect(a).toBe('x-1')
+      expect(b).toBe('x-1')
+      expect(count).toBe(1)
+    })
+
+    it('removes malformed function cache entries before computing fresh value', async () => {
+      const storage = createCacheStorage()
+      let count = 0
+
+      await storage.setItem('cache:hono/functions:fn:key.json', 123 as unknown as object)
+
+      const fn = cacheFunction(
+        () => {
+          count += 1
+          return `v${count}`
+        },
+        {
+          storage,
+          base: 'cache',
+          group: 'hono/functions',
+          name: 'fn',
+          getKey: () => 'key',
+          maxAge: 60,
+          swr: false,
+        }
+      )
+
+      const value = await fn()
+      expect(value).toBe('v1')
+      expect(count).toBe(1)
     })
   })
 
