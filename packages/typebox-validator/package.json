@@ -42,12 +42,12 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "typebox": "^1.0.81"
+    "typebox": "^1.1.5"
   },
   "devDependencies": {
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
-    "typebox": "^1.0.81",
+    "typebox": "^1.1.5",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0-beta.1"
   }
