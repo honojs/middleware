@@ -54,13 +54,16 @@ export class StreamableHTTPTransport implements Transport {
   #allowedHosts?: string[]
   #allowedOrigins?: string[]
   #enableDnsRebindingProtection: boolean
+  #strictAcceptHeader: boolean
 
   sessionId?: string
   onclose?: () => void
   onerror?: (error: Error) => void
   onmessage?: (message: JSONRPCMessage, extra?: MessageExtraInfo) => void
 
-  constructor(options?: StreamableHTTPServerTransportOptions) {
+  constructor(
+    options?: StreamableHTTPServerTransportOptions & { strictAcceptHeader?: boolean }
+  ) {
     this.#sessionIdGenerator = options?.sessionIdGenerator
     this.#enableJsonResponse = options?.enableJsonResponse ?? false
     this.#eventStore = options?.eventStore
@@ -69,6 +72,7 @@ export class StreamableHTTPTransport implements Transport {
     this.#allowedHosts = options?.allowedHosts
     this.#allowedOrigins = options?.allowedOrigins
     this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false
+    this.#strictAcceptHeader = options?.strictAcceptHeader ?? false
   }
 
   /**
@@ -148,8 +152,8 @@ export class StreamableHTTPTransport implements Transport {
   private async handleGetRequest(ctx: Context) {
     try {
       // The client MUST include an Accept header, listing text/event-stream as a supported content type.
-      const acceptHeader = ctx.req.header('Accept')
-      if (!acceptHeader?.includes('text/event-stream')) {
+      const getAcceptHeader = ctx.req.header('Accept') || '*/*'
+      if (!getAcceptHeader.includes('text/event-stream') && !getAcceptHeader.includes('*/*')) {
         throw new HTTPException(406, {
           res: Response.json({
             jsonrpc: '2.0',
@@ -275,23 +279,46 @@ export class StreamableHTTPTransport implements Transport {
   private async handlePostRequest(ctx: Context, parsedBody?: unknown) {
     try {
       // Validate the Accept header
-      const acceptHeader = ctx.req.header('Accept')
-      // The client MUST include an Accept header, listing both application/json and text/event-stream as supported content types.
-      if (
-        !acceptHeader?.includes('application/json') ||
-        !acceptHeader.includes('text/event-stream')
-      ) {
-        throw new HTTPException(406, {
-          res: Response.json({
-            jsonrpc: '2.0',
-            error: {
-              code: ErrorCode.ConnectionClosed,
-              message:
-                'Not Acceptable: Client must accept both application/json and text/event-stream',
-            },
-            id: null,
-          }),
-        })
+      const acceptHeader = ctx.req.header('Accept') || '*/*'
+
+      if (this.#strictAcceptHeader) {
+        // Strict spec compliance: require both as per MCP spec
+        if (
+          !acceptHeader.includes('application/json') ||
+          !acceptHeader.includes('text/event-stream')
+        ) {
+          throw new HTTPException(406, {
+            res: Response.json({
+              jsonrpc: '2.0',
+              error: {
+                code: ErrorCode.ConnectionClosed,
+                message:
+                  'Not Acceptable: Client must accept both application/json and text/event-stream',
+              },
+              id: null,
+            }),
+          })
+        }
+      } else {
+        // Permissive mode (default): accept if client can handle JSON, SSE, or wildcard
+        const acceptable =
+          acceptHeader.includes('application/json') ||
+          acceptHeader.includes('text/event-stream') ||
+          acceptHeader.includes('*/*')
+
+        if (!acceptable) {
+          throw new HTTPException(406, {
+            res: Response.json({
+              jsonrpc: '2.0',
+              error: {
+                code: ErrorCode.ConnectionClosed,
+                message:
+                  'Not Acceptable: Client must accept application/json or text/event-stream',
+              },
+              id: null,
+            }),
+          })
+        }
       }
 
       const ct = ctx.req.header('Content-Type')
