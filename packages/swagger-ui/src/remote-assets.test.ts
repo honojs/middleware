@@ -21,23 +21,15 @@ describe('remoteAssets', () => {
   it('should use custom baseUrl for internal CDN', () => {
     const baseUrl = 'https://unpkg.com'
     const assets = remoteAssets({ baseUrl })
-    expect(assets.css).toEqual([
-      `${baseUrl}/swagger-ui-dist/swagger-ui.css`,
-    ])
-    expect(assets.js).toEqual([
-      `${baseUrl}/swagger-ui-dist/swagger-ui-bundle.js`,
-    ])
+    expect(assets.css).toEqual([`${baseUrl}/swagger-ui-dist/swagger-ui.css`])
+    expect(assets.js).toEqual([`${baseUrl}/swagger-ui-dist/swagger-ui-bundle.js`])
   })
 
   it('should support baseUrl with version', () => {
     const baseUrl = 'https://unpkg.com'
     const version = '5.0.0'
     const assets = remoteAssets({ baseUrl, version })
-    expect(assets.css).toEqual([
-      `${baseUrl}/swagger-ui-dist@${version}/swagger-ui.css`,
-    ])
-    expect(assets.js).toEqual([
-      `${baseUrl}/swagger-ui-dist@${version}/swagger-ui-bundle.js`,
-    ])
+    expect(assets.css).toEqual([`${baseUrl}/swagger-ui-dist@${version}/swagger-ui.css`])
+    expect(assets.js).toEqual([`${baseUrl}/swagger-ui-dist@${version}/swagger-ui-bundle.js`])
   })
 })
