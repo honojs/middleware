@@ -1,5 +1,13 @@
 # @hono/eslint-config
 
+## 2.1.0
+
+### Minor Changes
+
+- [#1772](https://github.com/honojs/middleware/pull/1772) [`e762ac00bb46d06ba2f92ab49af01fec23490230`](https://github.com/honojs/middleware/commit/e762ac00bb46d06ba2f92ab49af01fec23490230) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Update [`@typescript-eslint/no-unused-vars`](https://typescript-eslint.io/rules/no-unused-vars/) to match
+  the behaviour of [`noUnusedLocals`](https://www.typescriptlang.org/tsconfig/#noUnusedLocals) and [`noUnusedParameters`](https://www.typescriptlang.org/tsconfig/#noUnusedParameters).
+  Specifcally ignoring variables and parameters prefixed with `_`
+
 ## 2.0.6
 
 ### Patch Changes
