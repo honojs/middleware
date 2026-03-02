@@ -1,11 +1,9 @@
 import { type } from 'arktype'
 import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { arktypeValidator } from '.'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 
 describe('Basic', () => {
   const app = new Hono()
