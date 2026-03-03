@@ -57,11 +57,11 @@ function defaultOnRequest<L extends BaseLogger>(logger: L, c: Context): void {
 }
 
 function defaultOnResponse<L extends BaseLogger>(logger: L, c: Context, elapsedMs: number): void {
-  logger.info({ status: c.res.status, elapsedMs }, 'request end')
+  logger.info({ method: c.req.method, path: c.req.path, status: c.res.status, elapsedMs }, 'request end')
 }
 
 function defaultOnError<L extends BaseLogger>(logger: L, err: Error, c: Context): void {
-  logger.error({ err, method: c.req.method, path: c.req.path }, 'request error')
+  logger.error({ err, method: c.req.method, path: c.req.path, status: c.res.status }, 'request error')
 }
 
 export function structuredLogger<L extends BaseLogger = BaseLogger>(

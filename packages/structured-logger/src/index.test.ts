@@ -219,6 +219,8 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       const lastInfoCall = mockLogger.info.mock.calls[mockLogger.info.mock.calls.length - 1]!
+      expect(lastInfoCall[0]).toHaveProperty('method', 'GET')
+      expect(lastInfoCall[0]).toHaveProperty('path', '/')
       expect(lastInfoCall[0]).toHaveProperty('status', 200)
       expect(lastInfoCall[0]).toHaveProperty('elapsedMs')
       expect(lastInfoCall[1]).toBe('request end')
@@ -241,6 +243,7 @@ describe('structuredLogger', () => {
       expect(errorCall[0]).toHaveProperty('err')
       expect(errorCall[0]).toHaveProperty('method', 'GET')
       expect(errorCall[0]).toHaveProperty('path', '/')
+      expect(errorCall[0]).toHaveProperty('status', 500)
       expect(errorCall[1]).toBe('request error')
     })
   })
