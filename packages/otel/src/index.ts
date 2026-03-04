@@ -120,7 +120,10 @@ export const httpInstrumentationMiddleware = (
         span?.setAttribute(ATTR_HTTP_ROUTE, routePath(c))
 
         span?.updateName(spanName(c))
-        requestDuration.record(performance.now() - monotonicStartTime, {
+        // Convert duration to seconds as the time unit from performance.now() is in milliseconds
+        const duration = (performance.now() - monotonicStartTime) / 1000
+
+        requestDuration.record(duration, {
           ...stableAttrs,
           [ATTR_HTTP_ROUTE]: routePath(c),
           [ATTR_HTTP_RESPONSE_STATUS_CODE]: c.res.status,
