@@ -355,6 +355,26 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     }
   })
 
+  it('Correctly records request duration metric as seconds (regression test for issue #1759)', async () => {
+    // verifies that we do not create another duration conversion regression (https://github.com/honojs/middleware/issues/1759)
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider }))
+    app.get('/metrics-test', (c) => c.text('success'))
+
+    await app.request('http://localhost/metrics-test')
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    assert.ok(resourceMetrics.length > 0)
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const dps = durationMetric.dataPoints
+    assert.strictEqual(dps.length, 1)
+    const dp = dps[0]
+    assert.ok(dp.value.max < 0.001)
+  })
+
   it('Should include serviceName and serviceVersion in metric attributes', async () => {
     const app = new Hono()
     app.use(
