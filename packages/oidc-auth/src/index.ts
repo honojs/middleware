@@ -184,11 +184,18 @@ export const getClient = (c: Context): oauth2.Client => {
   const env = getOidcAuthEnv(c)
   let client = c.get('oidcClient')
   if (client === undefined) {
-    client = {
-      client_id: env.OIDC_CLIENT_ID,
-      client_secret: env.OIDC_CLIENT_SECRET,
-      token_endpoint_auth_method: 'client_secret_basic',
-    }
+    client =
+      env.OIDC_CLIENT_SECRET === ''
+        ? {
+            // No client secret provided, use 'none' auth method
+            client_id: env.OIDC_CLIENT_ID,
+            token_endpoint_auth_method: 'none',
+          }
+        : {
+            client_id: env.OIDC_CLIENT_ID,
+            client_secret: env.OIDC_CLIENT_SECRET,
+            token_endpoint_auth_method: 'client_secret_basic',
+          }
     c.set('oidcClient', client)
   }
   return client
