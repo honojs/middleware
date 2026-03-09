@@ -52,15 +52,15 @@ export interface StructuredLoggerOptions<L extends BaseLogger = BaseLogger> {
 const now =
   typeof performance !== 'undefined' ? () => performance.now() : () => Date.now()
 
-function defaultOnRequest<L extends BaseLogger>(logger: L, c: Context): void {
+function defaultOnRequest(logger: BaseLogger, c: Context): void {
   logger.info({ method: c.req.method, path: c.req.path }, 'request start')
 }
 
-function defaultOnResponse<L extends BaseLogger>(logger: L, c: Context, elapsedMs: number): void {
+function defaultOnResponse(logger: BaseLogger, c: Context, elapsedMs: number): void {
   logger.info({ method: c.req.method, path: c.req.path, status: c.res.status, elapsedMs }, 'request end')
 }
 
-function defaultOnError<L extends BaseLogger>(logger: L, err: Error, c: Context): void {
+function defaultOnError(logger: BaseLogger, err: Error, c: Context): void {
   logger.error({ err, method: c.req.method, path: c.req.path, status: c.res.status }, 'request error')
 }
 

@@ -1,19 +1,18 @@
 import { Hono } from 'hono'
 import { describe, expect, it, vi } from 'vitest'
-import type { BaseLogger, StructuredLoggerOptions } from './index'
+import type { BaseLogger } from './index'
 import { structuredLogger } from './index'
 
-function createMockLogger(): BaseLogger & {
-  info: ReturnType<typeof vi.fn>
-  warn: ReturnType<typeof vi.fn>
-  error: ReturnType<typeof vi.fn>
-  debug: ReturnType<typeof vi.fn>
-} {
+type MockLogger = {
+  [K in keyof BaseLogger]: BaseLogger[K] & ReturnType<typeof vi.fn>
+}
+
+function createMockLogger(): MockLogger {
   return {
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    debug: vi.fn(),
+    info: vi.fn() as MockLogger['info'],
+    warn: vi.fn() as MockLogger['warn'],
+    error: vi.fn() as MockLogger['error'],
+    debug: vi.fn() as MockLogger['debug'],
   }
 }
 
@@ -30,7 +29,8 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       expect(createLogger).toHaveBeenCalledTimes(1)
-      expect(createLogger.mock.calls[0]![0]).toBeDefined()
+      expect(createLogger.mock.calls).toHaveLength(1)
+      expect((createLogger.mock.calls as unknown[][])[0]?.[0]).toBeDefined()
     })
 
     it('makes the logger accessible via c.var.logger in the handler', async () => {
@@ -83,7 +83,7 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       expect(capturedElapsed).toBeTypeOf('number')
-      expect(capturedElapsed!).toBeGreaterThanOrEqual(0)
+      expect(capturedElapsed).toBeGreaterThanOrEqual(0)
     })
 
     it('executes in order: createLogger, onRequest, handler, onResponse', async () => {
@@ -132,8 +132,8 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       expect(onError).toHaveBeenCalledTimes(1)
-      expect(onError.mock.calls[0]![0]).toBe(mockLogger)
-      expect(onError.mock.calls[0]![1]).toBe(handlerError)
+      expect(onError.mock.calls[0]?.[0]).toBe(mockLogger)
+      expect(onError.mock.calls[0]?.[1]).toBe(handlerError)
     })
 
     it('the error is still handled by app.onError', async () => {
@@ -170,7 +170,7 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       expect(onError).toHaveBeenCalledTimes(1)
-      const errorArg = onError.mock.calls[0]![1]
+      const errorArg = onError.mock.calls[0]?.[1] as Error
       expect(errorArg).toBeInstanceOf(Error)
       expect(errorArg.message).toBe('typed error')
     })
@@ -204,9 +204,9 @@ describe('structuredLogger', () => {
 
       await app.request('/test')
 
-      const infoCall = mockLogger.info.mock.calls[0]!
-      expect(infoCall[0]).toEqual({ method: 'GET', path: '/test' })
-      expect(infoCall[1]).toBe('request start')
+      const infoCall = mockLogger.info.mock.calls[0]
+      expect(infoCall?.[0]).toEqual({ method: 'GET', path: '/test' })
+      expect(infoCall?.[1]).toBe('request start')
     })
 
     it('default onResponse logs status and elapsed via logger.info', async () => {
@@ -218,12 +218,12 @@ describe('structuredLogger', () => {
 
       await app.request('/')
 
-      const lastInfoCall = mockLogger.info.mock.calls[mockLogger.info.mock.calls.length - 1]!
-      expect(lastInfoCall[0]).toHaveProperty('method', 'GET')
-      expect(lastInfoCall[0]).toHaveProperty('path', '/')
-      expect(lastInfoCall[0]).toHaveProperty('status', 200)
-      expect(lastInfoCall[0]).toHaveProperty('elapsedMs')
-      expect(lastInfoCall[1]).toBe('request end')
+      const lastInfoCall = mockLogger.info.mock.calls[mockLogger.info.mock.calls.length - 1]
+      expect(lastInfoCall?.[0]).toHaveProperty('method', 'GET')
+      expect(lastInfoCall?.[0]).toHaveProperty('path', '/')
+      expect(lastInfoCall?.[0]).toHaveProperty('status', 200)
+      expect(lastInfoCall?.[0]).toHaveProperty('elapsedMs')
+      expect(lastInfoCall?.[1]).toBe('request end')
     })
 
     it('default onError logs the error via logger.error', async () => {
@@ -239,12 +239,12 @@ describe('structuredLogger', () => {
       await app.request('/')
 
       expect(mockLogger.error).toHaveBeenCalledTimes(1)
-      const errorCall = mockLogger.error.mock.calls[0]!
-      expect(errorCall[0]).toHaveProperty('err')
-      expect(errorCall[0]).toHaveProperty('method', 'GET')
-      expect(errorCall[0]).toHaveProperty('path', '/')
-      expect(errorCall[0]).toHaveProperty('status', 500)
-      expect(errorCall[1]).toBe('request error')
+      const errorCall = mockLogger.error.mock.calls[0]
+      expect(errorCall?.[0]).toHaveProperty('err')
+      expect(errorCall?.[0]).toHaveProperty('method', 'GET')
+      expect(errorCall?.[0]).toHaveProperty('path', '/')
+      expect(errorCall?.[0]).toHaveProperty('status', 500)
+      expect(errorCall?.[1]).toBe('request error')
     })
   })
 
@@ -263,7 +263,7 @@ describe('structuredLogger', () => {
       app.use(
         structuredLogger({
           createLogger: (c) => {
-            capturedRequestId = c.var.requestId
+            capturedRequestId = c.var['requestId'] as string
             return createMockLogger()
           },
         })
