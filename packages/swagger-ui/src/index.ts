@@ -42,13 +42,11 @@ type OriginalSwaggerUIOptions = {
 
 type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
-const SwaggerUI = (options: SwaggerUIOptions): string => {
+const SwaggerUI = ({ baseUrl, version, ...options }: SwaggerUIOptions): string => {
   const asset = remoteAssets({
-    baseUrl: options?.baseUrl,
-    version: options?.version,
+    baseUrl: baseUrl,
+    version: version,
   })
-  delete options.baseUrl
-  delete options.version
 
   if (options.manuallySwaggerUIHtml) {
     return options.manuallySwaggerUIHtml(asset)
