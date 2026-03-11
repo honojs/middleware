@@ -138,18 +138,31 @@ app.get('/', (c) => {
 
 ### Type safe context
 
-Declare the logger type on your Hono app for full type safety:
+Pass your logger type as a generic to `Hono` for full type safety on `c.var.logger`:
 
 ```typescript
-import type { pino } from 'pino'
+import { Hono } from 'hono'
+import { structuredLogger } from '@hono/structured-logger'
+import pino from 'pino'
 
-type Env = {
+const rootLogger = pino()
+
+const app = new Hono<{
   Variables: {
-    logger: pino.Logger
+    logger: ReturnType<typeof rootLogger.child>
   }
-}
+}>()
 
-const app = new Hono<Env>()
+app.use(
+  structuredLogger({
+    createLogger: (c) => rootLogger.child({ foo: 'bar' }),
+  })
+)
+
+app.get('/', (c) => {
+  c.var.logger.info('hello') // typed!
+  return c.json({ foo: 'bar' })
+})
 ```
 
 ## API
