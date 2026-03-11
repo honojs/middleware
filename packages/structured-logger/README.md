@@ -44,7 +44,9 @@ import { Hono } from 'hono'
 import { structuredLogger } from '@hono/structured-logger'
 import winston from 'winston'
 
-const rootLogger = winston.createLogger({ /* config */ })
+const rootLogger = winston.createLogger({
+  /* config */
+})
 
 const app = new Hono()
 
@@ -173,13 +175,13 @@ Returns a Hono `MiddlewareHandler`.
 
 #### Options
 
-| Option | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `createLogger` | `(c: Context) => L` | Yes | | Factory that creates a request scoped logger instance |
-| `contextKey` | `string` | No | `'logger'` | Key used to store the logger on `c.var` |
-| `onRequest` | `(logger: L, c: Context) => void \| Promise<void>` | No | Logs method + path at info level | Called before handler execution |
-| `onResponse` | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>` | No | Logs method, path, status and elapsed time at info level | Called after handler execution |
-| `onError` | `(logger: L, err: Error, c: Context) => void \| Promise<void>` | No | Logs error, method, path and status at error level | Called when handler throws |
+| Option         | Type                                                                  | Required | Default                                                  | Description                                           |
+| -------------- | --------------------------------------------------------------------- | -------- | -------------------------------------------------------- | ----------------------------------------------------- |
+| `createLogger` | `(c: Context) => L`                                                   | Yes      |                                                          | Factory that creates a request scoped logger instance |
+| `contextKey`   | `string`                                                              | No       | `'logger'`                                               | Key used to store the logger on `c.var`               |
+| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                    | No       | Logs method + path at info level                         | Called before handler execution                       |
+| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | Logs method, path, status and elapsed time at info level | Called after handler execution                        |
+| `onError`      | `(logger: L, err: Error, c: Context) => void \| Promise<void>`        | No       | Logs error, method, path and status at error level       | Called when handler throws                            |
 
 ### `BaseLogger`
 

@@ -180,9 +180,7 @@ describe('structuredLogger', () => {
       const onResponse = vi.fn()
 
       const app = new Hono()
-      app.use(
-        structuredLogger({ createLogger: () => mockLogger, onResponse })
-      )
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse }))
       app.get('/', () => {
         throw new Error('fail')
       })

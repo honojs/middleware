@@ -49,19 +49,24 @@ export interface StructuredLoggerOptions<L extends BaseLogger = BaseLogger> {
   onError?: (logger: L, err: Error, c: Context) => void | Promise<void>
 }
 
-const now =
-  typeof performance !== 'undefined' ? () => performance.now() : () => Date.now()
+const now = typeof performance !== 'undefined' ? () => performance.now() : () => Date.now()
 
 function defaultOnRequest(logger: BaseLogger, c: Context): void {
   logger.info({ method: c.req.method, path: c.req.path }, 'request start')
 }
 
 function defaultOnResponse(logger: BaseLogger, c: Context, elapsedMs: number): void {
-  logger.info({ method: c.req.method, path: c.req.path, status: c.res.status, elapsedMs }, 'request end')
+  logger.info(
+    { method: c.req.method, path: c.req.path, status: c.res.status, elapsedMs },
+    'request end'
+  )
 }
 
 function defaultOnError(logger: BaseLogger, err: Error, c: Context): void {
-  logger.error({ err, method: c.req.method, path: c.req.path, status: c.res.status }, 'request error')
+  logger.error(
+    { err, method: c.req.method, path: c.req.path, status: c.res.status },
+    'request error'
+  )
 }
 
 export function structuredLogger<L extends BaseLogger = BaseLogger>(
@@ -88,11 +93,7 @@ export function structuredLogger<L extends BaseLogger = BaseLogger>(
     const elapsed = now() - start
 
     if (c.error) {
-      await onError(
-        logger,
-        c.error instanceof Error ? c.error : new Error(String(c.error)),
-        c
-      )
+      await onError(logger, c.error instanceof Error ? c.error : new Error(String(c.error)), c)
     } else {
       await onResponse(logger, c, elapsed)
     }
