@@ -48,7 +48,7 @@
   "devDependencies": {
     "arktype": "^2.1.29",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.21.1",
     "typebox": "^1.1.5",
     "typedriver": "^0.8.6",
     "typescript": "^5.9.3",
