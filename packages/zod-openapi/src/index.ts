@@ -703,12 +703,11 @@ export class OpenAPIHono<
 
     const typedInputs = inputs as unknown as Result
 
-    typedInputs.forEach(({ route, handler, hook, addRoute }) => {
-      if (addRoute === false) {
-        return
-      }
-      this.openapi(route, handler, hook)
-    })
+    typedInputs
+      .filter(({ addRoute }) => addRoute !== false)
+      .forEach(({ route, handler, hook }) => {
+        this.openapi(route, handler, hook)
+      })
     return this
   }
 
