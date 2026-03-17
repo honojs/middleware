@@ -34,6 +34,12 @@ declare module 'hono' {
 }
 
 export const cloudflareAccess = (accessTeamName: string, aud?: string): MiddlewareHandler => {
+  if (!/^[a-zA-Z0-9-]+$/.test(accessTeamName)) {
+    throw new Error(
+      'Invalid accessTeamName: must contain only alphanumeric characters and hyphens'
+    )
+  }
+
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0
