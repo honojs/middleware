@@ -521,9 +521,7 @@ describe('Cloudflare Access middleware', async () => {
   it('Should warn when aud is omitted', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     cloudflareAccess('my-cool-team-name')
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('No aud parameter provided')
-    )
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('No aud parameter provided'))
     warnSpy.mockRestore()
   })
 

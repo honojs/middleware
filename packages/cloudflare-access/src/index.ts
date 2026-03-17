@@ -35,9 +35,7 @@ declare module 'hono' {
 
 export const cloudflareAccess = (accessTeamName: string, aud?: string): MiddlewareHandler => {
   if (!/^[a-zA-Z0-9-]+$/.test(accessTeamName)) {
-    throw new Error(
-      'Invalid accessTeamName: must contain only alphanumeric characters and hyphens'
-    )
+    throw new Error('Invalid accessTeamName: must contain only alphanumeric characters and hyphens')
   }
 
   if (!aud) {
