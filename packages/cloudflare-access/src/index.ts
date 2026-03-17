@@ -21,7 +21,7 @@ export type CloudflareAccessVariables = {
 }
 
 type DecodedToken = {
-  header: { alg: string; typ?: string; kid?: string }
+  header: { alg: string; typ?: string; kid?: string; crit?: string[] }
   payload: CloudflareAccessPayload
   signature: string
   raw: { header?: string; payload?: string; signature?: string }
@@ -72,6 +72,11 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     // Validate algorithm
     if (token.header.alg !== 'RS256') {
       return c.text('Authentication error: Invalid token algorithm', 401)
+    }
+
+    // RFC 7515 §4.1.11: Reject tokens with critical extensions we don't understand
+    if (token.header.crit) {
+      return c.text('Authentication error: Unsupported critical extension', 401)
     }
 
     // Validate payload structure
@@ -135,13 +140,20 @@ async function getPublicKeys(accessTeamName: string) {
     })
   }
 
-  const data = await result.json<{ keys: JsonWebKeyWithKid[] }>()
+  const data = await result.json<{ keys: (JsonWebKey & { kid: string })[] }>()
 
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
   const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
 
   const importedKeys: Record<string, CryptoKey> = {}
   for (const key of data.keys) {
+    // RFC 7517 §4.1-4.3: Only import RSA keys intended for signature verification
+    if (key.kty !== 'RSA') {
+      continue
+    }
+    if (key.use && key.use !== 'sig') {
+      continue
+    }
     importedKeys[key.kid] = await crypto.subtle.importKey(
       'jwk',
       key,
@@ -169,14 +181,18 @@ function getJwt(c: Context) {
 }
 
 function base64urlDecode(str: string): string {
-  return atob(str.replace(/-/g, '+').replace(/_/g, '/'))
+  str = str.replace(/-/g, '+').replace(/_/g, '/')
+  // Restore padding removed per RFC 7515 §2
+  str += '='.repeat((4 - (str.length % 4)) % 4)
+  return atob(str)
 }
 
 function decodeJwt(token: string): DecodedToken {
-  const [header, payload, signature] = token.split('.')
-  if (!header || !payload || !signature) {
+  const parts = token.split('.')
+  if (parts.length !== 3) {
     throw new Error('Invalid token')
   }
+  const [header, payload, signature] = parts
 
   return {
     header: JSON.parse(base64urlDecode(header)) as DecodedToken['header'],
@@ -192,6 +208,15 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
   const signature = new Uint8Array(Array.from(token.signature).map((c) => c.charCodeAt(0)))
 
+  // RFC 7515 §4.1.4: Use kid to select the verification key when present
+  if (token.header.kid) {
+    const key = keys[token.header.kid]
+    if (key) {
+      return validateSingleKey(key, signature, data)
+    }
+  }
+
+  // Fall back to trying all keys when kid is absent or not found
   for (const key of Object.values(keys)) {
     const isValid = await validateSingleKey(key, signature, data)
 

@@ -565,6 +565,167 @@ describe('Cloudflare Access middleware', async () => {
     expect(text).not.toContain('my-cool-team-name')
   })
 
+  it('Should reject tokens with more than 3 dot-separated parts (JWE format)', async () => {
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+    // Append extra parts to simulate a JWE-like token
+    const jweToken = `${token}.extrapart.anotherpart`
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': jweToken,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+  })
+
+  it('Should reject tokens with fewer than 3 dot-separated parts', async () => {
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': 'part1.part2',
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+  })
+
+  it('Should reject tokens with crit header parameter', async () => {
+    const token = generateJWTWithHeader(
+      keyPair1.privateKey,
+      { alg: 'RS256', typ: 'JWT', crit: ['exp'] },
+      {
+        sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      }
+    )
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Unsupported critical extension')
+  })
+
+  it('Should use kid header to select the correct key for verification', async () => {
+    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
+    const jwk2 = publicKeyToJWK(keyPair2.publicKey)
+
+    const fetchSpy = vi.fn(() =>
+      Promise.resolve(Response.json({ keys: [jwk1, jwk2] }))
+    )
+    vi.stubGlobal('fetch', fetchSpy)
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    // Generate token with kid matching keyPair2
+    const token = generateJWTWithHeader(
+      keyPair2.privateKey,
+      { alg: 'RS256', typ: 'JWT', kid: jwk2.kid },
+      {
+        sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      }
+    )
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should reject token when kid does not match any known key and signature is invalid', async () => {
+    const token = generateJWTWithHeader(
+      keyPair3.privateKey,
+      { alg: 'RS256', typ: 'JWT', kid: 'nonexistent-kid' },
+      {
+        sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      }
+    )
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token')
+  })
+
+  it('Should skip non-RSA keys from JWKS response', async () => {
+    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
+    vi.stubGlobal('fetch', () =>
+      Response.json({
+        keys: [
+          { kid: 'ec-key', kty: 'EC', use: 'sig', crv: 'P-256', x: 'abc', y: 'def' },
+          jwk1,
+        ],
+      })
+    )
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should skip keys with use != sig from JWKS response', async () => {
+    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
+    const encKey = { ...publicKeyToJWK(keyPair2.publicKey), use: 'enc' }
+    vi.stubGlobal('fetch', () =>
+      Response.json({
+        keys: [encKey, jwk1],
+      })
+    )
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    // Token signed with keyPair2 (whose public key has use='enc') should fail
+    const token = generateJWT(keyPair2.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token')
+  })
+
   it('Should correctly decode tokens with base64url characters in payload', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: 'user+test/special_chars',
