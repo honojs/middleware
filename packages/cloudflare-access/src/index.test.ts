@@ -451,7 +451,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Malformed token payload')
   })
 
-  it('Should re-fetch keys after cache expiration', async () => {
+  it('Should use cached keys within TTL', async () => {
     const fetchSpy = vi.fn(() =>
       Promise.resolve(
         Response.json({
@@ -481,6 +481,49 @@ describe('Cloudflare Access middleware', async () => {
       headers: { 'cf-access-jwt-assertion': token },
     })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should re-fetch keys after cache expiration', async () => {
+    vi.useFakeTimers()
+
+    const fetchSpy = vi.fn(() =>
+      Promise.resolve(
+        Response.json({
+          keys: [publicKeyToJWK(keyPair1.publicKey), publicKeyToJWK(keyPair2.publicKey)],
+        })
+      )
+    )
+    vi.stubGlobal('fetch', fetchSpy)
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    // First request fetches keys
+    await freshApp.request('http://localhost/hello-behind-access', {
+      headers: { 'cf-access-jwt-assertion': token },
+    })
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+
+    // Advance time past the 1-hour cache TTL
+    vi.advanceTimersByTime(3601 * 1000)
+
+    // Third request should re-fetch keys since cache expired
+    const newToken = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+    await freshApp.request('http://localhost/hello-behind-access', {
+      headers: { 'cf-access-jwt-assertion': newToken },
+    })
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
+
+    vi.useRealTimers()
   })
 
   it('Should throw when accessTeamName contains invalid characters', () => {
