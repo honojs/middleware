@@ -9,7 +9,7 @@ This middleware can be used to validate that your application is being served be
 JWT received, User details from the JWT are also available inside the request context.
 
 This middleware will also ensure the Access policy serving the application is from a
-specific [Access Team](https://developers.cloudflare.com/cloudflare-one/faq/getting-started-faq/#whats-a-team-domainteam-name).
+specific [Access Team](https://developers.cloudflare.com/cloudflare-one/faq/getting-started-faq/#whats-a-team-domainteam-name). It is strongly recommended to pass your [Application Audience (AUD) Tag](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/#get-your-aud-tag) to validate that the JWT was intended for your specific application to prevent cross-application token reuse.
 
 ## Usage
 
@@ -19,11 +19,13 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', cloudflareAccess('my-access-team-name'))
+app.use('*', cloudflareAccess('my-access-team-name', 'my-application-aud-tag'))
 app.get('/', (c) => c.text('foo'))
 
 export default app
 ```
+
+The `aud` parameter is optional for backwards compatibility, but omitting it is discouraged in production.
 
 ## Access JWT payload
 
@@ -56,6 +58,7 @@ export default app
 | Authentication error: Token is expired                                                                 | 401       |
 | Authentication error: Expected team name {your-team-name}, but received ${different-team-signed-token} | 401       |
 | Authentication error: Invalid Token                                                                    | 401       |
+| Authentication error: Invalid token audience                                                           | 401       |
 | Authentication error: The Access Organization 'my-team-name' does not exist                            | 500       |
 | Authentication error: Received unexpected HTTP code 500 from Cloudflare Access                         | 500       |
 

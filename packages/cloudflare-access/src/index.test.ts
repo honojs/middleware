@@ -261,6 +261,65 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('foo')
   })
 
+  it('Should reject token with wrong audience when aud is configured', async () => {
+    const appWithAud = new Hono()
+    appWithAud.use('/*', cloudflareAccess('my-cool-team-name', 'expected-aud-tag'))
+    appWithAud.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: ['wrong-aud-tag'],
+    })
+
+    const res = await appWithAud.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token audience')
+  })
+
+  it('Should accept token with correct audience when aud is configured', async () => {
+    const appWithAud = new Hono()
+    appWithAud.use('/*', cloudflareAccess('my-cool-team-name', 'expected-aud-tag'))
+    appWithAud.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: ['expected-aud-tag'],
+    })
+
+    const res = await appWithAud.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should skip audience check when aud is not configured', async () => {
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: ['any-aud-tag'],
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
   it('Should be able to retrieve the JWT payload from Hono context', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: '1234567890',

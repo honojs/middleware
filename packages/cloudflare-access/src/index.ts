@@ -33,7 +33,7 @@ declare module 'hono' {
   }
 }
 
-export const cloudflareAccess = (accessTeamName: string): MiddlewareHandler => {
+export const cloudflareAccess = (accessTeamName: string, aud?: string): MiddlewareHandler => {
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0
@@ -78,6 +78,11 @@ export const cloudflareAccess = (accessTeamName: string): MiddlewareHandler => {
         `Authentication error: Expected team name ${expectedIss}, but received ${token.payload?.iss}`,
         401
       )
+    }
+
+    // Is the token intended for the correct application?
+    if (aud && !token.payload.aud?.includes(aud)) {
+      return c.text('Authentication error: Invalid token audience', 401)
     }
 
     c.set('accessPayload', token.payload)
