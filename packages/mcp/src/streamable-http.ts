@@ -245,6 +245,13 @@ export class StreamableHTTPTransport implements Transport {
         // Set up close handler for client disconnects
         stream.onAbort(() => {
           this.#streamMapping.get(resolvedStreamId)?.cleanup()
+
+          // When the standalone GET SSE stream disconnects, notify via onclose
+          // since this is the client's only persistent connection and MCP clients
+          // typically do not send DELETE requests when they disconnect
+          if (resolvedStreamId === this.#standaloneSseStreamId) {
+            this.onclose?.()
+          }
         })
       })
     } catch (error) {
