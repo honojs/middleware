@@ -66,6 +66,7 @@ export default app
 | Authentication error: Missing bearer token                                     | 401       |
 | Authentication error: Unable to decode bearer token                            | 401       |
 | Authentication error: Invalid token algorithm                                  | 401       |
+| Authentication error: Unsupported critical extension                           | 401       |
 | Authentication error: Malformed token payload                                  | 401       |
 | Authentication error: Token is expired                                         | 401       |
 | Authentication error: Token is not yet valid                                   | 401       |
