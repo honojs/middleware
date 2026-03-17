@@ -109,34 +109,7 @@ function generateJWT(
   payload: Record<string, unknown>,
   expiresIn: number = 3600
 ): string {
-  // Create header
-  const header = {
-    alg: 'RS256',
-    typ: 'JWT',
-  }
-
-  // Add expiration to payload
-  const now = Math.floor(Date.now() / 1000)
-  const fullPayload = {
-    ...payload,
-    iat: now,
-    exp: now + expiresIn,
-  }
-
-  // Encode header and payload
-  const encodedHeader = base64URLEncode(JSON.stringify(header))
-  const encodedPayload = base64URLEncode(JSON.stringify(fullPayload))
-
-  // Create signature
-  const signatureInput = `${encodedHeader}.${encodedPayload}`
-  const signer = crypto.createSign('RSA-SHA256')
-  signer.update(signatureInput)
-  const signature = signer.sign(privateKey)
-  // @ts-expect-error signature is not typed correctly
-  const encodedSignature = base64URLEncode(signature)
-
-  // Combine all parts
-  return `${encodedHeader}.${encodedPayload}.${encodedSignature}`
+  return generateJWTWithHeader(privateKey, { alg: 'RS256', typ: 'JWT' }, payload, expiresIn)
 }
 
 describe('Cloudflare Access middleware', async () => {
@@ -145,7 +118,7 @@ describe('Cloudflare Access middleware', async () => {
   const keyPair3 = await generateJWTKeyPair()
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.restoreAllMocks()
     vi.stubGlobal('fetch', () => {
       return Response.json({
         keys: [publicKeyToJWK(keyPair1.publicKey), publicKeyToJWK(keyPair2.publicKey)],
@@ -175,7 +148,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Missing bearer token')
   })
 
-  it('Should throw Unable to decode Bearer token when sending garbage', async () => {
+  it('Should throw unable to decode bearer token when sending garbage', async () => {
     const res = await app.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdasdasda',
