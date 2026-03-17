@@ -91,8 +91,14 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     }
 
     // Is the token intended for the correct application?
-    if (aud && !token.payload.aud?.includes(aud)) {
-      return c.text('Authentication error: Invalid token audience', 401)
+    // RFC 7519 §4.1.3: aud may be a string or an array of strings — normalize to array
+    // to avoid String.prototype.includes() substring matching vulnerability
+    if (aud) {
+      const audClaim = token.payload.aud
+      const audArray = Array.isArray(audClaim) ? audClaim : [audClaim]
+      if (!audArray.includes(aud)) {
+        return c.text('Authentication error: Invalid token audience', 401)
+      }
     }
 
     // Check is token is valid against at least one public key?

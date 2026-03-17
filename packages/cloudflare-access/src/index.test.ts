@@ -301,6 +301,49 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('foo')
   })
 
+  it('Should accept token with correct audience when aud is a string (RFC 7519 §4.1.3)', async () => {
+    const appWithAud = new Hono()
+    appWithAud.use('/*', cloudflareAccess('my-cool-team-name', 'expected-aud-tag'))
+    appWithAud.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: 'expected-aud-tag',
+    })
+
+    const res = await appWithAud.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should reject token when aud is a string substring of the expected aud', async () => {
+    const appWithAud = new Hono()
+    appWithAud.use('/*', cloudflareAccess('my-cool-team-name', 'expected-aud-tag'))
+    appWithAud.get('/hello-behind-access', (c) => c.text('foo'))
+
+    // "expected-aud" is a substring of "expected-aud-tag" — must NOT match
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: 'expected-aud',
+    })
+
+    const res = await appWithAud.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token audience')
+  })
+
   it('Should skip audience check when aud is not configured', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: '1234567890',
