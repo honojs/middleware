@@ -8,7 +8,7 @@ export type CloudflareAccessPayload = {
   email: string
   exp: number
   iat: number
-  nbf: number
+  nbf?: number
   iss: string
   type: string
   identity_nonce: string
