@@ -88,6 +88,11 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       return c.text('Authentication error: Token is expired', 401)
     }
 
+    // Is the token not yet valid?
+    if (token.payload.nbf && token.payload.nbf * 1000 > Date.now()) {
+      return c.text('Authentication error: Token is not yet valid', 401)
+    }
+
     // Check is token is valid against at least one public key?
     if (!(await isValidJwtSignature(token, cacheKeys))) {
       return c.text('Authentication error: Invalid Token', 401)
