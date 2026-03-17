@@ -856,6 +856,26 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Invalid token')
   })
 
+  it('Should reject tokens with whitespace or invalid characters in base64url segments', async () => {
+    // Construct a token where the header contains whitespace (invalid per RFC 7515 §5.2)
+    const validToken = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+    const parts = validToken.split('.')
+    // Insert whitespace into the header segment
+    const corruptedToken = `${parts[0]} ${parts[0]}.${parts[1]}.${parts[2]}`
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': corruptedToken,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+  })
+
   it('Should correctly decode tokens with base64url characters in payload', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: 'user+test/special_chars',

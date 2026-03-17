@@ -195,6 +195,10 @@ function getJwt(c: Context) {
 }
 
 function base64urlDecode(str: string): string {
+  // RFC 7515 §5.2: reject base64url strings with whitespace, line breaks, or invalid characters
+  if (!/^[A-Za-z0-9_-]*$/.test(str)) {
+    throw new Error('Invalid base64url encoding')
+  }
   str = str.replace(/-/g, '+').replace(/_/g, '/')
   // Restore padding removed per RFC 7515 §2
   str += '='.repeat((4 - (str.length % 4)) % 4)
