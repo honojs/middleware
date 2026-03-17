@@ -68,7 +68,7 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     try {
       token = decodeJwt(encodedToken)
     } catch {
-      return c.text('Authentication error: Unable to decode Bearer token', 401)
+      return c.text('Authentication error: Unable to decode bearer token', 401)
     }
 
     // Validate algorithm
@@ -95,7 +95,7 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
 
     // Check is token is valid against at least one public key?
     if (!(await isValidJwtSignature(token, cacheKeys))) {
-      return c.text('Authentication error: Invalid Token', 401)
+      return c.text('Authentication error: Invalid token', 401)
     }
 
     // Is signed from the correct team?

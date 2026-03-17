@@ -157,7 +157,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
+    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
   })
 
   it('Should be throw Token is expired when sending expired token', async () => {
@@ -209,7 +209,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid Token')
+    expect(await res.text()).toBe('Authentication error: Invalid token')
   })
 
   it('Should work when sending everything correctly', async () => {
