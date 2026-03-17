@@ -275,19 +275,20 @@ export class StreamableHTTPTransport implements Transport {
   private async handlePostRequest(ctx: Context, parsedBody?: unknown) {
     try {
       // Validate the Accept header
-      const acceptHeader = ctx.req.header('Accept')
-      // The client MUST include an Accept header, listing both application/json and text/event-stream as supported content types.
-      if (
-        !acceptHeader?.includes('application/json') ||
-        !acceptHeader.includes('text/event-stream')
-      ) {
+      const acceptHeader = ctx.req.header('Accept') || '*/*'
+      const acceptsJson =
+        acceptHeader.includes('application/json') || acceptHeader.includes('*/*')
+      const acceptsSse =
+        acceptHeader.includes('text/event-stream') || acceptHeader.includes('*/*')
+
+      if (!acceptsJson && !acceptsSse) {
         throw new HTTPException(406, {
           res: Response.json({
             jsonrpc: '2.0',
             error: {
               code: ErrorCode.ConnectionClosed,
               message:
-                'Not Acceptable: Client must accept both application/json and text/event-stream',
+                'Not Acceptable: Client must accept application/json or text/event-stream',
             },
             id: null,
           }),
