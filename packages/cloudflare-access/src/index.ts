@@ -106,15 +106,17 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       return c.text('Authentication error: Invalid token', 401)
     }
 
+    // RFC 7519 §4.1.4-4.1.5: allow small leeway for clock skew across distributed systems
+    const CLOCK_SKEW_SECONDS = 30
+    const nowSeconds = Math.floor(Date.now() / 1000)
+
     // Is the token expired? (checked after signature to avoid trusting unverified claims)
-    const expiryDate = new Date(token.payload.exp * 1000)
-    const currentDate = new Date(Date.now())
-    if (expiryDate <= currentDate) {
+    if (token.payload.exp + CLOCK_SKEW_SECONDS <= nowSeconds) {
       return c.text('Authentication error: Token is expired', 401)
     }
 
     // Is the token not yet valid?
-    if (token.payload.nbf && token.payload.nbf * 1000 > Date.now()) {
+    if (token.payload.nbf && token.payload.nbf - CLOCK_SKEW_SECONDS > nowSeconds) {
       return c.text('Authentication error: Token is not yet valid', 401)
     }
 

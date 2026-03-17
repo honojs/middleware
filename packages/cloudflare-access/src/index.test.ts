@@ -446,6 +446,44 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Token is not yet valid')
   })
 
+  it('Should accept token expired within clock skew leeway (30s)', async () => {
+    // Token that expired 10 seconds ago — within 30s leeway
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    }, -10) // exp = now - 10
+
+    // Manually override exp to be 10 seconds ago (generateJWT sets exp = now + expiresIn)
+    // With expiresIn = -10, exp = now + (-10) = now - 10, which is within 30s leeway
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should accept token with nbf slightly in the future within clock skew leeway', async () => {
+    const now = Math.floor(Date.now() / 1000)
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      nbf: now + 20, // 20 seconds in the future, within 30s leeway
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
   it('Should reject token with non-RS256 algorithm', async () => {
     const token = generateJWTWithHeader(
       keyPair1.privateKey,
