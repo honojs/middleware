@@ -47,6 +47,15 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0
+  let lastFetchTime = 0
+  const MIN_REFETCH_INTERVAL = 60 // Rate-limit JWKS re-fetches to prevent cache-busting DoS
+
+  async function refreshKeys() {
+    const publicKeys = await getPublicKeys(accessTeamName)
+    cacheKeys = publicKeys.keys
+    cacheExpiration = publicKeys.cacheExpiration
+    lastFetchTime = Math.floor(Date.now() / 1000)
+  }
 
   return createMiddleware(async (c, next) => {
     const encodedToken = getJwt(c)
@@ -56,9 +65,7 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
 
     // Load jwt keys if they are not in memory or already expired
     if (Object.keys(cacheKeys).length === 0 || Math.floor(Date.now() / 1000) >= cacheExpiration) {
-      const publicKeys = await getPublicKeys(accessTeamName)
-      cacheKeys = publicKeys.keys
-      cacheExpiration = publicKeys.cacheExpiration
+      await refreshKeys()
     }
 
     // Decode Token
@@ -99,6 +106,16 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       if (!audArray.includes(aud)) {
         return c.text('Authentication error: Invalid token audience', 401)
       }
+    }
+
+    // Re-fetch JWKS if token has a kid not in our cache (key rotation mid-cache-period)
+    // Rate-limited to prevent attackers from busting the cache with forged kid values
+    if (
+      token.header.kid &&
+      !cacheKeys[token.header.kid] &&
+      Math.floor(Date.now() / 1000) - lastFetchTime >= MIN_REFETCH_INTERVAL
+    ) {
+      await refreshKeys()
     }
 
     // Check is token is valid against at least one public key?
