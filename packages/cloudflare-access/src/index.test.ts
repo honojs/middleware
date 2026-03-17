@@ -346,7 +346,13 @@ describe('Cloudflare Access middleware', async () => {
       return Response.json({ success: false }, { status: 404 })
     })
 
-    const res = await app.request('http://localhost/hello-behind-access', {
+    // Use a fresh app so the middleware has no cached keys
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+    freshApp.onError((err, c) => c.json({ err: err.toString() }, 500))
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdads',
       },
@@ -363,7 +369,13 @@ describe('Cloudflare Access middleware', async () => {
       return Response.json({ success: false }, { status: 500 })
     })
 
-    const res = await app.request('http://localhost/hello-behind-access', {
+    // Use a fresh app so the middleware has no cached keys
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+    freshApp.onError((err, c) => c.json({ err: err.toString() }, 500))
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdads',
       },

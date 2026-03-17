@@ -45,7 +45,7 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     }
 
     // Load jwt keys if they are not in memory or already expired
-    if (Object.keys(cacheKeys).length === 0 || Math.floor(Date.now() / 1000) < cacheExpiration) {
+    if (Object.keys(cacheKeys).length === 0 || Math.floor(Date.now() / 1000) >= cacheExpiration) {
       const publicKeys = await getPublicKeys(accessTeamName)
       cacheKeys = publicKeys.keys
       cacheExpiration = publicKeys.cacheExpiration
