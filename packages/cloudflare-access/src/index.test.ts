@@ -344,6 +344,48 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Invalid token audience')
   })
 
+  it('Should accept token matching one of multiple configured audiences', async () => {
+    const appWithAuds = new Hono()
+    appWithAuds.use('/*', cloudflareAccess('my-cool-team-name', ['aud-one', 'aud-two']))
+    appWithAuds.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: ['aud-two'],
+    })
+
+    const res = await appWithAuds.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should reject token matching none of multiple configured audiences', async () => {
+    const appWithAuds = new Hono()
+    appWithAuds.use('/*', cloudflareAccess('my-cool-team-name', ['aud-one', 'aud-two']))
+    appWithAuds.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      aud: ['aud-three'],
+    })
+
+    const res = await appWithAuds.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token audience')
+  })
+
   it('Should skip audience check when aud is not configured', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: '1234567890',

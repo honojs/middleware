@@ -25,6 +25,16 @@ app.get('/', (c) => c.text('foo'))
 export default app
 ```
 
+The `aud` parameter accepts a single string or an array of strings for workers serving multiple Access applications:
+
+```ts
+// Single audience
+app.use('*', cloudflareAccess('my-team', 'aud-tag-1'))
+
+// Multiple audiences (e.g. during application migration)
+app.use('*', cloudflareAccess('my-team', ['aud-tag-1', 'aud-tag-2']))
+```
+
 The `aud` parameter is optional for backwards compatibility, but omitting it is discouraged in production.
 
 ## Access JWT payload

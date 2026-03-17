@@ -33,12 +33,17 @@ declare module 'hono' {
   }
 }
 
-export const cloudflareAccess = (accessTeamName: string, aud?: string): MiddlewareHandler => {
+export const cloudflareAccess = (
+  accessTeamName: string,
+  aud?: string | string[]
+): MiddlewareHandler => {
   if (!/^[a-zA-Z0-9-]+$/.test(accessTeamName)) {
     throw new Error('Invalid accessTeamName: must contain only alphanumeric characters and hyphens')
   }
 
-  if (!aud) {
+  const allowedAuds = aud ? (Array.isArray(aud) ? aud : [aud]) : []
+
+  if (allowedAuds.length === 0) {
     console.warn(
       'cloudflare-access: No aud parameter provided. It is strongly recommended to pass your Application Audience (AUD) Tag to prevent cross-application token reuse.'
     )
@@ -98,12 +103,12 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     }
 
     // Is the token intended for the correct application?
-    // RFC 7519 §4.1.3: aud may be a string or an array of strings — normalize to array
-    // to avoid String.prototype.includes() substring matching vulnerability
-    if (aud) {
+    // RFC 7519 §4.1.3: both the token's aud and the configured aud may be string or array.
+    // Normalize both to arrays and check for intersection.
+    if (allowedAuds.length > 0) {
       const audClaim = token.payload.aud
-      const audArray = Array.isArray(audClaim) ? audClaim : [audClaim]
-      if (!audArray.includes(aud)) {
+      const tokenAuds = Array.isArray(audClaim) ? audClaim : [audClaim]
+      if (!allowedAuds.some((a) => tokenAuds.includes(a))) {
         return c.text('Authentication error: Invalid token audience', 401)
       }
     }
