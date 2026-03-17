@@ -490,10 +490,14 @@ describe('Cloudflare Access middleware', async () => {
 
   it('Should accept token expired within clock skew leeway (30s)', async () => {
     // Token that expired 10 seconds ago — within 30s leeway
-    const token = generateJWT(keyPair1.privateKey, {
-      sub: '1234567890',
-      iss: 'https://my-cool-team-name.cloudflareaccess.com',
-    }, -10) // exp = now - 10
+    const token = generateJWT(
+      keyPair1.privateKey,
+      {
+        sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      },
+      -10
+    ) // exp = now - 10
 
     // Manually override exp to be 10 seconds ago (generateJWT sets exp = now + expiresIn)
     // With expiresIn = -10, exp = now + (-10) = now - 10, which is within 30s leeway
@@ -705,9 +709,7 @@ describe('Cloudflare Access middleware', async () => {
     vi.useFakeTimers()
 
     const jwk1 = publicKeyToJWK(keyPair1.publicKey)
-    const fetchSpy = vi.fn(() =>
-      Promise.resolve(Response.json({ keys: [jwk1] }))
-    )
+    const fetchSpy = vi.fn(() => Promise.resolve(Response.json({ keys: [jwk1] })))
     vi.stubGlobal('fetch', fetchSpy)
 
     const freshApp = new Hono()
@@ -837,9 +839,7 @@ describe('Cloudflare Access middleware', async () => {
     const jwk1 = publicKeyToJWK(keyPair1.publicKey)
     const jwk2 = publicKeyToJWK(keyPair2.publicKey)
 
-    const fetchSpy = vi.fn(() =>
-      Promise.resolve(Response.json({ keys: [jwk1, jwk2] }))
-    )
+    const fetchSpy = vi.fn(() => Promise.resolve(Response.json({ keys: [jwk1, jwk2] })))
     vi.stubGlobal('fetch', fetchSpy)
 
     const freshApp = new Hono()
@@ -890,10 +890,7 @@ describe('Cloudflare Access middleware', async () => {
     const jwk1 = publicKeyToJWK(keyPair1.publicKey)
     vi.stubGlobal('fetch', () =>
       Response.json({
-        keys: [
-          { kid: 'ec-key', kty: 'EC', use: 'sig', crv: 'P-256', x: 'abc', y: 'def' },
-          jwk1,
-        ],
+        keys: [{ kid: 'ec-key', kty: 'EC', use: 'sig', crv: 'P-256', x: 'abc', y: 'def' }, jwk1],
       })
     )
 
