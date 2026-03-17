@@ -165,6 +165,7 @@ describe('Cloudflare Access middleware', async () => {
       keyPair1.privateKey,
       {
         sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
       },
       -3600
     )

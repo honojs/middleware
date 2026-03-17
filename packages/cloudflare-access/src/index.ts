@@ -76,6 +76,11 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       return c.text('Authentication error: Invalid token algorithm', 401)
     }
 
+    // Validate payload structure
+    if (typeof token.payload.exp !== 'number' || typeof token.payload.iss !== 'string') {
+      return c.text('Authentication error: Malformed token payload', 401)
+    }
+
     // Is the token expired?
     const expiryDate = new Date(token.payload.exp * 1000)
     const currentDate = new Date(Date.now())
