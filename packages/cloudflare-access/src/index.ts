@@ -4,16 +4,16 @@ import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
 
 export type CloudflareAccessPayload = {
-  aud: string[]
-  email: string
+  aud: string | string[]
+  email?: string
   exp: number
   iat: number
   nbf?: number
   iss: string
-  type: string
-  identity_nonce: string
-  sub: string
-  country: string
+  type?: string
+  identity_nonce?: string
+  sub?: string
+  country?: string
 }
 
 export type CloudflareAccessVariables = {
