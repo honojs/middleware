@@ -1062,7 +1062,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(200)
-    const payload = await res.json()
+    const payload = await res.json() as { sub: string }
     expect(payload.sub).toBe('user+test/special_chars')
   })
 })
