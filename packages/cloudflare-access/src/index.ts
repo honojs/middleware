@@ -71,6 +71,11 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       return c.text('Authentication error: Unable to decode Bearer token', 401)
     }
 
+    // Validate algorithm
+    if (token.header.alg !== 'RS256') {
+      return c.text('Authentication error: Invalid token algorithm', 401)
+    }
+
     // Is the token expired?
     const expiryDate = new Date(token.payload.exp * 1000)
     const currentDate = new Date(Date.now())
