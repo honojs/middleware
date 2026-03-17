@@ -21,7 +21,7 @@ export type CloudflareAccessVariables = {
 }
 
 type DecodedToken = {
-  header: object
+  header: { alg: string; typ?: string; kid?: string }
   payload: CloudflareAccessPayload
   signature: string
   raw: { header?: string; payload?: string; signature?: string }
@@ -165,7 +165,7 @@ function decodeJwt(token: string): DecodedToken {
   }
 
   return {
-    header: JSON.parse(atob(header)) as object,
+    header: JSON.parse(atob(header)) as DecodedToken['header'],
     payload: JSON.parse(atob(payload)) as CloudflareAccessPayload,
     signature: atob(signature.replace(/_/g, '/').replace(/-/g, '+')),
     raw: { header, payload, signature },
