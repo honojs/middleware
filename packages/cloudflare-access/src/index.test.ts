@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import crypto from 'crypto'
 import { promisify } from 'util'
@@ -142,14 +142,14 @@ describe('Cloudflare Access middleware', async () => {
     )
   })
 
-  it('Should be throw Missing bearer token when nothing is sent', async () => {
+  it('Should throw Missing bearer token when nothing is sent', async () => {
     const res = await app.request('http://localhost/hello-behind-access')
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
     expect(await res.text()).toBe('Authentication error: Missing bearer token')
   })
 
-  it('Should be throw Unable to decode Bearer token when sending garbage', async () => {
+  it('Should throw Unable to decode Bearer token when sending garbage', async () => {
     const res = await app.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdasdasda',
@@ -160,7 +160,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
   })
 
-  it('Should be throw Token is expired when sending expired token', async () => {
+  it('Should throw Token is expired when sending expired token', async () => {
     const token = generateJWT(
       keyPair1.privateKey,
       {
@@ -196,7 +196,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Invalid team name')
   })
 
-  it('Should be throw Invalid token when sending token signed with private key not in the allowed list', async () => {
+  it('Should throw Invalid token when sending token signed with private key not in the allowed list', async () => {
     const token = generateJWT(keyPair3.privateKey, {
       sub: '1234567890',
       iss: 'https://my-cool-team-name.cloudflareaccess.com',
