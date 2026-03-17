@@ -158,6 +158,10 @@ function getJwt(c: Context) {
   return jwt.trim()
 }
 
+function base64urlDecode(str: string): string {
+  return atob(str.replace(/-/g, '+').replace(/_/g, '/'))
+}
+
 function decodeJwt(token: string): DecodedToken {
   const [header, payload, signature] = token.split('.')
   if (!header || !payload || !signature) {
@@ -165,9 +169,9 @@ function decodeJwt(token: string): DecodedToken {
   }
 
   return {
-    header: JSON.parse(atob(header)) as DecodedToken['header'],
-    payload: JSON.parse(atob(payload)) as CloudflareAccessPayload,
-    signature: atob(signature.replace(/_/g, '/').replace(/-/g, '+')),
+    header: JSON.parse(base64urlDecode(header)) as DecodedToken['header'],
+    payload: JSON.parse(base64urlDecode(payload)) as CloudflareAccessPayload,
+    signature: base64urlDecode(signature),
     raw: { header, payload, signature },
   }
 }
