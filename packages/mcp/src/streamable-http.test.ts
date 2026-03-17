@@ -608,15 +608,15 @@ describe('MCP helper', () => {
     expectErrorResponse(errorData, -32000, /Client must accept text\/event-stream/)
   })
 
-  it('should reject POST requests without proper Accept header', async () => {
+  it('should reject POST requests that explicitly accept neither json nor sse', async () => {
     sessionId = await initializeServer()
 
-    // Try POST without Accept: text/event-stream
+    // Try POST with Accept header that includes neither json nor sse
     const response = await server.request('/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json', // Missing text/event-stream
+        Accept: 'text/plain', // Neither application/json nor text/event-stream
         'mcp-session-id': sessionId,
         'mcp-protocol-version': '2025-03-26',
       },
@@ -628,8 +628,70 @@ describe('MCP helper', () => {
     expectErrorResponse(
       errorData,
       -32000,
-      /Client must accept both application\/json and text\/event-stream/
+      /Client must accept application\/json or text\/event-stream/
     )
+  })
+
+  it('should accept POST requests with only application/json Accept header', async () => {
+    sessionId = await initializeServer()
+
+    const response = await sendPostRequest(server, TEST_MESSAGES.toolsList, {
+      'mcp-session-id': sessionId,
+      'mcp-protocol-version': '2025-03-26',
+      Accept: 'application/json',
+    })
+
+    expect(response.status).not.toBe(406)
+  })
+
+  it('should accept POST requests with only text/event-stream Accept header', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).not.toBe(406)
+  })
+
+  it('should accept POST requests with wildcard Accept header', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).not.toBe(406)
+  })
+
+  it('should accept POST requests with no Accept header', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).not.toBe(406)
   })
 
   it('should reject unsupported Content-Type', async () => {
