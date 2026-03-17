@@ -51,16 +51,20 @@ export default app
 
 ## Errors throw by the middleware
 
-| Error                                                                                                  | HTTP Code |
-| ------------------------------------------------------------------------------------------------------ | --------- |
-| Authentication error: Missing bearer token                                                             | 401       |
-| Authentication error: Unable to decode Bearer token                                                    | 401       |
-| Authentication error: Token is expired                                                                 | 401       |
-| Authentication error: Expected team name {your-team-name}, but received ${different-team-signed-token} | 401       |
-| Authentication error: Invalid Token                                                                    | 401       |
-| Authentication error: Invalid token audience                                                           | 401       |
-| Authentication error: The Access Organization 'my-team-name' does not exist                            | 500       |
-| Authentication error: Received unexpected HTTP code 500 from Cloudflare Access                         | 500       |
+| Error                                                                          | HTTP Code |
+| ------------------------------------------------------------------------------ | --------- |
+| Authentication error: Missing bearer token                                     | 401       |
+| Authentication error: Unable to decode bearer token                            | 401       |
+| Authentication error: Invalid token algorithm                                  | 401       |
+| Authentication error: Malformed token payload                                  | 401       |
+| Authentication error: Token is expired                                         | 401       |
+| Authentication error: Token is not yet valid                                   | 401       |
+| Authentication error: Invalid token                                            | 401       |
+| Authentication error: Invalid team name                                        | 401       |
+| Authentication error: Invalid token audience                                   | 401       |
+| Invalid accessTeamName: must contain only alphanumeric characters and hyphens  | (throws)  |
+| Authentication error: The Access Organization 'my-team-name' does not exist    | 500       |
+| Authentication error: Received unexpected HTTP code 500 from Cloudflare Access | 500       |
 
 ## Author
 
