@@ -40,6 +40,12 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     )
   }
 
+  if (!aud) {
+    console.warn(
+      'cloudflare-access: No aud parameter provided. It is strongly recommended to pass your Application Audience (AUD) Tag to prevent cross-application token reuse.'
+    )
+  }
+
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0
