@@ -79,7 +79,23 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
       return c.text('Authentication error: Malformed token payload', 401)
     }
 
-    // Is the token expired?
+    // Is signed from the correct team? (cheap check before expensive signature verification)
+    const expectedIss = `https://${accessTeamName}.cloudflareaccess.com`
+    if (token.payload.iss !== expectedIss) {
+      return c.text('Authentication error: Invalid team name', 401)
+    }
+
+    // Is the token intended for the correct application?
+    if (aud && !token.payload.aud?.includes(aud)) {
+      return c.text('Authentication error: Invalid token audience', 401)
+    }
+
+    // Check is token is valid against at least one public key?
+    if (!(await isValidJwtSignature(token, cacheKeys))) {
+      return c.text('Authentication error: Invalid token', 401)
+    }
+
+    // Is the token expired? (checked after signature to avoid trusting unverified claims)
     const expiryDate = new Date(token.payload.exp * 1000)
     const currentDate = new Date(Date.now())
     if (expiryDate <= currentDate) {
@@ -89,22 +105,6 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     // Is the token not yet valid?
     if (token.payload.nbf && token.payload.nbf * 1000 > Date.now()) {
       return c.text('Authentication error: Token is not yet valid', 401)
-    }
-
-    // Check is token is valid against at least one public key?
-    if (!(await isValidJwtSignature(token, cacheKeys))) {
-      return c.text('Authentication error: Invalid token', 401)
-    }
-
-    // Is signed from the correct team?
-    const expectedIss = `https://${accessTeamName}.cloudflareaccess.com`
-    if (token.payload?.iss !== expectedIss) {
-      return c.text('Authentication error: Invalid team name', 401)
-    }
-
-    // Is the token intended for the correct application?
-    if (aud && !token.payload.aud?.includes(aud)) {
-      return c.text('Authentication error: Invalid token audience', 401)
     }
 
     c.set('accessPayload', token.payload)
