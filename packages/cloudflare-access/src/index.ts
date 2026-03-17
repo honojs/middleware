@@ -140,18 +140,26 @@ async function getPublicKeys(accessTeamName: string) {
     })
   }
 
-  const data = await result.json<{ keys: (JsonWebKey & { kid: string })[] }>()
+  const data = await result.json<{ keys: (JsonWebKey & { kid?: string })[] }>()
 
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
   const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
 
   const importedKeys: Record<string, CryptoKey> = {}
   for (const key of data.keys) {
+    // RFC 7517 §4.5: kid MUST be present for key selection to work
+    if (!key.kid) {
+      continue
+    }
     // RFC 7517 §4.1-4.3: Only import RSA keys intended for signature verification
     if (key.kty !== 'RSA') {
       continue
     }
     if (key.use && key.use !== 'sig') {
+      continue
+    }
+    // RFC 7517 §4.3: If key_ops is present, it must include "verify"
+    if (key.key_ops && !key.key_ops.includes('verify')) {
       continue
     }
     importedKeys[key.kid] = await crypto.subtle.importKey(

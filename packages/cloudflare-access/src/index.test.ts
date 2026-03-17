@@ -726,6 +726,93 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Invalid token')
   })
 
+  it('Should skip keys with key_ops that does not include verify', async () => {
+    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
+    // Key with key_ops that doesn't include 'verify' — should be skipped
+    const encryptOnlyKey = { ...publicKeyToJWK(keyPair2.publicKey), key_ops: ['encrypt'] }
+    vi.stubGlobal('fetch', () =>
+      Response.json({
+        keys: [encryptOnlyKey, jwk1],
+      })
+    )
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    // Token signed with keyPair2 (whose public key has key_ops=['encrypt']) should fail
+    const token = generateJWT(keyPair2.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token')
+  })
+
+  it('Should accept keys with key_ops that includes verify', async () => {
+    const jwk1 = { ...publicKeyToJWK(keyPair1.publicKey), key_ops: ['verify'] }
+    vi.stubGlobal('fetch', () =>
+      Response.json({
+        keys: [jwk1],
+      })
+    )
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe('foo')
+  })
+
+  it('Should skip keys without a kid field', async () => {
+    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
+    // Key without kid — should be skipped
+    const { kid: _kid, ...noKidKey } = publicKeyToJWK(keyPair2.publicKey)
+    vi.stubGlobal('fetch', () =>
+      Response.json({
+        keys: [noKidKey, jwk1],
+      })
+    )
+
+    const freshApp = new Hono()
+    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
+    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
+
+    // Token signed with keyPair2 (whose public key has no kid) should fail
+    const token = generateJWT(keyPair2.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+
+    const res = await freshApp.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Invalid token')
+  })
+
   it('Should correctly decode tokens with base64url characters in payload', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: 'user+test/special_chars',
