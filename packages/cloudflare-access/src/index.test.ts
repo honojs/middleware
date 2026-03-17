@@ -180,7 +180,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Token is expired')
   })
 
-  it('Should be throw Expected team name x, but received y when sending invalid iss', async () => {
+  it('Should throw Invalid team name when sending invalid iss', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: '1234567890',
       iss: 'https://different-team.cloudflareaccess.com',
@@ -193,9 +193,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe(
-      'Authentication error: Expected team name https://my-cool-team-name.cloudflareaccess.com, but received https://different-team.cloudflareaccess.com'
-    )
+    expect(await res.text()).toBe('Authentication error: Invalid team name')
   })
 
   it('Should be throw Invalid token when sending token signed with private key not in the allowed list', async () => {

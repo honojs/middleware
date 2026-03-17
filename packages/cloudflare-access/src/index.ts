@@ -101,10 +101,7 @@ export const cloudflareAccess = (accessTeamName: string, aud?: string): Middlewa
     // Is signed from the correct team?
     const expectedIss = `https://${accessTeamName}.cloudflareaccess.com`
     if (token.payload?.iss !== expectedIss) {
-      return c.text(
-        `Authentication error: Expected team name ${expectedIss}, but received ${token.payload?.iss}`,
-        401
-      )
+      return c.text('Authentication error: Invalid team name', 401)
     }
 
     // Is the token intended for the correct application?
