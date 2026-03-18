@@ -117,7 +117,7 @@ export const cloudflareAccess = (
 
     // Check is token is valid against at least one public key?
     if (!(await isValidJwtSignature(token, cacheKeys))) {
-      return c.text('Authentication error: Invalid token', 401)
+      return c.text('Authentication error: Invalid Token', 401)
     }
 
     // RFC 7519 §4.1.4-4.1.5: allow small leeway for clock skew across distributed systems

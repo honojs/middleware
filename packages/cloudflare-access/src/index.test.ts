@@ -141,14 +141,14 @@ describe('Cloudflare Access middleware', async () => {
     )
   })
 
-  it('Should throw Missing bearer token when nothing is sent', async () => {
+  it('Should be throw Missing bearer token when nothing is sent', async () => {
     const res = await app.request('http://localhost/hello-behind-access')
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
     expect(await res.text()).toBe('Authentication error: Missing bearer token')
   })
 
-  it('Should throw Unable to decode Bearer token when sending garbage', async () => {
+  it('Should be throw Unable to decode Bearer token when sending garbage', async () => {
     const res = await app.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdasdasda',
@@ -159,7 +159,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
-  it('Should throw Token is expired when sending expired token', async () => {
+  it('Should be throw Token is expired when sending expired token', async () => {
     const token = generateJWT(
       keyPair1.privateKey,
       {
@@ -179,7 +179,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Token is expired')
   })
 
-  it('Should throw Invalid team name when sending invalid iss', async () => {
+  it('Should be throw Invalid team name when sending invalid iss', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: '1234567890',
       iss: 'https://different-team.cloudflareaccess.com',
@@ -195,7 +195,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Invalid team name')
   })
 
-  it('Should throw Invalid token when sending token signed with private key not in the allowed list', async () => {
+  it('Should be throw Invalid token when sending token signed with private key not in the allowed list', async () => {
     const token = generateJWT(keyPair3.privateKey, {
       sub: '1234567890',
       iss: 'https://my-cool-team-name.cloudflareaccess.com',
@@ -208,7 +208,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid token')
+    expect(await res.text()).toBe('Authentication error: Invalid Token')
   })
 
   it('Should work when sending everything correctly', async () => {
@@ -833,7 +833,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid token')
+    expect(await res.text()).toBe('Authentication error: Invalid Token')
   })
 
   it('Should skip non-RSA keys from JWKS response', async () => {
@@ -889,7 +889,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid token')
+    expect(await res.text()).toBe('Authentication error: Invalid Token')
   })
 
   it('Should skip keys with key_ops that does not include verify', async () => {
@@ -919,7 +919,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid token')
+    expect(await res.text()).toBe('Authentication error: Invalid Token')
   })
 
   it('Should accept keys with key_ops that includes verify', async () => {
@@ -976,7 +976,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Invalid token')
+    expect(await res.text()).toBe('Authentication error: Invalid Token')
   })
 
   it('Should reject tokens with whitespace or invalid characters in base64url segments', async () => {

@@ -70,7 +70,7 @@ export default app
 | Authentication error: Malformed token payload                                  | 401       |
 | Authentication error: Token is expired                                         | 401       |
 | Authentication error: Token is not yet valid                                   | 401       |
-| Authentication error: Invalid token                                            | 401       |
+| Authentication error: Invalid Token                                            | 401       |
 | Authentication error: Invalid team name                                        | 401       |
 | Authentication error: Invalid token audience                                   | 401       |
 | Invalid accessTeamName: must contain only alphanumeric characters and hyphens  | (throws)  |
