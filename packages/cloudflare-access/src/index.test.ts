@@ -84,6 +84,7 @@ function generateJWTWithHeader(
   payload: Record<string, unknown>,
   expiresIn: number = 3600
 ): string {
+  // Add expiration to payload
   const now = Math.floor(Date.now() / 1000)
   const fullPayload = {
     ...payload,
@@ -91,9 +92,11 @@ function generateJWTWithHeader(
     exp: now + expiresIn,
   }
 
+  // Encode header and payload
   const encodedHeader = base64URLEncode(JSON.stringify(header))
   const encodedPayload = base64URLEncode(JSON.stringify(fullPayload))
 
+  // Create signature
   const signatureInput = `${encodedHeader}.${encodedPayload}`
   const signer = crypto.createSign('RSA-SHA256')
   signer.update(signatureInput)
@@ -101,6 +104,7 @@ function generateJWTWithHeader(
   // @ts-expect-error signature is not typed correctly
   const encodedSignature = base64URLEncode(signature)
 
+  // Combine all parts
   return `${encodedHeader}.${encodedPayload}.${encodedSignature}`
 }
 
