@@ -31,7 +31,7 @@ The `aud` parameter accepts a single string or an array of strings for workers s
 // Single audience
 app.use('*', cloudflareAccess('my-team', 'aud-tag-1'))
 
-// Multiple audiences (e.g. during application migration)
+// Multiple audiences (e.g. production and preview applications)
 app.use('*', cloudflareAccess('my-team', ['aud-tag-1', 'aud-tag-2']))
 ```
 
@@ -64,7 +64,7 @@ export default app
 | Error                                                                          | HTTP Code |
 | ------------------------------------------------------------------------------ | --------- |
 | Authentication error: Missing bearer token                                     | 401       |
-| Authentication error: Unable to decode bearer token                            | 401       |
+| Authentication error: Unable to decode Bearer token                            | 401       |
 | Authentication error: Invalid token algorithm                                  | 401       |
 | Authentication error: Unsupported critical extension                           | 401       |
 | Authentication error: Malformed token payload                                  | 401       |

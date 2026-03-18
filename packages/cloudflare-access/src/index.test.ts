@@ -148,7 +148,7 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Missing bearer token')
   })
 
-  it('Should throw unable to decode bearer token when sending garbage', async () => {
+  it('Should throw Unable to decode Bearer token when sending garbage', async () => {
     const res = await app.request('http://localhost/hello-behind-access', {
       headers: {
         'cf-access-jwt-assertion': 'asdasdasda',
@@ -156,7 +156,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
   it('Should throw Token is expired when sending expired token', async () => {
@@ -654,16 +654,13 @@ describe('Cloudflare Access middleware', async () => {
   })
 
   it('Should re-fetch JWKS when token has unknown kid (key rotation)', async () => {
-    vi.useFakeTimers()
-
     const jwk1 = publicKeyToJWK(keyPair1.publicKey)
     const jwk3 = publicKeyToJWK(keyPair3.publicKey)
 
-    // Initially only serve keyPair1
+    // Initially only serve keyPair1; after first fetch, also serve keyPair3 (simulating key rotation)
     let fetchCount = 0
     const fetchSpy = vi.fn(() => {
       fetchCount++
-      // After first fetch, also serve keyPair3 (simulating key rotation)
       const keys = fetchCount === 1 ? [jwk1] : [jwk1, jwk3]
       return Promise.resolve(Response.json({ keys }))
     })
@@ -684,9 +681,6 @@ describe('Cloudflare Access middleware', async () => {
     expect(res1.status).toBe(200)
     expect(fetchSpy).toHaveBeenCalledTimes(1)
 
-    // Advance past the re-fetch rate limit (60s)
-    vi.advanceTimersByTime(61 * 1000)
-
     // Request with keyPair3 and its kid — should trigger re-fetch since kid is unknown
     const token3 = generateJWTWithHeader(
       keyPair3.privateKey,
@@ -701,50 +695,6 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res3.status).toBe(200)
     expect(fetchSpy).toHaveBeenCalledTimes(2)
-
-    vi.useRealTimers()
-  })
-
-  it('Should rate-limit JWKS re-fetches on unknown kid to prevent DoS', async () => {
-    vi.useFakeTimers()
-
-    const jwk1 = publicKeyToJWK(keyPair1.publicKey)
-    const fetchSpy = vi.fn(() => Promise.resolve(Response.json({ keys: [jwk1] })))
-    vi.stubGlobal('fetch', fetchSpy)
-
-    const freshApp = new Hono()
-    freshApp.use('/*', cloudflareAccess('my-cool-team-name'))
-    freshApp.get('/hello-behind-access', (c) => c.text('foo'))
-
-    // First request fetches keys
-    const token1 = generateJWT(keyPair1.privateKey, {
-      sub: '1234567890',
-      iss: 'https://my-cool-team-name.cloudflareaccess.com',
-    })
-    await freshApp.request('http://localhost/hello-behind-access', {
-      headers: { 'cf-access-jwt-assertion': token1 },
-    })
-    expect(fetchSpy).toHaveBeenCalledTimes(1)
-
-    // Immediately send tokens with forged kids — should NOT trigger re-fetches
-    for (let i = 0; i < 5; i++) {
-      const forgedToken = generateJWTWithHeader(
-        keyPair3.privateKey,
-        { alg: 'RS256', typ: 'JWT', kid: `forged-kid-${i}` },
-        {
-          sub: '1234567890',
-          iss: 'https://my-cool-team-name.cloudflareaccess.com',
-        }
-      )
-      await freshApp.request('http://localhost/hello-behind-access', {
-        headers: { 'cf-access-jwt-assertion': forgedToken },
-      })
-    }
-
-    // Should still be 1 — rate limiter prevents re-fetches within 60s
-    expect(fetchSpy).toHaveBeenCalledTimes(1)
-
-    vi.useRealTimers()
   })
 
   it('Should throw when accessTeamName contains invalid characters', () => {
@@ -801,7 +751,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
   it('Should reject tokens with fewer than 3 dot-separated parts', async () => {
@@ -812,7 +762,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
   it('Should reject tokens with crit header parameter', async () => {
@@ -1046,7 +996,7 @@ describe('Cloudflare Access middleware', async () => {
     })
     expect(res).not.toBeNull()
     expect(res.status).toBe(401)
-    expect(await res.text()).toBe('Authentication error: Unable to decode bearer token')
+    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
   it('Should correctly decode tokens with base64url characters in payload', async () => {

@@ -52,14 +52,11 @@ export const cloudflareAccess = (
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
   let cacheKeys: Record<string, CryptoKey> = {}
   let cacheExpiration = 0
-  let lastFetchTime = 0
-  const MIN_REFETCH_INTERVAL = 60 // Rate-limit JWKS re-fetches to prevent cache-busting DoS
 
   async function refreshKeys() {
     const publicKeys = await getPublicKeys(accessTeamName)
     cacheKeys = publicKeys.keys
     cacheExpiration = publicKeys.cacheExpiration
-    lastFetchTime = Math.floor(Date.now() / 1000)
   }
 
   return createMiddleware(async (c, next) => {
@@ -78,7 +75,7 @@ export const cloudflareAccess = (
     try {
       token = decodeJwt(encodedToken)
     } catch {
-      return c.text('Authentication error: Unable to decode bearer token', 401)
+      return c.text('Authentication error: Unable to decode Bearer token', 401)
     }
 
     // Validate algorithm
@@ -113,13 +110,8 @@ export const cloudflareAccess = (
       }
     }
 
-    // Re-fetch JWKS if token has a kid not in our cache (key rotation mid-cache-period)
-    // Rate-limited to prevent attackers from busting the cache with forged kid values
-    if (
-      token.header.kid &&
-      !cacheKeys[token.header.kid] &&
-      Math.floor(Date.now() / 1000) - lastFetchTime >= MIN_REFETCH_INTERVAL
-    ) {
+    // Re-fetch JWKS if token has a kid not in our cache (handles key rotation mid-cache-period)
+    if (token.header.kid && !cacheKeys[token.header.kid]) {
       await refreshKeys()
     }
 
