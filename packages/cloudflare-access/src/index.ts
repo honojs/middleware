@@ -218,7 +218,8 @@ function base64urlDecode(str: string): string {
   str = str.replace(/-/g, '+').replace(/_/g, '/')
   // Restore padding removed per RFC 7515 §2
   str += '='.repeat((4 - (str.length % 4)) % 4)
-  return atob(str)
+  const bytes = Uint8Array.from(atob(str), (c) => c.charCodeAt(0))
+  return new TextDecoder().decode(bytes)
 }
 
 function decodeJwt(token: string): DecodedToken {
