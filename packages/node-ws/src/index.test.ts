@@ -329,4 +329,86 @@ describe('WebSocket helper', () => {
       })
     )
   })
+
+  describe('WebSocketServer options', () => {
+    it('Should accept and apply custom WebSocketServer options', async () => {
+      const customApp = new Hono()
+      const maxPayload = 1024 * 1024 // 1MB
+      const { injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({
+        app: customApp,
+        websocketServerOptions: {
+          maxPayload,
+          perMessageDeflate: false,
+        },
+      })
+
+      const customServer = await new Promise<ServerType>((resolve) => {
+        const server = serve({ fetch: customApp.fetch, port: 3031 }, () => {
+          resolve(server)
+        })
+      })
+      injectWebSocket(customServer)
+
+      customApp.get(
+        '/',
+        upgradeWebSocket(() => ({
+          onOpen() {
+            // Connection opened successfully
+          },
+        }))
+      )
+
+      // Verify options are applied
+      expect(wss.options.maxPayload).toBe(maxPayload)
+      expect(wss.options.perMessageDeflate).toBe(false)
+
+      const ws = new WebSocket('ws://localhost:3031/')
+      await new Promise<void>((resolve) => ws.on('open', resolve))
+      ws.close()
+      customServer.close()
+    })
+
+    it('Should always set noServer to true regardless of passed options', async () => {
+      const customApp = new Hono()
+      const { wss } = createNodeWebSocket({
+        app: customApp,
+        websocketServerOptions: {
+          // Even if we don't pass noServer, it should be true
+          maxPayload: 2048,
+        },
+      })
+
+      // noServer should always be true for this implementation
+      expect(wss.options.noServer).toBe(true)
+    })
+
+    it('Should work without websocketServerOptions (backward compatibility)', async () => {
+      const customApp = new Hono()
+      const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
+        app: customApp,
+      })
+
+      const customServer = await new Promise<ServerType>((resolve) => {
+        const server = serve({ fetch: customApp.fetch, port: 3032 }, () => {
+          resolve(server)
+        })
+      })
+      injectWebSocket(customServer)
+
+      const connectionPromise = new Promise<boolean>((resolve) =>
+        customApp.get(
+          '/',
+          upgradeWebSocket(() => ({
+            onOpen() {
+              resolve(true)
+            },
+          }))
+        )
+      )
+
+      new WebSocket('ws://localhost:3032/')
+      expect(await connectionPromise).toBe(true)
+      customServer.close()
+    })
+  })
 })
