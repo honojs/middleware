@@ -110,14 +110,17 @@ export const cloudflareAccess = (
       }
     }
 
-    // Re-fetch JWKS if token has a kid not in our cache (handles key rotation mid-cache-period)
-    if (token.header.kid && !cacheKeys[token.header.kid]) {
-      await refreshKeys()
-    }
-
     // Check is token is valid against at least one public key?
     if (!(await isValidJwtSignature(token, cacheKeys))) {
-      return c.text('Authentication error: Invalid Token', 401)
+      // Re-fetch JWKS and retry once if token has an unknown kid (key rotation mid-cache-period)
+      if (token.header.kid && !cacheKeys[token.header.kid]) {
+        await refreshKeys()
+        if (!(await isValidJwtSignature(token, cacheKeys))) {
+          return c.text('Authentication error: Invalid Token', 401)
+        }
+      } else {
+        return c.text('Authentication error: Invalid Token', 401)
+      }
     }
 
     // RFC 7519 §4.1.4-4.1.5: allow small leeway for clock skew across distributed systems
