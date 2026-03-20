@@ -53,7 +53,7 @@ app.use('*', cloudflareAccess('my-access-team-name'))
 app.get('/', (c) => {
   const payload = c.get('accessPayload')
 
-  return c.text(`You just authenticated with the email ${payload.email}`)
+  return c.text(payload.email ? `Hello, ${payload.email}` : 'Hello, authenticated user')
 })
 
 export default app
