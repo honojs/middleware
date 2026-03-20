@@ -152,7 +152,7 @@ async function getPublicKeys(accessTeamName: string) {
       // Dont cache error responses
       cacheTtlByStatus: { '200-299': 30, '300-599': 0 },
     },
-  })
+  } as RequestInit)
 
   if (!result.ok) {
     if (result.status === 404) {
@@ -166,7 +166,7 @@ async function getPublicKeys(accessTeamName: string) {
     })
   }
 
-  const data = await result.json<{ keys: (JsonWebKey & { kid?: string })[] }>()
+  const data = (await result.json()) as { keys: (JsonWebKey & { kid?: string })[] }
 
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
   const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
@@ -280,8 +280,13 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
 async function validateSingleKey(
   key: CryptoKey,
-  signature: BufferSource,
-  data: BufferSource
+  signature: Uint8Array,
+  data: Uint8Array
 ): Promise<boolean> {
-  return crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, data)
+  return crypto.subtle.verify(
+    'RSASSA-PKCS1-v1_5',
+    key,
+    signature.buffer as ArrayBuffer,
+    data.buffer as ArrayBuffer
+  )
 }
