@@ -40,6 +40,7 @@ export const cloudflareAccess = (
   if (!/^[a-zA-Z0-9-]+$/.test(accessTeamName)) {
     throw new Error('Invalid accessTeamName: must contain only alphanumeric characters and hyphens')
   }
+  accessTeamName = accessTeamName.toLowerCase()
 
   const allowedAuds = aud ? (Array.isArray(aud) ? aud : [aud]) : []
 
@@ -110,7 +111,7 @@ export const cloudflareAccess = (
       }
     }
 
-    // Check is token is valid against at least one public key?
+    // Check if token is valid against at least one public key
     if (!(await isValidJwtSignature(token, cacheKeys))) {
       // Re-fetch JWKS and retry once if token has an unknown kid (key rotation mid-cache-period)
       if (token.header.kid && !cacheKeys[token.header.kid]) {
@@ -128,7 +129,7 @@ export const cloudflareAccess = (
     const nowSeconds = Math.floor(Date.now() / 1000)
 
     // Is the token expired? (checked after signature to avoid trusting unverified claims)
-    if (token.payload.exp + CLOCK_SKEW_SECONDS <= nowSeconds) {
+    if (token.payload.exp + CLOCK_SKEW_SECONDS < nowSeconds) {
       return c.text('Authentication error: Token is expired', 401)
     }
 
@@ -255,7 +256,7 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
   const signature = token.signature
 
-  // RFC 7515 §5.2: Use kid to select the verification key when present
+  // RFC 7515 §4.1.4: Use kid to select the verification key when present
   if (token.header.kid) {
     const key = keys[token.header.kid]
     if (key) {
@@ -263,12 +264,14 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
     }
   }
 
-  // Fall back to trying all keys when kid is absent or not found
-  for (const key of Object.values(keys)) {
-    const isValid = await validateSingleKey(key, signature, data)
+  // Fall back to trying all keys only when kid is absent
+  if (!token.header.kid) {
+    for (const key of Object.values(keys)) {
+      const isValid = await validateSingleKey(key, signature, data)
 
-    if (isValid) {
-      return true
+      if (isValid) {
+        return true
+      }
     }
   }
 
