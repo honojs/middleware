@@ -516,6 +516,45 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('foo')
   })
 
+  it('Should reject token expired beyond clock skew leeway (30s)', async () => {
+    // Token that expired 31 seconds ago — outside 30s leeway
+    const token = generateJWT(
+      keyPair1.privateKey,
+      {
+        sub: '1234567890',
+        iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      },
+      -31
+    )
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Token is expired')
+  })
+
+  it('Should reject token with nbf beyond clock skew leeway (30s)', async () => {
+    const now = Math.floor(Date.now() / 1000)
+    const token = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+      nbf: now + 31, // 31 seconds in the future, outside 30s leeway
+    })
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': token,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Token is not yet valid')
+  })
+
   it('Should accept token with nbf slightly in the future within clock skew leeway', async () => {
     const now = Math.floor(Date.now() / 1000)
     const token = generateJWT(keyPair1.privateKey, {
