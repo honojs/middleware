@@ -23,7 +23,7 @@ export type CloudflareAccessVariables = {
 type DecodedToken = {
   header: { alg: string; typ?: string; kid?: string; crit?: string[] }
   payload: CloudflareAccessPayload
-  signature: string
+  signature: Uint8Array
   raw: { header?: string; payload?: string; signature?: string }
 }
 
@@ -222,6 +222,15 @@ function base64urlDecode(str: string): string {
   return new TextDecoder().decode(bytes)
 }
 
+function base64urlDecodeToBytes(str: string): Uint8Array {
+  if (!/^[A-Za-z0-9_-]*$/.test(str)) {
+    throw new Error('Invalid base64url encoding')
+  }
+  str = str.replace(/-/g, '+').replace(/_/g, '/')
+  str += '='.repeat((4 - (str.length % 4)) % 4)
+  return Uint8Array.from(atob(str), (c) => c.charCodeAt(0))
+}
+
 function decodeJwt(token: string): DecodedToken {
   const parts = token.split('.')
   if (parts.length !== 3) {
@@ -232,7 +241,7 @@ function decodeJwt(token: string): DecodedToken {
   return {
     header: JSON.parse(base64urlDecode(header)) as DecodedToken['header'],
     payload: JSON.parse(base64urlDecode(payload)) as CloudflareAccessPayload,
-    signature: base64urlDecode(signature),
+    signature: base64urlDecodeToBytes(signature),
     raw: { header, payload, signature },
   }
 }
@@ -241,7 +250,7 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
   const encoder = new TextEncoder()
   const data = encoder.encode([token.raw.header, token.raw.payload].join('.'))
 
-  const signature = new Uint8Array(Array.from(token.signature).map((c) => c.charCodeAt(0)))
+  const signature = token.signature
 
   // RFC 7515 §4.1.4: Use kid to select the verification key when present
   if (token.header.kid) {
