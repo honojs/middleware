@@ -172,7 +172,7 @@ async function getPublicKeys(accessTeamName: string) {
 
   const importedKeys: Record<string, CryptoKey> = {}
   for (const key of data.keys) {
-    // RFC 7517 §4.5: kid MUST be present for key selection to work
+    // Skip keys without kid — we need it to index into the cache for key selection
     if (!key.kid) {
       continue
     }
@@ -255,7 +255,7 @@ async function isValidJwtSignature(token: DecodedToken, keys: Record<string, Cry
 
   const signature = token.signature
 
-  // RFC 7515 §4.1.4: Use kid to select the verification key when present
+  // RFC 7515 §5.2: Use kid to select the verification key when present
   if (token.header.kid) {
     const key = keys[token.header.kid]
     if (key) {
