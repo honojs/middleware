@@ -1042,6 +1042,25 @@ describe('Cloudflare Access middleware', async () => {
     expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
   })
 
+  it('Should reject tokens with invalid base64url characters in the signature segment', async () => {
+    const validToken = generateJWT(keyPair1.privateKey, {
+      sub: '1234567890',
+      iss: 'https://my-cool-team-name.cloudflareaccess.com',
+    })
+    const parts = validToken.split('.')
+    // Replace signature with characters invalid in base64url (e.g. '!@#')
+    const corruptedToken = `${parts[0]}.${parts[1]}.!@#$`
+
+    const res = await app.request('http://localhost/hello-behind-access', {
+      headers: {
+        'cf-access-jwt-assertion': corruptedToken,
+      },
+    })
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(401)
+    expect(await res.text()).toBe('Authentication error: Unable to decode Bearer token')
+  })
+
   it('Should correctly decode tokens with base64url characters in payload', async () => {
     const token = generateJWT(keyPair1.privateKey, {
       sub: 'user+test/special_chars',
