@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.2.3
+
+### Patch Changes
+
+- [#1810](https://github.com/honojs/middleware/pull/1810) [`db8fd160d0685cda0d874a5908326c004f72522a`](https://github.com/honojs/middleware/commit/db8fd160d0685cda0d874a5908326c004f72522a) Thanks [@dirkluijk](https://github.com/dirkluijk)! - fix: bump @asteasolutions/zod-to-openapi to allow nested discriminated unions
+
 ## 1.2.2
 
 ### Patch Changes
