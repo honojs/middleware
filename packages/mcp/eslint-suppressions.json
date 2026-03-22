@@ -107,13 +107,13 @@
       "count": 1
     },
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 7
+      "count": 10
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 42
+      "count": 45
     },
     "@typescript-eslint/require-await": {
-      "count": 13
+      "count": 20
     }
   },
   "src/auth/router.ts": {

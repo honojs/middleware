@@ -49,7 +49,7 @@ describe('Validate requests using a Valibot schema', () => {
             }
           }
           output: {
-            success: boolean
+            success: true
             message: string
           }
           outputFormat: 'json'

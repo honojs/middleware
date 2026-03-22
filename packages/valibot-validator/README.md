@@ -8,12 +8,12 @@ You can write a schema with Valibot and validate the incoming values.
 ## Usage
 
 ```ts
-import { number, object, string } from 'valibot'
+import * as v from 'valibot'
 import { vValidator } from '@hono/valibot-validator'
 
-const schema = object({
-  name: string(),
-  age: number(),
+const schema = v.object({
+  name: v.string(),
+  age: v.number(),
 })
 
 app.post('/author', vValidator('json', schema), (c) => {

@@ -1,5 +1,17 @@
 # @hono/swagger-ui
 
+## 0.6.1
+
+### Patch Changes
+
+- [#1795](https://github.com/honojs/middleware/pull/1795) [`3ca0fab1f52dcbef755363ca43b94bb654de4bab`](https://github.com/honojs/middleware/commit/3ca0fab1f52dcbef755363ca43b94bb654de4bab) Thanks [@matzehecht](https://github.com/matzehecht)! - do not delete version and baseUrl from the passed swagger ui options ref
+
+## 0.6.0
+
+### Minor Changes
+
+- [#1776](https://github.com/honojs/middleware/pull/1776) [`1844c8bc785b7cacc647d835d1374eb88d314823`](https://github.com/honojs/middleware/commit/1844c8bc785b7cacc647d835d1374eb88d314823) Thanks [@travzhang](https://github.com/travzhang)! - add support for custom CDN base URL in remoteAssets
+
 ## 0.5.3
 
 ### Patch Changes

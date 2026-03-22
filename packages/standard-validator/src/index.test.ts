@@ -1,5 +1,6 @@
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
 import type { SuccessStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import { vi } from 'vitest'
@@ -9,7 +10,6 @@ import * as valibotSchemas from '../__schemas__/valibot'
 import * as zodSchemas from '../__schemas__/zod'
 import { sValidator } from '.'
 
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
 
@@ -49,7 +49,7 @@ describe('Standard Schema Validation', () => {
         type verifyOutput = Expect<
           Equal<
             {
-              success: boolean
+              success: true
               message: string
               queryName: string | undefined
             },

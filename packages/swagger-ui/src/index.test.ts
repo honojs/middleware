@@ -143,4 +143,26 @@ describe('SwaggerUI Middleware', () => {
     expect(html).toContain('{"info":{"title":"Custom UI","version":"1.0.0"}}') // RENDER_TYPE.JSON_STRING
     expect(html).toContain('window.ui = SwaggerUIBundle({') // entry point of SwaggerUI
   })
+
+  it('should handle baseUrl correctly', async () => {
+    app.get(
+      '/',
+      swaggerUI({
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
+        baseUrl: '/docs',
+      })
+    )
+
+    const res = await app.request('/')
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expect(html).toContain('/docs/swagger-ui-dist/swagger-ui.css') // CSS URL should be correct
+    expect(html).toContain('/docs/swagger-ui-dist/swagger-ui-bundle.js') // JS URL should be correct
+
+    const res2 = await app.request('/')
+    expect(res2.status).toBe(200)
+    const html2 = await res2.text()
+    expect(html2).toContain('/docs/swagger-ui-dist/swagger-ui.css') // CSS URL should be correct
+    expect(html2).toContain('/docs/swagger-ui-dist/swagger-ui-bundle.js') // JS URL should be correct
+  })
 })

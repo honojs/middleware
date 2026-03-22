@@ -10,7 +10,7 @@ You can write a schema with any validation library supporting Standard Schema an
 ### Basic:
 
 ```ts
-import { z } from 'zod'
+import * as z from 'zod'
 import { sValidator } from '@hono/standard-validator'
 
 const schema = z.object({
@@ -46,12 +46,12 @@ app.post(
 Headers are internally transformed to lower-case in Hono. Hence, you will have to make them lower-cased in validation object.
 
 ```ts
-import { object, string } from 'valibot'
+import * as v from 'valibot'
 import { sValidator } from '@hono/standard-validator'
 
-const schema = object({
-  'content-type': string(),
-  'user-agent': string(),
+const schema = v.object({
+  'content-type': v.string(),
+  'user-agent': v.string(),
 })
 
 app.post('/author', sValidator('header', schema), (c) => {

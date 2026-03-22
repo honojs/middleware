@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1743](https://github.com/honojs/middleware/pull/1743) [`af44b77ef957abe7b5b4eec43a1059f9ff18c91c`](https://github.com/honojs/middleware/commit/af44b77ef957abe7b5b4eec43a1059f9ff18c91c) Thanks [@te2wow](https://github.com/te2wow)! - Handle absolute URL in basePath of AuthConfigManager.setConfig()
+
 ## 1.1.0
 
 ### Minor Changes

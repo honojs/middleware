@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.8.1
+
+### Patch Changes
+
+- [#1745](https://github.com/honojs/middleware/pull/1745) [`6f512be7881070cae6a70436096f3e5c1c69a194`](https://github.com/honojs/middleware/commit/6f512be7881070cae6a70436096f3e5c1c69a194) Thanks [@andrewhong04](https://github.com/andrewhong04)! - Add sub and email values back to OidcAuth
+
 ## 1.8.0
 
 ### Minor Changes

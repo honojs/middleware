@@ -2,7 +2,14 @@ import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/p
 import type { LoggerInstance, Session } from '@auth/core/types'
 import * as React from 'react'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ClientSessionError, fetchData, now, parseUrl, useOnline } from './client'
+import {
+  ClientSessionError,
+  fetchData,
+  normalizeBasePath,
+  now,
+  parseUrl,
+  useOnline,
+} from './client'
 import type {
   WindowProps,
   AuthState,
@@ -53,7 +60,8 @@ class AuthConfigManager {
   }
 
   setConfig(userConfig: Partial<AuthClientConfig>): void {
-    this.config = { ...this.config, ...userConfig }
+    const normalized = normalizeBasePath(userConfig)
+    this.config = { ...this.config, ...normalized }
   }
 
   getConfig(): AuthClientConfig {

@@ -411,6 +411,147 @@ describe('MCP Auth Router', () => {
   })
 })
 
+describe('MCP Auth Router with string issuerUrl', () => {
+  const mockProvider: OAuthServerProvider = {
+    clientsStore: {
+      async getClient(clientId: string): Promise<OAuthClientInformationFull | undefined> {
+        if (clientId === 'valid-client') {
+          return {
+            client_id: 'valid-client',
+            client_secret: 'valid-secret',
+            redirect_uris: ['https://example.com/callback'],
+          }
+        }
+        return undefined
+      },
+
+      async registerClient(
+        client: OAuthClientInformationFull
+      ): Promise<OAuthClientInformationFull> {
+        return client
+      },
+    },
+
+    async authorize(
+      _client: OAuthClientInformationFull,
+      params: AuthorizationParams,
+      ctx: Context
+    ): Promise<void> {
+      const redirectUrl = new URL(params.redirectUri)
+      redirectUrl.searchParams.set('code', 'mock_auth_code')
+      if (params.state) {
+        redirectUrl.searchParams.set('state', params.state)
+      }
+      ctx.res = ctx.redirect(redirectUrl.toString())
+    },
+
+    async challengeForAuthorizationCode(): Promise<string> {
+      return 'mock_challenge'
+    },
+
+    async exchangeAuthorizationCode(): Promise<OAuthTokens> {
+      return {
+        access_token: 'mock_access_token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        refresh_token: 'mock_refresh_token',
+      }
+    },
+
+    async exchangeRefreshToken(): Promise<OAuthTokens> {
+      return {
+        access_token: 'new_mock_access_token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        refresh_token: 'new_mock_refresh_token',
+      }
+    },
+
+    async verifyAccessToken(token: string): Promise<AuthInfo> {
+      if (token === 'valid_token') {
+        return {
+          token,
+          clientId: 'valid-client',
+          scopes: ['read', 'write'],
+          expiresAt: Date.now() / 1000 + 3600,
+        }
+      }
+      throw new InvalidTokenError('Token is invalid or expired')
+    },
+
+    async revokeToken(
+      _client: OAuthClientInformationFull,
+      _request: OAuthTokenRevocationRequest
+    ): Promise<void> {
+      // Success - do nothing in mock
+    },
+  }
+
+  it('preserves exact issuer string without trailing slash', async () => {
+    const app = new Hono()
+    const options: AuthRouterOptions = {
+      provider: mockProvider,
+      issuerUrl: 'https://auth.example.com',
+    }
+    app.route('/', mcpAuthRouter(options))
+
+    const response = await app.request('/.well-known/oauth-authorization-server')
+    expect(response.status).toBe(200)
+
+    const body = await response.json()
+    expect(body.issuer).toBe('https://auth.example.com')
+  })
+
+  it('preserves exact issuer string with sub-path', async () => {
+    const app = new Hono()
+    const options: AuthRouterOptions = {
+      provider: mockProvider,
+      issuerUrl: 'https://auth.example.com/oauth',
+    }
+    app.route('/', mcpAuthRouter(options))
+
+    const response = await app.request('/.well-known/oauth-authorization-server')
+    expect(response.status).toBe(200)
+
+    const body = await response.json()
+    expect(body.issuer).toBe('https://auth.example.com/oauth')
+  })
+
+  it('preserves exact issuer in authorization_servers of protected resource metadata', async () => {
+    const app = new Hono()
+    const options: AuthRouterOptions = {
+      provider: mockProvider,
+      issuerUrl: 'https://auth.example.com',
+      scopesSupported: ['read', 'write'],
+    }
+    app.route('/', mcpAuthRouter(options))
+
+    const response = await app.request('/.well-known/oauth-protected-resource')
+    expect(response.status).toBe(200)
+
+    const body = await response.json()
+    expect(body.authorization_servers).toContain('https://auth.example.com')
+  })
+
+  it('validates string issuer URL', () => {
+    expect(() =>
+      mcpAuthRouter({
+        provider: mockProvider,
+        issuerUrl: 'http://auth.example.com',
+      })
+    ).toThrow('Issuer URL must be HTTPS')
+  })
+
+  it('allows localhost HTTP string for development', () => {
+    expect(() =>
+      mcpAuthRouter({
+        provider: mockProvider,
+        issuerUrl: 'http://localhost:3000',
+      })
+    ).not.toThrow()
+  })
+})
+
 describe('MCP Auth Metadata Router', () => {
   const mockOAuthMetadata: OAuthMetadata = {
     issuer: 'https://auth.example.com/',

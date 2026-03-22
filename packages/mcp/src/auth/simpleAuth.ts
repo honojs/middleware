@@ -4,7 +4,7 @@ import { wellKnownRouter } from './helpers'
 import { createOAuthMetadata } from './router'
 
 export type SimpleMcpAuthRouterOptions = {
-  issuer: string
+  issuer: string | URL
 } & Omit<WellKnownRouterOptions, 'oauthMetadata'>
 
 export function simpleMcpAuthRouter<E extends Env, S extends Schema, P extends string>(
@@ -14,7 +14,7 @@ export function simpleMcpAuthRouter<E extends Env, S extends Schema, P extends s
 
   return wellKnownRouter({
     oauthMetadata: createOAuthMetadata({
-      issuerUrl: new URL(issuer),
+      issuerUrl: issuer,
       scopesSupported: wellKnownOptions.scopesSupported,
       serviceDocumentationUrl: wellKnownOptions.serviceDocumentationUrl,
     }),

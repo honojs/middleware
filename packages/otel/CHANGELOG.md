@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1784](https://github.com/honojs/middleware/pull/1784) [`9199a6ec566125a557e8d7a42ca2db8be01ad1cf`](https://github.com/honojs/middleware/commit/9199a6ec566125a557e8d7a42ca2db8be01ad1cf) Thanks [@mrlorentx](https://github.com/mrlorentx)! - converts millisecond request duration to seconds before recording
+
 ## 1.1.0
 
 ### Minor Changes

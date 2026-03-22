@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.2.4
+
+### Patch Changes
+
+- [#1760](https://github.com/honojs/middleware/pull/1760) [`402b8cf6aeb541f7c9b5ada8cba9c345ebaefdf9`](https://github.com/honojs/middleware/commit/402b8cf6aeb541f7c9b5ada8cba9c345ebaefdf9) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - allow `issuerUrl` to accept a string for exact issuer representation in OAuth metadata
+
 ## 0.2.3
 
 ### Patch Changes

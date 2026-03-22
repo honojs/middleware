@@ -23,6 +23,8 @@ export type OidcClaimsHook = (
 
 declare module 'hono' {
   export interface OidcAuthClaims {
+    email?: string
+    sub?: string
     readonly [claim: string]: oauth2.JsonValue | undefined
   }
   interface ContextVariableMap {

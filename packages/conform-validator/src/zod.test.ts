@@ -45,7 +45,7 @@ describe('Validate requests using a Zod schema', () => {
             }
           }
           output: {
-            success: boolean
+            success: true
             message: string
           }
           outputFormat: 'json'

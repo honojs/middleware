@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   RouteConfig as RouteConfigBase,
   ZodContentObject,
@@ -562,8 +561,7 @@ export class OpenAPIHono<
             const mw: MiddlewareHandler = async (c, next) => {
               if (c.req.header('content-type')) {
                 if (isFormContentType(c.req.header('content-type')!)) {
-                  await validator(c, next)
-                  return
+                  return await validator(c, next)
                 }
               }
               c.req.addValidatedData('form', {})

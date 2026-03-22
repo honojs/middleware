@@ -6,6 +6,8 @@ import type { AssetURLs } from './swagger/resource'
 import { remoteAssets } from './swagger/resource'
 
 type OriginalSwaggerUIOptions = {
+  /** CDN base URL, e.g. https://unpkg.com for internal network mirror */
+  baseUrl?: string
   version?: string
   /**
    * manuallySwaggerUIHtml is a string that is used to render SwaggerUI.
@@ -40,9 +42,11 @@ type OriginalSwaggerUIOptions = {
 
 type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
-const SwaggerUI = (options: SwaggerUIOptions): string => {
-  const asset = remoteAssets({ version: options?.version })
-  delete options.version
+const SwaggerUI = ({ baseUrl, version, ...options }: SwaggerUIOptions): string => {
+  const asset = remoteAssets({
+    baseUrl: baseUrl,
+    version: version,
+  })
 
   if (options.manuallySwaggerUIHtml) {
     return options.manuallySwaggerUIHtml(asset)

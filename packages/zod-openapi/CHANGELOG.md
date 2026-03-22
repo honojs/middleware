@@ -1,5 +1,23 @@
 # @hono/zod-openapi
 
+## 1.2.3
+
+### Patch Changes
+
+- [#1810](https://github.com/honojs/middleware/pull/1810) [`db8fd160d0685cda0d874a5908326c004f72522a`](https://github.com/honojs/middleware/commit/db8fd160d0685cda0d874a5908326c004f72522a) Thanks [@dirkluijk](https://github.com/dirkluijk)! - fix: bump @asteasolutions/zod-to-openapi to allow nested discriminated unions
+
+## 1.2.2
+
+### Patch Changes
+
+- [#1748](https://github.com/honojs/middleware/pull/1748) [`82701be9e1bfd2b0830555119cf89315501386e2`](https://github.com/honojs/middleware/commit/82701be9e1bfd2b0830555119cf89315501386e2) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `zod-to-openapi` to fix the memory leak
+
+## 1.2.1
+
+### Patch Changes
+
+- [#1726](https://github.com/honojs/middleware/pull/1726) [`3d5e22509e9cee8379fccbe135fadc3248205f8e`](https://github.com/honojs/middleware/commit/3d5e22509e9cee8379fccbe135fadc3248205f8e) Thanks [@mouhannad-sh](https://github.com/mouhannad-sh)! - fix Incomplete context internal error with x-www-form-urlencoded submissions when the payload is invalid
+
 ## 1.2.0
 
 ### Minor Changes

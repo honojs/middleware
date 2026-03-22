@@ -1,28 +1,27 @@
 import type { TypedResponse } from 'hono'
 import { Hono } from 'hono'
+import type { ExtractSchema } from 'hono/types'
 import type { Equal, Expect, UnionToIntersection } from 'hono/utils/types'
 import type { InferIssue, NumberIssue, ObjectIssue, StringIssue } from 'valibot'
-import { number, object, objectAsync, optional, optionalAsync, string } from 'valibot'
+import * as v from 'valibot'
 import type { FailedResponse } from '.'
 import { vValidator } from '.'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExtractSchema<T> = T extends Hono<infer _, infer S> ? S : never
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
 
 describe('Basic', () => {
   const app = new Hono()
 
-  const schema = object({
-    name: string(),
-    age: number(),
+  const schema = v.object({
+    name: v.string(),
+    age: v.number(),
   })
 
-  const querySchema = optional(
-    object({
-      search: optional(string()),
-      page: optional(number()),
+  const querySchema = v.optional(
+    v.object({
+      search: v.optional(v.string()),
+      page: v.optional(v.number()),
     })
   )
 
@@ -83,7 +82,7 @@ describe('Basic', () => {
   type withoutHook_verifySuccessOutput = Expect<
     Equal<
       {
-        success: boolean
+        success: true
         message: string
       },
       MergeDiscriminatedUnion<(Actual['/author']['$post'] & { status: 200 })['output']>
@@ -218,9 +217,9 @@ describe('Basic', () => {
 describe('With Hook', () => {
   const app = new Hono()
 
-  const schema = object({
-    id: number(),
-    title: string(),
+  const schema = v.object({
+    id: v.number(),
+    title: v.string(),
   })
 
   app.post(
@@ -278,15 +277,15 @@ describe('With Hook', () => {
 describe('Async', () => {
   const app = new Hono()
 
-  const schemaAsync = objectAsync({
-    name: string(),
-    age: number(),
+  const schemaAsync = v.objectAsync({
+    name: v.string(),
+    age: v.number(),
   })
 
-  const querySchemaAsync = optionalAsync(
-    objectAsync({
-      search: optionalAsync(string()),
-      page: optionalAsync(number()),
+  const querySchemaAsync = v.optionalAsync(
+    v.objectAsync({
+      search: v.optionalAsync(v.string()),
+      page: v.optionalAsync(v.number()),
     })
   )
 
@@ -327,7 +326,7 @@ describe('Async', () => {
                 | undefined
             }
             output: {
-              success: boolean
+              success: true
               message: string
             }
             outputFormat: 'json'
@@ -461,9 +460,9 @@ describe('Async', () => {
 describe('With Hook Async', () => {
   const app = new Hono()
 
-  const schemaAsync = objectAsync({
-    id: number(),
-    title: string(),
+  const schemaAsync = v.objectAsync({
+    id: v.number(),
+    title: v.string(),
   })
 
   app.post(
@@ -526,8 +525,8 @@ describe('Test types', () => {
       '/',
       vValidator(
         'query',
-        object({
-          foo: string(),
+        v.object({
+          foo: v.string(),
         })
       ),
       (c) => {
