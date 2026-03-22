@@ -1,7 +1,8 @@
 {
   "name": "@hono/bun-compress",
   "version": "0.1.0",
-  "description": "A Hono middleware for compressing responses using Bun's built-in compression.",
+  "description": "Deprecated: Use hono/compress instead. Bun now supports CompressionStream natively.",
+  "deprecated": "Bun now supports CompressionStream natively. Use the built-in hono/compress middleware instead.",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
