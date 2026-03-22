@@ -1,5 +1,11 @@
 # @hono/bun-compress
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1809](https://github.com/honojs/middleware/pull/1809) [`ee082b6b1a3c9b2ac1a90a83123bdfbf226b17c4`](https://github.com/honojs/middleware/commit/ee082b6b1a3c9b2ac1a90a83123bdfbf226b17c4) Thanks [@ctonneslan](https://github.com/ctonneslan)! - Mark package as deprecated now that Bun supports CompressionStream natively
+
 ## 0.1.0
 
 ### Minor Changes
