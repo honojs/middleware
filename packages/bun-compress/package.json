@@ -1,6 +1,6 @@
 {
   "name": "@hono/bun-compress",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deprecated: Use hono/compress instead. Bun now supports CompressionStream natively.",
   "deprecated": "Bun now supports CompressionStream natively. Use the built-in hono/compress middleware instead.",
   "type": "module",
