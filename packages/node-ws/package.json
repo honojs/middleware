@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "devDependencies": {
-    "@hono/node-server": "^1.19.2",
+    "@hono/node-server": "^1.19.11",
     "@types/ws": "^8.18.1",
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
@@ -53,7 +53,7 @@
     "ws": "^8.17.0"
   },
   "peerDependencies": {
-    "@hono/node-server": "^1.19.2",
+    "@hono/node-server": "^1.19.11",
     "hono": "^4.6.0"
   },
   "engines": {
