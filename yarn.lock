@@ -1806,7 +1806,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/arktype-validator@workspace:packages/arktype-validator"
   dependencies:
-    arktype: "npm:^2.1.29"
+    arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
@@ -2301,7 +2301,7 @@ __metadata:
   resolution: "@hono/standard-validator@workspace:packages/standard-validator"
   dependencies:
     "@standard-schema/spec": "npm:1.1.0"
-    arktype: "npm:^2.1.29"
+    arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
@@ -2407,7 +2407,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/typedriver-validator@workspace:packages/typedriver-validator"
   dependencies:
-    arktype: "npm:^2.1.29"
+    arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typebox: "npm:^1.1.5"
@@ -5705,14 +5705,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arktype@npm:^2.1.29":
-  version: 2.1.29
-  resolution: "arktype@npm:2.1.29"
+"arktype@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "arktype@npm:2.2.0"
   dependencies:
     "@ark/schema": "npm:0.56.0"
     "@ark/util": "npm:0.56.0"
     arkregex: "npm:0.0.5"
-  checksum: 10c0/c89cd5cc9eee7a5e14df0f32b228c06760b99440dabf2ed2d9272877a1607d7f27641d4105d1466b70fc620007fe864ddd826acee11c07102388c8dd301a20fe
+  checksum: 10c0/67c05dfe9654996c6129e68ce6c39188d4a3c6f1268cf78f028d6c98ab0b92954142853f03a41ecff029d56a0703824d2ca5d76525dab54a32de09a7145b374e
   languageName: node
   linkType: hard
 
