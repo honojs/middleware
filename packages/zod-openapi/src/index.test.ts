@@ -7,7 +7,7 @@ import type { ServerErrorStatusCode } from 'hono/utils/http-status'
 import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
-import type { RouteConfigToTypedResponse } from './index'
+import type { RouteConfigToTypedResponse, RouteHandler } from './index'
 import { $, OpenAPIHono, createRoute, z } from './index'
 
 describe('Constructor', () => {
@@ -2277,6 +2277,35 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     expect(await res.json()).toEqual({ id: 'x', n: 1 })
   })
 
+  it('Should use c.status when c.json omits status (success)', async () => {
+    const app = new OpenAPIHono({ strictStatusCode: true, strictResponse: true })
+    app.openapi(itemRoute, (c) => {
+      c.status(200)
+      return c.json({ id: 'x', n: 1 })
+    })
+    const res = await app.request('/item')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'x', n: 1 })
+  })
+
+  it('Should reject undeclared status when only c.status is set and c.json omits status', async () => {
+    const app = new OpenAPIHono({ strictStatusCode: true, strictResponse: true })
+    app.openapi(itemRoute, (c) => {
+      c.status(404)
+      return c.json({ id: 'x', n: 1 })
+    })
+    const res = await app.request('/item')
+    expect(res.status).toBe(500)
+    const body = (await res.json()) as {
+      success: boolean
+      error: string
+      status: number
+    }
+    expect(body.success).toBe(false)
+    expect(body.error).toBe('Response status does not match any of the defined responses.')
+    expect(body.status).toBe(404)
+  })
+
   it('Should reject undeclared status when strictStatusCode is on', async () => {
     const app = new OpenAPIHono({ strictStatusCode: true })
     // @ts-expect-error deliberate 201 vs declared 200 (strictStatusCode test)
@@ -2291,6 +2320,118 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     expect(body.success).toBe(false)
     expect(body.error).toBe('Response status does not match any of the defined responses.')
     expect(body.status).toBe(201)
+  })
+
+  it('Should validate body per declared status when multiple responses exist', async () => {
+    const multiRoute = createRoute({
+      method: 'get',
+      path: '/multi-status-code',
+      request: {
+        query: z.object({
+          returnCode: z.string().optional(),
+        }),
+      },
+      responses: {
+        200: {
+          description: 'ok',
+          content: {
+            'application/json': {
+              schema: z.object({
+                name: z.string(),
+                age: z.number(),
+              }),
+            },
+          },
+        },
+        404: {
+          description: 'not found',
+          content: {
+            'application/json': {
+              schema: z.object({ not: z.literal('found') }),
+            },
+          },
+        },
+        500: {
+          description: 'error',
+          content: {
+            'application/json': {
+              schema: z.object({ error: z.string() }),
+            },
+          },
+        },
+      },
+    })
+    const app = new OpenAPIHono({ strictStatusCode: true, strictResponse: true })
+    const handleMulti: RouteHandler<typeof multiRoute> = (c) => {
+      const { returnCode } = c.req.valid('query')
+      if (returnCode === '500') {
+        return c.json({ error: returnCode }, 500)
+      }
+      if (returnCode === '404') {
+        return c.json({ not: 'found' as const }, 404)
+      }
+      return c.json({ name: 'John Doe', age: 20 }, 200)
+    }
+    app.openapi(multiRoute, handleMulti)
+
+    const r200 = await app.request('/multi-status-code')
+    expect(r200.status).toBe(200)
+    expect(await r200.json()).toEqual({ name: 'John Doe', age: 20 })
+
+    const r404 = await app.request('/multi-status-code?returnCode=404')
+    expect(r404.status).toBe(404)
+    expect(await r404.json()).toEqual({ not: 'found' })
+
+    const r500 = await app.request('/multi-status-code?returnCode=500')
+    expect(r500.status).toBe(500)
+    expect(await r500.json()).toEqual({ error: '500' })
+  })
+
+  it('Should reject invalid body for one of multiple declared response schemas', async () => {
+    const multiRoute = createRoute({
+      method: 'get',
+      path: '/multi-status-bad-body',
+      request: {
+        query: z.object({ returnCode: z.string().optional() }),
+      },
+      responses: {
+        200: {
+          description: 'ok',
+          content: {
+            'application/json': {
+              schema: z.object({ name: z.string(), age: z.number() }),
+            },
+          },
+        },
+        500: {
+          description: 'error',
+          content: {
+            'application/json': {
+              schema: z.object({ error: z.string() }),
+            },
+          },
+        },
+      },
+    })
+    const app = new OpenAPIHono({ strictStatusCode: true, strictResponse: true })
+    const handleBadBody: RouteHandler<typeof multiRoute> = (c) => {
+      const { returnCode } = c.req.valid('query')
+      if (returnCode === '500') {
+        return c.json({ wrong: true } as never, 500)
+      }
+      return c.json({ name: 'a', age: 1 }, 200)
+    }
+    app.openapi(multiRoute, handleBadBody)
+    const res = await app.request('/multi-status-bad-body?returnCode=500')
+    expect(res.status).toBe(500)
+    const body = (await res.json()) as {
+      success: boolean
+      error: string
+      issues?: unknown[]
+    }
+    expect(body.success).toBe(false)
+    expect(body.error).toBe('Response body validation failed.')
+    expect(Array.isArray(body.issues)).toBe(true)
   })
 
   it('Should use defaultResponseHook for body failures', async () => {

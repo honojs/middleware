@@ -395,7 +395,6 @@ export type RouteHook<
   I,
   E,
   P,
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type -- Hono-compatible handler may return void
   RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
 >
 
