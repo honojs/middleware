@@ -32,6 +32,18 @@ describe('Constructor', () => {
     })
     expect(app.defaultHook).toBeDefined()
   })
+
+  it('Should accept strict response options', () => {
+    const defaultResponseHook = () => new Response()
+    const app = new OpenAPIHono({
+      strictStatusCode: true,
+      strictResponse: true,
+      defaultResponseHook,
+    })
+    expect(app.strictStatusCode).toBe(true)
+    expect(app.strictResponse).toBe(true)
+    expect(app.defaultResponseHook).toBe(defaultResponseHook)
+  })
 })
 
 describe('Basic - params', () => {
@@ -2209,6 +2221,156 @@ describe('Hide Routes', () => {
     const res = await app.request('/books')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([{ title: 'foo' }])
+  })
+})
+
+describe('Response validation (strictStatusCode / strictResponse)', () => {
+  const ItemSchema = z
+    .object({
+      id: z.string(),
+      n: z.number(),
+    })
+    .openapi('Item')
+
+  const itemRoute = createRoute({
+    method: 'get',
+    path: '/item',
+    responses: {
+      200: {
+        description: 'ok',
+        content: { 'application/json': { schema: ItemSchema } },
+      },
+    },
+  })
+
+  it('Should not validate when strict flags are off', async () => {
+    const app = new OpenAPIHono()
+    app.openapi(itemRoute, (c) =>
+      c.json({ id: 'x', n: 'bad' } as unknown as z.infer<typeof ItemSchema>, 200)
+    )
+    const res = await app.request('/item')
+    expect(res.status).toBe(200)
+  })
+
+  it('Should reject invalid JSON body when strictResponse is on', async () => {
+    const app = new OpenAPIHono({ strictResponse: true })
+    app.openapi(itemRoute, (c) =>
+      c.json({ id: 'x', n: 'bad' } as unknown as z.infer<typeof ItemSchema>, 200)
+    )
+    const res = await app.request('/item')
+    expect(res.status).toBe(500)
+    const body = (await res.json()) as {
+      success: boolean
+      error: string
+      issues: unknown[]
+    }
+    expect(body.success).toBe(false)
+    expect(body.error).toBe('Response body validation failed.')
+    expect(Array.isArray(body.issues)).toBe(true)
+  })
+
+  it('Should accept valid JSON body when strictResponse is on', async () => {
+    const app = new OpenAPIHono({ strictResponse: true })
+    app.openapi(itemRoute, (c) => c.json({ id: 'x', n: 1 }, 200))
+    const res = await app.request('/item')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'x', n: 1 })
+  })
+
+  it('Should reject undeclared status when strictStatusCode is on', async () => {
+    const app = new OpenAPIHono({ strictStatusCode: true })
+    // @ts-expect-error deliberate 201 vs declared 200 (strictStatusCode test)
+    app.openapi(itemRoute, (c) => c.json({ id: 'x', n: 1 }, 201))
+    const res = await app.request('/item')
+    expect(res.status).toBe(500)
+    const body = (await res.json()) as {
+      success: boolean
+      error: string
+      status: number
+    }
+    expect(body.success).toBe(false)
+    expect(body.error).toBe('Response status does not match any of the defined responses.')
+    expect(body.status).toBe(201)
+  })
+
+  it('Should use defaultResponseHook for body failures', async () => {
+    const app = new OpenAPIHono({
+      strictResponse: true,
+      defaultResponseHook: (result, c) => {
+        if (result.kind === 'body') {
+          return c.json({ custom: true }, 502)
+        }
+      },
+    })
+    app.openapi(itemRoute, (c) => c.json({ wrong: true } as never, 200))
+    const res = await app.request('/item')
+    expect(res.status).toBe(502)
+    expect(await res.json()).toEqual({ custom: true })
+  })
+
+  it('Should prefer route responseHook over defaultResponseHook', async () => {
+    const app = new OpenAPIHono({
+      strictResponse: true,
+      defaultResponseHook: () => new Response('default', { status: 503 }),
+    })
+    app.openapi(itemRoute, (c) => c.json({ wrong: true } as never, 200), {
+      responseHook: () => new Response('route', { status: 504 }),
+    })
+    const res = await app.request('/item')
+    expect(res.status).toBe(504)
+    expect(await res.text()).toBe('route')
+  })
+
+  it('Should match 2XX range to status code', async () => {
+    const rangeRoute = createRoute({
+      method: 'get',
+      path: '/range',
+      responses: {
+        '2XX': {
+          description: 'ok',
+          content: { 'application/json': { schema: ItemSchema } },
+        },
+      },
+    })
+    const app = new OpenAPIHono({ strictStatusCode: true, strictResponse: true })
+    app.openapi(rangeRoute, (c) => c.json({ id: 'a', n: 2 }, 200))
+    const res = await app.request('/range')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'a', n: 2 })
+  })
+
+  it('Should keep request hook when using hooks object', async () => {
+    const ParamsSchema = z.object({ id: z.string().min(3) }).openapi({
+      param: { name: 'id', in: 'path' },
+    })
+    const r = createRoute({
+      method: 'get',
+      path: '/req-hook/{id}',
+      request: { params: ParamsSchema },
+      responses: {
+        200: {
+          description: 'ok',
+          content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } },
+        },
+        400: {
+          description: 'param validation',
+          content: { 'application/json': { schema: z.object({ reqHook: z.boolean() }) } },
+        },
+      },
+    })
+    const app = new OpenAPIHono({ strictResponse: true })
+    app.openapi(r, (c) => c.json({ ok: true }, 200), {
+      hook: (result, c) => {
+        if (!result.success) {
+          return c.json({ reqHook: true }, 400)
+        }
+      },
+    })
+    const bad = await app.request('/req-hook/x')
+    expect(bad.status).toBe(400)
+    expect(await bad.json()).toEqual({ reqHook: true })
+    const good = await app.request('/req-hook/abcd')
+    expect(good.status).toBe(200)
   })
 })
 

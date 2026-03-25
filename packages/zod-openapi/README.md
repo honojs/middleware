@@ -303,6 +303,47 @@ app.openapi(
 )
 ```
 
+### Response validation (optional)
+
+You can opt in to validating outgoing JSON against the route `responses` schemas. Validation runs when the handler calls `c.json(payload, status)` (or `c.json(payload, { status })`), so the payload is checked **before** a `Response` is built—not by re-reading the body afterward.
+
+Enable flags on `OpenAPIHono`:
+
+- `strictStatusCode` — the status passed to `c.json` must match the route’s `responses` (numeric keys, range keys like `2XX`, or `default`).
+- `strictResponse` — when the resolved response entry has an `application/json` schema, the JSON value is validated with that Zod schema. If there is no JSON schema for that status (e.g. `204`), validation is skipped.
+
+When validation fails, `defaultResponseHook` (or the route-level `responseHook`) runs. Return a `Response` from the hook to control the error payload; if you return nothing, a small JSON error with status `500` is sent.
+
+```ts
+const app = new OpenAPIHono({
+  strictStatusCode: true,
+  strictResponse: true,
+  defaultResponseHook: (result, c) => {
+    if (result.kind === 'status_mismatch') {
+      return c.json({ error: 'Unexpected status', status: result.status }, 500)
+    }
+    return c.json({ error: 'Invalid response body', issues: result.error.issues }, 500)
+  },
+})
+```
+
+Pass a **hooks object** as the third argument to `app.openapi` when you need both request validation (`hook`) and per-route response errors (`responseHook`):
+
+```ts
+app.openapi(route, handler, {
+  hook: (result, c) => {
+    /* request validation — same as before */
+  },
+  responseHook: (result, c) => {
+    if (result.kind === 'body') {
+      return c.json({ message: 'Bad handler output' }, 500)
+    }
+  },
+})
+```
+
+Responses built only with `return new Response(JSON.stringify(...))` (without going through `c.json`) are **not** validated.
+
 ### OpenAPI v3.1
 
 You can generate OpenAPI v3.1 spec using the following methods:
