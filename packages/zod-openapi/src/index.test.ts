@@ -2259,6 +2259,25 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     expect(res.status).toBe(200)
   })
 
+  it('Should not apply strict response when route middleware returns c.json without next', async () => {
+    const app = new OpenAPIHono({ strictResponse: true })
+    app.openapi(
+      {
+        ...itemRoute,
+        middleware: [
+          (c) =>
+            c.json({ id: 'x', n: 'bad' } as unknown as z.infer<typeof ItemSchema>, 200),
+        ],
+      },
+      () => {
+        throw new Error('handler should not run')
+      }
+    )
+    const res = await app.request('/item')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'x', n: 'bad' })
+  })
+
   it('Should reject invalid JSON body when strictResponse is on', async () => {
     const app = new OpenAPIHono({ strictResponse: true })
     app.openapi(itemRoute, (c) =>

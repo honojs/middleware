@@ -466,6 +466,7 @@ function resolveOpenAPIResponseKey(
   return undefined
 }
 
+/** Uses the first JSON-compatible `content` entry (key order) when several are present. */
 function getJsonZodSchemaForOpenAPIResponse(
   responses: RouteConfig['responses'],
   responseKey: string
@@ -597,6 +598,7 @@ function installOpenAPIResponseValidation<E extends Env, P extends string>(
   return restore
 }
 
+/** When strict flags are on, wraps the handler in `async` so validation can wrap `c.json` / `c.status` for the request. */
 function wrapOpenAPIRouteHandler<E extends Env, P extends string, I extends Input>(
   handler: Handler<E, P, I, any>,
   responses: RouteConfig['responses'],
@@ -663,35 +665,27 @@ export class OpenAPIHono<
   }
 
   /**
-   *
-   * @param {RouteConfig} route - The route definition which you create with `createRoute()`.
-   * @param {Handler} handler - The handler. If you want to return a JSON object, you should specify the status code with `c.json()`.
-   * @param {Hook} hook - Optional. The hook method defines what it should do after validation.
+   * @param route - From `createRoute()`.
+   * @param handler - Route handler; use `c.json(payload, status)` for JSON responses.
+   * @param hookOrHooks - Optional request-validation hook, or `{ hook?, responseHook? }`.
+   *   With `strictStatusCode` / `strictResponse` on the app, `responseHook` runs on response validation failure (overrides `defaultResponseHook` for that route). See README for scope.
    * @example
    * app.openapi(
    *   route,
    *   (c) => {
-   *     // ...
-   *     return c.json(
-   *       {
-   *         age: 20,
-   *         name: 'Young man',
-   *       },
-   *       200 // You should specify the status code even if it's 200.
-   *     )
+   *     return c.json({ age: 20, name: 'Young man' }, 200)
    *   },
-   *  (result, c) => {
-   *    if (!result.success) {
-   *      return c.json(
-   *        {
-   *          code: 400,
-   *          message: 'Custom Message',
-   *        },
-   *        400
-   *      )
-   *    }
-   *  }
-   *)
+   *   (result, c) => {
+   *     if (!result.success) {
+   *       return c.json({ code: 400, message: 'Custom Message' }, 400)
+   *     }
+   *   }
+   * )
+   * @example
+   * app.openapi(route, handler, {
+   *   hook: (result, c) => { ... },
+   *   responseHook: (result, c) => { ... },
+   * })
    */
   openapi = <
     R extends RouteConfig,

@@ -314,6 +314,8 @@ Enable flags on `OpenAPIHono`:
 
 When validation fails, `defaultResponseHook` (or the route-level `responseHook`) runs. Return a `Response` from the hook to control the error payload; if you return nothing, a small JSON error with status `500` is sent.
 
+The default body for body-validation failures includes Zod **`issues`**, which can be detailed. For production APIs, use **`defaultResponseHook` / `responseHook`** to return a smaller or redacted error shape.
+
 ```ts
 const app = new OpenAPIHono({
   strictStatusCode: true,
@@ -342,7 +344,13 @@ app.openapi(route, handler, {
 })
 ```
 
-Responses built only with `return new Response(JSON.stringify(...))` (without going through `c.json`) are **not** validated.
+#### Scope and limitations
+
+- Only **`c.json(...)`** is validated (together with **`c.status`** when inferring the status). **`c.text`**, **`c.html`**, **`c.body`**, and **`return new Response(...)`** are not checked.
+- If one response defines **several** JSON-compatible media types under `content`, the **first** such entry (object key order) is used for `strictResponse`.
+- Wrapping runs for the **OpenAPI route handler** (after built-in validators). If **route `middleware` returns a response without calling `next()`**, that response bypasses strict checks. Likewise, calling **`c.json` only after the handler has returned** does not go through validation.
+- With `strictStatusCode` or `strictResponse` enabled, the handler is executed inside an **async** wrapper (usually negligible; it can show up in stack traces).
+- Status range keys must follow **OpenAPI spelling** (`1XX` … `5XX` with uppercase `X`); other strings are not treated as ranges.
 
 ### OpenAPI v3.1
 
