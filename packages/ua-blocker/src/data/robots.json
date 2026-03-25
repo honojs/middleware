@@ -118,6 +118,13 @@
     "frequency": "Unclear at this time.",
     "description": "Apple has a secondary user agent, Applebot-Extended ... [that is] used to train Apple's foundation models powering generative AI features across Apple products, including Apple Intelligence, Services, and Developer Tools."
   },
+  "Aranet-SearchBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "Undocumented AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Description unavailable from darkvisitors.com More info can be found at https://darkvisitors.com/agents/agents/aranet-searchbot"
+  },
   "atlassian-bot": {
     "operator": "[Atlassian](https://www.atlassian.com)",
     "respect": "[Yes](https://support.atlassian.com/organization-administration/docs/connect-custom-website-to-rovo/#Editing-your-robots.txt)",
