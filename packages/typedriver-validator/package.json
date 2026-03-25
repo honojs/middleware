@@ -46,7 +46,7 @@
     "typedriver": "^0.8.6"
   },
   "devDependencies": {
-    "arktype": "^2.1.29",
+    "arktype": "^2.2.0",
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typebox": "^1.1.5",
