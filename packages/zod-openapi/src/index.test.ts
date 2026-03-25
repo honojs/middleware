@@ -2308,7 +2308,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
 
   it('Should reject undeclared status when strictStatusCode is on', async () => {
     const app = new OpenAPIHono({ strictStatusCode: true })
-    // @ts-expect-error deliberate 201 vs declared 200 (strictStatusCode test)
+    // @ts-expect-error status 201 not in route responses
     app.openapi(itemRoute, (c) => c.json({ id: 'x', n: 1 }, 201))
     const res = await app.request('/item')
     expect(res.status).toBe(500)

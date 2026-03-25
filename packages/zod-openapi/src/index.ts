@@ -231,16 +231,11 @@ export type Hook<T, E extends Env, P extends string, R> = (
   c: Context<E, P>
 ) => R
 
-/** Failure cases passed to {@link ResponseHook} (hook is only invoked on failure). */
 export type ResponseHookFailure =
   | { kind: 'status_mismatch'; status: number }
   | { kind: 'body'; error: ZodError }
 
-/**
- * Called when response validation fails (`strictStatusCode` / `strictResponse`).
- * Return a `Response` to send it; return `undefined` to use the built-in JSON error body (500).
- * Use a synchronous hook; `c.json` / `c.text` run on the real context methods while the hook runs.
- */
+/** When `strictStatusCode` or `strictResponse` fails; return a `Response` or `undefined` for the default 500 JSON. */
 export type ResponseHook<E extends Env = Env, P extends string = string> = (
   result: ResponseHookFailure,
   c: Context<E, P>
@@ -252,9 +247,9 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
-  /** When true, `c.json` status must match a key in the route `responses` (numeric, range like `2XX`, or `default`). */
+  /** Require `c.json` status to match a key in route `responses`. */
   strictStatusCode?: boolean
-  /** When true, JSON response bodies are validated with the Zod schema from `responses` for the resolved status (if present). */
+  /** Validate JSON bodies with Zod schemas from `responses` for the resolved status. */
   strictResponse?: boolean
   defaultResponseHook?: ResponseHook<E, any>
 }
@@ -618,7 +613,6 @@ function wrapOpenAPIRouteHandler<E extends Env, P extends string, I extends Inpu
   return (async (c, next) => {
     const restore = installOpenAPIResponseValidation(c, responses, options)
     try {
-      // OpenAPI handler return type is preserved via `as typeof handler` at the call site.
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- composed handler output is intentionally generic
       return await Promise.resolve(handler(c, next))
     } finally {
