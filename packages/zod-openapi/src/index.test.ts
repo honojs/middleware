@@ -2225,6 +2225,13 @@ describe('Hide Routes', () => {
 })
 
 describe('Response validation (strictStatusCode / strictResponse)', () => {
+  type BuiltinStrictValidationJson = {
+    success: boolean
+    error: string
+    status?: number
+    issues?: unknown[]
+  }
+
   const ItemSchema = z
     .object({
       id: z.string(),
@@ -2259,11 +2266,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     )
     const res = await app.request('/item')
     expect(res.status).toBe(500)
-    const body = (await res.json()) as {
-      success: boolean
-      error: string
-      issues: unknown[]
-    }
+    const body = (await res.json()) as BuiltinStrictValidationJson
     expect(body.success).toBe(false)
     expect(body.error).toBe('Response body validation failed.')
     expect(Array.isArray(body.issues)).toBe(true)
@@ -2296,11 +2299,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     })
     const res = await app.request('/item')
     expect(res.status).toBe(500)
-    const body = (await res.json()) as {
-      success: boolean
-      error: string
-      status: number
-    }
+    const body = (await res.json()) as BuiltinStrictValidationJson
     expect(body.success).toBe(false)
     expect(body.error).toBe('Response status does not match any of the defined responses.')
     expect(body.status).toBe(404)
@@ -2312,11 +2311,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     app.openapi(itemRoute, (c) => c.json({ id: 'x', n: 1 }, 201))
     const res = await app.request('/item')
     expect(res.status).toBe(500)
-    const body = (await res.json()) as {
-      success: boolean
-      error: string
-      status: number
-    }
+    const body = (await res.json()) as BuiltinStrictValidationJson
     expect(body.success).toBe(false)
     expect(body.error).toBe('Response status does not match any of the defined responses.')
     expect(body.status).toBe(201)
@@ -2424,11 +2419,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
     app.openapi(multiRoute, handleBadBody)
     const res = await app.request('/multi-status-bad-body?returnCode=500')
     expect(res.status).toBe(500)
-    const body = (await res.json()) as {
-      success: boolean
-      error: string
-      issues?: unknown[]
-    }
+    const body = (await res.json()) as BuiltinStrictValidationJson
     expect(body.success).toBe(false)
     expect(body.error).toBe('Response body validation failed.')
     expect(Array.isArray(body.issues)).toBe(true)
