@@ -1867,7 +1867,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/capnweb@workspace:packages/capnweb"
   dependencies:
-    "@hono/node-server": "npm:^1.19.2"
+    "@hono/node-server": "npm:^1.19.11"
     "@hono/node-ws": "workspace:^"
     "@types/ws": "npm:^8.5.0"
     capnweb: "npm:^0.5.0"
@@ -2106,12 +2106,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hono/node-server@npm:^1.19.2":
-  version: 1.19.2
-  resolution: "@hono/node-server@npm:1.19.2"
+"@hono/node-server@npm:^1.19.11":
+  version: 1.19.11
+  resolution: "@hono/node-server@npm:1.19.11"
   peerDependencies:
     hono: ^4
-  checksum: 10c0/36a191740ca65780ef5b9da21e5ea7ac34e77c64ecbd4449b03eb0b4430bf9e27d9f51266b9898e53e266e4d7505caa735d1a3ef543585ceeefb10684e253aa5
+  checksum: 10c0/34b1c29c249c5cd95469980b5c359370f3cbab49b3603f324a4afbf895d68b8d5485c71f1887769eabeb3499276c49e7102084234b4feb3853edb748aaa85f50
   languageName: node
   linkType: hard
 
@@ -2128,7 +2128,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/node-ws@workspace:packages/node-ws"
   dependencies:
-    "@hono/node-server": "npm:^1.19.2"
+    "@hono/node-server": "npm:^1.19.11"
     "@types/ws": "npm:^8.18.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
@@ -2136,7 +2136,7 @@ __metadata:
     vitest: "npm:^4.1.0-beta.1"
     ws: "npm:^8.17.0"
   peerDependencies:
-    "@hono/node-server": ^1.19.2
+    "@hono/node-server": ^1.19.11
     hono: ^4.6.0
   languageName: unknown
   linkType: soft
