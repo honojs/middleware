@@ -303,6 +303,55 @@ app.openapi(
 )
 ```
 
+### Response validation (optional)
+
+You can opt in to validating outgoing JSON against the route `responses` schemas. Validation runs when the handler calls `c.json(payload, status)` (or `c.json(payload, { status })`), so the payload is checked **before** a `Response` is built—not by re-reading the body afterward.
+
+Enable flags on `OpenAPIHono`:
+
+- `strictStatusCode` — the status passed to `c.json` must match the route’s `responses` (numeric keys, range keys like `2XX`, or `default`).
+- `strictResponse` — when the resolved response entry has an `application/json` schema, the JSON value is validated with that Zod schema. If there is no JSON schema for that status (e.g. `204`), validation is skipped.
+
+When validation fails, `defaultResponseHook` (or the route-level `responseHook`) runs. Return a `Response` from the hook to control the error payload; if you return nothing, a small JSON error with status `500` is sent.
+
+The default body for body-validation failures includes Zod **`issues`**, which can be detailed. For production APIs, use **`defaultResponseHook` / `responseHook`** to return a smaller or redacted error shape.
+
+```ts
+const app = new OpenAPIHono({
+  strictStatusCode: true,
+  strictResponse: true,
+  defaultResponseHook: (result, c) => {
+    if (result.kind === 'status_mismatch') {
+      return c.json({ error: 'Unexpected status', status: result.status }, 500)
+    }
+    return c.json({ error: 'Invalid response body', issues: result.error.issues }, 500)
+  },
+})
+```
+
+Pass a **hooks object** as the third argument to `app.openapi` when you need both request validation (`hook`) and per-route response errors (`responseHook`):
+
+```ts
+app.openapi(route, handler, {
+  hook: (result, c) => {
+    /* request validation — same as before */
+  },
+  responseHook: (result, c) => {
+    if (result.kind === 'body') {
+      return c.json({ message: 'Bad handler output' }, 500)
+    }
+  },
+})
+```
+
+#### Scope and limitations
+
+- Only **`c.json(...)`** is validated (together with **`c.status`** when inferring the status). **`c.text`**, **`c.html`**, **`c.body`**, and **`return new Response(...)`** are not checked.
+- If one response defines **several** JSON-compatible media types under `content`, the **first** such entry (object key order) is used for `strictResponse`.
+- Wrapping runs for the **OpenAPI route handler** (after built-in validators). If **route `middleware` returns a response without calling `next()`**, that response bypasses strict checks. Likewise, calling **`c.json` only after the handler has returned** does not go through validation.
+- With `strictStatusCode` or `strictResponse` enabled, the handler is executed inside an **async** wrapper (usually negligible; it can show up in stack traces).
+- Status range keys must follow **OpenAPI spelling** (`1XX` … `5XX` with uppercase `X`); other strings are not treated as ranges.
+
 ### OpenAPI v3.1
 
 You can generate OpenAPI v3.1 spec using the following methods:
