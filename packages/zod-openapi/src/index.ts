@@ -726,7 +726,9 @@ export class OpenAPIHono<
     return this as any
   }
 
-  override basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
+  override basePath<SubPath extends string>(
+    path: SubPath
+  ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
     return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
 
