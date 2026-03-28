@@ -398,6 +398,13 @@
     "frequency": "Unclear at this time.",
     "description": "Gemini-Deep-Research is the agent responsible for collecting and scanning resources used in Google Gemini's Deep Research feature, which acts as a personal research assistant. More info can be found at https://darkvisitors.com/agents/agents/gemini-deep-research"
   },
+  "Google-Agent": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Description unavailable from darkvisitors.com More info can be found at https://darkvisitors.com/agents/agents/google-agent"
+  },
   "Google-CloudVertexBot": {
     "operator": "Google",
     "respect": "[Yes](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers)",
