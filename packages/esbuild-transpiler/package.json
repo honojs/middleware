@@ -77,7 +77,7 @@
     "esbuild": "^0.27.2",
     "esbuild-wasm": "^0.27.3",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.21.4",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0-beta.1"
   },
