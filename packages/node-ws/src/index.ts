@@ -1,7 +1,7 @@
 import type { Hono } from 'hono'
 import { defineWebSocketHelper } from 'hono/ws'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
-import type { WebSocket } from 'ws'
+import type { ServerOptions, WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { STATUS_CODES } from 'node:http'
 import type { IncomingMessage, Server } from 'node:http'
@@ -23,6 +23,11 @@ export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app: Hono<any, any, any>
   baseUrl?: string | URL
+  /**
+   * Options to pass to the WebSocketServer constructor.
+   * Note: `noServer` option will always be set to `true` internally.
+   */
+  websocketServerOptions?: Omit<ServerOptions, 'noServer'>
 }
 
 const generateConnectionSymbol = () => Symbol('connection')
@@ -36,7 +41,10 @@ const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
-  const wss = new WebSocketServer({ noServer: true })
+  const wss = new WebSocketServer({
+    noServer: true,
+    ...init.websocketServerOptions,
+  })
   const waiterMap = new Map<
     IncomingMessage,
     { resolve: (ws: WebSocket) => void; connectionSymbol: symbol }
