@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.2.4
+
+### Patch Changes
+
+- [#1831](https://github.com/honojs/middleware/pull/1831) [`40ede9c55abe672798deca6970ef60b945382d34`](https://github.com/honojs/middleware/commit/40ede9c55abe672798deca6970ef60b945382d34) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: publish to JSR
+
 ## 1.2.3
 
 ### Patch Changes
