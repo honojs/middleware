@@ -29,6 +29,13 @@ describe('Authorization Handler', () => {
     scope: 'profile email',
   }
 
+  const loopbackClient: OAuthClientInformationFull = {
+    client_id: 'loopback-client',
+    client_secret: 'valid-secret',
+    redirect_uris: ['http://localhost/callback', 'http://127.0.0.1/callback'],
+    scope: 'profile email',
+  }
+
   // Mock client store
   const mockClientStore: OAuthRegisteredClientsStore = {
     async getClient(clientId: string): Promise<OAuthClientInformationFull | undefined> {
@@ -36,6 +43,8 @@ describe('Authorization Handler', () => {
         return validClient
       } else if (clientId === 'multi-redirect-client') {
         return multiRedirectClient
+      } else if (clientId === 'loopback-client') {
+        return loopbackClient
       }
       return undefined
     },
@@ -183,6 +192,70 @@ describe('Authorization Handler', () => {
       expect(response.status).toBe(302)
       const location = new URL(response.headers.get('location')!)
       expect(location.origin + location.pathname).toBe('https://example.com/callback')
+    })
+
+    it('accepts localhost redirect_uri with different port per RFC 8252', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'loopback-client')
+      url.searchParams.set('redirect_uri', 'http://localhost:58621/callback')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(302)
+      const location = new URL(response.headers.get('location')!)
+      expect(location.origin + location.pathname).toBe('http://localhost:58621/callback')
+    })
+
+    it('accepts 127.0.0.1 redirect_uri with different port per RFC 8252', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'loopback-client')
+      url.searchParams.set('redirect_uri', 'http://127.0.0.1:9999/callback')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(302)
+      const location = new URL(response.headers.get('location')!)
+      expect(location.origin + location.pathname).toBe('http://127.0.0.1:9999/callback')
+    })
+
+    it('rejects loopback redirect_uri with different path', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'loopback-client')
+      url.searchParams.set('redirect_uri', 'http://localhost:58621/evil')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(400)
+    })
+
+    it('rejects loopback redirect_uri with different query string', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'loopback-client')
+      url.searchParams.set('redirect_uri', 'http://localhost:58621/callback?extra=param')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(400)
+    })
+
+    it('does not apply loopback port matching to non-loopback URIs', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'valid-client')
+      url.searchParams.set('redirect_uri', 'https://example.com:9999/callback')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(400)
     })
   })
 
