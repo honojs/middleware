@@ -234,6 +234,18 @@ describe('Authorization Handler', () => {
       expect(response.status).toBe(400)
     })
 
+    it('rejects loopback redirect_uri with different query string', async () => {
+      const url = new URL('/authorize', 'https://example.com')
+      url.searchParams.set('client_id', 'loopback-client')
+      url.searchParams.set('redirect_uri', 'http://localhost:58621/callback?extra=param')
+      url.searchParams.set('response_type', 'code')
+      url.searchParams.set('code_challenge', 'challenge123')
+      url.searchParams.set('code_challenge_method', 'S256')
+      const response = await app.request(url)
+
+      expect(response.status).toBe(400)
+    })
+
     it('does not apply loopback port matching to non-loopback URIs', async () => {
       const url = new URL('/authorize', 'https://example.com')
       url.searchParams.set('client_id', 'valid-client')
