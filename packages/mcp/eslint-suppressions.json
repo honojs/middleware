@@ -1,7 +1,7 @@
 {
   "src/auth/helpers/authorize.test.ts": {
     "@typescript-eslint/no-non-null-assertion": {
-      "count": 10
+      "count": 12
     },
     "@typescript-eslint/require-await": {
       "count": 6
