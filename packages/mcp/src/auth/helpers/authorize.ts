@@ -53,7 +53,10 @@ function isLoopbackRedirectAllowed(redirectUri: string, registeredUris: string[]
     try {
       const reg = new URL(registered)
       return (
-        reg.hostname === req.hostname && reg.protocol === req.protocol && reg.pathname === req.pathname && reg.search === req.search
+        reg.hostname === req.hostname &&
+        reg.protocol === req.protocol &&
+        reg.pathname === req.pathname &&
+        reg.search === req.search
       )
     } catch {
       return false
