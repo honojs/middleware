@@ -32,6 +32,7 @@
     { "path": "packages/qwik-city" },
     { "path": "packages/react-compat" },
     { "path": "packages/react-renderer" },
+    { "path": "packages/response-cache" },
     { "path": "packages/sentry" },
     { "path": "packages/session" },
     { "path": "packages/ssg-plugins-essential" },
