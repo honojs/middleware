@@ -1,7 +1,5 @@
+import type { ServerType } from '@hono/node-server'
 import { serve } from '@hono/node-server'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import type { ServerType } from '@hono/node-server/dist/types'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
@@ -12,20 +10,18 @@ import { createNodeWebSocket } from '.'
 describe('WebSocket helper', () => {
   let app: Hono
   let server: ServerType
-  let injectWebSocket: ReturnType<typeof createNodeWebSocket>['injectWebSocket']
-  let upgradeWebSocket: ReturnType<typeof createNodeWebSocket>['upgradeWebSocket']
-  let wss: ReturnType<typeof createNodeWebSocket>['wss']
+  let nodeWs: ReturnType<typeof createNodeWebSocket>
 
   beforeEach(async () => {
     app = new Hono()
-    ;({ injectWebSocket, upgradeWebSocket, wss } = createNodeWebSocket({ app }))
+    nodeWs = createNodeWebSocket({ app })
 
     server = await new Promise<ServerType>((resolve) => {
       const server = serve({ fetch: app.fetch, port: 3030 }, () => {
         resolve(server)
       })
     })
-    injectWebSocket(server)
+    nodeWs.injectWebSocket(server)
   })
 
   afterEach(() => {
@@ -36,7 +32,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(
+        nodeWs.upgradeWebSocket(
           () =>
             new Promise((resolveWS) =>
               setTimeout(() => {
@@ -93,7 +89,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(() => ({
+        nodeWs.upgradeWebSocket(() => ({
           onOpen() {
             resolve(true)
           },
@@ -110,7 +106,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(() => ({
+        nodeWs.upgradeWebSocket(() => ({
           onMessage(data) {
             resolve(data.data)
           },
@@ -132,7 +128,7 @@ describe('WebSocket helper', () => {
 
     app.get(
       '/',
-      upgradeWebSocket(() => ({
+      nodeWs.upgradeWebSocket(() => ({
         onOpen() {
           openConnections++
         },
@@ -181,7 +177,7 @@ describe('WebSocket helper', () => {
     const testReason = 'Test!'
     app.get(
       '/',
-      upgradeWebSocket(() => ({
+      nodeWs.upgradeWebSocket(() => ({
         onClose(event) {
           expect(event.code).toBe(testCode)
           expect(event.reason).toBe(testReason)
@@ -198,7 +194,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<WSMessageReceive>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(() => ({
+        nodeWs.upgradeWebSocket(() => ({
           onMessage(data) {
             resolve(data.data)
           },
@@ -237,7 +233,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(() => ({
+        nodeWs.upgradeWebSocket(() => ({
           onOpen() {
             resolve(true)
           },
@@ -257,7 +253,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(() => ({
+        nodeWs.upgradeWebSocket(() => ({
           onOpen() {
             resolve(true)
           },
@@ -274,7 +270,7 @@ describe('WebSocket helper', () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
         '/',
-        upgradeWebSocket(async () => {
+        nodeWs.upgradeWebSocket(async () => {
           await new Promise((resolve) => setTimeout(resolve, 100))
           return {
             onMessage() {
@@ -296,7 +292,7 @@ describe('WebSocket helper', () => {
   it('Should return the wss used for the websocket helper', async () => {
     let clientWs: WebSocket | null = null
     const mainPromise = new Promise<void>((resolve) =>
-      wss.on('connection', (ws) => {
+      nodeWs.wss.on('connection', (ws) => {
         clientWs = ws
         resolve()
       })
@@ -304,20 +300,20 @@ describe('WebSocket helper', () => {
 
     app.get(
       '/',
-      upgradeWebSocket(() => ({}))
+      nodeWs.upgradeWebSocket(() => ({}))
     )
     new WebSocket('ws://localhost:3030/')
 
     await mainPromise
 
     expect(clientWs).toBeTruthy()
-    expect(wss.clients.size).toBe(1)
+    expect(nodeWs.wss.clients.size).toBe(1)
   })
 
   it('Should allow for custom HTTPException status code', async () => {
     app.get(
       '/',
-      upgradeWebSocket(() => {
+      nodeWs.upgradeWebSocket(() => {
         throw new HTTPException(401)
       })
     )
@@ -328,5 +324,87 @@ describe('WebSocket helper', () => {
         resolve()
       })
     )
+  })
+
+  describe('WebSocketServer options', () => {
+    it('Should accept and apply custom WebSocketServer options', async () => {
+      const customApp = new Hono()
+      const maxPayload = 1024 * 1024 // 1MB
+      const customNodeWs = createNodeWebSocket({
+        app: customApp,
+        websocketServerOptions: {
+          maxPayload,
+          perMessageDeflate: false,
+        },
+      })
+
+      const customServer = await new Promise<ServerType>((resolve) => {
+        const server = serve({ fetch: customApp.fetch, port: 3031 }, () => {
+          resolve(server)
+        })
+      })
+      customNodeWs.injectWebSocket(customServer)
+
+      customApp.get(
+        '/',
+        customNodeWs.upgradeWebSocket(() => ({
+          onOpen() {
+            // Connection opened successfully
+          },
+        }))
+      )
+
+      // Verify options are applied
+      expect(customNodeWs.wss.options.maxPayload).toBe(maxPayload)
+      expect(customNodeWs.wss.options.perMessageDeflate).toBe(false)
+
+      const ws = new WebSocket('ws://localhost:3031/')
+      await new Promise<void>((resolve) => ws.on('open', resolve))
+      ws.close()
+      customServer.close()
+    })
+
+    it('Should always set noServer to true regardless of passed options', () => {
+      const customApp = new Hono()
+      const customNodeWs = createNodeWebSocket({
+        app: customApp,
+        websocketServerOptions: {
+          // Even if we don't pass noServer, it should be true
+          maxPayload: 2048,
+        },
+      })
+
+      // noServer should always be true for this implementation
+      expect(customNodeWs.wss.options.noServer).toBe(true)
+    })
+
+    it('Should work without websocketServerOptions (backward compatibility)', async () => {
+      const customApp = new Hono()
+      const customNodeWs = createNodeWebSocket({
+        app: customApp,
+      })
+
+      const customServer = await new Promise<ServerType>((resolve) => {
+        const server = serve({ fetch: customApp.fetch, port: 3032 }, () => {
+          resolve(server)
+        })
+      })
+      customNodeWs.injectWebSocket(customServer)
+
+      const connectionPromise = new Promise<boolean>((resolve) =>
+        customApp.get(
+          '/',
+          customNodeWs.upgradeWebSocket(() => ({
+            onOpen() {
+              resolve(true)
+            },
+          }))
+        )
+      )
+
+      new WebSocket('ws://localhost:3032/')
+      expect(await connectionPromise).toBe(true)
+      customServer.close()
+    })
   })
 })
