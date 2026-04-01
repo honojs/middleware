@@ -1794,7 +1794,7 @@ __metadata:
     ajv: "npm:^8.12.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     ajv: ">=8.12.0"
@@ -1809,7 +1809,7 @@ __metadata:
     arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     arktype: ">=2.0.0-dev"
@@ -1826,7 +1826,7 @@ __metadata:
     hono: "npm:^4.11.5"
     react: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     "@auth/core": ">=0.35.0"
@@ -1842,7 +1842,7 @@ __metadata:
     "@types/bun": "npm:^1.3.8"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -1856,7 +1856,7 @@ __metadata:
     "@types/bun": "npm:^1.3.8"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -1874,7 +1874,7 @@ __metadata:
     hono: "npm:^4.11.5"
     publint: "npm:^0.3.16"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     ws: "npm:^8.17.0"
   peerDependencies:
@@ -1891,7 +1891,7 @@ __metadata:
     casbin: "npm:^5.48.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     casbin: ">=5.30.0"
@@ -1908,7 +1908,7 @@ __metadata:
     hono: "npm:^4.11.5"
     reflect-metadata: "npm:^0.2.2"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -1925,7 +1925,7 @@ __metadata:
     hono: "npm:^4.11.5"
     react: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -1939,7 +1939,7 @@ __metadata:
     "@types/node": "npm:^25.2.3"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -1956,7 +1956,7 @@ __metadata:
     "@conform-to/zod": "npm:^1.14.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     valibot: "npm:^1.3.0"
     vitest: "npm:^4.1.0-beta.1"
     yup: "npm:^1.7.1"
@@ -1974,7 +1974,7 @@ __metadata:
     effect: "npm:3.19.12"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     effect: ">=3.10.0"
@@ -1990,7 +1990,7 @@ __metadata:
     esbuild-wasm: "npm:^0.27.3"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.9.2"
@@ -2019,7 +2019,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2035,7 +2035,7 @@ __metadata:
     firebase-tools: "npm:^15.2.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2050,7 +2050,7 @@ __metadata:
     graphql: "npm:^16.5.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2063,7 +2063,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2081,7 +2081,7 @@ __metadata:
     hono-rate-limiter: "npm:^0.5.3"
     pkce-challenge: "npm:^5.0.0"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
   peerDependencies:
@@ -2099,7 +2099,7 @@ __metadata:
     "@medley/router": "npm:^0.2.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.8.0"
@@ -2132,7 +2132,7 @@ __metadata:
     "@types/ws": "npm:^8.18.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     ws: "npm:^8.17.0"
   peerDependencies:
@@ -2148,7 +2148,7 @@ __metadata:
     hono: "npm:^4.11.5"
     msw: "npm:^2.12.10"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2164,7 +2164,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.3"
     oauth4webapi: "npm:^2.6.0"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2183,7 +2183,7 @@ __metadata:
     "@opentelemetry/semantic-conventions": "npm:^1.28.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2197,7 +2197,7 @@ __metadata:
     hono: "npm:^4.11.5"
     prom-client: "npm:^15.0.0"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2213,7 +2213,7 @@ __metadata:
     "@builder.io/qwik-city": "npm:^1.18.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
   peerDependencies:
     "@builder.io/qwik": ^1.19.1
     "@builder.io/qwik-city": ^1.18.0
@@ -2227,7 +2227,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
   peerDependencies:
     hono: ">=4.5.0"
   languageName: unknown
@@ -2244,7 +2244,7 @@ __metadata:
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2260,7 +2260,7 @@ __metadata:
     hono: "npm:^4.11.5"
     toucan-js: "npm:^4.0.0"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2275,7 +2275,7 @@ __metadata:
     hono: "npm:^4.11.5"
     jose: "npm:^6.0.11"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     unstorage: "npm:^1.17.4"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
@@ -2289,7 +2289,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^25.2.3"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.8.0"
@@ -2304,7 +2304,7 @@ __metadata:
     arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     valibot: "npm:^1.3.0"
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
@@ -2321,7 +2321,7 @@ __metadata:
     hono: "npm:^4.11.5"
     stytch: "npm:^12.43.1"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.0.0"
@@ -2335,7 +2335,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2349,7 +2349,7 @@ __metadata:
     "@types/swagger-ui-dist": "npm:^3.30.6"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2363,7 +2363,7 @@ __metadata:
     "@trpc/server": "npm:^11.8.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
   peerDependencies:
@@ -2380,7 +2380,7 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     tsdown: "npm:^0.15.9"
     tsyringe: "npm:^4.10.0"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2395,7 +2395,7 @@ __metadata:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
     typebox: "npm:^1.1.5"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=3.9.0"
@@ -2412,7 +2412,7 @@ __metadata:
     tsdown: "npm:^0.15.9"
     typebox: "npm:^1.1.5"
     typedriver: "npm:^0.8.6"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     valibot: "npm:^1.3.0"
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
@@ -2429,7 +2429,7 @@ __metadata:
     "@ryoppippi/unplugin-typia": "npm:2.6.5"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     typia: "npm:^9.7.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
@@ -2445,7 +2445,7 @@ __metadata:
     "@types/node": "npm:^25.2.3"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
     hono: ">=4.0.0"
@@ -2458,7 +2458,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     valibot: "npm:^1.3.0"
     vitest: "npm:^4.1.0-beta.1"
   peerDependencies:
@@ -2476,7 +2476,7 @@ __metadata:
     hono: "npm:^4.11.5"
     openapi3-ts: "npm:^4.5.0"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     yaml: "npm:^2.8.2"
     zod: "npm:^4.2.1"
@@ -2492,7 +2492,7 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.15.9"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
   peerDependencies:
@@ -9618,7 +9618,7 @@ __metadata:
     publint: "npm:^0.3.16"
     tsdown: "npm:^0.15.9"
     turbo: "npm:^2.5.8"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.2"
     typia: "npm:^9.7.2"
     vitest: "npm:^4.1.0-beta.1"
   languageName: unknown
@@ -15613,13 +15613,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.9.3":
-  version: 5.9.3
-  resolution: "typescript@npm:5.9.3"
+"typescript@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "typescript@npm:6.0.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
+  checksum: 10c0/4b860b0bf87cc0fee0f66d8ef2640b5a8a8a8c74d1129adb82e389e5f97124383823c47946bef8a73ede371461143a3aa8544399d2133c7b2e4f07e81860af7f
   languageName: node
   linkType: hard
 
@@ -15633,13 +15633,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
-  version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+"typescript@patch:typescript@npm%3A^6.0.2#optional!builtin<compat/typescript>":
+  version: 6.0.2
+  resolution: "typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>::version=6.0.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
+  checksum: 10c0/49f0b84fc6ca55653e77752b8a61beabc09ee3dae5d965c31596225aa6ef213c5727b1d2e895b900416dc603854ba0872ac4a812c2a4ed6793a601f9c675de02
   languageName: node
   linkType: hard
 
