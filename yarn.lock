@@ -2314,6 +2314,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/structured-logger@workspace:packages/structured-logger":
+  version: 0.0.0-use.local
+  resolution: "@hono/structured-logger@workspace:packages/structured-logger"
+  dependencies:
+    hono: "npm:^4.11.5"
+    tsdown: "npm:^0.15.9"
+    typescript: "npm:^5.9.3"
+    vitest: "npm:^4.1.0-beta.1"
+  peerDependencies:
+    hono: ">=4.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/stytch-auth@workspace:packages/stytch-auth":
   version: 0.0.0-use.local
   resolution: "@hono/stytch-auth@workspace:packages/stytch-auth"
