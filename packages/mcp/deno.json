@@ -8,7 +8,8 @@
   },
   "imports": {
     "hono": "jsr:@hono/hono@^4.10.6",
-    "hono-rate-limiter": "jsr:@hono-rate-limiter/hono-rate-limiter@^0.4.2"
+    "hono-rate-limiter": "jsr:@hono-rate-limiter/hono-rate-limiter@^0.4.2",
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@1.25.1"
   },
   "publish": {
     "include": ["deno.json", "README.md", "src/**/*.ts"],

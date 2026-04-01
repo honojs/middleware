@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.2.5
+
+### Patch Changes
+
+- [#1824](https://github.com/honojs/middleware/pull/1824) [`6bb1522fad20fdd02bf6822d70332bd70287ad84`](https://github.com/honojs/middleware/commit/6bb1522fad20fdd02bf6822d70332bd70287ad84) Thanks [@arjunkmrm](https://github.com/arjunkmrm)! - fix: allow loopback redirect_uri with any port per RFC 8252
+
 ## 0.2.4
 
 ### Patch Changes

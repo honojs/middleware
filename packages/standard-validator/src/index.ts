@@ -156,7 +156,7 @@ const sValidator = <
           return hookResult
         }
 
-        if ('response' in hookResult) {
+        if (typeof hookResult === 'object' && 'response' in hookResult) {
           return hookResult.response
         }
       }
@@ -168,7 +168,7 @@ const sValidator = <
       return c.json({ data: value, error: processedIssues, success: false }, 400)
     }
 
-    return result.value as StandardSchemaV1.InferOutput<Schema>
+    return (result as { value: StandardSchemaV1.InferOutput<Schema> }).value
   })
 
 export type { Hook }
