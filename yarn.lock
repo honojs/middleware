@@ -2078,7 +2078,7 @@ __metadata:
     "@modelcontextprotocol/sdk": "npm:^1.25.1"
     "@types/node": "npm:^25.2.3"
     hono: "npm:^4.11.5"
-    hono-rate-limiter: "npm:^0.4.2"
+    hono-rate-limiter: "npm:^0.5.3"
     pkce-challenge: "npm:^5.0.0"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
@@ -2087,7 +2087,7 @@ __metadata:
   peerDependencies:
     "@modelcontextprotocol/sdk": ^1.25.1
     hono: "*"
-    hono-rate-limiter: ^0.4.2
+    hono-rate-limiter: ^0.5.3
     zod: ^3.25.0 || ^4.0.0
   languageName: unknown
   linkType: soft
@@ -9624,12 +9624,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"hono-rate-limiter@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "hono-rate-limiter@npm:0.4.2"
+"hono-rate-limiter@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "hono-rate-limiter@npm:0.5.3"
   peerDependencies:
-    hono: ^4.1.1
-  checksum: 10c0/fd6c2d484a3112cdf97759c6afe9d457d20029471c9ae2ab2fce4ae75e1cd629a7947988b3f8026fceeaab5b7fcf0e208b7b51d3618a16c4a7181d93a32ee51e
+    hono: ^4.10.8
+    unstorage: ^1.17.3
+  peerDependenciesMeta:
+    unstorage:
+      optional: true
+  checksum: 10c0/4153dc1ac0179a6903ec8b57351fd38477d70a7e441962b6c591bd5412f5d082230a91168eeb70b9cffac78e551c958352d4877ee2f2b4ae3647c14768e9a14e
   languageName: node
   linkType: hard
 
