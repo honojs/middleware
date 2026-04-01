@@ -49,7 +49,7 @@
     "pkg-pr-new": "^0.0.63",
     "prettier": "^3.8.1",
     "publint": "^0.3.16",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.21.7",
     "turbo": "^2.5.8",
     "typescript": "^5.9.3",
     "typia": "^9.7.2",
