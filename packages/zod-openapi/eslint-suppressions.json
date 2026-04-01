@@ -13,19 +13,7 @@
     }
   },
   "src/index.test.ts": {
-    "@typescript-eslint/no-deprecated": {
-      "count": 3
-    },
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 5
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 2
-    },
-    "@typescript-eslint/require-await": {
       "count": 3
     }
   },
