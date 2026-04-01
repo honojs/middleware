@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/universal-cache",
+    "types": [
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers/types",
+      "vitest/globals"
+    ]
+  },
+  "include": ["src", "vitest.config.ts", "vitest.workerd.config.ts"],
+  "references": []
+}
