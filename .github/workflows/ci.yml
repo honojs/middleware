@@ -74,7 +74,7 @@ jobs:
       - run: yarn test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true
