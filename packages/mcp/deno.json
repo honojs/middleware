@@ -8,7 +8,17 @@
   },
   "imports": {
     "hono": "jsr:@hono/hono@^4.10.6",
-    "hono-rate-limiter": "jsr:@hono-rate-limiter/hono-rate-limiter@^0.4.2"
+    "hono-rate-limiter": "jsr:@hono-rate-limiter/hono-rate-limiter@^0.4.2",
+    "@modelcontextprotocol/sdk/server/auth/clients.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/auth/clients.js",
+    "@modelcontextprotocol/sdk/server/auth/errors.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/auth/errors.js",
+    "@modelcontextprotocol/sdk/server/auth/provider.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/auth/provider.js",
+    "@modelcontextprotocol/sdk/server/auth/router.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/auth/router.js",
+    "@modelcontextprotocol/sdk/server/auth/types.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/auth/types.js",
+    "@modelcontextprotocol/sdk/server/mcp.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/mcp.js",
+    "@modelcontextprotocol/sdk/server/streamableHttp.js": "npm:@modelcontextprotocol/sdk@^1.25.1/server/streamableHttp.js",
+    "@modelcontextprotocol/sdk/shared/auth.js": "npm:@modelcontextprotocol/sdk@^1.25.1/shared/auth.js",
+    "@modelcontextprotocol/sdk/shared/transport.js": "npm:@modelcontextprotocol/sdk@^1.25.1/shared/transport.js",
+    "@modelcontextprotocol/sdk/types.js": "npm:@modelcontextprotocol/sdk@^1.25.1/types.js"
   },
   "publish": {
     "include": ["deno.json", "README.md", "src/**/*.ts"],
