@@ -647,7 +647,7 @@ export class OpenAPIHono<
     }) as any
   }
 
-  route<
+  override route<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
@@ -656,8 +656,8 @@ export class OpenAPIHono<
     path: SubPath,
     app: Hono<SubEnv, SubSchema, SubBasePath>
   ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath>
-  route<SubPath extends string>(path: SubPath): Hono<E, RemoveBlankRecord<S>, BasePath>
-  route<
+  override route<SubPath extends string>(path: SubPath): Hono<E, RemoveBlankRecord<S>, BasePath>
+  override route<
     SubPath extends string,
     SubEnv extends Env,
     SubSchema extends Schema,
@@ -726,7 +726,9 @@ export class OpenAPIHono<
     return this as any
   }
 
-  basePath<SubPath extends string>(path: SubPath): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
+  override basePath<SubPath extends string>(
+    path: SubPath
+  ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
     return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
   }
 

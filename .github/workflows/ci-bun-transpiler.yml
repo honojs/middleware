@@ -20,7 +20,7 @@ jobs:
       - run: yarn workspaces focus hono-middleware @hono/bun-transpiler
       - run: yarn turbo --filter @hono/bun-transpiler build
       - run: bun test packages/bun-transpiler --coverage --coverage-reporter lcov
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           directory: ./coverage
