@@ -9,7 +9,7 @@ This middleware can be used to validate that your application is being served be
 JWT received, User details from the JWT are also available inside the request context.
 
 This middleware will also ensure the Access policy serving the application is from a
-specific [Access Team](https://developers.cloudflare.com/cloudflare-one/faq/getting-started-faq/#whats-a-team-domainteam-name).
+specific [Access Team](https://developers.cloudflare.com/cloudflare-one/faq/getting-started-faq/#whats-a-team-domainteam-name). It is strongly recommended to pass your [Application Audience (AUD) Tag](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/#get-your-aud-tag) to validate that the JWT was intended for your specific application to prevent cross-application token reuse.
 
 ## Usage
 
@@ -19,11 +19,23 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.use('*', cloudflareAccess('my-access-team-name'))
+app.use('*', cloudflareAccess('my-access-team-name', 'my-application-aud-tag'))
 app.get('/', (c) => c.text('foo'))
 
 export default app
 ```
+
+The `aud` parameter accepts a single string or an array of strings for workers serving multiple Access applications:
+
+```ts
+// Single audience
+app.use('*', cloudflareAccess('my-team', 'aud-tag-1'))
+
+// Multiple audiences (e.g. production and preview applications)
+app.use('*', cloudflareAccess('my-team', ['aud-tag-1', 'aud-tag-2']))
+```
+
+The `aud` parameter is optional for backwards compatibility, but omitting it is discouraged in production.
 
 ## Access JWT payload
 
@@ -41,7 +53,7 @@ app.use('*', cloudflareAccess('my-access-team-name'))
 app.get('/', (c) => {
   const payload = c.get('accessPayload')
 
-  return c.text(`You just authenticated with the email ${payload.email}`)
+  return c.text(payload.email ? `Hello, ${payload.email}` : 'Hello, authenticated user')
 })
 
 export default app
@@ -49,15 +61,21 @@ export default app
 
 ## Errors throw by the middleware
 
-| Error                                                                                                  | HTTP Code |
-| ------------------------------------------------------------------------------------------------------ | --------- |
-| Authentication error: Missing bearer token                                                             | 401       |
-| Authentication error: Unable to decode Bearer token                                                    | 401       |
-| Authentication error: Token is expired                                                                 | 401       |
-| Authentication error: Expected team name {your-team-name}, but received ${different-team-signed-token} | 401       |
-| Authentication error: Invalid Token                                                                    | 401       |
-| Authentication error: The Access Organization 'my-team-name' does not exist                            | 500       |
-| Authentication error: Received unexpected HTTP code 500 from Cloudflare Access                         | 500       |
+| Error                                                                          | HTTP Code |
+| ------------------------------------------------------------------------------ | --------- |
+| Authentication error: Missing bearer token                                     | 401       |
+| Authentication error: Unable to decode Bearer token                            | 401       |
+| Authentication error: Invalid token algorithm                                  | 401       |
+| Authentication error: Unsupported critical extension                           | 401       |
+| Authentication error: Malformed token payload                                  | 401       |
+| Authentication error: Token is expired                                         | 401       |
+| Authentication error: Token is not yet valid                                   | 401       |
+| Authentication error: Invalid Token                                            | 401       |
+| Authentication error: Invalid team name                                        | 401       |
+| Authentication error: Invalid token audience                                   | 401       |
+| Invalid accessTeamName: must contain only alphanumeric characters and hyphens  | (throws)  |
+| Authentication error: The Access Organization 'my-team-name' does not exist    | 500       |
+| Authentication error: Received unexpected HTTP code 500 from Cloudflare Access | 500       |
 
 ## Author
 
