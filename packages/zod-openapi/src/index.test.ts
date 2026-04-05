@@ -2265,8 +2265,7 @@ describe('Response validation (strictStatusCode / strictResponse)', () => {
       {
         ...itemRoute,
         middleware: [
-          (c) =>
-            c.json({ id: 'x', n: 'bad' } as unknown as z.infer<typeof ItemSchema>, 200),
+          (c) => c.json({ id: 'x', n: 'bad' } as unknown as z.infer<typeof ItemSchema>, 200),
         ],
       },
       () => {
