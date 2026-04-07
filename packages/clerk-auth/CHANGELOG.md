@@ -1,5 +1,16 @@
 # @hono/clerk-auth
 
+## 3.1.1
+
+### Patch Changes
+
+- [#1843](https://github.com/honojs/middleware/pull/1843) [`d8de66af04ea218148982d097f2a96fec1d60da8`](https://github.com/honojs/middleware/commit/d8de66af04ea218148982d097f2a96fec1d60da8) Thanks [@wobsoriano](https://github.com/wobsoriano)! - Deprecate `@hono/clerk-auth` in favor of the official `@clerk/hono` package. To migrate, update your imports:
+
+  ```diff
+  - import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
+  + import { clerkMiddleware, getAuth } from '@clerk/hono'
+  ```
+
 ## 3.1.0
 
 ### Minor Changes
