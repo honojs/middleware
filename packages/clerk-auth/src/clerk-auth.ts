@@ -7,6 +7,7 @@ import type {
   GetAuthFnNoRequest,
 } from '@clerk/backend/internal'
 import { getAuthObjectForAcceptedToken } from '@clerk/backend/internal'
+import { deprecated } from '@clerk/shared/deprecated'
 import type { Context, MiddlewareHandler } from 'hono'
 import { env } from 'hono/adapter'
 
@@ -16,6 +17,10 @@ export type ClerkAuthVariables = {
 }
 
 export const getAuth: GetAuthFn<Context> = ((c: Context, options?: AuthOptions) => {
+  deprecated(
+    '@hono/clerk-auth',
+    'Use `@clerk/hono` instead.\n\n- import { clerkMiddleware, getAuth } from "@hono/clerk-auth"\n+ import { clerkMiddleware, getAuth } from "@clerk/hono"'
+  )
   const authFn = c.get('clerkAuth')
   return authFn(options)
 }) as GetAuthFn<Context>
@@ -30,6 +35,10 @@ type ClerkEnv = {
 type ClerkMiddlewareOptions = Omit<AuthenticateRequestOptions, 'acceptsToken'>
 
 export const clerkMiddleware = (options?: ClerkMiddlewareOptions): MiddlewareHandler => {
+  deprecated(
+    '@hono/clerk-auth',
+    'Use `@clerk/hono` instead.\n\n- import { clerkMiddleware, getAuth } from "@hono/clerk-auth"\n+ import { clerkMiddleware, getAuth } from "@clerk/hono"'
+  )
   return async (c, next) => {
     const clerkEnv = env<ClerkEnv>(c)
     const { secretKey, publishableKey, apiUrl, apiVersion, ...rest } = options || {
