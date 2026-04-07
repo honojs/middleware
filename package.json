@@ -50,7 +50,7 @@
     "prettier": "^3.8.1",
     "publint": "^0.3.16",
     "tsdown": "^0.15.9",
-    "turbo": "^2.5.8",
+    "turbo": "^2.9.4",
     "typescript": "^5.9.3",
     "typia": "^9.7.2",
     "vitest": "^4.1.0-beta.1"
