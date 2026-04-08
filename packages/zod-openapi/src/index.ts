@@ -231,14 +231,54 @@ export type Hook<T, E extends Env, P extends string, R> = (
   c: Context<E, P>
 ) => R
 
+export type ResponseHookFailure =
+  | { kind: 'status_mismatch'; status: number }
+  | { kind: 'body'; error: ZodError }
+
+/** When `strictStatusCode` or `strictResponse` fails; return a `Response` or `undefined` for the default 500 JSON. */
+export type ResponseHook<E extends Env = Env, P extends string = string> = (
+  result: ResponseHookFailure,
+  c: Context<E, P>
+) => Response | undefined
+
 type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Param}}${infer Rest}`
   ? `${Start}/:${Param}${ConvertPathType<Rest>}`
   : T
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
+  /** Require `c.json` status to match a key in route `responses`. */
+  strictStatusCode?: boolean
+  /** Validate JSON bodies with Zod schemas from `responses` for the resolved status. */
+  strictResponse?: boolean
+  defaultResponseHook?: ResponseHook<E, any>
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
+
+export type OpenAPIRouteHooks<
+  R extends RouteConfig,
+  E extends Env,
+  I extends Input,
+  P extends string,
+> = {
+  hook?: Hook<
+    I,
+    E,
+    P,
+    R extends {
+      responses: {
+        [statusCode: number]: {
+          content: {
+            [mediaType: string]: ZodMediaTypeObject
+          }
+        }
+      }
+    }
+      ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
+      : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
+  >
+  responseHook?: ResponseHook<E, P>
+}
 
 /**
  * Turns `T | T[] | undefined` into `T[]`
@@ -396,6 +436,212 @@ export const $ = <T extends Hono<any, any, any>>(app: T): HonoToOpenAPIHono<T> =
   return app as HonoToOpenAPIHono<T>
 }
 
+const OPENAPI_RESPONSE_RANGE_KEYS = ['1XX', '2XX', '3XX', '4XX', '5XX'] as const
+
+function statusMatchesOpenAPIRangeKey(status: number, key: string): boolean {
+  if (!(OPENAPI_RESPONSE_RANGE_KEYS as readonly string[]).includes(key)) {
+    return false
+  }
+  const family = Number(key[0])
+  return Math.floor(status / 100) === family
+}
+
+function resolveOpenAPIResponseKey(
+  responses: RouteConfig['responses'],
+  status: number
+): string | undefined {
+  const keys = Object.keys(responses)
+  const exact = String(status)
+  if (keys.includes(exact)) {
+    return exact
+  }
+  for (const k of keys) {
+    if (statusMatchesOpenAPIRangeKey(status, k)) {
+      return k
+    }
+  }
+  if (keys.includes('default')) {
+    return 'default'
+  }
+  return undefined
+}
+
+/** Uses the first JSON-compatible `content` entry (key order) when several are present. */
+function getJsonZodSchemaForOpenAPIResponse(
+  responses: RouteConfig['responses'],
+  responseKey: string
+): ZodType | undefined {
+  const entry = responses[responseKey as keyof typeof responses] as
+    | { content?: ZodContentObject }
+    | undefined
+  const content = entry?.content
+  if (!content) {
+    return undefined
+  }
+  for (const mediaType of Object.keys(content)) {
+    if (!isJSONContentType(mediaType)) {
+      continue
+    }
+    const media = content[mediaType] as ZodMediaTypeObject | undefined
+    const schema = media?.schema
+    if (isZod(schema)) {
+      return schema as ZodType
+    }
+  }
+  return undefined
+}
+
+function resolveStatusFromJsonArgs(
+  arg: number | Parameters<Context['json']>[1] | undefined,
+  contextStatus: number | undefined
+): number {
+  if (typeof arg === 'number') {
+    return arg
+  }
+  if (arg && typeof arg === 'object' && 'status' in arg && arg.status != null) {
+    return arg.status as number
+  }
+  return contextStatus ?? 200
+}
+
+function defaultOpenAPIResponseValidationFailureResponse(
+  c: Context,
+  failure: ResponseHookFailure
+): Response {
+  if (failure.kind === 'status_mismatch') {
+    return c.json(
+      {
+        success: false,
+        error: 'Response status does not match any of the defined responses.',
+        status: failure.status,
+      },
+      500
+    )
+  }
+  return c.json(
+    {
+      success: false,
+      error: 'Response body validation failed.',
+      issues: failure.error.issues,
+    },
+    500
+  )
+}
+
+function installOpenAPIResponseValidation<E extends Env, P extends string>(
+  c: Context<E, P>,
+  responses: RouteConfig['responses'],
+  options: {
+    strictStatusCode: boolean
+    strictResponse: boolean
+    routeResponseHook?: ResponseHook<E, P>
+    defaultResponseHook?: ResponseHook<E, P>
+  }
+): () => void {
+  const origJson = c.json.bind(c)
+  const origStatus = c.status.bind(c)
+  let contextStatus: number | undefined
+
+  const restore = () => {
+    c.json = origJson
+    c.status = origStatus
+  }
+
+  c.status = ((code: StatusCode) => {
+    contextStatus = code
+    origStatus(code)
+  }) as typeof c.status
+
+  c.json = ((object: unknown, arg?: never, headers?: never) => {
+    const status = resolveStatusFromJsonArgs(arg, contextStatus)
+    const responseKey = resolveOpenAPIResponseKey(responses, status)
+
+    if (options.strictStatusCode && responseKey === undefined) {
+      c.json = origJson
+      try {
+        const failure: ResponseHookFailure = { kind: 'status_mismatch', status }
+        const custom =
+          options.routeResponseHook?.(failure, c) ?? options.defaultResponseHook?.(failure, c)
+        if (custom) {
+          return custom
+        }
+        return defaultOpenAPIResponseValidationFailureResponse(c, failure)
+      } finally {
+        c.json = origJson
+      }
+    }
+
+    if (options.strictResponse && responseKey !== undefined) {
+      const schema = getJsonZodSchemaForOpenAPIResponse(responses, responseKey)
+      if (schema) {
+        const parsed = schema.safeParse(object)
+        if (!parsed.success) {
+          c.json = origJson
+          try {
+            const failure: ResponseHookFailure = { kind: 'body', error: parsed.error }
+            const custom =
+              options.routeResponseHook?.(failure, c) ?? options.defaultResponseHook?.(failure, c)
+            if (custom) {
+              return custom
+            }
+            return defaultOpenAPIResponseValidationFailureResponse(c, failure)
+          } finally {
+            c.json = origJson
+          }
+        }
+      }
+    }
+
+    return origJson(object as never, arg as never, headers as never)
+  }) as typeof c.json
+
+  return restore
+}
+
+/** When strict flags are on, wraps the handler in `async` so validation can wrap `c.json` / `c.status` for the request. */
+function wrapOpenAPIRouteHandler<E extends Env, P extends string, I extends Input>(
+  handler: Handler<E, P, I, any>,
+  responses: RouteConfig['responses'],
+  options: {
+    strictStatusCode: boolean
+    strictResponse: boolean
+    routeResponseHook?: ResponseHook<E, P>
+    defaultResponseHook?: ResponseHook<E, P>
+  }
+): Handler<E, P, I, any> {
+  if (!options.strictStatusCode && !options.strictResponse) {
+    return handler
+  }
+  return (async (c, next) => {
+    const restore = installOpenAPIResponseValidation(c, responses, options)
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- composed handler output is intentionally generic
+      return await Promise.resolve(handler(c, next))
+    } finally {
+      restore()
+    }
+  }) as Handler<E, P, I, any>
+}
+
+function normalizeOpenAPIRouteHooks<I, E extends Env, P extends string, R>(
+  hookOrObj:
+    | Hook<I, E, P, R>
+    | { hook?: Hook<I, E, P, R>; responseHook?: ResponseHook<E, P> }
+    | undefined,
+  defaultHook: Hook<I, E, P, R> | undefined
+): { requestHook: Hook<I, E, P, R> | undefined; responseHook?: ResponseHook<E, P> } {
+  if (hookOrObj === undefined) {
+    return { requestHook: defaultHook }
+  }
+  if (typeof hookOrObj === 'function') {
+    return { requestHook: hookOrObj }
+  }
+  return {
+    requestHook: hookOrObj.hook ?? defaultHook,
+    responseHook: hookOrObj.responseHook,
+  }
+}
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -403,43 +649,43 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
+  strictStatusCode: boolean
+  strictResponse: boolean
+  defaultResponseHook?: ResponseHook<E, any>
 
   constructor(init?: HonoInit<E>) {
-    super(init)
+    const { defaultHook, strictStatusCode, strictResponse, defaultResponseHook, ...honoInit } =
+      init ?? {}
+    super(honoInit as ConstructorParameters<typeof Hono>[0])
     this.openAPIRegistry = new OpenAPIRegistry()
-    this.defaultHook = init?.defaultHook
+    this.defaultHook = defaultHook
+    this.strictStatusCode = strictStatusCode ?? false
+    this.strictResponse = strictResponse ?? false
+    this.defaultResponseHook = defaultResponseHook
   }
 
   /**
-   *
-   * @param {RouteConfig} route - The route definition which you create with `createRoute()`.
-   * @param {Handler} handler - The handler. If you want to return a JSON object, you should specify the status code with `c.json()`.
-   * @param {Hook} hook - Optional. The hook method defines what it should do after validation.
+   * @param route - From `createRoute()`.
+   * @param handler - Route handler; use `c.json(payload, status)` for JSON responses.
+   * @param hookOrHooks - Optional request-validation hook, or `{ hook?, responseHook? }`.
+   *   With `strictStatusCode` / `strictResponse` on the app, `responseHook` runs on response validation failure (overrides `defaultResponseHook` for that route). See README for scope.
    * @example
    * app.openapi(
    *   route,
    *   (c) => {
-   *     // ...
-   *     return c.json(
-   *       {
-   *         age: 20,
-   *         name: 'Young man',
-   *       },
-   *       200 // You should specify the status code even if it's 200.
-   *     )
+   *     return c.json({ age: 20, name: 'Young man' }, 200)
    *   },
-   *  (result, c) => {
-   *    if (!result.success) {
-   *      return c.json(
-   *        {
-   *          code: 400,
-   *          message: 'Custom Message',
-   *        },
-   *        400
-   *      )
-   *    }
-   *  }
-   *)
+   *   (result, c) => {
+   *     if (!result.success) {
+   *       return c.json({ code: 400, message: 'Custom Message' }, 400)
+   *     }
+   *   }
+   * )
+   * @example
+   * app.openapi(route, handler, {
+   *   hook: (result, c) => { ... },
+   *   responseHook: (result, c) => { ... },
+   * })
    */
   openapi = <
     R extends RouteConfig,
@@ -472,7 +718,7 @@ export class OpenAPIHono<
         ? MaybePromise<RouteConfigToTypedResponse<R>>
         : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
     >,
-    hook:
+    hookOrHooks:
       | Hook<
           I,
           E,
@@ -489,6 +735,7 @@ export class OpenAPIHono<
             ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
             : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
         >
+      | OpenAPIRouteHooks<R, E, I, P>
       | undefined = this.defaultHook
   ): OpenAPIHono<
     E,
@@ -499,25 +746,27 @@ export class OpenAPIHono<
       this.openAPIRegistry.registerPath(route)
     }
 
+    const { requestHook, responseHook } = normalizeOpenAPIRouteHooks(hookOrHooks, this.defaultHook)
+
     const validators: MiddlewareHandler[] = []
 
     if (route.request?.query) {
-      const validator = zValidator('query', route.request.query as any, hook as any)
+      const validator = zValidator('query', route.request.query as any, requestHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.params) {
-      const validator = zValidator('param', route.request.params as any, hook as any)
+      const validator = zValidator('param', route.request.params as any, requestHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.headers) {
-      const validator = zValidator('header', route.request.headers as any, hook as any)
+      const validator = zValidator('header', route.request.headers as any, requestHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.cookies) {
-      const validator = zValidator('cookie', route.request.cookies as any, hook as any)
+      const validator = zValidator('cookie', route.request.cookies as any, requestHook as any)
       validators.push(validator as any)
     }
 
@@ -535,7 +784,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook) as MiddlewareHandler
+          const validator = zValidator('json', schema, requestHook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -554,7 +803,7 @@ export class OpenAPIHono<
         if (isFormContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('form', schema, hook) as MiddlewareHandler
+          const validator = zValidator('form', schema, requestHook) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -579,12 +828,23 @@ export class OpenAPIHono<
         : [routeMiddleware]
       : []
 
+    const wrappedHandler = wrapOpenAPIRouteHandler(
+      handler as Handler<any, any, any, any>,
+      route.responses,
+      {
+        strictStatusCode: this.strictStatusCode,
+        strictResponse: this.strictResponse,
+        routeResponseHook: responseHook,
+        defaultResponseHook: this.defaultResponseHook,
+      }
+    ) as typeof handler
+
     this.on(
       [route.method],
       [route.path.replaceAll(/\/{(.+?)}/g, '/:$1')],
       ...middleware,
       ...validators,
-      handler
+      wrappedHandler
     )
     return this
   }
@@ -729,7 +989,13 @@ export class OpenAPIHono<
   override basePath<SubPath extends string>(
     path: SubPath
   ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
+    return new OpenAPIHono({
+      ...(super.basePath(path) as any),
+      defaultHook: this.defaultHook,
+      strictStatusCode: this.strictStatusCode,
+      strictResponse: this.strictResponse,
+      defaultResponseHook: this.defaultResponseHook,
+    })
   }
 
   // Type overrides to return OpenAPIHono instead of Hono
