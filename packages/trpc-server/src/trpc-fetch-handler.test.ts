@@ -9,7 +9,9 @@ describe('trpcFetchHandler', () => {
     me: t.procedure.query(({ ctx }) => `user:${ctx.userId}`),
     rename: t.procedure
       .input((v) => {
-        if (typeof v !== 'string') throw new Error('expected string')
+        if (typeof v !== 'string') {
+          throw new Error('expected string')
+        }
         return v
       })
       .mutation(({ ctx, input }) => `${ctx.userId}→${input}`),
