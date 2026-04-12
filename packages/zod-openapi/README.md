@@ -437,10 +437,11 @@ const getUserRoute = defineOpenAPIRoute({
 
 Register multiple routes at once with full type safety:
 
+```ts
 const app = new OpenAPIHono()
 
-```ts
-app.openapiRoutes([getUserRoute, createUserRoute, updateUserRoute] as const) // 'as const' is important for type inference
+// 'as const' is important for type inference
+app.openapiRoutes([getUserRoute, createUserRoute, updateUserRoute] as const)
 ```
 
 #### Conditional Routes
