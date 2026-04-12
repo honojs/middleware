@@ -1,5 +1,34 @@
 # @hono/zod-openapi
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1752](https://github.com/honojs/middleware/pull/1752) [`fe0f8e4b44ca8e78d2ed60ed8591f415cd85eaa9`](https://github.com/honojs/middleware/commit/fe0f8e4b44ca8e78d2ed60ed8591f415cd85eaa9) Thanks [@destroSunRay](https://github.com/destroSunRay)! - This PR adds two new utilities to improve route definition and registration in `@hono/zod-openapi`:
+  - `defineOpenAPIRoute`: Provides explicit type safety for route definitions
+  - `openapiRoutes`: Enables batch registration of multiple routes with full type safety
+  - Registering many routes individually was repetitive and verbose
+  - Type inference for complex route configurations was challenging
+  - Organizing routes across multiple files was difficult
+  - No built-in support for conditional route registration
+  - RPC type safety was hard to maintain across scattered route registrations
+  - `defineOpenAPIRoute`: Wraps route definitions with explicit types for better IDE support and type checking
+  - `openapiRoutes`: Accepts an array of route definitions and registers them all at once
+  - Supports `addRoute` flag for conditional registration
+  - Maintains full type safety and RPC support through recursive type merging
+  - Enables clean modular organization of routes
+  - ✅ Reduced boilerplate code
+  - ✅ Better type inference and IDE autocomplete
+  - ✅ Easier code organization and maintainability
+  - ✅ Declarative conditional routes
+  - ✅ Full backward compatibility
+
+  See the updated README for usage examples.
+  - All existing tests pass (102/102)
+  - Added tests for new functionality
+  - Verified type inference works correctly
+  - Updated package README with usage examples
+
 ## 1.2.4
 
 ### Patch Changes
