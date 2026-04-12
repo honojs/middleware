@@ -1983,7 +1983,7 @@ describe('doc31 with generator options', () => {
     expect(res.status).toBe(200)
     const doc = (await res.json()) as { paths: Record<string, unknown> }
     expect(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      // @ts-expect-error it should throw an error if the types are wrong
       doc['paths']['/hello']['get']['responses']['200']['content']['application/json']['schema']
     ).toEqual({
       anyOf: [

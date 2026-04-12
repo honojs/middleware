@@ -15,6 +15,9 @@
   "src/index.test.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 3
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 1
     }
   },
   "src/index.ts": {
