@@ -26,7 +26,7 @@ describe('Constructor', () => {
     const app = new OpenAPIHono<FakeEnv>({
       defaultHook: (_result, c) => {
         // Make sure we're passing context types through
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-deprecated
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expectTypeOf(c).toMatchTypeOf<Context<FakeEnv, any, any>>()
       },
     })
@@ -287,12 +287,12 @@ describe('Query', () => {
 describe('Header', () => {
   const HeaderSchema = z.object({
     authorization: z.string(),
-    'x-request-id': z.uuid(),
+    'x-request-id': z.string().uuid(),
   })
 
   const PongSchema = z
     .object({
-      'x-request-id': z.uuid(),
+      'x-request-id': z.string().uuid(),
       authorization: z.string(),
     })
     .openapi('Post')
@@ -1156,7 +1156,7 @@ describe('basePath()', () => {
     expect(res.status).toBe(200)
   })
 
-  it('Should retain defaultHook of the parent app', () => {
+  it('Should retain defaultHook of the parent app', async () => {
     const defaultHook = () => {}
     const app = new OpenAPIHono({
       defaultHook,
@@ -1166,7 +1166,6 @@ describe('basePath()', () => {
   })
 
   it('Should include base path in typings', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const routes = new OpenAPIHono()
       .basePath('/api')
       .openapi(route, (c) => c.json({ message: 'Hello' }))
@@ -1179,8 +1178,8 @@ describe('basePath()', () => {
   it('Should add the base path to paths', async () => {
     const res = await app.request('/api/doc')
     expect(res.status).toBe(200)
-    const data = (await res.json()) as unknown
-    expect(Object.keys((data as { paths: Record<string, unknown> }).paths)[0]).toBe('/api/message')
+    const data = (await res.json()) as any
+    expect(Object.keys(data.paths)[0]).toBe('/api/message')
   })
 
   it('Should add nested base paths to openapi schema', async () => {
@@ -1981,9 +1980,8 @@ describe('doc31 with generator options', () => {
 
     const res = await app.request('/doc')
     expect(res.status).toBe(200)
-    const doc = (await res.json()) as { paths: Record<string, unknown> }
+    const doc = await res.json()
     expect(
-      // @ts-expect-error it should throw an error if the types are wrong
       doc['paths']['/hello']['get']['responses']['200']['content']['application/json']['schema']
     ).toEqual({
       anyOf: [
@@ -2121,7 +2119,7 @@ describe('RouteConfigToTypedResponse', () => {
 })
 
 describe('Generate YAML', () => {
-  it('Should generate YAML with Middleware', () => {
+  it('Should generate YAML with Middleware', async () => {
     const app = new OpenAPIHono()
     app.openapi(
       createRoute({
@@ -2187,7 +2185,7 @@ describe('Hide Routes', () => {
     (c) => c.json([{ title: 'foo' }])
   )
 
-  it('Should hide the route', () => {
+  it('Should hide the route', async () => {
     const doc = app.getOpenAPIDocument({
       openapi: '3.0.0',
       info: {
@@ -2633,9 +2631,7 @@ describe('openapiRoutes', () => {
 
   it('Should handle routes with hooks', async () => {
     const hookFn = vi.fn((result, c) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (!result.success) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         return c.json({ error: 'Validation failed' }, 400)
       }
     })
@@ -2951,7 +2947,6 @@ describe('openapiRoutes', () => {
         }),
         handler: (c) => {
           const response = c.json({ id: 1, name: 'test' }, 200)
-          // eslint-disable-next-line @typescript-eslint/no-deprecated
           expectTypeOf(response).toMatchTypeOf<
             TypedResponse<{ id: number; name: string }, 200, 'json'>
           >()
