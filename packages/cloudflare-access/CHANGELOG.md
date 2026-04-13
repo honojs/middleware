@@ -1,5 +1,11 @@
 # @hono/cloudflare-access
 
+## 0.4.0
+
+### Minor Changes
+
+- [#1805](https://github.com/honojs/middleware/pull/1805) [`e956ae02e7060e9227c2174a063a23ece3757397`](https://github.com/honojs/middleware/commit/e956ae02e7060e9227c2174a063a23ece3757397) Thanks [@gradyat](https://github.com/gradyat)! - Add audience (aud) validation and harden JWT verification
+
 ## 0.3.1
 
 ### Patch Changes
