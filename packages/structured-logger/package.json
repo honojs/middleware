@@ -1,6 +1,6 @@
 {
   "name": "@hono/structured-logger",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Structured Logger middleware for Hono",
   "type": "module",
   "main": "dist/index.js",
