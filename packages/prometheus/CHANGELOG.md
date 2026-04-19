@@ -1,5 +1,11 @@
 # @hono/prometheus
 
+## 1.0.3
+
+### Patch Changes
+
+- [#1858](https://github.com/honojs/middleware/pull/1858) [`fb26764a72cbf4b1aaa755061101f5284dc62778`](https://github.com/honojs/middleware/commit/fb26764a72cbf4b1aaa755061101f5284dc62778) Thanks [@yusukebe](https://github.com/yusukebe)! - docs: remove the link
+
 ## 1.0.2
 
 ### Patch Changes
