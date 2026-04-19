@@ -216,9 +216,15 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       throw new HTTPException(500, { message: 'Invalid session' })
     }
     const now = Math.floor(Date.now() / 1000)
-    // Revoke the session if it has expired
+    // Revoke the session if it has expired. Token revocation is best-effort —
+    // swallow any rejection so a failing IdP can't crash the request with an
+    // unhandled promise rejection.
     if (auth.ssnexp < now) {
-      revokeSession(c)
+      try {
+        await revokeSession(c)
+      } catch {
+        // ignore — the session is already considered expired
+      }
       return null
     }
     if (auth.rtkexp < now) {
