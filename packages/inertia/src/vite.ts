@@ -5,9 +5,9 @@
  * Hono app type into {@link AppRegistry}.
  */
 
+import type { Plugin } from 'vite'
 import { readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
-import type { Plugin } from 'vite'
 
 export interface InertiaPagesOptions {
   /**

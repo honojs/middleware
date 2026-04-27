@@ -31,7 +31,8 @@ type Distribute<T> = T extends infer U ? U : never
 type AllOutputs<App> = Distribute<
   {
     [Path in keyof ExtractSchema<App> & string]: {
-      [Method in keyof ExtractSchema<App>[Path] & string]: ExtractSchema<App>[Path][Method] extends {
+      [Method in keyof ExtractSchema<App>[Path] &
+        string]: ExtractSchema<App>[Path][Method] extends {
         output: infer O
       }
         ? Distribute<O>
@@ -40,11 +41,12 @@ type AllOutputs<App> = Distribute<
   }[keyof ExtractSchema<App> & string]
 >
 
-type RenderOutput<App> = AllOutputs<App> extends infer U
-  ? U extends { component: string; props: unknown }
-    ? U
+type RenderOutput<App> =
+  AllOutputs<App> extends infer U
+    ? U extends { component: string; props: unknown }
+      ? U
+      : never
     : never
-  : never
 
 /**
  * Resolves the props type for a given Inertia page component name.
