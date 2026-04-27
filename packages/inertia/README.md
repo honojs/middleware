@@ -141,7 +141,23 @@ export default defineConfig({
 
 ## Type safe `c.render`
 
-Use the [`/vite`](#vite-plugin) plugin to generate a `pages.gen.ts` file from your pages directory. Then use `PageProps<C>` in your components to read the exact props for a given page name:
+Out of the box `c.render(name, props)` accepts any string for `name`. Wire up the [`/vite`](#vite-plugin) plugin to generate a `pages.gen.ts` file from your pages directory and `c.render`'s first argument is constrained to the actual page names — typos are a compile error:
+
+```ts
+// `'About'` exists on disk → ok
+c.render('About', { title: 'About' })
+
+// ❌ `'Hme'` is not a registered page name
+c.render('Hme', { message: 'oops' })
+//       ~~~~~ Argument of type '"Hme"' is not assignable to parameter of type 'PageName'.
+```
+
+The generated file augments two interfaces in `@hono/inertia`:
+
+- `InertiaPages` — keys become the union of valid page names, constraining `c.render`'s component argument.
+- `AppRegistry` — registers your Hono app instance so `PageProps<C>` resolves to the props type of the matching route handler.
+
+Use `PageProps<C>` in your components to type the props you receive:
 
 ```tsx
 // app/pages/Posts/Show.tsx
@@ -151,8 +167,6 @@ export default function Show({ post }: PageProps<'Posts/Show'>) {
   return <article>{post.title}</article>
 }
 ```
-
-The generated file augments the `AppRegistry` interface so `PageProps<C>` resolves against your Hono app's route schema.
 
 ## Vite plugin
 

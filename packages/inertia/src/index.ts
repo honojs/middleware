@@ -135,9 +135,38 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
   }
 }
 
+/**
+ * Registry of valid Inertia page component names.
+ *
+ * Augment this interface to constrain the first argument of `c.render` to
+ * known page names. Typically populated automatically by the
+ * `@hono/inertia/vite` plugin from your pages directory.
+ *
+ * When empty, `c.render` accepts any string for backwards compatibility.
+ *
+ * @example
+ * ```ts
+ * declare module '@hono/inertia' {
+ *   interface InertiaPages {
+ *     Home: unknown
+ *     'Posts/Show': unknown
+ *   }
+ * }
+ * ```
+ */
+export interface InertiaPages {}
+
+/**
+ * Union of registered page component names. Falls back to `string` when
+ * {@link InertiaPages} has not been augmented.
+ */
+export type PageName = keyof InertiaPages extends never
+  ? string
+  : keyof InertiaPages & string
+
 declare module 'hono' {
   interface ContextRenderer {
-    <C extends string, P = Record<string, never>>(
+    <C extends PageName, P = Record<string, never>>(
       component: C,
       props?: P
     ): Response & TypedResponse<{ component: C; props: P }, 200, 'html'>
