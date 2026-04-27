@@ -52,13 +52,9 @@ type ExtractValidationResponse<VF> = VF extends (value: any, c: any) => infer R
   : never
 
 type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
-  in: HasUndefined<In> extends true
-    ? {
-        [K in Target]?: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
-      }
-    : {
-        [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
-      }
+  in: {
+    [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
+  }
   out: { [K in Target]: Out }
 }
 
