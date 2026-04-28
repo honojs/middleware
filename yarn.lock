@@ -2515,6 +2515,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/universal-cache@workspace:packages/universal-cache"
   dependencies:
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d"
+    "@cloudflare/workers-types": "npm:^4.20250612.0"
     hono: "npm:^4.11.5"
     ohash: "npm:^2.0.11"
     tsdown: "npm:^0.15.9"
