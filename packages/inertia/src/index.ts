@@ -162,7 +162,7 @@ export interface InertiaPages {}
  */
 export type PageName = keyof InertiaPages extends never
   ? string
-  : keyof InertiaPages & string
+  : Extract<keyof InertiaPages, string>
 
 declare module 'hono' {
   interface ContextRenderer {
