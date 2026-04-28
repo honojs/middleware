@@ -16,10 +16,10 @@ describe('inertia', () => {
       expect(res.headers.get('content-type')).toContain('text/html')
       const html = await res.text()
       expect(html).toContain('<!DOCTYPE html>')
-      expect(html).toContain('id="app"')
-      expect(html).toContain('data-page=')
-      expect(html).toContain('&quot;component&quot;:&quot;Home&quot;')
-      expect(html).toContain('&quot;message&quot;:&quot;hello&quot;')
+      expect(html).toContain('<div id="app"></div>')
+      expect(html).toContain('<script data-page="app" type="application/json">')
+      expect(html).toContain('"component":"Home"')
+      expect(html).toContain('"message":"hello"')
     })
 
     it('passes the page object and context to a custom rootView', async () => {
@@ -70,16 +70,20 @@ describe('inertia', () => {
       expect(await res.text()).toBe('<html><body>Home</body></html>')
     })
 
-    it('escapes HTML in the embedded page object to prevent attribute breakout', async () => {
+    it('escapes "/" so an embedded "</script>" cannot close the surrounding tag', async () => {
       const app = new Hono()
       app.use(inertia())
-      app.get('/', (c) => c.render('Home', { evil: '"><script>x</script>' }))
+      app.get('/', (c) => c.render('Home', { evil: '</script><script>x</script>' }))
 
       const res = await app.request('/')
       const html = await res.text()
 
-      expect(html).not.toContain('"><script>')
-      expect(html).toContain('&quot;&gt;&lt;script&gt;')
+      // Only one real <script ...application/json> opening, and one real
+      // closing </script> for it. The user payload's </script> must be
+      // neutralized via "/" -> "\/".
+      expect(html).toContain('<\\/script>')
+      expect(html.match(/<script data-page="app" type="application\/json">/g)).toHaveLength(1)
+      expect(html.match(/<\/script>/g)).toHaveLength(1)
     })
 
     it('defaults version to null in the page object', async () => {

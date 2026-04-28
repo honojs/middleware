@@ -51,19 +51,16 @@ export interface InertiaOptions {
 }
 
 /**
- * Serializes a {@link PageObject} into an HTML safe JSON string.
+ * Serializes a {@link PageObject} into a JSON string that is safe to embed
+ * inside a `<script type="application/json">` element.
  *
- * The result escapes `&`, `<`, `>`, `"`, and `'` so it can be embedded
- * inside an HTML attribute (e.g. `data-page="..."`) or a `<script>` tag
- * without breaking the surrounding markup.
+ * Mirrors `@inertiajs/core`'s `buildSSRBody`: only the forward slash is
+ * escaped (`/` → `\/`) so a `</script>` sequence inside the JSON cannot
+ * close the surrounding `<script>` tag. No HTML entity encoding is applied
+ * because script `textContent` is not HTML parsed.
  */
 export const serializePage = (page: PageObject): string =>
-  JSON.stringify(page)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
+  JSON.stringify(page).replace(/\//g, '\\/')
 
 const defaultRootView: RootView = (page) =>
   `<!DOCTYPE html>
@@ -73,7 +70,8 @@ const defaultRootView: RootView = (page) =>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <div id="app" data-page="${serializePage(page)}"></div>
+    <script data-page="app" type="application/json">${serializePage(page)}</script>
+    <div id="app"></div>
   </body>
 </html>`
 

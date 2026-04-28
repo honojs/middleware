@@ -20,7 +20,7 @@ npm i @hono/inertia
 
 ## Usage
 
-Define your `rootView` as its own function — it returns the HTML shell that boots the SPA — then pass it to the middleware. Use the `serializePage` helper to embed the page object safely:
+Define your `rootView` as its own function — it returns the HTML shell that boots the SPA — then pass it to the middleware. Use the `serializePage` helper to embed the page object inside the `<script>` tag that Inertia's client adapter reads from on boot:
 
 ```ts
 // app/root-view.ts
@@ -33,10 +33,13 @@ export const rootView: RootView = (page) => `<!DOCTYPE html>
     <script type="module" src="/src/client.tsx"></script>
   </head>
   <body>
-    <div id="app" data-page="${serializePage(page)}"></div>
+    <script data-page="app" type="application/json">${serializePage(page)}</script>
+    <div id="app"></div>
   </body>
 </html>`
 ```
+
+The `data-page` attribute holds the **mount element id** (matching `createInertiaApp({ id: 'app' })`'s default), and the JSON payload lives in the script's `textContent`. `serializePage` mirrors the official [`@inertiajs/core`](https://github.com/inertiajs/inertia) escape (only `/` → `\/`) so a `</script>` inside your props can't break out of the surrounding tag.
 
 ```ts
 // app/server.ts
@@ -59,13 +62,13 @@ export default routes
 
 Pair `@hono/inertia` with [`vite-ssr-components`](https://github.com/yusukebe/vite-ssr-components) to wire up Vite's HMR client and module scripts during development. The `<ViteClient />`, `<Script />` and `<Link />` helpers emit the right tags in both dev and production builds.
 
-Define the `Document` React component and `rootView` in their own module. React's `renderToString` HTML escapes attribute values automatically, so just pass `JSON.stringify(page)` straight to `data-page`:
+Define the `Document` React component and `rootView` in their own module. Inject the serialized page via `dangerouslySetInnerHTML` so React drops it into the `<script>` body verbatim:
 
 ```tsx
 // app/root-view.tsx
 import { renderToString } from 'react-dom/server'
 import { Link, Script, ViteClient } from 'vite-ssr-components/react'
-import type { PageObject, RootView } from '@hono/inertia'
+import { serializePage, type PageObject, type RootView } from '@hono/inertia'
 
 const Document = ({ page }: { page: PageObject }) => (
   <html>
@@ -75,7 +78,12 @@ const Document = ({ page }: { page: PageObject }) => (
       <Link href='/src/style.css' rel='stylesheet' />
     </head>
     <body>
-      <div id='app' data-page={JSON.stringify(page)} />
+      <script
+        data-page='app'
+        type='application/json'
+        dangerouslySetInnerHTML={{ __html: serializePage(page) }}
+      />
+      <div id='app' />
     </body>
   </html>
 )
