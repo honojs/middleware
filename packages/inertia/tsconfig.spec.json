@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "outDir": "../../dist/packages/inertia",
+    "types": ["vitest/globals", "node"]
+  },
+  "references": []
+}
