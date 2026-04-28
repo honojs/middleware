@@ -46,7 +46,7 @@
     "hono": ">=4.4.13"
   },
   "devDependencies": {
-    "effect": "3.19.12",
+    "effect": "3.21.2",
     "hono": "^4.11.5",
     "tsdown": "^0.15.9",
     "typescript": "^5.9.3",
