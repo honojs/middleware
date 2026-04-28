@@ -13,6 +13,7 @@ describe('inertia', () => {
       const res = await app.request('/')
 
       expect(res.status).toBe(200)
+      expect(res.headers.get('Vary')).toBe('Accept, X-Inertia')
       expect(res.headers.get('content-type')).toContain('text/html')
       const html = await res.text()
       expect(html).toContain('<!DOCTYPE html>')
@@ -103,6 +104,23 @@ describe('inertia', () => {
 
       expect(seen[0]?.version).toBeNull()
     })
+
+    it('responds with JSON props when JSON is accepted', async () => {
+      const app = new Hono()
+      app.use(inertia())
+      app.get('/', (c) => c.render('Home', { message: 'hello' }))
+
+      const res = await app.request('/', {
+        headers: {
+          Accept: 'application/json',
+        },
+      })
+
+      expect(res.status).toBe(200)
+      expect(res.headers.get('Vary')).toBe('Accept, X-Inertia')
+      expect(res.headers.get('content-type')).toContain('application/json')
+      expect(await res.json()).toEqual({ message: 'hello' })
+    })
   })
 
   describe('Inertia (XHR) request', () => {
@@ -120,7 +138,7 @@ describe('inertia', () => {
 
       expect(res.status).toBe(200)
       expect(res.headers.get('X-Inertia')).toBe('true')
-      expect(res.headers.get('Vary')).toBe('X-Inertia')
+      expect(res.headers.get('Vary')).toBe('Accept, X-Inertia')
       expect(res.headers.get('content-type')).toContain('application/json')
       expect(await res.json()).toEqual({
         component: 'Posts/Index',

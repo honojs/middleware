@@ -4,7 +4,8 @@
  *
  * Implements the [Inertia.js protocol](https://inertiajs.com/the-protocol) so
  * that `c.render(component, props)` returns the appropriate JSON page object
- * for XHR requests and a full HTML document for initial page loads.
+ * for Inertia XHR requests, props JSON for requests that accept JSON, and a
+ * full HTML document for initial page loads.
  */
 
 import type { Context, MiddlewareHandler, TypedResponse } from 'hono'
@@ -79,7 +80,8 @@ const defaultRootView: RootView = (page) =>
  * Inertia.js middleware for Hono.
  *
  * Sets up `c.render(component, props)` to respond according to the Inertia
- * protocol: JSON for `X-Inertia` requests, full HTML otherwise.
+ * protocol: JSON page objects for `X-Inertia` requests, props JSON for
+ * `Accept: application/json` requests, full HTML otherwise.
  *
  * @example
  * ```ts
@@ -116,10 +118,15 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         version,
       }
 
+      c.header('Vary', 'Accept, X-Inertia')
+
       if (c.req.header('X-Inertia')) {
         c.header('X-Inertia', 'true')
-        c.header('Vary', 'X-Inertia')
         return c.json(page)
+      }
+
+      if (c.req.header('Accept')?.includes('application/json')) {
+        return c.json(props)
       }
 
       const rendered = rootView(page, c)
