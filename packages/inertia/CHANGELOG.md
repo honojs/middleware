@@ -1,5 +1,11 @@
 # @hono/inertia
 
+## 0.2.0
+
+### Minor Changes
+
+- [#1869](https://github.com/honojs/middleware/pull/1869) [`a42b19d2d9c6c2c549b0a6d44a4541429ec3d100`](https://github.com/honojs/middleware/commit/a42b19d2d9c6c2c549b0a6d44a4541429ec3d100) Thanks [@adwd](https://github.com/adwd)! - feat(inertia): return props for JSON requests
+
 ## 0.1.0
 
 ### Minor Changes
