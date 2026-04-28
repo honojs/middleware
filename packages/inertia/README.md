@@ -10,7 +10,7 @@ app.use(inertia())
 app.get('/posts/:id', (c) => c.render('Posts/Show', { post }))
 ```
 
-That's it. The middleware speaks the full [Inertia protocol](https://inertiajs.com/the-protocol) — JSON page objects for in-app navigation, hydratable HTML for initial loads, `409` redirects on asset version mismatch — while staying framework agnostic. Plug in any view layer through `rootView`, get end-to-end type safety on `c.render(component, props)` via the bundled Vite plugin, and ship to any runtime Hono runs on.
+That's it. The middleware speaks the full [Inertia protocol](https://inertiajs.com/the-protocol) — JSON page objects for in-app navigation, hydratable HTML for initial loads, `409` redirects on asset version mismatch — while staying framework agnostic. It also returns the rendered props JSON directly when a request accepts `application/json`, so the same route can serve a JSON response without an extra endpoint. Plug in any view layer through `rootView`, get end-to-end type safety on `c.render(component, props)` via the bundled Vite plugin, and ship to any runtime Hono runs on.
 
 ## Install
 
