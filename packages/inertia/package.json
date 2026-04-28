@@ -1,6 +1,6 @@
 {
   "name": "@hono/inertia",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Inertia.js adapter middleware for Hono",
   "type": "module",
   "main": "dist/index.js",
