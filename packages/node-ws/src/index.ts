@@ -30,6 +30,24 @@ const generateConnectionSymbol = () => Symbol('connection')
 /** @example `c.env[CONNECTION_SYMBOL_KEY]` */
 const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
 
+const responseHeadersToSkip = new Set([
+  'connection',
+  'content-length',
+  'sec-websocket-accept',
+  'sec-websocket-extensions',
+  'sec-websocket-protocol',
+  'upgrade',
+])
+
+const appendResponseHeaders = (headers: string[], responseHeaders: Headers) => {
+  responseHeaders.forEach((value, key) => {
+    if (responseHeadersToSkip.has(key.toLowerCase())) {
+      return
+    }
+    headers.push(`${key}: ${value}`)
+  })
+}
+
 /**
  * Create WebSockets for Node.js
  * @param init Options
@@ -82,19 +100,30 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         const waiter = waiterMap.get(request)
 
         if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
+          const headers = ['Connection: close', 'Content-Length: 0']
+          appendResponseHeaders(headers, response.headers)
+
           socket.end(
             `HTTP/1.1 ${response.status.toString()} ${STATUS_CODES[response.status] ?? ''}\r\n` +
-              'Connection: close\r\n' +
-              'Content-Length: 0\r\n' +
+              `${headers.join('\r\n')}\r\n` +
               '\r\n'
           )
           waiterMap.delete(request)
           return
         }
 
-        wss.handleUpgrade(request, socket, head, (ws) => {
-          wss.emit('connection', ws, request)
-        })
+        const addResponseHeaders = (headers: string[]) => {
+          appendResponseHeaders(headers, response.headers)
+        }
+
+        wss.on('headers', addResponseHeaders)
+        try {
+          wss.handleUpgrade(request, socket, head, (ws) => {
+            wss.emit('connection', ws, request)
+          })
+        } finally {
+          wss.off('headers', addResponseHeaders)
+        }
       })
     },
     upgradeWebSocket: defineWebSocketHelper(async (c, events, options) => {

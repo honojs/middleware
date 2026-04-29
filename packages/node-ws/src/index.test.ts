@@ -270,6 +270,57 @@ describe('WebSocket helper', () => {
     expect(await mainPromise).toBe(true)
   })
 
+  it('Should include response headers in the WebSocket upgrade response', async () => {
+    app.use(async (c, next) => {
+      await next()
+      c.header('x-auth-result', c.req.header('authorization') ? 'authorized' : 'missing')
+    })
+    app.get(
+      '/',
+      upgradeWebSocket(() => ({}))
+    )
+
+    const ws = new WebSocket('ws://localhost:3030/', {
+      headers: {
+        authorization: 'Bearer token',
+      },
+    })
+    const responseHeaders = await new Promise<Record<string, string | string[] | undefined>>(
+      (resolve) => {
+        ws.on('upgrade', (response) => {
+          resolve(response.headers)
+        })
+      }
+    )
+    ws.close()
+
+    expect(responseHeaders['x-auth-result']).toBe('authorized')
+  })
+
+  it('Should include response headers in rejected WebSocket response', async () => {
+    app.get(
+      '/',
+      () =>
+        new Response(null, {
+          status: 401,
+          headers: {
+            'x-auth-result': 'missing',
+          },
+        })
+    )
+
+    const ws = new WebSocket('ws://localhost:3030/')
+    const responseHeaders = await new Promise<Record<string, string | string[] | undefined>>(
+      (resolve) => {
+        ws.on('unexpected-response', (_, response) => {
+          resolve(response.headers)
+        })
+      }
+    )
+
+    expect(responseHeaders['x-auth-result']).toBe('missing')
+  })
+
   it('Should not async processes to create events affect message handling', async () => {
     const mainPromise = new Promise<boolean>((resolve) =>
       app.get(
