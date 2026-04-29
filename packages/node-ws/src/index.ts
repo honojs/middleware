@@ -30,13 +30,24 @@ const generateConnectionSymbol = () => Symbol('connection')
 /** @example `c.env[CONNECTION_SYMBOL_KEY]` */
 const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
 
+// Hop-by-hop headers per RFC 9110 Section 7.6.1
+// (https://www.rfc-editor.org/rfc/rfc9110.html#name-connection) plus
+// `keep-alive` (commonly treated as hop-by-hop by HTTP implementations) and
+// WebSocket handshake headers managed by `ws` itself. These must not be
+// forwarded onto the upgrade response or the handshake will be corrupted.
 const responseHeadersToSkip = new Set([
   'connection',
   'content-length',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
   'sec-websocket-accept',
   'sec-websocket-extensions',
   'sec-websocket-protocol',
-  'upgrade',
 ])
 
 const appendResponseHeaders = (headers: string[], responseHeaders: Headers) => {
@@ -100,12 +111,12 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
         const waiter = waiterMap.get(request)
 
         if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
-          const headers = ['Connection: close', 'Content-Length: 0']
-          appendResponseHeaders(headers, response.headers)
+          const responseLines = ['Connection: close', 'Content-Length: 0']
+          appendResponseHeaders(responseLines, response.headers)
 
           socket.end(
             `HTTP/1.1 ${response.status.toString()} ${STATUS_CODES[response.status] ?? ''}\r\n` +
-              `${headers.join('\r\n')}\r\n` +
+              `${responseLines.join('\r\n')}\r\n` +
               '\r\n'
           )
           waiterMap.delete(request)
@@ -116,6 +127,8 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           appendResponseHeaders(headers, response.headers)
         }
 
+        // `headers` is emitted synchronously inside `handleUpgrade`, so this
+        // listener cannot leak across concurrent upgrades on the shared `wss`.
         wss.on('headers', addResponseHeaders)
         try {
           wss.handleUpgrade(request, socket, head, (ws) => {
