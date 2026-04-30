@@ -249,6 +249,41 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
   })
+  test('Should swallow revocationRequest failure on expired session (no unhandled rejection)', async () => {
+    // Regression for #1851: when getAuth() detects an expired session it
+    // calls revokeSession() to delete the cookie. Before the fix, the
+    // call was fire-and-forget; if the IdP returned an error
+    // (e.g. invalid_grant on an already-revoked refresh token) the
+    // rejection escaped the request and crashed Node — on Lambda it
+    // killed the runtime so the *next* invocation failed with
+    // Runtime.ExitError. After the fix, getAuth awaits revokeSession
+    // inside a try/catch, so a rejected revocation request still lets
+    // the auth-redirect response complete cleanly.
+    const oauth2 = await import('oauth4webapi')
+    const revocationRequest = vi.mocked(oauth2.revocationRequest)
+    revocationRequest.mockRejectedValueOnce(
+      new Error('IdP returned invalid_grant on already-revoked refresh token')
+    )
+    const unhandledRejections: unknown[] = []
+    const onUnhandled = (reason: unknown) => unhandledRejections.push(reason)
+    process.on('unhandledRejection', onUnhandled)
+    try {
+      const req = new Request('http://localhost/', {
+        method: 'GET',
+        headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+      })
+      const res = await app.request(req, {}, {})
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(302)
+      // give any orphaned promise a tick to surface — this is the window
+      // where the bug previously triggered the unhandled rejection.
+      await new Promise((resolve) => setImmediate(resolve))
+      expect(revocationRequest).toHaveBeenCalled()
+      expect(unhandledRejections).toEqual([])
+    } finally {
+      process.off('unhandledRejection', onUnhandled)
+    }
+  })
   test('Should use custom scope, if defined', async () => {
     process.env.OIDC_SCOPES = 'openid email'
     const req = new Request('http://localhost/', {
