@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
-import type * as oauth2 from 'oauth4webapi'
+import * as oauth2 from 'oauth4webapi'
 import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
@@ -248,6 +248,27 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.headers.get('set-cookie')).toMatch(`nonce=${MOCK_NONCE}`)
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
+  })
+  test('Should swallow revocationRequest failure on expired session', async () => {
+    // Regression for #1851: revokeSession() rejection used to escape getAuth().
+    const revocationRequest = vi.mocked(oauth2.revocationRequest)
+    revocationRequest.mockRejectedValueOnce(new Error('invalid_grant'))
+    const unhandled: unknown[] = []
+    const onUnhandled = (reason: unknown) => unhandled.push(reason)
+    process.on('unhandledRejection', onUnhandled)
+    try {
+      const req = new Request('http://localhost/', {
+        method: 'GET',
+        headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+      })
+      const res = await app.request(req, {}, {})
+      expect(res.status).toBe(302)
+      await new Promise((resolve) => setImmediate(resolve))
+      expect(revocationRequest).toHaveBeenCalled()
+      expect(unhandled).toEqual([])
+    } finally {
+      process.off('unhandledRejection', onUnhandled)
+    }
   })
   test('Should use custom scope, if defined', async () => {
     process.env.OIDC_SCOPES = 'openid email'
