@@ -24,7 +24,6 @@
     { "path": "packages/hello" },
     { "path": "packages/mcp" },
     { "path": "packages/medley-router" },
-    { "path": "packages/node-ws" },
     { "path": "packages/oauth-providers" },
     { "path": "packages/oidc-auth" },
     { "path": "packages/otel" },
