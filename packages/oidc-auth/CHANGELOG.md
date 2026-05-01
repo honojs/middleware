@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.8.2
+
+### Patch Changes
+
+- [#1855](https://github.com/honojs/middleware/pull/1855) [`eb443a2fbda674bbe12d3f30e96854bb0cad6232`](https://github.com/honojs/middleware/commit/eb443a2fbda674bbe12d3f30e96854bb0cad6232) Thanks [@SAY-5](https://github.com/SAY-5)! - Fix `getAuth()` swallowing `revokeSession()` failures: the call was invoked without `await` inside the refresh branch, so a rejecting `revokeSession` turned into an unhandled rejection and `getAuth()` returned `null` without surfacing the error. Await the call inside a try/catch so errors are observable and the session is cleaned up consistently.
+
 ## 1.8.1
 
 ### Patch Changes
