@@ -5,3 +5,6 @@
 # Casbin
 *.conf
 *.csv
+
+# Deprecated packages
+packages/node-ws

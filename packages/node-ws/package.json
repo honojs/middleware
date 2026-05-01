@@ -11,9 +11,6 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
-    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
     "version:jsr": "yarn version:set $npm_package_version"
   },
