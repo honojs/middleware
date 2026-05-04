@@ -2511,6 +2511,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/universal-cache@workspace:packages/universal-cache":
+  version: 0.0.0-use.local
+  resolution: "@hono/universal-cache@workspace:packages/universal-cache"
+  dependencies:
+    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d"
+    "@cloudflare/workers-types": "npm:^4.20250612.0"
+    hono: "npm:^4.11.5"
+    ohash: "npm:^2.0.11"
+    tsdown: "npm:^0.15.9"
+    typescript: "npm:^5.9.3"
+    unstorage: "npm:^1.17.0"
+    vitest: "npm:^4.1.0-beta.1"
+  peerDependencies:
+    hono: ">=4.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@hono/valibot-validator@workspace:packages/valibot-validator":
   version: 0.0.0-use.local
   resolution: "@hono/valibot-validator@workspace:packages/valibot-validator"
@@ -12619,6 +12636,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ohash@npm:^2.0.11":
+  version: 2.0.11
+  resolution: "ohash@npm:2.0.11"
+  checksum: 10c0/d07c8d79cc26da082c1a7c8d5b56c399dd4ed3b2bd069fcae6bae78c99a9bcc3ad813b1e1f49ca2f335292846d689c6141a762cf078727d2302a33d414e69c79
+  languageName: node
+  linkType: hard
+
 "on-finished@npm:2.4.1, on-finished@npm:^2.2.0, on-finished@npm:^2.4.1":
   version: 2.4.1
   resolution: "on-finished@npm:2.4.1"
@@ -16392,7 +16416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unstorage@npm:^1.17.4":
+"unstorage@npm:^1.17.0, unstorage@npm:^1.17.4":
   version: 1.17.4
   resolution: "unstorage@npm:1.17.4"
   dependencies:
