@@ -576,7 +576,7 @@ export class OpenAPIHono<
             ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
             : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
         >
-      | undefined = this.defaultHook
+      | undefined = undefined
   ): OpenAPIHono<
     E,
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
@@ -586,25 +586,32 @@ export class OpenAPIHono<
       this.openAPIRegistry.registerPath(route)
     }
 
+    // Resolve the defaultHook lazily so nested apps mounted via `route()`
+    // can inherit the parent's defaultHook. See #1306.
+    const effectiveHook =
+      hook ??
+      ((result: any, c: any) =>
+        this.defaultHook ? (this.defaultHook as any)(result, c) : undefined)
+
     const validators: MiddlewareHandler[] = []
 
     if (route.request?.query) {
-      const validator = zValidator('query', route.request.query as any, hook as any)
+      const validator = zValidator('query', route.request.query as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.params) {
-      const validator = zValidator('param', route.request.params as any, hook as any)
+      const validator = zValidator('param', route.request.params as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.headers) {
-      const validator = zValidator('header', route.request.headers as any, hook as any)
+      const validator = zValidator('header', route.request.headers as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.cookies) {
-      const validator = zValidator('cookie', route.request.cookies as any, hook as any)
+      const validator = zValidator('cookie', route.request.cookies as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
@@ -622,7 +629,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook) as MiddlewareHandler
+          const validator = zValidator('json', schema, effectiveHook as any) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -641,7 +648,7 @@ export class OpenAPIHono<
         if (isFormContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('form', schema, hook) as MiddlewareHandler
+          const validator = zValidator('form', schema, effectiveHook as any) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -792,6 +799,10 @@ export class OpenAPIHono<
 
     if (!(app instanceof OpenAPIHono)) {
       return this as any
+    }
+
+    if (app.defaultHook === undefined && this.defaultHook !== undefined) {
+      app.defaultHook = this.defaultHook
     }
 
     app.openAPIRegistry.definitions.forEach((def) => {
