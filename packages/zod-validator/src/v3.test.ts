@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import type { MiddlewareHandler } from 'hono'
 import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
@@ -79,6 +80,11 @@ describe('Basic', () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type verify = Expect<Equal<Expected, Actual>>
+
+  it('Should be assignable to a generic MiddlewareHandler', () => {
+    const middleware: MiddlewareHandler = zValidator('json', jsonSchema)
+    expect(middleware).toBeTypeOf('function')
+  })
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/author?name=Metallo', {
@@ -270,6 +276,15 @@ describe('With Hook', () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type verify = Expect<Equal<Expected, Actual>>
+
+  it('Should be assignable to a generic MiddlewareHandler', () => {
+    const middleware: MiddlewareHandler = zValidator('json', schema, (result, c) => {
+      if (!result.success) {
+        return c.json({ error: 'invalid' }, 400)
+      }
+    })
+    expect(middleware).toBeTypeOf('function')
+  })
 
   it('Should return 200 response', async () => {
     const req = new Request('http://localhost/post', {
@@ -530,6 +545,35 @@ describe('With options + validationFunction', () => {
         })
       }
     )
+
+  type ExtendedInput = {
+    json: {
+      name: string
+      age: number
+    }
+  }
+  type Actual = ExtractSchema<typeof route>['/extended']['$post']
+  type Expected =
+    | {
+        input: ExtendedInput
+        output: {
+          success: true
+          data: {
+            name: string
+            age: number
+          }
+        }
+        outputFormat: 'json'
+        status: ContentfulStatusCode
+      }
+    | {
+        input: ExtendedInput
+        output: z.SafeParseError<z.input<typeof jsonSchema>>
+        outputFormat: 'json'
+        status: 400
+      }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  type verify = Expect<Equal<Expected, Actual>>
 
   it('Should be ok due to passthrough schema', async () => {
     const req = new Request('http://localhost/extended', {
