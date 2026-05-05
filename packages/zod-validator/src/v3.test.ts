@@ -37,29 +37,43 @@ describe('Basic', () => {
   )
 
   type Actual = ExtractSchema<typeof route>
+  type AuthorInput = {
+    json: {
+      name: string
+      age: number
+    }
+  } & {
+    query?:
+      | {
+          name?: string | undefined
+        }
+      | undefined
+  }
   type Expected = {
     '/author': {
-      $post: {
-        input: {
-          json: {
-            name: string
-            age: number
+      $post:
+        | {
+            input: AuthorInput
+            output: {
+              success: true
+              message: string
+              queryName: string | undefined
+            }
+            outputFormat: 'json'
+            status: ContentfulStatusCode
           }
-        } & {
-          query?:
-            | {
-                name?: string | undefined
-              }
-            | undefined
-        }
-        output: {
-          success: true
-          message: string
-          queryName: string | undefined
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
+        | {
+            input: AuthorInput
+            output: z.SafeParseError<{ name: string; age: number }>
+            outputFormat: 'json'
+            status: 400
+          }
+        | {
+            input: AuthorInput
+            output: z.SafeParseError<{ name?: string | undefined } | undefined>
+            outputFormat: 'json'
+            status: 400
+          }
     }
   }
 
@@ -119,20 +133,28 @@ describe('coerce', () => {
   })
 
   type Actual = ExtractSchema<typeof route>
+  type PageInput = {
+    query: {
+      page: string | string[]
+    }
+  }
   type Expected = {
     '/page': {
-      $get: {
-        input: {
-          query: {
-            page: string | string[]
+      $get:
+        | {
+            input: PageInput
+            output: {
+              page: number
+            }
+            outputFormat: 'json'
+            status: ContentfulStatusCode
           }
-        }
-        output: {
-          page: number
-        }
-        outputFormat: 'json'
-        status: ContentfulStatusCode
-      }
+        | {
+            input: PageInput
+            output: z.SafeParseError<z.input<typeof querySchema>>
+            outputFormat: 'json'
+            status: 400
+          }
     }
   }
 
@@ -150,40 +172,42 @@ describe('coerce', () => {
 
   it('Should correctly infer literal types for enum and fallback for coerce schemas', () => {
     // Related to issue #1370: Type inference for coerce and enum schemas
-    const mixedRoute = new Hono().get(
-      '/mixed',
-      zValidator(
-        'query',
-        z.object({
-          tenant: z.enum(['abba', 'baab']), // Should infer as literal union type
-          page: z.coerce.number(), // Should fallback to string | string[]
-        })
-      ),
-      (c) => {
-        const query = c.req.valid('query')
-        return c.json({ query })
-      }
-    )
+    const mixedSchema = z.object({
+      tenant: z.enum(['abba', 'baab']), // Should infer as literal union type
+      page: z.coerce.number(), // Should fallback to string | string[]
+    })
+    const mixedRoute = new Hono().get('/mixed', zValidator('query', mixedSchema), (c) => {
+      const query = c.req.valid('query')
+      return c.json({ query })
+    })
 
     type MixedActual = ExtractSchema<typeof mixedRoute>
+    type MixedInput = {
+      query: {
+        tenant: 'abba' | 'baab' // Literal type preserved
+        page: string | string[] // Coerce fallback type
+      }
+    }
     type MixedExpected = {
       '/mixed': {
-        $get: {
-          input: {
-            query: {
-              tenant: 'abba' | 'baab' // Literal type preserved
-              page: string | string[] // Coerce fallback type
+        $get:
+          | {
+              input: MixedInput
+              output: {
+                query: {
+                  tenant: 'abba' | 'baab' // Output uses inferred type
+                  page: number // Coerce output type
+                }
+              }
+              outputFormat: 'json'
+              status: ContentfulStatusCode
             }
-          }
-          output: {
-            query: {
-              tenant: 'abba' | 'baab' // Output uses inferred type
-              page: number // Coerce output type
+          | {
+              input: MixedInput
+              output: z.SafeParseError<z.input<typeof mixedSchema>>
+              outputFormat: 'json'
+              status: 400
             }
-          }
-          outputFormat: 'json'
-          status: ContentfulStatusCode
-        }
       }
     }
 
@@ -404,24 +428,32 @@ describe('Only Types', () => {
     })
 
     type Actual = ExtractSchema<typeof route>
+    type EnumInput = {
+      query: {
+        order: 'asc' | 'desc'
+        orderWithDefault?: 'asc' | 'desc' | undefined
+        page: string | string[]
+      }
+    }
     type Expected = {
       '/': {
-        $get: {
-          input: {
-            query: {
-              order: 'asc' | 'desc'
-              orderWithDefault?: 'asc' | 'desc' | undefined
-              page: string | string[]
+        $get:
+          | {
+              input: EnumInput
+              output: {
+                order: 'asc' | 'desc'
+                orderWithDefault: 'asc' | 'desc'
+                page: number
+              }
+              outputFormat: 'json'
+              status: ContentfulStatusCode
             }
-          }
-          output: {
-            order: 'asc' | 'desc'
-            orderWithDefault: 'asc' | 'desc'
-            page: number
-          }
-          outputFormat: 'json'
-          status: ContentfulStatusCode
-        }
+          | {
+              input: EnumInput
+              output: z.SafeParseError<z.input<typeof querySchema>>
+              outputFormat: 'json'
+              status: 400
+            }
       }
     }
     type verify = Expect<Equal<Expected, Actual>>
@@ -444,16 +476,24 @@ describe('Case-Insensitive Headers', () => {
     })
 
     type Actual = ExtractSchema<typeof route>
+    type HeaderInput = {
+      header: z.infer<typeof headerSchema>
+    }
     type Expected = {
       '/': {
-        $get: {
-          input: {
-            header: z.infer<typeof headerSchema>
-          }
-          output: z.infer<typeof headerSchema>
-          outputFormat: 'json'
-          status: ContentfulStatusCode
-        }
+        $get:
+          | {
+              input: HeaderInput
+              output: z.infer<typeof headerSchema>
+              outputFormat: 'json'
+              status: ContentfulStatusCode
+            }
+          | {
+              input: HeaderInput
+              output: z.SafeParseError<z.input<typeof headerSchema>>
+              outputFormat: 'json'
+              status: 400
+            }
       }
     }
     type verify = Expect<Equal<Expected, Actual>>

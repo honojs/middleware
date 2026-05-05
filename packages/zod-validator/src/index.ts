@@ -17,6 +17,20 @@ type zInput<T> = T extends v3.ZodType ? v3.input<T> : T extends v4.$ZodType ? v4
 type zOutput<T> = T extends v3.ZodType ? v3.output<T> : T extends v4.$ZodType ? v4.output<T> : never
 type zInfer<T> = T extends v3.ZodType ? v3.infer<T> : T extends v4.$ZodType ? v4.infer<T> : never
 
+// Failure variant of `safeParseAsync`'s return value.
+// Mirrors the runtime body returned by `c.json(result, 400)` on validation failure.
+type ZodValidatorFailureBody<T extends ZodSchema> = T extends v4.$ZodType
+  ? Extract<v4ZodSafeParseResult<v4.output<T>>, { success: false }>
+  : T extends v3.ZodType
+    ? Extract<v3.SafeParseReturnType<v3.input<T>, v3.output<T>>, { success: false }>
+    : never
+
+type ZodValidatorFailureResponse<T extends ZodSchema> = TypedResponse<
+  ZodValidatorFailureBody<T>,
+  400,
+  'json'
+>
+
 export type Hook<
   T,
   E extends Env,
@@ -72,7 +86,7 @@ function zValidatorFunction<
   Out = zOutput<T>,
   I extends Input = DefaultInput<Target, In, Out>,
   V extends I = I,
->(target: Target, schema: T): MiddlewareHandler<E, P, V>
+>(target: Target, schema: T): MiddlewareHandler<E, P, V, ZodValidatorFailureResponse<T>>
 
 // with hook and options
 function zValidatorFunction<
@@ -120,7 +134,9 @@ function zValidatorFunction<
       value: ValidationTargets[Target]
     ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
   }
-): MiddlewareHandler<E, P, V> | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
+):
+  | MiddlewareHandler<E, P, V, ZodValidatorFailureResponse<T>>
+  | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
   // @ts-expect-error not typed well
   return validator(target, async (value: ValidationTargets[Target], c) => {
     let validatorValue = value
