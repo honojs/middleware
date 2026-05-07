@@ -1,5 +1,5 @@
 ---
-'@hono/zod-openapi': patch
+'@hono/zod-openapi': minor
 ---
 
 fix(zod-openapi): bump `peerDependencies.hono` to `>=4.10.0` to match the runtime requirement coming through `@hono/zod-validator`.
