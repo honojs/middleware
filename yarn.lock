@@ -2540,7 +2540,7 @@ __metadata:
     yaml: "npm:^2.8.2"
     zod: "npm:^4.2.1"
   peerDependencies:
-    hono: ">=4.3.6"
+    hono: ">=4.10.0"
     zod: ^4.0.0
   languageName: unknown
   linkType: soft
@@ -2555,7 +2555,7 @@ __metadata:
     vitest: "npm:^4.1.0-beta.1"
     zod: "npm:^4.2.1"
   peerDependencies:
-    hono: ">=3.9.0"
+    hono: ">=4.10.0"
     zod: ^3.25.0 || ^4.0.0
   languageName: unknown
   linkType: soft
