@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 1.1.2
+
+### Patch Changes
+
+- [#1885](https://github.com/honojs/middleware/pull/1885) [`8bc6b73c5ffebf29685d6825a4df06300167165f`](https://github.com/honojs/middleware/commit/8bc6b73c5ffebf29685d6825a4df06300167165f) Thanks [@mrlorentx](https://github.com/mrlorentx)! - Fixes request duration histogram bucketing
+
 ## 1.1.1
 
 ### Patch Changes
