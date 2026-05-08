@@ -345,7 +345,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
     assert.ok(durationMetric)
     assert.strictEqual(durationMetric.descriptor.unit, 's')
-    const dps = durationMetric.dataPoints
+    const dps = durationMetric.dataPoints as DataPoint<Histogram>[]
     assert.strictEqual(dps.length, 1)
     const dp = dps[0]
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
