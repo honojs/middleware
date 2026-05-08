@@ -1,5 +1,5 @@
 ---
-'@hono/zod-validator': patch
+'@hono/zod-validator': minor
 ---
 
 fix(zod-validator): surface the default `400` failure response so it propagates to the RPC schema (refs honojs/hono#3746).
