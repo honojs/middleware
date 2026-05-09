@@ -1,28 +1,28 @@
-# Sentry Middleware for Hono
+# Stripe Webhook Middleware for Hono
 
-[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=sentry)](https://codecov.io/github/honojs/middleware)
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=stripe-webhook)](https://codecov.io/github/honojs/middleware)
 
-This middleware integrates [Hono](https://github.com/honojs/hono) with Sentry. It captures exceptions and sends them to the specified Sentry data source name (DSN) using [toucan-js](https://github.com/robertcepa/toucan-js).
+This middleware integrates [Hono](https://github.com/honojs/hono) with [Stripe](https://stripe.com) webhook signature verification. It validates the `stripe-signature` header against the raw request body using [stripe-node](https://github.com/stripe/stripe-node) and exposes the verified `Stripe.Event` on the request context.
 
 ## Installation
 
 ```plain
-npm i hono @hono/sentry
+npm i hono stripe @hono/stripe-webhook
 ```
 
 ## Configuration
 
-If you're running your application on Cloudflare Workers, set a binding value named `SENTRY_DSN`, which will be used as the DSN. For instance, during development, you can specify this in `.dev.vars`:
+Provide your endpoint signing secret (e.g. `whsec_...`) to the middleware. On Cloudflare Workers, set a binding named `STRIPE_WEBHOOK_SECRET` and read it from `c.env`. For instance, during development, you can specify this in `.dev.vars`:
 
 ```plain
-SENTRY_DSN=<Your DSN>
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-On other platforms, you can directly provide the DSN by passing it as an option:
+On other platforms, you can directly provide the secret by passing it as an option:
 
 ```ts
-sentry({
-  dsn: `<Your DSN>`,
+stripeWebhook({
+  secret: '<Your signing secret>',
 })
 ```
 
@@ -30,58 +30,54 @@ sentry({
 
 ```ts
 import { Hono } from 'hono'
-import { sentry } from '@hono/sentry'
+import { stripeWebhook } from '@hono/stripe-webhook'
 
 const app = new Hono()
 
-app.use('*', sentry())
-app.get('/', (c) => c.text('foo'))
+app.post('/webhook', stripeWebhook({ secret: process.env.STRIPE_WEBHOOK_SECRET! }), (c) => {
+  const event = c.get('stripeEvent')
+  if (event.type === 'payment_intent.succeeded') {
+    // handle the event
+  }
+  return c.json({ received: true })
+})
 
 export default app
 ```
 
 Options:
 
-```ts
-import type { Options as ToucanOptions } from 'toucan-js'
-type Options = Omit<ToucanOptions, 'request' | 'context'>
-```
+| Option      | Type     | Default | Description                                                                       |
+| ----------- | -------- | ------- | --------------------------------------------------------------------------------- |
+| `secret`    | `string` | —       | Required. Your Stripe webhook endpoint signing secret (`whsec_...`).              |
+| `tolerance` | `number` | `300`   | Maximum age (in seconds) of the signed timestamp before the request is rejected. |
 
-### For Deno Users
+### Accessing the verified event
 
-```ts
-import { serve } from 'https://deno.land/std/http/server.ts'
-import { sentry } from 'npm:@hono/sentry'
-import { Hono } from 'https://deno.land/x/hono/mod.ts'
-
-const app = new Hono()
-
-app.use('*', sentry({ dsn: 'https://xxxxxx@xxx.ingest.sentry.io/xxxxxx' }))
-app.get('/', (c) => c.text('foo'))
-
-serve(app.fetch)
-```
-
-### Accessing an instance of `Sentry`
-
-You can retrieve an instance of `Sentry` using `c.get('sentry')`.
+You can retrieve the verified `Stripe.Event` using `c.get('stripeEvent')`.
 
 ```ts
-app.onError((e, c) => {
-  c.get('sentry').setContext('character', {
-    name: 'Mighty Fighter',
-    age: 19,
-    attack_type: 'melee',
-  })
-  c.get('sentry').captureException(e)
-  return c.text('Internal Server Error', 500)
+app.post('/webhook', stripeWebhook({ secret }), async (c) => {
+  const event = c.get('stripeEvent')
+  switch (event.type) {
+    case 'checkout.session.completed':
+      // ...
+      break
+    case 'invoice.payment_failed':
+      // ...
+      break
+  }
+  return c.json({ received: true })
 })
 ```
 
+### Why `clone()` is used to read the body
+
+Stripe signature verification must run against the **raw, byte-for-byte** request body. The middleware reads the body with `c.req.raw.clone().text()` so the original `Request` stream stays untouched and downstream handlers can still call `c.req.text()`, `c.req.json()`, or read `c.req.raw.body` themselves. Without `clone()`, the body stream would be consumed by the middleware and any subsequent read would throw.
+
 ## Authors
 
-- Samuel Lippert - <https://github.com/sam-lippert>
-- Yusuke Wada - <https://github.com/yusukebe>
+- Sola Samuel - <https://github.com/solasamuel>
 
 ## License
 
