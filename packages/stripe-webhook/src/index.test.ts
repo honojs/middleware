@@ -1,65 +1,83 @@
 import { Hono } from 'hono'
-import { Toucan } from 'toucan-js'
-import { getSentry, sentry } from '.'
+import { stripeWebhook } from '.'
 
-// Mock
-class Context implements ExecutionContext {
-  passThroughOnException(): void {
-    throw new Error('Method not implemented.')
+const constructEventAsync = vi.fn()
+
+vi.mock('stripe', () => {
+  class StripeMock {
+    webhooks = { constructEventAsync }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async waitUntil(promise: Promise<any>): Promise<void> {
-    await promise
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  props: any
-}
-
-vi.mock(import('toucan-js'), async (importOriginal) => {
-  const original = await importOriginal()
-
-  Object.assign(original.Toucan.prototype, { captureException: vi.fn(), log: vi.fn() })
-
-  return original
+  return { default: StripeMock }
 })
 
-const callback = vi.fn()
+describe('Stripe webhook middleware', () => {
+  const secret = 'whsec_test'
+  const buildApp = () => {
+    const app = new Hono()
+    app.post('/webhook', stripeWebhook({ secret }), (c) => {
+      const event = c.get('stripeEvent')
+      return c.json({ type: event.type })
+    })
+    return app
+  }
 
-describe('Sentry middleware', () => {
-  const app = new Hono()
-
-  app.use('/sentry/*', sentry(undefined, callback))
-  app.get('/sentry/foo', (c) => c.text('foo'))
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  app.get('/sentry/bar', (c) => getSentry(c).log('bar') || c.text('bar'))
-  app.get('/sentry/error', () => {
-    throw new Error('a catastrophic error')
+  it('Should reject requests without a stripe-signature header', async () => {
+    const app = buildApp()
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      body: '{}',
+    })
+    expect(res.status).toBe(400)
+    expect(await res.json()).toEqual({ error: 'Invalid webhook signature' })
+    expect(constructEventAsync).not.toHaveBeenCalled()
   })
 
-  it('Should initialize Toucan', async () => {
-    const req = new Request('http://localhost/sentry/foo')
-    const res = await app.fetch(req, {}, new Context())
-    expect(res).not.toBeNull()
+  it('Should return 400 when signature verification fails', async () => {
+    constructEventAsync.mockRejectedValueOnce(new Error('bad sig'))
+    const app = buildApp()
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      headers: { 'stripe-signature': 't=1,v1=deadbeef' },
+      body: '{}',
+    })
+    expect(res.status).toBe(400)
+    expect(await res.json()).toEqual({ error: 'Invalid webhook signature' })
+  })
+
+  it('Should expose the verified event on the context and continue', async () => {
+    const event = { id: 'evt_1', type: 'payment_intent.succeeded' }
+    constructEventAsync.mockResolvedValueOnce(event)
+    const app = buildApp()
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      headers: { 'stripe-signature': 't=1,v1=deadbeef' },
+      body: '{"id":"evt_1"}',
+    })
     expect(res.status).toBe(200)
-    expect(callback).toHaveBeenCalled()
+    expect(await res.json()).toEqual({ type: 'payment_intent.succeeded' })
+    expect(constructEventAsync).toHaveBeenCalledWith(
+      '{"id":"evt_1"}',
+      't=1,v1=deadbeef',
+      secret,
+      300
+    )
   })
 
-  it('Should make Sentry available via context', async () => {
-    const req = new Request('http://localhost/sentry/bar')
-    const res = await app.fetch(req, {}, new Context())
-    expect(res).not.toBeNull()
+  it('Should forward a custom tolerance to constructEventAsync', async () => {
+    constructEventAsync.mockResolvedValueOnce({ id: 'evt_2', type: 'charge.refunded' })
+    const app = new Hono()
+    app.post('/webhook', stripeWebhook({ secret, tolerance: 60 }), (c) => c.text('ok'))
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      headers: { 'stripe-signature': 't=1,v1=deadbeef' },
+      body: 'payload',
+    })
     expect(res.status).toBe(200)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    expect(Toucan.prototype.log).toHaveBeenCalled()
-  })
-
-  it('Should report errors', async () => {
-    const req = new Request('http://localhost/sentry/error')
-    const res = await app.fetch(req, {}, new Context())
-    expect(res).not.toBeNull()
-    expect(res.status).toBe(500)
-    expect(Toucan.prototype.captureException).toHaveBeenCalled()
+    expect(constructEventAsync).toHaveBeenLastCalledWith(
+      'payload',
+      't=1,v1=deadbeef',
+      secret,
+      60
+    )
   })
 })
