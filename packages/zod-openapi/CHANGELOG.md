@@ -1,5 +1,18 @@
 # @hono/zod-openapi
 
+## 1.4.0
+
+### Minor Changes
+
+- [#1881](https://github.com/honojs/middleware/pull/1881) [`e90e4fb30877f3e3f4b0588bdb2bbfc337efbf67`](https://github.com/honojs/middleware/commit/e90e4fb30877f3e3f4b0588bdb2bbfc337efbf67) Thanks [@T4ko0522](https://github.com/T4ko0522)! - fix(zod-openapi): bump `peerDependencies.hono` to `>=4.10.0` to match the runtime requirement coming through `@hono/zod-validator`.
+
+  `@hono/zod-openapi` lists `@hono/zod-validator` as a direct (non-peer) dependency, so its peer range must be at least as strict as `@hono/zod-validator`'s. After the typed-400 fix bumps `@hono/zod-validator`'s `peerDependencies.hono` to `>=4.10.0`, leaving `@hono/zod-openapi`'s peer at `>=4.3.6` would let consumers install `@hono/zod-openapi` against e.g. `hono@4.9.9`, where the bundled `@hono/zod-validator` types reference the 4-argument `MiddlewareHandler<E, P, I, R>` (introduced in Hono v4.10.0) and fail to compile (`TS2707`).
+
+### Patch Changes
+
+- Updated dependencies [[`e90e4fb30877f3e3f4b0588bdb2bbfc337efbf67`](https://github.com/honojs/middleware/commit/e90e4fb30877f3e3f4b0588bdb2bbfc337efbf67)]:
+  - @hono/zod-validator@0.8.0
+
 ## 1.3.0
 
 ### Minor Changes
