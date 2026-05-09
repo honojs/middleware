@@ -80,4 +80,35 @@ describe('Stripe webhook middleware', () => {
       60
     )
   })
+
+  it('Should return 400 when the timestamp is outside the tolerance window', async () => {
+    constructEventAsync.mockRejectedValueOnce(
+      new Error('Timestamp outside the tolerance zone')
+    )
+    const app = buildApp()
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      headers: { 'stripe-signature': 't=1,v1=deadbeef' },
+      body: '{}',
+    })
+    expect(res.status).toBe(400)
+    expect(await res.json()).toEqual({ error: 'Invalid webhook signature' })
+  })
+
+  it('Should leave the original request body readable by downstream handlers', async () => {
+    const payload = '{"id":"evt_3","type":"customer.created"}'
+    constructEventAsync.mockResolvedValueOnce({ id: 'evt_3', type: 'customer.created' })
+    const app = new Hono()
+    app.post('/webhook', stripeWebhook({ secret }), async (c) => {
+      const body = await c.req.text()
+      return c.json({ body })
+    })
+    const res = await app.request('/webhook', {
+      method: 'POST',
+      headers: { 'stripe-signature': 't=1,v1=deadbeef' },
+      body: payload,
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ body: payload })
+  })
 })
