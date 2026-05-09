@@ -17,6 +17,17 @@ type zInput<T> = T extends v3.ZodType ? v3.input<T> : T extends v4.$ZodType ? v4
 type zOutput<T> = T extends v3.ZodType ? v3.output<T> : T extends v4.$ZodType ? v4.output<T> : never
 type zInfer<T> = T extends v3.ZodType ? v3.infer<T> : T extends v4.$ZodType ? v4.infer<T> : never
 
+// Failure variant of `safeParseAsync`'s return value.
+// Mirrors the runtime body returned by `c.json(result, 400)` on validation failure.
+type ZodValidatorFailureBody<T extends ZodSchema> = T extends v4.$ZodType
+  ? Extract<v4ZodSafeParseResult<v4.output<T>>, { success: false }>
+  : T extends v3.ZodType
+    ? Extract<v3.SafeParseReturnType<v3.input<T>, v3.output<T>>, { success: false }>
+    : never
+
+type ZodValidatorFailureResponse<T extends ZodSchema> = Response &
+  TypedResponse<ZodValidatorFailureBody<T>, 400, 'json'>
+
 export type Hook<
   T,
   E extends Env,
@@ -36,20 +47,27 @@ type HasUndefined<T> = undefined extends T ? true : false
 type ExtractValidationResponse<VF> = VF extends (value: any, c: any) => infer R
   ? R extends Promise<infer PR>
     ? PR extends TypedResponse<infer T, infer S, infer F>
-      ? TypedResponse<T, S, F>
+      ? Response & TypedResponse<T, S, F>
       : PR extends Response
         ? PR
         : PR extends undefined
           ? never
           : never
     : R extends TypedResponse<infer T, infer S, infer F>
-      ? TypedResponse<T, S, F>
+      ? Response & TypedResponse<T, S, F>
       : R extends Response
         ? R
         : R extends undefined
           ? never
           : never
   : never
+
+type ValidationFunctionOption<T extends ZodSchema, Target extends keyof ValidationTargets> = {
+  validationFunction: (
+    schema: T,
+    value: ValidationTargets[Target]
+  ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
+}
 
 type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
   in: HasUndefined<In> extends true
@@ -62,7 +80,7 @@ type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
   out: { [K in Target]: Out }
 }
 
-// without hook and options
+// without hook (with or without options)
 function zValidatorFunction<
   T extends ZodSchema,
   Target extends keyof ValidationTargets,
@@ -72,7 +90,12 @@ function zValidatorFunction<
   Out = zOutput<T>,
   I extends Input = DefaultInput<Target, In, Out>,
   V extends I = I,
->(target: Target, schema: T): MiddlewareHandler<E, P, V>
+>(
+  target: Target,
+  schema: T,
+  hook?: undefined,
+  options?: ValidationFunctionOption<T, Target>
+): MiddlewareHandler<E, P, V, ZodValidatorFailureResponse<T>>
 
 // with hook and options
 function zValidatorFunction<
@@ -90,12 +113,7 @@ function zValidatorFunction<
   target: Target,
   schema: T,
   hook?: HookFn,
-  options?: {
-    validationFunction: (
-      schema: T,
-      value: ValidationTargets[Target]
-    ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
-  }
+  options?: ValidationFunctionOption<T, Target>
 ): MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>>
 
 // implementation
@@ -114,13 +132,10 @@ function zValidatorFunction<
   target: Target,
   schema: T,
   hook?: HookFn,
-  options?: {
-    validationFunction: (
-      schema: T,
-      value: ValidationTargets[Target]
-    ) => ZodSafeParseResult<any, any, T> | Promise<ZodSafeParseResult<any, any, T>>
-  }
-): MiddlewareHandler<E, P, V> | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
+  options?: ValidationFunctionOption<T, Target>
+):
+  | MiddlewareHandler<E, P, V, ZodValidatorFailureResponse<T>>
+  | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
   // @ts-expect-error not typed well
   return validator(target, async (value: ValidationTargets[Target], c) => {
     let validatorValue = value
