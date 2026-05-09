@@ -42,13 +42,12 @@
     "provenance": true
   },
   "peerDependencies": {
-    "hono": ">=3.0.0"
-  },
-  "dependencies": {
+    "hono": ">=3.0.0",
     "stripe": "^17.0.0"
   },
   "devDependencies": {
     "hono": "^4.11.5",
+    "stripe": "^17.0.0",
     "tsdown": "^0.15.9",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0-beta.1"
