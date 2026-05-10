@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { stripeWebhook } from '.'
+import { stripeWebhook, type StripeWebhookVariables } from '.'
 
 const constructEventAsync = vi.fn()
 
@@ -13,7 +13,7 @@ vi.mock('stripe', () => {
 describe('Stripe webhook middleware', () => {
   const secret = 'whsec_test'
   const buildApp = () => {
-    const app = new Hono()
+    const app = new Hono<{ Variables: StripeWebhookVariables }>()
     app.post('/webhook', stripeWebhook({ secret }), (c) => {
       const event = c.get('stripeEvent')
       return c.json({ type: event.type })
@@ -98,7 +98,7 @@ describe('Stripe webhook middleware', () => {
   it('Should leave the original request body readable by downstream handlers', async () => {
     const payload = '{"id":"evt_3","type":"customer.created"}'
     constructEventAsync.mockResolvedValueOnce({ id: 'evt_3', type: 'customer.created' })
-    const app = new Hono()
+    const app = new Hono<{ Variables: StripeWebhookVariables }>()
     app.post('/webhook', stripeWebhook({ secret }), async (c) => {
       const body = await c.req.text()
       return c.json({ body })

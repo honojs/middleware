@@ -5,12 +5,6 @@ export type StripeWebhookVariables = {
   stripeEvent: Stripe.Event
 }
 
-declare module 'hono' {
-  interface ContextVariableMap {
-    stripeEvent: Stripe.Event
-  }
-}
-
 type Options = {
   secret: string
   tolerance?: number

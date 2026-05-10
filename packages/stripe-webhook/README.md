@@ -30,9 +30,9 @@ stripeWebhook({
 
 ```ts
 import { Hono } from 'hono'
-import { stripeWebhook } from '@hono/stripe-webhook'
+import { stripeWebhook, type StripeWebhookVariables } from '@hono/stripe-webhook'
 
-const app = new Hono()
+const app = new Hono<{ Variables: StripeWebhookVariables }>()
 
 app.post('/webhook', stripeWebhook({ secret: process.env.STRIPE_WEBHOOK_SECRET! }), (c) => {
   const event = c.get('stripeEvent')
@@ -44,6 +44,8 @@ app.post('/webhook', stripeWebhook({ secret: process.env.STRIPE_WEBHOOK_SECRET! 
 
 export default app
 ```
+
+Pass `StripeWebhookVariables` as the `Variables` generic on `Hono<...>` so `c.get('stripeEvent')` is typed.
 
 Options:
 
