@@ -47,10 +47,11 @@ export default app
 
 Options:
 
-| Option      | Type     | Default | Description                                                                       |
-| ----------- | -------- | ------- | --------------------------------------------------------------------------------- |
-| `secret`    | `string` | —       | Required. Your Stripe webhook endpoint signing secret (`whsec_...`).              |
-| `tolerance` | `number` | `300`   | Maximum age (in seconds) of the signed timestamp before the request is rejected. |
+| Option       | Type                       | Default                | Description                                                                       |
+| ------------ | -------------------------- | ---------------------- | --------------------------------------------------------------------------------- |
+| `secret`     | `string`                   | —                      | Required. Your Stripe webhook endpoint signing secret (`whsec_...`).              |
+| `tolerance`  | `number`                   | `300`                  | Maximum age (in seconds) of the signed timestamp before the request is rejected. |
+| `apiVersion` | `Stripe.LatestApiVersion`  | `'2025-02-24.acacia'`  | Stripe API version pinned on the internal `Stripe` client.                        |
 
 ### Accessing the verified event
 

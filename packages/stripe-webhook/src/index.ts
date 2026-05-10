@@ -14,11 +14,12 @@ declare module 'hono' {
 type Options = {
   secret: string
   tolerance?: number
+  apiVersion?: Stripe.LatestApiVersion
 }
 
 export const stripeWebhook = (options: Options): MiddlewareHandler => {
-  const { secret, tolerance = 300 } = options
-  const stripe = new Stripe(secret, { apiVersion: '2025-02-24.acacia' })
+  const { secret, tolerance = 300, apiVersion = '2025-02-24.acacia' } = options
+  const stripe = new Stripe(secret, { apiVersion })
 
   return async (c, next) => {
     const signature = c.req.header('stripe-signature')
