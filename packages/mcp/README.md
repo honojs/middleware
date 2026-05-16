@@ -32,6 +32,20 @@ app.all('/mcp', async (c) => {
 export default app
 ```
 
+### Options
+
+The `StreamableHTTPTransport` constructor accepts all options from the MCP SDK's `StreamableHTTPServerTransportOptions`, plus:
+
+- **`strictAcceptHeader`** (default: `false`) — When `false` (the default), the transport accepts POST requests where the `Accept` header contains `application/json`, `text/event-stream`, or `*/*`. This improves compatibility with clients like Gemini CLI, Java MCP SDK, Open WebUI, and curl. When `true`, the transport enforces strict MCP spec compliance, requiring both `application/json` and `text/event-stream` in the `Accept` header.
+
+```ts
+// Permissive mode (default) — works with most HTTP clients
+const transport = new StreamableHTTPTransport()
+
+// Strict mode — requires fully spec-compliant Accept header
+const transport = new StreamableHTTPTransport({ strictAcceptHeader: true })
+```
+
 ## Auth
 
 The simplest way to setup MCP Auth when using 3rd party auth providers.
