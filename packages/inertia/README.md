@@ -215,7 +215,7 @@ A complete Cloudflare Workers + React + Vite example lives at [yusukebe/hono-ine
 ## Authors
 
 - Yusuke Wada <https://github.com/yusukebe>
-- asahi <https://github.com/ashunar0>
+- Asahi Kawanobe <https://github.com/ashunar0>
 
 ## License
 
