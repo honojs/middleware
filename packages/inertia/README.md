@@ -212,6 +212,11 @@ export default defineConfig({
 
 A complete Cloudflare Workers + React + Vite example lives at [yusukebe/hono-inertia-example](https://github.com/yusukebe/hono-inertia-example).
 
+## Authors
+
+- Yusuke Wada <https://github.com/yusukebe>
+- asahi <https://github.com/ashunar0>
+
 ## License
 
 MIT
