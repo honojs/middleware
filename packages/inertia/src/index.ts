@@ -137,7 +137,8 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const partialComponent = c.req.header('X-Inertia-Partial-Component')
       const partialData = c.req.header('X-Inertia-Partial-Data')
       const partialExcept = c.req.header('X-Inertia-Partial-Except')
-      const isPartial = partialComponent === component && Boolean(partialData || partialExcept)
+      const isPartial =
+        partialComponent === component && (partialData !== undefined || partialExcept !== undefined)
 
       const parseKeys = (header: string | undefined): string[] | null =>
         header
@@ -161,8 +162,12 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const kept: [string, unknown][] = []
       let hasFunction = false
       for (const [key, value] of Object.entries(propsInput)) {
-        if (isExcluded(key)) continue
-        if (typeof value === 'function') hasFunction = true
+        if (isExcluded(key)) {
+          continue
+        }
+        if (typeof value === 'function') {
+          hasFunction = true
+        }
         kept.push([key, value])
       }
 

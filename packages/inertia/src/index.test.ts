@@ -201,8 +201,12 @@ describe('inertia', () => {
         'X-Inertia-Version': 'v1',
         'X-Inertia-Partial-Component': component,
       }
-      if (only !== undefined) headers['X-Inertia-Partial-Data'] = only
-      if (except !== undefined) headers['X-Inertia-Partial-Except'] = except
+      if (only !== undefined) {
+        headers['X-Inertia-Partial-Data'] = only
+      }
+      if (except !== undefined) {
+        headers['X-Inertia-Partial-Except'] = except
+      }
       return headers
     }
 
