@@ -14,10 +14,11 @@ export function xAuth(options: {
   client_id?: string
   client_secret?: string
   redirect_uri?: string
+  state?: string
 }): MiddlewareHandler {
   return async (c, next) => {
     // Generate encoded "keys"
-    const newState = getRandomState()
+    const newState = options.state || getRandomState()
     const challenge = await getCodeChallenge()
 
     const auth = new AuthFlow({
