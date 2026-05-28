@@ -380,7 +380,7 @@ describe('session.get() with storage', () => {
     expect(sessionCookie?.payload.iat).toBeGreaterThan(recent)
     expect(sessionCookie?.payload.sid).not.toStrictEqual(sid)
     expect(getSpy).toHaveBeenCalledWith(sid)
-    expect(setSpy).not.toBeCalled()
+    expect(setSpy).not.toHaveBeenCalled()
     expect(storage.size).toBe(0)
   })
 
