@@ -82,6 +82,14 @@ export interface InertiaOptions {
 export const serializePage = (page: PageObject): string =>
   JSON.stringify(page).replace(/\//g, '\\/')
 
+const parseKeys = (header: string | undefined): string[] | null =>
+  header
+    ? header
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : null
+
 const defaultRootView: RootView = (page) =>
   `<!DOCTYPE html>
 <html>
@@ -139,14 +147,6 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const partialExcept = c.req.header('X-Inertia-Partial-Except')
       const isPartial =
         partialComponent === component && (partialData !== undefined || partialExcept !== undefined)
-
-      const parseKeys = (header: string | undefined): string[] | null =>
-        header
-          ? header
-              .split(',')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : null
 
       const onlyKeys = isPartial ? parseKeys(partialData) : null
       const exceptKeys = isPartial ? parseKeys(partialExcept) : null
