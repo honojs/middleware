@@ -1,5 +1,11 @@
 # @hono/inertia
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1904](https://github.com/honojs/middleware/pull/1904) [`a1334f21e77cea7db953825d35f58c271aa7b9fb`](https://github.com/honojs/middleware/commit/a1334f21e77cea7db953825d35f58c271aa7b9fb) Thanks [@ashunar0](https://github.com/ashunar0)! - add server-side support for [Inertia.js partial reloads](https://inertiajs.com/partial-reloads). Honors the `X-Inertia-Partial-Component`, `X-Inertia-Partial-Data` (only), and `X-Inertia-Partial-Except` headers, and accepts function-valued props (`() => T | Promise<T>`) that are evaluated lazily — function props excluded from a partial reload are never invoked, so heavy data fetching can be skipped.
+
 ## 0.2.0
 
 ### Minor Changes
