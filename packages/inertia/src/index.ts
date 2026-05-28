@@ -30,6 +30,25 @@ export type PageObject<P = Record<string, unknown>> = {
  */
 export type RootView = (page: PageObject, c: Context) => string | Promise<string>
 
+/**
+ * A prop value that can be resolved lazily. When the value is a function it
+ * is only invoked if the prop is included in the current render, which is the
+ * key mechanism behind partial reloads — heavy data fetching can be skipped
+ * for props that the client did not request.
+ */
+export type Resolvable<T> = T | (() => T | Promise<T>)
+
+/**
+ * Resolved form of a {@link Resolvable}. Resolves the awaited return value of
+ * a function prop, or the value itself otherwise.
+ */
+export type Resolved<T> = T extends (...args: never[]) => infer R ? Awaited<R> : T
+
+/**
+ * Applies {@link Resolved} to every property of `P`.
+ */
+export type ResolvedProps<P> = { [K in keyof P]: Resolved<P[K]> }
+
 export interface InertiaOptions {
   /**
    * Asset version. When an Inertia GET request's `X-Inertia-Version` header
@@ -62,6 +81,14 @@ export interface InertiaOptions {
  */
 export const serializePage = (page: PageObject): string =>
   JSON.stringify(page).replace(/\//g, '\\/')
+
+const parseKeys = (header: string | undefined): string[] | null =>
+  header
+    ? header
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : null
 
 const defaultRootView: RootView = (page) =>
   `<!DOCTYPE html>
@@ -109,31 +136,79 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       }
     }
 
-    c.setRenderer(((component: string, props: Record<string, unknown> = {}) => {
+    c.setRenderer(((component: string, propsInput: Record<string, unknown> = {}) => {
       const url = new URL(c.req.url)
-      const page: PageObject = {
-        component,
-        props,
-        url: url.pathname + url.search,
-        version,
+
+      // Partial reload negotiation: the client (Inertia core) signals
+      // "only re-evaluate these props" via X-Inertia-Partial-Component +
+      // X-Inertia-Partial-Data / X-Inertia-Partial-Except.
+      const partialComponent = c.req.header('X-Inertia-Partial-Component')
+      const partialData = c.req.header('X-Inertia-Partial-Data')
+      const partialExcept = c.req.header('X-Inertia-Partial-Except')
+      const isPartial =
+        partialComponent === component && (partialData !== undefined || partialExcept !== undefined)
+
+      const onlyKeys = isPartial ? parseKeys(partialData) : null
+      const exceptKeys = isPartial ? parseKeys(partialExcept) : null
+
+      const isExcluded = (key: string): boolean =>
+        (onlyKeys !== null && !onlyKeys.includes(key)) ||
+        (exceptKeys !== null && exceptKeys.includes(key))
+
+      // Collect kept entries and decide sync vs async resolution. When no
+      // function-valued prop is encountered, the renderer stays fully sync —
+      // preserving the original `Response` (non-Promise) return type for the
+      // common case.
+      const kept: [string, unknown][] = []
+      let hasFunction = false
+      for (const [key, value] of Object.entries(propsInput)) {
+        if (isExcluded(key)) {
+          continue
+        }
+        if (typeof value === 'function') {
+          hasFunction = true
+        }
+        kept.push([key, value])
       }
 
-      c.header('Vary', 'Accept, X-Inertia')
+      const respond = (resolvedProps: Record<string, unknown>) => {
+        const page: PageObject = {
+          component,
+          props: resolvedProps,
+          url: url.pathname + url.search,
+          version,
+        }
 
-      if (c.req.header('X-Inertia')) {
-        c.header('X-Inertia', 'true')
-        return c.json(page)
+        c.header('Vary', 'Accept, X-Inertia')
+
+        if (c.req.header('X-Inertia')) {
+          c.header('X-Inertia', 'true')
+          return c.json(page)
+        }
+
+        if (c.req.header('Accept')?.includes('application/json')) {
+          return c.json(resolvedProps)
+        }
+
+        const rendered = rootView(page, c)
+        if (rendered instanceof Promise) {
+          return rendered.then((html) => c.html(html))
+        }
+        return c.html(rendered)
       }
 
-      if (c.req.header('Accept')?.includes('application/json')) {
-        return c.json(props)
+      if (!hasFunction) {
+        return respond(Object.fromEntries(kept))
       }
 
-      const rendered = rootView(page, c)
-      if (rendered instanceof Promise) {
-        return rendered.then((html) => c.html(html))
-      }
-      return c.html(rendered)
+      return Promise.all(
+        kept.map(
+          async ([key, value]): Promise<[string, unknown]> => [
+            key,
+            typeof value === 'function' ? await (value as () => unknown)() : value,
+          ]
+        )
+      ).then((entries) => respond(Object.fromEntries(entries)))
     }) as Parameters<typeof c.setRenderer>[0])
 
     return next()
@@ -174,7 +249,7 @@ declare module 'hono' {
     <C extends PageName, P = Record<string, never>>(
       component: C,
       props?: P
-    ): Response & TypedResponse<{ component: C; props: P }, 200, 'html'>
+    ): Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
   }
   interface NotFoundResponse extends Response, TypedResponse<string, 404, 'text'> {}
 }
