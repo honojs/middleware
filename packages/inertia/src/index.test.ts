@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
 import type { PageObject } from './index'
-import { inertia } from './index'
+import { defer, inertia } from './index'
 
 describe('inertia', () => {
   describe('full page (non Inertia request)', () => {
@@ -384,6 +384,221 @@ describe('inertia', () => {
       expect(calls.sort()).toEqual(['a', 'b'])
       const body = (await res.json()) as { props: Record<string, unknown> }
       expect(body.props).toEqual({ a: 1, b: 2 })
+    })
+  })
+
+  describe('deferred props', () => {
+    const partialHeaders = (component: string, only?: string) => {
+      const headers: Record<string, string> = {
+        'X-Inertia': 'true',
+        'X-Inertia-Version': 'v1',
+        'X-Inertia-Partial-Component': component,
+      }
+      if (only !== undefined) {
+        headers['X-Inertia-Partial-Data'] = only
+      }
+      return headers
+    }
+
+    it('skips the resolver and advertises the key on the initial Inertia visit', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: { id: 1 },
+          posts: defer(() => {
+            calls.push('posts')
+            return [{ id: 1 }]
+          }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      expect(calls).toEqual([])
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        deferredProps?: Record<string, string[]>
+      }
+      expect(body.props).toEqual({ user: { id: 1 } })
+      expect(body.deferredProps).toEqual({ default: ['posts'] })
+    })
+
+    it('groups deferred keys by the provided group name', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          posts: defer(() => [{ id: 1 }]),
+          stats: defer(() => ({ total: 10 }), 'secondary'),
+          comments: defer(() => [], 'secondary'),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        deferredProps?: Record<string, string[]>
+      }
+      expect(body.props).toEqual({})
+      expect(body.deferredProps).toEqual({
+        default: ['posts'],
+        secondary: ['stats', 'comments'],
+      })
+    })
+
+    it('resolves a deferred prop when it is requested via partial reload', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: { id: 1 },
+          posts: defer(async () => {
+            await Promise.resolve()
+            calls.push('posts')
+            return [{ id: 1 }, { id: 2 }]
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'posts') })
+
+      expect(calls).toEqual(['posts'])
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        deferredProps?: Record<string, string[]>
+      }
+      expect(body.props).toEqual({ posts: [{ id: 1 }, { id: 2 }] })
+      // deferredProps must not be re-emitted on partial reloads, otherwise
+      // the client would loop fetching the same group forever.
+      expect(body.deferredProps).toBeUndefined()
+    })
+
+    it('does not invoke deferred resolvers that are not in only', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          posts: defer(() => {
+            calls.push('posts')
+            return [{ id: 1 }]
+          }),
+          stats: defer(() => {
+            calls.push('stats')
+            return { total: 10 }
+          }, 'secondary'),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'posts') })
+
+      expect(calls).toEqual(['posts'])
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ posts: [{ id: 1 }] })
+    })
+
+    it('skips deferred props on non-Inertia JSON requests', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: { id: 1 },
+          posts: defer(() => {
+            calls.push('posts')
+            return [{ id: 1 }]
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: { Accept: 'application/json' } })
+
+      expect(calls).toEqual([])
+      expect(await res.json()).toEqual({ user: { id: 1 } })
+    })
+
+    it('embeds the deferredProps map in the initial HTML page object', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: { id: 1 },
+          posts: defer(() => [{ id: 1 }]),
+        })
+      )
+
+      const res = await app.request('/')
+
+      const html = await res.text()
+      expect(html).toContain('"deferredProps":{"default":["posts"]}')
+      expect(html).not.toContain('"posts"\\:[{')
+    })
+
+    it('mixes deferred props with eager function props on partial reloads', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: () => {
+            calls.push('user')
+            return { id: 1 }
+          },
+          posts: defer(() => {
+            calls.push('posts')
+            return [{ id: 1 }]
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'user,posts') })
+
+      expect(calls.sort()).toEqual(['posts', 'user'])
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ user: { id: 1 }, posts: [{ id: 1 }] })
+    })
+
+    it('omits deferredProps from the page object when no prop is deferred', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { user: { id: 1 } }))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { deferredProps?: Record<string, string[]> }
+      expect(body.deferredProps).toBeUndefined()
+    })
+
+    it('omits a deferred prop from initial response even on default (non-XHR) HTML visits', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          user: { id: 1 },
+          posts: defer(() => {
+            calls.push('posts')
+            return [{ id: 1 }]
+          }),
+        })
+      )
+
+      const res = await app.request('/')
+
+      expect(calls).toEqual([])
+      const html = await res.text()
+      expect(html).toContain('"user":{"id":1}')
+      expect(html).not.toContain('"posts":[')
     })
   })
 })

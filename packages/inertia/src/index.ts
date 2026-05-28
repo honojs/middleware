@@ -20,6 +20,13 @@ export type PageObject<P = Record<string, unknown>> = {
   props: P
   url: string
   version: string | null
+  /**
+   * Deferred prop keys grouped by their fetch group. Present only on initial
+   * (non-partial) responses when at least one prop was marked with
+   * {@link defer}. The Inertia client uses this to schedule one partial
+   * reload per group right after mount.
+   */
+  deferredProps?: Record<string, string[]>
 }
 
 /**
@@ -48,6 +55,58 @@ export type Resolved<T> = T extends (...args: never[]) => infer R ? Awaited<R> :
  * Applies {@link Resolved} to every property of `P`.
  */
 export type ResolvedProps<P> = { [K in keyof P]: Resolved<P[K]> }
+
+const DEFER_MARKER = Symbol.for('@hono/inertia/defer')
+
+/**
+ * Internal marker produced by {@link defer}. The renderer detects this and
+ * skips the resolver on initial responses (advertising the key under
+ * `page.deferredProps`) so the client can request the value via a partial
+ * reload after the initial render.
+ *
+ * The shape is intentionally opaque — only the type guard inside the renderer
+ * reads it. The factory returns `T` so usage at call sites is transparent.
+ */
+interface DeferredProp<T = unknown> {
+  [DEFER_MARKER]: true
+  resolver: () => T | Promise<T>
+  group: string
+}
+
+const isDeferred = (value: unknown): value is DeferredProp =>
+  typeof value === 'object' && value !== null && DEFER_MARKER in value
+
+/**
+ * Marks a prop as deferred. On the initial response the resolver is skipped
+ * and the prop key is advertised under `page.deferredProps[group]`. The
+ * client then issues one partial reload per group, which re-enters the
+ * middleware with the corresponding key in `X-Inertia-Partial-Data`, at
+ * which point the resolver runs and the value is sent down.
+ *
+ * Multiple deferred props that share a `group` are fetched together in a
+ * single partial reload. The default group is `"default"`.
+ *
+ * @example
+ * ```ts
+ * app.get('/', (c) =>
+ *   c.render('Dashboard', {
+ *     user: { id: 1 },                       // sent on initial response
+ *     posts: defer(() => fetchPosts()),      // skipped initially, fetched after mount
+ *     stats: defer(() => fetchStats(), 'secondary'),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/deferred-props
+ */
+export const defer = <T>(resolver: () => T | Promise<T>, group = 'default'): T => {
+  const marker: DeferredProp<T> = {
+    [DEFER_MARKER]: true,
+    resolver,
+    group,
+  }
+  return marker as unknown as T
+}
 
 export interface InertiaOptions {
   /**
@@ -156,17 +215,33 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         (exceptKeys !== null && exceptKeys.includes(key))
 
       // Collect kept entries and decide sync vs async resolution. When no
-      // function-valued prop is encountered, the renderer stays fully sync —
-      // preserving the original `Response` (non-Promise) return type for the
-      // common case.
+      // function-valued or deferred prop is encountered, the renderer stays
+      // fully sync — preserving the original `Response` (non-Promise) return
+      // type for the common case.
+      //
+      // Deferred props are handled per visit kind:
+      //   - initial visit (`!isPartial`): the resolver is skipped, the key
+      //     is recorded in `deferredGroups`, and nothing is added to `kept`.
+      //   - partial visit (`isPartial`): the marker is kept and resolved
+      //     just like a regular function-valued prop.
       const kept: [string, unknown][] = []
-      let hasFunction = false
+      const deferredGroups: Record<string, string[]> = {}
+      let needsAsync = false
       for (const [key, value] of Object.entries(propsInput)) {
         if (isExcluded(key)) {
           continue
         }
+        if (isDeferred(value)) {
+          if (!isPartial) {
+            ;(deferredGroups[value.group] ??= []).push(key)
+            continue
+          }
+          needsAsync = true
+          kept.push([key, value])
+          continue
+        }
         if (typeof value === 'function') {
-          hasFunction = true
+          needsAsync = true
         }
         kept.push([key, value])
       }
@@ -177,6 +252,9 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
           props: resolvedProps,
           url: url.pathname + url.search,
           version,
+        }
+        if (!isPartial && Object.keys(deferredGroups).length > 0) {
+          page.deferredProps = deferredGroups
         }
 
         c.header('Vary', 'Accept, X-Inertia')
@@ -197,17 +275,17 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         return c.html(rendered)
       }
 
-      if (!hasFunction) {
+      if (!needsAsync) {
         return respond(Object.fromEntries(kept))
       }
 
       return Promise.all(
-        kept.map(
-          async ([key, value]): Promise<[string, unknown]> => [
-            key,
-            typeof value === 'function' ? await (value as () => unknown)() : value,
-          ]
-        )
+        kept.map(async ([key, value]): Promise<[string, unknown]> => {
+          if (isDeferred(value)) {
+            return [key, await value.resolver()]
+          }
+          return [key, typeof value === 'function' ? await (value as () => unknown)() : value]
+        })
       ).then((entries) => respond(Object.fromEntries(entries)))
     }) as Parameters<typeof c.setRenderer>[0])
 
