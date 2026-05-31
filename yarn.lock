@@ -2168,7 +2168,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:^9.0.10"
     hono: "npm:^4.11.5"
     jsonwebtoken: "npm:^9.0.3"
-    oauth4webapi: "npm:^2.6.0"
+    oauth4webapi: "npm:^3.8.6"
     tsdown: "npm:^0.15.9"
     typescript: "npm:^5.9.3"
     vitest: "npm:^4.1.7"
@@ -12497,10 +12497,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^2.6.0":
-  version: 2.9.0
-  resolution: "oauth4webapi@npm:2.9.0"
-  checksum: 10c0/7bbd2ab446c0621c71f6855c695b900d6ba1f56474b105751134112abf5cff9fbe2fe715d2ae0f57f0ed1adc600c37ae6bf007669af9f760dc982aaeaeb0968f
+"oauth4webapi@npm:^3.8.6":
+  version: 3.8.6
+  resolution: "oauth4webapi@npm:3.8.6"
+  checksum: 10c0/479810716702c5616e4a0eb80d4f1c264a6a2b63b04061a62a59375e195d2726e947507ede98e41ee3f9ca800f159621ea371c36f5c4346d015b6ec03e477440
   languageName: node
   linkType: hard
 
