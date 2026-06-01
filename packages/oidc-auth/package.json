@@ -52,7 +52,7 @@
     "vitest": "^4.1.7"
   },
   "dependencies": {
-    "oauth4webapi": "^2.6.0"
+    "oauth4webapi": "^3.8.6"
   },
   "engines": {
     "node": ">=18.0.0"
