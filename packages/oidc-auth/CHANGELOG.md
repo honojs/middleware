@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.8.3
+
+### Patch Changes
+
+- [#1916](https://github.com/honojs/middleware/pull/1916) [`d939c2d419b671cee283b589ebfff14eb01b1722`](https://github.com/honojs/middleware/commit/d939c2d419b671cee283b589ebfff14eb01b1722) Thanks [@thegu5](https://github.com/thegu5)! - bump oauth4webapi dependency from 2.6.0 to 3.8.6
+
 ## 1.8.2
 
 ### Patch Changes
