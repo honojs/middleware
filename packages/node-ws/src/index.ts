@@ -1,11 +1,11 @@
-import type { Hono } from 'hono'
+import type { Hono, Env } from 'hono'
 import { defineWebSocketHelper } from 'hono/ws'
 import type { UpgradeWebSocket, WSContext } from 'hono/ws'
 import type { WebSocket } from 'ws'
 import { WebSocketServer } from 'ws'
 import { STATUS_CODES } from 'node:http'
 import type { IncomingMessage, Server } from 'node:http'
-import type { Http2SecureServer, Http2Server } from 'node:http2'
+import type { Http2SecureServer, Http2Server, Http2ServerRequest } from 'node:http2'
 import type { Duplex } from 'node:stream'
 import { CloseEvent } from './events'
 
@@ -23,6 +23,7 @@ export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app: Hono<any, any, any>
   baseUrl?: string | URL
+  getEnv?: (request: IncomingMessage | Http2ServerRequest) => Env['Bindings']
 }
 
 const generateConnectionSymbol = () => Symbol('connection')
@@ -70,11 +71,13 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           headers.append(key, Array.isArray(value) ? value[0] : value)
         }
 
+        const customEnv = init.getEnv?.(request) ?? {}
         const env: {
           incoming: IncomingMessage
           outgoing: undefined
           [CONNECTION_SYMBOL_KEY]?: symbol
         } = {
+          ...customEnv,
           incoming: request,
           outgoing: undefined,
         }
