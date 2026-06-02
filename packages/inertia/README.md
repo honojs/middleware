@@ -176,6 +176,45 @@ export default function Show({ post }: PageProps<'Posts/Show'>) {
 }
 ```
 
+## Partial reloads
+
+Inertia's [partial reloads](https://inertiajs.com/partial-reloads) let a single visit re-fetch only a subset of the page's props, leaving the rest as they were. `@hono/inertia` honors the `X-Inertia-Partial-Component`, `X-Inertia-Partial-Data`, and `X-Inertia-Partial-Except` headers transparently — the route signature stays the same.
+
+```ts
+app.get('/dashboard', (c) =>
+  c.render('Dashboard', {
+    user, // sent every time
+    stats: () => db.heavyQuery(), // function prop — only invoked when included
+  })
+)
+```
+
+Function props (`() => T | Promise<T>`) are evaluated lazily, so heavy data fetching is skipped for props the client did not request. The return type may be synchronous or a `Promise`.
+
+A request is treated as a partial reload only when `X-Inertia-Partial-Component` matches the rendered component **and** at least one of `X-Inertia-Partial-Data` / `X-Inertia-Partial-Except` is present. Otherwise the request is processed as a normal Inertia visit and every prop — including function props — is resolved.
+
+## Deferred props
+
+[Deferred props](https://inertiajs.com/deferred-props) move heavy data fetching off the critical path: the initial response advertises which props are pending, the page becomes interactive immediately, and the Inertia client then issues a follow-up partial reload to fill them in.
+
+Wrap the resolver with `defer()`:
+
+```ts
+import { defer, inertia } from '@hono/inertia'
+
+app.use(inertia())
+
+app.get('/', (c) =>
+  c.render('Dashboard', {
+    user: { id: 1 }, // sent on the initial response
+    posts: defer(() => fetchPosts()), // resolved after mount
+    stats: defer(() => fetchStats(), 'secondary'),
+  })
+)
+```
+
+Multiple deferred props sharing the same `group` (the second argument, default `'default'`) are fetched together in a single follow-up request. On the initial response the resolvers are not invoked and the keys are advertised under `page.deferredProps[group]`; on the follow-up partial reload only the requested resolvers run.
+
 ## Vite plugin
 
 ```ts
