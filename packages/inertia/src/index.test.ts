@@ -539,7 +539,7 @@ describe('inertia', () => {
 
       const html = await res.text()
       expect(html).toContain('"deferredProps":{"default":["posts"]}')
-      expect(html).not.toContain('"posts"\\:[{')
+      expect(html).not.toContain('"posts":[{')
     })
 
     it('mixes deferred props with eager function props on partial reloads', async () => {
