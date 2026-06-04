@@ -1,6 +1,6 @@
 import type { Context, Env, MiddlewareHandler } from 'hono'
-import * as cookie from 'hono/cookie'
 import { env } from 'hono/adapter'
+import * as cookie from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
 import type { EncryptionKey, MaxAgeDuration } from './cookies'
