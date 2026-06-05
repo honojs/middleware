@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
 import type { PageObject } from './index'
-import { defer, inertia } from './index'
+import { deepMerge, defer, inertia, merge, prepend } from './index'
 
 describe('inertia', () => {
   describe('full page (non Inertia request)', () => {
@@ -599,6 +599,287 @@ describe('inertia', () => {
       const html = await res.text()
       expect(html).toContain('"user":{"id":1}')
       expect(html).not.toContain('"posts":[')
+    })
+  })
+
+  describe('merge props', () => {
+    const partialHeaders = (component: string, only?: string) => {
+      const headers: Record<string, string> = {
+        'X-Inertia': 'true',
+        'X-Inertia-Version': 'v1',
+        'X-Inertia-Partial-Component': component,
+      }
+      if (only !== undefined) {
+        headers['X-Inertia-Partial-Data'] = only
+      }
+      return headers
+    }
+
+    it('emits page.mergeProps and unwraps the value for merge()', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 1 }, { id: 2 }]),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        mergeProps?: string[]
+        prependProps?: string[]
+        deepMergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ posts: [{ id: 1 }, { id: 2 }] })
+      expect(body.mergeProps).toEqual(['posts'])
+      expect(body.prependProps).toBeUndefined()
+      expect(body.deepMergeProps).toBeUndefined()
+      expect(body.matchPropsOn).toBeUndefined()
+    })
+
+    it('emits page.prependProps for prepend()', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          notifications: prepend([{ id: 1 }]),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        prependProps?: string[]
+      }
+      expect(body.props).toEqual({ notifications: [{ id: 1 }] })
+      expect(body.prependProps).toEqual(['notifications'])
+    })
+
+    it('emits page.deepMergeProps for deepMerge()', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          feed: deepMerge({ data: [{ id: 1 }], meta: { total: 1 } }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        deepMergeProps?: string[]
+      }
+      expect(body.props).toEqual({ feed: { data: [{ id: 1 }], meta: { total: 1 } } })
+      expect(body.deepMergeProps).toEqual(['feed'])
+    })
+
+    it('builds matchPropsOn as "<key>.<field>" from a single matchOn string', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 1 }], { matchOn: 'id' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { matchPropsOn?: string[] }
+      expect(body.matchPropsOn).toEqual(['posts.id'])
+    })
+
+    it('expands an array matchOn into one matchPropsOn entry per field', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          conversations: deepMerge(
+            { data: [{ id: 1, threadId: 'a' }] },
+            { matchOn: ['data.id', 'data.threadId'] }
+          ),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { matchPropsOn?: string[] }
+      expect(body.matchPropsOn).toEqual(['conversations.data.id', 'conversations.data.threadId'])
+    })
+
+    it('mixes merge / prepend / deepMerge in a single response', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 1 }], { matchOn: 'id' }),
+          notifications: prepend([{ id: 9 }], { matchOn: 'id' }),
+          conversations: deepMerge({ data: [{ id: 1 }] }, { matchOn: 'data.id' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        mergeProps?: string[]
+        prependProps?: string[]
+        deepMergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({
+        posts: [{ id: 1 }],
+        notifications: [{ id: 9 }],
+        conversations: { data: [{ id: 1 }] },
+      })
+      expect(body.mergeProps).toEqual(['posts'])
+      expect(body.prependProps).toEqual(['notifications'])
+      expect(body.deepMergeProps).toEqual(['conversations'])
+      expect(body.matchPropsOn).toEqual(['posts.id', 'notifications.id', 'conversations.data.id'])
+    })
+
+    it('still emits mergeProps on partial reloads so the client can keep combining', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 3 }], { matchOn: 'id' }),
+          user: { id: 1 },
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Feed', 'posts') })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        mergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ posts: [{ id: 3 }] })
+      expect(body.mergeProps).toEqual(['posts'])
+      expect(body.matchPropsOn).toEqual(['posts.id'])
+    })
+
+    it('omits a merge-marked prop from mergeProps when the partial filter excludes it', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 3 }], { matchOn: 'id' }),
+          notifications: prepend([{ id: 9 }], { matchOn: 'id' }),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Feed', 'posts') })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        mergeProps?: string[]
+        prependProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ posts: [{ id: 3 }] })
+      expect(body.mergeProps).toEqual(['posts'])
+      expect(body.prependProps).toBeUndefined()
+      expect(body.matchPropsOn).toEqual(['posts.id'])
+    })
+
+    it('omits all merge fields from the page object when no prop is merge-marked', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { user: { id: 1 } }))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        mergeProps?: string[]
+        prependProps?: string[]
+        deepMergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.mergeProps).toBeUndefined()
+      expect(body.prependProps).toBeUndefined()
+      expect(body.deepMergeProps).toBeUndefined()
+      expect(body.matchPropsOn).toBeUndefined()
+    })
+
+    it('embeds mergeProps and matchPropsOn in the initial HTML page object', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 1 }], { matchOn: 'id' }),
+        })
+      )
+
+      const res = await app.request('/')
+
+      const html = await res.text()
+      expect(html).toContain('"mergeProps":["posts"]')
+      expect(html).toContain('"matchPropsOn":["posts.id"]')
+    })
+
+    it('resolves a function value passed to merge() on partial reloads', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge(
+            () => {
+              calls.push('posts')
+              return [{ id: 1 }, { id: 2 }]
+            },
+            { matchOn: 'id' }
+          ),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Feed', 'posts') })
+
+      expect(calls).toEqual(['posts'])
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        mergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ posts: [{ id: 1 }, { id: 2 }] })
+      expect(body.mergeProps).toEqual(['posts'])
+      expect(body.matchPropsOn).toEqual(['posts.id'])
+    })
+
+    it('unwraps the merge value for raw JSON requests (Accept: application/json) and skips the merge fields', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          posts: merge([{ id: 1 }], { matchOn: 'id' }),
+        })
+      )
+
+      const res = await app.request('/', { headers: { Accept: 'application/json' } })
+
+      // Accept: application/json returns the raw props (not a page object),
+      // so the merge metadata isn't relevant — only the unwrapped value matters.
+      expect(await res.json()).toEqual({ posts: [{ id: 1 }] })
     })
   })
 })

@@ -215,6 +215,38 @@ app.get('/', (c) =>
 
 Multiple deferred props sharing the same `group` (the second argument, default `'default'`) are fetched together in a single follow-up request. On the initial response the resolvers are not invoked and the keys are advertised under `page.deferredProps[group]`; on the follow-up partial reload only the requested resolvers run.
 
+## Merge props
+
+By default a partial reload **replaces** the cached prop value. [Merge props](https://inertiajs.com/merging-props) instead **combine** the incoming value with the cached one — append items to a list, prepend new notifications, or deep merge a paginated wrapper. The value travels as-is and the metadata (`page.mergeProps` / `prependProps` / `deepMergeProps` / `matchPropsOn`) tells the Inertia client how to combine it on the next partial reload.
+
+Pick the helper that matches the shape:
+
+```ts
+import { deepMerge, inertia, merge, prepend } from '@hono/inertia'
+
+app.use(inertia())
+
+app.get('/feed', (c) =>
+  c.render('Feed', {
+    // append: concat array items / shallow-spread object keys
+    posts: merge(await db.posts.page(n), { matchOn: 'id' }),
+
+    // prepend: insert new items at the start
+    notifications: prepend(await fetchNotifications(), { matchOn: 'id' }),
+
+    // deep merge: recurse into wrapper-shaped paginated props
+    conversations: deepMerge(
+      { data: await db.messages.page(n), meta: { nextCursor } },
+      { matchOn: 'data.id' }
+    ),
+  })
+)
+```
+
+`matchOn` accepts a string or array of strings and is emitted as `<propKey>.<field>` on `page.matchPropsOn` (e.g. `merge(posts, { matchOn: 'id' })` on the `posts` prop ⇒ `matchPropsOn: ['posts.id']`), which the client uses to dedupe items by that field.
+
+The merge metadata is included on **every** response — initial and partial — so the client knows which keys to combine on the next partial reload. Full page visits always replace props entirely; merging only kicks in on subsequent partial reloads.
+
 ## Vite plugin
 
 ```ts
