@@ -1,5 +1,11 @@
 # @hono/session
 
+## 0.2.1
+
+### Patch Changes
+
+- [#1929](https://github.com/honojs/middleware/pull/1929) [`5c31f325be19d2254569118f169fd7049190e640`](https://github.com/honojs/middleware/commit/5c31f325be19d2254569118f169fd7049190e640) Thanks [@orpheus6678](https://github.com/orpheus6678)! - Use of `env()` adapter to facilitate the retrieval of `AUTH_SECRET` across different runtimes as opposed to just cloudflare workers
+
 ## 0.2.0
 
 ### Minor Changes
