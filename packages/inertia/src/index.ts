@@ -27,6 +27,32 @@ export type PageObject<P = Record<string, unknown>> = {
    * reload per group right after mount.
    */
   deferredProps?: Record<string, string[]>
+  /**
+   * Prop keys whose values should be appended to the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link merge}. Emitted on both initial and partial responses so the
+   * client knows which keys to merge on the next partial reload.
+   */
+  mergeProps?: string[]
+  /**
+   * Prop keys whose values should be prepended to the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link prepend}.
+   */
+  prependProps?: string[]
+  /**
+   * Prop keys whose values should be deep-merged with the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link deepMerge}.
+   */
+  deepMergeProps?: string[]
+  /**
+   * Dot-paths used by the client to dedupe array items when merging. Each
+   * entry is `"<propKey>.<matchField>"` (e.g. `"posts.id"`), built from the
+   * `matchOn` option passed to {@link merge}, {@link prepend}, or
+   * {@link deepMerge}.
+   */
+  matchPropsOn?: string[]
 }
 
 /**
@@ -107,6 +133,123 @@ export const defer = <T>(resolver: () => T | Promise<T>, group = 'default'): T =
   }
   return marker as unknown as T
 }
+
+const MERGE_MARKER = Symbol.for('@hono/inertia/merge')
+
+/**
+ * Strategy applied by the Inertia client when combining incoming merge props
+ * with the cached value:
+ *
+ * - `'append'` — concat arrays (or shallow-spread object keys) at the end
+ * - `'prepend'` — concat arrays at the start
+ * - `'deep'` — recurse into nested arrays/objects, applying `matchOn` dedupe
+ */
+type MergeStrategy = 'append' | 'prepend' | 'deep'
+
+/**
+ * Internal marker produced by {@link merge}, {@link prepend}, and
+ * {@link deepMerge}. The renderer detects this and emits the resolved value
+ * as-is while recording the prop key against the corresponding
+ * `page.mergeProps` / `page.prependProps` / `page.deepMergeProps` bucket. The
+ * client then uses these on subsequent partial reloads to combine incoming
+ * values with the cached ones instead of replacing.
+ *
+ * The shape is intentionally opaque — only the type guard inside the renderer
+ * reads it. The factory returns `T` so usage at call sites is transparent.
+ */
+interface MergeProp<T = unknown> {
+  [MERGE_MARKER]: true
+  strategy: MergeStrategy
+  data: T
+  matchOn: string[]
+}
+
+const isMerge = (value: unknown): value is MergeProp =>
+  typeof value === 'object' && value !== null && MERGE_MARKER in value
+
+/**
+ * Options accepted by {@link merge}, {@link prepend}, and {@link deepMerge}.
+ */
+export interface MergeOptions {
+  /**
+   * Field(s) used by the Inertia client to dedupe array items when combining
+   * incoming and cached values. Each entry is appended to the prop key as a
+   * dot-path on `page.matchPropsOn` (e.g. `merge(posts, { matchOn: 'id' })`
+   * on the `posts` prop emits `matchPropsOn: ['posts.id']`).
+   */
+  matchOn?: string | string[]
+}
+
+const buildMerge =
+  (strategy: MergeStrategy) =>
+  <T>(data: T, options: MergeOptions = {}): T => {
+    const matchOn = options.matchOn
+      ? Array.isArray(options.matchOn)
+        ? options.matchOn
+        : [options.matchOn]
+      : []
+    const marker: MergeProp<T> = {
+      [MERGE_MARKER]: true,
+      strategy,
+      data,
+      matchOn,
+    }
+    return marker as unknown as T
+  }
+
+/**
+ * Marks a prop for **append merge** on partial reloads. The resolved value is
+ * sent as-is on this response, and the prop key is recorded under
+ * `page.mergeProps` so the client appends future partial-reload values to
+ * the cached array (or shallow-spreads object keys).
+ *
+ * Full page visits always replace props entirely — merging only kicks in on
+ * subsequent partial reloads.
+ *
+ * @example
+ * ```ts
+ * app.get('/feed', (c) =>
+ *   c.render('Feed', {
+ *     posts: merge(await db.posts.page(n), { matchOn: 'id' }),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const merge: <T>(data: T, options?: MergeOptions) => T = buildMerge('append')
+
+/**
+ * Marks a prop for **prepend merge** on partial reloads. Same as {@link merge}
+ * but new array items are inserted at the start of the cached array.
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const prepend: <T>(data: T, options?: MergeOptions) => T = buildMerge('prepend')
+
+/**
+ * Marks a prop for **deep merge** on partial reloads. The client walks the
+ * value recursively: arrays follow `matchOn` dedupe rules (or concat), nested
+ * objects merge key-by-key, scalars replace.
+ *
+ * Use for wrapper-shaped paginated props like `{ data: [...], meta: {...} }`
+ * where a shallow merge would lose the inner `data` array.
+ *
+ * @example
+ * ```ts
+ * app.get('/feed', (c) =>
+ *   c.render('Feed', {
+ *     feed: deepMerge(
+ *       { data: await db.posts.page(n), meta: { total, nextCursor } },
+ *       { matchOn: 'data.id' },
+ *     ),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const deepMerge: <T>(data: T, options?: MergeOptions) => T = buildMerge('deep')
 
 export interface InertiaOptions {
   /**
@@ -226,6 +369,10 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       //     just like a regular function-valued prop.
       const kept: [string, unknown][] = []
       const deferredGroups: Record<string, string[]> = {}
+      const mergeProps: string[] = []
+      const prependProps: string[] = []
+      const deepMergeProps: string[] = []
+      const matchPropsOn: string[] = []
       let needsAsync = false
       for (const [key, value] of Object.entries(propsInput)) {
         if (isExcluded(key)) {
@@ -238,6 +385,29 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
           }
           needsAsync = true
           kept.push([key, value])
+          continue
+        }
+        // Merge markers are emitted on every response (initial + partial) so
+        // the client knows which keys to combine on the *next* partial reload.
+        // The wrapped value is unwrapped here and treated like a plain prop.
+        if (isMerge(value)) {
+          if (value.strategy === 'append') {
+            mergeProps.push(key)
+          } else if (value.strategy === 'prepend') {
+            prependProps.push(key)
+          } else {
+            deepMergeProps.push(key)
+          }
+          for (const p of value.matchOn) {
+            matchPropsOn.push(`${key}.${p}`)
+          }
+          // Unwrap and forward to the same lazy-resolution path used for plain
+          // props, so `merge(() => fetchPosts(), ...)` resolves on partial
+          // reloads instead of being JSON-stringified as a raw function.
+          if (typeof value.data === 'function') {
+            needsAsync = true
+          }
+          kept.push([key, value.data])
           continue
         }
         if (typeof value === 'function') {
@@ -255,6 +425,18 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         }
         if (!isPartial && Object.keys(deferredGroups).length > 0) {
           page.deferredProps = deferredGroups
+        }
+        if (mergeProps.length > 0) {
+          page.mergeProps = mergeProps
+        }
+        if (prependProps.length > 0) {
+          page.prependProps = prependProps
+        }
+        if (deepMergeProps.length > 0) {
+          page.deepMergeProps = deepMergeProps
+        }
+        if (matchPropsOn.length > 0) {
+          page.matchPropsOn = matchPropsOn
         }
 
         c.header('Vary', 'Accept, X-Inertia')
