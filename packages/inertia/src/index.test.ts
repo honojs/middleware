@@ -884,11 +884,7 @@ describe('inertia', () => {
   })
 
   describe('scroll props', () => {
-    const partialHeaders = (
-      component: string,
-      only?: string,
-      mergeIntent?: string
-    ) => {
+    const partialHeaders = (component: string, only?: string, mergeIntent?: string) => {
       const headers: Record<string, string> = {
         'X-Inertia': 'true',
         'X-Inertia-Version': 'v1',
