@@ -7,43 +7,25 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
-    "./sitemap": {
-      "import": {
-        "types": "./dist/sitemap.d.ts",
-        "default": "./dist/sitemap.js"
-      },
-      "require": {
-        "types": "./dist/sitemap.d.cts",
-        "default": "./dist/sitemap.cjs"
-      }
-    },
     "./robots-txt": {
-      "import": {
-        "types": "./dist/robots-txt.d.ts",
-        "default": "./dist/robots-txt.js"
-      },
-      "require": {
-        "types": "./dist/robots-txt.d.cts",
-        "default": "./dist/robots-txt.cjs"
-      }
+      "import": "./dist/robots-txt.mjs",
+      "require": "./dist/robots-txt.cjs"
     },
     "./rss": {
-      "import": {
-        "types": "./dist/rss.d.ts",
-        "default": "./dist/rss.js"
-      },
-      "require": {
-        "types": "./dist/rss.d.cts",
-        "default": "./dist/rss.cjs"
-      }
-    }
+      "import": "./dist/rss.mjs",
+      "require": "./dist/rss.cjs"
+    },
+    "./sitemap": {
+      "import": "./dist/sitemap.mjs",
+      "require": "./dist/sitemap.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
@@ -62,7 +44,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
   }

@@ -3,49 +3,32 @@
   "version": "0.2.1",
   "description": "Session middleware for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./cookies": {
-      "import": {
-        "types": "./dist/cookies.d.ts",
-        "default": "./dist/cookies.js"
-      },
-      "require": {
-        "types": "./dist/cookies.d.cts",
-        "default": "./dist/cookies.cjs"
-      }
+      "import": "./dist/cookies.mjs",
+      "require": "./dist/cookies.cjs"
     },
-    "./testing": {
-      "import": {
-        "types": "./dist/helper/testing/index.d.ts",
-        "default": "./dist/helper/testing/index.js"
-      },
-      "require": {
-        "types": "./dist/helper/testing/index.d.cts",
-        "default": "./dist/helper/testing/index.cjs"
-      }
-    }
+    "./helper/testing": {
+      "import": "./dist/helper/testing/index.mjs",
+      "require": "./dist/helper/testing/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
@@ -68,7 +51,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.16.10",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "unstorage": "^1.17.4",
     "vitest": "^4.1.7"

@@ -3,20 +3,21 @@
   "version": "0.6.1",
   "description": "Validator middleware using Valibot",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "exports": {
-    "./package.json": "./package.json",
     ".": {
-      "import": "./dist/index.js",
-      "default": "./dist/index.cjs"
-    }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -40,7 +41,7 @@
   },
   "devDependencies": {
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "valibot": "^1.3.0",
     "vitest": "^4.1.7"

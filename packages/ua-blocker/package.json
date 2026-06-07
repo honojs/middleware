@@ -3,15 +3,15 @@
   "version": "0.1.31",
   "description": "User agent-based blocker for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "yarn build:pkg",
     "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -19,25 +19,14 @@
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./ai-bots": {
-      "import": {
-        "types": "./dist/ai-bots.d.ts",
-        "default": "./dist/ai-bots.js"
-      },
-      "require": {
-        "types": "./dist/ai-bots.d.cts",
-        "default": "./dist/ai-bots.cjs"
-      }
-    }
+      "import": "./dist/ai-bots.mjs",
+      "require": "./dist/ai-bots.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
@@ -57,7 +46,7 @@
   "devDependencies": {
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
   }

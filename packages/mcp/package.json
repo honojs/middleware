@@ -3,39 +3,28 @@
   "version": "0.3.0",
   "description": "MCP Middleware for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./auth": {
-      "import": {
-        "types": "./dist/auth/index.d.ts",
-        "default": "./dist/auth/index.js"
-      },
-      "require": {
-        "types": "./dist/auth/index.d.cts",
-        "default": "./dist/auth/index.cjs"
-      }
-    }
+      "import": "./dist/auth.mjs",
+      "require": "./dist/auth.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
@@ -64,7 +53,7 @@
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.3",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7",
     "zod": "^4.2.1"
