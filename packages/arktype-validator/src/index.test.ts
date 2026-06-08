@@ -55,7 +55,7 @@ describe('Basic', () => {
           }
         } & {
           query: {
-            name?: string | undefined
+            name?: string
           }
         }
         output: {
