@@ -8,15 +8,14 @@
   },
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "./dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -24,25 +23,42 @@
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
-    "./*": {
-      "import": {
-        "types": "./dist/providers/*/index.d.ts",
-        "default": "./dist/providers/*/index.js"
-      },
-      "require": {
-        "types": "./dist/providers/*/index.d.cts",
-        "default": "./dist/providers/*/index.cjs"
-      }
-    }
+    "./discord": {
+      "import": "./dist/discord/index.mjs",
+      "require": "./dist/discord/index.cjs"
+    },
+    "./facebook": {
+      "import": "./dist/facebook/index.mjs",
+      "require": "./dist/facebook/index.cjs"
+    },
+    "./github": {
+      "import": "./dist/github/index.mjs",
+      "require": "./dist/github/index.cjs"
+    },
+    "./google": {
+      "import": "./dist/google/index.mjs",
+      "require": "./dist/google/index.cjs"
+    },
+    "./linkedin": {
+      "import": "./dist/linkedin/index.mjs",
+      "require": "./dist/linkedin/index.cjs"
+    },
+    "./msentra": {
+      "import": "./dist/msentra/index.mjs",
+      "require": "./dist/msentra/index.cjs"
+    },
+    "./twitch": {
+      "import": "./dist/twitch/index.mjs",
+      "require": "./dist/twitch/index.cjs"
+    },
+    "./x": {
+      "import": "./dist/x/index.mjs",
+      "require": "./dist/x/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
@@ -84,7 +100,7 @@
   "devDependencies": {
     "hono": "^4.11.5",
     "msw": "^2.12.10",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
   },

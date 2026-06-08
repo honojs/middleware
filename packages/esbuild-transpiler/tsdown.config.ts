@@ -1,12 +1,13 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  attw: true,
-  clean: true,
-  dts: true,
-  entry: ['src/*.ts', 'src/transpilers/*.ts'],
+  attw: {
+    profile: 'node16',
+  },
+  entry: {
+    index: 'src/index.ts',
+    node: 'src/transpilers/node.ts',
+    wasm: 'src/transpilers/wasm.ts',
+  },
   external: ['esbuild-wasm', 'esbuild'],
-  format: ['cjs', 'esm'],
-  publint: true,
-  tsconfig: 'tsconfig.build.json',
 })

@@ -3,37 +3,25 @@
   "version": "1.0.0",
   "description": "Casbin middleware for Hono",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./helper": {
-      "import": {
-        "types": "./dist/helper/index.d.ts",
-        "default": "./dist/helper/index.js"
-      },
-      "require": {
-        "types": "./dist/helper/index.d.cts",
-        "default": "./dist/helper/index.cjs"
-      }
-    }
+      "import": "./dist/helper/index.mjs",
+      "require": "./dist/helper/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -59,7 +47,7 @@
     "@types/node": "^25.2.3",
     "casbin": "^5.48.0",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
   }

@@ -3,14 +3,14 @@
   "version": "0.1.4",
   "description": "esbuild Transpiler Middleware for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "yarn build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
@@ -18,35 +18,18 @@
   },
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./wasm": {
-      "import": {
-        "types": "./dist/transpilers/wasm.d.ts",
-        "default": "./dist/transpilers/wasm.js"
-      },
-      "require": {
-        "types": "./dist/transpilers/wasm.d.cts",
-        "default": "./dist/transpilers/wasm.cjs"
-      }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./node": {
-      "import": {
-        "types": "./dist/transpilers/node.d.ts",
-        "default": "./dist/transpilers/node.js"
-      },
-      "require": {
-        "types": "./dist/transpilers/node.d.cts",
-        "default": "./dist/transpilers/node.cjs"
-      }
-    }
+      "import": "./dist/node.mjs",
+      "require": "./dist/node.cjs"
+    },
+    "./wasm": {
+      "import": "./dist/wasm.mjs",
+      "require": "./dist/wasm.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -77,7 +60,7 @@
     "esbuild": "^0.27.2",
     "esbuild-wasm": "^0.27.3",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
   },
