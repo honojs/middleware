@@ -48,7 +48,7 @@
     "reflect-metadata": "^0.2.2",
     "tsdown": "^0.22.2",
     "tsyringe": "^4.10.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.7"
   }
 }
