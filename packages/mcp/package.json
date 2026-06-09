@@ -16,21 +16,26 @@
     "test": "vitest"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./auth": {
-      "import": "./dist/auth.mjs",
-      "require": "./dist/auth.cjs"
-    },
+    ".": "./src/index.ts",
+    "./auth": "./src/auth/index.ts",
     "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./auth": {
+        "import": "./dist/auth.mjs",
+        "require": "./dist/auth.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",

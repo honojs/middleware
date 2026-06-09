@@ -18,21 +18,26 @@
     "getrobotstxt": "node --experimental-strip-types ./script/get-robots-txt.ts"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./ai-bots": {
-      "import": "./dist/ai-bots.mjs",
-      "require": "./dist/ai-bots.cjs"
-    },
+    ".": "./src/index.ts",
+    "./ai-bots": "./src/ai-bots.ts",
     "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./ai-bots": {
+        "import": "./dist/ai-bots.mjs",
+        "require": "./dist/ai-bots.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",

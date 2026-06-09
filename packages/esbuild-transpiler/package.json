@@ -17,18 +17,9 @@
     "version:jsr": "yarn version:set $npm_package_version"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./node": {
-      "import": "./dist/node.mjs",
-      "require": "./dist/node.cjs"
-    },
-    "./wasm": {
-      "import": "./dist/wasm.mjs",
-      "require": "./dist/wasm.cjs"
-    },
+    ".": "./src/index.ts",
+    "./node": "./src/transpilers/node.ts",
+    "./wasm": "./src/transpilers/wasm.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -45,7 +36,22 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./node": {
+        "import": "./dist/node.mjs",
+        "require": "./dist/node.cjs"
+      },
+      "./wasm": {
+        "import": "./dist/wasm.mjs",
+        "require": "./dist/wasm.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",

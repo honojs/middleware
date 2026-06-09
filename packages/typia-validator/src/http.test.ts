@@ -48,13 +48,10 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: {
-            name: string
-            age: number
-          }
+          json: JsonSchema
         } & {
           query: {
-            name?: string | undefined
+            name?: string
           }
         } & {
           header: {

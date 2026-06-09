@@ -7,14 +7,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./http": {
-      "import": "./dist/http.mjs",
-      "require": "./dist/http.cjs"
-    },
+    ".": "./src/index.ts",
+    "./http": "./src/http.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -31,7 +25,18 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./http": {
+        "import": "./dist/http.mjs",
+        "require": "./dist/http.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",

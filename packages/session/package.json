@@ -16,25 +16,31 @@
     "test": "vitest"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./cookies": {
-      "import": "./dist/cookies.mjs",
-      "require": "./dist/cookies.cjs"
-    },
-    "./helper/testing": {
-      "import": "./dist/helper/testing/index.mjs",
-      "require": "./dist/helper/testing/index.cjs"
-    },
+    ".": "./src/index.ts",
+    "./cookies": "./src/cookies.ts",
+    "./helper/testing": "./src/helper/testing/index.ts",
     "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./cookies": {
+        "import": "./dist/cookies.mjs",
+        "require": "./dist/cookies.cjs"
+      },
+      "./helper/testing": {
+        "import": "./dist/helper/testing/index.mjs",
+        "require": "./dist/helper/testing/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",

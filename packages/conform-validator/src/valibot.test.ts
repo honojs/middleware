@@ -45,7 +45,7 @@ describe('Validate requests using a Valibot schema', () => {
             form: {
               name: ParsedFormValue | ParsedFormValue[]
               age: ParsedFormValue | ParsedFormValue[]
-              nickname?: ParsedFormValue | ParsedFormValue[] | undefined
+              nickname?: ParsedFormValue | ParsedFormValue[]
             }
           }
           output: {

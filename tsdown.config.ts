@@ -5,7 +5,10 @@ export default defineConfig({
   dts: {
     sourcemap: true,
   },
-  exports: true,
+  exports: {
+    enabled: true,
+    devExports: true,
+  },
   format: ['cjs', 'esm'],
   publint: true,
   tsconfig: 'tsconfig.build.json',

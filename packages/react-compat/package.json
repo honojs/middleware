@@ -7,7 +7,30 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./client": {
+        "import": "./dist/client.mjs",
+        "require": "./dist/client.cjs"
+      },
+      "./jsx-dev-runtime": {
+        "import": "./dist/jsx-dev-runtime.mjs",
+        "require": "./dist/jsx-dev-runtime.cjs"
+      },
+      "./jsx-runtime": {
+        "import": "./dist/jsx-runtime.mjs",
+        "require": "./dist/jsx-runtime.cjs"
+      },
+      "./server": {
+        "import": "./dist/server.mjs",
+        "require": "./dist/server.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
@@ -26,26 +49,11 @@
     "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./client": {
-      "import": "./dist/client.mjs",
-      "require": "./dist/client.cjs"
-    },
-    "./jsx-dev-runtime": {
-      "import": "./dist/jsx-dev-runtime.mjs",
-      "require": "./dist/jsx-dev-runtime.cjs"
-    },
-    "./jsx-runtime": {
-      "import": "./dist/jsx-runtime.mjs",
-      "require": "./dist/jsx-runtime.cjs"
-    },
-    "./server": {
-      "import": "./dist/server.mjs",
-      "require": "./dist/server.cjs"
-    },
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
+    "./jsx-runtime": "./src/jsx-runtime.ts",
+    "./server": "./src/server.ts",
     "./package.json": "./package.json"
   },
   "peerDependencies": {

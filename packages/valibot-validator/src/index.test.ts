@@ -71,8 +71,8 @@ describe('Basic', () => {
         }
         query?:
           | {
-              search?: string | string[] | undefined
-              page?: string | string[] | undefined
+              search?: string | string[]
+              page?: string | string[]
             }
           | undefined
       },
@@ -138,8 +138,8 @@ describe('Basic', () => {
         }
         query?:
           | {
-              search?: string | string[] | undefined
-              page?: string | string[] | undefined
+              search?: string | string[]
+              page?: string | string[]
             }
           | undefined
       },
@@ -415,6 +415,8 @@ describe('Async', () => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore this is a very complex type test
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type verify = Expect<Equal<Expected, Actual>>
 

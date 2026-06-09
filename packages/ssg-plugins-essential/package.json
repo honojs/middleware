@@ -13,25 +13,31 @@
     "test": "vitest"
   },
   "exports": {
-    "./robots-txt": {
-      "import": "./dist/robots-txt.mjs",
-      "require": "./dist/robots-txt.cjs"
-    },
-    "./rss": {
-      "import": "./dist/rss.mjs",
-      "require": "./dist/rss.cjs"
-    },
-    "./sitemap": {
-      "import": "./dist/sitemap.mjs",
-      "require": "./dist/sitemap.cjs"
-    },
+    "./robots-txt": "./src/plugins/robots-txt.ts",
+    "./rss": "./src/plugins/rss.ts",
+    "./sitemap": "./src/plugins/sitemap.ts",
     "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      "./robots-txt": {
+        "import": "./dist/robots-txt.mjs",
+        "require": "./dist/robots-txt.cjs"
+      },
+      "./rss": {
+        "import": "./dist/rss.mjs",
+        "require": "./dist/rss.cjs"
+      },
+      "./sitemap": {
+        "import": "./dist/sitemap.mjs",
+        "require": "./dist/sitemap.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
