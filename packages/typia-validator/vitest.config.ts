@@ -1,4 +1,4 @@
-import UnpluginTypia from '@ryoppippi/unplugin-typia/vite'
+import UnpluginTypia from '@typia/unplugin/vite'
 import { defineProject } from 'vitest/config'
 
 export default defineProject({
