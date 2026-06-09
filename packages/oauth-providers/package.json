@@ -22,49 +22,61 @@
     "version:jsr": "yarn version:set $npm_package_version"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./discord": {
-      "import": "./dist/discord/index.mjs",
-      "require": "./dist/discord/index.cjs"
-    },
-    "./facebook": {
-      "import": "./dist/facebook/index.mjs",
-      "require": "./dist/facebook/index.cjs"
-    },
-    "./github": {
-      "import": "./dist/github/index.mjs",
-      "require": "./dist/github/index.cjs"
-    },
-    "./google": {
-      "import": "./dist/google/index.mjs",
-      "require": "./dist/google/index.cjs"
-    },
-    "./linkedin": {
-      "import": "./dist/linkedin/index.mjs",
-      "require": "./dist/linkedin/index.cjs"
-    },
-    "./msentra": {
-      "import": "./dist/msentra/index.mjs",
-      "require": "./dist/msentra/index.cjs"
-    },
-    "./twitch": {
-      "import": "./dist/twitch/index.mjs",
-      "require": "./dist/twitch/index.cjs"
-    },
-    "./x": {
-      "import": "./dist/x/index.mjs",
-      "require": "./dist/x/index.cjs"
-    },
+    ".": "./src/index.ts",
+    "./discord": "./src/providers/discord/index.ts",
+    "./facebook": "./src/providers/facebook/index.ts",
+    "./github": "./src/providers/github/index.ts",
+    "./google": "./src/providers/google/index.ts",
+    "./linkedin": "./src/providers/linkedin/index.ts",
+    "./msentra": "./src/providers/msentra/index.ts",
+    "./twitch": "./src/providers/twitch/index.ts",
+    "./x": "./src/providers/x/index.ts",
     "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./discord": {
+        "import": "./dist/discord/index.mjs",
+        "require": "./dist/discord/index.cjs"
+      },
+      "./facebook": {
+        "import": "./dist/facebook/index.mjs",
+        "require": "./dist/facebook/index.cjs"
+      },
+      "./github": {
+        "import": "./dist/github/index.mjs",
+        "require": "./dist/github/index.cjs"
+      },
+      "./google": {
+        "import": "./dist/google/index.mjs",
+        "require": "./dist/google/index.cjs"
+      },
+      "./linkedin": {
+        "import": "./dist/linkedin/index.mjs",
+        "require": "./dist/linkedin/index.cjs"
+      },
+      "./msentra": {
+        "import": "./dist/msentra/index.mjs",
+        "require": "./dist/msentra/index.cjs"
+      },
+      "./twitch": {
+        "import": "./dist/twitch/index.mjs",
+        "require": "./dist/twitch/index.cjs"
+      },
+      "./x": {
+        "import": "./dist/x/index.mjs",
+        "require": "./dist/x/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "typesVersions": {
     "*": {

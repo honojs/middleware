@@ -7,14 +7,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./react": {
-      "import": "./dist/react.mjs",
-      "require": "./dist/react.cjs"
-    },
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -38,7 +32,18 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./react": {
+        "import": "./dist/react.mjs",
+        "require": "./dist/react.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
