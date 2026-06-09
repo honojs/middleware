@@ -6,6 +6,7 @@
       "outputs": ["dist/**"]
     },
     "lint": {
+      "dependsOn": ["^lint"],
       "outputs": [".cache/.eslintcache", "eslint-suppressions.json"]
     },
     "typecheck": {
