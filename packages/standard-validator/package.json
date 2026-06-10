@@ -39,6 +39,9 @@
     "directory": "packages/standard-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "@standard-schema/spec": "^1.0.0",
     "hono": ">=3.9.0"

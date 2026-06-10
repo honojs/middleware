@@ -39,6 +39,9 @@
     "directory": "packages/arktype-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "arktype": ">=2.0.0-dev",
     "hono": ">=3.0.0"

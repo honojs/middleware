@@ -39,6 +39,9 @@
     "directory": "packages/typedriver-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "hono": ">=3.9.0",
     "typedriver": "^0.8.6"
