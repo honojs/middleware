@@ -39,6 +39,9 @@
     "directory": "packages/valibot-validator"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "hono": ">=3.9.0",
     "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc"
