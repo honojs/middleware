@@ -313,6 +313,71 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const spans = memoryExporter.getFinishedSpans()
     assert.strictEqual(spans.length, 0)
   })
+
+  // Regression tests for https://github.com/honojs/middleware/issues/1914 - a downstream
+  // adapter (such as an RPC layer) can now expose a resolved operation name via the
+  // `getRoute` config callback, and the span's `http.route` attribute reflects that
+  // value at finalize time instead of being overwritten with the Hono route pattern.
+  it('Should use getRoute return value for the span http.route attribute', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getRoute: (c: Context) => c.get('rpc.route' as never) as string | undefined,
+      })
+    )
+    app2.get('/rpc/*', (c) => {
+      c.set('rpc.route' as never, '/rpc/user/getProfile' as never)
+      return c.text('ok')
+    })
+    await app2.request('http://localhost/rpc/user/getProfile')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/user/getProfile')
+  })
+
+  it('Should fall back to routePath(c) when getRoute returns undefined', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getRoute: () => undefined,
+      })
+    )
+    app2.get('/rpc/*', (c) => c.text('ok'))
+    await app2.request('http://localhost/rpc/user/getProfile')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
+  })
+
+  it('Should fall back to routePath(c) when getRoute returns an empty string', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getRoute: () => '',
+      })
+    )
+    app2.get('/rpc/*', (c) => c.text('ok'))
+    await app2.request('http://localhost/rpc/user/getProfile')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
+  })
+
+  it('Should fall back to routePath(c) when getRoute throws', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getRoute: () => {
+          throw new Error('boom')
+        },
+      })
+    )
+    app2.get('/rpc/*', (c) => c.text('ok'))
+    await app2.request('http://localhost/rpc/user/getProfile')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
+  })
 })
 
 describe('OpenTelemetry middleware - Metrics (combined)', () => {
@@ -557,5 +622,36 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     await app.request('http://localhost/no-active-tracking')
 
     assert.strictEqual(adds.length, 0)
+  })
+
+  // Regression test for https://github.com/honojs/middleware/issues/1914 - the resolved
+  // route from `getRoute` must also be applied to the `http.server.request.duration`
+  // histogram, so per-operation latency is not collapsed into the Hono pattern bucket.
+  it('Should use getRoute return value for the request duration metric http.route attribute', async () => {
+    const app = new Hono()
+    app.use(
+      httpInstrumentationMiddleware({
+        meterProvider: meterProvider as unknown as MeterProvider,
+        getRoute: (c: Context) => c.get('rpc.route' as never) as string | undefined,
+      })
+    )
+    app.get('/rpc/*', (c) => {
+      c.set('rpc.route' as never, '/rpc/user/getProfile' as never)
+      return c.text('ok')
+    })
+    await app.request('http://localhost/rpc/user/getProfile')
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    assert.ok(resourceMetrics.length > 0)
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const dps = durationMetric.dataPoints as DataPoint<Histogram>[]
+    const dp = dps.find((d) => d.attributes['http.route'] === '/rpc/user/getProfile')
+    assert.ok(dp, 'expected a data point keyed by the resolved RPC route')
+    assert.strictEqual(dp.attributes['http.route'], '/rpc/user/getProfile')
+    assert.strictEqual(dp.attributes['http.request.method'], 'GET')
+    assert.strictEqual(dp.attributes['http.response.status_code'], 200)
   })
 })
