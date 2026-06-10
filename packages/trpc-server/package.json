@@ -39,6 +39,9 @@
     "directory": "packages/trpc-server"
   },
   "homepage": "https://honojs.dev",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "@trpc/server": "^10.10.0 || >11.0.0-rc",
     "hono": ">=4.0.0"
