@@ -47,14 +47,14 @@
     "pkce-challenge": "^5.0.0"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "hono": "*",
     "hono-rate-limiter": "^0.5.3",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.3",
