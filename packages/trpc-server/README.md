@@ -138,6 +138,42 @@ app.use(
 export default app
 ```
 
+## `trpcFetchHandler`
+
+`trpcFetchHandler` is a wrapper around tRPC's `fetchRequestHandler` that
+preserves router context inference. Unlike `trpcServer`, it does not
+auto-merge `c.env` into the tRPC context — callers pass whatever they want
+from the Hono context through their own `createContext`, which lets the
+router's context type flow end-to-end.
+
+```ts
+import { Hono } from 'hono'
+import { trpcFetchHandler } from '@hono/trpc-server'
+import { appRouter } from './router'
+
+const app = new Hono()
+
+app.use(
+  '/trpc/*',
+  trpcFetchHandler({
+    router: appRouter,
+    endpoint: '/trpc',
+    createContext: (_opts, c) => ({
+      env: c.env,
+      userId: c.req.header('x-user-id'),
+    }),
+  })
+)
+
+export default app
+```
+
+`createContext` is required when the router uses a typed context
+(`initTRPC.context<T>()`) and optional otherwise, matching tRPC's own
+`fetchRequestHandler` contract. `trpcServer` remains fully supported;
+`trpcFetchHandler` is an alternative for consumers who need end-to-end
+router context inference.
+
 ## Author
 
 Yusuke Wada <https://github.com/yusukebe>
