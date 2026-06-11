@@ -103,11 +103,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arethetypeswrong/cli@npm:^0.17.4":
-  version: 0.17.4
-  resolution: "@arethetypeswrong/cli@npm:0.17.4"
+"@arethetypeswrong/cli@npm:^0.18.3":
+  version: 0.18.3
+  resolution: "@arethetypeswrong/cli@npm:0.18.3"
   dependencies:
-    "@arethetypeswrong/core": "npm:0.17.4"
+    "@arethetypeswrong/core": "npm:0.18.3"
     chalk: "npm:^4.1.2"
     cli-table3: "npm:^0.6.3"
     commander: "npm:^10.0.1"
@@ -115,24 +115,24 @@ __metadata:
     marked-terminal: "npm:^7.1.0"
     semver: "npm:^7.5.4"
   bin:
-    attw: dist/index.js
-  checksum: 10c0/561a2a8f88916c776669673119f4b02d0ceab25110c966f8817447e13587967c2935f2d8c468e5d9b19ff3e2617ca9128c43e44ca2abf62741f0a90899511c61
+    attw: ./dist/index.js
+  checksum: 10c0/ce4e5b3e33bca5928561ed94286a7f3d35da13905ddcb358940ed41237e59767398dfb8c42a0dc00275b66147ea78f8958e209afe99010d75b05243f974444b1
   languageName: node
   linkType: hard
 
-"@arethetypeswrong/core@npm:0.17.4":
-  version: 0.17.4
-  resolution: "@arethetypeswrong/core@npm:0.17.4"
+"@arethetypeswrong/core@npm:0.18.3":
+  version: 0.18.3
+  resolution: "@arethetypeswrong/core@npm:0.18.3"
   dependencies:
     "@andrewbranch/untar.js": "npm:^1.0.3"
     "@loaderkit/resolve": "npm:^1.0.2"
     cjs-module-lexer: "npm:^1.2.3"
-    fflate: "npm:^0.8.2"
-    lru-cache: "npm:^10.4.3"
+    fflate: "npm:^0.8.3"
+    lru-cache: "npm:^11.0.1"
     semver: "npm:^7.5.4"
     typescript: "npm:5.6.1-rc"
     validate-npm-package-name: "npm:^5.0.0"
-  checksum: 10c0/3414ce50cb5028608b14e78317e18c9617058264c83d110f3561aa6c39680338ca3398ef8bd9ba6966ba15044f89830250a1defe84d732d7758bcf3cca830c99
+  checksum: 10c0/e4d7aefd03e4e1a622561a972379b27defa9a9dd484b23581b76c93c5f6740e43a4fec6e96d84d6cacc1d526c5c6cb6db2061e4ab809a713cae88128407be079
   languageName: node
   linkType: hard
 
@@ -2078,7 +2078,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/mcp@workspace:packages/mcp"
   dependencies:
-    "@arethetypeswrong/cli": "npm:^0.17.4"
+    "@arethetypeswrong/cli": "npm:^0.18.3"
     "@modelcontextprotocol/sdk": "npm:^1.29.0"
     "@types/node": "npm:^25.2.3"
     hono: "npm:^4.11.5"
@@ -8943,6 +8943,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fflate@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "fflate@npm:0.8.3"
+  checksum: 10c0/eab181ca37f5348ae76d4b6f840e0026e30220e33153289ac942222d8b9638237d486507dbcc09878d724095bd354993a2ee48bbee99c8f2c6440d4448719aa7
+  languageName: node
+  linkType: hard
+
 "figures@npm:^3.0.0":
   version: 3.2.0
   resolution: "figures@npm:3.2.0"
@@ -11233,7 +11240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.2.0":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10c0/ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
