@@ -38,6 +38,9 @@
     "url": "git+https://github.com/honojs/middleware.git",
     "directory": "packages/otel"
   },
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=4.0.0"
