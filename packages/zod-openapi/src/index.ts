@@ -236,7 +236,7 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
   : T
 
 export type OpenAPIHonoOptions<E extends Env> = {
-  defaultHook?: Hook<any, E, any, any>
+  defaultHook?: Hook<unknown, E, string, Response | void | Promise<Response | void>>
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
