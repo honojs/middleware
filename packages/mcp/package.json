@@ -43,6 +43,9 @@
     "directory": "packages/mcp"
   },
   "homepage": "https://honohub.dev/docs/hono-mcp",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "dependencies": {
     "pkce-challenge": "^5.0.0"
   },
