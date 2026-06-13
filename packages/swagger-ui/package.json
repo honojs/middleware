@@ -51,5 +51,8 @@
   },
   "inlinedDependencies": {
     "@types/swagger-ui-dist": "3.30.6"
+  },
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
   }
 }
