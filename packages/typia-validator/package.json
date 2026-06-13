@@ -46,14 +46,14 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "typia": "^7.0.0 || ^8.0.0"
+    "typia": "^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0"
   },
   "devDependencies": {
-    "@ryoppippi/unplugin-typia": "2.6.5",
+    "@typia/unplugin": "^12.1.1",
     "hono": "^4.11.5",
     "tsdown": "^0.22.2",
     "typescript": "^6.0.3",
-    "typia": "^9.7.2",
+    "typia": "^12.1.1",
     "vitest": "^4.1.7"
   }
 }

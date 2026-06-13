@@ -2452,15 +2452,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hono/typia-validator@workspace:packages/typia-validator"
   dependencies:
-    "@ryoppippi/unplugin-typia": "npm:2.6.5"
+    "@typia/unplugin": "npm:^12.1.1"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.22.2"
     typescript: "npm:^6.0.3"
-    typia: "npm:^9.7.2"
+    typia: "npm:^12.1.1"
     vitest: "npm:^4.1.7"
   peerDependencies:
     hono: ">=3.9.0"
-    typia: ^7.0.0 || ^8.0.0
+    typia: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
   languageName: unknown
   linkType: soft
 
@@ -4853,7 +4853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ryoppippi/unplugin-typia@npm:2.6.5, @ryoppippi/unplugin-typia@npm:^2.6.5":
+"@ryoppippi/unplugin-typia@npm:^2.6.5":
   version: 2.6.5
   resolution: "@ryoppippi/unplugin-typia@npm:2.6.5"
   dependencies:
@@ -4879,13 +4879,6 @@ __metadata:
     vite:
       optional: true
   checksum: 10c0/bfcd43001578739ca51921fb993ea7d4c4237cabefe0fbffa55f0b06e995bfa9425811d684865af54cc1523ada70327dbffa5f3c62abf56e94201e4673b0af45
-  languageName: node
-  linkType: hard
-
-"@samchon/openapi@npm:^4.7.1":
-  version: 4.7.1
-  resolution: "@samchon/openapi@npm:4.7.1"
-  checksum: 10c0/311a2b8030fb21e1ffc9def70b723ca0c83abf6740b0949ac86ad2e22b6e36d55dd52ff53977e08d05ca92c9b3ebc4975e3a916cc5fd721abf6232a4aba1a5b7
   languageName: node
   linkType: hard
 
@@ -5421,6 +5414,71 @@ __metadata:
     "@typescript-eslint/types": "npm:8.56.1"
     eslint-visitor-keys: "npm:^5.0.0"
   checksum: 10c0/86d97905dec1af964cc177c185933d040449acf6006096497f2e0093c6a53eb92b3ac1db9eb40a5a2e8d91160f558c9734331a9280797f09f284c38978b22190
+  languageName: node
+  linkType: hard
+
+"@typia/core@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@typia/core@npm:12.1.1"
+  dependencies:
+    "@typia/interface": "npm:^12.1.1"
+    "@typia/utils": "npm:^12.1.1"
+  checksum: 10c0/1cc4fc245e5a8f04dffa6dfee438a00bf93f67ea0a840c38c253014b29c4972a8f985e6bcf5e7b688975c4af07a52d2275bf79e1eaa4abaca2e4c1dee256f0d3
+  languageName: node
+  linkType: hard
+
+"@typia/interface@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@typia/interface@npm:12.1.1"
+  checksum: 10c0/9a26fc73d9774eee7ff1c00ddc4ed13427924084889b09dc0f57554828116e7b93d4783c828853d123aede34b1bf5ca814a9a103270567ebdf86d3e8f358f223
+  languageName: node
+  linkType: hard
+
+"@typia/transform@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@typia/transform@npm:12.1.1"
+  dependencies:
+    "@typia/core": "npm:^12.1.1"
+    "@typia/interface": "npm:^12.1.1"
+    "@typia/utils": "npm:^12.1.1"
+  checksum: 10c0/649eea98111405165cc0f8ad24f79d65be070b456b4030c1515856da0f1ec48ed2ac7466cd69503192e67887597761d92f56df3aa597d2f8a02ce8523db7c17e
+  languageName: node
+  linkType: hard
+
+"@typia/unplugin@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@typia/unplugin@npm:12.1.1"
+  dependencies:
+    "@rollup/pluginutils": "npm:^5.1.4"
+    bun-only: "npm:^0.0.1"
+    consola: "npm:^3.4.2"
+    defu: "npm:^6.1.4"
+    diff-match-patch-es: "npm:^1.0.1"
+    find-cache-dir: "npm:^5.0.0"
+    magic-string: "npm:^0.30.17"
+    pathe: "npm:^2.0.3"
+    pkg-types: "npm:^2.1.0"
+    type-fest: "npm:^4.37.0"
+    unplugin: "npm:^2.2.2"
+  peerDependencies:
+    svelte: ^5.28.2
+    typia: ^12.1.1
+    vite: ">=3.0.0"
+  peerDependenciesMeta:
+    svelte:
+      optional: true
+    vite:
+      optional: true
+  checksum: 10c0/4081d74a7cc8cc1a3808eb40798cb7d3128576f6418c23c5e36241e597618a8f11bcabace9577aea4d953636976cec0f7615b20b63b4e2d5a832468885b97ae7
+  languageName: node
+  linkType: hard
+
+"@typia/utils@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@typia/utils@npm:12.1.1"
+  dependencies:
+    "@typia/interface": "npm:^12.1.1"
+  checksum: 10c0/fc652764ff7a824bbd290b209bbbd43ef90e3be833bda8fa81b4e68af73ea0d017ff0d143666ec38ab340ed790e2efff8305e8f2b685577a2fc7a273f160529a
   languageName: node
   linkType: hard
 
@@ -9922,7 +9980,7 @@ __metadata:
     tsdown: "npm:^0.22.2"
     turbo: "npm:^2.9.4"
     typescript: "npm:^6.0.3"
-    typia: "npm:^9.7.2"
+    typia: "npm:^12.1.1"
     vitest: "npm:^4.1.7"
   languageName: unknown
   linkType: soft
@@ -16207,22 +16265,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typia@npm:^9.7.2":
-  version: 9.7.2
-  resolution: "typia@npm:9.7.2"
+"typia@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "typia@npm:12.1.1"
   dependencies:
-    "@samchon/openapi": "npm:^4.7.1"
     "@standard-schema/spec": "npm:^1.0.0"
+    "@typia/core": "npm:^12.1.1"
+    "@typia/interface": "npm:^12.1.1"
+    "@typia/transform": "npm:^12.1.1"
+    "@typia/utils": "npm:^12.1.1"
     commander: "npm:^10.0.0"
     comment-json: "npm:^4.2.3"
     inquirer: "npm:^8.2.5"
     package-manager-detector: "npm:^0.2.0"
     randexp: "npm:^0.5.3"
   peerDependencies:
-    typescript: ">=4.8.0 <5.10.0"
+    typescript: ">=4.8.0 <7.0.0"
   bin:
     typia: lib/executable/typia.js
-  checksum: 10c0/1b19baddfed46c5032da1b05b92636e13a56572764778913050cfb9690e6b7e833fc220f3bfcfc29502905e0e7aa09c5a8ace14dc8177b88a989d33bf215f6d6
+  checksum: 10c0/cd0b1e45449b9225efb8cbbc803f99b538e8b58f615d0366c6bc6d9a7c11909d775f6bff43c80def2a02797a86d5e48e3dfc5a947ffe862a0a0563d36a55f1b8
   languageName: node
   linkType: hard
 

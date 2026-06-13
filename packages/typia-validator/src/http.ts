@@ -140,6 +140,7 @@ export const typiaValidator: TypiaValidator = (
         value = {
           get: (key) => queries[key]?.[0] ?? null,
           getAll: (key) => queries[key] ?? [],
+          size: Object.keys(queries).length,
         } satisfies IReadableURLSearchParams
       } else {
         value = Object.create(null)
