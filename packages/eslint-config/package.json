@@ -1,6 +1,9 @@
 {
   "name": "@hono/eslint-config",
   "version": "2.1.0",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "description": "ESLint Config for Hono projects",
   "type": "module",
   "module": "./index.js",
