@@ -51,6 +51,9 @@
     "directory": "packages/auth-js"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "@auth/core": ">=0.35.0",
     "hono": ">=3.0.0",
