@@ -2327,6 +2327,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@hono/stripe-webhook@workspace:packages/stripe-webhook":
+  version: 0.0.0-use.local
+  resolution: "@hono/stripe-webhook@workspace:packages/stripe-webhook"
+  dependencies:
+    hono: "npm:^4.11.5"
+    stripe: "npm:^17.0.0"
+    tsdown: "npm:^0.15.9"
+    typescript: "npm:^5.9.3"
+    vitest: "npm:^4.1.0-beta.1"
+  peerDependencies:
+    hono: ">=3.0.0"
+    stripe: ^17.0.0
+  languageName: unknown
+  linkType: soft
+
 "@hono/structured-logger@workspace:packages/structured-logger":
   version: 0.0.0-use.local
   resolution: "@hono/structured-logger@workspace:packages/structured-logger"
@@ -5178,6 +5193,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~6.20.0"
   checksum: 10c0/daf792ba5dcff1316abf4b33680f94b792f8d54d6ae495efc8929531e0ba1284a248d29aab117d2259f9280284d986ad5799b193b0516e2b926d713aab835f7d
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:>=8.1.0":
+  version: 25.6.2
+  resolution: "@types/node@npm:25.6.2"
+  dependencies:
+    undici-types: "npm:~7.19.0"
+  checksum: 10c0/7f540331aa3ab88c285aeaf2eb43e3992f54f0cdb7f3593d156af67b199d4eaf56590fa1c310a00aa58ff69dba668cb3915a157fe83cd6b40a73bb338a12f09a
   languageName: node
   linkType: hard
 
@@ -13679,6 +13703,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qs@npm:^6.11.0":
+  version: 6.15.1
+  resolution: "qs@npm:6.15.1"
+  dependencies:
+    side-channel: "npm:^1.1.0"
+  checksum: 10c0/19ee504f0ebff72598503e38cd6d9bd7b52a8ab62ae18b1e6bee3d4db58469bd65871ef1893a881bafb0f80ef2f9ab586e1f255cf25cc8d816c0f5a704721d97
+  languageName: node
+  linkType: hard
+
 "qs@npm:^6.14.0, qs@npm:^6.6.0":
   version: 6.14.0
   resolution: "qs@npm:6.14.0"
@@ -15493,6 +15526,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^17.0.0":
+  version: 17.7.0
+  resolution: "stripe@npm:17.7.0"
+  dependencies:
+    "@types/node": "npm:>=8.1.0"
+    qs: "npm:^6.11.0"
+  checksum: 10c0/df67c6d455bd0dd87140640924c220fa9581fc00c3267d171f407c8d088f946f61e3ae7e88a89e7dd705b10fd5254630fc943222eb6f003390ebafbd391f81b2
+  languageName: node
+  linkType: hard
+
 "stubs@npm:^3.0.0":
   version: 3.0.0
   resolution: "stubs@npm:3.0.0"
@@ -16336,6 +16379,13 @@ __metadata:
   version: 7.16.0
   resolution: "undici-types@npm:7.16.0"
   checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.19.0":
+  version: 7.19.2
+  resolution: "undici-types@npm:7.19.2"
+  checksum: 10c0/7159f10546f9f6c47d36776bb1bbf8671e87c1e587a6fee84ae1f111ae8de4f914efa8ca0dfcd224f4f4a9dfc3f6028f627ccb5ddaccf82d7fd54671b89fac3e
   languageName: node
   linkType: hard
 
