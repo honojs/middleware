@@ -58,5 +58,8 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
   }
 }
