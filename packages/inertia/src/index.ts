@@ -49,10 +49,37 @@ export type PageObject<P = Record<string, unknown>> = {
   /**
    * Dot-paths used by the client to dedupe array items when merging. Each
    * entry is `"<propKey>.<matchField>"` (e.g. `"posts.id"`), built from the
-   * `matchOn` option passed to {@link merge}, {@link prepend}, or
-   * {@link deepMerge}.
+   * `matchOn` option passed to {@link merge}, {@link prepend},
+   * {@link deepMerge}, or {@link scroll}.
    */
   matchPropsOn?: string[]
+  /**
+   * Pagination metadata emitted for every prop wrapped with {@link scroll}.
+   * Keyed by the prop name; each entry describes the previous/next page
+   * cursor that the Inertia client's `<InfiniteScroll>` adapter uses to
+   * trigger the next partial reload.
+   */
+  scrollProps?: Record<string, ScrollDescriptor>
+}
+
+/**
+ * Pagination metadata emitted on `page.scrollProps[key]` for each prop
+ * wrapped with {@link scroll}. The Inertia client's `<InfiniteScroll>`
+ * adapter reads these to know which page to request next (and whether more
+ * pages exist in either direction).
+ */
+export interface ScrollDescriptor {
+  /** `currentPage - 1`, or `null` if already on the first page. */
+  previousPage: number | null
+  /** `currentPage + 1`, or `null` if already on the last page. */
+  nextPage: number | null
+  /** Page number passed to {@link scroll}. */
+  currentPage: number
+  /**
+   * Query-string parameter the client uses to request the next page (e.g.
+   * `pageName: 'users_page'` ⇒ partial reload appends `?users_page=2`).
+   */
+  pageName: string
 }
 
 /**
@@ -251,6 +278,114 @@ export const prepend: <T>(data: T, options?: MergeOptions) => T = buildMerge('pr
  */
 export const deepMerge: <T>(data: T, options?: MergeOptions) => T = buildMerge('deep')
 
+const SCROLL_MARKER = Symbol.for('@hono/inertia/scroll')
+
+/**
+ * Request header sent by the Inertia client's `<InfiniteScroll>` adapter to
+ * tell the server whether the next partial reload should append (scrolling
+ * forward) or prepend (scrolling backward) its result onto the cached array.
+ *
+ * Mirrors `Inertia\Support\Header::INFINITE_SCROLL_MERGE_INTENT` from the
+ * Laravel adapter.
+ */
+const INFINITE_SCROLL_MERGE_INTENT_HEADER = 'X-Inertia-Infinite-Scroll-Merge-Intent'
+
+/**
+ * Internal marker produced by {@link scroll}. The renderer detects this,
+ * unwraps `data` as the prop value, emits {@link ScrollDescriptor} metadata
+ * on `page.scrollProps[key]`, and — mirroring `Inertia\ScrollProp` — opts
+ * the prop into the merge protocol (defaulting to `append`, switching to
+ * `prepend` when the client sends `X-Inertia-Infinite-Scroll-Merge-Intent:
+ * prepend`).
+ *
+ * The shape is intentionally opaque — only the type guard inside the
+ * renderer reads it. The factory returns `T[]` so usage at call sites is
+ * transparent.
+ */
+interface ScrollProp<T = unknown> {
+  [SCROLL_MARKER]: true
+  data: T[]
+  previousPage: number | null
+  nextPage: number | null
+  currentPage: number
+  pageName: string
+  matchOn: string[]
+}
+
+const isScroll = (value: unknown): value is ScrollProp =>
+  typeof value === 'object' && value !== null && SCROLL_MARKER in value
+
+/**
+ * Options accepted by {@link scroll}.
+ */
+export interface ScrollOptions<T> {
+  /** Page payload — the items rendered for `currentPage`. */
+  data: T[]
+  /** 1-indexed current page number. */
+  currentPage: number
+  /** Total page count. Used to compute `nextPage` (returns `null` when on the last page). */
+  lastPage: number
+  /** Query-string parameter the client uses to request the next page (e.g. `'users_page'` ⇒ `?users_page=2`). */
+  pageName: string
+  /**
+   * Field(s) used by the Inertia client to dedupe array items when
+   * combining incoming and cached pages. Each entry is emitted as
+   * `"<propKey>.<field>"` on `page.matchPropsOn`. Mirrors the `matchOn`
+   * option on {@link merge} — optional and no default, so items are
+   * appended verbatim if you do not pass a key.
+   */
+  matchOn?: string | string[]
+}
+
+/**
+ * Marks a prop as a paginated **infinite scroll** source. On every response
+ * the renderer emits `props[key] = data` and `page.scrollProps[key]` with
+ * the previous/next page cursor that the Inertia client's
+ * `<InfiniteScroll>` adapter reads to drive subsequent partial reloads.
+ *
+ * Scroll props opt into the merge protocol on every response (default
+ * `append`, switched to `prepend` when the client sends
+ * `X-Inertia-Infinite-Scroll-Merge-Intent: prepend`), so the cached array
+ * keeps growing instead of being replaced each page.
+ *
+ * Full page visits always replace props entirely — merging only kicks in on
+ * subsequent partial reloads.
+ *
+ * @example
+ * ```ts
+ * app.get('/users', (c) =>
+ *   c.render('Users/Index', {
+ *     users: scroll({
+ *       data: await db.users.page(currentPage),
+ *       currentPage,
+ *       lastPage: 10,
+ *       pageName: 'users_page',
+ *       matchOn: 'id',
+ *     }),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/docs/v2/data-props/infinite-scroll
+ */
+export const scroll = <T>(options: ScrollOptions<T>): T[] => {
+  const matchOn = options.matchOn
+    ? Array.isArray(options.matchOn)
+      ? options.matchOn
+      : [options.matchOn]
+    : []
+  const marker: ScrollProp<T> = {
+    [SCROLL_MARKER]: true,
+    data: options.data,
+    previousPage: options.currentPage > 1 ? options.currentPage - 1 : null,
+    nextPage: options.currentPage < options.lastPage ? options.currentPage + 1 : null,
+    currentPage: options.currentPage,
+    pageName: options.pageName,
+    matchOn,
+  }
+  return marker as unknown as T[]
+}
+
 export interface InertiaOptions {
   /**
    * Asset version. When an Inertia GET request's `X-Inertia-Version` header
@@ -367,12 +502,22 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       //     is recorded in `deferredGroups`, and nothing is added to `kept`.
       //   - partial visit (`isPartial`): the marker is kept and resolved
       //     just like a regular function-valued prop.
+      // Scroll props opt into the merge protocol on every response. Default
+      // direction is `append`; when the client's <InfiniteScroll> adapter is
+      // walking backwards it sends X-Inertia-Infinite-Scroll-Merge-Intent:
+      // prepend, which flips this prop into the prepend bucket instead.
+      // Mirrors `ScrollProp::configureMergeIntent` in inertia-laravel.
+      const scrollMergeIntent = c.req.header(INFINITE_SCROLL_MERGE_INTENT_HEADER)
+      const scrollDirection: 'append' | 'prepend' =
+        scrollMergeIntent === 'prepend' ? 'prepend' : 'append'
+
       const kept: [string, unknown][] = []
       const deferredGroups: Record<string, string[]> = {}
       const mergeProps: string[] = []
       const prependProps: string[] = []
       const deepMergeProps: string[] = []
       const matchPropsOn: string[] = []
+      const scrollProps: Record<string, ScrollDescriptor> = {}
       let needsAsync = false
       for (const [key, value] of Object.entries(propsInput)) {
         if (isExcluded(key)) {
@@ -385,6 +530,28 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
           }
           needsAsync = true
           kept.push([key, value])
+          continue
+        }
+        // Scroll markers emit pagination metadata on every response and opt
+        // the prop into the merge protocol so the client appends/prepends
+        // each incoming page to the cached array. Checked before isMerge so
+        // a scroll() prop never falls through to the plain merge branch.
+        if (isScroll(value)) {
+          scrollProps[key] = {
+            previousPage: value.previousPage,
+            nextPage: value.nextPage,
+            currentPage: value.currentPage,
+            pageName: value.pageName,
+          }
+          if (scrollDirection === 'prepend') {
+            prependProps.push(key)
+          } else {
+            mergeProps.push(key)
+          }
+          for (const p of value.matchOn) {
+            matchPropsOn.push(`${key}.${p}`)
+          }
+          kept.push([key, value.data])
           continue
         }
         // Merge markers are emitted on every response (initial + partial) so
@@ -437,6 +604,9 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         }
         if (matchPropsOn.length > 0) {
           page.matchPropsOn = matchPropsOn
+        }
+        if (Object.keys(scrollProps).length > 0) {
+          page.scrollProps = scrollProps
         }
 
         c.header('Vary', 'Accept, X-Inertia')

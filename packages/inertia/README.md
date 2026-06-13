@@ -247,6 +247,37 @@ app.get('/feed', (c) =>
 
 The merge metadata is included on **every** response — initial and partial — so the client knows which keys to combine on the next partial reload. Full page visits always replace props entirely; merging only kicks in on subsequent partial reloads.
 
+## Infinite scroll
+
+[Infinite scroll](https://inertiajs.com/docs/v2/data-props/infinite-scroll) keeps loading more items as the user scrolls — feeds, search results, chat history. The Inertia client's `<InfiniteScroll>` adapter handles the IntersectionObserver and the partial-reload requests; the server just needs to advertise the paging cursor.
+
+Wrap the page payload with `scroll()`:
+
+```ts
+import { inertia, scroll } from '@hono/inertia'
+
+app.use(inertia())
+
+app.get('/users', async (c) => {
+  const currentPage = Number(c.req.query('users_page') ?? 1)
+  return c.render('Users/Index', {
+    users: scroll({
+      data: await db.users.page(currentPage),
+      currentPage,
+      lastPage: 10,
+      pageName: 'users_page',
+      matchOn: 'id',
+    }),
+  })
+})
+```
+
+The renderer emits `page.scrollProps[key] = { previousPage, nextPage, currentPage, pageName }` — what the `<InfiniteScroll>` adapter reads to decide when to fetch the next page and which query string to use (e.g. `pageName: 'users_page'` ⇒ `?users_page=2`). `previousPage` is `currentPage - 1` (or `null` on the first page); `nextPage` is `currentPage + 1` (or `null` on the last page).
+
+Scroll props also opt into the [merge protocol](#merge-props) automatically. By default each incoming page is **appended** to the cached array; when the client sends `X-Inertia-Infinite-Scroll-Merge-Intent: prepend` (e.g. when scrolling backwards), the prop is moved into `page.prependProps` for that response instead. The optional `matchOn` is forwarded as `page.matchPropsOn` exactly like in `merge()` — accepting a string or array, with no default (omit it to skip dedupe).
+
+Full page visits always replace props entirely; the append/prepend behaviour only kicks in on subsequent partial reloads.
+
 ## Vite plugin
 
 ```ts

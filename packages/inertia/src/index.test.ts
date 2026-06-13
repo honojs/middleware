@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
-import type { PageObject } from './index'
-import { deepMerge, defer, inertia, merge, prepend } from './index'
+import type { PageObject, ScrollDescriptor } from './index'
+import { deepMerge, defer, inertia, merge, prepend, scroll } from './index'
 
 describe('inertia', () => {
   describe('full page (non Inertia request)', () => {
@@ -880,6 +880,401 @@ describe('inertia', () => {
       // Accept: application/json returns the raw props (not a page object),
       // so the merge metadata isn't relevant — only the unwrapped value matters.
       expect(await res.json()).toEqual({ posts: [{ id: 1 }] })
+    })
+  })
+
+  describe('scroll props', () => {
+    const partialHeaders = (component: string, only?: string, mergeIntent?: string) => {
+      const headers: Record<string, string> = {
+        'X-Inertia': 'true',
+        'X-Inertia-Version': 'v1',
+        'X-Inertia-Partial-Component': component,
+      }
+      if (only !== undefined) {
+        headers['X-Inertia-Partial-Data'] = only
+      }
+      if (mergeIntent !== undefined) {
+        headers['X-Inertia-Infinite-Scroll-Merge-Intent'] = mergeIntent
+      }
+      return headers
+    }
+
+    it('emits page.scrollProps with paging metadata and unwraps the value', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 1 }, { id: 2 }],
+            currentPage: 2,
+            lastPage: 5,
+            pageName: 'users_page',
+          }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        scrollProps?: Record<string, ScrollDescriptor>
+      }
+      expect(body.props).toEqual({ users: [{ id: 1 }, { id: 2 }] })
+      expect(body.scrollProps).toEqual({
+        users: { previousPage: 1, nextPage: 3, currentPage: 2, pageName: 'users_page' },
+      })
+    })
+
+    it('reports previousPage as null on the first page', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 1, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { scrollProps?: Record<string, ScrollDescriptor> }
+      expect(body.scrollProps?.['users']?.previousPage).toBeNull()
+      expect(body.scrollProps?.['users']?.nextPage).toBe(2)
+    })
+
+    it('reports nextPage as null on the last page', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 5, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { scrollProps?: Record<string, ScrollDescriptor> }
+      expect(body.scrollProps?.['users']?.previousPage).toBe(4)
+      expect(body.scrollProps?.['users']?.nextPage).toBeNull()
+    })
+
+    it('defaults the merge direction to append (mergeProps, not prependProps)', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 1, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { mergeProps?: string[]; prependProps?: string[] }
+      expect(body.mergeProps).toEqual(['users'])
+      expect(body.prependProps).toBeUndefined()
+    })
+
+    it('switches to prepend when X-Inertia-Infinite-Scroll-Merge-Intent is prepend', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 2, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: partialHeaders('Users/Index', 'users', 'prepend'),
+      })
+
+      const body = (await res.json()) as { mergeProps?: string[]; prependProps?: string[] }
+      expect(body.prependProps).toEqual(['users'])
+      expect(body.mergeProps).toBeUndefined()
+    })
+
+    it('treats an unknown merge-intent value (e.g. "append" or garbage) as append', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 2, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: partialHeaders('Users/Index', 'users', 'bogus'),
+      })
+
+      const body = (await res.json()) as { mergeProps?: string[]; prependProps?: string[] }
+      expect(body.mergeProps).toEqual(['users'])
+      expect(body.prependProps).toBeUndefined()
+    })
+
+    it('emits matchPropsOn for a single matchOn string', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 1 }],
+            currentPage: 1,
+            lastPage: 5,
+            pageName: 'page',
+            matchOn: 'id',
+          }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { matchPropsOn?: string[] }
+      expect(body.matchPropsOn).toEqual(['users.id'])
+    })
+
+    it('expands an array matchOn into one matchPropsOn entry per field', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 1, tenantId: 'a' }],
+            currentPage: 1,
+            lastPage: 5,
+            pageName: 'page',
+            matchOn: ['id', 'tenantId'],
+          }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { matchPropsOn?: string[] }
+      expect(body.matchPropsOn).toEqual(['users.id', 'users.tenantId'])
+    })
+
+    it('omits matchPropsOn entirely when matchOn is not passed', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({ data: [], currentPage: 1, lastPage: 5, pageName: 'page' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { matchPropsOn?: string[] }
+      expect(body.matchPropsOn).toBeUndefined()
+    })
+
+    it('still emits scrollProps and mergeProps on partial reloads', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 11 }],
+            currentPage: 2,
+            lastPage: 5,
+            pageName: 'page',
+            matchOn: 'id',
+          }),
+          tenant: { id: 1 },
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Users/Index', 'users') })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        scrollProps?: Record<string, ScrollDescriptor>
+        mergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ users: [{ id: 11 }] })
+      expect(body.scrollProps?.['users']?.currentPage).toBe(2)
+      expect(body.mergeProps).toEqual(['users'])
+      expect(body.matchPropsOn).toEqual(['users.id'])
+    })
+
+    it('omits a scroll-marked prop from scrollProps when the partial filter excludes it', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          users: scroll({
+            data: [{ id: 1 }],
+            currentPage: 1,
+            lastPage: 5,
+            pageName: 'page',
+            matchOn: 'id',
+          }),
+          orders: scroll({
+            data: [{ id: 2 }],
+            currentPage: 1,
+            lastPage: 3,
+            pageName: 'orders_page',
+            matchOn: 'id',
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Feed', 'users') })
+
+      const body = (await res.json()) as {
+        props: Record<string, unknown>
+        scrollProps?: Record<string, ScrollDescriptor>
+        mergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.props).toEqual({ users: [{ id: 1 }] })
+      expect(Object.keys(body.scrollProps ?? {})).toEqual(['users'])
+      expect(body.mergeProps).toEqual(['users'])
+      expect(body.matchPropsOn).toEqual(['users.id'])
+    })
+
+    it('supports multiple scroll() props in a single response', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Dashboard', {
+          users: scroll({
+            data: [],
+            currentPage: 1,
+            lastPage: 5,
+            pageName: 'users_page',
+            matchOn: 'id',
+          }),
+          orders: scroll({
+            data: [],
+            currentPage: 2,
+            lastPage: 4,
+            pageName: 'orders_page',
+            matchOn: 'id',
+          }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        scrollProps?: Record<string, ScrollDescriptor>
+        mergeProps?: string[]
+        matchPropsOn?: string[]
+      }
+      expect(body.scrollProps).toEqual({
+        users: { previousPage: null, nextPage: 2, currentPage: 1, pageName: 'users_page' },
+        orders: { previousPage: 1, nextPage: 3, currentPage: 2, pageName: 'orders_page' },
+      })
+      expect(body.mergeProps).toEqual(['users', 'orders'])
+      expect(body.matchPropsOn).toEqual(['users.id', 'orders.id'])
+    })
+
+    it('coexists with merge() / prepend() in the same response', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Feed', {
+          users: scroll({
+            data: [{ id: 1 }],
+            currentPage: 1,
+            lastPage: 5,
+            pageName: 'page',
+            matchOn: 'id',
+          }),
+          announcements: prepend([{ id: 9 }], { matchOn: 'id' }),
+          ticker: merge([{ id: 1 }], { matchOn: 'id' }),
+        })
+      )
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as {
+        mergeProps?: string[]
+        prependProps?: string[]
+        matchPropsOn?: string[]
+        scrollProps?: Record<string, ScrollDescriptor>
+      }
+      expect(body.mergeProps).toEqual(['users', 'ticker'])
+      expect(body.prependProps).toEqual(['announcements'])
+      expect(body.matchPropsOn).toEqual(['users.id', 'announcements.id', 'ticker.id'])
+      expect(body.scrollProps?.['users']?.pageName).toBe('page')
+    })
+
+    it('embeds scrollProps in the initial HTML page object', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 1 }],
+            currentPage: 1,
+            lastPage: 3,
+            pageName: 'users_page',
+            matchOn: 'id',
+          }),
+        })
+      )
+
+      const res = await app.request('/')
+
+      const html = await res.text()
+      expect(html).toContain('"scrollProps":{"users":')
+      expect(html).toContain('"pageName":"users_page"')
+      expect(html).toContain('"mergeProps":["users"]')
+      expect(html).toContain('"matchPropsOn":["users.id"]')
+    })
+
+    it('omits all scroll fields from the page object when no prop is scroll-marked', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { user: { id: 1 } }))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { scrollProps?: Record<string, ScrollDescriptor> }
+      expect(body.scrollProps).toBeUndefined()
+    })
+
+    it('unwraps the scroll value for raw JSON requests (Accept: application/json)', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Users/Index', {
+          users: scroll({
+            data: [{ id: 1 }],
+            currentPage: 1,
+            lastPage: 3,
+            pageName: 'users_page',
+            matchOn: 'id',
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: { Accept: 'application/json' } })
+
+      // Accept: application/json returns the raw props (not a page object),
+      // so scroll metadata isn't relevant — only the unwrapped value matters.
+      expect(await res.json()).toEqual({ users: [{ id: 1 }] })
     })
   })
 })
