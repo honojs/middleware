@@ -1,5 +1,32 @@
 # @hono/inertia
 
+## 0.6.0
+
+### Minor Changes
+
+- [#1934](https://github.com/honojs/middleware/pull/1934) [`35682a73136e7483bfd22e14659e9a307155f296`](https://github.com/honojs/middleware/commit/35682a73136e7483bfd22e14659e9a307155f296) Thanks [@ashunar0](https://github.com/ashunar0)! - feat(inertia): add infinite scroll with `scroll()`
+
+  Adds a `scroll()` helper that wraps a paginated page payload with the metadata
+  the Inertia client's `<InfiniteScroll>` adapter needs to keep loading more items
+  as the user scrolls:
+
+  ```ts
+  users: scroll({
+    data: await db.users.page(currentPage),
+    currentPage,
+    lastPage: 10,
+    pageName: 'users_page',
+    matchOn: 'id',
+  })
+  ```
+
+  The value travels as-is; the renderer emits `page.scrollProps[key] = {
+previousPage, nextPage, currentPage, pageName }` on every response and opts the
+  prop into the merge protocol — defaulting to `append`, switched to `prepend`
+  when the client sends `X-Inertia-Infinite-Scroll-Merge-Intent: prepend`. The
+  optional `matchOn` is forwarded as `page.matchPropsOn` for client-side dedupe.
+  Mirrors `Inertia::scroll(...)` in inertia-laravel 3.x.
+
 ## 0.5.0
 
 ### Minor Changes
