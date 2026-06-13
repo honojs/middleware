@@ -5566,9 +5566,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-istanbul@npm:^4.1.7":
-  version: 4.1.7
-  resolution: "@vitest/coverage-istanbul@npm:4.1.7"
+"@vitest/coverage-istanbul@npm:^4.1.8":
+  version: 4.1.8
+  resolution: "@vitest/coverage-istanbul@npm:4.1.8"
   dependencies:
     "@babel/core": "npm:^7.29.0"
     "@istanbuljs/schema": "npm:^0.1.3"
@@ -5581,8 +5581,8 @@ __metadata:
     obug: "npm:^2.1.1"
     tinyrainbow: "npm:^3.1.0"
   peerDependencies:
-    vitest: 4.1.7
-  checksum: 10c0/6c5d12a44ffeaf6779a657b600bb91a7c3dc0930021729218cdca28eba77466e1cdc73935bf7a92ce5055cbce68c51c822cc56c608af2dd4b90144b536b13c56
+    vitest: 4.1.8
+  checksum: 10c0/cb4d1df51fbe078391f17da0d09f2e7d765aa001bbaebaa6665ae9d356d9fd34f62b3739da175492b566cd2f35a3fd9d1cda61f35544f99b88611566931a772e
   languageName: node
   linkType: hard
 
@@ -9913,7 +9913,7 @@ __metadata:
     "@ryoppippi/unplugin-typia": "npm:^2.6.5"
     "@tsconfig/strictest": "npm:^2.0.8"
     "@types/node": "npm:^25.2.3"
-    "@vitest/coverage-istanbul": "npm:^4.1.7"
+    "@vitest/coverage-istanbul": "npm:^4.1.8"
     eslint: "npm:^10.0.3"
     hono: "npm:^4.11.5"
     pkg-pr-new: "npm:^0.0.63"
