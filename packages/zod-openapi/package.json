@@ -1,6 +1,9 @@
 {
   "name": "@hono/zod-openapi",
   "version": "1.4.0",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "description": "A wrapper class of Hono which supports OpenAPI.",
   "type": "module",
   "main": "./dist/index.cjs",
