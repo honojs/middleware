@@ -39,6 +39,9 @@
     "directory": "packages/prometheus"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "peerDependencies": {
     "hono": ">=3.0.0",
     "prom-client": "^15.0.0"
