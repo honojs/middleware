@@ -1,6 +1,10 @@
 {
   "name": "hono-middleware",
   "version": "0.0.0",
+  "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "description": "Third-party middleware for Hono",
   "type": "module",
   "workspaces": {
