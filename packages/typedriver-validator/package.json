@@ -47,7 +47,7 @@
     "arktype": "^2.2.0",
     "hono": "^4.11.5",
     "tsdown": "^0.22.2",
-    "typebox": "^1.1.5",
+    "typebox": "^1.2.14",
     "typedriver": "^0.8.6",
     "typescript": "^6.0.3",
     "valibot": "^1.3.0",
