@@ -62,5 +62,8 @@
     "typescript": "^6.0.3",
     "vitest": "^4.1.7",
     "zod": "^4.2.1"
+  },
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
   }
 }
