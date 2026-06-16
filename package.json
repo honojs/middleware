@@ -56,5 +56,9 @@
     "typia": "^12.1.1",
     "vitest": "^4.1.7"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "bugs": {
+    "url": "git+https://github.com/honojs/middleware/issues"
+  },
+  "homepage": "git+https://github.com/honojs/middleware#readme"
 }
