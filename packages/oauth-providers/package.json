@@ -118,5 +118,9 @@
   },
   "engines": {
     "node": ">=18.4.0"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
   }
 }

@@ -49,5 +49,8 @@
     "typescript": "^6.0.3",
     "valibot": "^1.3.0",
     "vitest": "^4.1.7"
+  },
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
   }
 }
