@@ -27,6 +27,9 @@
     "directory": "packages/sentry"
   },
   "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "author": "Samuel Lippert <samuel@driv.ly> (https://github.com/sam-lippert)",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
