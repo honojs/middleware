@@ -6,6 +6,10 @@
     "url": "git+https://github.com/honojs/middleware.git",
     "directory": "packages/oauth-providers"
   },
+  "homepage": "https://github.com/honojs/middleware",
+  "bugs": {
+    "url": "https://github.com/honojs/middleware/issues"
+  },
   "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
   "type": "module",
   "main": "./dist/index.cjs",
