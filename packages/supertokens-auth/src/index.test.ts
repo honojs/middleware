@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Hono } from 'hono'
 import { superTokensMiddleware, verifySession, getSession } from './index'
 
@@ -19,7 +19,6 @@ vi.mock('supertokens-node/recipe/session', () => ({
   },
 }))
 
-// Minimal CollectingResponse / PreParsedRequest mocks
 vi.mock('supertokens-node/framework/custom', () => {
   class FakePreParsedRequest {
     method: string
@@ -55,15 +54,17 @@ vi.mock('supertokens-node/framework/custom', () => {
     cookies: string[] = []
   }
 
-  const middleware = vi.fn(() => async (_req: unknown, _res: unknown, _next: () => Promise<void>) => {
-    // Don't call _next — the real implementation passes a noop
-    return { error: undefined, handled: false }
-  })
+  const middleware = vi.fn(
+    () => async (_req: unknown, _res: unknown, _next: () => Promise<void>) =>
+      ({ error: undefined, handled: false } as { handled: boolean; error?: unknown })
+  )
 
-  const errorHandler = vi.fn(() => async (_err: unknown, _req: unknown, res: FakeCollectingResponse) => {
-    res.statusCode = 500
-    res.body = JSON.stringify({ message: 'error' })
-  })
+  const errorHandler = vi.fn(
+    () => async (_err: unknown, _req: unknown, res: FakeCollectingResponse) => {
+      res.statusCode = 500
+      res.body = JSON.stringify({ message: 'error' })
+    }
+  )
 
   return {
     PreParsedRequest: FakePreParsedRequest,
@@ -115,7 +116,7 @@ describe('verifySession()', () => {
     const app = new Hono()
     app.get('/me', verifySession(), (c) => {
       const session = c.get('session')
-      return c.json({ userId: session.getUserId() })
+      return c.json({ userId: session?.getUserId() })
     })
 
     const res = await app.request(makeRequest('/me'))
@@ -205,7 +206,7 @@ describe('getSession()', () => {
   it('throws if called without verifySession() in the chain', async () => {
     const app = new Hono()
     app.get('/bad', (c) => {
-      getSession(c) // no verifySession middleware
+      getSession(c)
       return c.json({ ok: true })
     })
     app.onError((err, c) => c.json({ message: err.message }, 500))
