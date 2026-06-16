@@ -8,7 +8,7 @@ import type { IncomingMessage, Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Duplex } from 'node:stream'
 import { CloseEvent } from './events'
-
+import type { ServerOptions } from 'ws'
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket<
     WebSocket,
@@ -23,6 +23,7 @@ export interface NodeWebSocketInit {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   app: Hono<any, any, any>
   baseUrl?: string | URL
+  webSocketOptions?: ServerOptions
 }
 
 const generateConnectionSymbol = () => Symbol('connection')
@@ -36,7 +37,10 @@ const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
  * @returns NodeWebSocket
  */
 export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
-  const wss = new WebSocketServer({ noServer: true })
+  const wss = new WebSocketServer({
+    noServer: true,
+    ...init.webSocketOptions,
+  })
   const waiterMap = new Map<
     IncomingMessage,
     { resolve: (ws: WebSocket) => void; connectionSymbol: symbol }

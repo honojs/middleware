@@ -327,4 +327,16 @@ describe('WebSocket helper', () => {
       })
     )
   })
+
+  it('should pass websocket options to WebSocketServer', () => {
+    const { wss } = createNodeWebSocket({
+      app: new Hono(),
+      webSocketOptions: {
+        maxPayload: 12345,
+      },
+    })
+
+    expect(wss.options.maxPayload).toBe(12345)
+  })
+
 })
