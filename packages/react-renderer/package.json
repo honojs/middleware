@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.16.10",
-    "@types/react": "^19.2.16",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "hono": "^4.11.5",
     "react": "^19.2.7",
