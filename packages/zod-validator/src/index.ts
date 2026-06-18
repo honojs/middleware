@@ -70,13 +70,9 @@ type ValidationFunctionOption<T extends ZodSchema, Target extends keyof Validati
 }
 
 type DefaultInput<Target extends keyof ValidationTargets, In, Out> = {
-  in: HasUndefined<In> extends true
-    ? {
-        [K in Target]?: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
-      }
-    : {
-        [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
-      }
+  in: {
+    [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
+  }
   out: { [K in Target]: Out }
 }
 
