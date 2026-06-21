@@ -1,4 +1,4 @@
-import type { Context, Env, Handler, Input, TypedResponse, ValidationTargets } from 'hono'
+import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
 import type {
   GenericSchema,
@@ -20,6 +20,9 @@ type MustBeResponse<T, Schema extends GenericSchema | GenericSchemaAsync> =
     : T extends Response | TypedResponse<unknown>
       ? T
       : never
+
+type FallbackIfHookReturnsVoid<R, T extends GenericSchema | GenericSchemaAsync> =
+  undefined extends Awaited<R> ? FailedResponse<T> : never
 
 export type Hook<
   T extends GenericSchema | GenericSchemaAsync,
@@ -100,7 +103,7 @@ export const vValidator = <
   target: Target,
   schema: T,
   hook?: Hook<T, E, P, Target, R>
-): Handler<E, P, V, MustBeResponse<R, T>> =>
+): MiddlewareHandler<E, P, V, MustBeResponse<R, T> | FallbackIfHookReturnsVoid<R, T>> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
     const result = await safeParseAsync(schema, value)
