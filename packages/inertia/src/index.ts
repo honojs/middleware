@@ -473,12 +473,16 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       }
     }
 
-    c.setRenderer(((component: string, propsInput: Record<string, unknown> = {}, options: RenderOptions = {}) => {
+    c.setRenderer(((
+      component: string,
+      propsInput: Record<string, unknown> = {},
+      options: RenderOptions = {}
+    ) => {
       // Use the Referer for non-GET requests to keep the original URL.
       // Override with options.url if provided.
       const url =
         options.url === undefined
-          ? new URL(c.req.method === 'GET' ? c.req.url : c.req.header('Referer') ?? c.req.url)
+          ? new URL(c.req.method === 'GET' ? c.req.url : (c.req.header('Referer') ?? c.req.url))
           : new URL(options.url, c.req.url)
 
       // Partial reload negotiation: the client (Inertia core) signals
@@ -684,7 +688,7 @@ export type PageName = keyof InertiaPages extends never
  */
 export interface RenderOptions {
   /**
-   * Overrides `page.url`. 
+   * Overrides `page.url`.
    * It is primarily used to prevent incorrect URLs when using no-referrer.
    */
   url?: string
