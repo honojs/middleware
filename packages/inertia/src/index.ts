@@ -474,7 +474,8 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
     }
 
     c.setRenderer(((component: string, propsInput: Record<string, unknown> = {}) => {
-      const url = new URL(c.req.url)
+      // Use the Referer for non-GET requests to keep the original URL.
+      const url = new URL(c.req.method === 'GET' ? c.req.url : c.req.header('Referer') ?? c.req.url)
 
       // Partial reload negotiation: the client (Inertia core) signals
       // "only re-evaluate these props" via X-Inertia-Partial-Component +
