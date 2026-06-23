@@ -46,7 +46,7 @@
   "devDependencies": {
     "arktype": "^2.2.0",
     "hono": "^4.11.5",
-    "tsdown": "^0.22.2",
+    "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.7"
   }
