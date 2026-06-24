@@ -61,7 +61,7 @@
     "@types/react": "^19",
     "hono": "^4.11.5",
     "react": "^19.2.7",
-    "tsdown": "^0.22.2",
+    "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.7"
   },
