@@ -257,6 +257,38 @@ describe('inertia', () => {
       const body = (await res.json()) as PageObject
       expect(body.url).toBe('/users/new')
     })
+
+    it('prefers options.url over Referer when both are present on a non-GET request', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.post('/users', (c) => c.render('Users/New', {}, { url: '/override' }))
+
+      const res = await app.request('/users', {
+        method: 'POST',
+        headers: {
+          'X-Inertia': 'true',
+          'X-Inertia-Version': 'v1',
+          Referer: 'http://localhost/users/new',
+        },
+      })
+
+      const body = (await res.json()) as PageObject
+      expect(body.url).toBe('/override')
+    })
+
+    it('keeps only the pathname when options.url is an absolute URL', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.post('/users', (c) => c.render('Users/New', {}, { url: 'https://example.com/override' }))
+
+      const res = await app.request('/users', {
+        method: 'POST',
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as PageObject
+      expect(body.url).toBe('/override')
+    })
   })
 
   describe('partial reload', () => {
