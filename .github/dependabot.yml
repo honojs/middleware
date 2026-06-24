@@ -3,12 +3,16 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    cooldown:
+      default-days: 7
     schedule:
       interval: weekly
 
   - package-ecosystem: npm
     allow:
       - dependency-type: development
+    cooldown:
+      default-days: 7
     directory: /
     groups:
       otel:
