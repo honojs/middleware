@@ -48,7 +48,7 @@
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.7",
-    "yaml": "^2.8.2",
+    "yaml": "^2.9.0",
     "zod": "^4.2.1"
   },
   "dependencies": {
