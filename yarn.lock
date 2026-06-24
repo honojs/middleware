@@ -2414,12 +2414,12 @@ __metadata:
   dependencies:
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.22.3"
-    typebox: "npm:^1.1.5"
+    typebox: "npm:^1.3.0"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.7"
   peerDependencies:
     hono: ">=3.9.0"
-    typebox: ^1.1.5
+    typebox: ^1.3.0
   languageName: unknown
   linkType: soft
 
@@ -2430,7 +2430,7 @@ __metadata:
     arktype: "npm:^2.2.0"
     hono: "npm:^4.11.5"
     tsdown: "npm:^0.22.3"
-    typebox: "npm:^1.1.5"
+    typebox: "npm:^1.3.0"
     typedriver: "npm:^0.8.6"
     typescript: "npm:^6.0.3"
     valibot: "npm:^1.3.0"
@@ -16169,10 +16169,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typebox@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "typebox@npm:1.1.5"
-  checksum: 10c0/ce5c9953816bedd95da8e8507dad3e8126310ff12d0161a7f04742083b541dbc61b598f9cbe390ac92e5fb746c3a2cae9b84d08b104989ae0cc2d3c320b81789
+"typebox@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "typebox@npm:1.3.0"
+  checksum: 10c0/59acac6f716cc7c5186ac97545ee0259a53b8379fd6630299eb89a9d519aab0e615673cdc1080ad5b867c416d7d5e977f69a9ac9d416e701f5044d5931bcc723
   languageName: node
   linkType: hard
 
