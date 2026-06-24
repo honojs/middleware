@@ -4,15 +4,7 @@
 
 fix(inertia): use the Referer for non-GET requests to keep the original URL
 
-For non-GET requests, `page.url` now uses the `Referer` header (falling
-back to `c.req.url`) instead of `c.req.url` to keep the original URL.
-
-feat(inertia): add an option to override `page.url`
-
-`c.render(component, props, options)` now accepts an optional third
-argument `options?: RenderOptions` with a `url` field. Overrides `page.url`.
-It is primarily used to prevent incorrect URLs when using no-referrer.
-
-```ts
-app.post('/users', (c) => c.render('Users/New', {}, { url: '/users/new' }))
-```
+**Behavior change**: For non-GET requests, `page.url` previously used
+`c.req.url` (e.g. the POST target). It now uses the `Referer` header
+(falling back to `c.req.url` when unavailable). If you were relying on
+the old value, pass the explicit `options.url` instead.
