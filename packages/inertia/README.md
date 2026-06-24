@@ -176,6 +176,24 @@ export default function Show({ post }: PageProps<'Posts/Show'>) {
 }
 ```
 
+## Page URL resolution
+
+`c.render` resolves the current page's URL. Its default source depends on the request method:
+
+| Method                       | Default Page URL source                                       |
+| ---------------------------- | ------------------------------------------------------------- |
+| `GET`                        | `c.req.url`                                                   |
+| non-`GET` (`POST`, `PUT`, …) | `Referer` header (falls back to `c.req.url` when unavailable) |
+
+### Override Page URL
+
+When the `Referer` header is unavailable (e.g. under a `no-referrer` Referrer-Policy) or reduced to the origin (under an `origin` or `strict-origin`), the resolved URL may not reflect the original URL. To pin a deterministic value regardless, pass the third argument to `c.render`:
+
+```ts
+// Resolved URL: '/users/new'
+app.post('/users', (c) => c.render('Users/New', {}, { url: '/users/new' }))
+```
+
 ## Partial reloads
 
 Inertia's [partial reloads](https://inertiajs.com/partial-reloads) let a single visit re-fetch only a subset of the page's props, leaving the rest as they were. `@hono/inertia` honors the `X-Inertia-Partial-Component`, `X-Inertia-Partial-Data`, and `X-Inertia-Partial-Except` headers transparently — the route signature stays the same.
