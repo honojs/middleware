@@ -473,8 +473,22 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       }
     }
 
-    c.setRenderer(((component: string, propsInput: Record<string, unknown> = {}) => {
-      const url = new URL(c.req.url)
+    c.setRenderer(((
+      component: string,
+      propsInput: Record<string, unknown> = {},
+      options: RenderOptions = {}
+    ) => {
+      // Use the Referer for non-GET requests to keep the original URL.
+      // Override with options.url if provided.
+      const url = (() => {
+        try {
+          return options.url === undefined
+            ? new URL(c.req.method === 'GET' ? c.req.url : (c.req.header('Referer') ?? c.req.url))
+            : new URL(options.url, c.req.url)
+        } catch {
+          return new URL(c.req.url)
+        }
+      })()
 
       // Partial reload negotiation: the client (Inertia core) signals
       // "only re-evaluate these props" via X-Inertia-Partial-Component +
@@ -674,11 +688,23 @@ export type PageName = keyof InertiaPages extends never
   ? string
   : Extract<keyof InertiaPages, string>
 
+/**
+ * Render options accepted as the third argument of `c.render`.
+ */
+export interface RenderOptions {
+  /**
+   * Overrides `page.url`. It is primarily used to prevent
+   * incorrect URLs when using no-referrer, origin, or strict-origin.
+   */
+  url?: string
+}
+
 declare module 'hono' {
   interface ContextRenderer {
     <C extends PageName, P = Record<string, never>>(
       component: C,
-      props?: P
+      props?: P,
+      options?: RenderOptions
     ): Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
   }
   interface NotFoundResponse extends Response, TypedResponse<string, 404, 'text'> {}
