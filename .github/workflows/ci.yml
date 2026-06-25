@@ -22,10 +22,12 @@ jobs:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
         id: setSHAs
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn workspaces focus what-changed
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
       - uses: ./.github/actions/what-changed
         id: set-packages
         with:
@@ -43,13 +45,15 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn
-      - run: yarn typecheck
-      - run: yarn lint --cache-strategy content
-      - run: yarn format
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm lint --cache-strategy content
+      - run: pnpm format
 
   test:
     runs-on: ubuntu-latest
@@ -69,12 +73,14 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn turbo --filter @hono/${{ matrix.package }} build
-      - run: yarn test --coverage --project @hono/${{ matrix.package }}
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo --filter @hono/${{ matrix.package }} build
+      - run: pnpm test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7

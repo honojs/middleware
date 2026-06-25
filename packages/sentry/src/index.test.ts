@@ -13,6 +13,8 @@ class Context implements ExecutionContext {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tracing: any
 }
 
 vi.mock(import('toucan-js'), async (importOriginal) => {

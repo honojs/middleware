@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",

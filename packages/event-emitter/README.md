@@ -36,7 +36,7 @@ For more usage examples, see the [tests](src/index.test.ts) or my [Hono REST API
 ```sh
 npm install @hono/event-emitter
 # or
-yarn add @hono/event-emitter
+pnpm add @hono/event-emitter
 # or
 pnpm add @hono/event-emitter
 # or

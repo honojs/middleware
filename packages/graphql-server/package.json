@@ -32,11 +32,11 @@
     }
   },
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "VERSION=$npm_package_version pnpm -w run version:set"
   },
   "peerDependencies": {
     "hono": ">=3.0.0"
