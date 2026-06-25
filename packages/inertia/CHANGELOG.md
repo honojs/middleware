@@ -1,5 +1,26 @@
 # @hono/inertia
 
+## 0.7.0
+
+### Minor Changes
+
+- [#1991](https://github.com/honojs/middleware/pull/1991) [`4d78c0b464cd79e6c1549745c3f4a8b86fbea001`](https://github.com/honojs/middleware/commit/4d78c0b464cd79e6c1549745c3f4a8b86fbea001) Thanks [@nkfr26](https://github.com/nkfr26)! - feat(inertia): add an option to override `page.url`
+
+  `c.render(component, props, options)` now accepts an optional third argument
+  `options?: RenderOptions` with a `url` field. Overrides `page.url`. It is primarily
+  used to prevent incorrect URLs when using no-referrer, origin, or strict-origin.
+
+  ```ts
+  app.post('/users', (c) => c.render('Users/New', {}, { url: '/users/new' }))
+  ```
+
+- [#1991](https://github.com/honojs/middleware/pull/1991) [`4d78c0b464cd79e6c1549745c3f4a8b86fbea001`](https://github.com/honojs/middleware/commit/4d78c0b464cd79e6c1549745c3f4a8b86fbea001) Thanks [@nkfr26](https://github.com/nkfr26)! - fix(inertia): use the Referer for non-GET requests to keep the original URL
+
+  **Behavior change**: For non-GET requests, `page.url` previously used
+  `c.req.url` (e.g. the POST target). It now uses the `Referer` header
+  (falling back to `c.req.url` when unavailable). If you were relying on
+  the old value, pass the explicit `options.url` instead.
+
 ## 0.6.0
 
 ### Minor Changes
