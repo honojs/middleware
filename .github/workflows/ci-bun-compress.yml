@@ -24,7 +24,9 @@ jobs:
         with:
           bun-version: ${{ matrix.bun-version }}
       - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
-      - run: pnpm install --frozen-lockfile
+        with:
+          cache: true
+      - run: pnpm install --filter @hono/bun-compress
       - run: pnpm turbo --filter @hono/bun-compress build
       - run: bun test packages/bun-compress --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
