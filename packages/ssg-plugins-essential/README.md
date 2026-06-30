@@ -16,7 +16,7 @@ This plugin collection provides standard and lightweight plugins essential for s
 npm install @hono/ssg-plugins-essential
 
 # Yarn
-pnpm add @hono/ssg-plugins-essential
+yarn add @hono/ssg-plugins-essential
 
 # pnpm
 pnpm add @hono/ssg-plugins-essential
