@@ -3,6 +3,7 @@ import type { Context, Env, Input, TypedResponse, ValidationTargets } from 'hono
 import type { Handler } from 'hono/types'
 import { validator } from 'hono/validator'
 import { sanitizeIssues } from './sanitize-issues'
+import type { InferInput } from './utils'
 
 type HasUndefined<T> = undefined extends T ? true : false
 
@@ -118,14 +119,10 @@ const sValidator = <
   I extends Input = {
     in: HasUndefined<In> extends true
       ? {
-          [K in Target]?: In extends ValidationTargets[K]
-            ? In
-            : { [K2 in keyof In]?: ValidationTargets[K][K2] }
+          [K in Target]?: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
         }
       : {
-          [K in Target]: In extends ValidationTargets[K]
-            ? In
-            : { [K2 in keyof In]: ValidationTargets[K][K2] }
+          [K in Target]: [In] extends [ValidationTargets[K]] ? In : InferInput<In, K>
         }
     out: { [K in Target]: Out }
   },
@@ -138,7 +135,7 @@ const sValidator = <
 >(
   target: Target,
   schema: Schema,
-  hook?: Hook<StandardSchemaV1.InferOutput<Schema>, E, P, Target, R>
+  hook?: Hook<StandardSchemaV1.InferInput<Schema>, E, P, Target, R>
 ): Handler<E, P, V, MustBeResponse<R>> =>
   // @ts-expect-error not typed well
   validator(target, async (value, c) => {
