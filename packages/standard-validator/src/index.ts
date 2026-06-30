@@ -168,5 +168,5 @@ const sValidator = <
     return (result as { value: StandardSchemaV1.InferOutput<Schema> }).value
   })
 
-export type { Hook }
+export type { Hook, InferInput }
 export { sValidator }
