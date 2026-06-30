@@ -1,5 +1,13 @@
 # @hono/standard-validator
 
+## 0.2.3
+
+### Patch Changes
+
+- [#2008](https://github.com/honojs/middleware/pull/2008) [`a47c715fdbac8406e0399f8f5576dca596e2e5b8`](https://github.com/honojs/middleware/commit/a47c715fdbac8406e0399f8f5576dca596e2e5b8) Thanks [@MathurAditya724](https://github.com/MathurAditya724)! - fix(standard-validator): preserve literal union types in RPC input and fix hook data type
+  - Port `InferInput` utility from `@hono/zod-validator` to preserve literal union types (e.g., `z.enum(["asc", "desc"])`) in the RPC client's input type, while still falling back to wire-level types (`string | string[]` for query, `string` for param/header/cookie) for non-literal values.
+  - Fix hook `data` type to use `InferInput` instead of `InferOutput`, matching the runtime behavior where the raw input value is passed to the hook (fixes #1990).
+
 ## 0.2.2
 
 ### Patch Changes
