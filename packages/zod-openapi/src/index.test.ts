@@ -3,7 +3,7 @@ import type { Context, TypedResponse } from 'hono'
 import { accepts } from 'hono/accepts'
 import { bearerAuth } from 'hono/bearer-auth'
 import { hc } from 'hono/client'
-import type { ServerErrorStatusCode } from 'hono/utils/http-status'
+import type { ServerErrorStatusCode, StatusCode } from 'hono/utils/http-status'
 import type { JSONValue } from 'hono/utils/types'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { stringify } from 'yaml'
@@ -2112,6 +2112,117 @@ describe('RouteConfigToTypedResponse', () => {
             ok: boolean
           },
           ServerErrorStatusCode,
+          'json'
+        >
+    expectTypeOf<Actual>().toEqualTypeOf<Expected>()
+  })
+
+  it('Should resolve text/plain responses to the text format', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/plain',
+      responses: {
+        200: {
+          content: {
+            'text/plain': {
+              schema: z.string(),
+            },
+          },
+          description: 'Plain text',
+        },
+      },
+    })
+
+    type Actual = RouteConfigToTypedResponse<typeof route>
+    type Expected = TypedResponse<string, 200, 'text'>
+    expectTypeOf<Actual>().toEqualTypeOf<Expected>()
+  })
+
+  it('Should treat application/*+json media types as json', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/vnd',
+      responses: {
+        200: {
+          content: {
+            'application/vnd.api+json': {
+              schema: UserSchema,
+            },
+          },
+          description: 'Vendor JSON',
+        },
+      },
+    })
+
+    type Actual = RouteConfigToTypedResponse<typeof route>
+    type Expected = TypedResponse<
+      {
+        name: string
+        age: number
+        hobbies: Record<string, JSONValue>[]
+      },
+      200,
+      'json'
+    >
+    expectTypeOf<Actual>().toEqualTypeOf<Expected>()
+  })
+
+  it('Should type responses without content as a generic TypedResponse', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/no-content',
+      responses: {
+        204: {
+          description: 'No Content',
+        },
+      },
+    })
+
+    type Actual = RouteConfigToTypedResponse<typeof route>
+    type Expected = TypedResponse<{}, 204, string>
+    expectTypeOf<Actual>().toEqualTypeOf<Expected>()
+  })
+
+  it('Should resolve the default response to the remaining status codes', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/with-default',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: UserSchema,
+            },
+          },
+          description: 'OK',
+        },
+        default: {
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
+          description: 'Error',
+        },
+      },
+    })
+
+    type Actual = RouteConfigToTypedResponse<typeof route>
+    type Expected =
+      | TypedResponse<
+          {
+            name: string
+            age: number
+            hobbies: Record<string, JSONValue>[]
+          },
+          200,
+          'json'
+        >
+      | TypedResponse<
+          {
+            ok: boolean
+          },
+          Exclude<StatusCode, 200>,
           'json'
         >
     expectTypeOf<Actual>().toEqualTypeOf<Expected>()
