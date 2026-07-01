@@ -1012,6 +1012,7 @@ describe('session.id', () => {
   it('preserves session id across requests with same cookie', async () => {
     // First request - create session
     const firstRes = await client['session-id'][':sub'].$put({ param: { sub: 'user1' } })
+    // @ts-expect-error - `Response` class from @cloudflare/workers-types is leaking which is causing this issue, needs to be fixed later
     const sessionCookie = await getSetCookie(firstRes, 'sid', decrypt)
     const firstData = await firstRes.json()
 

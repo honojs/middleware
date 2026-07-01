@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
     "typecheck": "tsc -b tsconfig.json",

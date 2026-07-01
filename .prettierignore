@@ -8,3 +8,6 @@
 
 # Deprecated packages
 packages/node-ws
+
+# Lockfiles
+pnpm-lock.yaml

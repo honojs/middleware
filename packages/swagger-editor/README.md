@@ -9,7 +9,7 @@ This library, `@hono/swagger-editor` is the middleware for integrating Swagger E
 ```bash
 npm install @hono/swagger-editor
 # or
-yarn add @hono/swagger-editor
+pnpm add @hono/swagger-editor
 ```
 
 ## Usage

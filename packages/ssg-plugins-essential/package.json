@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest"
