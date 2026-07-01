@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
-    "hono": ">=4.10.0",
+    "hono": ">=4.11.2",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
