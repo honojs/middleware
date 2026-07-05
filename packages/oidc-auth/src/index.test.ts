@@ -175,6 +175,7 @@ const {
   revokeSession,
   initOidcAuthMiddleware,
   getClient,
+  setClientAuth,
 } = await import('.')
 
 const app = new Hono()
@@ -188,6 +189,10 @@ app.get('/callback-custom', async (c) => {
     sub: claims?.sub ?? orig?.sub ?? '',
     token: response.access_token,
   }))
+  return processOAuthCallback(c)
+})
+app.get('/callback-client-secret-post', async (c) => {
+  setClientAuth(c, oauth2.ClientSecretPost(MOCK_CLIENT_SECRET))
   return processOAuthCallback(c)
 })
 app.use('/*', oidcAuthMiddleware())
@@ -507,17 +512,38 @@ describe('processOAuthCallback()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
-  test('Should authenticate the token exchange with client_secret_post so Google receives the client secret byte-for-byte', async () => {
-    // Regression for #1992: oauth4webapi v3's ClientSecretBasic percent-encodes
-    // '-', '_' and '.' per RFC 6749 Appendix B. Google rejects that encoding, so
-    // the client secret (which contains those characters) must travel unencoded
-    // in the token request body (client_secret_post), not in a Basic auth header.
+  test('Should default to client_secret_basic for the token exchange', async () => {
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
       method: 'GET',
       headers: {
         cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
       },
     })
+    await app.request(req, {}, {})
+    const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
+    expect(authorizationCodeGrantRequest).toHaveBeenCalled()
+    const clientAuth = authorizationCodeGrantRequest.mock.calls.at(-1)?.[2]
+    const headers = new Headers()
+    const body = new URLSearchParams()
+    await clientAuth?.({ issuer: MOCK_ISSUER }, { client_id: MOCK_CLIENT_ID }, body, headers)
+    expect(headers.get('authorization')).toMatch(/^Basic /)
+    expect(body.get('client_secret')).toBeNull()
+  })
+  test('setClientAuth() should authenticate the token exchange with client_secret_post so Google receives the client secret byte-for-byte', async () => {
+    // Regression for #1992: oauth4webapi v3's ClientSecretBasic percent-encodes
+    // '-', '_' and '.' per RFC 6749 Appendix B. Google rejects that encoding, so
+    // consumers whose client secret contains those characters can opt in to
+    // client_secret_post via setClientAuth(), sending the secret unencoded in the
+    // token request body instead of a Basic auth header.
+    const req = new Request(
+      `${MOCK_REDIRECT_URI}-client-secret-post?code=1234&state=${MOCK_STATE}`,
+      {
+        method: 'GET',
+        headers: {
+          cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+        },
+      }
+    )
     await app.request(req, {}, {})
     const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
     expect(authorizationCodeGrantRequest).toHaveBeenCalled()

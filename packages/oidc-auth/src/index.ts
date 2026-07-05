@@ -31,6 +31,7 @@ declare module 'hono' {
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
     oidcClaimsHook?: OidcClaimsHook
+    clientAuth?: oauth2.ClientAuth
   }
 }
 
@@ -184,11 +185,26 @@ export const getClient = (c: Context): oauth2.Client => {
     client = {
       client_id: env.OIDC_CLIENT_ID,
       client_secret: env.OIDC_CLIENT_SECRET,
-      token_endpoint_auth_method: 'client_secret_post',
+      token_endpoint_auth_method: 'client_secret_basic',
     }
     c.set('oidcClient', client)
   }
   return client
+}
+
+/**
+ * Sets the OAuth2 client metadata.
+ */
+export const setClient = (c: Context, client: oauth2.Client) => {
+  c.set('oidcClient', client)
+}
+
+/**
+ * Sets the client authentication method used for token endpoint requests.
+ * If not set, falls back to `client_secret_basic`.
+ */
+export const setClientAuth = (c: Context, clientAuth: oauth2.ClientAuth) => {
+  c.set('clientAuth', clientAuth)
 }
 
 /**
@@ -235,7 +251,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       const response = await oauth2.refreshTokenGrantRequest(
         as,
         client,
-        oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
+        c.get('clientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
         auth.rtk
       )
       let result: oauth2.TokenEndpointResponse
@@ -327,7 +343,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
         const response = await oauth2.revocationRequest(
           as,
           client,
-          oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
+          c.get('clientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
           auth.rtk
         )
         try {
@@ -442,7 +458,7 @@ export const processOAuthCallback = async (
   const result = await exchangeAuthorizationCode(
     as,
     client,
-    oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
+    c.get('clientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
     params,
     redirectUri,
     nonce,
