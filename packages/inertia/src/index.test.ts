@@ -265,8 +265,8 @@ describe('inertia', () => {
     it('falls back to c.req.url when options.url is unparseable on non-GET requests', async () => {
       const app = new Hono()
       app.use(inertia({ version: 'v1' }))
-      // '#' is unusable as a URL because it's just a URI fragment
-      app.post('/users', (c) => c.render('Users/New', {}, { url: '#' }))
+      // new URL('http://', 'http://localhost') throws an error because the host is empty
+      app.post('/users', (c) => c.render('Users/New', {}, { url: 'http://' }))
 
       const res = await app.request('/users', {
         method: 'POST',
