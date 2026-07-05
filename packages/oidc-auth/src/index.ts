@@ -184,7 +184,7 @@ export const getClient = (c: Context): oauth2.Client => {
     client = {
       client_id: env.OIDC_CLIENT_ID,
       client_secret: env.OIDC_CLIENT_SECRET,
-      token_endpoint_auth_method: 'client_secret_basic',
+      token_endpoint_auth_method: 'client_secret_post',
     }
     c.set('oidcClient', client)
   }
@@ -235,7 +235,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       const response = await oauth2.refreshTokenGrantRequest(
         as,
         client,
-        oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
+        oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
         auth.rtk
       )
       let result: oauth2.TokenEndpointResponse
@@ -327,7 +327,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
         const response = await oauth2.revocationRequest(
           as,
           client,
-          oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
+          oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
           auth.rtk
         )
         try {
@@ -442,7 +442,7 @@ export const processOAuthCallback = async (
   const result = await exchangeAuthorizationCode(
     as,
     client,
-    oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
+    oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET),
     params,
     redirectUri,
     nonce,

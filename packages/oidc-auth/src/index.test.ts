@@ -507,6 +507,27 @@ describe('processOAuthCallback()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
   })
+  test('Should authenticate the token exchange with client_secret_post so Google receives the client secret byte-for-byte', async () => {
+    // Regression for #1992: oauth4webapi v3's ClientSecretBasic percent-encodes
+    // '-', '_' and '.' per RFC 6749 Appendix B. Google rejects that encoding, so
+    // the client secret (which contains those characters) must travel unencoded
+    // in the token request body (client_secret_post), not in a Basic auth header.
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    await app.request(req, {}, {})
+    const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
+    expect(authorizationCodeGrantRequest).toHaveBeenCalled()
+    const clientAuth = authorizationCodeGrantRequest.mock.calls.at(-1)?.[2]
+    const headers = new Headers()
+    const body = new URLSearchParams()
+    await clientAuth?.({ issuer: MOCK_ISSUER }, { client_id: MOCK_CLIENT_ID }, body, headers)
+    expect(headers.get('authorization')).toBeNull()
+    expect(body.get('client_secret')).toBe(MOCK_CLIENT_SECRET)
+  })
   test('Verify default callback path when OIDC_REDIRECT_URI is undefined', async () => {
     delete process.env.OIDC_REDIRECT_URI
     const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
