@@ -195,7 +195,7 @@ export const getClient = (c: Context): oauth2.Client => {
 /**
  * Sets the OAuth2 client metadata.
  */
-export const setClient = (c: Context, client: oauth2.Client) => {
+export const setClient = (c: Context, client: oauth2.Client): void => {
   c.set('oidcClient', client)
 }
 
@@ -203,7 +203,7 @@ export const setClient = (c: Context, client: oauth2.Client) => {
  * Sets the client authentication method used for token endpoint requests.
  * If not set, falls back to `client_secret_basic`.
  */
-export const setClientAuth = (c: Context, clientAuth: oauth2.ClientAuth) => {
+export const setClientAuth = (c: Context, clientAuth: oauth2.ClientAuth): void => {
   c.set('clientAuth', clientAuth)
 }
 
