@@ -244,7 +244,40 @@ describe('inertia', () => {
       expect(body.url).toBe('/users')
     })
 
-    it('overrides page.url via options.url on a non-GET request', async () => {
+    it('falls back to c.req.url when Referer is unparseable on non-GET requests', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.post('/users', (c) => c.render('Users/New'))
+
+      const res = await app.request('/users', {
+        method: 'POST',
+        headers: {
+          'X-Inertia': 'true',
+          'X-Inertia-Version': 'v1',
+          Referer: 'invalid-url',
+        },
+      })
+
+      const body = (await res.json()) as PageObject
+      expect(body.url).toBe('/users')
+    })
+
+    it('falls back to c.req.url when options.url is unparseable on non-GET requests', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      // new URL('http://', 'http://localhost') throws an error because the host is empty
+      app.post('/users', (c) => c.render('Users/New', {}, { url: 'http://' }))
+
+      const res = await app.request('/users', {
+        method: 'POST',
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as PageObject
+      expect(body.url).toBe('/users')
+    })
+
+    it('overrides page.url via options.url on non-GET requests', async () => {
       const app = new Hono()
       app.use(inertia({ version: 'v1' }))
       app.post('/users', (c) => c.render('Users/New', {}, { url: '/users/new' }))
@@ -258,7 +291,7 @@ describe('inertia', () => {
       expect(body.url).toBe('/users/new')
     })
 
-    it('prefers options.url over Referer when both are present on a non-GET request', async () => {
+    it('prefers options.url over Referer when both are present on non-GET requests', async () => {
       const app = new Hono()
       app.use(inertia({ version: 'v1' }))
       app.post('/users', (c) => c.render('Users/New', {}, { url: '/override' }))
