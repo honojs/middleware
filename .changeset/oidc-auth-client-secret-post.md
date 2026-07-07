@@ -1,5 +1,5 @@
 ---
-'@hono/oidc-auth': patch
+'@hono/oidc-auth': minor
 ---
 
 Fix Google login failing with `OAuth2Error: [invalid_client] The OAuth client was not found`. `oauth4webapi` v3 percent-encodes the client id/secret for `client_secret_basic` per RFC 6749 Appendix B, but Google does not decode that encoding and rejects the resulting credentials when they contain `-`, `_` or `.`.
