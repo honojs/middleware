@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.3.1
+
+### Patch Changes
+
+- [#2024](https://github.com/honojs/middleware/pull/2024) [`a57c2628abe935102a20059f865bbbbff2434c26`](https://github.com/honojs/middleware/commit/a57c2628abe935102a20059f865bbbbff2434c26) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@hono/mcp`
+
 ## 0.3.0
 
 ### Minor Changes
