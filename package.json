@@ -41,7 +41,7 @@
     "@vitest/coverage-istanbul": "^4.1.8",
     "eslint": "^10.0.3",
     "hono": "^4.11.5",
-    "pkg-pr-new": "^0.0.63",
+    "pkg-pr-new": "^0.0.75",
     "prettier": "^3.8.1",
     "publint": "^0.3.16",
     "tsdown": "^0.22.3",
