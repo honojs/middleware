@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.2",
-    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.29.7",
     "@cloudflare/vitest-pool-workers": "^0.16.10",
     "@cloudflare/workers-types": "^4.20250612.0",
