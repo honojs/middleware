@@ -13,7 +13,8 @@
     "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
     ".": "./src/index.ts",
