@@ -35,6 +35,8 @@ Here is a list of the IdPs that I have tested:
 | Google      | `https://accounts.google.com`                             |
 | Slack       | `https://slack.com`                                       |
 
+Note: by default the middleware authenticates to the token endpoint with `client_secret_basic`, which percent-encodes the client secret. Secrets containing `-`, `_` or `.` (this includes Google's `GOCSPX-` client secrets) get mangled by that encoding and the token exchange fails with `invalid_client`. Use `setClientAuth` to opt into `client_secret_post` for these secrets, see [Client authentication method](#client-authentication-method) below.
+
 ## Installation
 
 ```plain
@@ -166,6 +168,25 @@ app.use(async (c, next) => {
   return middleware(c, next)
 })
 ```
+
+## Client authentication method
+
+By default, the middleware authenticates to the token endpoint with `client_secret_basic`. Use `setClientAuth` to switch to a different method, such as `client_secret_post`, for IdPs whose client secret is not compatible with `client_secret_basic`'s encoding (e.g. Google's `GOCSPX-` secrets):
+
+```typescript
+import { oidcAuthMiddleware, setClientAuth } from '@hono/oidc-auth'
+import * as oauth2 from 'oauth4webapi'
+
+app.use('*', async (c, next) => {
+  setClientAuth(c, oauth2.ClientSecretPost(c.env.OIDC_CLIENT_SECRET))
+  await next()
+})
+app.use('*', oidcAuthMiddleware())
+```
+
+`setClientAuth` sets the auth method for the current request context, so it must run on every request, before `getAuth`, `revokeSession` or `processOAuthCallback` are called (not just on the callback route), otherwise the token refresh and revocation requests fall back to `client_secret_basic`.
+
+`setClient` works the same way to override the full OAuth2 client metadata instead of just the authentication method.
 
 ## Author
 
