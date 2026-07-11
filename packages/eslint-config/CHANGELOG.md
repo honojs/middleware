@@ -1,5 +1,11 @@
 # @hono/eslint-config
 
+## 2.1.1
+
+### Patch Changes
+
+- [#2029](https://github.com/honojs/middleware/pull/2029) [`68fc1e367584615cd0c1060f6fbb80344a236188`](https://github.com/honojs/middleware/commit/68fc1e367584615cd0c1060f6fbb80344a236188) Thanks [@BlankParticle](https://github.com/BlankParticle)! - Support TypeScript 6 and ESLint 10 by updating `typescript-eslint` and the package's peer dependency ranges.
+
 ## 2.1.0
 
 ### Minor Changes
