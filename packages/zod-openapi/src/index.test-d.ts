@@ -188,6 +188,78 @@ describe('Input types', () => {
   })
 })
 
+describe('Form, header and cookie input types', () => {
+  it('Should infer form body input', () => {
+    const route = createRoute({
+      method: 'post',
+      path: '/form',
+      request: {
+        body: {
+          content: {
+            'application/x-www-form-urlencoded': {
+              schema: z.object({
+                name: z.string(),
+                tag: z.string(),
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'ok',
+        },
+      },
+    })
+
+    const app = new OpenAPIHono()
+    const routes = app.openapi(route, (c) => {
+      const form = c.req.valid('form')
+      assertType<{ name: string; tag: string }>(form)
+      return c.body(null, 200)
+    })
+
+    type Input = ExtractSchema<typeof routes>['/form']['$post']['input']
+    type verify = Expect<Equal<Input, { form: { name: string; tag: string } }>>
+  })
+
+  it('Should infer header and cookie input', () => {
+    const route = createRoute({
+      method: 'get',
+      path: '/secure',
+      request: {
+        headers: z.object({
+          authorization: z.string(),
+        }),
+        cookies: z.object({
+          session: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          description: 'ok',
+        },
+      },
+    })
+
+    const app = new OpenAPIHono()
+    const routes = app.openapi(route, (c) => {
+      const header = c.req.valid('header')
+      assertType<{ authorization: string }>(header)
+
+      const cookie = c.req.valid('cookie')
+      assertType<{ session: string }>(cookie)
+
+      return c.body(null, 200)
+    })
+
+    type Input = ExtractSchema<typeof routes>['/secure']['$get']['input']
+    type verify = Expect<
+      Equal<Input, { header: { authorization: string } } & { cookie: { session: string } }>
+    >
+  })
+})
+
 describe('Response schema includes a Date type', () => {
   it('Should not throw a type error', () => {
     new OpenAPIHono().openapi(

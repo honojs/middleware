@@ -179,6 +179,53 @@ describe('supports async handler', () => {
     hono.openapi(routeWithDefault, errorHandler)
   })
 
+  test('handler may return a raw Response when no response schema is defined', () => {
+    // HasZodResponses<R> is false here, so a raw Response is allowed.
+    const route = createRoute({
+      method: 'get',
+      path: '/raw',
+      responses: {
+        200: {
+          description: 'No response schema',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = () => {
+      return new Response('hello')
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+  })
+
+  test('handler rejects a raw Response when a response schema is defined', () => {
+    // HasZodResponses<R> is true here, so only the typed response is allowed.
+    const route = createRoute({
+      method: 'get',
+      path: '/typed',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ id: z.string() }),
+            },
+          },
+          description: 'JSON body',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = (c) => c.json({ id: '123' }, 200)
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+
+    // @ts-expect-error a raw Response is not assignable when a response schema is defined
+    const invalid: RouteHandler<typeof route> = () => new Response('nope')
+    void invalid
+  })
+
   test('handler should respect explicitly defined status codes with default fallback', () => {
     const routeWithDefault = createRoute({
       method: 'get',

@@ -74,17 +74,19 @@ type IsForm<T> = T extends string
     : never
   : never
 
+// `Code` is the already-resolved status code (see RouteConfigToTypedResponse,
+// which binds ExtractStatusCode<Status> once and passes the result in).
 type ReturnJsonOrTextOrResponse<
   ContentType,
   Content,
-  Status extends keyof StatusCodeRangeDefinitions | StatusCode,
+  Code extends StatusCode,
 > = ContentType extends string
   ? ContentType extends `application/${infer Start}json${infer _End}`
     ? Start extends '' | `${string}+` | `vnd.${string}+`
-      ? TypedResponse<JSONParsed<Content>, ExtractStatusCode<Status>, 'json'>
+      ? TypedResponse<JSONParsed<Content>, Code, 'json'>
       : never
     : ContentType extends `text/plain${infer _Rest}`
-      ? TypedResponse<Content, ExtractStatusCode<Status>, 'text'>
+      ? TypedResponse<Content, Code, 'text'>
       : Response
   : never
 
@@ -99,43 +101,27 @@ type InputTypeBase<
   Part extends string,
   Type extends keyof ValidationTargets,
 > = R['request'] extends RequestTypes
-  ? RequestPart<R, Part> extends ZodType
+  ? // Bind the resolved part schema once instead of re-indexing RequestPart
+    // (and re-deriving z.input) at every use site below.
+    RequestPart<R, Part> extends infer Schema extends ZodType
     ? {
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
-            ? {
-                [K2 in keyof z.input<RequestPart<R, Part>>]?: z.input<RequestPart<R, Part>>[K2]
-              }
-            : {
-                [K2 in keyof z.input<RequestPart<R, Part>>]: z.input<RequestPart<R, Part>>[K2]
-              }
+            ? { [K2 in keyof z.input<Schema>]?: z.input<Schema>[K2] }
+            : { [K2 in keyof z.input<Schema>]: z.input<Schema>[K2] }
         }
-        out: { [K in Type]: z.output<RequestPart<R, Part>> }
+        out: { [K in Type]: z.output<Schema> }
       }
     : {}
   : {}
 
 type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
   ? R['request']['body'] extends ZodRequestBody
-    ? R['request']['body']['content'] extends ZodContentObject
-      ? IsJson<keyof R['request']['body']['content']> extends never
+    ? R['request']['body']['content'] extends infer Content extends ZodContentObject
+      ? IsJson<keyof Content> extends never
         ? {}
-        : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-              'schema',
-              ZodType<any>
-            >
-          ? {
-              in: {
-                json: z.input<
-                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-                >
-              }
-              out: {
-                json: z.output<
-                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-                >
-              }
-            }
+        : Content[keyof Content] extends Record<'schema', infer Schema extends ZodType<any>>
+          ? { in: { json: z.input<Schema> }; out: { json: z.output<Schema> } }
           : {}
       : {}
     : {}
@@ -143,25 +129,11 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
 
 type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
   ? R['request']['body'] extends ZodRequestBody
-    ? R['request']['body']['content'] extends ZodContentObject
-      ? IsForm<keyof R['request']['body']['content']> extends never
+    ? R['request']['body']['content'] extends infer Content extends ZodContentObject
+      ? IsForm<keyof Content> extends never
         ? {}
-        : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
-              'schema',
-              ZodType<any>
-            >
-          ? {
-              in: {
-                form: z.input<
-                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-                >
-              }
-              out: {
-                form: z.output<
-                  R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
-                >
-              }
-            }
+        : Content[keyof Content] extends Record<'schema', infer Schema extends ZodType<any>>
+          ? { in: { form: z.input<Schema> }; out: { form: z.output<Schema> } }
           : {}
       : {}
     : {}
@@ -175,8 +147,8 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', ZodType>
-    ? z.infer<A['schema']>
+  ? A extends Record<'schema', infer Schema extends ZodType>
+    ? z.infer<Schema>
     : never
   : never
 
@@ -194,27 +166,41 @@ type ExtractStatusCode<T extends RouteConfigStatusCode> = T extends keyof Status
 type DefinedStatusCodes<R extends RouteConfig> = keyof R['responses'] & RouteConfigStatusCode
 export type RouteConfigToTypedResponse<R extends RouteConfig> =
   | {
-      [Status in DefinedStatusCodes<R>]: R['responses'][Status] extends { content: infer Content }
-        ? undefined extends Content
-          ? never
-          : ReturnJsonOrTextOrResponse<
-              keyof R['responses'][Status]['content'],
-              ExtractContent<R['responses'][Status]['content']>,
-              Status
-            >
-        : TypedResponse<{}, ExtractStatusCode<Status>, string>
+      // Resolve the status code once and reuse it across both branches.
+      [Status in DefinedStatusCodes<R>]: ExtractStatusCode<Status> extends infer Code extends
+        StatusCode
+        ? R['responses'][Status] extends { content: infer Content }
+          ? undefined extends Content
+            ? never
+            : ReturnJsonOrTextOrResponse<keyof Content, ExtractContent<Content>, Code>
+          : TypedResponse<{}, Code, string>
+        : never
     }[DefinedStatusCodes<R>]
   | ('default' extends keyof R['responses']
-      ? R['responses']['default'] extends { content: infer Content }
-        ? undefined extends Content
-          ? never
-          : ReturnJsonOrTextOrResponse<
-              keyof Content,
-              ExtractContent<Content>,
-              Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>
-            >
-        : TypedResponse<{}, Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>>, string>
+      ? Exclude<StatusCode, ExtractStatusCode<DefinedStatusCodes<R>>> extends infer Code extends
+          StatusCode
+        ? R['responses']['default'] extends { content: infer Content }
+          ? undefined extends Content
+            ? never
+            : ReturnJsonOrTextOrResponse<keyof Content, ExtractContent<Content>, Code>
+          : TypedResponse<{}, Code, string>
+        : never
       : never)
+
+// Whether a route declares Zod-typed responses. If it does, a handler may only
+// return one of the typed responses; otherwise a raw Response is also valid.
+type HasZodResponses<R extends RouteConfig> = R extends {
+  responses: { [statusCode: number]: { content: { [mediaType: string]: ZodMediaTypeObject } } }
+}
+  ? true
+  : false
+
+// Allowed handler return type for a route config. Shared by RouteHandler,
+// openapi() and HandlerFromRoute; the hook variant is HandlerResponse<R> | undefined.
+type HandlerResponse<R extends RouteConfig> =
+  HasZodResponses<R> extends true
+    ? MaybePromise<RouteConfigToTypedResponse<R>>
+    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
 
 export type Hook<T, E extends Env, P extends string, R> = (
   result: { target: keyof ValidationTargets } & (
@@ -310,40 +296,15 @@ export type RouteConfigToEnv<R extends RouteConfig> =
 export type RouteHandler<
   R extends RouteConfig,
   E extends Env = RouteConfigToEnv<R>,
-  I extends Input = InputTypeParam<R> &
-    InputTypeQuery<R> &
-    InputTypeHeader<R> &
-    InputTypeCookie<R> &
-    InputTypeForm<R> &
-    InputTypeJson<R>,
+  I extends Input = ComputeInput<R>,
   P extends string = ConvertPathType<R['path']>,
-> = Handler<
-  E,
-  P,
-  I,
-  // If response type is defined, only TypedResponse is allowed.
-  R extends {
-    responses: {
-      [statusCode: number]: {
-        content: {
-          [mediaType: string]: ZodMediaTypeObject
-        }
-      }
-    }
-  }
-    ? MaybePromise<RouteConfigToTypedResponse<R>>
-    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
->
+  // If a response type is defined, only the typed response is allowed.
+> = Handler<E, P, I, HandlerResponse<R>>
 
 export type RouteHook<
   R extends RouteConfig,
   E extends Env = RouteConfigToEnv<R>,
-  I extends Input = InputTypeParam<R> &
-    InputTypeQuery<R> &
-    InputTypeHeader<R> &
-    InputTypeCookie<R> &
-    InputTypeForm<R> &
-    InputTypeJson<R>,
+  I extends Input = ComputeInput<R>,
   P extends string = ConvertPathType<R['path']>,
 > = Hook<
   I,
@@ -406,36 +367,11 @@ type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
   E,
   ConvertPathType<R['path']>,
   ComputeInput<R>,
-  R extends {
-    responses: {
-      [statusCode: number]: {
-        content: {
-          [mediaType: string]: ZodMediaTypeObject
-        }
-      }
-    }
-  }
-    ? MaybePromise<RouteConfigToTypedResponse<R>>
-    : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
+  HandlerResponse<R>
 >
 
 type HookFromRoute<R extends RouteConfig, E extends Env> =
-  | Hook<
-      ComputeInput<R>,
-      E,
-      ConvertPathType<R['path']>,
-      R extends {
-        responses: {
-          [statusCode: number]: {
-            content: {
-              [mediaType: string]: ZodMediaTypeObject
-            }
-          }
-        }
-      }
-        ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
-        : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
-    >
+  | Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, HandlerResponse<R> | undefined>
   | undefined
 
 // Recursive Helper: Merge Schemas for the Return Type
@@ -527,12 +463,7 @@ export class OpenAPIHono<
    */
   openapi = <
     R extends RouteConfig,
-    I extends Input = InputTypeParam<R> &
-      InputTypeQuery<R> &
-      InputTypeHeader<R> &
-      InputTypeCookie<R> &
-      InputTypeForm<R> &
-      InputTypeJson<R>,
+    I extends Input = ComputeInput<R>,
     P extends string = ConvertPathType<R['path']>,
   >(
     { middleware: routeMiddleware, hide, ...route }: R,
@@ -543,37 +474,10 @@ export class OpenAPIHono<
         : E,
       P,
       I,
-      // If response type is defined, only TypedResponse is allowed.
-      R extends {
-        responses: {
-          [statusCode: number]: {
-            content: {
-              [mediaType: string]: ZodMediaTypeObject
-            }
-          }
-        }
-      }
-        ? MaybePromise<RouteConfigToTypedResponse<R>>
-        : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
+      // If a response type is defined, only the typed response is allowed.
+      HandlerResponse<R>
     >,
-    hook:
-      | Hook<
-          I,
-          E,
-          P,
-          R extends {
-            responses: {
-              [statusCode: number]: {
-                content: {
-                  [mediaType: string]: ZodMediaTypeObject
-                }
-              }
-            }
-          }
-            ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
-            : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
-        >
-      | undefined = this.defaultHook
+    hook: Hook<I, E, P, HandlerResponse<R> | undefined> | undefined = this.defaultHook
   ): OpenAPIHono<
     E,
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
@@ -855,19 +759,15 @@ export class OpenAPIHono<
   declare notFound: (handler: NotFoundHandler<E>) => OpenAPIHono<E, S, BasePath>
 }
 
-type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${infer Tail}`
-  ? `${Head}/:${Param}${RoutingPath<Tail>}`
-  : P
-
 export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
   routeConfig: R
 ): R & {
-  getRoutingPath(): RoutingPath<R['path']>
+  getRoutingPath(): ConvertPathType<R['path']>
 } => {
   const route = {
     ...routeConfig,
-    getRoutingPath(): RoutingPath<R['path']> {
-      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
+    getRoutingPath(): ConvertPathType<R['path']> {
+      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as ConvertPathType<P>
     },
   }
   return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
