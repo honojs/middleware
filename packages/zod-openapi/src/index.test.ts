@@ -1370,6 +1370,57 @@ describe('basePath()', () => {
     const client = hc<typeof routes>('http://localhost/')
     expect(client.api.doc31.$url().pathname).toBe('/api/doc31')
   })
+
+  const errorRoute = createRoute({
+    method: 'get',
+    path: '/error',
+    responses: {
+      200: {
+        description: 'ok',
+      },
+    },
+  })
+  const throwHandler = () => {
+    throw new Error('boom')
+  }
+
+  it('Should fire onError() registered after basePath()', async () => {
+    const parent = new OpenAPIHono()
+    const sub = new OpenAPIHono().basePath('/api')
+    sub.openapi(errorRoute, throwHandler)
+    sub.onError((err, c) => c.text('caught: ' + err.message, 500))
+    parent.route('/', sub)
+
+    const res = await parent.request('/api/error')
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('caught: boom')
+  })
+
+  it('Should fire onError() registered before basePath()', async () => {
+    const parent = new OpenAPIHono()
+    const base = new OpenAPIHono()
+    base.onError((err, c) => c.text('caught: ' + err.message, 500))
+    const sub = base.basePath('/api')
+    sub.openapi(errorRoute, throwHandler)
+    parent.route('/', sub)
+
+    const res = await parent.request('/api/error')
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('caught: boom')
+  })
+
+  // Note: `route()` does not propagate `notFoundHandler` (only `errorHandler`),
+  // so this is a same-instance contract test that `notFound()` set after
+  // `basePath()` targets the returned instance -- not a regression guard for the
+  // binding fix (it passes with or without the fix).
+  it('notFound() set after basePath() targets the returned instance', async () => {
+    const app = new OpenAPIHono().basePath('/api')
+    app.notFound((c) => c.text('custom not found', 404))
+
+    const res = await app.request('/api/missing')
+    expect(res.status).toBe(404)
+    expect(await res.text()).toBe('custom not found')
+  })
 })
 
 describe('onError() and onNotFound()', () => {
