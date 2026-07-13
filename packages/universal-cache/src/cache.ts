@@ -147,7 +147,12 @@ const getDefaultHandlerKey = async (
   hashFn: (value: string) => string | Promise<string>
 ) => {
   const url = new URL(ctx.req.url)
-  const fullPath = `${ctx.req.method.toUpperCase()}:${url.origin}${url.pathname}${url.search}`
+  const method = ctx.req.method.toUpperCase()
+  const body =
+    method === 'GET' || method === 'HEAD'
+      ? ''
+      : `:${encodeBase64(await ctx.req.raw.clone().arrayBuffer())}`
+  const fullPath = `${method}:${url.origin}${url.pathname}${url.search}${body}`
 
   let pathPrefix = '-'
   try {
@@ -157,12 +162,19 @@ const getDefaultHandlerKey = async (
   }
 
   const hashedPath = `${pathPrefix}.${await hashFn(fullPath)}`
-  if (!varies?.length) {
+  const varyHeaders = new Set(varies?.map(toLower) ?? [])
+  for (const header of ['authorization', 'cookie']) {
+    if (ctx.req.header(header) !== undefined) {
+      varyHeaders.add(header)
+    }
+  }
+
+  if (varyHeaders.size === 0) {
     return hashedPath
   }
 
   const varyParts = await Promise.all(
-    varies.map(async (header) => {
+    [...varyHeaders].map(async (header) => {
       const value = ctx.req.header(header) ?? ''
       return `${escapeKey(toLower(header))}.${await hashFn(value)}`
     })
@@ -179,7 +191,8 @@ const getDefaultHandlerName = (ctx: Context) => {
 
 const createCachedResponse = (entry: CachedResponseEntry) => {
   const headers = new Headers(entry.headers)
-  return new Response(decodeBase64(entry.value), {
+  const body = entry.status === 204 || entry.status === 205 ? null : decodeBase64(entry.value)
+  return new Response(body, {
     status: entry.status,
     headers,
   })
@@ -359,8 +372,14 @@ const maybeServeCachedResponse = async (
             refreshHeaders.delete(revalidateHeader)
           }
           refreshHeaders.set(INTERNAL_REVALIDATE_HEADER, revalidateToken)
+          const method = ctx.req.method.toUpperCase()
+          const body =
+            method === 'GET' || method === 'HEAD'
+              ? undefined
+              : await ctx.req.raw.clone().arrayBuffer()
           const request = new Request(ctx.req.url, {
-            method: ctx.req.method,
+            ...(body ? { body } : {}),
+            method,
             headers: refreshHeaders,
           })
           const response = await fetch(request)

@@ -2,6 +2,7 @@
   "name": "@hono/universal-cache",
   "version": "0.0.0",
   "description": "Universal cache middleware and helpers for Hono",
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

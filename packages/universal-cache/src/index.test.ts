@@ -115,6 +115,64 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(1)
     })
 
+    it('includes request bodies in default keys for custom methods', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.post(
+        '/items',
+        cacheMiddleware({ maxAge: 60, methods: ['POST'], swr: false }),
+        async (c) => {
+          count += 1
+          return c.text(`${await c.req.text()}:${count}`)
+        }
+      )
+
+      const request = (body: string) =>
+        app.request('http://localhost/items', { body, method: 'POST' })
+
+      expect(await (await request('one')).text()).toBe('one:1')
+      expect(await (await request('two')).text()).toBe('two:2')
+      expect(await (await request('one')).text()).toBe('one:1')
+      expect(count).toBe(2)
+    })
+
+    it('preserves request bodies during background revalidation', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+      const app = new Hono()
+      let count = 0
+      let resolveRefresh!: () => void
+      const refreshed = new Promise<void>((resolve) => {
+        resolveRefresh = resolve
+      })
+
+      app.post(
+        '/items',
+        cacheMiddleware({ maxAge: 1, methods: ['POST'], staleMaxAge: 60, swr: true }),
+        async (c) => {
+          count += 1
+          if (count === 2) {
+            resolveRefresh()
+          }
+          return c.text(`${await c.req.text()}:${count}`)
+        }
+      )
+
+      vi.stubGlobal('fetch', (request: Request) => app.request(request))
+
+      const request = () => app.request('http://localhost/items', { body: 'one', method: 'POST' })
+
+      expect(await (await request()).text()).toBe('one:1')
+      vi.advanceTimersByTime(1100)
+      expect(await (await request()).text()).toBe('one:1')
+      await refreshed
+      await flushPromises()
+      expect(await (await request()).text()).toBe('one:2')
+      expect(count).toBe(2)
+    })
+
     it('respects shouldBypassCache', async () => {
       const app = new Hono()
       let count = 0
@@ -422,6 +480,27 @@ describe('@hono/universal-cache', () => {
       expect(await (await app.request('http://one.example/items')).text()).toBe('GET:one.example:1')
     })
 
+    it.each(['authorization', 'cookie'])(
+      'automatically varies by the %s header',
+      async (header) => {
+        const app = new Hono()
+        let count = 0
+
+        app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => {
+          count += 1
+          return c.text(`${c.req.header(header)}:${count}`)
+        })
+
+        const request = (value: string) =>
+          app.request('http://localhost/items', { headers: { [header]: value } })
+
+        expect(await (await request('one')).text()).toBe('one:1')
+        expect(await (await request('two')).text()).toBe('two:2')
+        expect(await (await request('one')).text()).toBe('one:1')
+        expect(count).toBe(2)
+      }
+    )
+
     it('serves stale and revalidates in background once per key', async () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
@@ -519,6 +598,25 @@ describe('@hono/universal-cache', () => {
       expect(await res1.text()).toBe('1')
       expect(await res2.text()).toBe('2')
       expect(count).toBe(2)
+    })
+
+    it.each([204, 205])('replays cached %i responses without a body', async (status) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), () => {
+        count += 1
+        return new Response(null, { headers: { 'x-count': String(count) }, status })
+      })
+
+      const first = await app.request('http://localhost/items')
+      const cached = await app.request('http://localhost/items')
+
+      expect(first.status).toBe(status)
+      expect(cached.status).toBe(status)
+      expect(cached.headers.get('x-count')).toBe('1')
+      expect(await cached.text()).toBe('')
+      expect(count).toBe(1)
     })
 
     it.each([
