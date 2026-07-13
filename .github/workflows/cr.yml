@@ -37,15 +37,15 @@ jobs:
             ${{ runner.os }}-turbo-preview-
             ${{ runner.os }}-turbo-
 
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          cache: true
+          run_install: true
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-
-      - name: Install Dependencies
-        run: yarn
-
       - name: Build
-        run: yarn turbo build
+        run: pnpm turbo build
 
       - name: Publish to StackBlitz
-        run: yarn pkg-pr-new publish --compact --no-template './packages/*'
+        run: pnpm pkg-pr-new publish --compact --no-template './packages/*'

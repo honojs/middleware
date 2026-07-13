@@ -75,8 +75,7 @@ export class AuthFlow {
     const url = `https://graph.facebook.com/v18.0/oauth/access_token?${parsedOptions}`
 
     const response = (await fetch(url).then((res) => res.json())) as
-      | FacebookTokenResponse
-      | FacebookErrorResponse
+      FacebookTokenResponse | FacebookErrorResponse
 
     if ('error' in response) {
       throw new HTTPException(400, { message: response.error?.message })

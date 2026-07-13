@@ -44,9 +44,7 @@ import { Hono } from 'hono'
 import { structuredLogger } from '@hono/structured-logger'
 import winston from 'winston'
 
-const rootLogger = winston.createLogger({
-  /* config */
-})
+const rootLogger = winston.createLogger({/* config */})
 
 const app = new Hono()
 

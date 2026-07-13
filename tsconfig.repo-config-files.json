@@ -6,6 +6,7 @@
     "types": ["node"]
   },
   "include": [
+    "scripts",
     "eslint.config.mjs",
     "packages/eslint-config/index.js",
     "tsdown.config.ts",

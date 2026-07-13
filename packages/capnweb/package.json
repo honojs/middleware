@@ -10,12 +10,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
     ".": "./src/index.ts",

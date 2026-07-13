@@ -18,6 +18,8 @@ class MockContext implements ExecutionContext {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tracing: any
 }
 
 export type Options = Omit<ToucanOptions, 'request' | 'context'>

@@ -66,7 +66,6 @@ import { refreshToken, revokeToken, xAuth } from './providers/x'
 import type { Token } from './types'
 
 const server = setupServer(...handlers)
-server.listen()
 
 const client_id = '1jsdsldjkssd-4343dsasdsd34ghhn4-dummyid'
 const client_secret = 'SDJS943hS_jj45dummysecret'

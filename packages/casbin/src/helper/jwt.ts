@@ -10,7 +10,7 @@ export const jwtAuthorizer = async (
 ): Promise<boolean> => {
   // Note: if use hono/jwt, the payload is stored in c.get('jwtPayload')
   // https://github.com/honojs/hono/blob/8ba02273e829318d7f8797267f52229e531b8bd5/src/middleware/jwt/jwt.ts#L136
-  let payload: JWTPayload = c.get('jwtPayload')
+  let payload = c.get('jwtPayload') as JWTPayload
 
   if (!payload) {
     const credentials = c.req.header('Authorization')

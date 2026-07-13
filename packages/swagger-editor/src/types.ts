@@ -132,14 +132,7 @@ export interface CustomSwaggerUIOptions {
          * Highlight.js syntax coloring theme to use. (Only these 6 styles are available.)
          */
         theme?:
-          | 'agate'
-          | 'arta'
-          | 'idea'
-          | 'monokai'
-          | 'nord'
-          | 'obsidian'
-          | 'tomorrow-night'
-          | undefined
+          'agate' | 'arta' | 'idea' | 'monokai' | 'nord' | 'obsidian' | 'tomorrow-night' | undefined
       }
     | undefined
   /**
@@ -251,14 +244,7 @@ interface PluginsOptions {
 type PluginLoadType = 'legacy' | 'chain'
 
 type SupportedHTTPMethods =
-  | 'get'
-  | 'put'
-  | 'post'
-  | 'delete'
-  | 'options'
-  | 'head'
-  | 'patch'
-  | 'trace'
+  'get' | 'put' | 'post' | 'delete' | 'options' | 'head' | 'patch' | 'trace'
 
 type SorterLike = 'alpha' | 'method' | ((name1: string, name2: string) => number)
 

@@ -450,9 +450,7 @@ Use the addRoute flag to conditionally include routes:
 
 ```ts
 const debugRoute = defineOpenAPIRoute({
-  route: createRoute({
-    /* ... */
-  }),
+  route: createRoute({/* ... */}),
   handler: (c) => {
     /* ... */
   },

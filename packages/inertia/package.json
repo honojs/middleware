@@ -10,11 +10,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:pkg",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -57,7 +57,7 @@
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
-    "vite": "^8.0.10",
+    "vite": "^8.1.1",
     "vitest": "^4.1.7"
   },
   "engines": {

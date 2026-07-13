@@ -11,7 +11,7 @@ This package depends on `prom-client`, so you need to install that as well:
 ```bash
 npm install -S @hono/prometheus prom-client
 # or
-yarn add @hono/prometheus prom-client
+pnpm add @hono/prometheus prom-client
 ```
 
 ## Usage

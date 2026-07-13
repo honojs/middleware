@@ -49,10 +49,7 @@ export interface SignInResponse {
 }
 
 export type SignInAuthorizationParams =
-  | string
-  | string[][]
-  | Record<string, string>
-  | URLSearchParams
+  string | string[][] | Record<string, string> | URLSearchParams
 
 export interface SignOutResponse {
   url: string
@@ -74,16 +71,14 @@ export interface SessionProviderProps {
 export type UpdateSession = (data?: any) => Promise<Session | null>
 
 export type SessionContextValue<R extends boolean = false> = R extends true
-  ?
-      | { update: UpdateSession; data: Session; status: 'authenticated' }
-      | { update: UpdateSession; data: null; status: 'loading' }
-  :
-      | { update: UpdateSession; data: Session; status: 'authenticated' }
-      | {
-          update: UpdateSession
-          data: null
-          status: 'unauthenticated' | 'loading'
-        }
+  ? | { update: UpdateSession; data: Session; status: 'authenticated' }
+    | { update: UpdateSession; data: null; status: 'loading' }
+  : | { update: UpdateSession; data: Session; status: 'authenticated' }
+    | {
+        update: UpdateSession
+        data: null
+        status: 'unauthenticated' | 'loading'
+      }
 
 export type WindowProps = {
   url: string
