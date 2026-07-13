@@ -12,13 +12,10 @@ import type { SignatureAlgorithm } from 'hono/utils/jwt/jwa'
 import * as oauth2 from 'oauth4webapi'
 
 export type IDToken = oauth2.IDToken
-export type TokenEndpointResponses =
-  | oauth2.OpenIDTokenEndpointResponse
-  | oauth2.TokenEndpointResponse
 export type OidcClaimsHook = (
   orig: OidcAuth | undefined,
   claims: IDToken | undefined,
-  response: TokenEndpointResponses
+  response: oauth2.TokenEndpointResponse
 ) => Promise<OidcAuthClaims>
 
 declare module 'hono' {
@@ -34,6 +31,7 @@ declare module 'hono' {
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
     oidcClaimsHook?: OidcClaimsHook
+    oidcClientAuth?: oauth2.ClientAuth
   }
 }
 
@@ -195,6 +193,21 @@ export const getClient = (c: Context): oauth2.Client => {
 }
 
 /**
+ * Sets the OAuth2 client metadata.
+ */
+export const setClient = (c: Context, client: oauth2.Client): void => {
+  c.set('oidcClient', client)
+}
+
+/**
+ * Sets the client authentication method used for token endpoint requests.
+ * If not set, falls back to `client_secret_basic`.
+ */
+export const setClientAuth = (c: Context, clientAuth: oauth2.ClientAuth): void => {
+  c.set('oidcClientAuth', clientAuth)
+}
+
+/**
  * Validates and parses session JWT and returns the OIDC user metadata.
  * If the session is invalid or expired, revokes the session and returns null.
  */
@@ -216,9 +229,15 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       throw new HTTPException(500, { message: 'Invalid session' })
     }
     const now = Math.floor(Date.now() / 1000)
-    // Revoke the session if it has expired
+    // Revoke the session if it has expired. Token revocation is best-effort —
+    // swallow any rejection so a failing IdP can't crash the request with an
+    // unhandled promise rejection.
     if (auth.ssnexp < now) {
-      revokeSession(c)
+      try {
+        await revokeSession(c)
+      } catch {
+        // ignore — the session is already considered expired
+      }
       return null
     }
     if (auth.rtkexp < now) {
@@ -229,12 +248,25 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
       }
       const as = await getAuthorizationServer(c)
       const client = getClient(c)
-      const response = await oauth2.refreshTokenGrantRequest(as, client, auth.rtk)
-      const result = await oauth2.processRefreshTokenResponse(as, client, response)
-      if (oauth2.isOAuth2Error(result)) {
-        // The refresh_token might be expired or revoked
-        deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
-        return null
+      const response = await oauth2.refreshTokenGrantRequest(
+        as,
+        client,
+        c.get('oidcClientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
+        auth.rtk
+      )
+      let result: oauth2.TokenEndpointResponse
+      try {
+        result = await oauth2.processRefreshTokenResponse(as, client, response)
+      } catch (error) {
+        if (
+          error instanceof oauth2.ResponseBodyError ||
+          error instanceof oauth2.WWWAuthenticateChallengeError
+        ) {
+          // The refresh_token might be expired or revoked
+          deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+          return null
+        }
+        throw error
       }
       auth = await updateAuth(c, auth, result)
     }
@@ -246,10 +278,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
 /**
  * Generates a new session JWT and sets the session cookie.
  */
-const setAuth = async (
-  c: Context,
-  response: oauth2.OpenIDTokenEndpointResponse
-): Promise<OidcAuth> => {
+const setAuth = async (c: Context, response: oauth2.TokenEndpointResponse): Promise<OidcAuth> => {
   return updateAuth(c, undefined, response)
 }
 
@@ -259,7 +288,7 @@ const setAuth = async (
 const updateAuth = async (
   c: Context,
   orig: OidcAuth | undefined,
-  response: TokenEndpointResponses
+  response: oauth2.TokenEndpointResponse
 ): Promise<OidcAuth> => {
   const env = getOidcAuthEnv(c)
   const claims = oauth2.getValidatedIdTokenClaims(response)
@@ -311,12 +340,21 @@ export const revokeSession = async (c: Context): Promise<void> => {
       const as = await getAuthorizationServer(c)
       const client = getClient(c)
       if (as.revocation_endpoint !== undefined) {
-        const response = await oauth2.revocationRequest(as, client, auth.rtk)
-        const result = await oauth2.processRevocationResponse(response)
-        if (oauth2.isOAuth2Error(result)) {
-          throw new HTTPException(500, {
-            message: `OAuth2Error: [${result.error}] ${result.error_description}`,
-          })
+        const response = await oauth2.revocationRequest(
+          as,
+          client,
+          c.get('oidcClientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
+          auth.rtk
+        )
+        try {
+          await oauth2.processRevocationResponse(response)
+        } catch (error) {
+          if (error instanceof oauth2.ResponseBodyError) {
+            throw new HTTPException(500, {
+              message: `OAuth2Error: [${error.error}] ${error.error_description}`,
+            })
+          }
+          throw error
         }
       }
     }
@@ -393,11 +431,16 @@ export const processOAuthCallback = async (
   const path = new URL(env.OIDC_REDIRECT_URI, c.req.url).pathname
   deleteCookie(c, 'state', { path })
   const currentUrl: URL = new URL(c.req.url)
-  const params = oauth2.validateAuthResponse(as, client, currentUrl, state)
-  if (oauth2.isOAuth2Error(params)) {
-    throw new HTTPException(500, {
-      message: `OAuth2Error: [${params.error}] ${params.error_description}`,
-    })
+  let params: URLSearchParams
+  try {
+    params = oauth2.validateAuthResponse(as, client, currentUrl, state)
+  } catch (error) {
+    if (error instanceof oauth2.AuthorizationResponseError) {
+      throw new HTTPException(500, {
+        message: `OAuth2Error: [${error.error}] ${error.error_description}`,
+      })
+    }
+    throw error
   }
 
   // Exchanges the authorization code for a refresh token
@@ -415,6 +458,7 @@ export const processOAuthCallback = async (
   const result = await exchangeAuthorizationCode(
     as,
     client,
+    c.get('oidcClientAuth') ?? oauth2.ClientSecretBasic(env.OIDC_CLIENT_SECRET),
     params,
     redirectUri,
     nonce,
@@ -430,6 +474,7 @@ export const processOAuthCallback = async (
 const exchangeAuthorizationCode = async (
   as: oauth2.AuthorizationServer,
   client: oauth2.Client,
+  clientAuth: oauth2.ClientAuth,
   params: URLSearchParams,
   redirect_uri: string,
   nonce: string,
@@ -438,24 +483,29 @@ const exchangeAuthorizationCode = async (
   const response = await oauth2.authorizationCodeGrantRequest(
     as,
     client,
+    clientAuth,
     params,
     redirect_uri,
     code_verifier
   )
-  // Handle www-authenticate challenges
-  const challenges = oauth2.parseWwwAuthenticateChallenges(response)
-  if (challenges !== undefined) {
-    throw new HTTPException(500, {
-      message: `www-authenticate error: ${JSON.stringify(challenges)}`,
+  try {
+    return await oauth2.processAuthorizationCodeResponse(as, client, response, {
+      expectedNonce: nonce,
+      requireIdToken: true,
     })
+  } catch (error) {
+    if (error instanceof oauth2.WWWAuthenticateChallengeError) {
+      throw new HTTPException(500, {
+        message: `www-authenticate error: ${JSON.stringify(error.cause)}`,
+      })
+    }
+    if (error instanceof oauth2.ResponseBodyError) {
+      throw new HTTPException(500, {
+        message: `OAuth2Error: [${error.error}] ${error.error_description}`,
+      })
+    }
+    throw error
   }
-  const result = await oauth2.processAuthorizationCodeOpenIDResponse(as, client, response, nonce)
-  if (oauth2.isOAuth2Error(result)) {
-    throw new HTTPException(500, {
-      message: `OAuth2Error: [${result.error}] ${result.error_description}`,
-    })
-  }
-  return result
 }
 
 /**

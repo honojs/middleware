@@ -3,32 +3,23 @@
   "version": "1.4.2",
   "description": "A third-party firebase auth middleware for Hono",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "pnpm -w run build:pkg",
     "start-firebase-emulator": "firebase emulators:start --project example-project12345",
     "test-with-emulator": "firebase emulators:exec --project example-project12345 'vitest run'",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint"
   },
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "repository": {
@@ -41,7 +32,14 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "dependencies": {
     "firebase-auth-cloudflare-workers": "^2.0.6"
@@ -50,11 +48,11 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d",
-    "firebase-tools": "^15.2.1",
+    "@cloudflare/vitest-pool-workers": "^0.16.10",
+    "firebase-tools": "^15.18.0",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1"
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   }
 }

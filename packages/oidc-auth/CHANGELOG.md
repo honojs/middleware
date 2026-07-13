@@ -1,5 +1,25 @@
 # @hono/oidc-auth
 
+## 1.9.0
+
+### Minor Changes
+
+- [#2014](https://github.com/honojs/middleware/pull/2014) [`8a9c08556e93fa43d89fef7f364dccbba0ce0bd9`](https://github.com/honojs/middleware/commit/8a9c08556e93fa43d89fef7f364dccbba0ce0bd9) Thanks [@momomuchu](https://github.com/momomuchu)! - Fix Google login failing with `OAuth2Error: [invalid_client] The OAuth client was not found`. `oauth4webapi` v3 percent-encodes the client id/secret for `client_secret_basic` per RFC 6749 Appendix B, but Google does not decode that encoding and rejects the resulting credentials when they contain `-`, `_` or `.`.
+
+  Add `setClientAuth()` to let consumers opt in to `client_secret_post` for the token endpoint requests (authorization code exchange, refresh, revocation), which sends the client secret unencoded in the request body. Also add `setClient()` to set the OAuth2 client metadata directly. The default `token_endpoint_auth_method` remains `client_secret_basic`, so existing consumers are unaffected; only clients whose secret contains `-`, `_` or `.` need to call `setClientAuth(c, oauth2.ClientSecretPost(env.OIDC_CLIENT_SECRET))`.
+
+## 1.8.3
+
+### Patch Changes
+
+- [#1916](https://github.com/honojs/middleware/pull/1916) [`d939c2d419b671cee283b589ebfff14eb01b1722`](https://github.com/honojs/middleware/commit/d939c2d419b671cee283b589ebfff14eb01b1722) Thanks [@thegu5](https://github.com/thegu5)! - bump oauth4webapi dependency from 2.6.0 to 3.8.6
+
+## 1.8.2
+
+### Patch Changes
+
+- [#1855](https://github.com/honojs/middleware/pull/1855) [`eb443a2fbda674bbe12d3f30e96854bb0cad6232`](https://github.com/honojs/middleware/commit/eb443a2fbda674bbe12d3f30e96854bb0cad6232) Thanks [@SAY-5](https://github.com/SAY-5)! - Fix `getAuth()` swallowing `revokeSession()` failures: the call was invoked without `await` inside the refresh branch, so a rejecting `revokeSession` turned into an unhandled rejection and `getAuth()` returned `null` without surfacing the error. Await the call inside a try/catch so errors are observable and the session is cleaned up consistently.
+
 ## 1.8.1
 
 ### Patch Changes

@@ -7,40 +7,61 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./client": {
+        "import": "./dist/client.mjs",
+        "require": "./dist/client.cjs"
+      },
+      "./jsx-dev-runtime": {
+        "import": "./dist/jsx-dev-runtime.mjs",
+        "require": "./dist/jsx-dev-runtime.cjs"
+      },
+      "./jsx-runtime": {
+        "import": "./dist/jsx-runtime.mjs",
+        "require": "./dist/jsx-runtime.cjs"
+      },
+      "./server": {
+        "import": "./dist/server.mjs",
+        "require": "./dist/server.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
     "directory": "packages/react-compat"
   },
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./*": {
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
-    }
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
+    "./jsx-runtime": "./src/jsx-runtime.ts",
+    "./server": "./src/server.ts",
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "hono": ">=4.5.0"
   },
   "devDependencies": {
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3"
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3"
   }
 }

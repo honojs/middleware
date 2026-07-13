@@ -345,7 +345,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
     assert.ok(durationMetric)
     assert.strictEqual(durationMetric.descriptor.unit, 's')
-    const dps = durationMetric.dataPoints
+    const dps = durationMetric.dataPoints as DataPoint<Histogram>[]
     assert.strictEqual(dps.length, 1)
     const dp = dps[0]
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
@@ -353,6 +353,10 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     if (dp.attributes['http.response.status_code']) {
       assert.strictEqual(dp.attributes['http.response.status_code'], 200)
     }
+    assert.deepStrictEqual(
+      dp.value.buckets.boundaries,
+      [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
+    )
   })
 
   it('Correctly records request duration metric as seconds (regression test for issue #1759)', async () => {

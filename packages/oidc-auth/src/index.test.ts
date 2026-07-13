@@ -1,11 +1,16 @@
 import { Hono } from 'hono'
 import jwt from 'jsonwebtoken'
-import type * as oauth2 from 'oauth4webapi'
+import * as oauth2 from 'oauth4webapi'
 import crypto from 'node:crypto'
 
 const MOCK_ISSUER = 'https://accounts.google.com'
 const MOCK_CLIENT_ID = 'CLIENT_ID_001'
 const MOCK_CLIENT_SECRET = 'CLIENT_SECRET_001'
+const MOCK_CUSTOM_CLIENT: oauth2.Client = {
+  client_id: MOCK_CLIENT_ID,
+  client_secret: 'CUSTOM_CLIENT_SECRET_001',
+  token_endpoint_auth_method: 'client_secret_basic',
+}
 const MOCK_REDIRECT_URI = 'http://localhost/callback'
 const MOCK_SUBJECT = 'USER_ID_001'
 const MOCK_EMAIL = 'user001@example.com'
@@ -175,6 +180,8 @@ const {
   revokeSession,
   initOidcAuthMiddleware,
   getClient,
+  setClient,
+  setClientAuth,
 } = await import('.')
 
 const app = new Hono()
@@ -188,6 +195,14 @@ app.get('/callback-custom', async (c) => {
     sub: claims?.sub ?? orig?.sub ?? '',
     token: response.access_token,
   }))
+  return processOAuthCallback(c)
+})
+app.get('/callback-client-secret-post', async (c) => {
+  setClientAuth(c, oauth2.ClientSecretPost(MOCK_CLIENT_SECRET))
+  return processOAuthCallback(c)
+})
+app.get('/callback-custom-client', async (c) => {
+  setClient(c, MOCK_CUSTOM_CLIENT)
   return processOAuthCallback(c)
 })
 app.use('/*', oidcAuthMiddleware())
@@ -248,6 +263,27 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.headers.get('set-cookie')).toMatch(`nonce=${MOCK_NONCE}`)
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
+  })
+  test('Should swallow revocationRequest failure on expired session', async () => {
+    // Regression for #1851: revokeSession() rejection used to escape getAuth().
+    const revocationRequest = vi.mocked(oauth2.revocationRequest)
+    revocationRequest.mockRejectedValueOnce(new Error('invalid_grant'))
+    const unhandled: unknown[] = []
+    const onUnhandled = (reason: unknown) => unhandled.push(reason)
+    process.on('unhandledRejection', onUnhandled)
+    try {
+      const req = new Request('http://localhost/', {
+        method: 'GET',
+        headers: { cookie: `oidc-auth=${MOCK_JWT_EXPIRED_SESSION}` },
+      })
+      const res = await app.request(req, {}, {})
+      expect(res.status).toBe(302)
+      await new Promise((resolve) => setImmediate(resolve))
+      expect(revocationRequest).toHaveBeenCalled()
+      expect(unhandled).toEqual([])
+    } finally {
+      process.off('unhandledRejection', onUnhandled)
+    }
   })
   test('Should use custom scope, if defined', async () => {
     process.env.OIDC_SCOPES = 'openid email'
@@ -485,6 +521,63 @@ describe('processOAuthCallback()', () => {
     expect(res).not.toBeNull()
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('http://localhost/1234')
+  })
+  test('Should default to client_secret_basic for the token exchange', async () => {
+    const req = new Request(`${MOCK_REDIRECT_URI}?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    await app.request(req, {}, {})
+    const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
+    expect(authorizationCodeGrantRequest).toHaveBeenCalled()
+    const clientAuth = authorizationCodeGrantRequest.mock.calls.at(-1)?.[2]
+    const headers = new Headers()
+    const body = new URLSearchParams()
+    await clientAuth?.({ issuer: MOCK_ISSUER }, { client_id: MOCK_CLIENT_ID }, body, headers)
+    expect(headers.get('authorization')).toMatch(/^Basic /)
+    expect(body.get('client_secret')).toBeNull()
+  })
+  test('setClientAuth() should authenticate the token exchange with client_secret_post so Google receives the client secret byte-for-byte', async () => {
+    // Regression for #1992: oauth4webapi v3's ClientSecretBasic percent-encodes
+    // '-', '_' and '.' per RFC 6749 Appendix B. Google rejects that encoding, so
+    // consumers whose client secret contains those characters can opt in to
+    // client_secret_post via setClientAuth(), sending the secret unencoded in the
+    // token request body instead of a Basic auth header.
+    const req = new Request(
+      `${MOCK_REDIRECT_URI}-client-secret-post?code=1234&state=${MOCK_STATE}`,
+      {
+        method: 'GET',
+        headers: {
+          cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+        },
+      }
+    )
+    await app.request(req, {}, {})
+    const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
+    expect(authorizationCodeGrantRequest).toHaveBeenCalled()
+    const clientAuth = authorizationCodeGrantRequest.mock.calls.at(-1)?.[2]
+    const headers = new Headers()
+    const body = new URLSearchParams()
+    await clientAuth?.({ issuer: MOCK_ISSUER }, { client_id: MOCK_CLIENT_ID }, body, headers)
+    expect(headers.get('authorization')).toBeNull()
+    expect(body.get('client_secret')).toBe(MOCK_CLIENT_SECRET)
+  })
+  test('setClient() should override the client metadata used for the token exchange', async () => {
+    const req = new Request(`${MOCK_REDIRECT_URI}-custom-client?code=1234&state=${MOCK_STATE}`, {
+      method: 'GET',
+      headers: {
+        cookie: `state=${MOCK_STATE}; nonce=${MOCK_NONCE}; code_verifier=1234; continue=http%3A%2F%2Flocalhost%2F1234`,
+      },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res.status).toBe(302)
+    const authorizationCodeGrantRequest = vi.mocked(oauth2.authorizationCodeGrantRequest)
+    expect(authorizationCodeGrantRequest).toHaveBeenCalled()
+    const client = authorizationCodeGrantRequest.mock.calls.at(-1)?.[1]
+    expect(client).toEqual(MOCK_CUSTOM_CLIENT)
+    expect(client?.client_secret).not.toBe(MOCK_CLIENT_SECRET)
   })
   test('Verify default callback path when OIDC_REDIRECT_URI is undefined', async () => {
     delete process.env.OIDC_REDIRECT_URI

@@ -1,5 +1,53 @@
 # @hono/ua-blocker
 
+## 0.1.35
+
+### Patch Changes
+
+- [#2026](https://github.com/honojs/middleware/pull/2026) [`9b73871f9623b6698adcedff07228ebf87a5664c`](https://github.com/honojs/middleware/commit/9b73871f9623b6698adcedff07228ebf87a5664c) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.34
+
+### Patch Changes
+
+- [#2009](https://github.com/honojs/middleware/pull/2009) [`a05110a33221de19d6770f6fe53d4f37fa5e855b`](https://github.com/honojs/middleware/commit/a05110a33221de19d6770f6fe53d4f37fa5e855b) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.33
+
+### Patch Changes
+
+- [#2004](https://github.com/honojs/middleware/pull/2004) [`542e629c531c246578618fbe90f9d478297a2527`](https://github.com/honojs/middleware/commit/542e629c531c246578618fbe90f9d478297a2527) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.32
+
+### Patch Changes
+
+- [#1975](https://github.com/honojs/middleware/pull/1975) [`5504943caeb0b9d161b09383c0abb5ecfb66ad68`](https://github.com/honojs/middleware/commit/5504943caeb0b9d161b09383c0abb5ecfb66ad68) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.31
+
+### Patch Changes
+
+- [#1927](https://github.com/honojs/middleware/pull/1927) [`c70fca68112f5d6bcea182f860cc71a38a1ca698`](https://github.com/honojs/middleware/commit/c70fca68112f5d6bcea182f860cc71a38a1ca698) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.30
+
+### Patch Changes
+
+- [#1901](https://github.com/honojs/middleware/pull/1901) [`295b080bde1bd00e66f5e66e8c403e94e1cfec7e`](https://github.com/honojs/middleware/commit/295b080bde1bd00e66f5e66e8c403e94e1cfec7e) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.29
+
+### Patch Changes
+
+- [#1893](https://github.com/honojs/middleware/pull/1893) [`992af5d5533d2dcbb093b8c1657e689b19704120`](https://github.com/honojs/middleware/commit/992af5d5533d2dcbb093b8c1657e689b19704120) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+## 0.1.28
+
+### Patch Changes
+
+- [#1876](https://github.com/honojs/middleware/pull/1876) [`7a3eba735fd7de69422838514e43976203ff6bdd`](https://github.com/honojs/middleware/commit/7a3eba735fd7de69422838514e43976203ff6bdd) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
 ## 0.1.27
 
 ### Patch Changes

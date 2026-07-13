@@ -6,6 +6,9 @@ on:
     - cron: '15 0 */3 * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sync-and-pr:
     if: ${{ !github.event.repository.fork }}
@@ -15,24 +18,27 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Set up Node.js and Yarn
-        uses: actions/setup-node@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          cache: true
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-          cache: 'yarn'
 
-      - run: yarn workspaces focus hono-middleware @hono/ua-blocker
+      - run: pnpm install --filter @hono/ua-blocker
 
       - name: Fetch latest robots.json
-        run: yarn workspace @hono/ua-blocker getrobotstxt
+        run: pnpm --filter @hono/ua-blocker getrobotstxt
 
       - name: Generate data
-        run: yarn workspace @hono/ua-blocker prebuild
+        run: pnpm --filter @hono/ua-blocker prebuild
 
       - name: Format
-        run: yarn prettier --write "packages/ua-blocker"
+        run: pnpm prettier --write "packages/ua-blocker"
 
       - name: Check for changes
         id: changes
@@ -60,7 +66,7 @@ jobs:
 
       - name: Create Pull Request if changes exist
         if: steps.changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(ua-blocker): update robots.json from upstream'

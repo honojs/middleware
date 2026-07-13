@@ -1,48 +1,42 @@
 {
   "name": "@hono/typia-validator",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Validator middleware using Typia",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./http": {
-      "import": {
-        "types": "./dist/http.d.ts",
-        "default": "./dist/http.js"
-      },
-      "require": {
-        "types": "./dist/http.d.cts",
-        "default": "./dist/http.cjs"
-      }
-    }
+    ".": "./src/index.ts",
+    "./http": "./src/http.ts",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./http": {
+        "import": "./dist/http.mjs",
+        "require": "./dist/http.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
@@ -52,14 +46,14 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "hono": ">=3.9.0",
-    "typia": "^7.0.0 || ^8.0.0"
+    "typia": "^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0"
   },
   "devDependencies": {
-    "@ryoppippi/unplugin-typia": "2.6.5",
+    "@typia/unplugin": "^12.1.1",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
-    "typia": "^9.7.2",
-    "vitest": "^4.1.0-beta.1"
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
+    "typia": "^12.1.1",
+    "vitest": "^4.1.7"
   }
 }

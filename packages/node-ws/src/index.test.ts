@@ -1,7 +1,5 @@
 import { serve } from '@hono/node-server'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import type { ServerType } from '@hono/node-server/dist/types'
+import type { ServerType } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'

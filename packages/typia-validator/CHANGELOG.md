@@ -1,5 +1,11 @@
 # @hono/typia-validator
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1943](https://github.com/honojs/middleware/pull/1943) [`10435bb61fd3f0f2c957a1e13ed9dbe3c014c134`](https://github.com/honojs/middleware/commit/10435bb61fd3f0f2c957a1e13ed9dbe3c014c134) Thanks [@BarryThePenguin](https://github.com/BarryThePenguin)! - Widen peer dependency support to include v9, v10, v11, and v12
+
 ## 0.1.2
 
 ### Patch Changes

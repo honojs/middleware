@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.3.1
+
+### Patch Changes
+
+- [#1862](https://github.com/honojs/middleware/pull/1862) [`5bb9d142989d6b4e754ba8805d82da151560fdff`](https://github.com/honojs/middleware/commit/5bb9d142989d6b4e754ba8805d82da151560fdff) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: deprecated
+
 ## 1.3.0
 
 ### Minor Changes

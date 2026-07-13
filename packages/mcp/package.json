@@ -1,47 +1,42 @@
 {
   "name": "@hono/mcp",
-  "version": "0.2.5",
+  "version": "0.3.1",
   "description": "MCP Middleware for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vitest",
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./auth": {
-      "import": {
-        "types": "./dist/auth/index.d.ts",
-        "default": "./dist/auth/index.js"
-      },
-      "require": {
-        "types": "./dist/auth/index.d.cts",
-        "default": "./dist/auth/index.cjs"
-      }
-    }
+    ".": "./src/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./package.json": "./package.json"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./auth": {
+        "import": "./dist/auth.mjs",
+        "require": "./dist/auth.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
@@ -53,20 +48,19 @@
     "pkce-challenge": "^5.0.0"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "hono": "*",
     "hono-rate-limiter": "^0.5.3",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.3",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1",
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7",
     "zod": "^4.2.1"
   }
 }

@@ -4,7 +4,8 @@
  *
  * Implements the [Inertia.js protocol](https://inertiajs.com/the-protocol) so
  * that `c.render(component, props)` returns the appropriate JSON page object
- * for XHR requests and a full HTML document for initial page loads.
+ * for Inertia XHR requests, props JSON for requests that accept JSON, and a
+ * full HTML document for initial page loads.
  */
 
 import type { Context, MiddlewareHandler, TypedResponse } from 'hono'
@@ -19,6 +20,66 @@ export type PageObject<P = Record<string, unknown>> = {
   props: P
   url: string
   version: string | null
+  /**
+   * Deferred prop keys grouped by their fetch group. Present only on initial
+   * (non-partial) responses when at least one prop was marked with
+   * {@link defer}. The Inertia client uses this to schedule one partial
+   * reload per group right after mount.
+   */
+  deferredProps?: Record<string, string[]>
+  /**
+   * Prop keys whose values should be appended to the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link merge}. Emitted on both initial and partial responses so the
+   * client knows which keys to merge on the next partial reload.
+   */
+  mergeProps?: string[]
+  /**
+   * Prop keys whose values should be prepended to the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link prepend}.
+   */
+  prependProps?: string[]
+  /**
+   * Prop keys whose values should be deep-merged with the cached value during
+   * subsequent partial reloads. Present whenever at least one prop was marked
+   * with {@link deepMerge}.
+   */
+  deepMergeProps?: string[]
+  /**
+   * Dot-paths used by the client to dedupe array items when merging. Each
+   * entry is `"<propKey>.<matchField>"` (e.g. `"posts.id"`), built from the
+   * `matchOn` option passed to {@link merge}, {@link prepend},
+   * {@link deepMerge}, or {@link scroll}.
+   */
+  matchPropsOn?: string[]
+  /**
+   * Pagination metadata emitted for every prop wrapped with {@link scroll}.
+   * Keyed by the prop name; each entry describes the previous/next page
+   * cursor that the Inertia client's `<InfiniteScroll>` adapter uses to
+   * trigger the next partial reload.
+   */
+  scrollProps?: Record<string, ScrollDescriptor>
+}
+
+/**
+ * Pagination metadata emitted on `page.scrollProps[key]` for each prop
+ * wrapped with {@link scroll}. The Inertia client's `<InfiniteScroll>`
+ * adapter reads these to know which page to request next (and whether more
+ * pages exist in either direction).
+ */
+export interface ScrollDescriptor {
+  /** `currentPage - 1`, or `null` if already on the first page. */
+  previousPage: number | null
+  /** `currentPage + 1`, or `null` if already on the last page. */
+  nextPage: number | null
+  /** Page number passed to {@link scroll}. */
+  currentPage: number
+  /**
+   * Query-string parameter the client uses to request the next page (e.g.
+   * `pageName: 'users_page'` ⇒ partial reload appends `?users_page=2`).
+   */
+  pageName: string
 }
 
 /**
@@ -28,6 +89,302 @@ export type PageObject<P = Record<string, unknown>> = {
  * by the client side adapter (e.g. `<div id="app" data-page="...">`).
  */
 export type RootView = (page: PageObject, c: Context) => string | Promise<string>
+
+/**
+ * A prop value that can be resolved lazily. When the value is a function it
+ * is only invoked if the prop is included in the current render, which is the
+ * key mechanism behind partial reloads — heavy data fetching can be skipped
+ * for props that the client did not request.
+ */
+export type Resolvable<T> = T | (() => T | Promise<T>)
+
+/**
+ * Resolved form of a {@link Resolvable}. Resolves the awaited return value of
+ * a function prop, or the value itself otherwise.
+ */
+export type Resolved<T> = T extends (...args: never[]) => infer R ? Awaited<R> : T
+
+/**
+ * Applies {@link Resolved} to every property of `P`.
+ */
+export type ResolvedProps<P> = { [K in keyof P]: Resolved<P[K]> }
+
+const DEFER_MARKER = Symbol.for('@hono/inertia/defer')
+
+/**
+ * Internal marker produced by {@link defer}. The renderer detects this and
+ * skips the resolver on initial responses (advertising the key under
+ * `page.deferredProps`) so the client can request the value via a partial
+ * reload after the initial render.
+ *
+ * The shape is intentionally opaque — only the type guard inside the renderer
+ * reads it. The factory returns `T` so usage at call sites is transparent.
+ */
+interface DeferredProp<T = unknown> {
+  [DEFER_MARKER]: true
+  resolver: () => T | Promise<T>
+  group: string
+}
+
+const isDeferred = (value: unknown): value is DeferredProp =>
+  typeof value === 'object' && value !== null && DEFER_MARKER in value
+
+/**
+ * Marks a prop as deferred. On the initial response the resolver is skipped
+ * and the prop key is advertised under `page.deferredProps[group]`. The
+ * client then issues one partial reload per group, which re-enters the
+ * middleware with the corresponding key in `X-Inertia-Partial-Data`, at
+ * which point the resolver runs and the value is sent down.
+ *
+ * Multiple deferred props that share a `group` are fetched together in a
+ * single partial reload. The default group is `"default"`.
+ *
+ * @example
+ * ```ts
+ * app.get('/', (c) =>
+ *   c.render('Dashboard', {
+ *     user: { id: 1 },                       // sent on initial response
+ *     posts: defer(() => fetchPosts()),      // skipped initially, fetched after mount
+ *     stats: defer(() => fetchStats(), 'secondary'),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/deferred-props
+ */
+export const defer = <T>(resolver: () => T | Promise<T>, group = 'default'): T => {
+  const marker: DeferredProp<T> = {
+    [DEFER_MARKER]: true,
+    resolver,
+    group,
+  }
+  return marker as unknown as T
+}
+
+const MERGE_MARKER = Symbol.for('@hono/inertia/merge')
+
+/**
+ * Strategy applied by the Inertia client when combining incoming merge props
+ * with the cached value:
+ *
+ * - `'append'` — concat arrays (or shallow-spread object keys) at the end
+ * - `'prepend'` — concat arrays at the start
+ * - `'deep'` — recurse into nested arrays/objects, applying `matchOn` dedupe
+ */
+type MergeStrategy = 'append' | 'prepend' | 'deep'
+
+/**
+ * Internal marker produced by {@link merge}, {@link prepend}, and
+ * {@link deepMerge}. The renderer detects this and emits the resolved value
+ * as-is while recording the prop key against the corresponding
+ * `page.mergeProps` / `page.prependProps` / `page.deepMergeProps` bucket. The
+ * client then uses these on subsequent partial reloads to combine incoming
+ * values with the cached ones instead of replacing.
+ *
+ * The shape is intentionally opaque — only the type guard inside the renderer
+ * reads it. The factory returns `T` so usage at call sites is transparent.
+ */
+interface MergeProp<T = unknown> {
+  [MERGE_MARKER]: true
+  strategy: MergeStrategy
+  data: T
+  matchOn: string[]
+}
+
+const isMerge = (value: unknown): value is MergeProp =>
+  typeof value === 'object' && value !== null && MERGE_MARKER in value
+
+/**
+ * Options accepted by {@link merge}, {@link prepend}, and {@link deepMerge}.
+ */
+export interface MergeOptions {
+  /**
+   * Field(s) used by the Inertia client to dedupe array items when combining
+   * incoming and cached values. Each entry is appended to the prop key as a
+   * dot-path on `page.matchPropsOn` (e.g. `merge(posts, { matchOn: 'id' })`
+   * on the `posts` prop emits `matchPropsOn: ['posts.id']`).
+   */
+  matchOn?: string | string[]
+}
+
+const buildMerge =
+  (strategy: MergeStrategy) =>
+  <T>(data: T, options: MergeOptions = {}): T => {
+    const matchOn = options.matchOn
+      ? Array.isArray(options.matchOn)
+        ? options.matchOn
+        : [options.matchOn]
+      : []
+    const marker: MergeProp<T> = {
+      [MERGE_MARKER]: true,
+      strategy,
+      data,
+      matchOn,
+    }
+    return marker as unknown as T
+  }
+
+/**
+ * Marks a prop for **append merge** on partial reloads. The resolved value is
+ * sent as-is on this response, and the prop key is recorded under
+ * `page.mergeProps` so the client appends future partial-reload values to
+ * the cached array (or shallow-spreads object keys).
+ *
+ * Full page visits always replace props entirely — merging only kicks in on
+ * subsequent partial reloads.
+ *
+ * @example
+ * ```ts
+ * app.get('/feed', (c) =>
+ *   c.render('Feed', {
+ *     posts: merge(await db.posts.page(n), { matchOn: 'id' }),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const merge: <T>(data: T, options?: MergeOptions) => T = buildMerge('append')
+
+/**
+ * Marks a prop for **prepend merge** on partial reloads. Same as {@link merge}
+ * but new array items are inserted at the start of the cached array.
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const prepend: <T>(data: T, options?: MergeOptions) => T = buildMerge('prepend')
+
+/**
+ * Marks a prop for **deep merge** on partial reloads. The client walks the
+ * value recursively: arrays follow `matchOn` dedupe rules (or concat), nested
+ * objects merge key-by-key, scalars replace.
+ *
+ * Use for wrapper-shaped paginated props like `{ data: [...], meta: {...} }`
+ * where a shallow merge would lose the inner `data` array.
+ *
+ * @example
+ * ```ts
+ * app.get('/feed', (c) =>
+ *   c.render('Feed', {
+ *     feed: deepMerge(
+ *       { data: await db.posts.page(n), meta: { total, nextCursor } },
+ *       { matchOn: 'data.id' },
+ *     ),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/merging-props
+ */
+export const deepMerge: <T>(data: T, options?: MergeOptions) => T = buildMerge('deep')
+
+const SCROLL_MARKER = Symbol.for('@hono/inertia/scroll')
+
+/**
+ * Request header sent by the Inertia client's `<InfiniteScroll>` adapter to
+ * tell the server whether the next partial reload should append (scrolling
+ * forward) or prepend (scrolling backward) its result onto the cached array.
+ *
+ * Mirrors `Inertia\Support\Header::INFINITE_SCROLL_MERGE_INTENT` from the
+ * Laravel adapter.
+ */
+const INFINITE_SCROLL_MERGE_INTENT_HEADER = 'X-Inertia-Infinite-Scroll-Merge-Intent'
+
+/**
+ * Internal marker produced by {@link scroll}. The renderer detects this,
+ * unwraps `data` as the prop value, emits {@link ScrollDescriptor} metadata
+ * on `page.scrollProps[key]`, and — mirroring `Inertia\ScrollProp` — opts
+ * the prop into the merge protocol (defaulting to `append`, switching to
+ * `prepend` when the client sends `X-Inertia-Infinite-Scroll-Merge-Intent:
+ * prepend`).
+ *
+ * The shape is intentionally opaque — only the type guard inside the
+ * renderer reads it. The factory returns `T[]` so usage at call sites is
+ * transparent.
+ */
+interface ScrollProp<T = unknown> {
+  [SCROLL_MARKER]: true
+  data: T[]
+  previousPage: number | null
+  nextPage: number | null
+  currentPage: number
+  pageName: string
+  matchOn: string[]
+}
+
+const isScroll = (value: unknown): value is ScrollProp =>
+  typeof value === 'object' && value !== null && SCROLL_MARKER in value
+
+/**
+ * Options accepted by {@link scroll}.
+ */
+export interface ScrollOptions<T> {
+  /** Page payload — the items rendered for `currentPage`. */
+  data: T[]
+  /** 1-indexed current page number. */
+  currentPage: number
+  /** Total page count. Used to compute `nextPage` (returns `null` when on the last page). */
+  lastPage: number
+  /** Query-string parameter the client uses to request the next page (e.g. `'users_page'` ⇒ `?users_page=2`). */
+  pageName: string
+  /**
+   * Field(s) used by the Inertia client to dedupe array items when
+   * combining incoming and cached pages. Each entry is emitted as
+   * `"<propKey>.<field>"` on `page.matchPropsOn`. Mirrors the `matchOn`
+   * option on {@link merge} — optional and no default, so items are
+   * appended verbatim if you do not pass a key.
+   */
+  matchOn?: string | string[]
+}
+
+/**
+ * Marks a prop as a paginated **infinite scroll** source. On every response
+ * the renderer emits `props[key] = data` and `page.scrollProps[key]` with
+ * the previous/next page cursor that the Inertia client's
+ * `<InfiniteScroll>` adapter reads to drive subsequent partial reloads.
+ *
+ * Scroll props opt into the merge protocol on every response (default
+ * `append`, switched to `prepend` when the client sends
+ * `X-Inertia-Infinite-Scroll-Merge-Intent: prepend`), so the cached array
+ * keeps growing instead of being replaced each page.
+ *
+ * Full page visits always replace props entirely — merging only kicks in on
+ * subsequent partial reloads.
+ *
+ * @example
+ * ```ts
+ * app.get('/users', (c) =>
+ *   c.render('Users/Index', {
+ *     users: scroll({
+ *       data: await db.users.page(currentPage),
+ *       currentPage,
+ *       lastPage: 10,
+ *       pageName: 'users_page',
+ *       matchOn: 'id',
+ *     }),
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/docs/v2/data-props/infinite-scroll
+ */
+export const scroll = <T>(options: ScrollOptions<T>): T[] => {
+  const matchOn = options.matchOn
+    ? Array.isArray(options.matchOn)
+      ? options.matchOn
+      : [options.matchOn]
+    : []
+  const marker: ScrollProp<T> = {
+    [SCROLL_MARKER]: true,
+    data: options.data,
+    previousPage: options.currentPage > 1 ? options.currentPage - 1 : null,
+    nextPage: options.currentPage < options.lastPage ? options.currentPage + 1 : null,
+    currentPage: options.currentPage,
+    pageName: options.pageName,
+    matchOn,
+  }
+  return marker as unknown as T[]
+}
 
 export interface InertiaOptions {
   /**
@@ -62,6 +419,14 @@ export interface InertiaOptions {
 export const serializePage = (page: PageObject): string =>
   JSON.stringify(page).replace(/\//g, '\\/')
 
+const parseKeys = (header: string | undefined): string[] | null =>
+  header
+    ? header
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : null
+
 const defaultRootView: RootView = (page) =>
   `<!DOCTYPE html>
 <html>
@@ -79,7 +444,8 @@ const defaultRootView: RootView = (page) =>
  * Inertia.js middleware for Hono.
  *
  * Sets up `c.render(component, props)` to respond according to the Inertia
- * protocol: JSON for `X-Inertia` requests, full HTML otherwise.
+ * protocol: JSON page objects for `X-Inertia` requests, props JSON for
+ * `Accept: application/json` requests, full HTML otherwise.
  *
  * @example
  * ```ts
@@ -107,26 +473,186 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       }
     }
 
-    c.setRenderer(((component: string, props: Record<string, unknown> = {}) => {
-      const url = new URL(c.req.url)
-      const page: PageObject = {
-        component,
-        props,
-        url: url.pathname + url.search,
-        version,
+    c.setRenderer(((
+      component: string,
+      propsInput: Record<string, unknown> = {},
+      options: RenderOptions = {}
+    ) => {
+      // Use the Referer for non-GET requests to keep the original URL.
+      // Override with options.url if provided.
+      const url = (() => {
+        try {
+          return options.url === undefined
+            ? new URL(c.req.method === 'GET' ? c.req.url : (c.req.header('Referer') ?? c.req.url))
+            : new URL(options.url, c.req.url)
+        } catch {
+          return new URL(c.req.url)
+        }
+      })()
+
+      // Partial reload negotiation: the client (Inertia core) signals
+      // "only re-evaluate these props" via X-Inertia-Partial-Component +
+      // X-Inertia-Partial-Data / X-Inertia-Partial-Except.
+      const partialComponent = c.req.header('X-Inertia-Partial-Component')
+      const partialData = c.req.header('X-Inertia-Partial-Data')
+      const partialExcept = c.req.header('X-Inertia-Partial-Except')
+      const isPartial =
+        partialComponent === component && (partialData !== undefined || partialExcept !== undefined)
+
+      const onlyKeys = isPartial ? parseKeys(partialData) : null
+      const exceptKeys = isPartial ? parseKeys(partialExcept) : null
+
+      const isExcluded = (key: string): boolean =>
+        (onlyKeys !== null && !onlyKeys.includes(key)) ||
+        (exceptKeys !== null && exceptKeys.includes(key))
+
+      // Collect kept entries and decide sync vs async resolution. When no
+      // function-valued or deferred prop is encountered, the renderer stays
+      // fully sync — preserving the original `Response` (non-Promise) return
+      // type for the common case.
+      //
+      // Deferred props are handled per visit kind:
+      //   - initial visit (`!isPartial`): the resolver is skipped, the key
+      //     is recorded in `deferredGroups`, and nothing is added to `kept`.
+      //   - partial visit (`isPartial`): the marker is kept and resolved
+      //     just like a regular function-valued prop.
+      // Scroll props opt into the merge protocol on every response. Default
+      // direction is `append`; when the client's <InfiniteScroll> adapter is
+      // walking backwards it sends X-Inertia-Infinite-Scroll-Merge-Intent:
+      // prepend, which flips this prop into the prepend bucket instead.
+      // Mirrors `ScrollProp::configureMergeIntent` in inertia-laravel.
+      const scrollMergeIntent = c.req.header(INFINITE_SCROLL_MERGE_INTENT_HEADER)
+      const scrollDirection: 'append' | 'prepend' =
+        scrollMergeIntent === 'prepend' ? 'prepend' : 'append'
+
+      const kept: [string, unknown][] = []
+      const deferredGroups: Record<string, string[]> = {}
+      const mergeProps: string[] = []
+      const prependProps: string[] = []
+      const deepMergeProps: string[] = []
+      const matchPropsOn: string[] = []
+      const scrollProps: Record<string, ScrollDescriptor> = {}
+      let needsAsync = false
+      for (const [key, value] of Object.entries(propsInput)) {
+        if (isExcluded(key)) {
+          continue
+        }
+        if (isDeferred(value)) {
+          if (!isPartial) {
+            ;(deferredGroups[value.group] ??= []).push(key)
+            continue
+          }
+          needsAsync = true
+          kept.push([key, value])
+          continue
+        }
+        // Scroll markers emit pagination metadata on every response and opt
+        // the prop into the merge protocol so the client appends/prepends
+        // each incoming page to the cached array. Checked before isMerge so
+        // a scroll() prop never falls through to the plain merge branch.
+        if (isScroll(value)) {
+          scrollProps[key] = {
+            previousPage: value.previousPage,
+            nextPage: value.nextPage,
+            currentPage: value.currentPage,
+            pageName: value.pageName,
+          }
+          if (scrollDirection === 'prepend') {
+            prependProps.push(key)
+          } else {
+            mergeProps.push(key)
+          }
+          for (const p of value.matchOn) {
+            matchPropsOn.push(`${key}.${p}`)
+          }
+          kept.push([key, value.data])
+          continue
+        }
+        // Merge markers are emitted on every response (initial + partial) so
+        // the client knows which keys to combine on the *next* partial reload.
+        // The wrapped value is unwrapped here and treated like a plain prop.
+        if (isMerge(value)) {
+          if (value.strategy === 'append') {
+            mergeProps.push(key)
+          } else if (value.strategy === 'prepend') {
+            prependProps.push(key)
+          } else {
+            deepMergeProps.push(key)
+          }
+          for (const p of value.matchOn) {
+            matchPropsOn.push(`${key}.${p}`)
+          }
+          // Unwrap and forward to the same lazy-resolution path used for plain
+          // props, so `merge(() => fetchPosts(), ...)` resolves on partial
+          // reloads instead of being JSON-stringified as a raw function.
+          if (typeof value.data === 'function') {
+            needsAsync = true
+          }
+          kept.push([key, value.data])
+          continue
+        }
+        if (typeof value === 'function') {
+          needsAsync = true
+        }
+        kept.push([key, value])
       }
 
-      if (c.req.header('X-Inertia')) {
-        c.header('X-Inertia', 'true')
-        c.header('Vary', 'X-Inertia')
-        return c.json(page)
+      const respond = (resolvedProps: Record<string, unknown>) => {
+        const page: PageObject = {
+          component,
+          props: resolvedProps,
+          url: url.pathname + url.search,
+          version,
+        }
+        if (!isPartial && Object.keys(deferredGroups).length > 0) {
+          page.deferredProps = deferredGroups
+        }
+        if (mergeProps.length > 0) {
+          page.mergeProps = mergeProps
+        }
+        if (prependProps.length > 0) {
+          page.prependProps = prependProps
+        }
+        if (deepMergeProps.length > 0) {
+          page.deepMergeProps = deepMergeProps
+        }
+        if (matchPropsOn.length > 0) {
+          page.matchPropsOn = matchPropsOn
+        }
+        if (Object.keys(scrollProps).length > 0) {
+          page.scrollProps = scrollProps
+        }
+
+        c.header('Vary', 'Accept, X-Inertia')
+
+        if (c.req.header('X-Inertia')) {
+          c.header('X-Inertia', 'true')
+          return c.json(page)
+        }
+
+        if (c.req.header('Accept')?.includes('application/json')) {
+          return c.json(resolvedProps)
+        }
+
+        const rendered = rootView(page, c)
+        if (rendered instanceof Promise) {
+          return rendered.then((html) => c.html(html))
+        }
+        return c.html(rendered)
       }
 
-      const rendered = rootView(page, c)
-      if (rendered instanceof Promise) {
-        return rendered.then((html) => c.html(html))
+      if (!needsAsync) {
+        return respond(Object.fromEntries(kept))
       }
-      return c.html(rendered)
+
+      return Promise.all(
+        kept.map(async ([key, value]): Promise<[string, unknown]> => {
+          if (isDeferred(value)) {
+            return [key, await value.resolver()]
+          }
+          return [key, typeof value === 'function' ? await (value as () => unknown)() : value]
+        })
+      ).then((entries) => respond(Object.fromEntries(entries)))
     }) as Parameters<typeof c.setRenderer>[0])
 
     return next()
@@ -162,12 +688,24 @@ export type PageName = keyof InertiaPages extends never
   ? string
   : Extract<keyof InertiaPages, string>
 
+/**
+ * Render options accepted as the third argument of `c.render`.
+ */
+export interface RenderOptions {
+  /**
+   * Overrides `page.url`. It is primarily used to prevent
+   * incorrect URLs when using no-referrer, origin, or strict-origin.
+   */
+  url?: string
+}
+
 declare module 'hono' {
   interface ContextRenderer {
     <C extends PageName, P = Record<string, never>>(
       component: C,
-      props?: P
-    ): Response & TypedResponse<{ component: C; props: P }, 200, 'html'>
+      props?: P,
+      options?: RenderOptions
+    ): Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
   }
   interface NotFoundResponse extends Response, TypedResponse<string, 404, 'text'> {}
 }

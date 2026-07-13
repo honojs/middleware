@@ -1,4 +1,5 @@
 import type { Context, Env, MiddlewareHandler } from 'hono'
+import { env } from 'hono/adapter'
 import * as cookie from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
@@ -66,7 +67,7 @@ export const useSession = <Data extends SessionData>(
   let encryptionKey: EncryptionKey | undefined
 
   return createMiddleware<SessionEnv<Data>>(async (c, next) => {
-    const secret = options?.secret ?? c.env.AUTH_SECRET
+    const secret = options?.secret ?? env(c).AUTH_SECRET
 
     if (!secret) {
       throw new Error('Missing AUTH_SECRET')

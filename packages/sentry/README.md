@@ -2,6 +2,9 @@
 
 [![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=sentry)](https://codecov.io/github/honojs/middleware)
 
+> [!NOTE]
+> Sentry now provides an official SDK for Hono. If you are starting a new project or considering a migration, we recommend using the **[official Sentry Hono SDK](https://docs.sentry.io/platforms/javascript/guides/hono/)** for first-party support and the latest features.
+
 This middleware integrates [Hono](https://github.com/honojs/hono) with Sentry. It captures exceptions and sends them to the specified Sentry data source name (DSN) using [toucan-js](https://github.com/robertcepa/toucan-js).
 
 ## Installation

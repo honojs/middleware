@@ -1,5 +1,17 @@
 # @hono/mcp
 
+## 0.3.1
+
+### Patch Changes
+
+- [#2024](https://github.com/honojs/middleware/pull/2024) [`a57c2628abe935102a20059f865bbbbff2434c26`](https://github.com/honojs/middleware/commit/a57c2628abe935102a20059f865bbbbff2434c26) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: bump `@hono/mcp`
+
+## 0.3.0
+
+### Minor Changes
+
+- [#1774](https://github.com/honojs/middleware/pull/1774) [`9575cbc4b8b32bb1605a465a414a9728f1a6ef9b`](https://github.com/honojs/middleware/commit/9575cbc4b8b32bb1605a465a414a9728f1a6ef9b) Thanks [@bookernath](https://github.com/bookernath)! - relax Accept header validation to accept `application/json`, `text/event-stream`, or `*/*` individually, improving compatibility with Gemini CLI, Java MCP SDK, Open WebUI, and curl. Add `strictAcceptHeader` option for strict MCP spec compliance.
+
 ## 0.2.5
 
 ### Patch Changes

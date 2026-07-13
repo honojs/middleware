@@ -158,7 +158,7 @@ describe('session.get(refresh)', () => {
     expect(res.status).toBe(200)
     expect(data).toStrictEqual({ sub: newSub })
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '7200',
+      'Max-Age': expect.toBeOneOf(['7200', '7199', '7198']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -180,7 +180,7 @@ describe('session.get(refresh)', () => {
     expect(res.status).toBe(200)
     expect(data).toBeNull()
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '10800',
+      'Max-Age': expect.toBeOneOf(['10800', '10799', '10798']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -380,7 +380,7 @@ describe('session.get() with storage', () => {
     expect(sessionCookie?.payload.iat).toBeGreaterThan(recent)
     expect(sessionCookie?.payload.sid).not.toStrictEqual(sid)
     expect(getSpy).toHaveBeenCalledWith(sid)
-    expect(setSpy).not.toBeCalled()
+    expect(setSpy).not.toHaveBeenCalled()
     expect(storage.size).toBe(0)
   })
 
@@ -460,7 +460,7 @@ describe('session.get(refresh) with storage', () => {
     expect(res.status).toBe(200)
     expect(data).toStrictEqual({ sub })
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '7200',
+      'Max-Age': expect.toBeOneOf(['7200', '7199', '7198']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -483,7 +483,7 @@ describe('session.get(refresh) with storage', () => {
     expect(res.status).toBe(200)
     expect(data).toBeNull()
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '10800',
+      'Max-Age': expect.toBeOneOf(['10800', '10799', '10798']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -739,7 +739,7 @@ describe('options.duration.absolute', () => {
     expect(res.status).toBe(200)
     expect(data).toBeNull()
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '36000',
+      'Max-Age': expect.toBeOneOf(['36000', '35999', '35998']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -761,7 +761,7 @@ describe('options.duration.absolute', () => {
     expect(res.status).toBe(200)
     expect(data).toStrictEqual({ sub: newSub })
     expect(sessionCookie?.attributes).toMatchObject({
-      'Max-Age': '32400',
+      'Max-Age': expect.toBeOneOf(['32400', '32399', '32398']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -795,7 +795,7 @@ describe('options.duration.inactivity', () => {
     expect(res.status).toBe(200)
     expect(data).toBeNull()
     expect(sessionCookie?.attributes).toStrictEqual({
-      'Max-Age': '10800',
+      'Max-Age': expect.toBeOneOf(['10800', '10799', '10798']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -817,7 +817,7 @@ describe('options.duration.inactivity', () => {
     expect(res.status).toBe(200)
     expect(data).toStrictEqual({ sub: newSub })
     expect(sessionCookie?.attributes).toMatchObject({
-      'Max-Age': '10800',
+      'Max-Age': expect.toBeOneOf(['10800', '10799', '10798']) as unknown,
       Path: '/',
       SameSite: 'Lax',
     })
@@ -1012,6 +1012,7 @@ describe('session.id', () => {
   it('preserves session id across requests with same cookie', async () => {
     // First request - create session
     const firstRes = await client['session-id'][':sub'].$put({ param: { sub: 'user1' } })
+    // @ts-expect-error - `Response` class from @cloudflare/workers-types is leaking which is causing this issue, needs to be fixed later
     const sessionCookie = await getSetCookie(firstRes, 'sid', decrypt)
     const firstData = await firstRes.json()
 

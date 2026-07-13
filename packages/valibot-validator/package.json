@@ -3,30 +3,35 @@
   "version": "0.6.1",
   "description": "Validator middleware using Valibot",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "import": "./dist/index.js",
-      "default": "./dist/index.cjs"
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
@@ -40,9 +45,9 @@
   },
   "devDependencies": {
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
     "valibot": "^1.3.0",
-    "vitest": "^4.1.0-beta.1"
+    "vitest": "^4.1.7"
   }
 }

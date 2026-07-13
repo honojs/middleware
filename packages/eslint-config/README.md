@@ -5,7 +5,7 @@
 ```bash
 npm install @hono/eslint-config
 # or
-yarn add @hono/eslint-config
+pnpm add @hono/eslint-config
 ```
 
 ## Setting

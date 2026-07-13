@@ -42,14 +42,16 @@ describe('Basic', () => {
     '/author': {
       $post: {
         input: {
-          json: Readonly<{
-            name: string
-            age: number
-          }>
+          json: {
+            readonly name: string
+            readonly age: number
+          }
         } & {
-          query?: Readonly<{
-            name?: string | string[] | undefined
-          }>
+          query?:
+            | {
+                readonly name?: string | string[]
+              }
+            | undefined
         }
         output: {
           success: true

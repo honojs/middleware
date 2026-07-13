@@ -3,26 +3,27 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 
-const exclude = new Set(['@hono/bun-compress', '@hono/bun-transpiler'])
-const since = core.getInput('since')
+const exclude = new Set(['@hono/bun-compress', '@hono/bun-transpiler', '@hono/node-ws'])
+const since = core.getInput('since') || 'origin/main'
 
-const workspaces = await exec.getExecOutput('yarn workspaces list', [
+const { stdout } = await exec.getExecOutput('pnpm', [
+  'list',
+  '--recursive',
+  '--depth=-1',
   '--json',
-  '--no-private',
-  since ? `--since=${since}` : '--since',
+  // Select workspace packages whose files changed since `since`.
+  '--filter',
+  `[${since}]`,
 ])
 
 const changed = []
 
-for (const workspace of workspaces.stdout.split('\n')) {
-  try {
-    const { name } = JSON.parse(workspace)
-
-    if (!exclude.has(name)) {
-      changed.push(name.replace(/^@hono\//, ''))
-    }
-  } catch {
-    // Ignore any parsing errors for empty lines or invalid JSON
+for (const workspace of JSON.parse(stdout || '[]')) {
+  if (workspace.private) {
+    continue
+  }
+  if (!exclude.has(workspace.name)) {
+    changed.push(workspace.name.replace(/^@hono\//, ''))
   }
 }
 

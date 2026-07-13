@@ -9,7 +9,7 @@ This library, `@hono/swagger-ui`, provides a middleware and a component for inte
 ```bash
 npm install @hono/swagger-ui
 # or
-yarn add @hono/swagger-ui
+pnpm add @hono/swagger-ui
 ```
 
 ## Usage

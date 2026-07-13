@@ -3,21 +3,16 @@
   "version": "0.0.0",
   "description": "Third-party middleware for Hono",
   "type": "module",
-  "workspaces": {
-    "packages": [
-      ".github/actions/*",
-      "packages/*"
-    ]
-  },
   "scripts": {
     "build": "tsdown",
-    "publish": "yarn publish:npm && yarn publish:jsr",
-    "publish:npm": "yarn workspaces foreach --all --no-private --topological --verbose npm publish --tolerate-republish && changeset tag",
+    "build:pkg": "tsdown --workspace $INIT_CWD",
+    "publish": "pnpm publish:npm && pnpm publish:jsr",
+    "publish:npm": "pnpm -r publish --no-git-checks && changeset tag",
     "publish:jsr": "deno install --no-lock && deno publish",
-    "version": "yarn version:npm && yarn version:jsr",
+    "version": "pnpm version:npm && pnpm version:jsr",
     "version:npm": "changeset version",
     "version:jsr": "turbo run version:jsr",
-    "version:set": "tmp=$(mktemp) && jq --arg version $0 '.version = $version' $INIT_CWD/deno.json > $tmp && mv $tmp $INIT_CWD/deno.json && prettier --write $INIT_CWD/deno.json",
+    "version:set": "node scripts/version-set.ts",
     "typecheck": "tsc --build",
     "typecheck:clean": "tsc --build --clean",
     "typecheck:watch": "tsc --build --watch",
@@ -37,23 +32,23 @@
     "@arethetypeswrong/core": "^0.18.2",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.29.7",
-    "@cloudflare/vitest-pool-workers": "https://pkg.pr.new/@cloudflare/vitest-pool-workers@7143d5d",
+    "@cloudflare/vitest-pool-workers": "^0.16.10",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
-    "@ryoppippi/unplugin-typia": "^2.6.5",
     "@tsconfig/strictest": "^2.0.8",
     "@types/node": "^25.2.3",
-    "@vitest/coverage-istanbul": "^4.1.0-beta.1",
+    "@typia/unplugin": "^12.1.1",
+    "@vitest/coverage-istanbul": "^4.1.8",
     "eslint": "^10.0.3",
     "hono": "^4.11.5",
     "pkg-pr-new": "^0.0.63",
     "prettier": "^3.8.1",
     "publint": "^0.3.16",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.22.3",
     "turbo": "^2.9.4",
-    "typescript": "^5.9.3",
-    "typia": "^9.7.2",
-    "vitest": "^4.1.0-beta.1"
+    "typescript": "^6.0.3",
+    "typia": "^12.1.1",
+    "vitest": "^4.1.7"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "pnpm@11.9.0"
 }

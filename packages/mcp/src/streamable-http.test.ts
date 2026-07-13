@@ -22,6 +22,7 @@ interface TestServerConfig {
   eventStore?: EventStore
   onsessioninitialized?: (sessionId: string) => void | Promise<void>
   onsessionclosed?: (sessionId: string) => void
+  strictAcceptHeader?: boolean
 }
 
 /**
@@ -54,6 +55,7 @@ async function createTestServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    strictAcceptHeader: config.strictAcceptHeader,
   })
 
   await mcpServer.connect(transport)
@@ -115,6 +117,7 @@ async function createTestAuthServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    strictAcceptHeader: config.strictAcceptHeader,
   })
 
   await mcpServer.connect(transport)
@@ -590,10 +593,10 @@ describe('MCP helper', () => {
     expectErrorResponse(errorData, -32000, /Only one SSE stream is allowed per session/)
   })
 
-  it('should reject GET requests without Accept: text/event-stream header', async () => {
+  it('should reject GET requests without acceptable Accept header', async () => {
     sessionId = await initializeServer()
 
-    // Try GET without proper Accept header
+    // Try GET with Accept that doesn't include text/event-stream or */*
     const response = await server.request('/', {
       method: 'GET',
       headers: {
@@ -608,15 +611,94 @@ describe('MCP helper', () => {
     expectErrorResponse(errorData, -32000, /Client must accept text\/event-stream/)
   })
 
-  it('should reject POST requests without proper Accept header', async () => {
+  it('should accept GET requests with Accept: */*', async () => {
     sessionId = await initializeServer()
 
-    // Try POST without Accept: text/event-stream
+    const response = await server.request('/', {
+      method: 'GET',
+      headers: {
+        Accept: '*/*',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('content-type')).toBe('text/event-stream')
+  })
+
+  it('should accept POST requests with Accept: application/json only (permissive default)', async () => {
+    sessionId = await initializeServer()
+
     const response = await server.request('/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json', // Missing text/event-stream
+        Accept: 'application/json',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should accept POST requests with Accept: text/event-stream only (permissive default)', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should accept POST requests with Accept: */* (permissive default)', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should accept POST requests with no Accept header (permissive default)', async () => {
+    // No Accept header defaults to */* internally
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(TEST_MESSAGES.initialize),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
+  it('should reject POST requests with unacceptable Accept header (permissive default)', async () => {
+    sessionId = await initializeServer()
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/html',
         'mcp-session-id': sessionId,
         'mcp-protocol-version': '2025-03-26',
       },
@@ -628,7 +710,7 @@ describe('MCP helper', () => {
     expectErrorResponse(
       errorData,
       -32000,
-      /Client must accept both application\/json and text\/event-stream/
+      /Client must accept application\/json or text\/event-stream/
     )
   })
 
@@ -2160,6 +2242,61 @@ describe('StreamableHTTPServerTransport DNS rebinding protection', () => {
 
       expect(response2.status).toBe(200)
     })
+  })
+})
+
+describe('strictAcceptHeader option', () => {
+  let server: Hono
+  let transport: StreamableHTTPTransport
+
+  afterEach(async () => {
+    await stopTestServer({ transport })
+  })
+
+  it('should reject POST with Accept: application/json only when strict mode is enabled', async () => {
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+      strictAcceptHeader: true,
+    })
+    server = result.server
+    transport = result.transport
+
+    // Initialize first (with both Accept types)
+    const initResponse = await sendPostRequest(server, TEST_MESSAGES.initialize)
+    expect(initResponse.status).toBe(200)
+    const sessionId = initResponse.headers.get('mcp-session-id') as string
+
+    // Try POST with only application/json
+    const response = await server.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'mcp-session-id': sessionId,
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(406)
+    const errorData = await response.json()
+    expectErrorResponse(
+      errorData,
+      -32000,
+      /Client must accept both application\/json and text\/event-stream/
+    )
+  })
+
+  it('should accept POST with both Accept types when strict mode is enabled', async () => {
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+      strictAcceptHeader: true,
+    })
+    server = result.server
+    transport = result.transport
+
+    const response = await sendPostRequest(server, TEST_MESSAGES.initialize)
+    expect(response.status).toBe(200)
   })
 })
 

@@ -13,7 +13,7 @@ npm i @hono/graphql-server
 or
 
 ```plain
-yarn add @hono/graphql-server
+pnpm add @hono/graphql-server
 ```
 
 ## Usage

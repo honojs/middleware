@@ -3,50 +3,24 @@
   "version": "0.1.4",
   "description": "esbuild Transpiler Middleware for Hono",
   "type": "module",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "build": "pnpm -w run build:pkg",
     "lint": "eslint",
     "typecheck": "tsc -b tsconfig.json",
     "test": "vitest",
-    "version:jsr": "yarn version:set $npm_package_version"
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./wasm": {
-      "import": {
-        "types": "./dist/transpilers/wasm.d.ts",
-        "default": "./dist/transpilers/wasm.js"
-      },
-      "require": {
-        "types": "./dist/transpilers/wasm.d.cts",
-        "default": "./dist/transpilers/wasm.cjs"
-      }
-    },
-    "./node": {
-      "import": {
-        "types": "./dist/transpilers/node.d.ts",
-        "default": "./dist/transpilers/node.js"
-      },
-      "require": {
-        "types": "./dist/transpilers/node.d.cts",
-        "default": "./dist/transpilers/node.cjs"
-      }
-    }
+    ".": "./src/index.ts",
+    "./node": "./src/transpilers/node.ts",
+    "./wasm": "./src/transpilers/wasm.ts",
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -62,7 +36,22 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./node": {
+        "import": "./dist/node.mjs",
+        "require": "./dist/node.cjs"
+      },
+      "./wasm": {
+        "import": "./dist/wasm.mjs",
+        "require": "./dist/wasm.cjs"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "repository": {
     "type": "git",
@@ -77,9 +66,9 @@
     "esbuild": "^0.27.2",
     "esbuild-wasm": "^0.27.3",
     "hono": "^4.11.5",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0-beta.1"
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   },
   "engines": {
     "node": ">=18.14.1"

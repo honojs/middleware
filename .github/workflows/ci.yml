@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   what-changed:
     runs-on: ubuntu-latest
@@ -14,15 +17,18 @@ jobs:
       actions: 'read'
       pull-requests: 'read'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v5
+      - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
         id: setSHAs
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          cache: true
+          run_install: true
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn workspaces focus what-changed
       - uses: ./.github/actions/what-changed
         id: set-packages
         with:
@@ -31,8 +37,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/cache@v5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: |
             .turbo
@@ -40,13 +46,16 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          cache: true
+          run_install: true
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn
-      - run: yarn typecheck
-      - run: yarn lint --cache-strategy content
-      - run: yarn format
+      - run: pnpm typecheck
+      - run: pnpm lint --cache-strategy content
+      - run: pnpm format
 
   test:
     runs-on: ubuntu-latest
@@ -57,8 +66,8 @@ jobs:
         package: ${{ fromJSON(needs.what-changed.outputs.packages) }}
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/cache@v5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: |
             .turbo
@@ -66,15 +75,19 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          cache: true
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: .tool-versions
-      - run: yarn workspaces focus hono-middleware @hono/${{ matrix.package }}
-      - run: yarn turbo --filter @hono/${{ matrix.package }} build
-      - run: yarn test --coverage --project @hono/${{ matrix.package }}
+          cache: 'pnpm'
+      - run: pnpm install --filter @hono/${{ matrix.package }}
+      - run: pnpm turbo --filter @hono/${{ matrix.package }} build
+      - run: pnpm test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
-      - uses: codecov/codecov-action@v6
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true

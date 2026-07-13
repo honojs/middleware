@@ -27,14 +27,8 @@ export type Hook<
   P extends string,
   Target extends keyof ValidationTargets = keyof ValidationTargets,
   R extends
-    | void
-    | Response
-    | TypedResponse<unknown>
-    | Promise<Response | TypedResponse<unknown> | void> =
-    | void
-    | Response
-    | TypedResponse<unknown>
-    | Promise<Response | TypedResponse<unknown> | void>,
+    void | Response | TypedResponse<unknown> | Promise<Response | TypedResponse<unknown> | void> =
+    void | Response | TypedResponse<unknown> | Promise<Response | TypedResponse<unknown> | void>,
 > = (
   result: SafeParseResult<T> & {
     target: Target
@@ -67,10 +61,8 @@ export const vValidator = <
   },
   V extends I = I,
   R extends
-    | void
-    | Response
-    | TypedResponse<unknown>
-    | Promise<Response | TypedResponse<unknown> | void> = FailedResponse<T>,
+    void | Response | TypedResponse<unknown> | Promise<Response | TypedResponse<unknown> | void> =
+    FailedResponse<T>,
 >(
   target: Target,
   schema: T,
