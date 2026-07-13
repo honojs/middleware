@@ -17,3 +17,4 @@ export type {
   CacheFunctionOptions,
   CacheMiddlewareOptions,
 } from './types'
+export { stableStringify } from './utils'

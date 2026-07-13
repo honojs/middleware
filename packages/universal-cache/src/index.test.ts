@@ -9,6 +9,7 @@ import {
   getCacheStorage,
   setCacheDefaults,
   setCacheStorage,
+  stableStringify,
 } from '.'
 
 const resetDefaultOptions = () => {
@@ -228,6 +229,44 @@ describe('@hono/universal-cache', () => {
       expect(await cached.text()).toBe('v1')
     })
 
+    it('does not trust a spoofed internal revalidation header', async () => {
+      const app = new Hono()
+      let value = 'v1'
+
+      app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => c.text(value))
+
+      await app.request('http://localhost/items')
+      value = 'v2'
+
+      const spoofed = await app.request('http://localhost/items', {
+        headers: { 'x-hono-universal-cache-revalidate': '1' },
+      })
+
+      expect(await spoofed.text()).toBe('v1')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('v1')
+    })
+
+    it('invalidates a fresh response without requiring a revalidation header', async () => {
+      const app = new Hono()
+      let value = 'v1'
+      let invalidate = false
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          maxAge: 60,
+          swr: false,
+          shouldInvalidateCache: () => invalidate,
+        }),
+        (c) => c.text(value)
+      )
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('v1')
+      value = 'v2'
+      invalidate = true
+      expect(await (await app.request('http://localhost/items')).text()).toBe('v2')
+    })
+
     it('supports custom revalidate header', async () => {
       const app = new Hono()
       let value = 'v1'
@@ -361,6 +400,28 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
+    it('separates default cache keys by origin and method', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.on(
+        ['GET', 'POST'],
+        '/items',
+        cacheMiddleware({ maxAge: 60, methods: ['GET', 'POST'], swr: false }),
+        (c) => {
+          count += 1
+          return c.text(`${c.req.method}:${new URL(c.req.url).host}:${count}`)
+        }
+      )
+
+      expect(await (await app.request('http://one.example/items')).text()).toBe('GET:one.example:1')
+      expect(await (await app.request('http://two.example/items')).text()).toBe('GET:two.example:2')
+      expect(await (await app.request('http://one.example/items', { method: 'POST' })).text()).toBe(
+        'POST:one.example:3'
+      )
+      expect(await (await app.request('http://one.example/items')).text()).toBe('GET:one.example:1')
+    })
+
     it('serves stale and revalidates in background once per key', async () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
@@ -421,6 +482,27 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
+    it('handles rejected background response refreshes while serving stale', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 1, staleMaxAge: 60, swr: true }), (c) => {
+        count += 1
+        return c.text(String(count))
+      })
+
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('refresh failed')))
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      vi.advanceTimersByTime(1100)
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      await flushPromises()
+      expect(count).toBe(1)
+    })
+
     it('does not cache non-cacheable responses with set-cookie', async () => {
       const app = new Hono()
       let count = 0
@@ -437,6 +519,23 @@ describe('@hono/universal-cache', () => {
       expect(await res1.text()).toBe('1')
       expect(await res2.text()).toBe('2')
       expect(count).toBe(2)
+    })
+
+    it.each([
+      ['private responses', { 'cache-control': 'private' }, 200],
+      ['wildcard vary responses', { vary: '*' }, 200],
+      ['partial responses', {}, 206],
+    ])('does not cache %s', async (_name, headers, status) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), () => {
+        count += 1
+        return new Response(String(count), { headers, status })
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
     })
 
     it('supports custom serialize/deserialize for responses', async () => {
@@ -745,6 +844,41 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(1)
     })
 
+    it('caches null function results', async () => {
+      let count = 0
+      const fn = cacheFunction(
+        () => {
+          count += 1
+          return null
+        },
+        { maxAge: 60, swr: false }
+      )
+
+      expect(await fn()).toBeNull()
+      expect(await fn()).toBeNull()
+      expect(count).toBe(1)
+    })
+
+    it('invalidates a fresh function result', async () => {
+      let count = 0
+      let invalidate = false
+      const fn = cacheFunction(
+        () => {
+          count += 1
+          return count
+        },
+        {
+          maxAge: 60,
+          swr: false,
+          shouldInvalidateCache: () => invalidate,
+        }
+      )
+
+      expect(await fn()).toBe(1)
+      invalidate = true
+      expect(await fn()).toBe(2)
+    })
+
     it('deduplicates concurrent calls', async () => {
       let count = 0
 
@@ -767,6 +901,35 @@ describe('@hono/universal-cache', () => {
       expect(b).toBe('x-1')
       expect(c).toBe('x-1')
       expect(count).toBe(1)
+    })
+
+    it('does not deduplicate calls across storage instances', async () => {
+      let count = 0
+      let resolveFirst!: () => void
+      const firstCall = new Promise<void>((resolve) => {
+        resolveFirst = resolve
+      })
+      const fetcher = async () => {
+        count += 1
+        const current = count
+        if (current === 1) {
+          await firstCall
+        }
+        return current
+      }
+      const options = {
+        getKey: () => 'key',
+        maxAge: 60,
+        swr: false,
+      }
+      const first = cacheFunction(fetcher, { ...options, storage: createCacheStorage() })
+      const second = cacheFunction(fetcher, { ...options, storage: createCacheStorage() })
+
+      const firstResult = first()
+      const secondResult = second()
+      expect(await secondResult).toBe(2)
+      resolveFirst()
+      expect(await firstResult).toBe(1)
     })
 
     it('respects shouldBypassCache for functions', async () => {
@@ -976,6 +1139,28 @@ describe('@hono/universal-cache', () => {
       expect(refreshed).toBe('v2')
     })
 
+    it('handles rejected background function refreshes while serving stale', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+      let shouldThrow = false
+      const fn = cacheFunction(
+        () => {
+          if (shouldThrow) {
+            throw new Error('refresh failed')
+          }
+          return 'cached'
+        },
+        { maxAge: 1, staleMaxAge: 60, swr: true }
+      )
+
+      expect(await fn()).toBe('cached')
+      shouldThrow = true
+      vi.advanceTimersByTime(1100)
+      expect(await fn()).toBe('cached')
+      await flushPromises()
+    })
+
     it('bypasses cache when maxAge is zero', async () => {
       let count = 0
 
@@ -1042,6 +1227,10 @@ describe('@hono/universal-cache', () => {
   })
 
   describe('global cache accessors', () => {
+    it('exports stableStringify for deterministic custom keys', () => {
+      expect(stableStringify({ b: 2, a: 1 })).toBe('{"a":1,"b":2}')
+    })
+
     it('sets and gets global cache defaults and storage', () => {
       const storage = createCacheStorage()
       const defaults = { maxAge: 120, staleMaxAge: 30 }

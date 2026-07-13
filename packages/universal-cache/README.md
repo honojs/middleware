@@ -62,10 +62,13 @@ const getStats = cacheFunction(async (id: string) => ({ id, ts: Date.now() }), {
 - `setCacheStorage(storage)` / `getCacheStorage()`
 - `setCacheDefaults(options)` / `getCacheDefaults()`
 - `createCacheStorage()`
+- `stableStringify(value)` for deterministic custom cache keys built from JSON-compatible values
 
 ## Notes
 
 - Cached responses drop `set-cookie` and hop-by-hop headers.
+- Responses marked `private`, `no-store`, `no-cache`, `Vary: *`, or HTTP 206 are not cached.
+- Default response keys include the request method, origin, path, query, and configured `varies` headers.
 - Manual cache revalidation is disabled by default. Set `revalidateHeader` to opt in.
 - Use `shouldRevalidate` to gate manual revalidation requests.
 - Middleware cache defaults to `GET` and `HEAD`.

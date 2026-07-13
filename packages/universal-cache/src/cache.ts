@@ -40,6 +40,25 @@ const HOP_BY_HOP_HEADERS = new Set([
 ])
 
 const INTERNAL_REVALIDATE_HEADER = 'x-hono-universal-cache-revalidate'
+const CACHE_MISS = Symbol('cache-miss')
+
+const createInternalRevalidateToken = () => {
+  if (!globalThis.crypto) {
+    return null
+  }
+  const bytes = new Uint8Array(16)
+  globalThis.crypto.getRandomValues(bytes)
+  return encodeBase64(bytes.buffer)
+}
+
+let internalRevalidateToken: string | null | undefined
+
+const getInternalRevalidateToken = () => {
+  if (internalRevalidateToken === undefined) {
+    internalRevalidateToken = createInternalRevalidateToken()
+  }
+  return internalRevalidateToken
+}
 
 let defaultStorage: Storage = createStorage({
   driver: memoryDriver(),
@@ -48,8 +67,16 @@ let defaultStorage: Storage = createStorage({
 let defaultCacheOptions: CacheDefaults = {}
 const requestCacheDefaults = new WeakMap<Context, CacheDefaults>()
 
-const pendingFunctionRequests = new Map<string, Promise<unknown>>()
-const pendingRevalidations = new Map<string, Promise<void>>()
+type PendingRequests = WeakMap<Storage, Map<string, Promise<unknown>>>
+
+const getPendingRequests = (pendingRequests: PendingRequests, storage: Storage) => {
+  let requests = pendingRequests.get(storage)
+  if (!requests) {
+    requests = new Map()
+    pendingRequests.set(storage, requests)
+  }
+  return requests
+}
 
 const setRequestCacheDefaults = (ctx: Context, options: CacheConfigOptions = {}) => {
   const current = requestCacheDefaults.get(ctx) ?? {}
@@ -120,7 +147,7 @@ const getDefaultHandlerKey = async (
   hashFn: (value: string) => string | Promise<string>
 ) => {
   const url = new URL(ctx.req.url)
-  const fullPath = `${url.pathname}${url.search}`
+  const fullPath = `${ctx.req.method.toUpperCase()}:${url.origin}${url.pathname}${url.search}`
 
   let pathPrefix = '-'
   try {
@@ -172,7 +199,7 @@ const getCacheHeaders = (response: Response): Record<string, string> => {
 }
 
 const isCacheableResponse = (response: Response) => {
-  if (response.status < 200 || response.status >= 300) {
+  if (response.status < 200 || response.status >= 300 || response.status === 206) {
     return false
   }
   if (response.headers.has('set-cookie')) {
@@ -186,12 +213,19 @@ const isCacheableResponse = (response: Response) => {
   if (lastModified === 'undefined') {
     return false
   }
+  if (response.headers.get('vary')?.trim() === '*') {
+    return false
+  }
   const cacheControl = response.headers.get('cache-control')
   if (!cacheControl) {
     return true
   }
   const normalized = cacheControl.toLowerCase()
-  return !(normalized.includes('no-store') || normalized.includes('no-cache'))
+  return !(
+    normalized.includes('no-store') ||
+    normalized.includes('no-cache') ||
+    normalized.includes('private')
+  )
 }
 
 const defaultSerializeResponse = async (
@@ -278,6 +312,7 @@ const maybeServeCachedResponse = async (
   cachedRaw: unknown,
   deserialize: NonNullable<CacheMiddlewareOptions['deserialize']>,
   revalidateHeader: string | false,
+  pendingRequests: PendingRequests,
   validate?: CacheMiddlewareOptions['validate']
 ) => {
   const cached = isValidCachedResponseEntry(cachedRaw) ? cachedRaw : null
@@ -301,28 +336,41 @@ const maybeServeCachedResponse = async (
   }
 
   if (swr && isStaleValid(cached.staleExpires)) {
+    if (ctx.req.header(INTERNAL_REVALIDATE_HEADER) !== undefined) {
+      return await deserialize(cached)
+    }
+
     if (getRuntimeKey() === 'workerd') {
       return null
     }
 
-    if (!pendingRevalidations.has(storageKey)) {
+    const revalidateToken = getInternalRevalidateToken()
+    if (!revalidateToken) {
+      return null
+    }
+
+    const requests = getPendingRequests(pendingRequests, storage)
+    const pendingKey = `${storageKey}:${integrity}`
+    if (!requests.has(pendingKey)) {
       const revalidatePromise = (async () => {
         try {
           const refreshHeaders = new Headers(ctx.req.raw.headers)
           if (revalidateHeader) {
             refreshHeaders.delete(revalidateHeader)
           }
-          refreshHeaders.set(INTERNAL_REVALIDATE_HEADER, '1')
+          refreshHeaders.set(INTERNAL_REVALIDATE_HEADER, revalidateToken)
           const request = new Request(ctx.req.url, {
             method: ctx.req.method,
             headers: refreshHeaders,
           })
-          await fetch(request)
+          const response = await fetch(request)
+          await response.body?.cancel()
         } finally {
-          pendingRevalidations.delete(storageKey)
+          requests.delete(pendingKey)
         }
       })()
-      pendingRevalidations.set(storageKey, revalidatePromise)
+      void revalidatePromise.catch(() => undefined)
+      requests.set(pendingKey, revalidatePromise)
     }
     return await deserialize(cached)
   }
@@ -380,7 +428,8 @@ const readCachedResponse = async (
   options: CacheMiddlewareOptions,
   swr: boolean,
   deserialize: NonNullable<CacheMiddlewareOptions['deserialize']>,
-  revalidateHeader: string | false
+  revalidateHeader: string | false,
+  pendingRequests: PendingRequests
 ) => {
   const cachedRaw = await storage.getItem(storageKey)
   return await maybeServeCachedResponse(
@@ -392,6 +441,7 @@ const readCachedResponse = async (
     cachedRaw,
     deserialize,
     revalidateHeader,
+    pendingRequests,
     options.validate
   )
 }
@@ -437,6 +487,7 @@ export const cacheMiddleware = (
     typeof options === 'number' ? { maxAge: options } : options
   const { config: middlewareConfig, ...routeOptions } = normalized
   const isConfigOnly = middlewareConfig !== undefined && Object.keys(routeOptions).length === 0
+  const pendingRevalidations: PendingRequests = new WeakMap()
 
   const handler: MiddlewareHandler = async (ctx: Context, next: Next) => {
     if (middlewareConfig) {
@@ -481,15 +532,18 @@ export const cacheMiddleware = (
       return next()
     }
 
-    const isInternalRevalidateRequest = ctx.req.header(INTERNAL_REVALIDATE_HEADER) === '1'
+    const revalidateToken = getRuntimeKey() === 'workerd' ? null : getInternalRevalidateToken()
+    const isInternalRevalidateRequest =
+      revalidateToken !== null && ctx.req.header(INTERNAL_REVALIDATE_HEADER) === revalidateToken
     const isManualRevalidateRequest =
       revalidateHeader !== false && ctx.req.header(revalidateHeader) === '1'
     const isRevalidateRequest =
       isInternalRevalidateRequest ||
       (isManualRevalidateRequest && (await shouldManualRevalidateMiddlewareCache(ctx, merged)))
     const { storageKey, integrity } = await resolveHandlerCacheKey(ctx, merged, base, group, hashFn)
+    const shouldInvalidate = await shouldInvalidateMiddlewareCache(ctx, merged)
 
-    if (!isRevalidateRequest) {
+    if (!isRevalidateRequest && !shouldInvalidate) {
       const cachedResponse = await readCachedResponse(
         ctx,
         storage,
@@ -498,7 +552,8 @@ export const cacheMiddleware = (
         merged,
         swr,
         deserialize,
-        revalidateHeader
+        revalidateHeader,
+        pendingRevalidations
       )
       if (cachedResponse) {
         ctx.res = cachedResponse
@@ -506,7 +561,6 @@ export const cacheMiddleware = (
       }
     }
 
-    const shouldInvalidate = await shouldInvalidateMiddlewareCache(ctx, merged)
     if (shouldInvalidate && !keepPreviousOn5xx) {
       await storage.removeItem(storageKey)
     }
@@ -626,24 +680,28 @@ const maybeServeCachedFunctionValue = async <TResult, TArgs extends unknown[]>(
   staleMaxAge: number,
   serialize: NonNullable<CacheFunctionOptions<TArgs>['serialize']>,
   deserialize: NonNullable<CacheFunctionOptions<TArgs>['deserialize']>,
+  pendingRequests: PendingRequests,
   validate?: CacheFunctionOptions<TArgs>['validate'],
   validateArgs?: TArgs
-): Promise<TResult | null> => {
+): Promise<TResult | typeof CACHE_MISS> => {
   if (!cached || cached.integrity !== integrity) {
-    return null
+    return CACHE_MISS
   }
   if (validate) {
     const args = validateArgs ?? ([] as unknown as TArgs)
     if (validate(cached, ...args) === false) {
-      return null
+      return CACHE_MISS
     }
   }
   if (!isExpired(cached.expires)) {
     return (await deserialize(cached)) as TResult
   }
   if (swr && isStaleValid(cached.staleExpires)) {
-    if (!pendingFunctionRequests.has(storageKey)) {
-      const refreshPromise = Promise.resolve(fetcher())
+    const requests = getPendingRequests(pendingRequests, storage)
+    const pendingKey = `${storageKey}:${integrity}`
+    if (!requests.has(pendingKey)) {
+      const refreshPromise = Promise.resolve()
+        .then(fetcher)
         .then((fresh) =>
           refreshFunctionCache(
             storage,
@@ -657,13 +715,14 @@ const maybeServeCachedFunctionValue = async <TResult, TArgs extends unknown[]>(
           )
         )
         .finally(() => {
-          pendingFunctionRequests.delete(storageKey)
+          requests.delete(pendingKey)
         })
-      pendingFunctionRequests.set(storageKey, refreshPromise)
+      void refreshPromise.catch(() => undefined)
+      requests.set(pendingKey, refreshPromise)
     }
     return (await deserialize(cached)) as TResult
   }
-  return null
+  return CACHE_MISS
 }
 
 /**
@@ -689,6 +748,7 @@ export const cacheFunction = <TArgs extends unknown[], TResult>(
   const integrityValue = merged.integrity
   let integrityCache: string | null = null
   let integrityPromise: Promise<string> | null = null
+  const pendingFunctionRequests: PendingRequests = new WeakMap()
 
   const getFunctionIntegrity = async () => {
     if (integrityCache) {
@@ -717,8 +777,9 @@ export const cacheFunction = <TArgs extends unknown[], TResult>(
 
     const integrity = await getFunctionIntegrity()
     const storageKey = await getFunctionStorageKey(merged, base, group, name, args, hashFn)
+    const shouldInvalidate = await shouldInvalidateFunctionCache(merged, args)
 
-    const cachedRaw = await storage.getItem(storageKey)
+    const cachedRaw = shouldInvalidate ? null : await storage.getItem(storageKey)
     const cached = isValidCachedFunctionEntry<TResult>(cachedRaw) ? cachedRaw : null
     if (!cached && cachedRaw !== null) {
       await storage.removeItem(storageKey)
@@ -734,20 +795,22 @@ export const cacheFunction = <TArgs extends unknown[], TResult>(
       staleMaxAge,
       serialize,
       deserialize,
+      pendingFunctionRequests,
       merged.validate,
       args
     )
-    if (cachedValue !== null) {
+    if (cachedValue !== CACHE_MISS) {
       return cachedValue
     }
 
-    const shouldInvalidate = await shouldInvalidateFunctionCache(merged, args)
     if (shouldInvalidate && !keepPreviousOn5xx) {
       await storage.removeItem(storageKey)
     }
 
-    if (pendingFunctionRequests.has(storageKey)) {
-      return (await pendingFunctionRequests.get(storageKey)) as TResult
+    const requests = getPendingRequests(pendingFunctionRequests, storage)
+    const pendingKey = `${storageKey}:${integrity}`
+    if (requests.has(pendingKey)) {
+      return (await requests.get(pendingKey)) as TResult
     }
 
     const resultPromise = Promise.resolve(fn(...args))
@@ -764,10 +827,10 @@ export const cacheFunction = <TArgs extends unknown[], TResult>(
         )
       )
       .finally(() => {
-        pendingFunctionRequests.delete(storageKey)
+        requests.delete(pendingKey)
       })
 
-    pendingFunctionRequests.set(storageKey, resultPromise)
+    requests.set(pendingKey, resultPromise)
     return await resultPromise
   }
 }

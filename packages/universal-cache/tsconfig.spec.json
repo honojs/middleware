@@ -8,6 +8,6 @@
       "vitest/globals"
     ]
   },
-  "include": ["src", "vitest.config.ts", "vitest.workerd.config.ts"],
+  "include": ["src", "tsdown.config.ts", "vitest.config.ts", "vitest.workerd.config.ts"],
   "references": []
 }
