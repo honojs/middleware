@@ -160,5 +160,6 @@ const sValidator = <
     return (result as { value: StandardSchemaV1.InferOutput<Schema> }).value
   })
 
+// Prefer import `InferInput` from `hono/validator` directly (hono >= 4.11.2)
 export type { Hook, InferInput }
 export { sValidator }
