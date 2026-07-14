@@ -1,5 +1,24 @@
 # @hono/zod-openapi
 
+## 1.5.0
+
+### Minor Changes
+
+- [#1878](https://github.com/honojs/middleware/pull/1878) [`443a8dc5cd8a6a65daa2bec1f251adfc605b05ce`](https://github.com/honojs/middleware/commit/443a8dc5cd8a6a65daa2bec1f251adfc605b05ce) Thanks [@SAY-5](https://github.com/SAY-5)! - feat: inherit `defaultHook` from parent app on nested routes mounted via `app.route()`
+
+  Behavior change: if a parent app has a `defaultHook` and a mounted sub-app does not declare its own, the sub-app's routes now use the parent's `defaultHook` instead of the built-in validation response.
+
+### Patch Changes
+
+- [#2033](https://github.com/honojs/middleware/pull/2033) [`740123c01aadb6c2ed742d1c67c2763a4cdc4f1f`](https://github.com/honojs/middleware/commit/740123c01aadb6c2ed742d1c67c2763a4cdc4f1f) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: resolve defaultHook through the ancestor chain on nested routes
+
+- [#2031](https://github.com/honojs/middleware/pull/2031) [`bf52ec2f18e32479ec85c00922c8aede68dc8286`](https://github.com/honojs/middleware/commit/bf52ec2f18e32479ec85c00922c8aede68dc8286) Thanks [@tokiya-takai](https://github.com/tokiya-takai)! - fix(zod-openapi): preserve `onError()`/`notFound()` set after `basePath()`
+
+  `OpenAPIHono.basePath()` used to rebuild the instance by spreading the plain `Hono` clone returned by `super.basePath()`.
+  That spread copied the clone's arrow-function instance fields (`onError`, `notFound`, `request`, `fetch`),
+  which stay bound to the discarded clone — so calling `.onError()` (or `.notFound()`) _after_ `.basePath()` mutated the throwaway clone instead of the returned app and silently had no effect (the parent's handler ran instead).
+  `basePath()` now transplants only the routing state onto a properly constructed `OpenAPIHono`, keeping its own correctly-bound methods. Fixes #2021.
+
 ## 1.4.0
 
 ### Minor Changes
