@@ -64,16 +64,10 @@ app.post('/author', sValidator('header', schema), (c) => {
 
 ### `InferInput`
 
-For new projects, prefer importing `InferInput` directly from `hono/validator` (requires hono >= 4.11.2):
+To infer the input type of a validated target, import `InferInput` from `hono/validator`:
 
 ```ts
 import type { InferInput } from 'hono/validator'
-```
-
-It is also re-exported from this package for backward compatibility:
-
-```ts
-import type { InferInput } from '@hono/standard-validator'
 ```
 
 ## Author

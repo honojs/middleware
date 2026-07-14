@@ -1,5 +1,5 @@
 ---
-'@hono/standard-validator': patch
+'@hono/standard-validator': minor
 ---
 
-feat(standard-validator): re-export InferInput type for downstream consumers
+Use `InferInput` from `hono/validator` instead of a local copy to avoid duplication (requires `hono >=4.11.2`)

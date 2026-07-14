@@ -2,8 +2,8 @@ import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { Context, Env, Input, TypedResponse, ValidationTargets } from 'hono'
 import type { Handler } from 'hono/types'
 import { validator } from 'hono/validator'
+import type { InferInput } from 'hono/validator'
 import { sanitizeIssues } from './sanitize-issues'
-import type { InferInput } from './utils'
 
 type HasUndefined<T> = undefined extends T ? true : false
 
@@ -160,6 +160,5 @@ const sValidator = <
     return (result as { value: StandardSchemaV1.InferOutput<Schema> }).value
   })
 
-// Prefer import `InferInput` from `hono/validator` directly (require hono >= 4.11.2)
 export type { Hook }
 export { sValidator }
