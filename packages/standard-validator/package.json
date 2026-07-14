@@ -41,7 +41,7 @@
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
     "@standard-schema/spec": "^1.0.0",
-    "hono": ">=3.9.0"
+    "hono": ">=4.11.2"
   },
   "devDependencies": {
     "@standard-schema/spec": "1.1.0",
