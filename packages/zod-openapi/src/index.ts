@@ -487,11 +487,28 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
+  #parentApp?: OpenAPIHono<any, any, any>
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
+  }
+
+  #resolveDefaultHook(): OpenAPIHonoOptions<any>['defaultHook'] {
+    if (this.defaultHook) {
+      return this.defaultHook
+    }
+    const seen = new Set<OpenAPIHono<any, any, any>>([this])
+    let parent = this.#parentApp
+    while (parent && !seen.has(parent)) {
+      if (parent.defaultHook) {
+        return parent.defaultHook
+      }
+      seen.add(parent)
+      parent = parent.#parentApp
+    }
+    return undefined
   }
 
   /**
@@ -583,14 +600,12 @@ export class OpenAPIHono<
       this.openAPIRegistry.registerPath(route)
     }
 
-    // Resolve the defaultHook lazily so nested apps mounted via `route()`
-    // can inherit the parent's defaultHook. See #1306.
-    /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call */
     const effectiveHook =
       hook ??
-      ((result: any, c: any) =>
-        this.defaultHook ? (this.defaultHook as any)(result, c) : undefined)
-    /* eslint-enable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call */
+      ((result: any, c: any) => {
+        const resolved = this.#resolveDefaultHook()
+        return resolved ? resolved(result, c) : undefined
+      })
 
     const validators: MiddlewareHandler[] = []
 
@@ -800,9 +815,7 @@ export class OpenAPIHono<
       return this as any
     }
 
-    if (app.defaultHook === undefined && this.defaultHook !== undefined) {
-      app.defaultHook = this.defaultHook
-    }
+    app.#parentApp ??= this
 
     app.openAPIRegistry.definitions.forEach((def) => {
       switch (def.type) {
