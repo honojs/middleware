@@ -847,7 +847,21 @@ export class OpenAPIHono<
   override basePath<SubPath extends string>(
     path: SubPath
   ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
+    const cloned = super.basePath(path)
+    const newApp = new OpenAPIHono<E, S, MergePath<BasePath, SubPath>>({
+      defaultHook: this.defaultHook,
+    })
+    newApp.router = cloned.router
+    newApp.routes = cloned.routes
+    const { getPath } = cloned
+
+    const clonedInternal = cloned as unknown as { errorHandler: ErrorHandler<E>; _basePath: string }
+    Object.assign(newApp, {
+      getPath,
+      errorHandler: clonedInternal.errorHandler,
+      _basePath: clonedInternal._basePath,
+    })
+    return newApp
   }
 
   // Type overrides to return OpenAPIHono instead of Hono
