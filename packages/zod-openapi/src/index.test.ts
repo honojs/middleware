@@ -1083,6 +1083,28 @@ describe('Routers', () => {
     })
     expect(res.status).toBe(200)
   })
+
+  it('Should apply the parent app defaultHook to nested routes mounted via app.route()', async () => {
+    const subApp = new OpenAPIHono().openapi(route, (c) => c.json({ id: 123 }))
+
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'parentDefaultHook' }, 422)
+        }
+      },
+    }).route('/api', subApp)
+
+    const res = await app.request('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 'not-a-number' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(422)
+    expect(await res.json()).toEqual({ ok: false, source: 'parentDefaultHook' })
+  })
 })
 
 describe('Multi params', () => {
