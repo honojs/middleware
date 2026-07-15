@@ -536,8 +536,17 @@ describe('OAuth Middleware', () => {
       expect(res.status).toBe(401)
     })
 
+    it('Prevent login CSRF when state is omitted', async () => {
+      const res = await app.request(`/google?code=${dummyCode}`)
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(401)
+    })
+
     it('Should throw error for invalide code', async () => {
-      const res = await app.request('/google?code=9348ffdsd-sdsdbad-code')
+      const res = await app.request('/google?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+        headers: { cookie: 'state=valid-state' },
+      })
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(400)
@@ -545,7 +554,9 @@ describe('OAuth Middleware', () => {
     })
 
     it('Should work with received code', async () => {
-      const res = await app.request(`/google?code=${dummyCode}`)
+      const res = await app.request(`/google?code=${dummyCode}&state=valid-state`, {
+        headers: { cookie: 'state=valid-state' },
+      })
       const response = (await res.json()) as {
         token: Token
         refreshToken: Token
@@ -591,7 +602,9 @@ describe('OAuth Middleware', () => {
     })
 
     it('Should throw error for invalid code', async () => {
-      const res = await app.request('/facebook?code=9348ffdsd-sdsdbad-code')
+      const res = await app.request('/facebook?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+        headers: { cookie: 'state=valid-state' },
+      })
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(400)
@@ -600,7 +613,8 @@ describe('OAuth Middleware', () => {
 
     it('Should work with received code', async () => {
       const res = await app.request(
-        `/facebook?code=${dummyCode}&granted_scopes=email%2Cpublic_profile`
+        `/facebook?code=${dummyCode}&granted_scopes=email%2Cpublic_profile&state=valid-state`,
+        { headers: { cookie: 'state=valid-state' } }
       )
       const response = (await res.json()) as {
         token: Token
@@ -639,7 +653,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error for invalide code', async () => {
-        const res = await app.request('/github/app?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request('/github/app?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+          headers: { cookie: 'state=valid-state' },
+        })
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
@@ -647,7 +663,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/github/app?code=${dummyCode}`)
+        const res = await app.request(`/github/app?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           refreshToken: Token
@@ -679,7 +697,10 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error for invalide code', async () => {
-        const res = await app.request('/github/oauth-app?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request(
+          '/github/oauth-app?code=9348ffdsd-sdsdbad-code&state=valid-state',
+          { headers: { cookie: 'state=valid-state' } }
+        )
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
@@ -687,7 +708,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/github/oauth-app?code=${dummyCode}`)
+        const res = await app.request(`/github/oauth-app?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           user: GitHubUser
@@ -723,7 +746,9 @@ describe('OAuth Middleware', () => {
     })
 
     it('Should throw error for invalide code', async () => {
-      const res = await app.request('/linkedin?code=9348ffdsd-sdsdbad-code')
+      const res = await app.request('/linkedin?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+        headers: { cookie: 'state=valid-state' },
+      })
 
       expect(res).not.toBeNull()
       expect(res.status).toBe(400)
@@ -731,7 +756,9 @@ describe('OAuth Middleware', () => {
     })
 
     it('Should work with received code', async () => {
-      const res = await app.request(`/linkedin?code=${dummyCode}`)
+      const res = await app.request(`/linkedin?code=${dummyCode}&state=valid-state`, {
+        headers: { cookie: 'state=valid-state' },
+      })
       const response = (await res.json()) as {
         token: Token
         refreshToken: Token
@@ -874,7 +901,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error for invalid code', async () => {
-        const res = await app.request('/discord?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request('/discord?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+          headers: { cookie: 'state=valid-state' },
+        })
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
@@ -882,7 +911,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/discord?code=${dummyCode}`)
+        const res = await app.request(`/discord?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           refreshToken: Token
@@ -966,7 +997,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error for invalid code', async () => {
-        const res = await app.request('/twitch?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request('/twitch?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+          headers: { cookie: 'state=valid-state' },
+        })
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
@@ -974,7 +1007,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/twitch?code=${dummyCode}`)
+        const res = await app.request(`/twitch?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           refreshToken: Token
@@ -1080,7 +1115,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error for invalid code', async () => {
-        const res = await app.request('/msentra?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request('/msentra?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+          headers: { cookie: 'state=valid-state' },
+        })
         const text = await res.text()
 
         expect(res).not.toBeNull()
@@ -1089,7 +1126,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/msentra?code=${dummyCode}`)
+        const res = await app.request(`/msentra?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           user: MSEntraUser

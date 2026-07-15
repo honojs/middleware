@@ -33,15 +33,17 @@ export function linkedinAuth(options: {
         maxAge: 60 * 10,
         httpOnly: true,
         path: '/',
-        // secure: true,
+        secure: true,
+        sameSite: 'Lax',
       })
       return c.redirect(auth.redirect())
     }
 
     // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
+    if (auth.code) {
       const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
+      const state = c.req.query('state')
+      if (!storedState || !state || state !== storedState) {
         throw new HTTPException(401)
       }
     }
