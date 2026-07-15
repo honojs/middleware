@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.9.0
+
+### Minor Changes
+
+- [#2038](https://github.com/honojs/middleware/pull/2038) [`7bc11dffa7dd5b639c614b12c34bd76722d76354`](https://github.com/honojs/middleware/commit/7bc11dffa7dd5b639c614b12c34bd76722d76354) Thanks [@yusukebe](https://github.com/yusukebe)! - Use `InferInput` from `hono/validator` instead of a local copy to avoid duplication (requires `hono >=4.11.2`)
+
 ## 0.8.0
 
 ### Minor Changes

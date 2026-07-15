@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.3.0
+
+### Minor Changes
+
+- [#2013](https://github.com/honojs/middleware/pull/2013) [`47bd78d6b2c32e54c3fe4cb4b64bceb531cc0699`](https://github.com/honojs/middleware/commit/47bd78d6b2c32e54c3fe4cb4b64bceb531cc0699) Thanks [@brilliantnz](https://github.com/brilliantnz)! - Use `InferInput` from `hono/validator` instead of a local copy to avoid duplication (requires `hono >=4.11.2`)
+
 ## 0.2.3
 
 ### Patch Changes

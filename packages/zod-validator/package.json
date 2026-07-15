@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-validator",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Validator middleware using Zod",
   "type": "module",
   "module": "./dist/index.mjs",
