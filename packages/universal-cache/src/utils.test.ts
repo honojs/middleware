@@ -25,6 +25,7 @@ describe('utils', () => {
     expect(stableStringify('abc')).toBe("'abc'")
     expect(stableStringify(true)).toBe('true')
     expect(stableStringify(Number.NaN)).not.toBe(stableStringify(null))
+    expect(stableStringify(-0)).not.toBe(stableStringify(0))
   })
 
   it('stableStringify handles Date, arrays, and sorted object keys', () => {
@@ -34,6 +35,16 @@ describe('utils', () => {
     expect(stableStringify({ z: 1, a: { y: 2, x: 1 } })).toBe(
       stableStringify({ a: { x: 1, y: 2 }, z: 1 })
     )
+    expect(stableStringify(["a','b"])).not.toBe(stableStringify(['a', 'b']))
+  })
+
+  it('stableStringify handles cyclic values', () => {
+    const first: { self?: unknown; value: number } = { value: 1 }
+    const second: { self?: unknown; value: number } = { value: 1 }
+    first.self = first
+    second.self = second
+
+    expect(stableStringify(first)).toBe(stableStringify(second))
   })
 
   it('computes TTL for all branches', () => {

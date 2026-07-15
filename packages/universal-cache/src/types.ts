@@ -72,16 +72,20 @@ export interface CacheMiddlewareOptions extends CacheBaseOptions {
   varies?: string[]
 }
 
-export interface CacheFunctionOptions<TArgs extends unknown[]> extends CacheBaseOptions {
+export interface CacheFunctionOptions<
+  TArgs extends unknown[],
+  TResult = unknown,
+  TStored = TResult,
+> extends CacheBaseOptions {
   /** Deserialize a cached entry back into the function result. */
-  deserialize?: (entry: CachedFunctionEntry<unknown>) => unknown
+  deserialize?: (entry: CachedFunctionEntry<TStored>) => TResult | Promise<TResult>
   /** Provide a custom cache key. */
   getKey?: CacheKeyFn<TArgs>
   /** Serialize the function result into a cached entry. */
   serialize?: (
-    value: unknown,
+    value: TResult,
     context: { integrity: string; maxAge: number; staleMaxAge: number; now: number }
-  ) => CachedFunctionEntry<unknown> | Promise<CachedFunctionEntry<unknown>>
+  ) => CachedFunctionEntry<TStored> | Promise<CachedFunctionEntry<TStored>>
   /** Return true to bypass cache entirely for this call. */
   shouldBypassCache?: (...args: TArgs) => boolean | Promise<boolean>
   /** Return true to invalidate the cache before re-fetch. */
@@ -89,7 +93,7 @@ export interface CacheFunctionOptions<TArgs extends unknown[]> extends CacheBase
   /** Enable stale-while-revalidate behavior. */
   swr?: boolean
   /** Optional validation for cached function entries. */
-  validate?: (entry: CachedFunctionEntry<unknown>, ...args: TArgs) => boolean
+  validate?: (entry: CachedFunctionEntry<TStored>, ...args: TArgs) => boolean
 }
 
 export interface CachedResponseEntry {

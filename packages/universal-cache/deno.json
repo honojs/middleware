@@ -9,7 +9,7 @@
     "hono": "jsr:@hono/hono@^4.8.3",
     "lru-cache": "npm:lru-cache@^10.4.3",
     "ohash": "npm:ohash@^2.0.11",
-    "unstorage": "npm:unstorage@^1.17.0"
+    "unstorage": "npm:unstorage@1.17.3"
   },
   "publish": {
     "include": ["deno.json", "README.md", "src/**/*.ts"],

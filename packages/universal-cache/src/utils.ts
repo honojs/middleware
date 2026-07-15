@@ -1,3 +1,5 @@
+import { serialize as serializeHashValue } from 'ohash'
+
 /** Default storage base prefix. */
 export const DEFAULT_CACHE_BASE = 'cache'
 /** Default storage group for cached handlers. */
@@ -22,7 +24,48 @@ export const normalizePathToName = (path: string): string => {
 }
 
 /** Stable, type-aware serialization for cache keys. */
-export const stableStringify = (value: unknown): string => serializeHashValue(value)
+export const stableStringify = (value: unknown): string => {
+  const references = new WeakMap<object, number>()
+  let referenceIndex = 0
+
+  const serialize = (current: unknown): string => {
+    if (Object.is(current, -0)) {
+      return 'number:-0'
+    }
+
+    const isPlainObject =
+      typeof current === 'object' &&
+      current !== null &&
+      (Object.getPrototypeOf(current) === Object.prototype ||
+        Object.getPrototypeOf(current) === null)
+    if (!Array.isArray(current) && !isPlainObject) {
+      return serializeHashValue(current)
+    }
+
+    const object = current as object
+    const reference = references.get(object)
+    if (reference !== undefined) {
+      return `reference:${reference}`
+    }
+    const nextReference = referenceIndex++
+    references.set(object, nextReference)
+
+    if (Array.isArray(current)) {
+      const items = Array.from({ length: current.length }, (_, index) =>
+        index in current ? ['value', serialize(current[index])] : ['hole']
+      )
+      return `array:${nextReference}:${JSON.stringify(items)}`
+    }
+
+    const record = current as Record<string, unknown>
+    const entries = Object.keys(record)
+      .sort()
+      .map((key) => [key, serialize(record[key])])
+    return `object:${nextReference}:${JSON.stringify(entries)}`
+  }
+
+  return serialize(value)
+}
 
 /** Compute storage TTL in seconds from cache options. */
 export const computeTtlSeconds = (maxAge: number, staleMaxAge: number): number | undefined => {
@@ -45,4 +88,3 @@ export const isStaleValid = (staleExpires: number | null): boolean => {
   }
   return Date.now() <= staleExpires
 }
-import { serialize as serializeHashValue } from 'ohash'
