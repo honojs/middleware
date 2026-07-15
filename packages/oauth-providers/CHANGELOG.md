@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.6
+
+### Patch Changes
+
+- [#2040](https://github.com/honojs/middleware/pull/2040) [`b37765f40b7bddb1d8fce39573b085222dea58c1`](https://github.com/honojs/middleware/commit/b37765f40b7bddb1d8fce39573b085222dea58c1) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: fail closed on missing OAuth state to prevent login CSRF
+
 ## 0.8.5
 
 ### Patch Changes
