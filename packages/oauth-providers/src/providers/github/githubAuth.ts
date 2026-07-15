@@ -27,9 +27,10 @@ export function githubAuth(options: {
     })
 
     // Avoid CSRF attack by checking state
-    if (c.req.url.includes('?')) {
+    if (auth.code) {
       const storedState = getCookie(c, 'state')
-      if (c.req.query('state') !== storedState) {
+      const state = c.req.query('state')
+      if (!storedState || !state || state !== storedState) {
         throw new HTTPException(401)
       }
     }
@@ -40,7 +41,8 @@ export function githubAuth(options: {
         maxAge: 60 * 10,
         httpOnly: true,
         path: '/',
-        // secure: true,
+        secure: true,
+        sameSite: 'Lax',
       })
 
       // OAuth apps can't have multiple callback URLs, but GitHub Apps can.
