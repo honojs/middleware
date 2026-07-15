@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Context, Env, Input, MiddlewareHandler, TypedResponse, ValidationTargets } from 'hono'
 import { validator } from 'hono/validator'
+import type { InferInput } from 'hono/validator'
 import type * as v3 from 'zod/v3'
 import type { ZodSafeParseResult as v4ZodSafeParseResult } from 'zod/v4'
 import type * as v4 from 'zod/v4/core'
-import type { InferInput } from 'hono/validator'
 
 type ZodSchema = v3.ZodType | v4.$ZodType
 type ZodError<T extends ZodSchema> = T extends v4.$ZodType
