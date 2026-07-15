@@ -91,6 +91,16 @@ app.post(
 )
 ```
 
+## Types
+
+### `InferInput`
+
+To infer the input type of a validated target, import `InferInput` from `hono/validator`:
+
+```ts
+import type { InferInput } from 'hono/validator'
+```
+
 ## Author
 
 Yusuke Wada <https://github.com/yusukebe>

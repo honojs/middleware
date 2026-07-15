@@ -487,11 +487,28 @@ export class OpenAPIHono<
 > extends Hono<E, S, BasePath> {
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
+  #parentApp?: OpenAPIHono<any, any, any>
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
+  }
+
+  #resolveDefaultHook(): OpenAPIHonoOptions<any>['defaultHook'] {
+    if (this.defaultHook) {
+      return this.defaultHook
+    }
+    const seen = new Set<OpenAPIHono<any, any, any>>([this])
+    let parent = this.#parentApp
+    while (parent && !seen.has(parent)) {
+      if (parent.defaultHook) {
+        return parent.defaultHook
+      }
+      seen.add(parent)
+      parent = parent.#parentApp
+    }
+    return undefined
   }
 
   /**
@@ -573,7 +590,7 @@ export class OpenAPIHono<
             ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
             : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
         >
-      | undefined = this.defaultHook
+      | undefined = undefined // eslint-disable-line @typescript-eslint/no-useless-default-assignment
   ): OpenAPIHono<
     E,
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
@@ -583,25 +600,32 @@ export class OpenAPIHono<
       this.openAPIRegistry.registerPath(route)
     }
 
+    const effectiveHook =
+      hook ??
+      ((result: any, c: any) => {
+        const resolved = this.#resolveDefaultHook()
+        return resolved ? resolved(result, c) : undefined
+      })
+
     const validators: MiddlewareHandler[] = []
 
     if (route.request?.query) {
-      const validator = zValidator('query', route.request.query as any, hook as any)
+      const validator = zValidator('query', route.request.query as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.params) {
-      const validator = zValidator('param', route.request.params as any, hook as any)
+      const validator = zValidator('param', route.request.params as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.headers) {
-      const validator = zValidator('header', route.request.headers as any, hook as any)
+      const validator = zValidator('header', route.request.headers as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
     if (route.request?.cookies) {
-      const validator = zValidator('cookie', route.request.cookies as any, hook as any)
+      const validator = zValidator('cookie', route.request.cookies as any, effectiveHook as any)
       validators.push(validator as any)
     }
 
@@ -619,7 +643,7 @@ export class OpenAPIHono<
         if (isJSONContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, hook) as MiddlewareHandler
+          const validator = zValidator('json', schema, effectiveHook as any) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -638,7 +662,7 @@ export class OpenAPIHono<
         if (isFormContentType(mediaType)) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('form', schema, hook) as MiddlewareHandler
+          const validator = zValidator('form', schema, effectiveHook as any) as MiddlewareHandler
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -791,6 +815,8 @@ export class OpenAPIHono<
       return this as any
     }
 
+    app.#parentApp ??= this
+
     app.openAPIRegistry.definitions.forEach((def) => {
       switch (def.type) {
         case 'component':
@@ -847,7 +873,21 @@ export class OpenAPIHono<
   override basePath<SubPath extends string>(
     path: SubPath
   ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
-    return new OpenAPIHono({ ...(super.basePath(path) as any), defaultHook: this.defaultHook })
+    const cloned = super.basePath(path)
+    const newApp = new OpenAPIHono<E, S, MergePath<BasePath, SubPath>>({
+      defaultHook: this.defaultHook,
+    })
+    newApp.router = cloned.router
+    newApp.routes = cloned.routes
+    const { getPath } = cloned
+
+    const clonedInternal = cloned as unknown as { errorHandler: ErrorHandler<E>; _basePath: string }
+    Object.assign(newApp, {
+      getPath,
+      errorHandler: clonedInternal.errorHandler,
+      _basePath: clonedInternal._basePath,
+    })
+    return newApp
   }
 
   // Type overrides to return OpenAPIHono instead of Hono

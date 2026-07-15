@@ -1083,6 +1083,123 @@ describe('Routers', () => {
     })
     expect(res.status).toBe(200)
   })
+
+  it('Should apply the parent app defaultHook to nested routes mounted via app.route()', async () => {
+    const subApp = new OpenAPIHono().openapi(route, (c) => c.json({ id: 123 }))
+
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'parentDefaultHook' }, 422)
+        }
+      },
+    }).route('/api', subApp)
+
+    const res = await app.request('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 'not-a-number' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    expect(res.status).toBe(422)
+    expect(await res.json()).toEqual({ ok: false, source: 'parentDefaultHook' })
+  })
+
+  const invalidPostsRequest = {
+    method: 'POST',
+    body: JSON.stringify({ id: 'not-a-number' }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  it('Should apply the root defaultHook across multiple nesting levels regardless of composition order', async () => {
+    const leaf = new OpenAPIHono().openapi(route, (c) => c.json({ id: 123 }))
+    // Mount bottom-up: the middle app has no defaultHook when the leaf is mounted
+    const mid = new OpenAPIHono().route('/nested', leaf)
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'rootDefaultHook' }, 422)
+        }
+      },
+    }).route('/api', mid)
+
+    const res = await app.request('/api/nested/posts', invalidPostsRequest)
+    expect(res.status).toBe(422)
+    expect(await res.json()).toEqual({ ok: false, source: 'rootDefaultHook' })
+  })
+
+  it('Should prefer the nearest ancestor defaultHook', async () => {
+    const leaf = new OpenAPIHono().openapi(route, (c) => c.json({ id: 123 }))
+    const mid = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'midDefaultHook' }, 422)
+        }
+      },
+    }).route('/nested', leaf)
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'rootDefaultHook' }, 422)
+        }
+      },
+    }).route('/api', mid)
+
+    const res = await app.request('/api/nested/posts', invalidPostsRequest)
+    expect(res.status).toBe(422)
+    expect(await res.json()).toEqual({ ok: false, source: 'midDefaultHook' })
+  })
+
+  it('Should prefer the sub-app own defaultHook over ancestors', async () => {
+    const leaf = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'leafDefaultHook' }, 422)
+        }
+      },
+    }).openapi(route, (c) => c.json({ id: 123 }))
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'rootDefaultHook' }, 422)
+        }
+      },
+    }).route('/api', leaf)
+
+    const res = await app.request('/api/posts', invalidPostsRequest)
+    expect(res.status).toBe(422)
+    expect(await res.json()).toEqual({ ok: false, source: 'leafDefaultHook' })
+  })
+
+  it('Should inherit the defaultHook from the first parent when mounted onto multiple parents', async () => {
+    const shared = new OpenAPIHono().openapi(route, (c) => c.json({ id: 123 }))
+    const parent1 = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'parent1' }, 422)
+        }
+      },
+    }).route('/p1', shared)
+    const parent2 = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          return c.json({ ok: false, source: 'parent2' }, 422)
+        }
+      },
+    }).route('/p2', shared)
+
+    const res1 = await parent1.request('/p1/posts', invalidPostsRequest)
+    expect(await res1.json()).toEqual({ ok: false, source: 'parent1' })
+
+    // Documented limitation: the sub-app remembers the first parent it was
+    // mounted onto, so requests through the second parent use the first
+    // parent's defaultHook.
+    const res2 = await parent2.request('/p2/posts', invalidPostsRequest)
+    expect(await res2.json()).toEqual({ ok: false, source: 'parent1' })
+  })
 })
 
 describe('Multi params', () => {
@@ -1369,6 +1486,57 @@ describe('basePath()', () => {
     })
     const client = hc<typeof routes>('http://localhost/')
     expect(client.api.doc31.$url().pathname).toBe('/api/doc31')
+  })
+
+  const errorRoute = createRoute({
+    method: 'get',
+    path: '/error',
+    responses: {
+      200: {
+        description: 'ok',
+      },
+    },
+  })
+  const throwHandler = () => {
+    throw new Error('boom')
+  }
+
+  it('Should fire onError() registered after basePath()', async () => {
+    const parent = new OpenAPIHono()
+    const sub = new OpenAPIHono().basePath('/api')
+    sub.openapi(errorRoute, throwHandler)
+    sub.onError((err, c) => c.text('caught: ' + err.message, 500))
+    parent.route('/', sub)
+
+    const res = await parent.request('/api/error')
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('caught: boom')
+  })
+
+  it('Should fire onError() registered before basePath()', async () => {
+    const parent = new OpenAPIHono()
+    const base = new OpenAPIHono()
+    base.onError((err, c) => c.text('caught: ' + err.message, 500))
+    const sub = base.basePath('/api')
+    sub.openapi(errorRoute, throwHandler)
+    parent.route('/', sub)
+
+    const res = await parent.request('/api/error')
+    expect(res.status).toBe(500)
+    expect(await res.text()).toBe('caught: boom')
+  })
+
+  // Note: `route()` does not propagate `notFoundHandler` (only `errorHandler`),
+  // so this is a same-instance contract test that `notFound()` set after
+  // `basePath()` targets the returned instance -- not a regression guard for the
+  // binding fix (it passes with or without the fix).
+  it('notFound() set after basePath() targets the returned instance', async () => {
+    const app = new OpenAPIHono().basePath('/api')
+    app.notFound((c) => c.text('custom not found', 404))
+
+    const res = await app.request('/api/missing')
+    expect(res.status).toBe(404)
+    expect(await res.text()).toBe('custom not found')
   })
 })
 
