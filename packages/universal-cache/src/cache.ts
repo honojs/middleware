@@ -36,7 +36,6 @@ const HOP_BY_HOP_HEADERS = new Set([
   'trailer',
   'transfer-encoding',
   'upgrade',
-  'content-length',
   'proxy-connection',
 ])
 
@@ -47,6 +46,7 @@ const DEFAULT_MEMORY_MAX_ENTRY_SIZE = 5 * 1024 * 1024
 const DEFAULT_MAX_RESPONSE_BODY_SIZE = 3 * 1024 * 1024
 const DEFAULT_MAX_RESPONSE_BODY_TIME = 1000
 const DEFAULT_PENDING_REQUEST_TIME = 5000
+const DEFAULT_STORAGE_READ_TIME = 5000
 const CONDITIONAL_REQUEST_HEADERS = [
   'range',
   'if-range',
@@ -102,11 +102,18 @@ let defaultCacheOptions: CacheDefaults = {}
 const requestCacheDefaults = new WeakMap<Context, CacheDefaults>()
 
 type PendingRequests = WeakMap<Storage, Map<string, Promise<unknown>>>
+interface CacheMutationState {
+  generation: number
+  pending: boolean
+  tail: Promise<void>
+}
 
 const pendingMiddlewareRequests: PendingRequests = new WeakMap()
 const pendingFunctionRequests: PendingRequests = new WeakMap()
+const cacheMutations = new WeakMap<Storage, Map<string, CacheMutationState>>()
 const functionNamespace = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 let functionNamespaceIndex = 0
+let cacheMutationGeneration = 0
 
 const getPendingRequests = (pendingRequests: PendingRequests, storage: Storage) => {
   let requests = pendingRequests.get(storage)
@@ -117,19 +124,125 @@ const getPendingRequests = (pendingRequests: PendingRequests, storage: Storage) 
   return requests
 }
 
+const getCacheMutations = (storage: Storage) => {
+  let mutations = cacheMutations.get(storage)
+  if (!mutations) {
+    mutations = new Map()
+    cacheMutations.set(storage, mutations)
+  }
+  return mutations
+}
+
+const beginCacheMutation = (storage: Storage, key: string) => {
+  const mutations = getCacheMutations(storage)
+  const current = mutations.get(key)
+  const state = {
+    generation: ++cacheMutationGeneration,
+    pending: current?.pending ?? false,
+    tail: current?.tail ?? Promise.resolve(),
+  }
+  mutations.set(key, state)
+  return state.generation
+}
+
+const queueCacheMutation = (
+  storage: Storage,
+  key: string,
+  generation: number,
+  operation: () => Promise<unknown>
+) => {
+  const mutations = getCacheMutations(storage)
+  const state = mutations.get(key)
+  if (!state || state.generation !== generation) {
+    return Promise.resolve()
+  }
+  const run = async () => {
+    if (mutations.get(key)?.generation !== generation) {
+      return
+    }
+    try {
+      await operation()
+    } catch {
+      // Cache failures must not fail application work.
+    }
+  }
+  const queued = state.pending ? state.tail.catch(() => undefined).then(run) : run()
+  state.pending = true
+  state.tail = queued
+  void queued.then(() => {
+    if (state.tail === queued) {
+      state.pending = false
+    }
+  })
+  return queued
+}
+
+const waitForCacheMutation = async (mutation: Promise<void>) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined
+  await Promise.race([
+    mutation,
+    new Promise<void>((resolve) => {
+      timeout = setTimeout(resolve, DEFAULT_STORAGE_READ_TIME)
+    }),
+  ]).finally(() => {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+  })
+}
+
+const finishCacheMutation = (storage: Storage, key: string, generation: number) => {
+  const mutations = getCacheMutations(storage)
+  const state = mutations.get(key)
+  if (!state || state.generation !== generation) {
+    return
+  }
+  const tail = state.tail
+  void tail.finally(() => {
+    const current = mutations.get(key)
+    if (current?.generation === generation && current.tail === tail) {
+      mutations.delete(key)
+    }
+  })
+}
+
 const readCacheEntry = async (storage: Storage, key: string) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined
   try {
-    return await storage.getItem(key)
+    return await Promise.race([
+      storage.getItem(key),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => {
+          reject(new Error('Cache storage read timed out'))
+        }, DEFAULT_STORAGE_READ_TIME)
+      }),
+    ])
   } catch {
     return null
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
   }
 }
 
 const removeCacheEntry = async (storage: Storage, key: string) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined
   try {
-    await storage.removeItem(key)
+    await Promise.race([
+      storage.removeItem(key),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => {
+          reject(new Error('Cache storage removal timed out'))
+        }, DEFAULT_STORAGE_READ_TIME)
+      }),
+    ])
   } catch {
     // Cache failures must not fail the request.
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
   }
 }
 
@@ -188,8 +301,10 @@ export const createCacheStorage = (options: CacheStorageOptions = {}): Storage =
   })
 
 const createStorageKey = (base: string, group: string, name: string, key: string) => {
-  const segments = [base, group, name, key].filter(Boolean)
-  return `${segments.map((segment) => encodeURIComponent(segment)).join(':')}.json`
+  const segments = [base, group, name, key]
+  return `${segments
+    .map((segment) => (segment === '' ? '%00' : encodeURIComponent(segment)))
+    .join(':')}.json`
 }
 
 const escapeKey = (value: string) => value.replace(/\W/g, '')
@@ -321,6 +436,21 @@ const isCacheableResponse = (response: Response, varies: string[] | undefined) =
   )
 }
 
+const hasRequestNoCacheDirective = (value: string | undefined) =>
+  value?.split(',').some((directive) => {
+    const separator = directive.indexOf('=')
+    const name = (separator === -1 ? directive : directive.slice(0, separator)).trim().toLowerCase()
+    if (name === 'no-cache' || name === 'no-store') {
+      return true
+    }
+    if (name !== 'max-age' || separator === -1) {
+      return false
+    }
+    const raw = directive.slice(separator + 1).trim()
+    const normalized = raw.startsWith('"') && raw.endsWith('"') ? raw.slice(1, -1) : raw
+    return /^0+$/.test(normalized)
+  }) ?? false
+
 const defaultSerializeResponse = async (
   response: Response,
   context: { integrity: string; maxAge: number; staleMaxAge: number; now: number }
@@ -349,7 +479,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
 
 const readResponseBody = async (response: Response) => {
-  const body = response.clone().body
+  const body = response.body
   if (!body) {
     return new Uint8Array()
   }
@@ -383,9 +513,15 @@ const readResponseBody = async (response: Response) => {
       clearTimeout(timeout)
     }
     if (!complete) {
-      void reader.cancel().catch(() => undefined)
+      void reader
+        .cancel()
+        .catch(() => undefined)
+        .finally(() => {
+          reader.releaseLock()
+        })
+    } else {
+      reader.releaseLock()
     }
-    reader.releaseLock()
   }
 
   const buffer = new Uint8Array(size)
@@ -490,16 +626,9 @@ const shouldBypassMiddlewareCache = async (ctx: Context, options: CacheMiddlewar
     return true
   }
 
-  const cacheControl = ctx.req.header('cache-control')?.toLowerCase()
   if (
-    cacheControl
-      ?.split(',')
-      .some((directive) => ['no-cache', 'no-store', 'max-age=0'].includes(directive.trim())) ||
-    ctx.req
-      .header('pragma')
-      ?.toLowerCase()
-      .split(',')
-      .some((directive) => directive.trim() === 'no-cache')
+    hasRequestNoCacheDirective(ctx.req.header('cache-control')) ||
+    hasRequestNoCacheDirective(ctx.req.header('pragma'))
   ) {
     return true
   }
@@ -535,7 +664,8 @@ const cacheResponseEntry = async (
   maxAge: number,
   staleMaxAge: number,
   now: number,
-  serialize: NonNullable<CacheMiddlewareOptions['serialize']>
+  serialize: NonNullable<CacheMiddlewareOptions['serialize']>,
+  generation: number
 ) => {
   try {
     const rawEntry = await serialize(response, { integrity, maxAge, staleMaxAge, now })
@@ -543,9 +673,16 @@ const cacheResponseEntry = async (
     if (ttl === 0) {
       return
     }
-    await storage.setItem(storageKey, rawEntry, ttl ? { ttl } : undefined)
+    await queueCacheMutation(storage, storageKey, generation, () =>
+      storage.setItem(storageKey, rawEntry, ttl ? { ttl } : undefined)
+    )
   } catch {
     // Cache failures must not fail the response.
+  } finally {
+    if (response.body && !response.bodyUsed) {
+      void response.body.cancel().catch(() => undefined)
+    }
+    finishCacheMutation(storage, storageKey, generation)
   }
 }
 
@@ -581,7 +718,8 @@ const writeCachedResponse = (
   maxAge: number,
   staleMaxAge: number,
   now: number,
-  serialize: NonNullable<CacheMiddlewareOptions['serialize']>
+  serialize: NonNullable<CacheMiddlewareOptions['serialize']>,
+  generation: number
 ) => {
   let cacheResponse: Response
   try {
@@ -597,7 +735,8 @@ const writeCachedResponse = (
     maxAge,
     staleMaxAge,
     now,
-    serialize
+    serialize,
+    generation
   )
 
   if (getRuntimeKey() === 'workerd') {
@@ -722,19 +861,23 @@ export const cacheMiddleware = (
     }
 
     let resolvePending: ((response: Response | null) => void) | undefined
-    let rejectPending: ((error: unknown) => void) | undefined
     let pendingPromise: Promise<Response | null> | undefined
     let pendingTimeout: ReturnType<typeof setTimeout> | undefined
     let sharedPendingResponse: Response | null = null
+    let pendingSettled = false
+
+    const detachPending = () => {
+      if (requests.get(pendingKey) === pendingPromise) {
+        requests.delete(pendingKey)
+      }
+    }
 
     const clearPending = () => {
       if (pendingTimeout) {
         clearTimeout(pendingTimeout)
         pendingTimeout = undefined
       }
-      if (requests.get(pendingKey) === pendingPromise) {
-        requests.delete(pendingKey)
-      }
+      detachPending()
       if (sharedPendingResponse?.body) {
         setTimeout(() => {
           void sharedPendingResponse?.body?.cancel().catch(() => undefined)
@@ -744,22 +887,25 @@ export const cacheMiddleware = (
     }
 
     if (shouldCoalesce) {
-      pendingPromise = new Promise<Response | null>((resolve, reject) => {
+      pendingPromise = new Promise<Response | null>((resolve) => {
         resolvePending = resolve
-        rejectPending = reject
       })
       requests.set(pendingKey, pendingPromise)
       pendingTimeout = setTimeout(() => {
+        pendingSettled = true
         resolvePending?.(null)
         clearPending()
       }, DEFAULT_PENDING_REQUEST_TIME)
       void pendingPromise.catch(() => undefined)
     }
 
+    const generation = beginCacheMutation(storage, storageKey)
+
     const settlePending = (response: Response | null, completion?: Promise<unknown>) => {
-      if (!pendingPromise || !resolvePending || requests.get(pendingKey) !== pendingPromise) {
+      if (!pendingPromise || !resolvePending || pendingSettled) {
         return
       }
+      pendingSettled = true
       try {
         sharedPendingResponse = response?.clone() ?? null
       } catch {
@@ -773,46 +919,56 @@ export const cacheMiddleware = (
       }
     }
 
-    const failPending = (error: unknown) => {
-      if (pendingPromise && rejectPending) {
-        rejectPending(error)
+    const releasePending = () => {
+      if (pendingPromise && resolvePending && !pendingSettled) {
+        pendingSettled = true
+        resolvePending(null)
         clearPending()
       }
     }
 
     if (shouldInvalidate && !keepPreviousOn5xx) {
-      await removeCacheEntry(storage, storageKey)
+      await waitForCacheMutation(
+        queueCacheMutation(storage, storageKey, generation, () => storage.removeItem(storageKey))
+      )
     }
 
     try {
       await next()
     } catch (error) {
       if (staleResponse) {
+        finishCacheMutation(storage, storageKey, generation)
         settlePending(staleResponse)
         ctx.res = staleResponse
         return staleResponse
       }
-      failPending(error)
+      releasePending()
+      finishCacheMutation(storage, storageKey, generation)
       throw error
     }
     const response = ctx.res
 
     if (!response) {
+      finishCacheMutation(storage, storageKey, generation)
       settlePending(null)
       return response
     }
 
     if (response.status >= 500 && staleResponse) {
+      finishCacheMutation(storage, storageKey, generation)
       settlePending(staleResponse)
       ctx.res = staleResponse
       return staleResponse
     }
 
     if (!isCacheableResponse(response, merged.varies)) {
-      if (shouldInvalidate && keepPreviousOn5xx && response.status < 500) {
-        await removeCacheEntry(storage, storageKey)
+      if (response.status < 500) {
+        await waitForCacheMutation(
+          queueCacheMutation(storage, storageKey, generation, () => storage.removeItem(storageKey))
+        )
       }
-      settlePending(response.status >= 500 ? response : null)
+      finishCacheMutation(storage, storageKey, generation)
+      settlePending(response.status >= 500 && !ctx.req.raw.signal.aborted ? response : null)
       return response
     }
 
@@ -825,9 +981,20 @@ export const cacheMiddleware = (
       maxAge,
       staleMaxAge,
       Date.now(),
-      serialize
+      serialize,
+      generation
     )
-    settlePending(response, cacheWrite)
+    detachPending()
+    void cacheWrite.then(async () => {
+      const cachedResult = await readCachedResponse(
+        storage,
+        storageKey,
+        integrity,
+        merged,
+        deserialize
+      )
+      settlePending(cachedResult?.response ?? null)
+    })
     return response
   }
 
@@ -853,8 +1020,55 @@ const createFunctionEntry = <TResult>(
 const defaultSerializeFunctionEntry = <TResult>(
   result: TResult,
   context: { integrity: string; maxAge: number; staleMaxAge: number; now: number }
-) =>
-  createFunctionEntry(result, context.integrity, context.maxAge, context.staleMaxAge, context.now)
+) => {
+  assertJsonSafe(result)
+  return createFunctionEntry(
+    result,
+    context.integrity,
+    context.maxAge,
+    context.staleMaxAge,
+    context.now
+  )
+}
+
+const assertJsonSafe = (value: unknown, ancestors = new WeakSet<object>()): void => {
+  if (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'boolean' ||
+    (typeof value === 'number' && Number.isFinite(value) && !Object.is(value, -0))
+  ) {
+    return
+  }
+  if (typeof value !== 'object' || value === null) {
+    throw new TypeError('Default function cache serialization requires JSON-safe values')
+  }
+  if (ancestors.has(value)) {
+    throw new TypeError('Default function cache serialization does not support cyclic values')
+  }
+  const isArray = Array.isArray(value)
+  const prototype = Object.getPrototypeOf(value) as object | null
+  if (!isArray && prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError('Default function cache serialization requires plain objects and arrays')
+  }
+  if (Reflect.ownKeys(value).some((key) => typeof key === 'symbol')) {
+    throw new TypeError('Default function cache serialization does not support symbol keys')
+  }
+  ancestors.add(value)
+  if (isArray) {
+    for (let index = 0; index < value.length; index += 1) {
+      if (!(index in value)) {
+        throw new TypeError('Default function cache serialization does not support sparse arrays')
+      }
+      assertJsonSafe(value[index], ancestors)
+    }
+  } else {
+    for (const key of Object.keys(value)) {
+      assertJsonSafe((value as Record<string, unknown>)[key], ancestors)
+    }
+  }
+  ancestors.delete(value)
+}
 
 const defaultDeserializeFunctionEntry = <TResult>(entry: CachedFunctionEntry<TResult>) =>
   entry.value
@@ -899,15 +1113,19 @@ const refreshFunctionCache = async <TResult, TStored>(
   maxAge: number,
   staleMaxAge: number,
   now: number,
-  serialize: NonNullable<CacheFunctionOptions<unknown[], TResult, TStored>['serialize']>
+  serialize: NonNullable<CacheFunctionOptions<unknown[], TResult, TStored>['serialize']>,
+  generation: number
 ) => {
   try {
     const rawEntry = await serialize(result, { integrity, maxAge, staleMaxAge, now })
     const ttl = computeTtlSeconds(maxAge, staleMaxAge)
-    await storage.setItem(storageKey, rawEntry, ttl ? { ttl } : undefined)
+    await queueCacheMutation(storage, storageKey, generation, () =>
+      storage.setItem(storageKey, rawEntry, ttl ? { ttl } : undefined)
+    )
   } catch {
     // Cache failures must not fail the function result.
   }
+  finishCacheMutation(storage, storageKey, generation)
   return result
 }
 
@@ -947,6 +1165,7 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
     const requests = getPendingRequests(pendingRequests, storage)
     const pendingKey = stableStringify([storageKey, integrity])
     if (!requests.has(pendingKey)) {
+      const generation = beginCacheMutation(storage, storageKey)
       const refreshPromise = Promise.resolve().then(fetcher)
       requests.set(pendingKey, refreshPromise)
       const timeout = setTimeout(() => {
@@ -964,7 +1183,8 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
             maxAge,
             staleMaxAge,
             Date.now(),
-            serialize
+            serialize,
+            generation
           )
         )
         .finally(() => {
@@ -973,7 +1193,9 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
             requests.delete(pendingKey)
           }
         })
-        .catch(() => undefined)
+        .catch(() => {
+          finishCacheMutation(storage, storageKey, generation)
+        })
     }
     return (await deserialize(cached)) as TResult
   }
@@ -1028,7 +1250,12 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
     const shouldInvalidate = await shouldInvalidateFunctionCache(merged, args)
 
     const cachedRaw = shouldInvalidate ? null : await readCacheEntry(storage, storageKey)
-    const cached = isValidCachedFunctionEntry<TStored>(cachedRaw) ? cachedRaw : null
+    let cached: CachedFunctionEntry<TStored> | null = null
+    try {
+      cached = isValidCachedFunctionEntry<TStored>(cachedRaw) ? cachedRaw : null
+    } catch {
+      cached = null
+    }
     if (!cached && cachedRaw !== null) {
       await removeCacheEntry(storage, storageKey)
     }
@@ -1056,16 +1283,18 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
       return cachedValue
     }
 
-    if (shouldInvalidate && !keepPreviousOn5xx) {
-      await removeCacheEntry(storage, storageKey)
-    }
-
     const requests = getPendingRequests(pendingFunctionRequests, storage)
     const pendingKey = stableStringify([storageKey, integrity])
-    if (requests.has(pendingKey)) {
+    if (!shouldInvalidate && requests.has(pendingKey)) {
       return (await requests.get(pendingKey)) as TResult
     }
 
+    const generation = beginCacheMutation(storage, storageKey)
+    if (shouldInvalidate && !keepPreviousOn5xx) {
+      await waitForCacheMutation(
+        queueCacheMutation(storage, storageKey, generation, () => storage.removeItem(storageKey))
+      )
+    }
     const resultPromise = Promise.resolve().then(() => fn(...args))
     requests.set(pendingKey, resultPromise)
     const timeout = setTimeout(() => {
@@ -1083,7 +1312,8 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
           maxAge,
           staleMaxAge,
           Date.now(),
-          serialize
+          serialize,
+          generation
         )
       )
       .finally(() => {
@@ -1092,7 +1322,9 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
           requests.delete(pendingKey)
         }
       })
-      .catch(() => undefined)
+      .catch(() => {
+        finishCacheMutation(storage, storageKey, generation)
+      })
     return await resultPromise
   }
 }

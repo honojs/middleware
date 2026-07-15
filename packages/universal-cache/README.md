@@ -38,7 +38,7 @@ Passing a number is shorthand for `{ maxAge: number }`. `GET` and `HEAD` are cac
 
 The default storage is an in-memory `unstorage` instance scoped to the current process or isolate. It expires entries and is limited to 1,000 entries, 50 MiB total, and 5 MiB per entry. Configure a persistent or distributed driver for multi-instance deployments.
 
-Custom storage drivers must bound their own operation latency. A storage promise that never settles also prevents the cache operation from settling.
+Cache reads and removals fail open after five seconds. Cache mutations for the same key are ordered within one process or isolate, so a slower older write cannot replace a newer result. Storage operations cannot be cancelled, however, and coordination is scoped to the same `Storage` object. Distributed deployments and separate storage clients must use a backend with appropriate atomic writes, compare-and-set, or locking when multiple writers can update the same key. Custom serializers and storage drivers should still bound their own work.
 
 ```ts
 import { Hono } from 'hono'
@@ -143,13 +143,13 @@ const getStats = cacheFunction(async (id: string) => ({ id, ts: Date.now() }), {
 })
 ```
 
-Without `getKey`, arguments are deterministically serialized with type information and hashed. This distinguishes values such as a `Date` from the same ISO string, `0` from `-0`, and supports common values including `Map`, `Set`, and `BigInt`. Provide `getKey` for identity-sensitive values such as symbols, functions, or sparse arrays.
+Without `getKey`, arguments are deterministically serialized with type information and hashed. This distinguishes values such as a `Date` from the same ISO string, `0` from `-0`, and supports common values including `Map`, `Set`, and `BigInt`. `Map` and `Set` insertion order is part of that identity. Provide `getKey` for identity-sensitive values such as symbols, functions, or sparse arrays.
 
 Implicit function names are process-local to prevent separate closures from sharing cached values. Set an explicit stable `name` for persistent or distributed caching across processes, and keep that name unique for each logical function.
 
 Concurrent calls for the same storage, key, and integrity value share one in-flight operation. Different storage instances remain isolated.
 
-Default function serialization uses JSON through `unstorage`. It safely preserves JSON-compatible results only. Values such as `Date`, `Map`, `Set`, class instances, and `BigInt` require custom `serialize` and `deserialize` functions when their type or shape must be preserved.
+Default function serialization uses JSON through `unstorage`. It persists only values that round-trip without changing meaning: `null`, strings, booleans, finite numbers other than negative zero, dense arrays, and plain objects containing those values. Unsupported results are returned normally but are not cached. Values such as `NaN`, `Infinity`, negative zero, `Date`, `Map`, `Set`, class instances, and `BigInt` require custom `serialize` and `deserialize` functions.
 
 ## Custom serialization and validation
 
@@ -178,7 +178,7 @@ The middleware does not cache:
 - responses containing `Vary: *` or a `Vary` header not covered by `varies`
 - malformed persisted entries
 
-Cached responses exclude `set-cookie`, `content-length`, and other hop-by-hop headers.
+Cached responses exclude `set-cookie` and hop-by-hop headers. `Content-Length` is preserved, including for cached `HEAD` responses.
 Cache hits include an `Age` header based on the stored age plus resident time.
 Set `Cache-Control: no-store` on custom streaming response types so they are not buffered for caching.
 

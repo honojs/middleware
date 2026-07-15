@@ -154,6 +154,143 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
+    it('retries followers when the coalesced leader is aborted', async () => {
+      const app = new Hono()
+      const controller = new AbortController()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), async (c) => {
+        count += 1
+        if (count === 1) {
+          await new Promise<void>((resolve) => {
+            c.req.raw.signal.addEventListener(
+              'abort',
+              () => {
+                resolve()
+              },
+              { once: true }
+            )
+          })
+          return new Response('aborted', { status: 599 })
+        }
+        return c.text('ok')
+      })
+
+      const leader = app.request('http://localhost/items', { signal: controller.signal })
+      await vi.waitFor(() => {
+        expect(count).toBe(1)
+      })
+      const follower = app.request('http://localhost/items')
+      controller.abort()
+
+      expect((await leader).status).toBe(599)
+      expect(await (await follower).text()).toBe('ok')
+      expect(count).toBe(2)
+    })
+
+    it('prevents a slow expired leader from overwriting a newer response', async () => {
+      vi.useFakeTimers()
+      const app = new Hono()
+      let count = 0
+      let release: (() => void) | undefined
+      const gate = new Promise<void>((resolve) => {
+        release = resolve
+      })
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), async (c) => {
+        count += 1
+        if (count === 1) {
+          await gate
+          return c.text('old')
+        }
+        return c.text('new')
+      })
+
+      const oldRequest = app.request('http://localhost/items')
+      await vi.waitFor(() => {
+        expect(count).toBe(1)
+      })
+      await vi.advanceTimersByTimeAsync(5100)
+      expect(await (await app.request('http://localhost/items')).text()).toBe('new')
+      release?.()
+      expect(await (await oldRequest).text()).toBe('old')
+      await flushPromises()
+      expect(await (await app.request('http://localhost/items')).text()).toBe('new')
+    })
+
+    it('orders delayed persistence so the newest response wins', async () => {
+      vi.useFakeTimers()
+      const storage = createCacheStorage()
+      const originalSetItem = storage.setItem.bind(storage)
+      let release: (() => void) | undefined
+      const gate = new Promise<void>((resolve) => {
+        release = resolve
+      })
+      let writes = 0
+      vi.spyOn(storage, 'setItem').mockImplementation(async (...args) => {
+        writes += 1
+        if (writes === 1) {
+          await gate
+        }
+        await originalSetItem(...args)
+      })
+      const app = new Hono()
+      let count = 0
+      app.get('/items', cacheMiddleware({ maxAge: 60, storage }), (c) =>
+        c.text(count++ === 0 ? 'old' : 'new')
+      )
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('old')
+      await vi.advanceTimersByTimeAsync(5100)
+      expect(await (await app.request('http://localhost/items')).text()).toBe('new')
+      release?.()
+      await vi.waitFor(() => {
+        expect(writes).toBe(2)
+      })
+      expect(await (await app.request('http://localhost/items')).text()).toBe('new')
+    })
+
+    it('prevents manual revalidation from being overwritten by an older fill', async () => {
+      const app = new Hono()
+      let count = 0
+      let release: (() => void) | undefined
+      const gate = new Promise<void>((resolve) => {
+        release = resolve
+      })
+      app.get(
+        '/items',
+        cacheMiddleware({
+          maxAge: 60,
+          revalidateHeader: 'x-revalidate',
+          shouldRevalidate: () => true,
+        }),
+        async (c) => {
+          count += 1
+          if (count === 1) {
+            await gate
+            return c.text('old')
+          }
+          return c.text('new')
+        }
+      )
+
+      const oldRequest = app.request('http://localhost/items')
+      await vi.waitFor(() => {
+        expect(count).toBe(1)
+      })
+      expect(
+        await (
+          await app.request('http://localhost/items', {
+            headers: { 'x-revalidate': '1' },
+          })
+        ).text()
+      ).toBe('new')
+      release?.()
+      expect(await (await oldRequest).text()).toBe('old')
+      await flushPromises()
+      expect(await (await app.request('http://localhost/items')).text()).toBe('new')
+    })
+
     it('does not cache methods outside GET/HEAD by default', async () => {
       const app = new Hono()
       let count = 0
@@ -294,6 +431,8 @@ describe('@hono/universal-cache', () => {
       ['cache-control', 'no-cache'],
       ['cache-control', 'public, max-age=0'],
       ['cache-control', 'no-store'],
+      ['cache-control', 'max-age=00'],
+      ['cache-control', 'max-age="0"'],
       ['pragma', 'no-cache'],
       ['pragma', 'foo, no-cache'],
     ])('bypasses cached responses for %s: %s', async (header, value) => {
@@ -873,6 +1012,42 @@ describe('@hono/universal-cache', () => {
       const next = await app.request('http://localhost/stream')
       expect(count).toBe(2)
       void next.body?.cancel()
+    })
+
+    it('cancels the private cache branch after an unknown stream exceeds its limit', async () => {
+      let cancelled = 0
+      const app = new Hono()
+      app.get('/stream', cacheMiddleware({ maxAge: 60 }), () => {
+        const stream = new ReadableStream<Uint8Array>({
+          async pull(controller) {
+            await new Promise((resolve) => setTimeout(resolve, 10))
+            controller.enqueue(new Uint8Array(1024 * 1024))
+          },
+          cancel() {
+            cancelled += 1
+          },
+        })
+        return new Response(stream, { headers: { 'content-type': 'application/octet-stream' } })
+      })
+
+      const response = await app.request('http://localhost/stream')
+      await response.body?.cancel()
+      expect(cancelled).toBe(1)
+    })
+
+    it('preserves Content-Length on cached HEAD responses', async () => {
+      const app = new Hono()
+      let count = 0
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), () => {
+        count += 1
+        return new Response('content', { headers: { 'content-length': '7' } })
+      })
+
+      const first = await app.request('http://localhost/items', { method: 'HEAD' })
+      const second = await app.request('http://localhost/items', { method: 'HEAD' })
+      expect(first.headers.get('content-length')).toBe('7')
+      expect(second.headers.get('content-length')).toBe('7')
+      expect(count).toBe(1)
     })
 
     it('expires coalescing state when response persistence never settles', async () => {
@@ -1737,6 +1912,138 @@ describe('@hono/universal-cache', () => {
       await flushPromises()
       await expect(fn()).rejects.toThrow('failed')
       expect(count).toBe(2)
+    })
+
+    it('prevents a slow expired function call from overwriting a newer result', async () => {
+      vi.useFakeTimers()
+      let count = 0
+      let release: (() => void) | undefined
+      const gate = new Promise<void>((resolve) => {
+        release = resolve
+      })
+      const fn = cacheFunction(
+        async () => {
+          count += 1
+          if (count === 1) {
+            await gate
+            return 'old'
+          }
+          return 'new'
+        },
+        { maxAge: 60, name: 'ordered-function', swr: false }
+      )
+
+      const oldCall = fn()
+      await vi.waitFor(() => {
+        expect(count).toBe(1)
+      })
+      await vi.advanceTimersByTimeAsync(5100)
+      expect(await fn()).toBe('new')
+      release?.()
+      expect(await oldCall).toBe('old')
+      await flushPromises()
+      expect(await fn()).toBe('new')
+    })
+
+    it('keeps empty function cache-key segments isolated', async () => {
+      const storage = createCacheStorage()
+      let secondCalls = 0
+      const first = cacheFunction(() => 'first', {
+        base: 'base',
+        getKey: () => 'key',
+        group: 'group',
+        maxAge: 60,
+        name: '',
+        storage,
+      })
+      const second = cacheFunction(
+        () => {
+          secondCalls += 1
+          return 'second'
+        },
+        {
+          base: 'base',
+          getKey: () => '',
+          group: 'group',
+          maxAge: 60,
+          name: 'key',
+          storage,
+        }
+      )
+
+      expect(await first()).toBe('first')
+      expect(await second()).toBe('second')
+      expect(secondCalls).toBe(1)
+      expect((await storage.getKeys()).sort()).toEqual([
+        'base:group:%00:key.json',
+        'base:group:key:%00.json',
+      ])
+    })
+
+    it.each([
+      ['NaN', () => Number.NaN],
+      ['Infinity', () => Number.POSITIVE_INFINITY],
+      ['negative zero', () => -0],
+      ['Date', () => new Date('2026-01-01T00:00:00.000Z')],
+      ['Map', () => new Map([['key', 'value']])],
+    ])('does not persist JSON-unsafe %s function results', async (_name, createValue) => {
+      let count = 0
+      const fn = cacheFunction(
+        () => {
+          count += 1
+          return createValue()
+        },
+        { maxAge: 60, swr: false }
+      )
+
+      const first = await fn()
+      await flushPromises()
+      const second = await fn()
+      expect(Object.prototype.toString.call(second)).toBe(Object.prototype.toString.call(first))
+      if (typeof first === 'number') {
+        expect(Object.is(second, first)).toBe(true)
+      }
+      expect(count).toBe(2)
+    })
+
+    it('fails open when persisted function metadata getters throw', async () => {
+      const storage = createCacheStorage()
+      vi.spyOn(storage, 'getItem').mockResolvedValue(
+        new Proxy(
+          {},
+          {
+            get() {
+              throw new Error('hostile record')
+            },
+          }
+        )
+      )
+      let count = 0
+      const fn = cacheFunction(() => `origin-${++count}`, {
+        getKey: () => 'key',
+        maxAge: 60,
+        storage,
+        swr: false,
+      })
+
+      expect(await fn()).toBe('origin-1')
+    })
+
+    it('fails open after a storage read timeout', async () => {
+      vi.useFakeTimers()
+      const storage = createCacheStorage()
+      vi.spyOn(storage, 'getItem').mockReturnValue(new Promise<never>(() => undefined))
+      let count = 0
+      const fn = cacheFunction(() => `origin-${++count}`, {
+        getKey: () => 'key',
+        maxAge: 60,
+        storage,
+        swr: false,
+      })
+
+      const result = fn()
+      await vi.advanceTimersByTimeAsync(5100)
+      expect(await result).toBe('origin-1')
     })
 
     it('does not block fresh function results on a hung cache write', async () => {

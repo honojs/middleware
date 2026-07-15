@@ -38,7 +38,10 @@ export const stableStringify = (value: unknown): string => {
       current !== null &&
       (Object.getPrototypeOf(current) === Object.prototype ||
         Object.getPrototypeOf(current) === null)
-    if (!Array.isArray(current) && !isPlainObject) {
+    const isMap = current instanceof Map
+    const isSet = current instanceof Set
+    const isFloatArray = current instanceof Float32Array || current instanceof Float64Array
+    if (!Array.isArray(current) && !isPlainObject && !isMap && !isSet && !isFloatArray) {
       return serializeHashValue(current)
     }
 
@@ -55,6 +58,22 @@ export const stableStringify = (value: unknown): string => {
         index in current ? ['value', serialize(current[index])] : ['hole']
       )
       return `array:${nextReference}:${JSON.stringify(items)}`
+    }
+
+    if (isMap) {
+      const entries = [...current].map(([key, entryValue]) => [
+        serialize(key),
+        serialize(entryValue),
+      ])
+      return `map:${nextReference}:${JSON.stringify(entries)}`
+    }
+
+    if (isSet) {
+      return `set:${nextReference}:${JSON.stringify([...current].map(serialize))}`
+    }
+
+    if (isFloatArray) {
+      return `${current.constructor.name}:${nextReference}:${JSON.stringify([...current].map(serialize))}`
     }
 
     const record = current as Record<string, unknown>

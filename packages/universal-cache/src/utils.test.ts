@@ -47,6 +47,24 @@ describe('utils', () => {
     expect(stableStringify(first)).toBe(stableStringify(second))
   })
 
+  it('stableStringify preserves negative zero in maps and floating arrays', () => {
+    expect(stableStringify(new Map([['value', 0]]))).not.toBe(
+      stableStringify(new Map([['value', -0]]))
+    )
+    expect(stableStringify(new Map([['value', { nested: 0 }]]))).not.toBe(
+      stableStringify(new Map([['value', { nested: -0 }]]))
+    )
+    expect(stableStringify(new Float64Array([0]))).not.toBe(stableStringify(new Float64Array([-0])))
+  })
+
+  it('stableStringify supports cyclic maps', () => {
+    const first = new Map<string, unknown>()
+    const second = new Map<string, unknown>()
+    first.set('self', first)
+    second.set('self', second)
+    expect(stableStringify(first)).toBe(stableStringify(second))
+  })
+
   it('computes TTL for all branches', () => {
     expect(computeTtlSeconds(0, 30)).toBe(0)
     expect(computeTtlSeconds(-1, 30)).toBe(0)
