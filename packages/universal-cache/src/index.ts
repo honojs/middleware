@@ -10,8 +10,8 @@ export {
 } from './cache'
 export type {
   CacheBaseOptions,
-  CacheConfigOptions,
   CacheDefaults,
+  CacheStorageOptions,
   CachedFunctionEntry,
   CachedResponseEntry,
   CacheFunctionOptions,

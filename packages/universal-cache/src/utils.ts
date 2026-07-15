@@ -21,25 +21,8 @@ export const normalizePathToName = (path: string): string => {
   return trimmed.replace(/\/+?/g, ':')
 }
 
-/** Stable stringification with sorted object keys. */
-export const stableStringify = (value: unknown): string => {
-  if (value === null || value === undefined) {
-    return String(value)
-  }
-  if (typeof value !== 'object') {
-    return JSON.stringify(value)
-  }
-  if (value instanceof Date) {
-    return JSON.stringify(value.toISOString())
-  }
-  if (Array.isArray(value)) {
-    return `[${value.map((item) => stableStringify(item)).join(',')}]`
-  }
-  const record = value as Record<string, unknown>
-  const keys = Object.keys(record).sort()
-  const entries = keys.map((key) => `${JSON.stringify(key)}:${stableStringify(record[key])}`)
-  return `{${entries.join(',')}}`
-}
+/** Stable, type-aware serialization for cache keys. */
+export const stableStringify = (value: unknown): string => serializeHashValue(value)
 
 /** Compute storage TTL in seconds from cache options. */
 export const computeTtlSeconds = (maxAge: number, staleMaxAge: number): number | undefined => {
@@ -62,3 +45,4 @@ export const isStaleValid = (staleExpires: number | null): boolean => {
   }
   return Date.now() <= staleExpires
 }
+import { serialize as serializeHashValue } from 'ohash'

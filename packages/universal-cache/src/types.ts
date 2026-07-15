@@ -3,6 +3,15 @@ import type { Storage } from 'unstorage'
 
 export type CacheKeyFn<TArgs extends unknown[]> = (...args: TArgs) => string | Promise<string>
 
+export interface CacheStorageOptions {
+  /** Maximum number of in-memory entries. */
+  maxEntries?: number
+  /** Maximum total in-memory size in bytes. */
+  maxSize?: number
+  /** Maximum size of one in-memory entry in bytes. */
+  maxEntrySize?: number
+}
+
 /**
  * Shared cache options for middleware and function caching.
  */
@@ -26,14 +35,10 @@ export interface CacheBaseOptions {
   maxAge?: number
   /** Cache entry name (used as part of the storage key). */
   name?: string
-  /** Custom header name to allow manual cache revalidation. Disabled by default. */
-  revalidateHeader?: string | false
   /** Stale max age in seconds. Use -1 for unlimited stale. */
   staleMaxAge?: number
   /** Custom storage instance to use for caching. */
   storage?: Storage
-  /** Enable stale-while-revalidate behavior. */
-  swr?: boolean
 }
 
 /**
@@ -41,26 +46,15 @@ export interface CacheBaseOptions {
  */
 export interface CacheDefaults extends CacheBaseOptions {}
 
-/**
- * Options for configuring cache defaults through Hono `app.use(...)`.
- */
-export interface CacheConfigOptions extends Omit<CacheDefaults, 'storage'> {
-  /** Default storage instance used by cache middleware and cached functions. */
-  storage?: Storage
-}
-
 export interface CacheMiddlewareOptions extends CacheBaseOptions {
-  /**
-   * Optional request-scoped defaults to apply before resolving this middleware options.
-   * Useful for route-local overrides on top of `app.use(cacheDefaults(...))`.
-   */
-  config?: CacheConfigOptions
   /** Deserialize a cached entry back into a response. */
   deserialize?: (entry: CachedResponseEntry) => Response | Promise<Response>
   /** Provide a custom cache key. */
   getKey?: (ctx: Context) => string | Promise<string>
   /** Allowed HTTP methods (default: GET, HEAD). */
   methods?: string[]
+  /** Custom header name to allow manual cache revalidation. Disabled by default. */
+  revalidateHeader?: string | false
   /** Serialize the response into a cached entry. */
   serialize?: (
     response: Response,
@@ -92,6 +86,8 @@ export interface CacheFunctionOptions<TArgs extends unknown[]> extends CacheBase
   shouldBypassCache?: (...args: TArgs) => boolean | Promise<boolean>
   /** Return true to invalidate the cache before re-fetch. */
   shouldInvalidateCache?: (...args: TArgs) => boolean | Promise<boolean>
+  /** Enable stale-while-revalidate behavior. */
+  swr?: boolean
   /** Optional validation for cached function entries. */
   validate?: (entry: CachedFunctionEntry<unknown>, ...args: TArgs) => boolean
 }

@@ -17,7 +17,7 @@ describe('@hono/universal-cache workerd', () => {
     let value = 'v1'
     let count = 0
 
-    app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => {
+    app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => {
       count += 1
       return c.text(value)
     })
@@ -55,7 +55,6 @@ describe('@hono/universal-cache workerd', () => {
       '/items',
       cacheMiddleware({
         maxAge: 60,
-        swr: false,
         revalidateHeader: 'x-custom-revalidate',
         shouldRevalidate: () => allowRevalidate,
       }),
@@ -90,7 +89,7 @@ describe('@hono/universal-cache workerd', () => {
     expect(await revalidated.text()).toBe('v2')
   })
 
-  it('supports custom manual revalidation on workerd', async () => {
+  it('denies custom manual revalidation without shouldRevalidate on workerd', async () => {
     const app = new Hono()
     let value = 'v1'
     let count = 0
@@ -99,7 +98,6 @@ describe('@hono/universal-cache workerd', () => {
       '/items',
       cacheMiddleware({
         maxAge: 60,
-        swr: false,
         revalidateHeader: 'x-custom-revalidate',
       }),
       (c) => {
@@ -115,21 +113,21 @@ describe('@hono/universal-cache workerd', () => {
 
     value = 'v2'
     const ctx2 = createExecutionContext()
-    const revalidated = await app.request(
+    const attempted = await app.request(
       'http://localhost/items',
       { headers: { 'x-custom-revalidate': '1' } },
       {},
       ctx2
     )
     await waitOnExecutionContext(ctx2)
-    expect(await revalidated.text()).toBe('v2')
+    expect(await attempted.text()).toBe('v1')
 
     const ctx3 = createExecutionContext()
     const cached = await app.request('http://localhost/items', {}, {}, ctx3)
     await waitOnExecutionContext(ctx3)
 
-    expect(await cached.text()).toBe('v2')
-    expect(count).toBe(2)
+    expect(await cached.text()).toBe('v1')
+    expect(count).toBe(1)
   })
 
   it('refreshes stale entries synchronously on workerd', async () => {
@@ -141,7 +139,6 @@ describe('@hono/universal-cache workerd', () => {
       cacheMiddleware({
         maxAge: 1,
         staleMaxAge: 60,
-        swr: true,
       }),
       (c) => {
         count += 1

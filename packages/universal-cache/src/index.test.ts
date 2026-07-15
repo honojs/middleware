@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import type { CacheDefaults } from './types'
 import {
   cacheDefaults,
   cacheFunction,
@@ -13,26 +12,16 @@ import {
 } from '.'
 
 const resetDefaultOptions = () => {
-  const defaults = {
-    base: undefined,
-    group: undefined,
-    hash: undefined,
-    integrity: undefined,
-    keepPreviousOn5xx: undefined,
-    maxAge: undefined,
-    name: undefined,
-    revalidateHeader: undefined,
-    staleMaxAge: undefined,
-    storage: undefined,
-    swr: undefined,
-  } as unknown as CacheDefaults
-  setCacheDefaults(defaults)
+  setCacheDefaults({})
 }
 
 const flushPromises = async () => {
   await Promise.resolve()
   await Promise.resolve()
 }
+
+const createTestStorageKey = (...segments: string[]) =>
+  `${segments.map((segment) => encodeURIComponent(segment)).join(':')}.json`
 
 describe('@hono/universal-cache', () => {
   const toBase64 = (value: string) => Buffer.from(value).toString('base64')
@@ -57,7 +46,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
         }),
         (c) => {
           count += 1
@@ -99,7 +87,6 @@ describe('@hono/universal-cache', () => {
         cacheMiddleware({
           maxAge: 60,
           methods: ['POST'],
-          swr: false,
         }),
         (c) => {
           count += 1
@@ -119,14 +106,10 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let count = 0
 
-      app.post(
-        '/items',
-        cacheMiddleware({ maxAge: 60, methods: ['POST'], swr: false }),
-        async (c) => {
-          count += 1
-          return c.text(`${await c.req.text()}:${count}`)
-        }
-      )
+      app.post('/items', cacheMiddleware({ maxAge: 60, methods: ['POST'] }), async (c) => {
+        count += 1
+        return c.text(`${await c.req.text()}:${count}`)
+      })
 
       const request = (body: string) =>
         app.request('http://localhost/items', { body, method: 'POST' })
@@ -137,38 +120,26 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
-    it('preserves request bodies during background revalidation', async () => {
+    it('refreshes expired custom methods synchronously', async () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
 
       const app = new Hono()
       let count = 0
-      let resolveRefresh!: () => void
-      const refreshed = new Promise<void>((resolve) => {
-        resolveRefresh = resolve
-      })
-
       app.post(
         '/items',
-        cacheMiddleware({ maxAge: 1, methods: ['POST'], staleMaxAge: 60, swr: true }),
+        cacheMiddleware({ maxAge: 1, methods: ['POST'], staleMaxAge: 60 }),
         async (c) => {
           count += 1
-          if (count === 2) {
-            resolveRefresh()
-          }
           return c.text(`${await c.req.text()}:${count}`)
         }
       )
-
-      vi.stubGlobal('fetch', (request: Request) => app.request(request))
 
       const request = () => app.request('http://localhost/items', { body: 'one', method: 'POST' })
 
       expect(await (await request()).text()).toBe('one:1')
       vi.advanceTimersByTime(1100)
-      expect(await (await request()).text()).toBe('one:1')
-      await refreshed
-      await flushPromises()
+      expect(await (await request()).text()).toBe('one:2')
       expect(await (await request()).text()).toBe('one:2')
       expect(count).toBe(2)
     })
@@ -181,7 +152,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           shouldBypassCache: (c) => c.req.header('x-bypass') === '1',
         }),
         (c) => {
@@ -202,6 +172,53 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
+    it.each([
+      ['range', 'bytes=0-2'],
+      ['if-range', '"v1"'],
+      ['if-match', '"v1"'],
+      ['if-none-match', '"v1"'],
+      ['if-modified-since', 'Wed, 01 Jan 2025 00:00:00 GMT'],
+      ['if-unmodified-since', 'Wed, 01 Jan 2025 00:00:00 GMT'],
+    ])('bypasses cached responses for %s requests', async (header, value) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => {
+        count += 1
+        return c.text(String(count), c.req.header('range') ? 206 : 200)
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      const conditional = await app.request('http://localhost/items', {
+        headers: { [header]: value },
+      })
+      expect(await conditional.text()).toBe('2')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(count).toBe(2)
+    })
+
+    it.each([
+      ['cache-control', 'no-cache'],
+      ['cache-control', 'public, max-age=0'],
+      ['cache-control', 'no-store'],
+      ['pragma', 'no-cache'],
+    ])('bypasses cached responses for %s: %s', async (header, value) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => {
+        count += 1
+        return c.text(String(count))
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(
+        await (await app.request('http://localhost/items', { headers: { [header]: value } })).text()
+      ).toBe('2')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(count).toBe(2)
+    })
+
     it('keeps previous cache on failed invalidation refresh when keepPreviousOn5xx is true', async () => {
       const app = new Hono()
       let status = 200
@@ -211,7 +228,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           keepPreviousOn5xx: true,
           revalidateHeader: 'x-internal-revalidate',
           shouldInvalidateCache: (c) => c.req.header('x-invalidate') === '1',
@@ -244,7 +260,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           keepPreviousOn5xx: false,
           revalidateHeader: 'x-internal-revalidate',
           shouldInvalidateCache: (c) => c.req.header('x-invalidate') === '1',
@@ -272,7 +287,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let value = 'v1'
 
-      app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => c.text(value))
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => c.text(value))
 
       const first = await app.request('http://localhost/items')
       expect(await first.text()).toBe('v1')
@@ -291,7 +306,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let value = 'v1'
 
-      app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => c.text(value))
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => c.text(value))
 
       await app.request('http://localhost/items')
       value = 'v2'
@@ -313,7 +328,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           shouldInvalidateCache: () => invalidate,
         }),
         (c) => c.text(value)
@@ -325,7 +339,7 @@ describe('@hono/universal-cache', () => {
       expect(await (await app.request('http://localhost/items')).text()).toBe('v2')
     })
 
-    it('supports custom revalidate header', async () => {
+    it('denies a custom revalidate header without shouldRevalidate', async () => {
       const app = new Hono()
       let value = 'v1'
 
@@ -333,7 +347,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           revalidateHeader: 'x-custom-revalidate',
         }),
         (c) => c.text(value)
@@ -346,7 +359,7 @@ describe('@hono/universal-cache', () => {
       })
       const cached = await app.request('http://localhost/items')
 
-      expect(await cached.text()).toBe('v2')
+      expect(await cached.text()).toBe('v1')
     })
 
     it('respects shouldRevalidate for manual revalidation', async () => {
@@ -358,7 +371,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           revalidateHeader: 'x-custom-revalidate',
           shouldRevalidate: () => allowRevalidate,
         }),
@@ -386,7 +398,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let count = 0
 
-      app.use('*', cacheDefaults({ maxAge: 60, swr: false }))
+      app.use('*', cacheDefaults({ maxAge: 60 }))
       app.get('/items', cacheMiddleware(), (c) => {
         count += 1
         return c.text(String(count))
@@ -400,31 +412,6 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(1)
     })
 
-    it('supports route-level config overrides via cacheMiddleware({ config })', async () => {
-      const app = new Hono()
-      let count = 0
-
-      app.use('*', cacheDefaults({ maxAge: 60, swr: false }))
-      app.get(
-        '/items',
-        cacheMiddleware({
-          config: { maxAge: 0 },
-          swr: false,
-        }),
-        (c) => {
-          count += 1
-          return c.text(String(count))
-        }
-      )
-
-      const res1 = await app.request('http://localhost/items')
-      const res2 = await app.request('http://localhost/items')
-
-      expect(await res1.text()).toBe('1')
-      expect(await res2.text()).toBe('2')
-      expect(count).toBe(2)
-    })
-
     it('keys by varies headers', async () => {
       const app = new Hono()
       let count = 0
@@ -433,7 +420,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           varies: ['accept-language'],
         }),
         (c) => {
@@ -465,7 +451,7 @@ describe('@hono/universal-cache', () => {
       app.on(
         ['GET', 'POST'],
         '/items',
-        cacheMiddleware({ maxAge: 60, methods: ['GET', 'POST'], swr: false }),
+        cacheMiddleware({ maxAge: 60, methods: ['GET', 'POST'] }),
         (c) => {
           count += 1
           return c.text(`${c.req.method}:${new URL(c.req.url).host}:${count}`)
@@ -480,13 +466,63 @@ describe('@hono/universal-cache', () => {
       expect(await (await app.request('http://one.example/items')).text()).toBe('GET:one.example:1')
     })
 
+    it.each([
+      ['user?one', 'user?two'],
+      ['a/b', 'a:b'],
+      ['a\\b', 'a:b'],
+    ])('keeps normalized custom keys %s and %s isolated', async (firstKey, secondKey) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          getKey: (c) => c.req.header('x-key') ?? '',
+          maxAge: 60,
+        }),
+        (c) => {
+          count += 1
+          return c.text(`${c.req.header('x-key')}:${count}`)
+        }
+      )
+
+      const request = (key: string) =>
+        app.request('http://localhost/items', { headers: { 'x-key': key } })
+
+      expect(await (await request(firstKey)).text()).toBe(`${firstKey}:1`)
+      expect(await (await request(secondKey)).text()).toBe(`${secondKey}:2`)
+      expect(await (await request(firstKey)).text()).toBe(`${firstKey}:1`)
+      expect(await (await request(secondKey)).text()).toBe(`${secondKey}:2`)
+      expect(count).toBe(2)
+    })
+
     it.each(['authorization', 'cookie'])(
-      'automatically varies by the %s header',
+      'does not cache requests with an implicit %s header',
       async (header) => {
         const app = new Hono()
         let count = 0
 
-        app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), (c) => {
+        app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => {
+          count += 1
+          return c.text(`${c.req.header(header)}:${count}`)
+        })
+
+        const request = (value: string) =>
+          app.request('http://localhost/items', { headers: { [header]: value } })
+
+        expect(await (await request('one')).text()).toBe('one:1')
+        expect(await (await request('one')).text()).toBe('one:2')
+        expect(count).toBe(2)
+      }
+    )
+
+    it.each(['authorization', 'cookie'])(
+      'caches requests when %s is explicitly included in varies',
+      async (header) => {
+        const app = new Hono()
+        let count = 0
+
+        app.get('/items', cacheMiddleware({ maxAge: 60, varies: [header] }), (c) => {
           count += 1
           return c.text(`${c.req.header(header)}:${count}`)
         })
@@ -501,85 +537,74 @@ describe('@hono/universal-cache', () => {
       }
     )
 
-    it('serves stale and revalidates in background once per key', async () => {
+    it('refreshes stale responses synchronously', async () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
 
       const app = new Hono()
       let count = 0
-      let fetchCalls = 0
-
-      let resolveRefresh!: () => void
-      const waitForRefresh = new Promise<void>((resolve) => {
-        resolveRefresh = resolve
-      })
-
       app.get(
         '/items',
         cacheMiddleware({
           maxAge: 1,
           staleMaxAge: 60,
-          swr: true,
           getKey: () => 'stable-key',
         }),
-        async (c) => {
+        (c) => {
           count += 1
-          if (count > 1) {
-            await waitForRefresh
-          }
           return c.text(String(count))
         }
       )
-
-      const nativeFetch = globalThis.fetch
-      vi.stubGlobal('fetch', (async (input: RequestInfo | URL, init?: RequestInit) => {
-        const request = input instanceof Request ? input : new Request(input, init)
-        const url = new URL(request.url)
-        if (url.hostname === 'localhost') {
-          fetchCalls += 1
-          return app.request(request)
-        }
-        return nativeFetch(input, init)
-      }) as typeof fetch)
 
       const first = await app.request('http://localhost/items')
       expect(await first.text()).toBe('1')
 
       vi.advanceTimersByTime(1100)
 
-      const stale1 = await app.request('http://localhost/items')
-      const stale2 = await app.request('http://localhost/items')
-
-      expect(await stale1.text()).toBe('1')
-      expect(await stale2.text()).toBe('1')
-      expect(fetchCalls).toBe(1)
-
-      resolveRefresh()
-      await flushPromises()
-      await flushPromises()
-
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
       expect(count).toBe(2)
     })
 
-    it('handles rejected background response refreshes while serving stale', async () => {
+    it('serves a stale response when synchronous refresh returns 5xx', async () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
-
       const app = new Hono()
-      let count = 0
+      let fail = false
 
-      app.get('/items', cacheMiddleware({ maxAge: 1, staleMaxAge: 60, swr: true }), (c) => {
-        count += 1
-        return c.text(String(count))
+      app.get('/items', cacheMiddleware({ maxAge: 1, staleMaxAge: 60 }), (c) => {
+        return fail ? c.text('failed', 500) : c.text('cached')
       })
 
-      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('refresh failed')))
-
-      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('cached')
       vi.advanceTimersByTime(1100)
-      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
-      await flushPromises()
-      expect(count).toBe(1)
+      fail = true
+
+      const fallback = await app.request('http://localhost/items')
+      expect(fallback.status).toBe(200)
+      expect(await fallback.text()).toBe('cached')
+    })
+
+    it('serves a stale response when synchronous refresh throws', async () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+      const app = new Hono()
+      let fail = false
+
+      app.get('/items', cacheMiddleware({ maxAge: 1, staleMaxAge: 60 }), (c) => {
+        if (fail) {
+          throw new Error('failed')
+        }
+        return c.text('cached')
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('cached')
+      vi.advanceTimersByTime(1100)
+      fail = true
+
+      const fallback = await app.request('http://localhost/items')
+      expect(fallback.status).toBe(200)
+      expect(await fallback.text()).toBe('cached')
     })
 
     it('does not cache non-cacheable responses with set-cookie', async () => {
@@ -600,11 +625,118 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(2)
     })
 
+    it.each([
+      'text/event-stream; charset=utf-8',
+      'application/x-ndjson',
+      'application/ndjson',
+      'application/json-seq',
+      'application/stream+json',
+      'multipart/x-mixed-replace; boundary=frame',
+    ])('does not cache streaming responses with content type %s', async (contentType) => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/events', cacheMiddleware({ maxAge: 60 }), () => {
+        count += 1
+        const body = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(`data: ${count}\n\n`))
+          },
+        })
+        return new Response(body, {
+          headers: { 'content-type': contentType },
+        })
+      })
+
+      const first = await app.request('http://localhost/events')
+      const second = await app.request('http://localhost/events')
+      await first.body?.cancel()
+      await second.body?.cancel()
+
+      expect(count).toBe(2)
+    })
+
+    it('does not cache responses with unkeyed Vary headers', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), (c) => {
+        count += 1
+        c.header('vary', 'Accept-Language, Accept-Encoding')
+        return c.text(String(count))
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
+    })
+
+    it('caches responses when every Vary header is keyed', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.get(
+        '/items',
+        cacheMiddleware({ maxAge: 60, varies: ['accept-language', 'accept-encoding'] }),
+        (c) => {
+          count += 1
+          c.header('vary', 'Accept-Language, Accept-Encoding')
+          return c.text(String(count))
+        }
+      )
+
+      const headers = { 'accept-encoding': 'gzip', 'accept-language': 'en' }
+      expect(await (await app.request('http://localhost/items', { headers })).text()).toBe('1')
+      expect(await (await app.request('http://localhost/items', { headers })).text()).toBe('1')
+      expect(count).toBe(1)
+    })
+
+    it('fails open when response storage reads and writes fail', async () => {
+      const storage = createCacheStorage()
+      vi.spyOn(storage, 'getItem').mockRejectedValue(new Error('read unavailable'))
+      vi.spyOn(storage, 'setItem').mockRejectedValue(new Error('write unavailable'))
+      const app = new Hono()
+      let count = 0
+
+      app.get('/items', cacheMiddleware({ maxAge: 60, storage }), (c) => {
+        count += 1
+        return c.text(String(count))
+      })
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
+    })
+
+    it('fails open when response storage removal fails', async () => {
+      const storage = createCacheStorage()
+      const app = new Hono()
+      let invalidate = false
+      let count = 0
+
+      app.get(
+        '/items',
+        cacheMiddleware({
+          keepPreviousOn5xx: false,
+          maxAge: 60,
+          shouldInvalidateCache: () => invalidate,
+          storage,
+        }),
+        (c) => {
+          count += 1
+          return c.text(String(count))
+        }
+      )
+
+      expect(await (await app.request('http://localhost/items')).text()).toBe('1')
+      vi.spyOn(storage, 'removeItem').mockRejectedValue(new Error('remove unavailable'))
+      invalidate = true
+      expect(await (await app.request('http://localhost/items')).text()).toBe('2')
+    })
+
     it.each([204, 205])('replays cached %i responses without a body', async (status) => {
       const app = new Hono()
       let count = 0
 
-      app.get('/items', cacheMiddleware({ maxAge: 60, swr: false }), () => {
+      app.get('/items', cacheMiddleware({ maxAge: 60 }), () => {
         count += 1
         return new Response(null, { headers: { 'x-count': String(count) }, status })
       })
@@ -644,7 +776,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           serialize: async (response, context) => ({
             value: await response.clone().text(),
             encoding: 'base64',
@@ -686,7 +817,7 @@ describe('@hono/universal-cache', () => {
       const group = 'hono/handlers'
       const name = 'items'
       const key = 'manual-key'
-      const storageKey = `${base}:${group}:${name}:${key}.json`
+      const storageKey = createTestStorageKey(base, group, name, key)
 
       await storage.setItem(storageKey, { value: 1 })
 
@@ -697,7 +828,6 @@ describe('@hono/universal-cache', () => {
           name,
           getKey: () => key,
           maxAge: 60,
-          swr: false,
         }),
         (c) => {
           count += 1
@@ -722,7 +852,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let count = 0
 
-      app.get('*', cacheMiddleware({ maxAge: 60, swr: false }), (c) => {
+      app.get('*', cacheMiddleware({ maxAge: 60 }), (c) => {
         count += 1
         return c.text(String(count))
       })
@@ -741,7 +871,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let count = 0
 
-      const storageKey = 'cache:hono/handlers:items:key.json'
+      const storageKey = createTestStorageKey('cache', 'hono/handlers', 'items', 'key')
       await storage.setItem(storageKey, {
         value: toBase64('stale'),
         encoding: 'base64',
@@ -760,7 +890,6 @@ describe('@hono/universal-cache', () => {
           name: 'items',
           getKey: () => 'key',
           maxAge: 60,
-          swr: false,
           integrity: 'fresh-integrity',
         }),
         (c) => {
@@ -779,7 +908,7 @@ describe('@hono/universal-cache', () => {
       const app = new Hono()
       let count = 0
 
-      const storageKey = 'cache:hono/handlers:items:key.json'
+      const storageKey = createTestStorageKey('cache', 'hono/handlers', 'items', 'key')
       await storage.setItem(storageKey, {
         value: toBase64('stale'),
         encoding: 'base64',
@@ -798,7 +927,6 @@ describe('@hono/universal-cache', () => {
           name: 'items',
           getKey: () => 'key',
           maxAge: 60,
-          swr: false,
           integrity: 'integrity',
           validate: () => false,
         }),
@@ -813,73 +941,6 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(1)
     })
 
-    it('treats etag/last-modified header value "undefined" as invalid cache entry', async () => {
-      const storage = createCacheStorage()
-      const app = new Hono()
-      let count = 0
-
-      await storage.setItem('cache:hono/handlers:etag:key.json', {
-        value: toBase64('stale'),
-        encoding: 'base64',
-        status: 200,
-        headers: { etag: 'undefined' },
-        mtime: Date.now(),
-        expires: Date.now() + 60_000,
-        staleExpires: Date.now() + 120_000,
-        integrity: 'integrity',
-      })
-
-      await storage.setItem('cache:hono/handlers:last-mod:key.json', {
-        value: toBase64('stale'),
-        encoding: 'base64',
-        status: 200,
-        headers: { 'last-modified': 'undefined' },
-        mtime: Date.now(),
-        expires: Date.now() + 60_000,
-        staleExpires: Date.now() + 120_000,
-        integrity: 'integrity',
-      })
-
-      app.get(
-        '/etag',
-        cacheMiddleware({
-          storage,
-          name: 'etag',
-          getKey: () => 'key',
-          maxAge: 60,
-          swr: false,
-          integrity: 'integrity',
-        }),
-        (c) => {
-          count += 1
-          return c.text(`value-${count}`)
-        }
-      )
-
-      app.get(
-        '/last-mod',
-        cacheMiddleware({
-          storage,
-          name: 'last-mod',
-          getKey: () => 'key',
-          maxAge: 60,
-          swr: false,
-          integrity: 'integrity',
-        }),
-        (c) => {
-          count += 1
-          return c.text(`value-${count}`)
-        }
-      )
-
-      const etagRes = await app.request('http://localhost/etag')
-      const lastModRes = await app.request('http://localhost/last-mod')
-
-      expect(await etagRes.text()).toBe('value-1')
-      expect(await lastModRes.text()).toBe('value-2')
-      expect(count).toBe(2)
-    })
-
     it('evicts old cache when invalidated response is non-cacheable with keepPreviousOn5xx=true', async () => {
       const app = new Hono()
       let value = 'v1'
@@ -889,7 +950,6 @@ describe('@hono/universal-cache', () => {
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          swr: false,
           keepPreviousOn5xx: true,
           revalidateHeader: 'x-internal-revalidate',
           shouldInvalidateCache: (c) => c.req.header('x-invalidate') === '1',
@@ -1296,11 +1356,33 @@ describe('@hono/universal-cache', () => {
       expect(count).toBe(1)
     })
 
+    it.each([
+      [new Date('2026-01-01T00:00:00.000Z'), '2026-01-01T00:00:00.000Z'],
+      [Number.NaN, null],
+    ])('keeps type-distinct arguments isolated', async (firstArg, secondArg) => {
+      let count = 0
+      const fn = cacheFunction(
+        (value: unknown) => {
+          count += 1
+          return `${String(value)}:${count}`
+        },
+        { maxAge: 60, swr: false }
+      )
+
+      expect(await fn(firstArg)).toBe(`${String(firstArg)}:1`)
+      expect(await fn(secondArg)).toBe(`${String(secondArg)}:2`)
+      expect(await fn(firstArg)).toBe(`${String(firstArg)}:1`)
+      expect(count).toBe(2)
+    })
+
     it('removes malformed function cache entries before computing fresh value', async () => {
       const storage = createCacheStorage()
       let count = 0
 
-      await storage.setItem('cache:hono/functions:fn:key.json', 123 as unknown as object)
+      await storage.setItem(
+        createTestStorageKey('cache', 'hono/functions', 'fn', 'key'),
+        123 as unknown as object
+      )
 
       const fn = cacheFunction(
         () => {
@@ -1322,22 +1404,76 @@ describe('@hono/universal-cache', () => {
       expect(value).toBe('v1')
       expect(count).toBe(1)
     })
+
+    it('fails open when function storage reads and writes fail', async () => {
+      const storage = createCacheStorage()
+      vi.spyOn(storage, 'getItem').mockRejectedValue(new Error('read unavailable'))
+      vi.spyOn(storage, 'setItem').mockRejectedValue(new Error('write unavailable'))
+      let count = 0
+
+      const fn = cacheFunction(() => ++count, { maxAge: 60, storage })
+
+      expect(await fn()).toBe(1)
+      expect(await fn()).toBe(2)
+    })
+
+    it('resolves global defaults when the cached function is called', async () => {
+      let count = 0
+      const fn = cacheFunction(() => ++count)
+
+      setCacheDefaults({ maxAge: 0 })
+      expect(await fn()).toBe(1)
+      expect(await fn()).toBe(2)
+
+      setCacheDefaults({ maxAge: 60 })
+      expect(await fn()).toBe(3)
+      expect(await fn()).toBe(3)
+    })
   })
 
   describe('global cache accessors', () => {
     it('exports stableStringify for deterministic custom keys', () => {
-      expect(stableStringify({ b: 2, a: 1 })).toBe('{"a":1,"b":2}')
+      expect(stableStringify({ b: 2, a: 1 })).toBe(stableStringify({ a: 1, b: 2 }))
     })
 
     it('sets and gets global cache defaults and storage', () => {
       const storage = createCacheStorage()
-      const defaults = { maxAge: 120, staleMaxAge: 30 }
 
       setCacheStorage(storage)
-      setCacheDefaults(defaults)
+      setCacheDefaults({ maxAge: 120 })
+      const defaults = getCacheDefaults()
+      defaults.maxAge = 1
 
       expect(getCacheStorage()).toBe(storage)
-      expect(getCacheDefaults()).toMatchObject(defaults)
+      expect(getCacheDefaults()).toEqual({ maxAge: 120 })
+
+      setCacheDefaults({ staleMaxAge: 30 })
+      expect(getCacheDefaults()).toEqual({ staleMaxAge: 30 })
+      setCacheDefaults({})
+      expect(getCacheDefaults()).toEqual({})
+    })
+
+    it('bounds and expires the default memory storage', async () => {
+      const storage = createCacheStorage()
+
+      for (let index = 0; index <= 1000; index += 1) {
+        await storage.setItem(`key-${index}`, index)
+      }
+
+      expect(await storage.getItem('key-0')).toBeNull()
+      expect(await storage.getItem('key-1000')).toBe(1000)
+
+      await storage.setItem('expiring', 'value', { ttl: 0.001 })
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      expect(await storage.getItem('expiring')).toBeNull()
+
+      const smallStorage = createCacheStorage({
+        maxEntries: 10,
+        maxEntrySize: 10,
+        maxSize: 100,
+      })
+      await smallStorage.setItem('oversized', 'a value larger than ten bytes')
+      expect(await smallStorage.getItem('oversized')).toBeNull()
     })
   })
 })

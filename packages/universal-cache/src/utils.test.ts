@@ -22,16 +22,18 @@ describe('utils', () => {
     expect(stableStringify(null)).toBe('null')
     expect(stableStringify(undefined)).toBe('undefined')
     expect(stableStringify(123)).toBe('123')
-    expect(stableStringify('abc')).toBe('"abc"')
+    expect(stableStringify('abc')).toBe("'abc'")
     expect(stableStringify(true)).toBe('true')
+    expect(stableStringify(Number.NaN)).not.toBe(stableStringify(null))
   })
 
   it('stableStringify handles Date, arrays, and sorted object keys', () => {
     const date = new Date('2026-01-01T00:00:00.000Z')
-    expect(stableStringify(date)).toBe('"2026-01-01T00:00:00.000Z"')
-
-    expect(stableStringify([{ b: 2, a: 1 }, 'x'])).toBe('[{"a":1,"b":2},"x"]')
-    expect(stableStringify({ z: 1, a: { y: 2, x: 1 } })).toBe('{"a":{"x":1,"y":2},"z":1}')
+    expect(stableStringify(date)).not.toBe(stableStringify(date.toISOString()))
+    expect(stableStringify([{ b: 2, a: 1 }, 'x'])).toBe(stableStringify([{ a: 1, b: 2 }, 'x']))
+    expect(stableStringify({ z: 1, a: { y: 2, x: 1 } })).toBe(
+      stableStringify({ a: { x: 1, y: 2 }, z: 1 })
+    )
   })
 
   it('computes TTL for all branches', () => {
