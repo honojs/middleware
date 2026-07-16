@@ -322,6 +322,47 @@ app.getOpenAPI31Document(
 
 The second parameter is optional and accepts generator options as supported by the `@asteasolutions/zod-to-openapi` library. Refer to their documentation for the complete list of available options and their usage.
 
+### Other schema libraries
+
+Besides Zod, you can use any schema library that implements [Standard JSON Schema](https://standardschema.dev/json-schema), such as ArkType. These schemas describe themselves, so this package needs no adapter for each one: it validates them through their Standard Schema interface and documents them with the JSON Schema they generate.
+
+```ts
+import { type } from 'arktype'
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi'
+
+const UserSchema = type({ name: 'string', age: 'number' })
+
+const route = createRoute({
+  method: 'post',
+  path: '/users',
+  request: {
+    body: {
+      required: true,
+      content: { 'application/json': { schema: UserSchema } },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Created',
+      content: { 'application/json': { schema: type({ id: 'string' }) } },
+    },
+  },
+})
+
+const app = new OpenAPIHono()
+
+app.openapi(route, (c) => {
+  const { name } = c.req.valid('json') // typed as { name: string; age: number }
+  return c.json({ id: name }, 200)
+})
+```
+
+You can mix libraries within a route — an ArkType request body next to a Zod response, for example. Zod schemas keep going through `@asteasolutions/zod-to-openapi` untouched, so `.openapi()` metadata and registered components behave exactly as they did before.
+
+Valibot does not implement the interface directly — wrap its schemas with [`toStandardJsonSchema()`](https://valibot.dev/api/toStandardJsonSchema/) from `@valibot/to-json-schema` first.
+
+Request bodies and parameters are documented from a schema's **input** type and responses from its **output** type, so a field with a default is optional in a request body and guaranteed in a response.
+
 ### The Registry
 
 You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-openapi#the-registry) object via `app.openAPIRegistry`:
@@ -602,10 +643,18 @@ const HeadersSchema = z.object({
 })
 ```
 
+### Non-Zod schemas
+
+Two things behave differently for schemas from other libraries:
+
+- **`app.doc()` and OpenAPI 3.0.** A library is allowed to throw for a JSON Schema target it does not implement, and ArkType implements only the drafts. Those schemas fall back to `draft-07`, which OpenAPI 3.0 is close to but not identical with, so constructs 3.0 lacks pass through unconverted. `app.doc31()` needs no fallback, since OpenAPI 3.1 already is `draft-2020-12`.
+- **Validation hooks.** `result.error` is a `ZodError` for Zod schemas but an array of Standard Schema issues for other libraries, while the `Hook` type still calls it a `ZodError`.
+
 ## References
 
 - [Hono](https://hono.dev/)
 - [Zod](https://zod.dev/)
+- [Standard JSON Schema](https://standardschema.dev/json-schema)
 - [Zod to OpenAPI](https://github.com/asteasolutions/zod-to-openapi)
 
 ## Authors
