@@ -44,6 +44,7 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "arktype": "^2.2.3",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
@@ -53,7 +54,9 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "@hono/standard-validator": "workspace:^",
     "@hono/zod-validator": "workspace:^",
+    "@standard-schema/spec": "^1.1.0",
     "openapi3-ts": "^4.5.0"
   },
   "engines": {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
+  ResponseConfig as ResponseConfigBase,
   RouteConfig as RouteConfigBase,
-  ZodContentObject,
   ZodMediaTypeObject,
   ZodRequestBody,
 } from '@asteasolutions/zod-to-openapi'
@@ -12,6 +12,7 @@ import {
   extendZodWithOpenApi,
   getOpenApiMetadata,
 } from '@asteasolutions/zod-to-openapi'
+import { sValidator } from '@hono/standard-validator'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import type {
@@ -42,21 +43,74 @@ import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import type { ZodType, ZodError } from 'zod'
 import { z } from 'zod'
+import type { StandardOpenAPISchema } from './standard-schema'
+import {
+  TARGETS,
+  convertRouteSchemas,
+  needsConversion,
+  routeUsesStandardSchema,
+} from './standard-schema'
 import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
 
-export type RouteConfig = RouteConfigBase & {
+/**
+ * Anything this package can both validate with and describe: a Zod type, or a schema from
+ * a library implementing Standard JSON Schema.
+ */
+type AnySchema = ZodType | StandardOpenAPISchema
+
+/**
+ * Zod types implement Standard Schema too, so `ZodType` has to be checked first — otherwise
+ * every Zod schema would infer through `~standard.types` and lose what `z.input`/`z.output`
+ * know about transforms, defaults and pipes.
+ */
+type InferInput<S> = S extends ZodType
+  ? z.input<S>
+  : S extends StandardOpenAPISchema<infer I, any>
+    ? I
+    : never
+
+type InferOutput<S> = S extends ZodType
+  ? z.output<S>
+  : S extends StandardOpenAPISchema<any, infer O>
+    ? O
+    : never
+
+type RouteParameterBase = NonNullable<RouteConfigBase['request']>['params']
+
+type MediaTypeObject = Omit<ZodMediaTypeObject, 'schema'> & {
+  schema: ZodMediaTypeObject['schema'] | StandardOpenAPISchema
+}
+type ContentObject = Partial<Record<string, MediaTypeObject>>
+type RequestBody = Omit<ZodRequestBody, 'content'> & { content: ContentObject }
+type ResponseConfig = Omit<ResponseConfigBase, 'content' | 'headers'> & {
+  content?: ContentObject
+  headers?: ResponseConfigBase['headers'] | StandardOpenAPISchema
+}
+
+export type RouteConfig = Omit<RouteConfigBase, 'request' | 'responses'> & {
+  request?: {
+    body?: RequestBody
+    params?: RouteParameterBase | StandardOpenAPISchema
+    query?: RouteParameterBase | StandardOpenAPISchema
+    cookies?: RouteParameterBase | StandardOpenAPISchema
+    headers?:
+      RouteParameterBase | ZodType<unknown>[] | StandardOpenAPISchema | StandardOpenAPISchema[]
+  }
+  responses: {
+    [statusCode: string]: ResponseConfig
+  }
   middleware?: H | H[]
   hide?: boolean
 }
 
 type RequestTypes = {
-  body?: ZodRequestBody
-  params?: ZodType
-  query?: ZodType
-  cookies?: ZodType
-  headers?: ZodType | ZodType[]
+  body?: RequestBody
+  params?: AnySchema
+  query?: AnySchema
+  cookies?: AnySchema
+  headers?: AnySchema | AnySchema[]
 }
 
 type IsJson<T> = T extends string
@@ -99,39 +153,41 @@ type InputTypeBase<
   Part extends string,
   Type extends keyof ValidationTargets,
 > = R['request'] extends RequestTypes
-  ? RequestPart<R, Part> extends ZodType
+  ? RequestPart<R, Part> extends AnySchema
     ? {
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
             ? {
-                [K2 in keyof z.input<RequestPart<R, Part>>]?: z.input<RequestPart<R, Part>>[K2]
+                [K2 in keyof InferInput<RequestPart<R, Part>>]?: InferInput<
+                  RequestPart<R, Part>
+                >[K2]
               }
             : {
-                [K2 in keyof z.input<RequestPart<R, Part>>]: z.input<RequestPart<R, Part>>[K2]
+                [K2 in keyof InferInput<RequestPart<R, Part>>]: InferInput<RequestPart<R, Part>>[K2]
               }
         }
-        out: { [K in Type]: z.output<RequestPart<R, Part>> }
+        out: { [K in Type]: InferOutput<RequestPart<R, Part>> }
       }
     : {}
   : {}
 
 type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
-  ? R['request']['body'] extends ZodRequestBody
-    ? R['request']['body']['content'] extends ZodContentObject
+  ? R['request']['body'] extends RequestBody
+    ? R['request']['body']['content'] extends ContentObject
       ? IsJson<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodType<any>
+              AnySchema
             >
           ? {
               in: {
-                json: z.input<
+                json: InferInput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
               out: {
-                json: z.output<
+                json: InferOutput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
@@ -142,22 +198,22 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
   : {}
 
 type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
-  ? R['request']['body'] extends ZodRequestBody
-    ? R['request']['body']['content'] extends ZodContentObject
+  ? R['request']['body'] extends RequestBody
+    ? R['request']['body']['content'] extends ContentObject
       ? IsForm<keyof R['request']['body']['content']> extends never
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              ZodType<any>
+              AnySchema
             >
           ? {
               in: {
-                form: z.input<
+                form: InferInput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
               out: {
-                form: z.output<
+                form: InferOutput<
                   R['request']['body']['content'][keyof R['request']['body']['content']]['schema']
                 >
               }
@@ -175,8 +231,8 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', ZodType>
-    ? z.infer<A['schema']>
+  ? A extends Record<'schema', AnySchema>
+    ? InferOutput<A['schema']>
     : never
   : never
 
@@ -326,7 +382,7 @@ export type RouteHandler<
     responses: {
       [statusCode: number]: {
         content: {
-          [mediaType: string]: ZodMediaTypeObject
+          [mediaType: string]: MediaTypeObject
         }
       }
     }
@@ -410,7 +466,7 @@ type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
     responses: {
       [statusCode: number]: {
         content: {
-          [mediaType: string]: ZodMediaTypeObject
+          [mediaType: string]: MediaTypeObject
         }
       }
     }
@@ -428,7 +484,7 @@ type HookFromRoute<R extends RouteConfig, E extends Env> =
         responses: {
           [statusCode: number]: {
             content: {
-              [mediaType: string]: ZodMediaTypeObject
+              [mediaType: string]: MediaTypeObject
             }
           }
         }
@@ -480,6 +536,19 @@ export const defineOpenAPIRoute = <
   return def
 }
 
+/**
+ * Picks the validator that understands the schema: Zod keeps going through `zValidator`,
+ * anything else validates through its Standard Schema interface via `sValidator`.
+ */
+const validatorFor = (
+  target: keyof ValidationTargets,
+  schema: AnySchema,
+  hook: any
+): MiddlewareHandler =>
+  needsConversion(schema)
+    ? (sValidator(target, schema, hook) as MiddlewareHandler)
+    : (zValidator(target as any, schema as any, hook) as MiddlewareHandler)
+
 export class OpenAPIHono<
   E extends Env = Env,
   S extends Schema = {},
@@ -488,6 +557,15 @@ export class OpenAPIHono<
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
   #parentApp?: OpenAPIHono<any, any, any>
+  /**
+   * Routes carrying a non-Zod schema, held unconverted until a document is asked for.
+   *
+   * They cannot go into `openAPIRegistry` at `openapi()` time: converting a schema needs a
+   * JSON Schema target, and which target applies is not known until the caller picks
+   * `getOpenAPIDocument` (3.0) or `getOpenAPI31Document` (3.1). Zod routes have no such
+   * problem and are registered eagerly, exactly as before.
+   */
+  #standardRoutes: RouteConfig[] = []
 
   constructor(init?: HonoInit<E>) {
     super(init)
@@ -565,7 +643,7 @@ export class OpenAPIHono<
         responses: {
           [statusCode: number]: {
             content: {
-              [mediaType: string]: ZodMediaTypeObject
+              [mediaType: string]: MediaTypeObject
             }
           }
         }
@@ -582,7 +660,7 @@ export class OpenAPIHono<
             responses: {
               [statusCode: number]: {
                 content: {
-                  [mediaType: string]: ZodMediaTypeObject
+                  [mediaType: string]: MediaTypeObject
                 }
               }
             }
@@ -597,7 +675,11 @@ export class OpenAPIHono<
     BasePath
   > => {
     if (!hide) {
-      this.openAPIRegistry.registerPath(route)
+      if (routeUsesStandardSchema(route)) {
+        this.#standardRoutes.push(route)
+      } else {
+        this.openAPIRegistry.registerPath(route as RouteConfigBase)
+      }
     }
 
     const effectiveHook =
@@ -610,23 +692,19 @@ export class OpenAPIHono<
     const validators: MiddlewareHandler[] = []
 
     if (route.request?.query) {
-      const validator = zValidator('query', route.request.query as any, effectiveHook as any)
-      validators.push(validator as any)
+      validators.push(validatorFor('query', route.request.query as AnySchema, effectiveHook))
     }
 
     if (route.request?.params) {
-      const validator = zValidator('param', route.request.params as any, effectiveHook as any)
-      validators.push(validator as any)
+      validators.push(validatorFor('param', route.request.params as AnySchema, effectiveHook))
     }
 
     if (route.request?.headers) {
-      const validator = zValidator('header', route.request.headers as any, effectiveHook as any)
-      validators.push(validator as any)
+      validators.push(validatorFor('header', route.request.headers as AnySchema, effectiveHook))
     }
 
     if (route.request?.cookies) {
-      const validator = zValidator('cookie', route.request.cookies as any, effectiveHook as any)
-      validators.push(validator as any)
+      validators.push(validatorFor('cookie', route.request.cookies as AnySchema, effectiveHook))
     }
 
     const bodyContent = route.request?.body?.content
@@ -636,14 +714,12 @@ export class OpenAPIHono<
         if (!bodyContent[mediaType]) {
           continue
         }
-        const schema = (bodyContent[mediaType] as ZodMediaTypeObject)['schema']
-        if (!isZod(schema)) {
+        const schema = (bodyContent[mediaType] as MediaTypeObject)['schema']
+        if (!isZod(schema) && !needsConversion(schema)) {
           continue
         }
         if (isJSONContentType(mediaType)) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('json', schema, effectiveHook as any) as MiddlewareHandler
+          const validator = validatorFor('json', schema as AnySchema, effectiveHook)
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -660,9 +736,7 @@ export class OpenAPIHono<
           }
         }
         if (isFormContentType(mediaType)) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore we can ignore the type error since Zod Validator's types are not used
-          const validator = zValidator('form', schema, effectiveHook as any) as MiddlewareHandler
+          const validator = validatorFor('form', schema as AnySchema, effectiveHook)
           if (route.request?.body?.required) {
             validators.push(validator)
           } else {
@@ -731,11 +805,29 @@ export class OpenAPIHono<
     return this
   }
 
+  /**
+   * The definitions to generate from, with the schemas of any non-Zod route converted for
+   * the version being generated. When there are none, the existing registry is handed back
+   * untouched so a Zod-only app behaves exactly as it did before.
+   */
+  #definitionsFor(version: '3.0' | '3.1'): OpenAPIRegistry['definitions'] {
+    if (this.#standardRoutes.length === 0) {
+      return this.openAPIRegistry.definitions
+    }
+
+    const registry = new OpenAPIRegistry()
+    registry.definitions.push(...this.openAPIRegistry.definitions)
+    for (const route of this.#standardRoutes) {
+      registry.registerPath(convertRouteSchemas(route, TARGETS[version]) as RouteConfigBase)
+    }
+    return registry.definitions
+  }
+
   getOpenAPIDocument = (
     objectConfig: OpenAPIObjectConfig,
     generatorConfig?: OpenAPIGeneratorOptions
   ): OpenAPIObject => {
-    const generator = new OpenApiGeneratorV3(this.openAPIRegistry.definitions, generatorConfig)
+    const generator = new OpenApiGeneratorV3(this.#definitionsFor('3.0'), generatorConfig)
     const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
@@ -745,7 +837,7 @@ export class OpenAPIHono<
     objectConfig: OpenAPIObjectConfig,
     generatorConfig?: OpenAPIGeneratorOptions
   ): OpenAPIV31bject => {
-    const generator = new OpenApiGeneratorV31(this.openAPIRegistry.definitions, generatorConfig)
+    const generator = new OpenApiGeneratorV31(this.#definitionsFor('3.1'), generatorConfig)
     const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
@@ -816,6 +908,18 @@ export class OpenAPIHono<
     }
 
     app.#parentApp ??= this
+
+    const subBasePath = (app as unknown as { _basePath: string })._basePath.replaceAll(
+      /:([^\/]+)/g,
+      '{$1}'
+    )
+
+    for (const route of app.#standardRoutes) {
+      this.#standardRoutes.push({
+        ...route,
+        path: mergePath(pathForOpenAPI, subBasePath, route.path),
+      })
+    }
 
     app.openAPIRegistry.definitions.forEach((def) => {
       switch (def.type) {
