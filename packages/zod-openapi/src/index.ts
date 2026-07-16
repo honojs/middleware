@@ -54,10 +54,6 @@ import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
 
-/**
- * Anything this package can both validate with and describe: a Zod type, or a schema from
- * a library implementing Standard JSON Schema.
- */
 type AnySchema = ZodType | StandardOpenAPISchema
 
 /**
@@ -65,17 +61,15 @@ type AnySchema = ZodType | StandardOpenAPISchema
  * every Zod schema would infer through `~standard.types` and lose what `z.input`/`z.output`
  * know about transforms, defaults and pipes.
  */
-type InferInput<S> = S extends ZodType
-  ? z.input<S>
-  : S extends StandardOpenAPISchema<infer I, any>
-    ? I
-    : never
+type InferInput<S> =
+  S extends ZodType ? z.input<S>
+  : S extends StandardOpenAPISchema<infer Input, unknown> ? Input
+  : never
 
-type InferOutput<S> = S extends ZodType
-  ? z.output<S>
-  : S extends StandardOpenAPISchema<any, infer O>
-    ? O
-    : never
+type InferOutput<S> =
+  S extends ZodType ? z.output<S>
+  : S extends StandardOpenAPISchema<unknown, infer Output> ? Output
+  : never
 
 type RouteParameterBase = NonNullable<RouteConfigBase['request']>['params']
 
@@ -557,14 +551,6 @@ export class OpenAPIHono<
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
   #parentApp?: OpenAPIHono<any, any, any>
-  /**
-   * Routes carrying a non-Zod schema, held unconverted until a document is asked for.
-   *
-   * They cannot go into `openAPIRegistry` at `openapi()` time: converting a schema needs a
-   * JSON Schema target, and which target applies is not known until the caller picks
-   * `getOpenAPIDocument` (3.0) or `getOpenAPI31Document` (3.1). Zod routes have no such
-   * problem and are registered eagerly, exactly as before.
-   */
   #standardRoutes: RouteConfig[] = []
 
   constructor(init?: HonoInit<E>) {
