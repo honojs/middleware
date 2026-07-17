@@ -1,8 +1,5 @@
 # @hono/inertia
 
-> [!WARNING]
-> **Experimental.**
-
 **The SPA, minus the API.** [Inertia.js](https://inertiajs.com) on [Hono](https://hono.dev) — render React, Vue, or Svelte straight from your routes and skip the REST endpoints, the client side router, and the data fetching layer entirely.
 
 ```ts
