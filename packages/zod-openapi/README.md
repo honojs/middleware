@@ -363,6 +363,18 @@ Valibot does not implement the interface directly — wrap its schemas with [`to
 
 Request bodies and parameters are documented from a schema's **input** type and responses from its **output** type, so a field with a default is optional in a request body and guaranteed in a response.
 
+Libraries may only support certain JSON Schema dialects. By default OpenAPI 3.0 tries `openapi-3.0` then falls back to `draft-07`, and OpenAPI 3.1 asks for `draft-2020-12`. Override that when you know what your validators support:
+
+```ts
+const app = new OpenAPIHono({
+  // ArkType rejects openapi-3.0 — ask for draft-07 directly.
+  jsonSchemaTargets: { '3.0': ['draft-07'] },
+})
+
+// Or per document:
+app.getOpenAPIDocument(config, undefined, { jsonSchemaTargets: ['draft-07'] })
+```
+
 ### The Registry
 
 You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-openapi#the-registry) object via `app.openAPIRegistry`:
@@ -647,7 +659,7 @@ const HeadersSchema = z.object({
 
 Two things behave differently for schemas from other libraries:
 
-- **`app.doc()` and OpenAPI 3.0.** A library is allowed to throw for a JSON Schema target it does not implement, and ArkType implements only the drafts. Those schemas fall back to `draft-07`, which OpenAPI 3.0 is close to but not identical with, so constructs 3.0 lacks pass through unconverted. `app.doc31()` needs no fallback, since OpenAPI 3.1 already is `draft-2020-12`.
+- **`app.doc()` and OpenAPI 3.0.** A library is allowed to throw for a JSON Schema target it does not implement, and ArkType implements only the drafts. By default those schemas fall back to `draft-07`, which OpenAPI 3.0 is close to but not identical with, so constructs 3.0 lacks pass through unconverted. Set `jsonSchemaTargets` (on the app or per `getOpenAPIDocument` / `doc` call) to pick the dialect yourself — e.g. `{ '3.0': ['draft-07'] }` for ArkType. `app.doc31()` needs no fallback, since OpenAPI 3.1 already is `draft-2020-12`.
 - **Validation hooks.** `result.error` is a `ZodError` for Zod schemas but an array of Standard Schema issues for other libraries, while the `Hook` type still calls it a `ZodError`.
 
 ## References

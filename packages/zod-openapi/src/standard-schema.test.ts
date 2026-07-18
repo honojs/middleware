@@ -292,6 +292,57 @@ describe('target support', () => {
     })
   })
 
+  it('lets the user pick which JSON Schema dialect to request', () => {
+    const app = new OpenAPIHono({
+      // ArkType rejects openapi-3.0 — ask for draft-07 only, no silent fallback chain.
+      jsonSchemaTargets: { '3.0': ['draft-07'] },
+    })
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/ark',
+        request: { query: type({ name: 'string' }) },
+        responses: { 200: { description: 'ok' } },
+      }),
+      (c) => c.json({}, 200)
+    )
+
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/ark': {
+          get: {
+            parameters: [{ in: 'query', name: 'name', required: true, schema: { type: 'string' } }],
+          },
+        },
+      },
+    })
+  })
+
+  it('accepts a per-document override of the JSON Schema dialect', () => {
+    const app = new OpenAPIHono()
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/ark',
+        request: { query: type({ name: 'string' }) },
+        responses: { 200: { description: 'ok' } },
+      }),
+      (c) => c.json({}, 200)
+    )
+
+    expect(
+      app.getOpenAPIDocument(config, undefined, { jsonSchemaTargets: ['draft-07'] })
+    ).toMatchObject({
+      paths: {
+        '/ark': {
+          get: {
+            parameters: [{ in: 'query', name: 'name', required: true, schema: { type: 'string' } }],
+          },
+        },
+      },
+    })
+  })
+
   it('names the vendor when no target is supported', () => {
     const broken = {
       '~standard': {

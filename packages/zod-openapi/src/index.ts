@@ -43,7 +43,7 @@ import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import type { ZodType, ZodError } from 'zod'
 import { z } from 'zod'
-import type { StandardOpenAPISchema } from './standard-schema'
+import type { StandardOpenAPISchema, JSONSchemaTarget } from './standard-schema'
 import {
   TARGETS,
   convertRouteSchemas,
@@ -286,6 +286,16 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
 
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
+  /**
+   * JSON Schema dialects to try when converting Standard Schema libraries into an OpenAPI
+   * document. Defaults try OpenAPI-native targets first, then draft fallbacks. Override when
+   * a library only supports specific dialects — e.g. ArkType with OpenAPI 3.0:
+   * `{ '3.0': ['draft-07'] }`.
+   */
+  jsonSchemaTargets?: {
+    '3.0'?: JSONSchemaTarget[]
+    '3.1'?: JSONSchemaTarget[]
+  }
 }
 type HonoInit<E extends Env> = ConstructorParameters<typeof Hono>[0] & OpenAPIHonoOptions<E>
 
@@ -413,6 +423,15 @@ export type OpenAPIGeneratorOptions = ConstructorParameters<typeof OpenApiGenera
 
 export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
   OpenAPIGeneratorOptions | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
+
+/** Per-call options for document generation beyond `@asteasolutions/zod-to-openapi`. */
+export type OpenAPIDocumentOptions = {
+  /**
+   * JSON Schema dialects to try for non-Zod schemas on this document. Overrides the app's
+   * `jsonSchemaTargets` for the matching OpenAPI version.
+   */
+  jsonSchemaTargets?: JSONSchemaTarget[]
+}
 
 /**
  * Utility type to convert Hono types to OpenAPIHono types.
@@ -552,11 +571,13 @@ export class OpenAPIHono<
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
   #parentApp?: OpenAPIHono<any, any, any>
   #standardRoutes: RouteConfig[] = []
+  #jsonSchemaTargets: NonNullable<OpenAPIHonoOptions<E>['jsonSchemaTargets']>
 
   constructor(init?: HonoInit<E>) {
     super(init)
     this.openAPIRegistry = new OpenAPIRegistry()
     this.defaultHook = init?.defaultHook
+    this.#jsonSchemaTargets = init?.jsonSchemaTargets ?? {}
   }
 
   #resolveDefaultHook(): OpenAPIHonoOptions<any>['defaultHook'] {
@@ -796,24 +817,32 @@ export class OpenAPIHono<
    * the version being generated. When there are none, the existing registry is handed back
    * untouched so a Zod-only app behaves exactly as it did before.
    */
-  #definitionsFor(version: '3.0' | '3.1'): OpenAPIRegistry['definitions'] {
+  #definitionsFor(
+    version: '3.0' | '3.1',
+    jsonSchemaTargets?: JSONSchemaTarget[]
+  ): OpenAPIRegistry['definitions'] {
     if (this.#standardRoutes.length === 0) {
       return this.openAPIRegistry.definitions
     }
 
+    const targets = jsonSchemaTargets ?? this.#jsonSchemaTargets[version] ?? TARGETS[version]
     const registry = new OpenAPIRegistry()
     registry.definitions.push(...this.openAPIRegistry.definitions)
     for (const route of this.#standardRoutes) {
-      registry.registerPath(convertRouteSchemas(route, TARGETS[version]) as RouteConfigBase)
+      registry.registerPath(convertRouteSchemas(route, targets) as RouteConfigBase)
     }
     return registry.definitions
   }
 
   getOpenAPIDocument = (
     objectConfig: OpenAPIObjectConfig,
-    generatorConfig?: OpenAPIGeneratorOptions
+    generatorConfig?: OpenAPIGeneratorOptions,
+    documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIObject => {
-    const generator = new OpenApiGeneratorV3(this.#definitionsFor('3.0'), generatorConfig)
+    const generator = new OpenApiGeneratorV3(
+      this.#definitionsFor('3.0', documentOptions?.jsonSchemaTargets),
+      generatorConfig
+    )
     const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
@@ -821,9 +850,13 @@ export class OpenAPIHono<
 
   getOpenAPI31Document = (
     objectConfig: OpenAPIObjectConfig,
-    generatorConfig?: OpenAPIGeneratorOptions
+    generatorConfig?: OpenAPIGeneratorOptions,
+    documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIV31bject => {
-    const generator = new OpenApiGeneratorV31(this.#definitionsFor('3.1'), generatorConfig)
+    const generator = new OpenApiGeneratorV31(
+      this.#definitionsFor('3.1', documentOptions?.jsonSchemaTargets),
+      generatorConfig
+    )
     const document = generator.generateDocument(objectConfig)
     // @ts-expect-error the _basePath is a private property
     return this._basePath ? addBasePathToDocument(document, this._basePath) : document
@@ -832,7 +865,8 @@ export class OpenAPIHono<
   doc = <P extends string>(
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
-    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>,
+    documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
@@ -840,7 +874,7 @@ export class OpenAPIHono<
       const generatorConfig =
         typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPIDocument(objectConfig, generatorConfig)
+        const document = this.getOpenAPIDocument(objectConfig, generatorConfig, documentOptions)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -851,7 +885,8 @@ export class OpenAPIHono<
   doc31 = <P extends string>(
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
-    configureGenerator?: OpenAPIGeneratorConfigure<E, P>
+    configureGenerator?: OpenAPIGeneratorConfigure<E, P>,
+    documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
@@ -859,7 +894,7 @@ export class OpenAPIHono<
       const generatorConfig =
         typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPI31Document(objectConfig, generatorConfig)
+        const document = this.getOpenAPI31Document(objectConfig, generatorConfig, documentOptions)
         return c.json(document)
       } catch (e: any) {
         return c.json(e, 500)
@@ -966,6 +1001,7 @@ export class OpenAPIHono<
     const cloned = super.basePath(path)
     const newApp = new OpenAPIHono<E, S, MergePath<BasePath, SubPath>>({
       defaultHook: this.defaultHook,
+      jsonSchemaTargets: this.#jsonSchemaTargets,
     })
     newApp.router = cloned.router
     newApp.routes = cloned.routes
@@ -1005,6 +1041,8 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
 
 extendZodWithOpenApi(z)
 export { extendZodWithOpenApi, z }
+export type { JSONSchemaTarget }
+export { TARGETS }
 
 function addBasePathToDocument(document: Record<string, any>, basePath: string) {
   const updatedPaths: Record<string, any> = {}

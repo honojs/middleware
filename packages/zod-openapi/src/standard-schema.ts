@@ -15,7 +15,8 @@ export interface StandardOpenAPISchema<Input = unknown, Output = Input> {
     StandardJSONSchemaV1.Props<Input, Output>
 }
 
-type StandardOpenAPISchemaTarget = StandardJSONSchemaV1.Target
+/** A JSON Schema dialect a Standard Schema library may be asked to emit. */
+export type JSONSchemaTarget = StandardJSONSchemaV1.Target
 
 type JSONSchema = Record<string, unknown>
 
@@ -23,7 +24,7 @@ type JSONSchema = Record<string, unknown>
 type OpenApiMetadata = ReturnType<typeof getOpenApiMetadata>
 
 /**
- * Targets to try per OpenAPI version, in order.
+ * Default targets to try per OpenAPI version, in order.
  *
  * The spec lets a library throw for targets it does not implement, and support is uneven:
  * Zod emits `openapi-3.0`, while ArkType throws `JSONSchema target 'openapi-3.0' is not
@@ -31,8 +32,11 @@ type OpenApiMetadata = ReturnType<typeof getOpenApiMetadata>
  * `doc()` would be unusable for those libraries — draft-07 is close to the draft-04 that
  * OpenAPI 3.0 builds on, so most schemas survive, but constructs 3.0 lacks pass through
  * unconverted. 3.1 already is draft-2020-12, so it needs no fallback.
+ *
+ * Override per app with `jsonSchemaTargets` on `OpenAPIHono` when a library only supports
+ * a specific dialect (e.g. ArkType → `{ '3.0': ['draft-07'] }`).
  */
-export const TARGETS: Record<'3.0' | '3.1', StandardOpenAPISchemaTarget[]> = {
+export const TARGETS: Record<'3.0' | '3.1', JSONSchemaTarget[]> = {
   '3.0': ['openapi-3.0', 'draft-07'],
   '3.1': ['draft-2020-12'],
 }
@@ -63,7 +67,7 @@ const isStandardJSONSchema = (x: unknown): x is StandardOpenAPISchema => {
 const toJSONSchema = (
   schema: StandardOpenAPISchema,
   kind: 'input' | 'output',
-  targets: StandardOpenAPISchemaTarget[]
+  targets: JSONSchemaTarget[]
 ): JSONSchema => {
   const errors: string[] = []
 
@@ -104,7 +108,7 @@ const carry = (jsonSchema: JSONSchema): z.ZodString =>
 const toContentSchema = (
   schema: StandardOpenAPISchema,
   kind: 'input' | 'output',
-  targets: StandardOpenAPISchemaTarget[]
+  targets: JSONSchemaTarget[]
 ): z.ZodString => carry(toJSONSchema(schema, kind, targets))
 
 /**
@@ -117,7 +121,7 @@ const toContentSchema = (
  */
 const toParameterSchema = (
   schema: StandardOpenAPISchema,
-  targets: StandardOpenAPISchemaTarget[]
+  targets: JSONSchemaTarget[]
 ): z.ZodObject<Record<string, z.ZodString | z.ZodOptional<z.ZodString>>> => {
   // Parameters describe what the client sends, so they reflect the input type.
   const jsonSchema = toJSONSchema(schema, 'input', targets)
@@ -182,7 +186,7 @@ export const routeUsesStandardSchema = (route: RouteLike): boolean =>
 const convertContent = (
   content: Record<string, { schema?: unknown } | undefined> | undefined,
   kind: 'input' | 'output',
-  targets: StandardOpenAPISchemaTarget[]
+  targets: JSONSchemaTarget[]
 ) =>
   content &&
   Object.fromEntries(
@@ -194,7 +198,7 @@ const convertContent = (
     ])
   )
 
-const convertParameter = (schema: unknown, targets: StandardOpenAPISchemaTarget[]) =>
+const convertParameter = (schema: unknown, targets: JSONSchemaTarget[]) =>
   needsConversion(schema) ? toParameterSchema(schema, targets) : schema
 
 /**
@@ -204,7 +208,7 @@ const convertParameter = (schema: unknown, targets: StandardOpenAPISchemaTarget[
  */
 export const convertRouteSchemas = <R extends RouteLike>(
   route: R,
-  targets: StandardOpenAPISchemaTarget[]
+  targets: JSONSchemaTarget[]
 ): R => {
   const { request, responses } = route
 
