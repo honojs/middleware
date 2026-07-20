@@ -35,6 +35,7 @@
     { "path": "packages/sentry" },
     { "path": "packages/session" },
     { "path": "packages/ssg-plugins-essential" },
+    { "path": "packages/standard-json-openapi" },
     { "path": "packages/standard-validator" },
     { "path": "packages/structured-logger" },
     { "path": "packages/stytch-auth" },
