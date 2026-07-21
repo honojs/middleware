@@ -814,7 +814,6 @@ export class OpenAPIHono<
     }
 
     app.openAPIRegistry.definitions.forEach((def) => {
-
       switch (def.type) {
         case 'component':
           return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
