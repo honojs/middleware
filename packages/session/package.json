@@ -58,7 +58,7 @@
     "@cloudflare/vitest-pool-workers": "^0.16.10",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "unstorage": "^1.17.4",
     "vitest": "^4.1.7"
   }
