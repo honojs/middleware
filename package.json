@@ -46,7 +46,7 @@
     "publint": "^0.3.16",
     "tsdown": "^0.22.3",
     "turbo": "^2.9.4",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typia": "^12.1.1",
     "vitest": "^4.1.7"
   },

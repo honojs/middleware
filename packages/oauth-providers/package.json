@@ -113,7 +113,7 @@
     "hono": "^4.11.5",
     "msw": "^2.12.10",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.7"
   },
   "engines": {

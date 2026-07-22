@@ -62,6 +62,6 @@
   "devDependencies": {
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
