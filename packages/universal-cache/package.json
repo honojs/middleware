@@ -1,0 +1,66 @@
+{
+  "name": "@hono/universal-cache",
+  "version": "0.0.0",
+  "description": "Universal cache middleware and helpers for Hono",
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm -w run build:pkg",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "test:workerd": "vitest --config vitest.workerd.config.ts",
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/universal-cache"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=4.8.3"
+  },
+  "dependencies": {
+    "lru-cache": "^10.4.3",
+    "unstorage": "^1.17.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.16.10",
+    "@cloudflare/workers-types": "^4.20250612.0",
+    "hono": "^4.11.5",
+    "ohash": "^2.0.11",
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "inlinedDependencies": {
+    "ohash": "2.0.11"
+  }
+}
