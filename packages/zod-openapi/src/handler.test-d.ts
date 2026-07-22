@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { MiddlewareToHandlerType, OfHandlerType, RouteHandler } from '.'
-import { OpenAPIHono, createRoute, z } from '.'
+import { OpenAPIHono, createRoute, defineOpenAPIRoute, z } from '.'
 
 describe('supports async handler', () => {
   const route = createRoute({
@@ -227,5 +227,43 @@ describe('supports async handler', () => {
     hono.openapi(routeWithDefault, successHandler)
     hono.openapi(routeWithDefault, notFoundHandler)
     hono.openapi(routeWithDefault, errorHandler)
+  })
+})
+
+describe('defineOpenAPIRoute', () => {
+  test('handler infers env type from route middleware', () => {
+    // https://github.com/honojs/middleware/issues/1879
+    type Identity = { id: string }
+    type CustomEnv = { Variables: { identity: Identity } }
+
+    const requireIdentity: MiddlewareHandler<CustomEnv> = async (c, next) => {
+      c.set('identity', { id: '123' })
+      await next()
+    }
+
+    const definition = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/me',
+        middleware: [requireIdentity] as const,
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ id: z.string() }),
+              },
+            },
+            description: 'ok',
+          },
+        },
+      }),
+      handler: (c) => {
+        type IdentityType = typeof c.var.identity
+        type Verify = Expect<Equal<IdentityType, Identity>>
+        return c.json({ id: c.var.identity.id }, 200)
+      },
+    })
+
+    new OpenAPIHono().openapiRoutes([definition])
   })
 })

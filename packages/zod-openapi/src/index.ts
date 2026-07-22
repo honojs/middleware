@@ -401,9 +401,16 @@ type ComputeInput<R extends RouteConfig> = InputTypeParam<R> &
   InputTypeForm<R> &
   InputTypeJson<R>
 
+// Helper: Merge env with route middleware env (if any)
+type EnvFromRoute<R extends RouteConfig, E extends Env> = R['middleware'] extends
+  | MiddlewareHandler[]
+  | MiddlewareHandler
+  ? RouteMiddlewareParams<R>['env'] & E
+  : E
+
 // Helper: Calculate the expected Handler type for a specific RouteConfig
 type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
-  E,
+  EnvFromRoute<R, E>,
   ConvertPathType<R['path']>,
   ComputeInput<R>,
   R extends {
@@ -422,7 +429,7 @@ type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
 type HookFromRoute<R extends RouteConfig, E extends Env> =
   | Hook<
       ComputeInput<R>,
-      E,
+      EnvFromRoute<R, E>,
       ConvertPathType<R['path']>,
       R extends {
         responses: {
