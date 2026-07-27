@@ -38,7 +38,7 @@ const userSchema = z.strictObject({
     .max(10, 'Username cannot be longer than 10 characters')
     .regex(/^[\p{L}\p{N}_]+$/u, 'Username must contain only alphanumeric characters'),
   password: z.string().trim().min(4, 'Password must be at least 4 characters long'),
-});
+})
 
 export {
   headerSchema,

@@ -491,53 +491,51 @@ describe('Standard Schema Validation', () => {
 })
 
 describe('sortErrors', () => {
+  const testData = {
+    username: 'Super John Doe',
+    password: '123',
+    role: 'admin',
+  }
 
-	it('sorts Zod validation errors by path', () => {
-		// Arrange
-		const { error: { issues = [] } = {} } = zodSchemas.userSchema.safeParse({
-			username: 'Super John Doe',
-			password: '123',
-			role: 'admin',
-		});
+  const testResult = {
+    formErrors: ['Unrecognized key: "role"'],
+    fieldErrors: {
+      username: [
+        'Username cannot be longer than 10 characters',
+        'Username must contain only alphanumeric characters',
+      ],
+      password: ['Password must be at least 4 characters long'],
+    },
+  }
 
-		// Act
-		const sortedErrors = sortErrors(issues);
+  it('sorts Zod validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await zodSchemas.userSchema['~standard'].validate(testData)
 
-		// Assert
-		expect(sortedErrors).toStrictEqual({
-			formErrors: ['Unrecognized key: "role"'],
-			fieldErrors: {
-				username: [
-					'Username cannot be longer than 10 characters',
-					'Username must contain only alphanumeric characters',
-				],
-				password: ['Password must be at least 4 characters long'],
-			},
-		});
-	});
+    // Act
+    const sortedErrors = sortErrors(issues)
 
-	it('sorts Valibot validation errors by path', async () => {
-		// Arrange
-		const { issues = [] } = await valibotSchemas.userSchema['~standard'].validate({
-			username: 'Super John Doe',
-			password: '123',
-			role: 'admin',
-		});
+    // Assert
+    expect(sortedErrors).toStrictEqual(testResult)
+  })
 
-		// Act
-		const sortedErrors = sortErrors(issues);
+  it('sorts Valibot validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await valibotSchemas.userSchema['~standard'].validate(testData)
 
-		// Assert
-		expect(sortedErrors).toStrictEqual({
-			formErrors: [],
-			fieldErrors: {
-				username: [
-					'Username cannot be longer than 10 characters',
-					'Username must contain only alphanumeric characters',
-				],
-				password: ['Password must be at least 4 characters long'],
-				role: ['Invalid key: Expected never but received "role"'],
-			},
-		});
-	});
-});
+    // Act
+    const sortedErrors = sortErrors(issues)
+
+    // Assert
+    expect(sortedErrors).toStrictEqual(testResult)
+  })
+
+  it('sorts ArkType validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await arktypeSchemas.userSchema['~standard'].validate(testData)
+    // Act
+    const sortedErrors = sortErrors(issues)
+    // Assert
+    expect(sortedErrors).toStrictEqual(testResult)
+  })
+})
