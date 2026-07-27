@@ -162,3 +162,36 @@ const sValidator = <
 
 export type { Hook }
 export { sValidator }
+
+interface SortedIssues {
+  [path: PropertyKey]: string[]
+}
+
+/**
+ * Sorts validation errors by their paths.
+ * @param issues An array of {@link StandardSchemaV1.Issue validation issues}.
+ * @returns An object with sorted form and field errors.
+ */
+export const sortErrors = (issues: readonly StandardSchemaV1.Issue[]): {
+  formErrors: string[];
+  fieldErrors: SortedIssues;
+} => {
+  const formErrors: string[] = [];
+  const fieldErrors: SortedIssues = {};
+
+  const hasKey = (key?: PropertyKey) => key != undefined;
+
+  for (const { path = [], message } of issues) {
+    const [issuePath] = path;
+    const key = typeof issuePath === 'object' ? issuePath.key : issuePath;
+
+    if (hasKey(key) && !fieldErrors[key]) {
+      fieldErrors[key] = []
+    };
+
+    const errors = hasKey(key) ? fieldErrors[key] : formErrors;
+    errors?.push(message);
+  }
+
+  return { formErrors, fieldErrors };
+}
