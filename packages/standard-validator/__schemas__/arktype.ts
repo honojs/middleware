@@ -31,12 +31,8 @@ const headerSchema = type({
 })
 
 const userSchema = type({
-  username: type('string')
-    .atMostLength(10)
-    .configure({ message: 'Username cannot be longer than 10 characters' })
-    .matching(/^[\p{L}\p{N}_]+$/u)
-    .configure({ message: 'Username must contain only alphanumeric characters' }),
-  password: type.pipe(type.string, (s) => s.trim(), type.string.atLeastLength(4)),
+  username: type('string.alphanumeric <= 10'),
+  password: type('string >= 4').pipe((value) => value.trim()),
 })
 
 export {
