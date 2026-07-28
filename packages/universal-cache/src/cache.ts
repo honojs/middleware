@@ -110,6 +110,7 @@ interface CacheMutationState {
 
 const pendingMiddlewareRequests: PendingRequests = new WeakMap()
 const pendingFunctionRequests: PendingRequests = new WeakMap()
+const pendingMiddlewareFreshUntil = new WeakMap<Promise<unknown>, number>()
 const cacheMutations = new WeakMap<Storage, Map<string, CacheMutationState>>()
 const functionNamespace = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 let functionNamespaceIndex = 0
@@ -818,6 +819,21 @@ export const cacheMiddleware = (
     const shouldCoalesce = !isRevalidateRequest && !shouldInvalidate
     let staleResponse: Response | undefined
 
+    const getPendingResponse = () => {
+      const pending = requests.get(pendingKey) as Promise<Response | null> | undefined
+      if (!pending) {
+        return undefined
+      }
+      const freshUntil = pendingMiddlewareFreshUntil.get(pending)
+      if (freshUntil !== undefined && Date.now() > freshUntil) {
+        if (requests.get(pendingKey) === pending) {
+          requests.delete(pendingKey)
+        }
+        return undefined
+      }
+      return pending
+    }
+
     const servePendingResponse = async (pending: Promise<Response | null>) => {
       const shared = await pending
       if (!shared) {
@@ -830,7 +846,7 @@ export const cacheMiddleware = (
     }
 
     if (shouldCoalesce) {
-      const pending = requests.get(pendingKey) as Promise<Response | null> | undefined
+      const pending = getPendingResponse()
       if (pending) {
         const pendingResponse = await servePendingResponse(pending)
         return pendingResponse === true ? ctx.res : pendingResponse
@@ -853,7 +869,7 @@ export const cacheMiddleware = (
     }
 
     if (shouldCoalesce) {
-      const pending = requests.get(pendingKey) as Promise<Response | null> | undefined
+      const pending = getPendingResponse()
       if (pending) {
         const pendingResponse = await servePendingResponse(pending)
         return pendingResponse === true ? ctx.res : pendingResponse
@@ -890,6 +906,7 @@ export const cacheMiddleware = (
       pendingPromise = new Promise<Response | null>((resolve) => {
         resolvePending = resolve
       })
+      pendingMiddlewareFreshUntil.set(pendingPromise, Date.now() + maxAge * 1000)
       requests.set(pendingKey, pendingPromise)
       pendingTimeout = setTimeout(() => {
         pendingSettled = true
@@ -984,7 +1001,6 @@ export const cacheMiddleware = (
       serialize,
       generation
     )
-    detachPending()
     void cacheWrite.then(async () => {
       const cachedResult = await readCachedResponse(
         storage,

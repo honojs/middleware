@@ -1256,23 +1256,30 @@ describe('@hono/universal-cache', () => {
     it('supports custom serialize/deserialize for responses', async () => {
       const app = new Hono()
       let count = 0
+      let releaseSerialize: (() => void) | undefined
+      const serializeGate = new Promise<void>((resolve) => {
+        releaseSerialize = resolve
+      })
 
       app.get(
         '/items',
         cacheMiddleware({
           maxAge: 60,
-          serialize: async (response, context) => ({
-            value: await response.text(),
-            encoding: 'base64',
-            status: response.status,
-            headers: {
-              'content-type': response.headers.get('content-type') ?? 'text/plain;charset=UTF-8',
-            },
-            mtime: context.now,
-            expires: context.now + context.maxAge * 1000,
-            staleExpires: context.now + context.maxAge * 1000,
-            integrity: context.integrity,
-          }),
+          serialize: async (response, context) => {
+            await serializeGate
+            return {
+              value: await response.text(),
+              encoding: 'base64',
+              status: response.status,
+              headers: {
+                'content-type': response.headers.get('content-type') ?? 'text/plain;charset=UTF-8',
+              },
+              mtime: context.now,
+              expires: context.now + context.maxAge * 1000,
+              staleExpires: context.now + context.maxAge * 1000,
+              integrity: context.integrity,
+            }
+          },
           deserialize: (entry) =>
             new Response(entry.value, {
               status: entry.status,
@@ -1286,8 +1293,13 @@ describe('@hono/universal-cache', () => {
       )
 
       const res1 = await app.request('http://localhost/items')
-      const res2 = await app.request('http://localhost/items')
+      const res2Promise = app.request('http://localhost/items')
+      await flushPromises()
+      const countBeforeRelease = count
+      releaseSerialize?.()
+      const res2 = await res2Promise
 
+      expect(countBeforeRelease).toBe(1)
       expect(await res1.text()).toBe('value-1')
       expect(await res2.text()).toBe('value-1')
       expect(count).toBe(1)
