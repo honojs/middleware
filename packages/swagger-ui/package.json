@@ -46,7 +46,7 @@
     "@types/swagger-ui-dist": "^3.30.6",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.7"
   },
   "inlinedDependencies": {

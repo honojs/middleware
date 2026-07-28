@@ -46,7 +46,7 @@
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.7"
   }
 }

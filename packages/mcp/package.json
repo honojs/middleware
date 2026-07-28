@@ -59,7 +59,7 @@
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.3",
     "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.7",
     "zod": "^4.2.1"
   }
