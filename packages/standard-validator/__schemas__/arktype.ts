@@ -33,6 +33,7 @@ const headerSchema = type({
 const userSchema = type({
   username: type('string.alphanumeric <= 10'),
   password: type('string >= 4').pipe((value) => value.trim()),
+  '+': 'reject',
 })
 
 export {
