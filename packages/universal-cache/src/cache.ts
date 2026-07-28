@@ -107,6 +107,10 @@ interface CacheMutationState {
   pending: boolean
   tail: Promise<void>
 }
+interface CacheMutationSnapshot {
+  generation: number
+  pending: boolean
+}
 
 const pendingMiddlewareRequests: PendingRequests = new WeakMap()
 const pendingFunctionRequests: PendingRequests = new WeakMap()
@@ -132,6 +136,14 @@ const getCacheMutations = (storage: Storage) => {
     cacheMutations.set(storage, mutations)
   }
   return mutations
+}
+
+const getCacheMutationSnapshot = (storage: Storage, key: string): CacheMutationSnapshot => {
+  const state = cacheMutations.get(storage)?.get(key)
+  return {
+    generation: state?.generation ?? 0,
+    pending: state?.pending ?? false,
+  }
 }
 
 const beginCacheMutation = (storage: Storage, key: string) => {
@@ -227,24 +239,27 @@ const readCacheEntry = async (storage: Storage, key: string) => {
   }
 }
 
-const removeCacheEntry = async (storage: Storage, key: string) => {
-  let timeout: ReturnType<typeof setTimeout> | undefined
-  try {
-    await Promise.race([
-      storage.removeItem(key),
-      new Promise<never>((_, reject) => {
-        timeout = setTimeout(() => {
-          reject(new Error('Cache storage removal timed out'))
-        }, DEFAULT_STORAGE_READ_TIME)
-      }),
-    ])
-  } catch {
-    // Cache failures must not fail the request.
-  } finally {
-    if (timeout) {
-      clearTimeout(timeout)
-    }
+const removeCacheEntry = async (
+  storage: Storage,
+  key: string,
+  expectedMutation: CacheMutationSnapshot
+) => {
+  const currentMutation = getCacheMutationSnapshot(storage, key)
+  if (
+    expectedMutation.pending ||
+    currentMutation.pending ||
+    currentMutation.generation !== expectedMutation.generation
+  ) {
+    return
   }
+  const generation = beginCacheMutation(storage, key)
+  const mutation = queueCacheMutation(storage, key, generation, () => storage.removeItem(key))
+  await waitForCacheMutation(mutation)
+  const latestMutation = cacheMutations.get(storage)?.get(key)?.tail
+  if (latestMutation && latestMutation !== mutation) {
+    await waitForCacheMutation(latestMutation)
+  }
+  finishCacheMutation(storage, key, generation)
 }
 
 const setRequestCacheDefaults = (ctx: Context, options: CacheDefaults = {}) => {
@@ -317,10 +332,14 @@ const getDefaultHandlerKey = async (
 ) => {
   const url = new URL(ctx.req.url)
   const method = ctx.req.method.toUpperCase()
-  const body =
-    method === 'GET' || method === 'HEAD'
-      ? ''
-      : `:${encodeBase64(await ctx.req.raw.clone().arrayBuffer())}`
+  let body = ''
+  if (method !== 'GET' && method !== 'HEAD') {
+    try {
+      body = `:${encodeBase64(await ctx.req.arrayBuffer())}`
+    } catch {
+      return
+    }
+  }
   const fullPath = `${method}:${url.origin}${url.pathname}${url.search}${body}`
 
   let pathPrefix = '-'
@@ -581,6 +600,9 @@ const resolveHandlerCacheKey = async (
   const key = options.getKey
     ? await options.getKey(ctx)
     : await getDefaultHandlerKey(ctx, options.varies, hashFn)
+  if (key === undefined) {
+    return
+  }
   const storageKey = createStorageKey(base, group, name, key)
   const integrity = options.integrity ?? (await hashFn(stableStringify([group, name])))
   return { name, key, storageKey, integrity }
@@ -592,21 +614,22 @@ const maybeServeCachedResponse = async (
   integrity: string,
   cachedRaw: unknown,
   deserialize: NonNullable<CacheMiddlewareOptions['deserialize']>,
+  expectedMutation: CacheMutationSnapshot,
   validate?: CacheMiddlewareOptions['validate']
 ): Promise<{ response: Response; stale: boolean } | null> => {
   const cached = isValidCachedResponseEntry(cachedRaw) ? cachedRaw : null
   if (!cached) {
     if (cachedRaw !== null) {
-      await removeCacheEntry(storage, storageKey)
+      await removeCacheEntry(storage, storageKey, expectedMutation)
     }
     return null
   }
   if (cached.integrity !== integrity) {
-    await removeCacheEntry(storage, storageKey)
+    await removeCacheEntry(storage, storageKey, expectedMutation)
     return null
   }
   if (validate && validate(cached) === false) {
-    await removeCacheEntry(storage, storageKey)
+    await removeCacheEntry(storage, storageKey, expectedMutation)
     return null
   }
 
@@ -618,7 +641,7 @@ const maybeServeCachedResponse = async (
     return { response: await deserialize(cached), stale: true }
   }
 
-  await removeCacheEntry(storage, storageKey)
+  await removeCacheEntry(storage, storageKey, expectedMutation)
   return null
 }
 
@@ -694,6 +717,7 @@ const readCachedResponse = async (
   options: CacheMiddlewareOptions,
   deserialize: NonNullable<CacheMiddlewareOptions['deserialize']>
 ) => {
+  const expectedMutation = getCacheMutationSnapshot(storage, storageKey)
   const cachedRaw = await readCacheEntry(storage, storageKey)
   try {
     return await maybeServeCachedResponse(
@@ -702,10 +726,11 @@ const readCachedResponse = async (
       integrity,
       cachedRaw,
       deserialize,
+      expectedMutation,
       options.validate
     )
   } catch {
-    await removeCacheEntry(storage, storageKey)
+    await removeCacheEntry(storage, storageKey, expectedMutation)
     return null
   }
 }
@@ -812,7 +837,11 @@ export const cacheMiddleware = (
       return next()
     }
 
-    const { storageKey, integrity } = await resolveHandlerCacheKey(ctx, merged, base, group, hashFn)
+    const resolvedKey = await resolveHandlerCacheKey(ctx, merged, base, group, hashFn)
+    if (!resolvedKey) {
+      return next()
+    }
+    const { storageKey, integrity } = resolvedKey
     const shouldInvalidate = await shouldInvalidateMiddlewareCache(ctx, merged)
     const requests = getPendingRequests(pendingMiddlewareRequests, storage)
     const pendingKey = stableStringify([storageKey, integrity])
@@ -1157,6 +1186,7 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
   serialize: NonNullable<CacheFunctionOptions<TArgs, TResult, TStored>['serialize']>,
   deserialize: NonNullable<CacheFunctionOptions<TArgs, TResult, TStored>['deserialize']>,
   pendingRequests: PendingRequests,
+  expectedMutation: CacheMutationSnapshot,
   validate?: CacheFunctionOptions<TArgs, TResult, TStored>['validate'],
   validateArgs?: TArgs
 ): Promise<TResult | typeof CACHE_MISS> => {
@@ -1164,13 +1194,13 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
     return CACHE_MISS
   }
   if (cached.integrity !== integrity) {
-    await removeCacheEntry(storage, storageKey)
+    await removeCacheEntry(storage, storageKey, expectedMutation)
     return CACHE_MISS
   }
   if (validate) {
     const args = validateArgs ?? ([] as unknown as TArgs)
     if (validate(cached, ...args) === false) {
-      await removeCacheEntry(storage, storageKey)
+      await removeCacheEntry(storage, storageKey, expectedMutation)
       return CACHE_MISS
     }
   }
@@ -1215,7 +1245,7 @@ const maybeServeCachedFunctionValue = async <TResult, TStored, TArgs extends unk
     }
     return (await deserialize(cached)) as TResult
   }
-  await removeCacheEntry(storage, storageKey)
+  await removeCacheEntry(storage, storageKey, expectedMutation)
   return CACHE_MISS
 }
 
@@ -1265,6 +1295,7 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
     const storageKey = await getFunctionStorageKey(merged, base, group, name, args, hashFn)
     const shouldInvalidate = await shouldInvalidateFunctionCache(merged, args)
 
+    const expectedMutation = getCacheMutationSnapshot(storage, storageKey)
     const cachedRaw = shouldInvalidate ? null : await readCacheEntry(storage, storageKey)
     let cached: CachedFunctionEntry<TStored> | null = null
     try {
@@ -1273,7 +1304,7 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
       cached = null
     }
     if (!cached && cachedRaw !== null) {
-      await removeCacheEntry(storage, storageKey)
+      await removeCacheEntry(storage, storageKey, expectedMutation)
     }
     let cachedValue: TResult | typeof CACHE_MISS = CACHE_MISS
     try {
@@ -1289,11 +1320,12 @@ export const cacheFunction = <TArgs extends unknown[], TResult, TStored = TResul
         serialize,
         deserialize,
         pendingFunctionRequests,
+        expectedMutation,
         merged.validate,
         args
       )
     } catch {
-      await removeCacheEntry(storage, storageKey)
+      await removeCacheEntry(storage, storageKey, expectedMutation)
     }
     if (cachedValue !== CACHE_MISS) {
       return cachedValue

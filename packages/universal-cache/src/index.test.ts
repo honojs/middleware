@@ -250,6 +250,63 @@ describe('@hono/universal-cache', () => {
       expect(await (await app.request('http://localhost/items')).text()).toBe('new')
     })
 
+    it('does not let delayed invalid-entry removal erase a newer response', async () => {
+      const storage = createCacheStorage()
+      const storageKey = createTestStorageKey('cache', 'hono/handlers', 'items', 'key')
+      await storage.setItem(storageKey, { value: 'malformed' })
+      const originalRemoveItem = storage.removeItem.bind(storage)
+      let markRemoveStarted: (() => void) | undefined
+      let releaseRemove: (() => void) | undefined
+      const removeStarted = new Promise<void>((resolve) => {
+        markRemoveStarted = resolve
+      })
+      const removeGate = new Promise<void>((resolve) => {
+        releaseRemove = resolve
+      })
+      vi.spyOn(storage, 'removeItem').mockImplementation(async (key) => {
+        markRemoveStarted?.()
+        await removeGate
+        await originalRemoveItem(key)
+      })
+
+      const app = new Hono()
+      let freshCount = 0
+      app.onError(() => new Response('failed', { status: 500 }))
+      app.get(
+        '/items',
+        cacheMiddleware({
+          getKey: () => 'key',
+          integrity: 'integrity',
+          maxAge: 60,
+          name: 'items',
+          revalidateHeader: 'x-revalidate',
+          shouldRevalidate: () => true,
+          storage,
+        }),
+        (c) => {
+          if (c.req.header('x-fail') === '1') {
+            throw new Error('origin failed')
+          }
+          return c.text(`fresh-${++freshCount}`)
+        }
+      )
+
+      const invalidRead = app.request('http://localhost/items', {
+        headers: { 'x-fail': '1' },
+      })
+      await removeStarted
+      const refreshed = await app.request('http://localhost/items', {
+        headers: { 'x-revalidate': '1' },
+      })
+      expect(await refreshed.text()).toBe('fresh-1')
+      await flushPromises()
+      releaseRemove?.()
+
+      expect((await invalidRead).status).toBe(500)
+      expect(await (await app.request('http://localhost/items')).text()).toBe('fresh-1')
+      expect(freshCount).toBe(1)
+    })
+
     it('prevents manual revalidation from being overwritten by an older fill', async () => {
       const app = new Hono()
       let count = 0
@@ -347,6 +404,46 @@ describe('@hono/universal-cache', () => {
       expect(await (await request('one')).text()).toBe('one:1')
       expect(await (await request('two')).text()).toBe('two:2')
       expect(await (await request('one')).text()).toBe('one:1')
+      expect(count).toBe(2)
+    })
+
+    it('reuses request bodies read by earlier Hono middleware', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.use('/items', async (c, next) => {
+        await c.req.text()
+        await next()
+      })
+      app.post('/items', cacheMiddleware({ maxAge: 60, methods: ['POST'] }), async (c) => {
+        count += 1
+        return c.text(`${await c.req.text()}:${count}`)
+      })
+
+      const request = () => app.request('http://localhost/items', { body: 'one', method: 'POST' })
+
+      expect(await (await request()).text()).toBe('one:1')
+      expect(await (await request()).text()).toBe('one:1')
+      expect(count).toBe(1)
+    })
+
+    it('bypasses caching when a custom method body cannot be replayed', async () => {
+      const app = new Hono()
+      let count = 0
+
+      app.use('/items', async (c, next) => {
+        await c.req.raw.text()
+        await next()
+      })
+      app.post('/items', cacheMiddleware({ maxAge: 60, methods: ['POST'] }), (c) => {
+        count += 1
+        return c.text(String(count))
+      })
+
+      const request = () => app.request('http://localhost/items', { body: 'one', method: 'POST' })
+
+      expect(await (await request()).text()).toBe('1')
+      expect(await (await request()).text()).toBe('2')
       expect(count).toBe(2)
     })
 
@@ -1955,6 +2052,55 @@ describe('@hono/universal-cache', () => {
       expect(await oldCall).toBe('old')
       await flushPromises()
       expect(await fn()).toBe('new')
+    })
+
+    it('does not let delayed invalid-entry removal erase a newer function result', async () => {
+      const storage = createCacheStorage()
+      const storageKey = createTestStorageKey('cache', 'hono/functions', 'shared', 'key')
+      await storage.setItem(storageKey, { value: 'malformed' })
+      const originalRemoveItem = storage.removeItem.bind(storage)
+      let markRemoveStarted: (() => void) | undefined
+      let releaseRemove: (() => void) | undefined
+      const removeStarted = new Promise<void>((resolve) => {
+        markRemoveStarted = resolve
+      })
+      const removeGate = new Promise<void>((resolve) => {
+        releaseRemove = resolve
+      })
+      vi.spyOn(storage, 'removeItem').mockImplementation(async (key) => {
+        markRemoveStarted?.()
+        await removeGate
+        await originalRemoveItem(key)
+      })
+
+      const common = {
+        getKey: () => 'key',
+        integrity: 'integrity',
+        maxAge: 60,
+        name: 'shared',
+        storage,
+        swr: false,
+      }
+      const failingReader = cacheFunction(() => {
+        throw new Error('origin failed')
+      }, common)
+      const invalidatingWriter = cacheFunction(() => 'fresh', {
+        ...common,
+        keepPreviousOn5xx: true,
+        shouldInvalidateCache: () => true,
+      })
+
+      const invalidRead = failingReader().catch(() => undefined)
+      await removeStarted
+      expect(await invalidatingWriter()).toBe('fresh')
+      await flushPromises()
+      releaseRemove?.()
+      await invalidRead
+
+      await vi.waitFor(async () => {
+        const cached = await storage.getItem<{ value?: unknown }>(storageKey)
+        expect(cached?.value).toBe('fresh')
+      })
     })
 
     it('keeps empty function cache-key segments isolated', async () => {
