@@ -172,7 +172,7 @@ interface SortedIssues {
  * @param issues An array of {@link StandardSchemaV1.Issue validation issues}.
  * @returns An object with sorted form and field errors.
  */
-export const sortErrors = (
+export const flattenErrors = (
   issues: readonly StandardSchemaV1.Issue[]
 ): {
   formErrors: string[]

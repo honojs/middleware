@@ -8,7 +8,7 @@ import { vi } from 'vitest'
 import * as arktypeSchemas from '../__schemas__/arktype'
 import * as valibotSchemas from '../__schemas__/valibot'
 import * as zodSchemas from '../__schemas__/zod'
-import { sValidator, sortErrors } from '.'
+import { sValidator, flattenErrors } from '.'
 
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
@@ -502,7 +502,7 @@ describe('sortErrors', () => {
     const { issues = [] } = await zodSchemas.userSchema['~standard'].validate(testData)
 
     // Act
-    const sortedErrors = sortErrors(issues)
+    const sortedErrors = flattenErrors(issues)
 
     // Assert
     expect(sortedErrors).toStrictEqual({
@@ -522,7 +522,7 @@ describe('sortErrors', () => {
     const { issues = [] } = await valibotSchemas.userSchema['~standard'].validate(testData)
 
     // Act
-    const sortedErrors = sortErrors(issues)
+    const sortedErrors = flattenErrors(issues)
 
     // Assert
     expect(sortedErrors).toStrictEqual({
@@ -543,7 +543,7 @@ describe('sortErrors', () => {
     const { issues = [] } = await arktypeSchemas.userSchema['~standard'].validate(testData)
 
     // Act
-    const sortedErrors = sortErrors(issues)
+    const sortedErrors = flattenErrors(issues)
 
     // Assert
     expect(sortedErrors).toStrictEqual({
