@@ -42,8 +42,7 @@
   "author": "Gustavo Santos Thiago <gusanthiagodv@gmail.com> (https://github.com/gusanthiago)",
   "peerDependencies": {
     "@standard-schema/spec": "^1.0.0",
-    "hono": ">=4.10.0",
-    "zod": "^4.0.0"
+    "hono": ">=4.10.0"
   },
   "devDependencies": {
     "@standard-schema/spec": "^1.1.0",
@@ -56,9 +55,7 @@
     "zod": "^4.2.1"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.5.0",
     "@hono/standard-validator": "workspace:^",
-    "@hono/zod-validator": "workspace:^",
     "openapi3-ts": "^4.5.0"
   },
   "engines": {

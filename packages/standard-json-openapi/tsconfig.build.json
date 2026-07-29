@@ -8,8 +8,5 @@
     "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false
   },
-  "references": [
-    { "path": "../standard-validator/tsconfig.build.json" },
-    { "path": "../zod-validator/tsconfig.build.json" }
-  ]
+  "references": [{ "path": "../standard-validator/tsconfig.build.json" }]
 }

@@ -1,19 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  ResponseConfig as ResponseConfigBase,
-  RouteConfig as RouteConfigBase,
-  ZodMediaTypeObject,
-  ZodRequestBody,
-} from '@asteasolutions/zod-to-openapi'
-import {
-  OpenAPIRegistry,
-  OpenApiGeneratorV3,
-  OpenApiGeneratorV31,
-  extendZodWithOpenApi,
-  getOpenApiMetadata,
-} from '@asteasolutions/zod-to-openapi'
 import { sValidator } from '@hono/standard-validator'
-import { zValidator } from '@hono/zod-validator'
+import type { StandardSchemaV1 } from '@standard-schema/spec'
 import { Hono } from 'hono'
 import type {
   Context,
@@ -28,7 +15,7 @@ import type {
   TypedResponse,
   ValidationTargets,
 } from 'hono'
-import type { H, MergePath, MergeSchemaPath } from 'hono/types'
+import type { MergePath, MergeSchemaPath } from 'hono/types'
 import type {
   ClientErrorStatusCode,
   InfoStatusCode,
@@ -40,16 +27,12 @@ import type {
 import type { JSONParsed, RemoveBlankRecord } from 'hono/utils/types'
 import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
-import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
-import type { ZodType, ZodError } from 'zod'
-import { z } from 'zod'
-import type { StandardOpenAPISchema, JSONSchemaTarget } from './standard-schema'
-import {
-  TARGETS,
-  convertRouteSchemas,
-  needsConversion,
-  routeUsesStandardSchema,
-} from './standard-schema'
+import type { OpenAPIObject as OpenAPIV31Object } from 'openapi3-ts/oas31'
+import type { OpenAPIObjectConfig } from './generator'
+import { OpenAPIRegistry, TARGETS, generateDocument } from './generator'
+import type { ContentObject, MediaTypeObject, RequestBody, RouteConfig } from './route-config'
+import type { JSONSchemaTarget, StandardOpenAPISchema } from './standard-schema'
+import { isStandardJSONSchema } from './standard-schema'
 import type {
   AsArray,
   HasUndefined,
@@ -58,62 +41,15 @@ import type {
   OfHandlerType,
 } from './utils'
 import { toArray } from './utils'
-import { isZod } from './zod-typeguard'
-
-type AnySchema = ZodType | StandardOpenAPISchema
 
 /**
- * Zod types implement Standard Schema too, so `ZodType` has to be checked first — otherwise
- * every Zod schema would infer through `~standard.types` and lose what `z.input`/`z.output`
- * know about transforms, defaults and pipes.
+ * Every supported library — Zod 4 included — reports its two faces through `~standard.types`,
+ * so nothing needs a library-specific escape hatch here.
  */
-type InferInput<S> = S extends ZodType
-  ? z.input<S>
-  : S extends StandardOpenAPISchema<infer Input, unknown>
-    ? Input
-    : never
+type InferInput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferInput<S> : never
+type InferOutput<S> = S extends StandardSchemaV1 ? StandardSchemaV1.InferOutput<S> : never
 
-type InferOutput<S> = S extends ZodType
-  ? z.output<S>
-  : S extends StandardOpenAPISchema<unknown, infer Output>
-    ? Output
-    : never
-
-type RouteParameterBase = NonNullable<RouteConfigBase['request']>['params']
-
-type MediaTypeObject = Omit<ZodMediaTypeObject, 'schema'> & {
-  schema: ZodMediaTypeObject['schema'] | StandardOpenAPISchema
-}
-type ContentObject = Partial<Record<string, MediaTypeObject>>
-type RequestBody = Omit<ZodRequestBody, 'content'> & { content: ContentObject }
-type ResponseConfig = Omit<ResponseConfigBase, 'content' | 'headers'> & {
-  content?: ContentObject
-  headers?: ResponseConfigBase['headers'] | StandardOpenAPISchema
-}
-
-export type RouteConfig = Omit<RouteConfigBase, 'request' | 'responses'> & {
-  request?: {
-    body?: RequestBody
-    params?: RouteParameterBase | StandardOpenAPISchema
-    query?: RouteParameterBase | StandardOpenAPISchema
-    cookies?: RouteParameterBase | StandardOpenAPISchema
-    headers?:
-      RouteParameterBase | ZodType<unknown>[] | StandardOpenAPISchema | StandardOpenAPISchema[]
-  }
-  responses: {
-    [statusCode: string]: ResponseConfig
-  }
-  middleware?: H | H[]
-  hide?: boolean
-}
-
-type RequestTypes = {
-  body?: RequestBody
-  params?: AnySchema
-  query?: AnySchema
-  cookies?: AnySchema
-  headers?: AnySchema | AnySchema[]
-}
+type RequestTypes = NonNullable<RouteConfig['request']>
 
 type IsJson<T> = T extends string
   ? T extends `application/${infer Start}json${infer _End}`
@@ -153,7 +89,7 @@ type InputTypeBase<
   Part extends string,
   Type extends keyof ValidationTargets,
 > = R['request'] extends RequestTypes
-  ? RequestPart<R, Part> extends AnySchema
+  ? RequestPart<R, Part> extends StandardOpenAPISchema
     ? {
         in: {
           [K in Type]: HasUndefined<ValidationTargets[K]> extends true
@@ -178,7 +114,7 @@ type InputTypeJson<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              AnySchema
+              StandardOpenAPISchema
             >
           ? {
               in: {
@@ -204,7 +140,7 @@ type InputTypeForm<R extends RouteConfig> = R['request'] extends RequestTypes
         ? {}
         : R['request']['body']['content'][keyof R['request']['body']['content']] extends Record<
               'schema',
-              AnySchema
+              StandardOpenAPISchema
             >
           ? {
               in: {
@@ -231,7 +167,7 @@ type InputTypeCookie<R extends RouteConfig> = InputTypeBase<R, 'cookies', 'cooki
 type ExtractContent<T> = T extends {
   [K in keyof T]: infer A
 }
-  ? A extends Record<'schema', AnySchema>
+  ? A extends Record<'schema', StandardOpenAPISchema>
     ? InferOutput<A['schema']>
     : never
   : never
@@ -280,7 +216,9 @@ export type Hook<T, E extends Env, P extends string, R> = (
       }
     | {
         success: false
-        error: ZodError
+        // Whatever library the schema came from, failures arrive as Standard Schema issues.
+        error: readonly StandardSchemaV1.Issue[]
+        data: T
       }
   ),
   c: Context<E, P>
@@ -293,10 +231,9 @@ type ConvertPathType<T extends string> = T extends `${infer Start}/{${infer Para
 export type OpenAPIHonoOptions<E extends Env> = {
   defaultHook?: Hook<any, E, any, any>
   /**
-   * JSON Schema dialects to try when converting Standard Schema libraries into an OpenAPI
-   * document. Defaults try OpenAPI-native targets first, then draft fallbacks. Override when
-   * a library only supports specific dialects — e.g. ArkType with OpenAPI 3.0:
-   * `{ '3.0': ['draft-07'] }`.
+   * JSON Schema dialects to try when asking a schema library to describe itself. Defaults try
+   * OpenAPI-native targets first, then draft fallbacks. Override when a library only supports
+   * specific dialects — e.g. ArkType with OpenAPI 3.0: `{ '3.0': ['draft-07'] }`.
    */
   jsonSchemaTargets?: {
     '3.0'?: JSONSchemaTarget[]
@@ -331,23 +268,14 @@ export type RouteHook<
   RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
 >
 
-type OpenAPIObjectConfig = Parameters<
-  InstanceType<typeof OpenApiGeneratorV3>['generateDocument']
->[0]
-
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
   OpenAPIObjectConfig | ((context: Context<E, P>) => OpenAPIObjectConfig)
 
-export type OpenAPIGeneratorOptions = ConstructorParameters<typeof OpenApiGeneratorV3>[1]
-
-export type OpenAPIGeneratorConfigure<E extends Env, P extends string> =
-  OpenAPIGeneratorOptions | ((context: Context<E, P>) => OpenAPIGeneratorOptions)
-
-/** Per-call options for document generation beyond `@asteasolutions/zod-to-openapi`. */
+/** Per-call options for document generation. */
 export type OpenAPIDocumentOptions = {
   /**
-   * JSON Schema dialects to try for non-Zod schemas on this document. Overrides the app's
-   * `jsonSchemaTargets` for the matching OpenAPI version.
+   * JSON Schema dialects to try for this document. Overrides the app's `jsonSchemaTargets` for
+   * the matching OpenAPI version.
    */
   jsonSchemaTargets?: JSONSchemaTarget[]
 }
@@ -461,22 +389,11 @@ export const defineOpenAPIRoute = <
   return def
 }
 
-/**
- * Picks the validator that understands the schema: Zod keeps going through `zValidator`,
- * anything else validates through its Standard Schema interface via `sValidator`.
- */
-const validatorFor = (
-  target: keyof ValidationTargets,
-  schema: AnySchema,
-  hook: any
-): MiddlewareHandler =>
-  needsConversion(schema)
-    ? (sValidator(target, schema, hook) as MiddlewareHandler)
-    : (zValidator(target as any, schema as any, hook) as MiddlewareHandler)
-
-/** The OpenAPI ref id a Zod schema was registered under (`.openapi('Name')`), if any. */
-const refIdOf = (schema: Parameters<typeof getOpenApiMetadata>[0]): string | undefined =>
-  (getOpenApiMetadata(schema)._internal as { refId?: string } | undefined)?.refId
+/** The request-body targets Hono validates, each with the Content-Types it covers. */
+const BODY_TARGETS = [
+  ['json', isJSONContentType],
+  ['form', isFormContentType],
+] as const satisfies readonly (readonly ['json' | 'form', (contentType: string) => boolean])[]
 
 /**
  * When the body is optional, only run validation if the request's Content-Type matches;
@@ -505,7 +422,6 @@ export class OpenAPIHono<
   openAPIRegistry: OpenAPIRegistry
   defaultHook?: OpenAPIHonoOptions<E>['defaultHook']
   #parentApp?: OpenAPIHono<any, any, any>
-  #standardRoutes: RouteConfig[] = []
   #jsonSchemaTargets: NonNullable<OpenAPIHonoOptions<E>['jsonSchemaTargets']>
 
   constructor(init?: HonoInit<E>) {
@@ -584,11 +500,7 @@ export class OpenAPIHono<
     BasePath
   > => {
     if (!hide) {
-      if (routeUsesStandardSchema(route)) {
-        this.#standardRoutes.push(route)
-      } else {
-        this.openAPIRegistry.registerPath(route as RouteConfigBase)
-      }
+      this.openAPIRegistry.registerPath(route as RouteConfig)
     }
 
     const effectiveHook: Hook<I, E, P, HookReturn<R>> = hook ??
@@ -597,23 +509,25 @@ export class OpenAPIHono<
       return resolved?.(result, c) as HookReturn<R> | undefined
     })
 
+    const validate = (target: keyof ValidationTargets, schema: unknown) => {
+      // A hand-written JSON Schema describes the document but cannot validate anything.
+      return isStandardJSONSchema(schema)
+        ? (sValidator(target, schema, effectiveHook as any) as MiddlewareHandler)
+        : undefined
+    }
+
     const validators: MiddlewareHandler[] = []
-
-    if (route.request?.query) {
-      validators.push(validatorFor('query', route.request.query as AnySchema, effectiveHook))
+    const push = (validator: MiddlewareHandler | undefined) => {
+      if (validator) {
+        validators.push(validator)
+      }
     }
 
-    if (route.request?.params) {
-      validators.push(validatorFor('param', route.request.params as AnySchema, effectiveHook))
-    }
-
-    if (route.request?.headers) {
-      validators.push(validatorFor('header', route.request.headers as AnySchema, effectiveHook))
-    }
-
-    if (route.request?.cookies) {
-      validators.push(validatorFor('cookie', route.request.cookies as AnySchema, effectiveHook))
-    }
+    push(validate('query', route.request?.query))
+    push(validate('param', route.request?.params))
+    // An array of header schemas describes the document only; there is one `header` target.
+    push(validate('header', route.request?.headers))
+    push(validate('cookie', route.request?.cookies))
 
     const bodyContent = route.request?.body?.content
     const bodyRequired = route.request?.body?.required
@@ -622,23 +536,14 @@ export class OpenAPIHono<
       if (!media) {
         continue
       }
-      const schema = (media as MediaTypeObject).schema
-      if (!isZod(schema) && !needsConversion(schema)) {
-        continue
-      }
-
-      if (isJSONContentType(mediaType)) {
-        const validator = validatorFor('json', schema as AnySchema, effectiveHook)
-        validators.push(
-          bodyRequired ? validator : optionalBodyValidator('json', validator, isJSONContentType)
-        )
-      }
-
-      if (isFormContentType(mediaType)) {
-        const validator = validatorFor('form', schema as AnySchema, effectiveHook)
-        validators.push(
-          bodyRequired ? validator : optionalBodyValidator('form', validator, isFormContentType)
-        )
+      for (const [target, matches] of BODY_TARGETS) {
+        if (!matches(mediaType)) {
+          continue
+        }
+        const validator = validate(target, media.schema)
+        if (validator) {
+          push(bodyRequired ? validator : optionalBodyValidator(target, validator, matches))
+        }
       }
     }
 
@@ -688,65 +593,41 @@ export class OpenAPIHono<
     return this
   }
 
-  #definitionsFor(
+  #generate(
     version: '3.0' | '3.1',
-    jsonSchemaTargets?: JSONSchemaTarget[]
-  ): OpenAPIRegistry['definitions'] {
-    if (this.#standardRoutes.length === 0) {
-      return this.openAPIRegistry.definitions
-    }
-
-    const targets = jsonSchemaTargets ?? this.#jsonSchemaTargets[version] ?? TARGETS[version]
-    const registry = new OpenAPIRegistry()
-    registry.definitions.push(...this.openAPIRegistry.definitions)
-    for (const route of this.#standardRoutes) {
-      registry.registerPath(convertRouteSchemas(route, targets) as RouteConfigBase)
-    }
-    return registry.definitions
+    objectConfig: OpenAPIObjectConfig,
+    documentOptions?: OpenAPIDocumentOptions
+  ): OpenAPIV31Object {
+    const document = generateDocument(
+      this.openAPIRegistry.definitions,
+      objectConfig,
+      version,
+      documentOptions?.jsonSchemaTargets ?? this.#jsonSchemaTargets[version]
+    )
+    const basePath = (this as unknown as { _basePath?: string })._basePath
+    return basePath ? addBasePathToDocument(document, basePath) : document
   }
 
   getOpenAPIDocument = (
     objectConfig: OpenAPIObjectConfig,
-    generatorConfig?: OpenAPIGeneratorOptions,
     documentOptions?: OpenAPIDocumentOptions
-  ): OpenAPIObject => {
-    const generator = new OpenApiGeneratorV3(
-      this.#definitionsFor('3.0', documentOptions?.jsonSchemaTargets),
-      generatorConfig
-    )
-    const document = generator.generateDocument(objectConfig)
-    const basePath = (this as unknown as { _basePath?: string })._basePath
-    return basePath ? addBasePathToDocument(document, basePath) : document
-  }
+  ): OpenAPIObject => this.#generate('3.0', objectConfig, documentOptions) as OpenAPIObject
 
   getOpenAPI31Document = (
     objectConfig: OpenAPIObjectConfig,
-    generatorConfig?: OpenAPIGeneratorOptions,
     documentOptions?: OpenAPIDocumentOptions
-  ): OpenAPIV31bject => {
-    const generator = new OpenApiGeneratorV31(
-      this.#definitionsFor('3.1', documentOptions?.jsonSchemaTargets),
-      generatorConfig
-    )
-    const document = generator.generateDocument(objectConfig)
-    const basePath = (this as unknown as { _basePath?: string })._basePath
-    return basePath ? addBasePathToDocument(document, basePath) : document
-  }
+  ): OpenAPIV31Object => this.#generate('3.1', objectConfig, documentOptions)
 
   doc = <P extends string>(
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
-    configureGenerator?: OpenAPIGeneratorConfigure<E, P>,
     documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
-      const generatorConfig =
-        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPIDocument(objectConfig, generatorConfig, documentOptions)
-        return c.json(document)
+        return c.json(this.getOpenAPIDocument(objectConfig, documentOptions))
       } catch (e: any) {
         return c.json(e, 500)
       }
@@ -756,17 +637,13 @@ export class OpenAPIHono<
   doc31 = <P extends string>(
     path: P,
     configureObject: OpenAPIObjectConfigure<E, P>,
-    configureGenerator?: OpenAPIGeneratorConfigure<E, P>,
     documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
     return this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
-      const generatorConfig =
-        typeof configureGenerator === 'function' ? configureGenerator(c) : configureGenerator
       try {
-        const document = this.getOpenAPI31Document(objectConfig, generatorConfig, documentOptions)
-        return c.json(document)
+        return c.json(this.getOpenAPI31Document(objectConfig, documentOptions))
       } catch (e: any) {
         return c.json(e, 500)
       }
@@ -805,50 +682,25 @@ export class OpenAPIHono<
       /:([^\/]+)/g,
       '{$1}'
     )
-
-    for (const route of app.#standardRoutes) {
-      this.#standardRoutes.push({
-        ...route,
-        path: mergePath(pathForOpenAPI, subBasePath, route.path),
-      })
-    }
+    const prefix = (routePath: string) => mergePath(pathForOpenAPI, subBasePath, routePath)
 
     app.openAPIRegistry.definitions.forEach((def) => {
       switch (def.type) {
         case 'component':
-          return this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
-
-        case 'route': {
-          this.openAPIRegistry.registerPath({
-            ...def.route,
-            path: mergePath(pathForOpenAPI, subBasePath, def.route.path),
-          })
+          this.openAPIRegistry.registerComponent(def.componentType, def.name, def.component)
           return
-        }
 
-        case 'webhook': {
-          this.openAPIRegistry.registerWebhook({
-            ...def.webhook,
-            path: mergePath(pathForOpenAPI, subBasePath, def.webhook.path),
-          })
+        case 'schema':
+          this.openAPIRegistry.register(def.name, def.schema)
           return
-        }
 
-        case 'schema': {
-          const refId = refIdOf(def.schema)
-          if (refId) {
-            this.openAPIRegistry.register(refId, def.schema)
-          }
+        case 'route':
+          this.openAPIRegistry.registerPath({ ...def.route, path: prefix(def.route.path) })
           return
-        }
 
-        case 'parameter': {
-          const refId = refIdOf(def.schema)
-          if (refId) {
-            this.openAPIRegistry.registerParameter(refId, def.schema)
-          }
+        case 'webhook':
+          this.openAPIRegistry.registerWebhook({ ...def.webhook, path: prefix(def.webhook.path) })
           return
-        }
 
         default: {
           const exhaustive: never = def
@@ -904,10 +756,18 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
   return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
 }
 
-extendZodWithOpenApi(z)
-export { extendZodWithOpenApi, z }
-export type { JSONSchemaTarget }
-export { TARGETS }
+export { OpenAPIRegistry, TARGETS, isStandardJSONSchema }
+export type { ComponentType, Definition, OpenAPIObjectConfig } from './generator'
+export type {
+  ContentObject,
+  MediaTypeObject,
+  Method,
+  RequestBody,
+  ResponseConfig,
+  RouteConfig,
+  RouteSchema,
+} from './route-config'
+export type { JSONSchema, JSONSchemaTarget, StandardOpenAPISchema } from './standard-schema'
 export type { DeepSimplify, MiddlewareToHandlerType, OfHandlerType } from './utils'
 
 function addBasePathToDocument<T extends { paths?: Record<string, unknown> }>(

@@ -791,15 +791,9 @@ importers:
 
   packages/standard-json-openapi:
     dependencies:
-      '@asteasolutions/zod-to-openapi':
-        specifier: ^8.5.0
-        version: 8.5.0(zod@4.4.3)
       '@hono/standard-validator':
         specifier: workspace:^
         version: link:../standard-validator
-      '@hono/zod-validator':
-        specifier: workspace:^
-        version: link:../zod-validator
       openapi3-ts:
         specifier: ^4.5.0
         version: 4.6.0

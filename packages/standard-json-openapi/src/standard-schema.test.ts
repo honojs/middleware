@@ -1,11 +1,12 @@
 import { type } from 'arktype'
-import { OpenAPIHono, createRoute, z } from './index'
+import { z } from 'zod'
+import { OpenAPIHono, createRoute } from './index'
 
 const info = { title: 'API', version: '1.0.0' }
 const config = { openapi: '3.0.0', info }
 const config31 = { openapi: '3.1.0', info }
 
-describe('non-Zod schemas', () => {
+describe('ArkType schemas', () => {
   const app = new OpenAPIHono()
 
   app.openapi(
@@ -87,7 +88,7 @@ describe('non-Zod schemas', () => {
     })
   })
 
-  it('validates requests against a non-Zod schema', async () => {
+  it('validates requests against an ArkType schema', async () => {
     const res = await app.request('/users/abc', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -98,7 +99,7 @@ describe('non-Zod schemas', () => {
     expect(await res.json()).toEqual({ id: 'abc:Ada' })
   })
 
-  it('rejects requests that do not match a non-Zod schema', async () => {
+  it('rejects requests that do not match an ArkType schema', async () => {
     const res = await app.request('/users/abc', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -188,23 +189,71 @@ describe('mixing schema libraries', () => {
     })
   })
 
-  it('keeps Zod-only apps on the existing registry path', () => {
+  it('treats Zod like every other library, with no Zod-specific code path', async () => {
     const app = new OpenAPIHono()
-    const Schema = z.object({ id: z.string() }).openapi('User')
+
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/zod',
+        request: {
+          body: {
+            required: true,
+            content: { 'application/json': { schema: z.object({ name: z.string() }) } },
+          },
+        },
+        responses: {
+          200: {
+            description: 'ok',
+            content: { 'application/json': { schema: z.object({ id: z.string() }) } },
+          },
+        },
+      }),
+      (c) => c.json({ id: c.req.valid('json').name }, 200)
+    )
+
+    const res = await app.request('/zod', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ada' }),
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'Ada' })
+
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/zod': {
+          post: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { name: { type: 'string' } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+})
+
+describe('named components', () => {
+  it('emits a $ref for a schema registered by name, from any library', () => {
+    const app = new OpenAPIHono()
+    const User = app.openAPIRegistry.register('User', type({ id: 'string' }))
 
     app.openapi(
       createRoute({
         method: 'get',
         path: '/users',
         responses: {
-          200: { description: 'ok', content: { 'application/json': { schema: Schema } } },
+          200: { description: 'ok', content: { 'application/json': { schema: User } } },
         },
       }),
       (c) => c.json({ id: '1' }, 200)
     )
 
-    // A Zod-only app must not notice any of this: refs still resolve to components instead
-    // of being inlined, which is what breaks if the route stops reaching the registry.
     expect(app.getOpenAPIDocument(config)).toMatchObject({
       paths: {
         '/users': {
@@ -218,6 +267,65 @@ describe('mixing schema libraries', () => {
         },
       },
       components: { schemas: { User: { type: 'object' } } },
+    })
+  })
+
+  it('splits a named schema whose input and output differ into two components', () => {
+    const app = new OpenAPIHono()
+    const Post = app.openAPIRegistry.register(
+      'Post',
+      z.object({ title: z.string(), draft: z.boolean().default(true) })
+    )
+
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: { body: { required: true, content: { 'application/json': { schema: Post } } } },
+        responses: {
+          200: { description: 'ok', content: { 'application/json': { schema: Post } } },
+        },
+      }),
+      (c) => c.json(c.req.valid('json'), 200)
+    )
+
+    // `draft` has a default: optional on the way in, guaranteed on the way out.
+    expect(app.getOpenAPI31Document(config31)).toMatchObject({
+      paths: {
+        '/posts': {
+          post: {
+            requestBody: {
+              content: {
+                'application/json': { schema: { $ref: '#/components/schemas/PostInput' } },
+              },
+            },
+            responses: {
+              200: {
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/Post' } } },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          PostInput: { required: ['title'] },
+          Post: { required: ['title', 'draft'] },
+        },
+      },
+    })
+  })
+
+  it('registers a hand-written component and refs it', () => {
+    const app = new OpenAPIHono()
+    const { ref } = app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
+      type: 'http',
+      scheme: 'bearer',
+    })
+
+    expect(ref).toEqual({ $ref: '#/components/securitySchemes/bearer' })
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      components: { securitySchemes: { bearer: { type: 'http', scheme: 'bearer' } } },
     })
   })
 })
@@ -330,9 +438,7 @@ describe('target support', () => {
       (c) => c.json({}, 200)
     )
 
-    expect(
-      app.getOpenAPIDocument(config, undefined, { jsonSchemaTargets: ['draft-07'] })
-    ).toMatchObject({
+    expect(app.getOpenAPIDocument(config, { jsonSchemaTargets: ['draft-07'] })).toMatchObject({
       paths: {
         '/ark': {
           get: {
@@ -375,8 +481,46 @@ describe('target support', () => {
   })
 })
 
+describe('validation hooks', () => {
+  it('hands the hook Standard Schema issues, whichever library failed', async () => {
+    const issues: string[] = []
+    const app = new OpenAPIHono({
+      defaultHook: (result, c) => {
+        if (!result.success) {
+          issues.push(...result.error.map((issue) => issue.message))
+          return c.json({ ok: false }, 400)
+        }
+      },
+    })
+
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/hooked',
+        request: {
+          body: {
+            required: true,
+            content: { 'application/json': { schema: type({ age: 'number' }) } },
+          },
+        },
+        responses: { 200: { description: 'ok' } },
+      }),
+      (c) => c.json({}, 200)
+    )
+
+    const res = await app.request('/hooked', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ age: 'nope' }),
+    })
+
+    expect(res.status).toBe(400)
+    expect(issues.length).toBeGreaterThan(0)
+  })
+})
+
 describe('response headers', () => {
-  it('describes non-Zod response headers instead of leaking library internals', () => {
+  it('describes response headers instead of leaking library internals', () => {
     const app = new OpenAPIHono()
     app.openapi(
       createRoute({
@@ -404,7 +548,7 @@ describe('response headers', () => {
 })
 
 describe('sub apps', () => {
-  it('merges non-Zod routes from a mounted app', () => {
+  it('merges routes from a mounted app', () => {
     const books = new OpenAPIHono()
     books.openapi(
       createRoute({
@@ -419,5 +563,26 @@ describe('sub apps', () => {
     const app = new OpenAPIHono().route('/books', books)
 
     expect(Object.keys(app.getOpenAPIDocument(config).paths)).toEqual(['/books/{id}'])
+  })
+
+  it('carries a mounted app’s named components up to the parent', () => {
+    const books = new OpenAPIHono()
+    const Book = books.openAPIRegistry.register('Book', type({ title: 'string' }))
+    books.openapi(
+      createRoute({
+        method: 'get',
+        path: '/',
+        responses: {
+          200: { description: 'ok', content: { 'application/json': { schema: Book } } },
+        },
+      }),
+      (c) => c.json({ title: 'x' }, 200)
+    )
+
+    const app = new OpenAPIHono().route('/books', books)
+
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      components: { schemas: { Book: { type: 'object' } } },
+    })
   })
 })
