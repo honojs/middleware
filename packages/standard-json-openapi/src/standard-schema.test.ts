@@ -1,5 +1,6 @@
 import { type } from 'arktype'
 import { z } from 'zod'
+import * as zm from 'zod/mini'
 import { OpenAPIHono, createRoute } from './index'
 
 const info = { title: 'API', version: '1.0.0' }
@@ -235,6 +236,68 @@ describe('mixing schema libraries', () => {
         },
       },
     })
+  })
+})
+
+describe('libraries without a native JSON Schema interface', () => {
+  // Zod Mini ships `~standard.validate` but not `~standard.jsonSchema`. This mirrors the
+  // wrapper the README documents — keep the two in step.
+  const withJSONSchema = <T extends zm.core.$ZodType>(schema: T) =>
+    Object.assign(schema, {
+      '~standard': {
+        ...schema['~standard'],
+        jsonSchema: {
+          input: (options?: { target?: string }) =>
+            zm.toJSONSchema(schema, { io: 'input', target: options?.target as never }),
+          output: (options?: { target?: string }) =>
+            zm.toJSONSchema(schema, { io: 'output', target: options?.target as never }),
+        },
+      },
+    })
+
+  it('documents and validates a wrapped Zod Mini schema', async () => {
+    const app = new OpenAPIHono()
+    const Body = withJSONSchema(zm.object({ name: zm.string() }))
+
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/mini',
+        request: { body: { required: true, content: { 'application/json': { schema: Body } } } },
+        responses: { 200: { description: 'ok' } },
+      }),
+      (c) => c.json({ name: c.req.valid('json').name }, 200)
+    )
+
+    expect(app.getOpenAPI31Document(config31)).toMatchObject({
+      paths: {
+        '/mini': {
+          post: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { name: { type: 'string' } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const ok = await app.request('/mini', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ada' }),
+    })
+    expect(ok.status).toBe(200)
+
+    const bad = await app.request('/mini', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 42 }),
+    })
+    expect(bad.status).toBe(400)
   })
 })
 
