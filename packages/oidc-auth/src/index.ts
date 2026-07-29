@@ -18,6 +18,23 @@ export type OidcClaimsHook = (
   response: oauth2.TokenEndpointResponse
 ) => Promise<OidcAuthClaims>
 
+/**
+ * Optional hook invoked when a session refresh (refresh-token grant) is rejected
+ * by the authorization server. `getAuth` otherwise swallows this error silently —
+ * it deletes the session cookie and returns `null`, which drives a redirect to
+ * re-authenticate. The hook lets callers observe *why* the refresh failed (for
+ * logging, metrics, or to branch on the specific OAuth2 error, e.g. distinguish a
+ * permanent `invalid_grant` from a transient `too_many_requests`).
+ *
+ * It runs before the cookie is deleted and receives the Hono context, so a hook
+ * may set a response header/attribute that then rides the redirect. Errors thrown
+ * by the hook propagate to the caller.
+ */
+export type OidcAuthRefreshErrorHook = (
+  error: oauth2.ResponseBodyError | oauth2.WWWAuthenticateChallengeError,
+  c: Context
+) => void | Promise<void>
+
 declare module 'hono' {
   export interface OidcAuthClaims {
     email?: string
@@ -31,6 +48,7 @@ declare module 'hono' {
     oidcAuth: OidcAuth | null
     oidcAuthJwt: string
     oidcClaimsHook?: OidcClaimsHook
+    oidcAuthRefreshErrorHook?: OidcAuthRefreshErrorHook
     oidcClientAuth?: oauth2.ClientAuth
   }
 }
@@ -262,7 +280,13 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
           error instanceof oauth2.ResponseBodyError ||
           error instanceof oauth2.WWWAuthenticateChallengeError
         ) {
-          // The refresh_token might be expired or revoked
+          // The refresh_token might be expired or revoked. Surface the error to an
+          // optional hook (logging/metrics/signalling) before swallowing it and
+          // redirecting to re-authenticate.
+          const refreshErrorHook = c.get('oidcAuthRefreshErrorHook')
+          if (refreshErrorHook !== undefined) {
+            await refreshErrorHook(error, c)
+          }
           deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
           return null
         }
