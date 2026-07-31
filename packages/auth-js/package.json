@@ -60,7 +60,7 @@
     "@auth/core": "^0.35.3",
     "@types/react": "^19",
     "hono": "^4.11.5",
-    "react": "^19.2.7",
+    "react": "^19.2.8",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.7"
