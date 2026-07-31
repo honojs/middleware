@@ -47,7 +47,7 @@
     "@conform-to/dom": "^1.14.0",
     "@conform-to/valibot": "^1.17.1",
     "@conform-to/yup": "^1.19.4",
-    "@conform-to/zod": "^1.14.0",
+    "@conform-to/zod": "^1.20.0",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
