@@ -164,8 +164,8 @@ export type { Hook }
 export { sValidator }
 
 interface FlattenedErrorObject {
-  formErrors: string[];
-  fieldErrors: Record<string, string[]>;
+  formErrors: string[]
+  fieldErrors: Record<string, string[]>
 }
 
 /**
@@ -173,9 +173,7 @@ interface FlattenedErrorObject {
  * @param issues An array of {@link StandardSchemaV1.Issue validation issues}.
  * @returns An object with sorted form and field errors.
  */
-export const flattenErrors = (
-  issues: readonly StandardSchemaV1.Issue[]
-): FlattenedErrorObject => {
+export const flattenErrors = (issues: readonly StandardSchemaV1.Issue[]): FlattenedErrorObject => {
   const formErrors: string[] = []
   const fieldErrors: Record<PropertyKey, string[]> = {}
 
