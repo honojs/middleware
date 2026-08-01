@@ -163,8 +163,9 @@ const sValidator = <
 export type { Hook }
 export { sValidator }
 
-interface SortedIssues {
-  [path: PropertyKey]: string[]
+interface FlattenedErrorObject {
+  formErrors: string[];
+  fieldErrors: Record<string, string[]>;
 }
 
 /**
@@ -174,24 +175,19 @@ interface SortedIssues {
  */
 export const flattenErrors = (
   issues: readonly StandardSchemaV1.Issue[]
-): {
-  formErrors: string[]
-  fieldErrors: SortedIssues
-} => {
+): FlattenedErrorObject => {
   const formErrors: string[] = []
-  const fieldErrors: SortedIssues = {}
-
-  const hasKey = (key?: PropertyKey) => key != undefined
+  const fieldErrors: Record<PropertyKey, string[]> = {}
 
   for (const { path = [], message } of issues) {
     const [issuePath] = path
     const key = typeof issuePath === 'object' ? issuePath.key : issuePath
 
-    if (hasKey(key) && !fieldErrors[key]) {
+    if (typeof key !== 'undefined' && !fieldErrors[key]) {
       fieldErrors[key] = []
     }
 
-    const errors = hasKey(key) ? fieldErrors[key] : formErrors
+    const errors = typeof key !== 'undefined' ? fieldErrors[key] : formErrors
     errors?.push(message)
   }
 
