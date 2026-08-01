@@ -38,7 +38,7 @@ If validation fails and no hook is provided, the middleware responds with `400 B
 }
 ```
 
-Note that `error.message` is a JSON string of Zod's issue array, not a nested object. This format is Zod's own serialization and is not guaranteed to be stable across Zod versions. If clients parse the error body, define your own format with a hook (see below).
+Note that `error.message` is a JSON string of Zod's issue array, not a nested object. This is the Zod v4 shape; with Zod v3 the same code serializes the issues inline instead (`"error": { "issues": [...], "name": "ZodError" }`). The format is Zod's own serialization and is not guaranteed to be stable across Zod versions. If clients parse the error body, define your own format with a hook (see below).
 
 Hook:
 
