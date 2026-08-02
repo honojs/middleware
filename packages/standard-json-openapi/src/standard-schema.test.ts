@@ -1,4 +1,6 @@
+import { toStandardJsonSchema } from '@valibot/to-json-schema'
 import { type } from 'arktype'
+import * as v from 'valibot'
 import { z } from 'zod'
 import * as zm from 'zod/mini'
 import { OpenAPIHono, createRoute } from './index'
@@ -136,7 +138,188 @@ describe('ArkType schemas', () => {
   })
 })
 
+describe('Valibot schemas', () => {
+  // Valibot keeps `~standard.jsonSchema` out of the core bundle; `toStandardJsonSchema()`
+  // adds it and leaves `validate` alone, so the wrapped schema still validates.
+  const app = new OpenAPIHono()
+
+  app.openapi(
+    createRoute({
+      method: 'post',
+      path: '/valibot/{id}',
+      summary: 'Update a user',
+      request: {
+        params: toStandardJsonSchema(v.object({ id: v.string() })),
+        query: toStandardJsonSchema(v.object({ dryRun: v.optional(v.string()) })),
+        body: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: toStandardJsonSchema(v.object({ name: v.string(), age: v.number() })),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Updated',
+          content: {
+            'application/json': { schema: toStandardJsonSchema(v.object({ id: v.string() })) },
+          },
+        },
+      },
+    }),
+    (c) => {
+      const { name } = c.req.valid('json')
+      const { id } = c.req.valid('param')
+      return c.json({ id: `${id}:${name}` }, 200)
+    }
+  )
+
+  it('describes a Valibot body, response and parameters in the document', () => {
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/valibot/{id}': {
+          post: {
+            summary: 'Update a user',
+            parameters: [
+              { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
+              { in: 'query', name: 'dryRun', required: false, schema: { type: 'string' } },
+            ],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: { name: { type: 'string' }, age: { type: 'number' } },
+                    required: ['name', 'age'],
+                  },
+                },
+              },
+            },
+            responses: {
+              200: {
+                description: 'Updated',
+                content: {
+                  'application/json': {
+                    schema: { type: 'object', properties: { id: { type: 'string' } } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+
+  it('validates requests against a Valibot schema', async () => {
+    const res = await app.request('/valibot/abc', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ada', age: 36 }),
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'abc:Ada' })
+  })
+
+  it('rejects requests that do not match a Valibot schema', async () => {
+    const res = await app.request('/valibot/abc', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ada', age: 'not a number' }),
+    })
+
+    expect(res.status).toBe(400)
+  })
+
+  it('generates a 3.1 document without leaking $schema into it', () => {
+    const doc = app.getOpenAPI31Document(config31)
+
+    expect(doc).toMatchObject({
+      paths: {
+        '/valibot/{id}': {
+          post: {
+            requestBody: { content: { 'application/json': { schema: { type: 'object' } } } },
+          },
+        },
+      },
+    })
+    expect(doc).not.toHaveProperty([
+      'paths',
+      '/valibot/{id}',
+      'post',
+      'requestBody',
+      'content',
+      'application/json',
+      'schema',
+      '$schema',
+    ])
+  })
+})
+
 describe('mixing schema libraries', () => {
+  it('accepts Zod, Valibot and ArkType schemas on the same route', async () => {
+    const app = new OpenAPIHono()
+
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/three/{id}',
+        request: {
+          params: toStandardJsonSchema(v.object({ id: v.string() })),
+          query: z.object({ tag: z.string() }),
+          body: {
+            required: true,
+            content: { 'application/json': { schema: type({ name: 'string' }) } },
+          },
+        },
+        responses: {
+          200: {
+            description: 'ok',
+            content: { 'application/json': { schema: z.object({ id: z.string() }) } },
+          },
+        },
+      }),
+      (c) => {
+        const { id } = c.req.valid('param')
+        const { tag } = c.req.valid('query')
+        const { name } = c.req.valid('json')
+        return c.json({ id: `${id}:${tag}:${name}` }, 200)
+      }
+    )
+
+    const res = await app.request('/three/abc?tag=x', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ada' }),
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ id: 'abc:x:Ada' })
+
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/three/{id}': {
+          post: {
+            parameters: [
+              { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
+              { in: 'query', name: 'tag', required: true, schema: { type: 'string' } },
+            ],
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { name: { type: 'string' } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+
   it('accepts Zod and ArkType schemas on the same route', () => {
     const app = new OpenAPIHono()
 
@@ -607,6 +790,45 @@ describe('response headers', () => {
         },
       },
     })
+  })
+})
+
+describe('request headers', () => {
+  const app = new OpenAPIHono()
+  app.openapi(
+    createRoute({
+      method: 'get',
+      path: '/qh',
+      request: {
+        headers: [type({ 'x-key': 'string' }), z.object({ 'x-trace': z.string() })],
+      },
+      responses: { 200: { description: 'ok' } },
+    }),
+    (c) => c.json({}, 200)
+  )
+
+  it('documents every schema in an array of header schemas', () => {
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/qh': {
+          get: {
+            parameters: [
+              { in: 'header', name: 'x-key', required: true, schema: { type: 'string' } },
+              { in: 'header', name: 'x-trace', required: true, schema: { type: 'string' } },
+            ],
+          },
+        },
+      },
+    })
+  })
+
+  it('validates against every schema in the array', async () => {
+    expect((await app.request('/qh', { headers: { 'x-key': 'k', 'x-trace': 't' } })).status).toBe(
+      200
+    )
+    // Each schema runs, so a header missing from either one is rejected.
+    expect((await app.request('/qh', { headers: { 'x-key': 'k' } })).status).toBe(400)
+    expect((await app.request('/qh', { headers: { 'x-trace': 't' } })).status).toBe(400)
   })
 })
 

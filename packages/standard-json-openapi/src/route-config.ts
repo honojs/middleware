@@ -38,7 +38,10 @@ export type RouteConfig = Omit<
     params?: StandardOpenAPISchema
     query?: StandardOpenAPISchema
     cookies?: StandardOpenAPISchema
-    /** One object schema, or several merged. Only a single schema is validated at runtime. */
+    /**
+     * One object schema, or several. Each is documented and validated, but Hono keeps a single
+     * `header` target, so `c.req.valid('header')` is typed only when one schema is given.
+     */
     headers?: StandardOpenAPISchema | StandardOpenAPISchema[]
   }
   responses: {

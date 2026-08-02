@@ -46,10 +46,12 @@
   },
   "devDependencies": {
     "@standard-schema/spec": "^1.1.0",
+    "@valibot/to-json-schema": "^1.7.1",
     "arktype": "^2.2.3",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
+    "valibot": "^1.4.2",
     "vitest": "^4.1.7",
     "yaml": "^2.8.2",
     "zod": "^4.2.1"

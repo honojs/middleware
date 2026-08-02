@@ -525,8 +525,11 @@ export class OpenAPIHono<
 
     push(validate('query', route.request?.query))
     push(validate('param', route.request?.params))
-    // An array of header schemas describes the document only; there is one `header` target.
-    push(validate('header', route.request?.headers))
+    // `headers` may be several schemas. Each one validates; Hono keeps one `header` target,
+    // so `c.req.valid('header')` holds the last schema's output.
+    for (const headers of toArray(route.request?.headers)) {
+      push(validate('header', headers))
+    }
     push(validate('cookie', route.request?.cookies))
 
     const bodyContent = route.request?.body?.content
