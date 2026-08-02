@@ -62,35 +62,9 @@ Requests are validated against the same schema that documents them, and `c.req.v
 
 ### Supported schema libraries
 
-Any library exposing `~standard.jsonSchema` works without configuration:
+Any validation library listed on the [Standard JSON Schema spec page](https://standardschema.dev/json-schema) is supported here.
 
-| Library    | Support                                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| Zod 4      | Native                                                                                                             |
-| ArkType    | Native                                                                                                             |
-| Valibot    | Wrap with [`toStandardJsonSchema()`](https://valibot.dev/api/toStandardJsonSchema/) from `@valibot/to-json-schema` |
-| Zod 4 Mini | Wrap — see below                                                                                                   |
-
-Zod Mini exposes `~standard.validate` but not `~standard.jsonSchema`, so it validates but cannot describe itself. Give it one:
-
-```ts
-import * as z from 'zod/mini'
-
-const withJSONSchema = <T extends z.core.$ZodType>(schema: T) =>
-  Object.assign(schema, {
-    '~standard': {
-      ...schema['~standard'],
-      jsonSchema: {
-        input: (options?: { target?: string }) =>
-          z.toJSONSchema(schema, { io: 'input', target: options?.target as never }),
-        output: (options?: { target?: string }) =>
-          z.toJSONSchema(schema, { io: 'output', target: options?.target as never }),
-      },
-    },
-  })
-
-const User = withJSONSchema(z.object({ name: z.string() }))
-```
+Some libraries (notably Valibot and Zod Mini) do **not** expose the `~standard.jsonSchema` interface by default for bundle size reasons. You'll need to follow their instructions on how to expose the interface (in the case of Valibot, this requires you to wrap your schema with the `toStandardJsonSchema` function from `@valibot/to-json-schema`, in Zod Mini's case, you can just wrap your schema with `z.toJSONSchema`).
 
 A schema that reaches a route without `~standard.jsonSchema` is treated as a literal JSON Schema object and is neither converted nor validated, so wrap before you use it.
 

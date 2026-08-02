@@ -1,6 +1,6 @@
 {
   "name": "@hono/standard-json-openapi",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A Hono class that generates OpenAPI docs from any Standard JSON Schema library.",
   "type": "module",
   "main": "./dist/index.cjs",
