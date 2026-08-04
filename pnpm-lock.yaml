@@ -180,8 +180,8 @@ importers:
   packages/capnweb:
     devDependencies:
       '@hono/node-server':
-        specifier: ^1.19.11
-        version: 1.19.14(hono@4.12.28)
+        specifier: ^2.0.12
+        version: 2.0.12(hono@4.12.28)
       '@hono/node-ws':
         specifier: workspace:^
         version: link:../node-ws
@@ -556,8 +556,8 @@ importers:
         version: 8.21.0
     devDependencies:
       '@hono/node-server':
-        specifier: ^1.19.11
-        version: 1.19.14(hono@4.12.28)
+        specifier: ^2.0.12
+        version: 2.0.12(hono@4.12.28)
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
@@ -1660,9 +1660,15 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@hono/node-server@1.19.14':
-    resolution: {integrity: sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw==}
+  '@hono/node-server@1.19.17':
+    resolution: {integrity: sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==}
     engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
+
+  '@hono/node-server@2.0.12':
+    resolution: {integrity: sha512-eWpQYr67tqJLeaSUl0Q+TquuYfUdTibpOJlUMV2FfUP7+KqCC5TufnwnlXL6mobZBJbGAYRd7ZvEBDCbLInjhg==}
+    engines: {node: '>=20'}
     peerDependencies:
       hono: ^4
 
@@ -7834,7 +7840,11 @@ snapshots:
       protobufjs: 7.6.5
       yargs: 17.7.3
 
-  '@hono/node-server@1.19.14(hono@4.12.28)':
+  '@hono/node-server@1.19.17(hono@4.12.28)':
+    dependencies:
+      hono: 4.12.28
+
+  '@hono/node-server@2.0.12(hono@4.12.28)':
     dependencies:
       hono: 4.12.28
 
@@ -8201,7 +8211,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.29.0(zod@4.4.3)':
     dependencies:
-      '@hono/node-server': 1.19.14(hono@4.12.28)
+      '@hono/node-server': 1.19.17(hono@4.12.28)
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
