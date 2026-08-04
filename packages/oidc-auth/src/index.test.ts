@@ -318,33 +318,6 @@ describe('oidcAuthMiddleware()', () => {
     const res = await app.request(req, {}, {})
     expect(res.status).toBe(302)
   })
-  test('Should swallow an error thrown by oidcAuthRefreshErrorHook and still redirect', async () => {
-    // A buggy hook must not break the re-authentication flow.
-    const refreshTokenGrantRequest = vi.mocked(oauth2.refreshTokenGrantRequest)
-    refreshTokenGrantRequest.mockResolvedValueOnce(
-      new Response(JSON.stringify({ error: 'invalid_grant', error_description: 'Bad Request' }), {
-        status: 400,
-        headers: { 'content-type': 'application/json' },
-      })
-    )
-    const hookApp = new Hono()
-    hookApp.use('/*', async (c, next) => {
-      c.set('oidcAuthRefreshErrorHook', () => {
-        throw new Error('hook failed')
-      })
-      await next()
-    })
-    hookApp.use('/*', oidcAuthMiddleware())
-    hookApp.all('/*', (c) => c.text('OK'))
-
-    const req = new Request('http://localhost/', {
-      method: 'GET',
-      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
-    })
-    const res = await hookApp.request(req, {}, {})
-    expect(res.status).toBe(302) // redirect to re-authenticate, not a 500
-    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;') // session cookie still cleared
-  })
   test('Should swallow revocationRequest failure on expired session', async () => {
     // Regression for #1851: revokeSession() rejection used to escape getAuth().
     const revocationRequest = vi.mocked(oauth2.revocationRequest)

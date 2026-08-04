@@ -28,8 +28,7 @@ export type OidcClaimsHook = (
  *
  * It runs before the cookie is deleted and receives the Hono context, so a hook
  * may set a response header/attribute that then rides the redirect. Errors thrown
- * by the hook are swallowed so a failing hook cannot break the re-authentication
- * flow.
+ * by the hook propagate to the caller.
  */
 export type OidcAuthRefreshErrorHook = (
   error: oauth2.ResponseBodyError | oauth2.WWWAuthenticateChallengeError,
@@ -286,11 +285,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
           // redirecting to re-authenticate.
           const refreshErrorHook = c.get('oidcAuthRefreshErrorHook')
           if (refreshErrorHook !== undefined) {
-            try {
-              await refreshErrorHook(error, c)
-            } catch {
-              // ignore — a failing hook must not break the re-authentication redirect
-            }
+            await refreshErrorHook(error, c)
           }
           deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
           return null
