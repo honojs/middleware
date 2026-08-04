@@ -94,11 +94,6 @@
       "count": 4
     }
   },
-  "src/utils/getRandomState.ts": {
-    "@typescript-eslint/no-deprecated": {
-      "count": 1
-    }
-  },
   "src/utils/objectToQuery.ts": {
     "@typescript-eslint/no-dynamic-delete": {
       "count": 1

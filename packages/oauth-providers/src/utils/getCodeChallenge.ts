@@ -1,32 +1,23 @@
+import { base64UrlEncode } from './base64UrlEncode'
+
 type Challenge = {
   codeVerifier: string
   codeChallenge: string
 }
 
 export async function getCodeChallenge(): Promise<Challenge> {
-  const codeVerifier = generateRandomString()
+  const codeVerifier = generateCodeVerifier()
 
   const encoder = new TextEncoder()
   const encoded = encoder.encode(codeVerifier)
   const shaEncoded = await crypto.subtle.digest('SHA-256', encoded)
-  const strEncoded = btoa(String.fromCharCode(...new Uint8Array(shaEncoded)))
-  const codeChallenge = base64URLEncode(strEncoded)
+  const codeChallenge = base64UrlEncode(new Uint8Array(shaEncoded))
 
   return { codeVerifier, codeChallenge }
 }
 
-function generateRandomString() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'
-  const length = Math.floor(Math.random() * (128 - 43 + 1)) + 43
-
-  const randomString = Array.from({ length }, () => {
-    const randomIndex = Math.floor(Math.random() * characters.length)
-    return characters.charAt(randomIndex)
-  }).join('')
-
-  return randomString
-}
-
-function base64URLEncode(str: string) {
-  return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+// RFC 7636 7.1 requires a CSPRNG. 32 random bytes encode to 43 base64url
+// characters, the minimum length the spec allows.
+function generateCodeVerifier(): string {
+  return base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)))
 }
