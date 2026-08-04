@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.7
+
+### Patch Changes
+
+- [#2062](https://github.com/honojs/middleware/pull/2062) [`130c6a0b2544b2a20b811f5c5532e7cece32b939`](https://github.com/honojs/middleware/commit/130c6a0b2544b2a20b811f5c5532e7cece32b939) Thanks [@yusukebe](https://github.com/yusukebe)! - fix: use a CSPRNG for OAuth state and PKCE code verifier
+
 ## 0.8.6
 
 ### Patch Changes
