@@ -1,0 +1,21 @@
+packages/oidc-auth/src/index.test.ts
+  s_8ac0af5c55d667::t_d226038687392a 321-347
+packages/oidc-auth/src/index.ts
+  s_8ac0af5c55d667::t_e1ede42c04b959 31-32,289-293
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a275072bc8911e10835af869ef7d2bdadd196411",
+  "prompts": {},
+  "sessions": {
+    "s_8ac0af5c55d667": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1261a6d6-09d1-4056-a53f-dfc8e3a977e4",
+        "model": "unknown"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
