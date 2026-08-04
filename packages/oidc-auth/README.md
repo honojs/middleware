@@ -149,6 +149,28 @@ Note:
 If explicit logout is not required, the logout handler can be omitted.
 If the middleware is applied to the callback URL, the default callback handling in the middleware can be used, so the explicit callback handling is not required.
 
+## Handling session refresh errors
+
+When a token refresh is rejected (the refresh token was revoked/expired, or the IdP returned an error such as `too_many_requests`), `getAuth` deletes the session cookie and redirects to re-authenticate. Set an `oidcAuthRefreshErrorHook` to observe the error, or `throw` from it to replace that redirect with your own response.
+
+```typescript
+import type { OidcAuthRefreshErrorHook } from '@hono/oidc-auth'
+import { HTTPException } from 'hono/http-exception'
+import * as oauth2 from 'oauth4webapi'
+
+const oidcAuthRefreshErrorHook: OidcAuthRefreshErrorHook = async (error, c) => {
+  if (error instanceof oauth2.ResponseBodyError && error.error === 'too_many_requests') {
+    throw new HTTPException(503, { message: 'Authentication temporarily unavailable' })
+  }
+}
+...
+app.use('*', async (c, next) => {
+  c.set('oidcAuthRefreshErrorHook', oidcAuthRefreshErrorHook) // set before any getAuth()
+  await next()
+})
+app.use('*', oidcAuthMiddleware())
+```
+
 ## Programmatically configure auth variables
 
 ```typescript
