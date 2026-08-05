@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.4.0
+
+### Minor Changes
+
+- [#2050](https://github.com/honojs/middleware/pull/2050) [`98e4e81031769e7269f4fc6bab831bc429035a03`](https://github.com/honojs/middleware/commit/98e4e81031769e7269f4fc6bab831bc429035a03) Thanks [@KTrain5169](https://github.com/KTrain5169)! - Add a new flattenErrors utility that allows errors to be sorted by form and field errors, with field errors also being sorted by path.
+
 ## 0.3.0
 
 ### Minor Changes
