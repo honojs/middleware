@@ -162,3 +162,32 @@ const sValidator = <
 
 export type { Hook }
 export { sValidator }
+
+interface FlattenedErrorObject {
+  formErrors: string[]
+  fieldErrors: Record<string, string[]>
+}
+
+/**
+ * Sorts validation errors by their paths.
+ * @param issues An array of {@link StandardSchemaV1.Issue validation issues}.
+ * @returns An object with sorted form and field errors.
+ */
+export const flattenErrors = (issues: readonly StandardSchemaV1.Issue[]): FlattenedErrorObject => {
+  const formErrors: string[] = []
+  const fieldErrors: Record<PropertyKey, string[]> = {}
+
+  for (const { path = [], message } of issues) {
+    const [issuePath] = path
+    const key = typeof issuePath === 'object' ? issuePath.key : issuePath
+
+    if (typeof key !== 'undefined' && !fieldErrors[key]) {
+      fieldErrors[key] = []
+    }
+
+    const errors = typeof key !== 'undefined' ? fieldErrors[key] : formErrors
+    errors?.push(message)
+  }
+
+  return { formErrors, fieldErrors }
+}
