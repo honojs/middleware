@@ -3,99 +3,85 @@
  * Structured Logger Middleware for Hono.
  */
 
-import type { Context, MiddlewareHandler } from 'hono'
+import type { Context, Env, MiddlewareHandler } from 'hono'
 
-/**
- * Minimal logger interface compatible with pino, winston, console, bunyan, etc.
- */
-export interface BaseLogger {
-  info(obj: unknown, msg?: string, ...args: unknown[]): void
-  warn(obj: unknown, msg?: string, ...args: unknown[]): void
-  error(obj: unknown, msg?: string, ...args: unknown[]): void
-  debug(obj: unknown, msg?: string, ...args: unknown[]): void
+const defaultKey = 'logger' as const
+
+type DefaultKey = typeof defaultKey
+
+export type StructuredLoggerEnv<L, K extends string = DefaultKey> = Env & {
+  Variables: { [P in K]: L }
 }
 
-export interface StructuredLoggerOptions<L extends BaseLogger = BaseLogger> {
+type LoggedContext<E extends Env, L, K extends string> = Context<StructuredLoggerEnv<L, K> & E>
+
+export interface StructuredLoggerOptions<
+  E extends Env = {},
+  L = unknown,
+  K extends string = DefaultKey,
+> {
   /**
    * Factory function that creates a request scoped logger.
    * Receives the Hono context so you can inject requestId, headers, etc.
    */
-  createLogger: (c: Context) => L
+  createLogger: (c: Context<E>) => L
 
   /**
    * Key used to store the logger instance on c.var.
    * @default 'logger'
    */
-  contextKey?: string
+  contextKey?: K
 
-  /**
-   * Called after logger creation, before handler execution.
-   * Use for logging request start, incoming headers, etc.
-   * Default: logs method + path at info level.
-   */
-  onRequest?: (logger: L, c: Context) => void | Promise<void>
+  /** Called before createLogger, when this returns true the request is not logged. */
+  skip?: (c: Context<E>) => boolean
 
-  /**
-   * Called after handler execution with elapsed time in ms.
-   * Use for logging response status, duration, etc.
-   * Default: logs status + elapsed at info level.
-   */
-  onResponse?: (logger: L, c: Context, elapsedMs: number) => void | Promise<void>
+  /** Called after logger creation, before handler execution. */
+  onRequest?: (logger: L, c: LoggedContext<E, L, K>) => void | Promise<void>
 
-  /**
-   * Called when an error occurs during handler execution.
-   * Default: logs error at error level.
-   */
-  onError?: (logger: L, err: Error, c: Context) => void | Promise<void>
+  /** Called after handler execution with elapsed time in ms. */
+  onResponse?: (logger: L, c: LoggedContext<E, L, K>, elapsedMs: number) => void | Promise<void>
+
+  /** Called when an error occurs during handler execution, with elapsed time in ms. */
+  onError?: (
+    logger: L,
+    err: Error,
+    c: LoggedContext<E, L, K>,
+    elapsedMs: number
+  ) => void | Promise<void>
 }
 
 const now = typeof performance !== 'undefined' ? () => performance.now() : () => Date.now()
 
-function defaultOnRequest(logger: BaseLogger, c: Context): void {
-  logger.info({ method: c.req.method, path: c.req.path }, 'request start')
-}
-
-function defaultOnResponse(logger: BaseLogger, c: Context, elapsedMs: number): void {
-  logger.info(
-    { method: c.req.method, path: c.req.path, status: c.res.status, elapsedMs },
-    'request end'
-  )
-}
-
-function defaultOnError(logger: BaseLogger, err: Error, c: Context): void {
-  logger.error(
-    { err, method: c.req.method, path: c.req.path, status: c.res.status },
-    'request error'
-  )
-}
-
-export function structuredLogger<L extends BaseLogger = BaseLogger>(
-  options: StructuredLoggerOptions<L>
-): MiddlewareHandler {
-  const {
-    createLogger,
-    contextKey = 'logger',
-    onRequest = defaultOnRequest,
-    onResponse = defaultOnResponse,
-    onError = defaultOnError,
-  } = options
+export function structuredLogger<E extends Env = {}, L = unknown, K extends string = DefaultKey>(
+  options: StructuredLoggerOptions<E, L, K>
+): MiddlewareHandler<E> {
+  const { createLogger, contextKey = defaultKey, skip, onRequest, onResponse, onError } = options
 
   return async (c, next) => {
+    if (skip && skip(c)) {
+      return next()
+    }
+
     const logger = createLogger(c)
     c.set(contextKey as never, logger as never)
+    const ctx = c as LoggedContext<E, L, K>
+
+    if (onRequest) {
+      await onRequest(logger, ctx)
+    }
 
     const start = now()
-
-    await onRequest(logger, c)
 
     await next()
 
     const elapsed = now() - start
 
     if (c.error) {
-      await onError(logger, c.error instanceof Error ? c.error : new Error(String(c.error)), c)
-    } else {
-      await onResponse(logger, c, elapsed)
+      if (onError) {
+        await onError(logger, c.error, ctx, elapsed)
+      }
+    } else if (onResponse) {
+      await onResponse(logger, ctx, elapsed)
     }
   }
 }
