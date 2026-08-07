@@ -55,6 +55,8 @@ export class StreamableHTTPTransport implements Transport {
   #allowedOrigins?: string[]
   #enableDnsRebindingProtection: boolean
   #strictAcceptHeader: boolean
+  /** Guards against double-firing `onclose` when abort handlers race `close()`. */
+  #closedNotified = false
 
   sessionId?: string
   onclose?: () => void
@@ -254,9 +256,13 @@ export class StreamableHTTPTransport implements Transport {
           },
         })
 
-        // Set up close handler for client disconnects
+        // Set up close handler for client disconnects. MCP clients often drop
+        // the GET SSE stream without sending DELETE; surface that as `onclose`.
         stream.onAbort(() => {
           this.#streamMapping.get(resolvedStreamId)?.cleanup()
+          if (resolvedStreamId === this.#standaloneSseStreamId) {
+            this.#notifyClose()
+          }
         })
       })
     } catch (error) {
@@ -623,6 +629,14 @@ export class StreamableHTTPTransport implements Transport {
     return true
   }
 
+  #notifyClose(): void {
+    if (this.#closedNotified) {
+      return
+    }
+    this.#closedNotified = true
+    this.onclose?.()
+  }
+
   async close(): Promise<void> {
     // Close all SSE connections
 
@@ -634,7 +648,9 @@ export class StreamableHTTPTransport implements Transport {
 
     // Clear any pending responses
     this.#requestResponseMap.clear()
-    this.onclose?.()
+    // Standalone SSE abort may already have notified; still notify when there
+    // was no GET stream (e.g. DELETE after JSON-only traffic).
+    this.#notifyClose()
   }
 
   async send(message: JSONRPCMessage, options?: { relatedRequestId?: RequestId }): Promise<void> {

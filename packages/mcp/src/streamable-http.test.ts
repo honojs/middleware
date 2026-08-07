@@ -1724,6 +1724,40 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     stopTestServer({ transport: result.transport })
   })
 
+  it('should call onclose when the standalone SSE stream aborts', async () => {
+    const onclose = vitest.fn()
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+    })
+    result.transport.onclose = onclose
+
+    const initResponse = await sendPostRequest(result.server, TEST_MESSAGES.initialize)
+    const sessionId = initResponse.headers.get('mcp-session-id')
+    expect(sessionId).toBeDefined()
+
+    const sseResponse = await result.server.request('/', {
+      method: 'GET',
+      headers: {
+        Accept: 'text/event-stream',
+        'mcp-session-id': sessionId || '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+    })
+    expect(sseResponse.status).toBe(200)
+
+    // Client disconnect without DELETE — cancel the SSE body.
+    await sseResponse.body?.cancel()
+    await vitest.waitFor(() => {
+      expect(onclose).toHaveBeenCalledTimes(1)
+    })
+
+    // Explicit close afterward must not double-fire onclose.
+    await result.transport.close()
+    expect(onclose).toHaveBeenCalledTimes(1)
+
+    stopTestServer({ transport: result.transport })
+  })
+
   it('should not call onsessionclosed callback when not provided', async () => {
     // Create server without onsessionclosed callback
     const result = await createTestServer({
