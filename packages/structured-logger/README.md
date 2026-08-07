@@ -201,14 +201,14 @@ Returns a Hono `MiddlewareHandler`.
 
 #### Options
 
-| Option         | Type                                                                              | Required | Default                                                          | Description                                           |
-| -------------- | --------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------- | ----------------------------------------------------- |
-| `createLogger` | `(c: Context) => L`                                                               | Yes      |                                                                  | Factory that creates a request scoped logger instance |
-| `contextKey`   | `K extends string`                                                                | No       | `'logger'`                                                       | Key used to store the logger on `c.var`               |
-| `skip`         | `(c: Context) => boolean`                                                         | No       | —                                                                | When true, request passes through without logging     |
-| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | No       | —                                                                | Called before handler execution                       |
-| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | No       | —                                                                | Called after handler execution                        |
-| `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —                                                                | Called when handler throws                            |
+| Option         | Type                                                                              | Required | Default    | Description                                           |
+| -------------- | --------------------------------------------------------------------------------- | -------- | ---------- | ----------------------------------------------------- |
+| `createLogger` | `(c: Context) => L`                                                               | Yes      |            | Factory that creates a request scoped logger instance |
+| `contextKey`   | `K extends string`                                                                | No       | `'logger'` | Key used to store the logger on `c.var`               |
+| `skip`         | `(c: Context) => boolean`                                                         | No       | —          | When true, request passes through without logging     |
+| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | No       | —          | Called before handler execution                       |
+| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | No       | —          | Called after handler execution                        |
+| `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —          | Called when handler throws                            |
 
 ## Behavior
 
