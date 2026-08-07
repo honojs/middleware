@@ -118,25 +118,21 @@ This validator returns ungrouped errors, which can be inconvenient when mapping 
 To group them, use `flattenErrors` inside a `sValidator` hook:
 
 ```ts
-/*
-  Install the Standard Schema interface from npm or JSR,
-  or copy it from https://standardschema.dev/schema
-*/
-import type { StandardSchemaV1 } from '@standard-schema/spec'
-
-import type { ValidationTargets } from 'hono'
 import { flattenErrors, sValidator } from '@hono/standard-validator'
 
-export const validate = <Target extends keyof ValidationTargets, Schema extends StandardSchemaV1>(
-  target: Target,
-  schema: Schema
-) =>
-  sValidator(target, schema, (result, c) => {
+// ...schema
+
+app.post(
+  '/author',
+  sValidator('json', schema, (result, c) => {
     if (!result.success) {
-      const flattenedError = flattenErrors(result.error)
-      return c.json(flattenedError, 400)
+      return c.json(flattenErrors(result.error), 400)
     }
-  })
+  }),
+  (c) => {
+    // ...
+  }
+)
 ```
 
 Now, error messages are grouped by field as arrays under the `fieldErrors` property. As for unknown keys or root-level issues, they go inside `fieldErrors` or `formErrors`, depending on the validation library you use:
