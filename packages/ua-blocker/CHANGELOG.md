@@ -1,5 +1,11 @@
 # @hono/ua-blocker
 
+## 0.1.38
+
+### Patch Changes
+
+- [#2072](https://github.com/honojs/middleware/pull/2072) [`a1bd75e75087f090d4cd9c778766630b0a339dae`](https://github.com/honojs/middleware/commit/a1bd75e75087f090d4cd9c778766630b0a339dae) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
 ## 0.1.37
 
 ### Patch Changes
