@@ -1209,6 +1209,145 @@ app.get('/msentra/refresh', (c, next) => {
 })
 ```
 
+### OpenStreetMap
+
+```ts
+import { Hono } from 'hono'
+import { openstreetmapAuth } from '@hono/oauth-providers/openstreetmap'
+
+const app = new Hono()
+
+app.use(
+  '/openstreetmap',
+  openstreetmapAuth({
+    client_id: process.env.OPENSTREETMAP_ID,
+    client_secret: process.env.OPENSTREETMAP_SECRET,
+    scope: ['read_prefs'],
+  })
+)
+
+export default app
+```
+
+Register your application on the [OAuth 2 applications page](https://www.openstreetmap.org/oauth2/applications)
+of your OpenStreetMap account to obtain the client ID and secret.
+
+#### Parameters
+
+- `client_id`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client ID. You can find this value on the [OAuth 2 applications page](https://www.openstreetmap.org/oauth2/applications).<br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `OPENSTREETMAP_ID=`.
+- `client_secret`:
+  - Type: `string`.
+  - `Required`.
+  - Your app client secret. You can find this value on the [OAuth 2 applications page](https://www.openstreetmap.org/oauth2/applications).<br />When developing **Cloudflare Workers**, there's no need to send this parameter. Just declare it in the `wrangler.toml` file as `OPENSTREETMAP_SECRET=`.
+    > ⚠️ Do **not** share your **client secret** to ensure the security of your app.
+- `scope`:
+  - Type: `OpenStreetMapScope[]`.
+  - `Required`.
+  - Set of **permissions** to request the user's authorization to access your app for retrieving user information and performing actions on their behalf. Review all the scopes OpenStreetMap offers on the [OAuth wiki page](https://wiki.openstreetmap.org/wiki/OAuth).
+    > `read_prefs` is required to read the user details, so `user-openstreetmap` stays `undefined` without it.
+    > `read_email` is a privileged scope that OpenStreetMap only offers to applications registered by a site administrator, so `user-openstreetmap.email` is usually `undefined`.
+- `state`:
+  - Type: `string`.
+  - `Optional`.
+  - A value to be returned unchanged in the redirect back to your app. Defaults to a random value used as the anti-CSRF token of the flow.
+- `redirect_uri`:
+  - Type: `string`.
+  - `Optional`.
+  - The URL OpenStreetMap redirects the user back to. Defaults to the route the middleware is used on, and has to match one of the redirect URIs registered for your application.
+
+The middleware always uses **PKCE** with the `S256` challenge method, so it works with both
+confidential and public OpenStreetMap applications.
+
+#### Authentication Flow
+
+After the completion of the OpenStreetMap OAuth flow, essential data has been prepared for use in
+the subsequent steps that your app needs to take.
+
+`openstreetmapAuth` method provides 3 set key data:
+
+- `token`:
+  - Access token to make requests to the OpenStreetMap API for retrieving user information and
+    performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+    }
+    ```
+    > OpenStreetMap access tokens do not expire, so neither `expires_in` nor a `refresh-token` is
+    > provided. Use `revokeToken` to invalidate a token.
+- `granted-scopes`:
+  - Scopes for which the user has granted permissions.
+  - Type: `string[]`.
+- `user-openstreetmap`:
+  - User basic info retrieved from OpenStreetMap.
+  - Type:
+    ```
+    {
+      id: number
+      display_name: string
+      account_created: string
+      description?: string
+      company?: string
+      social_links: { url: string; platform: string }[]
+      contributor_terms: { agreed: boolean; pd: boolean }
+      img: { href?: string }
+      roles: string[]
+      changesets: { count: number }
+      traces: { count: number }
+      blocks: {
+        received: { count: number; active: number }
+        issued?: { count: number; active: number }
+      }
+      home?: { lat: number; lon: number; zoom: number }
+      languages?: string[]
+      messages: {
+        received: { count: number; unread: number }
+        sent: { count: number }
+      }
+      email?: string
+    }
+    ```
+    > `email` is only present when the `read_email` scope has been granted, and `issued` blocks are
+    > only present for moderators.
+
+> [!NOTE]
+> To access this data, utilize the `c.get` method within the callback of the upcoming HTTP request
+> handler.
+
+```ts
+app.get('/openstreetmap', (c) => {
+  const token = c.get('token')
+  const grantedScopes = c.get('granted-scopes')
+  const user = c.get('user-openstreetmap')
+
+  return c.json({
+    token,
+    grantedScopes,
+    user,
+  })
+})
+```
+
+#### Revoke Token
+
+Since OpenStreetMap access tokens never expire on their own, revoke them when the user signs out of
+your app. The `revokeToken` method accepts the `client_id`, `client_secret` and the `token` as
+parameters.
+
+```ts
+import { openstreetmapAuth, revokeToken } from '@hono/oauth-providers/openstreetmap'
+
+app.post('/openstreetmap/revoke', async (c) => {
+  const revoked = await revokeToken(client_id, client_secret, token)
+
+  return c.json({ revoked })
+})
+```
+
 ## Advance Usage
 
 ### Customize `redirect_uri`
