@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import { HttpResponse, http } from 'msw'
 import { setupServer } from 'msw/node'
 import {
   discordCodeError,
@@ -25,6 +24,7 @@ import {
   msentraToken,
   msentraUser,
   openStreetMapCodeError,
+  openStreetMapRejectedCode,
   openStreetMapRevokeTokenError,
   openStreetMapToken,
   openStreetMapUser,
@@ -521,6 +521,9 @@ describe('OAuth Middleware', () => {
       state: 'test-state',
     })
   )
+  // Without the options the middleware falls back to the environment, which
+  // does not carry the OpenStreetMap credentials either.
+  app.use('/openstreetmap-no-credentials', openstreetmapAuth({ scope: ['read_prefs'] }))
   app.get('/openstreetmap', (c) => {
     const token = c.get('token')
     const refreshToken = c.get('refresh-token')
@@ -1301,19 +1304,24 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should throw error when the API rejects the token', async () => {
-        server.use(
-          http.get('https://api.openstreetmap.org/api/0.6/user/details.json', () =>
-            HttpResponse.text(openStreetMapUserError, { status: 401 })
-          )
+        const res = await app.request(
+          `/openstreetmap?code=${openStreetMapRejectedCode}&state=valid-state`,
+          { headers: { cookie: 'state=valid-state; code-verifier=valid-code-verifier' } }
         )
-
-        const res = await app.request(`/openstreetmap?code=${dummyCode}&state=valid-state`, {
-          headers: { cookie: 'state=valid-state; code-verifier=valid-code-verifier' },
-        })
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(openStreetMapUserError)
+      })
+
+      it('Should throw error when the credentials are missing', async () => {
+        const res = await app.request('/openstreetmap-no-credentials')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(
+          'Required parameters were not found. Please provide them to proceed.'
+        )
       })
 
       it('Should work with received code', async () => {

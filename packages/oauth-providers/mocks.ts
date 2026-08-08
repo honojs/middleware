@@ -243,8 +243,13 @@ export const handlers = [
   http.post('https://www.openstreetmap.org/oauth2/token', async ({ request }) => {
     const body = new URLSearchParams(await request.text())
     // OpenStreetMap only supports the authorization code flow, with PKCE.
-    if (body.get('code') === dummyCode && body.get('code_verifier')) {
-      return HttpResponse.json(openStreetMapToken)
+    if (body.get('code_verifier')) {
+      if (body.get('code') === dummyCode) {
+        return HttpResponse.json(openStreetMapToken)
+      }
+      if (body.get('code') === openStreetMapRejectedCode) {
+        return HttpResponse.json(openStreetMapRejectedToken)
+      }
     }
     return HttpResponse.json(openStreetMapCodeError, { status: 400 })
   }),
@@ -645,10 +650,18 @@ export const msentraCodeError = {
 // OpenStreetMap access tokens do not expire, so the token response carries
 // neither `expires_in` nor `refresh_token`.
 export const openStreetMapToken = {
-  access_token: 'JvKtCjxJs0h1rDxHNCyoW2LqTNsMUHQPfQ8m1nsRtUw',
+  access_token: 'openstreetmapd0mmy4cc3sst0k3n',
   token_type: 'Bearer',
   scope: 'read_prefs write_api read_email',
   created_at: 1727000000,
+} satisfies OpenStreetMapTokenResponse
+
+// A code that exchanges fine but yields a token the API no longer accepts, as
+// happens once the user revokes the application.
+export const openStreetMapRejectedCode = 'osm-code-for-a-rejected-token'
+export const openStreetMapRejectedToken = {
+  ...openStreetMapToken,
+  access_token: 'openstreetmapr3j3ct3d4cc3sst0k3n',
 } satisfies OpenStreetMapTokenResponse
 
 export const openStreetMapUser = {
