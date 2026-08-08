@@ -16,6 +16,10 @@ import type {
   MSEntraUser,
 } from './src/providers/msentra'
 import type {
+  OpenStreetMapErrorResponse,
+  OpenStreetMapTokenResponse,
+} from './src/providers/openstreetmap'
+import type {
   TwitchErrorResponse,
   TwitchTokenResponse,
   TwitchTokenSuccess,
@@ -235,6 +239,35 @@ export const handlers = [
       return HttpResponse.json(msentraCodeError)
     }
   ),
+  // OpenStreetMap
+  http.post('https://www.openstreetmap.org/oauth2/token', async ({ request }) => {
+    const body = new URLSearchParams(await request.text())
+    // OpenStreetMap only supports the authorization code flow, with PKCE.
+    if (body.get('code_verifier')) {
+      if (body.get('code') === dummyCode) {
+        return HttpResponse.json(openStreetMapToken)
+      }
+      if (body.get('code') === openStreetMapRejectedCode) {
+        return HttpResponse.json(openStreetMapRejectedToken)
+      }
+    }
+    return HttpResponse.json(openStreetMapCodeError, { status: 400 })
+  }),
+  http.get('https://api.openstreetmap.org/api/0.6/user/details.json', ({ request }) => {
+    if (request.headers.get('authorization') !== `Bearer ${openStreetMapToken.access_token}`) {
+      // The OpenStreetMap API answers with a plain text body on error.
+      return HttpResponse.text(openStreetMapUserError, { status: 401 })
+    }
+    return HttpResponse.json(openStreetMapUserResponse)
+  }),
+  http.post('https://www.openstreetmap.org/oauth2/revoke', async ({ request }) => {
+    const body = new URLSearchParams(await request.text())
+    if (body.get('token') !== openStreetMapToken.access_token) {
+      return HttpResponse.json(openStreetMapRevokeTokenError, { status: 403 })
+    }
+    // RFC 7009 mandates an empty 200 response for a successful revocation.
+    return HttpResponse.json({}, { status: 200 })
+  }),
 ]
 
 export const dummyCode = '4/0AfJohXl9tS46EmTA6u9x3pJQiyCNyahx4DLJaeJelzJ0E5KkT4qJmCtjq9n3FxBvO40ofg'
@@ -613,3 +646,92 @@ export const msentraCodeError = {
   error_description: 'AADSTS1234567: Invalid request.',
   error_codes: [1234567],
 }
+
+// OpenStreetMap access tokens do not expire, so the token response carries
+// neither `expires_in` nor `refresh_token`.
+export const openStreetMapToken = {
+  access_token: 'openstreetmapd0mmy4cc3sst0k3n',
+  token_type: 'Bearer',
+  scope: 'read_prefs write_api read_email',
+  created_at: 1727000000,
+} satisfies OpenStreetMapTokenResponse
+
+// A code that exchanges fine but yields a token the API no longer accepts, as
+// happens once the user revokes the application.
+export const openStreetMapRejectedCode = 'osm-code-for-a-rejected-token'
+export const openStreetMapRejectedToken = {
+  ...openStreetMapToken,
+  access_token: 'openstreetmapr3j3ct3d4cc3sst0k3n',
+} satisfies OpenStreetMapTokenResponse
+
+export const openStreetMapUser = {
+  id: 1234,
+  display_name: 'hono-osm-user',
+  account_created: '2013-04-01T12:34:56Z',
+  description: 'An OpenStreetMap contributor.',
+  company: 'Hono',
+  social_links: [
+    {
+      url: 'https://hono.dev',
+      platform: 'website',
+    },
+  ],
+  contributor_terms: {
+    agreed: true,
+    pd: false,
+  },
+  img: {
+    href: 'https://www.openstreetmap.org/attachments/users/images/000/001/234/original/avatar.png',
+  },
+  roles: [],
+  changesets: {
+    count: 4321,
+  },
+  traces: {
+    count: 12,
+  },
+  blocks: {
+    received: {
+      count: 0,
+      active: 0,
+    },
+  },
+  home: {
+    lat: 35.681236,
+    lon: 139.767125,
+    zoom: 12,
+  },
+  languages: ['ja', 'en'],
+  messages: {
+    received: {
+      count: 7,
+      unread: 1,
+    },
+    sent: {
+      count: 3,
+    },
+  },
+  email: 'example@openstreetmap.org',
+}
+
+export const openStreetMapUserResponse = {
+  version: '0.6',
+  generator: 'OpenStreetMap server',
+  copyright: 'OpenStreetMap and contributors',
+  attribution: 'https://www.openstreetmap.org/copyright',
+  license: 'https://opendatacommons.org/licenses/odbl/1-0/',
+  user: openStreetMapUser,
+}
+
+export const openStreetMapCodeError = {
+  error: 'invalid_grant',
+  error_description:
+    'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.',
+} satisfies OpenStreetMapErrorResponse
+
+export const openStreetMapUserError = "Couldn't authenticate you"
+
+export const openStreetMapRevokeTokenError = {
+  error: 'unauthorized_client',
+  error_description: 'The client is not authorized to perform this request.',
+} satisfies OpenStreetMapErrorResponse
