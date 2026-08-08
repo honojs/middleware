@@ -144,9 +144,6 @@
     "@typescript-eslint/no-deprecated": {
       "count": 3
     },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 11
-    },
     "@typescript-eslint/no-misused-promises": {
       "count": 3
     },
@@ -164,9 +161,6 @@
     },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 7
-    },
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 8
     },
     "@typescript-eslint/require-await": {
       "count": 6
