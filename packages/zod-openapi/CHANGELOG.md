@@ -1,5 +1,19 @@
 # @hono/zod-openapi
 
+## 1.5.2
+
+### Patch Changes
+
+- [#2069](https://github.com/honojs/middleware/pull/2069) [`fc0377c5595bde3147d181e5013a3fc710175e40`](https://github.com/honojs/middleware/commit/fc0377c5595bde3147d181e5013a3fc710175e40) Thanks [@edenbuilds](https://github.com/edenbuilds)! - fix(zod-openapi): keep the `z` import edge so `.openapi()` survives bundling
+
+  Re-exporting zod's `z` as a pass-through let esbuild code-splitting resolve
+  `import { z } from '@hono/zod-openapi'` straight to zod and drop the edge to the
+  module that runs `extendZodWithOpenApi(z)`, so schemas could be built before the
+  patch applied and `.openapi()` was undefined at runtime. Export `z` as an alias
+  declaration instead: it compiles to a binding local to the module, which keeps
+  that edge, while still carrying zod's type namespace so `z.infer`, `z.ZodType`
+  and the rest continue to work. Fixes #2051.
+
 ## 1.5.1
 
 ### Patch Changes
