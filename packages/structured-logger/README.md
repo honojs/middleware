@@ -2,7 +2,7 @@
 
 Structured Logger middleware for [Hono](https://hono.dev).
 
-Library agnostic: works with pino, winston, bunyan, console, or any logger that implements the `BaseLogger` interface. Zero dependencies. Provides a request scoped logger on `c.var.logger` with full type safety, automatic response time measurement, and native integration with `hono/request-id`.
+Library agnostic: works with pino, winston, bunyan, console, or any structured logging library. Zero dependencies. Provides a request scoped logger on `c.var.logger` with full type safety, automatic response time measurement, and native integration with `hono/request-id`.
 
 ## Install
 
@@ -70,6 +70,24 @@ app.use(
 )
 ```
 
+### Skipping routes
+
+Pass a `skip` function to opt specific requests out of logging entirely. Called before `createLogger`, so skipped requests incur no logger allocation:
+
+```typescript
+import { Hono } from 'hono'
+import { structuredLogger } from '@hono/structured-logger'
+
+const app = new Hono()
+
+app.use(
+  structuredLogger({
+    createLogger: () => console,
+    skip: (c) => c.req.path === '/health',
+  })
+)
+```
+
 ### Custom hooks
 
 ```typescript
@@ -104,12 +122,13 @@ app.use(
         'request completed'
       )
     },
-    onError: (logger, err, c) => {
+    onError: (logger, err, c, elapsedMs) => {
       logger.error(
         {
           err,
           method: c.req.method,
           path: c.req.path,
+          elapsedMs,
         },
         'request failed'
       )
@@ -120,9 +139,13 @@ app.use(
 
 ### Custom context key
 
-If you already have a `logger` variable on your context, use `contextKey` to pick a different name:
+If you already have a `logger` variable on your context, use `contextKey` to pick a different name. Pass the same key to `StructuredLoggerEnv` to keep `c.var` fully typed:
 
 ```typescript
+import { structuredLogger, type StructuredLoggerEnv } from '@hono/structured-logger'
+
+const app = new Hono<StructuredLoggerEnv<MyLogger, 'log'>>()
+
 app.use(
   structuredLogger({
     createLogger: () => myLogger,
@@ -138,19 +161,37 @@ app.get('/', (c) => {
 
 ### Type safe context
 
-Declare the logger type on your Hono app for full type safety:
+Use `StructuredLoggerEnv` to declare the logger type on your Hono app. The second type parameter matches `contextKey` and defaults to `'logger'`:
 
 ```typescript
-import type { pino } from 'pino'
+import type pino from 'pino'
+import { structuredLogger, type StructuredLoggerEnv } from '@hono/structured-logger'
 
-type Env = {
-  Variables: {
-    logger: pino.Logger
-  }
-}
+// Default key ('logger')
+const app = new Hono<StructuredLoggerEnv<pino.Logger>>()
 
-const app = new Hono<Env>()
+// Custom key — pass the same literal to both
+const app = new Hono<StructuredLoggerEnv<pino.Logger, 'log'>>()
+app.use(structuredLogger({ createLogger: ..., contextKey: 'log' }))
 ```
+
+`c.var.logger` (or the custom key) will then be typed as `pino.Logger` throughout the app.
+
+To get typed access to other context variables inside `structuredLogger`, set the type argument with your app's env type:
+
+```typescript
+import type { Context } from 'hono'
+
+type AppEnv = { Variables: { tenantId: string } }
+
+app.use(
+  structuredLogger<AppEnv>({
+    createLogger: (c) => rootLogger.child({ tenantId: c.var.tenantId }),
+  })
+)
+```
+
+TypeScript infers `E = AppEnv` from the annotation, so the middleware's return type enforces that the app declares `tenantId` in its env.
 
 ## API
 
@@ -160,37 +201,26 @@ Returns a Hono `MiddlewareHandler`.
 
 #### Options
 
-| Option         | Type                                                                  | Required | Default                                                  | Description                                           |
-| -------------- | --------------------------------------------------------------------- | -------- | -------------------------------------------------------- | ----------------------------------------------------- |
-| `createLogger` | `(c: Context) => L`                                                   | Yes      |                                                          | Factory that creates a request scoped logger instance |
-| `contextKey`   | `string`                                                              | No       | `'logger'`                                               | Key used to store the logger on `c.var`               |
-| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                    | No       | Logs method + path at info level                         | Called before handler execution                       |
-| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | Logs method, path, status and elapsed time at info level | Called after handler execution                        |
-| `onError`      | `(logger: L, err: Error, c: Context) => void \| Promise<void>`        | No       | Logs error, method, path and status at error level       | Called when handler throws                            |
-
-### `BaseLogger`
-
-Minimal interface your logger must implement:
-
-```typescript
-interface BaseLogger {
-  info(obj: unknown, msg?: string, ...args: unknown[]): void
-  warn(obj: unknown, msg?: string, ...args: unknown[]): void
-  error(obj: unknown, msg?: string, ...args: unknown[]): void
-  debug(obj: unknown, msg?: string, ...args: unknown[]): void
-}
-```
-
-Compatible with pino, winston, bunyan, console, and most logging libraries out of the box.
+| Option         | Type                                                                              | Required | Default    | Description                                           |
+| -------------- | --------------------------------------------------------------------------------- | -------- | ---------- | ----------------------------------------------------- |
+| `createLogger` | `(c: Context) => L`                                                               | Yes      |            | Factory that creates a request scoped logger instance |
+| `contextKey`   | `K extends string`                                                                | No       | `'logger'` | Key used to store the logger on `c.var`               |
+| `skip`         | `(c: Context) => boolean`                                                         | No       | —          | When true, request passes through without logging     |
+| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | No       | —          | Called before handler execution                       |
+| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | No       | —          | Called after handler execution                        |
+| `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —          | Called when handler throws                            |
 
 ## Behavior
 
 1. `createLogger(c)` is called once per request.
 2. The logger is stored on `c.var[contextKey]`.
 3. `onRequest` fires before handler execution.
-4. After handler completes, `onResponse` fires with elapsed time in milliseconds (measured via `performance.now()`).
-5. If the handler throws, Hono's error handler runs first, then `onError` fires (checking `c.error`). `onResponse` is skipped when an error occurred.
+4. After handler completes, `onResponse` fires with elapsed time in milliseconds (measured via `performance.now()` immediately after `onRequest` returns, so `elapsedMs` reflects handler duration only).
+5. If the handler throws, Hono's `app.onError()` runs first to shape the response, then `onError` fires with elapsed time. By the time `onError` runs, `c.res` already holds the final response — including the correct status for `HTTPException`. `onResponse` is skipped when an error occurred.
 6. `onError` and `onResponse` are mutually exclusive per request.
+
+> [!WARNING]
+> **Avoid logging in both `onError` and `app.onError()`.** Since `app.onError()` always runs before this middleware's `onError` hook, logging in both places produces a duplicate log line for every error. The recommended pattern is to log only here and keep `app.onError()` focused on shaping the response. Note that errors handled via `HTTPException` never reach the error branch of `app.onError()`, so logging there would also silently drop those.
 
 ## Runtime compatibility
 
