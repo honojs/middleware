@@ -942,7 +942,7 @@ describe('MCP helper', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1711,7 +1711,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1721,7 +1721,41 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).toHaveBeenCalledTimes(1)
 
     // Clean up
-    stopTestServer({ transport: result.transport })
+    await stopTestServer({ transport: result.transport })
+  })
+
+  it('should call onclose when the standalone SSE stream aborts', async () => {
+    const onclose = vitest.fn()
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+    })
+    result.transport.onclose = onclose
+
+    const initResponse = await sendPostRequest(result.server, TEST_MESSAGES.initialize)
+    const sessionId = initResponse.headers.get('mcp-session-id')
+    expect(sessionId).toBeDefined()
+
+    const sseResponse = await result.server.request('/', {
+      method: 'GET',
+      headers: {
+        Accept: 'text/event-stream',
+        'mcp-session-id': sessionId ?? '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+    })
+    expect(sseResponse.status).toBe(200)
+
+    // Client disconnect without DELETE — cancel the SSE body.
+    await sseResponse.body?.cancel()
+    await vitest.waitFor(() => {
+      expect(onclose).toHaveBeenCalledTimes(1)
+    })
+
+    // Explicit close afterward must not double-fire onclose.
+    await result.transport.close()
+    expect(onclose).toHaveBeenCalledTimes(1)
+
+    await stopTestServer({ transport: result.transport })
   })
 
   it('should not call onsessionclosed callback when not provided', async () => {
@@ -1740,7 +1774,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1748,7 +1782,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(deleteResponse.status).toBe(200)
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should not call onsessionclosed callback for invalid session DELETE', async () => {
@@ -1778,7 +1812,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).not.toHaveBeenCalled()
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should call onsessionclosed callback with correct session ID when multiple sessions exist', async () => {
@@ -1815,7 +1849,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse1 = await server1.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': sessionId1 || '',
+        'mcp-session-id': sessionId1 ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1828,7 +1862,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse2 = await server2.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': sessionId2 || '',
+        'mcp-session-id': sessionId2 ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1838,8 +1872,8 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).toHaveBeenCalledTimes(2)
 
     // Clean up
-    stopTestServer({ transport: result1.transport })
-    stopTestServer({ transport: result2.transport })
+    await stopTestServer({ transport: result1.transport })
+    await stopTestServer({ transport: result2.transport })
   })
 })
 
@@ -1872,7 +1906,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(initializationOrder).toEqual(['async-start', 'async-end', tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should support sync onsessioninitialized callback (backwards compatibility)', async () => {
@@ -1895,7 +1929,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(capturedSessionId).toEqual([tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should support async onsessionclosed callback', async () => {
@@ -1924,7 +1958,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1937,7 +1971,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(closureOrder).toEqual(['async-close-start', 'async-close-end', tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should propagate errors from async onsessioninitialized callback', async () => {
@@ -1959,7 +1993,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
 
     // Clean up
     consoleErrorSpy.mockRestore()
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should propagate errors from async onsessionclosed callback', async () => {
@@ -1983,7 +2017,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1992,7 +2026,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
 
     // Clean up
     consoleErrorSpy.mockRestore()
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should handle both async callbacks together', async () => {
@@ -2026,7 +2060,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -2040,7 +2074,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(events).toHaveLength(2)
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 })
 
