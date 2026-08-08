@@ -403,7 +403,10 @@ type ComputeInput<R extends RouteConfig> = InputTypeParam<R> &
 
 // Helper: Calculate the expected Handler type for a specific RouteConfig
 type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
-  E,
+  // use the env from the middleware if it's defined
+  R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
+    ? RouteMiddlewareParams<R>['env'] & E
+    : E,
   ConvertPathType<R['path']>,
   ComputeInput<R>,
   R extends {
