@@ -11,3 +11,9 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
   workerd: false
+
+minimumReleaseAgeExclude:
+  - rolldown-plugin-dts@0.28.1
+
+overrides:
+  rolldown-plugin-dts: 0.28.1
