@@ -63,7 +63,9 @@ If validation fails and no hook is provided, the middleware responds with `400 B
 }
 ```
 
-The issue objects in `error` come from the underlying schema library (Zod in this example), so their fields vary by library and are not guaranteed to be stable. Also note that `data` echoes the raw request input back to the client. If that is undesirable (for example, the request may contain sensitive values) or clients parse the error body, define your own format with a hook. For example, an [RFC 9457 Problem Details](https://datatracker.ietf.org/doc/html/rfc9457) body:
+The issue objects in `error` come from the underlying schema library (Zod in this example), so their fields vary by library and are not guaranteed to be stable. Also note that `data` echoes the raw request input back to the client, which may be undesirable when requests carry sensitive values.
+
+To group the issues by field instead, see [Grouping errors](#grouping-errors), which uses the `flattenErrors` utility shipped with this package. To control the response shape entirely, pass a hook. For example, an [RFC 9457 Problem Details](https://datatracker.ietf.org/doc/html/rfc9457) body, which reports each issue as a JSON Pointer and omits the input echo:
 
 ```ts
 app.post(
