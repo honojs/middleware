@@ -29,7 +29,7 @@
     "url": "git+https://github.com/honojs/middleware.git"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "^0.18.2",
+    "@arethetypeswrong/core": "^0.18.5",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.29.7",
     "@cloudflare/vitest-pool-workers": "^0.16.10",
