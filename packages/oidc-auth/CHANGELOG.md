@@ -1,5 +1,11 @@
 # @hono/oidc-auth
 
+## 1.10.0
+
+### Minor Changes
+
+- [#2056](https://github.com/honojs/middleware/pull/2056) [`0d67bceaeba92f72506d0ee37043d98f599ca23f`](https://github.com/honojs/middleware/commit/0d67bceaeba92f72506d0ee37043d98f599ca23f) Thanks [@pdebie-amazon](https://github.com/pdebie-amazon)! - Add an optional `oidcAuthRefreshErrorHook`. `getAuth()` otherwise swallows a rejected refresh-token grant (it catches the `oauth4webapi` `ResponseBodyError` / `WWWAuthenticateChallengeError`, deletes the session cookie, and returns `null`), so callers cannot observe _why_ a refresh failed. The hook is invoked with the OAuth2 error and the context before the cookie is deleted, letting applications log/meter refresh failures or branch on the specific error (e.g. distinguish a permanent `invalid_grant` from a transient `too_many_requests`), and — since it runs before the redirect and receives the context — optionally set a response header that rides the redirect. The hook is optional and defaults to the current behaviour, so this is fully backward compatible.
+
 ## 1.9.0
 
 ### Minor Changes

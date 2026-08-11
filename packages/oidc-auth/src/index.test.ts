@@ -264,6 +264,60 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.headers.get('set-cookie')).toMatch('code_verifier=')
     expect(res.headers.get('set-cookie')).toMatch('continue=http%3A%2F%2Flocalhost%2F')
   })
+  test('Should invoke oidcAuthRefreshErrorHook when the refresh-token grant is rejected', async () => {
+    // A rejected refresh (e.g. the refresh token was revoked) makes
+    // processRefreshTokenResponse throw a ResponseBodyError; getAuth otherwise
+    // swallows it and redirects. The hook must fire with the OAuth2 error, and a
+    // header it sets must ride the resulting redirect.
+    const refreshTokenGrantRequest = vi.mocked(oauth2.refreshTokenGrantRequest)
+    refreshTokenGrantRequest.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'invalid_grant', error_description: 'Bad Request' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
+      })
+    )
+    const seen: unknown[] = []
+    const hookApp = new Hono()
+    hookApp.use('/*', async (c, next) => {
+      c.set('oidcAuthRefreshErrorHook', (error, ctx) => {
+        seen.push(error)
+        if (error instanceof oauth2.ResponseBodyError && error.error === 'invalid_grant') {
+          ctx.header('x-refresh-dead', '1')
+        }
+      })
+      await next()
+    })
+    hookApp.use('/*', oidcAuthMiddleware())
+    hookApp.all('/*', (c) => c.text('OK'))
+
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await hookApp.request(req, {}, {})
+    expect(res.status).toBe(302) // refresh failed → redirect to re-authenticate
+    expect(res.headers.get('x-refresh-dead')).toBe('1') // header set in the hook rode the redirect
+    expect(res.headers.get('set-cookie')).toMatch('oidc-auth=;') // session cookie cleared
+    expect(seen).toHaveLength(1)
+    expect(seen[0]).toBeInstanceOf(oauth2.ResponseBodyError)
+    expect((seen[0] as oauth2.ResponseBodyError).error).toBe('invalid_grant')
+  })
+  test('Should still redirect on a rejected refresh when no oidcAuthRefreshErrorHook is set', async () => {
+    // The hook is optional — behaviour is unchanged when it is absent.
+    const refreshTokenGrantRequest = vi.mocked(oauth2.refreshTokenGrantRequest)
+    refreshTokenGrantRequest.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'invalid_grant', error_description: 'Bad Request' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
+      })
+    )
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res.status).toBe(302)
+  })
   test('Should swallow revocationRequest failure on expired session', async () => {
     // Regression for #1851: revokeSession() rejection used to escape getAuth().
     const revocationRequest = vi.mocked(oauth2.revocationRequest)

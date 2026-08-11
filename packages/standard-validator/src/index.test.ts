@@ -8,7 +8,7 @@ import { vi } from 'vitest'
 import * as arktypeSchemas from '../__schemas__/arktype'
 import * as valibotSchemas from '../__schemas__/valibot'
 import * as zodSchemas from '../__schemas__/zod'
-import { sValidator } from '.'
+import { sValidator, flattenErrors } from '.'
 
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
@@ -486,6 +486,75 @@ describe('Standard Schema Validation', () => {
           }
         })
       })
+    })
+  })
+})
+
+describe('sortErrors', () => {
+  const testData = {
+    username: 'Super John Doe',
+    password: '123',
+    role: 'admin',
+  }
+
+  it('sorts Zod validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await zodSchemas.userSchema['~standard'].validate(testData)
+
+    // Act
+    const sortedErrors = flattenErrors(issues)
+
+    // Assert
+    expect(sortedErrors).toStrictEqual({
+      formErrors: ['Unrecognized key: "role"'],
+      fieldErrors: {
+        username: [
+          'Username cannot be longer than 10 characters',
+          'Username must contain only alphanumeric characters',
+        ],
+        password: ['Password must be at least 4 characters long'],
+      },
+    })
+  })
+
+  it('sorts Valibot validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await valibotSchemas.userSchema['~standard'].validate(testData)
+
+    // Act
+    const sortedErrors = flattenErrors(issues)
+
+    // Assert
+    expect(sortedErrors).toStrictEqual({
+      formErrors: [],
+      fieldErrors: {
+        username: [
+          'Username cannot be longer than 10 characters',
+          'Username must contain only alphanumeric characters',
+        ],
+        password: ['Password must be at least 4 characters long'],
+        role: ['Invalid key: Expected never but received "role"'],
+      },
+    })
+  })
+
+  it('sorts ArkType validation errors by path', async () => {
+    // Arrange
+    const { issues = [] } = await arktypeSchemas.userSchema['~standard'].validate(testData)
+
+    // Act
+    const sortedErrors = flattenErrors(issues)
+
+    // Assert
+    expect(sortedErrors).toStrictEqual({
+      formErrors: [],
+      fieldErrors: {
+        username: [
+          expect.stringMatching(/username.*must be.*only letters and digits.*at most length 10/s),
+        ],
+        password: ['password must be at least length 4 (was 3)'],
+        role: ['role must be removed'],
+      },
     })
   })
 })

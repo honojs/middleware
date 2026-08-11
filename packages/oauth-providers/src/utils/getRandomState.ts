@@ -1,7 +1,7 @@
-const rand = () => {
-  return Math.random().toString(36).substr(2)
-}
+import { base64UrlEncode } from './base64UrlEncode'
 
-export function getRandomState() {
-  return `${rand()}-${rand()}-${rand()}`
+// The state parameter is the anti-CSRF token of the OAuth flow (RFC 6749 10.12),
+// so it has to come from a CSPRNG rather than Math.random().
+export function getRandomState(): string {
+  return base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)))
 }

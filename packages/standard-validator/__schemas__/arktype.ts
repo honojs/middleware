@@ -30,6 +30,12 @@ const headerSchema = type({
   'user-agent': 'string',
 })
 
+const userSchema = type({
+  username: type('string.alphanumeric <= 10'),
+  password: type('string >= 4').pipe((value) => value.trim()),
+  '+': 'reject',
+})
+
 export {
   headerSchema,
   idJSONSchema,
@@ -38,4 +44,5 @@ export {
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
+  userSchema,
 }

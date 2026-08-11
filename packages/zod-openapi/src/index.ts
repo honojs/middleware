@@ -41,7 +41,7 @@ import { mergePath } from 'hono/utils/url'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 import type { OpenAPIObject as OpenAPIV31bject } from 'openapi3-ts/oas31'
 import type { ZodType, ZodError } from 'zod'
-import { z } from 'zod'
+import * as zodModule from 'zod'
 import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
@@ -913,8 +913,18 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
   return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
 }
 
-extendZodWithOpenApi(z)
-export { extendZodWithOpenApi, z }
+// `zodModule.z`, not the `z` alias below: the alias compiles to a binding
+// declared at that point, which this call precedes.
+extendZodWithOpenApi(zodModule.z)
+// An alias declaration, not `export { z }`: re-exporting the imported binding
+// lets a bundler resolve `import { z } from '@hono/zod-openapi'` straight to zod
+// and drop the edge to this module, so the `extendZodWithOpenApi` call above can
+// evaluate after the schemas that need it — `.openapi()` is then undefined at
+// runtime under esbuild code splitting (#2051). This compiles to a binding local
+// to this module, which keeps that edge, while an alias — unlike `const z = zod`
+// — still carries zod's type namespace, so `z.infer` and friends keep working.
+export import z = zodModule.z
+export { extendZodWithOpenApi }
 
 function addBasePathToDocument(document: Record<string, any>, basePath: string) {
   const updatedPaths: Record<string, any> = {}
