@@ -36,7 +36,7 @@ export interface StructuredLoggerOptions<
   skip?: (c: Context<E>) => boolean
 
   /** Called after logger creation, before handler execution. */
-  onRequest?: (logger: L, c: LoggedContext<E, L, K>) => void | Promise<void>
+  onRequest: (logger: L, c: LoggedContext<E, L, K>) => void | Promise<void>
 
   /** Called after handler execution with elapsed time in ms. */
   onResponse?: (logger: L, c: LoggedContext<E, L, K>, elapsedMs: number) => void | Promise<void>
@@ -66,9 +66,7 @@ export function structuredLogger<E extends Env = {}, L = unknown, K extends stri
     c.set(contextKey as never, logger as never)
     const ctx = c as LoggedContext<E, L, K>
 
-    if (onRequest) {
-      await onRequest(logger, ctx)
-    }
+    await onRequest(logger, ctx)
 
     const start = now()
 

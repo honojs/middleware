@@ -28,6 +28,8 @@ app.use(requestId())
 app.use(
   structuredLogger({
     createLogger: (c) => rootLogger.child({ requestId: c.var.requestId }),
+    onRequest: (logger, c) =>
+      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
   })
 )
 
@@ -51,6 +53,8 @@ const app = new Hono()
 app.use(
   structuredLogger({
     createLogger: (c) => rootLogger.child({ requestId: c.var.requestId }),
+    onRequest: (logger, c) =>
+      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
   })
 )
 ```
@@ -66,6 +70,7 @@ const app = new Hono()
 app.use(
   structuredLogger({
     createLogger: () => console,
+    onRequest: (_logger, c) => console.info(c.req.method, c.req.path),
   })
 )
 ```
@@ -84,6 +89,7 @@ app.use(
   structuredLogger({
     createLogger: () => console,
     skip: (c) => c.req.path === '/health',
+    onRequest: (_logger, c) => console.info(c.req.method, c.req.path),
   })
 )
 ```
@@ -150,6 +156,8 @@ app.use(
   structuredLogger({
     createLogger: () => myLogger,
     contextKey: 'log',
+    onRequest: (logger, c) =>
+      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
   })
 )
 
@@ -172,7 +180,7 @@ const app = new Hono<StructuredLoggerEnv<pino.Logger>>()
 
 // Custom key — pass the same literal to both
 const app = new Hono<StructuredLoggerEnv<pino.Logger, 'log'>>()
-app.use(structuredLogger({ createLogger: ..., contextKey: 'log' }))
+app.use(structuredLogger({ createLogger: ..., contextKey: 'log', onRequest: ... }))
 ```
 
 `c.var.logger` (or the custom key) will then be typed as `pino.Logger` throughout the app.
@@ -187,6 +195,8 @@ type AppEnv = { Variables: { tenantId: string } }
 app.use(
   structuredLogger<AppEnv>({
     createLogger: (c) => rootLogger.child({ tenantId: c.var.tenantId }),
+    onRequest: (logger, c) =>
+      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
   })
 )
 ```
@@ -206,7 +216,7 @@ Returns a Hono `MiddlewareHandler`.
 | `createLogger` | `(c: Context) => L`                                                               | Yes      |            | Factory that creates a request scoped logger instance |
 | `contextKey`   | `K extends string`                                                                | No       | `'logger'` | Key used to store the logger on `c.var`               |
 | `skip`         | `(c: Context) => boolean`                                                         | No       | —          | When true, request passes through without logging     |
-| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | No       | —          | Called before handler execution                       |
+| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | Yes      | —          | Called before handler execution                       |
 | `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | No       | —          | Called after handler execution                        |
 | `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —          | Called when handler throws                            |
 
