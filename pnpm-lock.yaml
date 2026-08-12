@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@arethetypeswrong/core':
-        specifier: ^0.18.2
-        version: 0.18.4
+        specifier: ^0.18.5
+        version: 0.18.5
       '@changesets/changelog-github':
         specifier: ^0.4.8
         version: 0.4.8
@@ -58,7 +58,7 @@ importers:
         version: 0.3.21
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       turbo:
         specifier: ^2.10.7
         version: 2.10.7
@@ -91,7 +91,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -109,7 +109,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -133,7 +133,7 @@ importers:
         version: 19.2.8
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -151,7 +151,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -169,7 +169,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -199,7 +199,7 @@ importers:
         version: 0.3.21
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -223,7 +223,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -248,7 +248,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -276,7 +276,7 @@ importers:
         version: 19.2.8
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -294,7 +294,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -321,7 +321,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -348,7 +348,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -369,7 +369,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -411,7 +411,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -436,7 +436,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -458,7 +458,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -473,7 +473,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -488,7 +488,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -519,7 +519,7 @@ importers:
         version: 0.5.3(hono@4.12.28)(unstorage@1.17.5)
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -541,7 +541,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -566,7 +566,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -584,7 +584,7 @@ importers:
         version: 2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2)
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -609,7 +609,7 @@ importers:
         version: 9.0.3
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -643,7 +643,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -661,7 +661,7 @@ importers:
         version: 15.1.3
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -682,7 +682,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -694,7 +694,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -721,7 +721,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -740,7 +740,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -762,7 +762,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -784,7 +784,7 @@ importers:
         version: 25.9.5
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -805,7 +805,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -826,7 +826,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -844,7 +844,7 @@ importers:
         version: 12.43.1
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -859,7 +859,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -877,7 +877,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -895,7 +895,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -916,7 +916,7 @@ importers:
         version: 0.2.2
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       tsyringe:
         specifier: ^4.10.0
         version: 4.10.0
@@ -934,7 +934,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typebox:
         specifier: ^1.1.5
         version: 1.3.5
@@ -955,7 +955,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typebox:
         specifier: ^1.1.5
         version: 1.3.5
@@ -985,7 +985,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -1006,7 +1006,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -1021,7 +1021,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -1049,7 +1049,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -1070,7 +1070,7 @@ importers:
         version: 4.12.28
       tsdown:
         specifier: ^0.22.3
-        version: 0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -1095,8 +1095,8 @@ packages:
   '@actions/io@1.1.3':
     resolution: {integrity: sha512-wi9JjgKLYS7U/z8PPbco+PvTb/nRWjeoFlJ1Qer83k/3C5PHQi28hiVdeE2kHXmIL99mQFawx8qt/JPjZilJ8Q==}
 
-  '@andrewbranch/untar.js@1.0.3':
-    resolution: {integrity: sha512-Jh15/qVmrLGhkKJBdXlK1+9tY4lZruYjsgkDFj08ZmDiWVBLJcqkok7Z0/R0In+i1rScBpJlSvrTS2Lm41Pbnw==}
+  '@andrewbranch/untar.js@1.0.4':
+    resolution: {integrity: sha512-pVXSwPsLuw8IGLo2Di0EaOfsk+ntVvpkk942J/sHYIkwvtKUakEcPh7HBgZ6tuimgzKSEHgCvO4XgQ05DEbwDw==}
 
   '@apidevtools/json-schema-ref-parser@9.1.2':
     resolution: {integrity: sha512-r1w81DpR+KyRWd3f+rk6TNqMgedmAxZP5v5KWlXQWlgMUUtyEJch0DKEci1SorPMiSeM8XPl7MZ3miJ60JIpQg==}
@@ -1104,8 +1104,8 @@ packages:
   '@apphosting/common@0.0.8':
     resolution: {integrity: sha512-RJu5gXs2HYV7+anxpVPpp04oXeuHbV3qn402AdXVlnuYM/uWo7aceqmngpfp6Bi376UzRqGjfpdwFHxuwsEGXQ==}
 
-  '@arethetypeswrong/core@0.18.4':
-    resolution: {integrity: sha512-M5F0ePyN6h2Z6XxRiyIPqjGbltotXLjR0CKA0uKspsDu0QmgTNYvRb4RSQPMUs2ZXZHCCYpbaZbFbYOXLxCjUA==}
+  '@arethetypeswrong/core@0.18.5':
+    resolution: {integrity: sha512-9ytjzGwxjm9Uz7I9avfbt5vlQt6uk9uRRESzJjqrznl6WKvI6dwYTo+vJ3U02Wrq/mR3iql/PzhvHhKdJIAjDQ==}
     engines: {node: '>=20'}
 
   '@ark/schema@0.56.2':
@@ -7174,7 +7174,7 @@ snapshots:
 
   '@actions/io@1.1.3': {}
 
-  '@andrewbranch/untar.js@1.0.3': {}
+  '@andrewbranch/untar.js@1.0.4': {}
 
   '@apidevtools/json-schema-ref-parser@9.1.2':
     dependencies:
@@ -7185,9 +7185,9 @@ snapshots:
 
   '@apphosting/common@0.0.8': {}
 
-  '@arethetypeswrong/core@0.18.4':
+  '@arethetypeswrong/core@0.18.5':
     dependencies:
-      '@andrewbranch/untar.js': 1.0.3
+      '@andrewbranch/untar.js': 1.0.4
       '@loaderkit/resolve': 1.0.6
       cjs-module-lexer: 1.4.3
       fflate: 0.8.3
@@ -12976,7 +12976,7 @@ snapshots:
       picomatch: 4.0.5
       typescript: 6.0.3
 
-  tsdown@0.22.4(@arethetypeswrong/core@0.18.4)(@typescript/typescript6@6.0.2)(publint@0.3.21):
+  tsdown@0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -12994,7 +12994,7 @@ snapshots:
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
     optionalDependencies:
-      '@arethetypeswrong/core': 0.18.4
+      '@arethetypeswrong/core': 0.18.5
       publint: 0.3.21
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
