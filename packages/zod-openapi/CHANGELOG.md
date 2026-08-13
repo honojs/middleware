@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.6.0
+
+### Minor Changes
+
+- [#2086](https://github.com/honojs/middleware/pull/2086) [`1dc1a4a5418be24d571652e1013b8a6a925824c0`](https://github.com/honojs/middleware/commit/1dc1a4a5418be24d571652e1013b8a6a925824c0) Thanks [@WolfieLeader](https://github.com/WolfieLeader)! - feat: support the HTTP QUERY method in `createRoute()` by bumping `@asteasolutions/zod-to-openapi` to v9
+
 ## 1.5.3
 
 ### Patch Changes
