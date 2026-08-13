@@ -28,8 +28,8 @@ app.use(requestId())
 app.use(
   structuredLogger({
     createLogger: (c) => rootLogger.child({ requestId: c.var.requestId }),
-    onRequest: (logger, c) =>
-      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
+    onResponse: (logger, c, elapsedMs) =>
+      logger.info({ method: c.req.method, path: c.req.path, elapsedMs }, 'request completed'),
   })
 )
 
@@ -53,8 +53,8 @@ const app = new Hono()
 app.use(
   structuredLogger({
     createLogger: (c) => rootLogger.child({ requestId: c.var.requestId }),
-    onRequest: (logger, c) =>
-      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
+    onResponse: (logger, c, elapsedMs) =>
+      logger.info({ method: c.req.method, path: c.req.path, elapsedMs }, 'request completed'),
   })
 )
 ```
@@ -70,14 +70,14 @@ const app = new Hono()
 app.use(
   structuredLogger({
     createLogger: () => console,
-    onRequest: (_logger, c) => console.info(c.req.method, c.req.path),
+    onResponse: (_logger, c, elapsedMs) => console.info(c.req.method, c.req.path, elapsedMs),
   })
 )
 ```
 
 ### Skipping routes
 
-Pass a `skip` function to opt specific requests out of logging entirely. Called before `createLogger`, so skipped requests incur no logger allocation:
+Pass a `skip` function to suppress hooks for specific requests. The logger is still created and available on `c.var` — only `onRequest`, `onResponse`, and `onError` are skipped:
 
 ```typescript
 import { Hono } from 'hono'
@@ -89,7 +89,7 @@ app.use(
   structuredLogger({
     createLogger: () => console,
     skip: (c) => c.req.path === '/health',
-    onRequest: (_logger, c) => console.info(c.req.method, c.req.path),
+    onResponse: (_logger, c, elapsedMs) => console.info(c.req.method, c.req.path, elapsedMs),
   })
 )
 ```
@@ -156,8 +156,8 @@ app.use(
   structuredLogger({
     createLogger: () => myLogger,
     contextKey: 'log',
-    onRequest: (logger, c) =>
-      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
+    onResponse: (logger, c, elapsedMs) =>
+      logger.info({ method: c.req.method, path: c.req.path, elapsedMs }, 'request completed'),
   })
 )
 
@@ -180,7 +180,7 @@ const app = new Hono<StructuredLoggerEnv<pino.Logger>>()
 
 // Custom key — pass the same literal to both
 const app = new Hono<StructuredLoggerEnv<pino.Logger, 'log'>>()
-app.use(structuredLogger({ createLogger: ..., contextKey: 'log', onRequest: ... }))
+app.use(structuredLogger({ createLogger: ..., contextKey: 'log', onResponse: ... }))
 ```
 
 `c.var.logger` (or the custom key) will then be typed as `pino.Logger` throughout the app.
@@ -188,17 +188,18 @@ app.use(structuredLogger({ createLogger: ..., contextKey: 'log', onRequest: ... 
 To get typed access to other context variables inside `structuredLogger`, set the type argument with your app's env type:
 
 ```typescript
-import type { Context } from 'hono'
+import pino from 'pino'
 
 type AppEnv = { Variables: { tenantId: string } }
 
-app.use(
-  structuredLogger<AppEnv>({
-    createLogger: (c) => rootLogger.child({ tenantId: c.var.tenantId }),
-    onRequest: (logger, c) =>
-      logger.info({ method: c.req.method, path: c.req.path }, 'incoming request'),
-  })
-)
+const rootLogger = pino()
+
+structuredLogger<AppEnv, pino.BaseLogger>({
+  createLogger: (c) => rootLogger.child({ tenantId: c.var.tenantId }),
+  onResponse: (logger, c, elapsedMs) => {
+    logger.info({ path: c.req.path, elapsedMs }, 'request completed')
+  },
+})
 ```
 
 TypeScript infers `E = AppEnv` from the annotation, so the middleware's return type enforces that the app declares `tenantId` in its env.
@@ -211,20 +212,20 @@ Returns a Hono `MiddlewareHandler`.
 
 #### Options
 
-| Option         | Type                                                                              | Required | Default    | Description                                           |
-| -------------- | --------------------------------------------------------------------------------- | -------- | ---------- | ----------------------------------------------------- |
-| `createLogger` | `(c: Context) => L`                                                               | Yes      |            | Factory that creates a request scoped logger instance |
-| `contextKey`   | `K extends string`                                                                | No       | `'logger'` | Key used to store the logger on `c.var`               |
-| `skip`         | `(c: Context) => boolean`                                                         | No       | —          | When true, request passes through without logging     |
-| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | Yes      | —          | Called before handler execution                       |
-| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | No       | —          | Called after handler execution                        |
-| `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —          | Called when handler throws                            |
+| Option         | Type                                                                              | Required | Default    | Description                                                     |
+| -------------- | --------------------------------------------------------------------------------- | -------- | ---------- | --------------------------------------------------------------- |
+| `createLogger` | `(c: Context) => L`                                                               | Yes      |            | Factory that creates a request scoped logger instance           |
+| `contextKey`   | `K extends string`                                                                | No       | `'logger'` | Key used to store the logger on `c.var`                         |
+| `skip`         | `(c: Context) => boolean`                                                         | No       | —          | When true, hooks are suppressed; logger is still set on `c.var` |
+| `onRequest`    | `(logger: L, c: Context) => void \| Promise<void>`                                | No       | —          | Called before handler execution                                 |
+| `onResponse`   | `(logger: L, c: Context, elapsedMs: number) => void \| Promise<void>`             | Yes      | —          | Called after handler execution                                  |
+| `onError`      | `(logger: L, err: Error, c: Context, elapsedMs: number) => void \| Promise<void>` | No       | —          | Called when handler throws                                      |
 
 ## Behavior
 
-1. `createLogger(c)` is called once per request.
-2. The logger is stored on `c.var[contextKey]`.
-3. `onRequest` fires before handler execution.
+1. `createLogger(c)` is called once per request and the logger is stored on `c.var[contextKey]`.
+2. If `skip` returns `true`, hooks are suppressed and the request passes through.
+3. If provided, `onRequest` fires before handler execution.
 4. After handler completes, `onResponse` fires with elapsed time in milliseconds (measured via `performance.now()` immediately after `onRequest` returns, so `elapsedMs` reflects handler duration only).
 5. If the handler throws, Hono's `app.onError()` runs first to shape the response, then `onError` fires with elapsed time. By the time `onError` runs, `c.res` already holds the final response — including the correct status for `HTTPException`. `onResponse` is skipped when an error occurred.
 6. `onError` and `onResponse` are mutually exclusive per request.

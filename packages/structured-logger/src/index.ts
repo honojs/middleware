@@ -32,14 +32,14 @@ export interface StructuredLoggerOptions<
    */
   contextKey?: K
 
-  /** Called before createLogger, when this returns true the request is not logged. */
+  /** When this returns true, hooks are suppressed but the logger is still created and set on context. */
   skip?: (c: Context<E>) => boolean
 
   /** Called after logger creation, before handler execution. */
-  onRequest: (logger: L, c: LoggedContext<E, L, K>) => void | Promise<void>
+  onRequest?: (logger: L, c: LoggedContext<E, L, K>) => void | Promise<void>
 
   /** Called after handler execution with elapsed time in ms. */
-  onResponse?: (logger: L, c: LoggedContext<E, L, K>, elapsedMs: number) => void | Promise<void>
+  onResponse: (logger: L, c: LoggedContext<E, L, K>, elapsedMs: number) => void | Promise<void>
 
   /** Called when an error occurs during handler execution, with elapsed time in ms. */
   onError?: (
@@ -58,15 +58,17 @@ export function structuredLogger<E extends Env = {}, L = unknown, K extends stri
   const { createLogger, contextKey = defaultKey, skip, onRequest, onResponse, onError } = options
 
   return async (c, next) => {
-    if (skip && skip(c)) {
-      return next()
-    }
-
     const logger = createLogger(c)
     c.set(contextKey as never, logger as never)
     const ctx = c as LoggedContext<E, L, K>
 
-    await onRequest(logger, ctx)
+    if (skip && skip(c)) {
+      return next()
+    }
+
+    if (onRequest) {
+      await onRequest(logger, ctx)
+    }
 
     const start = now()
 
@@ -78,7 +80,7 @@ export function structuredLogger<E extends Env = {}, L = unknown, K extends stri
       if (onError) {
         await onError(logger, c.error, ctx, elapsed)
       }
-    } else if (onResponse) {
+    } else {
       await onResponse(logger, ctx, elapsed)
     }
   }

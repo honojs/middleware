@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import type { StructuredLoggerEnv } from './index'
 import { structuredLogger } from './index'
 
@@ -16,7 +16,7 @@ describe('structuredLogger', () => {
       const createLogger = vi.fn(() => mockLogger)
       const app = new Hono()
 
-      app.use(structuredLogger({ createLogger, onRequest: vi.fn() }))
+      app.use(structuredLogger({ createLogger, onResponse: vi.fn() }))
       app.get('/', (c) => c.text('ok'))
 
       await app.request('/')
@@ -31,7 +31,7 @@ describe('structuredLogger', () => {
       let capturedLogger: unknown = null
 
       const app = new Hono<StructuredLoggerEnv<MockLogger>>()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn() }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse: vi.fn() }))
       app.get('/', (c) => {
         capturedLogger = c.var.logger
         return c.text('ok')
@@ -48,7 +48,7 @@ describe('structuredLogger', () => {
 
       const app = new Hono<StructuredLoggerEnv<MockLogger, 'log'>>()
       app.use(
-        structuredLogger({ createLogger: () => mockLogger, contextKey: 'log', onRequest: vi.fn() })
+        structuredLogger({ createLogger: () => mockLogger, contextKey: 'log', onResponse: vi.fn() })
       )
       app.get('/', (c) => {
         capturedLogger = c.var.log
@@ -68,7 +68,6 @@ describe('structuredLogger', () => {
       app.use(
         structuredLogger({
           createLogger: () => mockLogger,
-          onRequest: vi.fn(),
           onResponse: (_logger, _c, elapsedMs) => {
             capturedElapsed = elapsedMs
           },
@@ -119,7 +118,7 @@ describe('structuredLogger', () => {
       const handlerError = new Error('handler failed')
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn(), onError }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse: vi.fn(), onError }))
       app.get('/', () => {
         throw handlerError
       })
@@ -141,7 +140,7 @@ describe('structuredLogger', () => {
       app.use(
         structuredLogger({
           createLogger: () => mockLogger,
-          onRequest: vi.fn(),
+          onResponse: vi.fn(),
           onError: (_logger, _err, _c, elapsedMs) => {
             capturedElapsed = elapsedMs
           },
@@ -164,7 +163,7 @@ describe('structuredLogger', () => {
       let caughtError: unknown = null
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn() }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse: vi.fn() }))
       app.get('/', () => {
         throw handlerError
       })
@@ -183,7 +182,7 @@ describe('structuredLogger', () => {
       const onError = vi.fn()
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn(), onError }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse: vi.fn(), onError }))
       app.get('/', () => {
         throw new Error('typed error')
       })
@@ -202,7 +201,7 @@ describe('structuredLogger', () => {
       const onResponse = vi.fn()
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn(), onResponse }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse }))
       app.get('/', () => {
         throw new Error('fail')
       })
@@ -230,7 +229,7 @@ describe('structuredLogger', () => {
 
       app.use(
         structuredLogger<TestEnv>({
-          onRequest: vi.fn(),
+          onResponse: vi.fn(),
           createLogger: (c) => {
             capturedRequestId = c.var.requestId
             return createMockLogger()
@@ -253,7 +252,7 @@ describe('structuredLogger', () => {
         '/api/*',
         structuredLogger({
           createLogger: () => apiLogger,
-          onRequest: (logger) => {
+          onResponse: (logger) => {
             logger.info({}, 'request')
           },
         })
@@ -262,7 +261,7 @@ describe('structuredLogger', () => {
         '/admin/*',
         structuredLogger({
           createLogger: () => adminLogger,
-          onRequest: (logger) => {
+          onResponse: (logger) => {
             logger.info({}, 'request')
           },
         })
@@ -315,7 +314,7 @@ describe('structuredLogger', () => {
       const app = new Hono()
       app.use(
         structuredLogger({
-          onRequest: vi.fn(),
+          onResponse: vi.fn(),
           createLogger: () => {
             const logger = createMockLogger()
             loggers.push(logger)
@@ -339,7 +338,7 @@ describe('structuredLogger', () => {
       const onResponse = vi.fn()
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger: () => mockLogger, onRequest: vi.fn(), onResponse }))
+      app.use(structuredLogger({ createLogger: () => mockLogger, onResponse }))
       app.get('/', (c) => {
         return c.text('streamed content')
       })
@@ -357,7 +356,7 @@ describe('structuredLogger', () => {
           createLogger: () => {
             throw new Error('factory failed')
           },
-          onRequest: vi.fn(),
+          onResponse: vi.fn(),
         })
       )
       app.get('/', (c) => c.text('ok'))
@@ -379,6 +378,7 @@ describe('structuredLogger', () => {
           onRequest: () => {
             throw new Error('onRequest blew up')
           },
+          onResponse: vi.fn(),
         })
       )
       app.get('/', (c) => c.text('ok'))
@@ -397,7 +397,6 @@ describe('structuredLogger', () => {
       app.use(
         structuredLogger({
           createLogger: () => mockLogger,
-          onRequest: vi.fn(),
           onResponse: () => {
             throw new Error('onResponse blew up')
           },
@@ -413,29 +412,64 @@ describe('structuredLogger', () => {
     })
   })
 
-  describe('skip', () => {
-    it('skips logging when skip returns true', async () => {
-      const createLogger = vi.fn(() => createMockLogger())
-
-      const app = new Hono()
-      app.use(structuredLogger({ createLogger, skip: () => true, onRequest: vi.fn() }))
-      app.get('/', (c) => c.text('ok'))
-
-      await app.request('/')
-
-      expect(createLogger).not.toHaveBeenCalled()
+  describe('types', () => {
+    it('infers all logger type in hooks when type args are fully inferred', () => {
+      structuredLogger({
+        createLogger: () => createMockLogger(),
+        onRequest: (logger) => {
+          expectTypeOf(logger).toEqualTypeOf<MockLogger>()
+        },
+        onResponse: (logger) => {
+          expectTypeOf(logger).toEqualTypeOf<MockLogger>()
+        },
+        onError: (logger) => {
+          expectTypeOf(logger).toEqualTypeOf<MockLogger>()
+        },
+      })
     })
 
-    it('logs normally when skip returns false', async () => {
-      const createLogger = vi.fn(() => createMockLogger())
+    it('infers logger type in hooks when E and L are explicitly provided', () => {
+      type AppEnv = { Variables: { tenantId: string } }
+
+      structuredLogger<AppEnv, MockLogger>({
+        createLogger: (c) => {
+          expectTypeOf(c.var.tenantId).toEqualTypeOf<string>()
+          return createMockLogger()
+        },
+        onResponse: (logger) => {
+          expectTypeOf(logger).toEqualTypeOf<MockLogger>()
+        },
+      })
+    })
+  })
+
+  describe('skip', () => {
+    it('skips hooks when skip returns true', async () => {
+      const onResponse = vi.fn()
 
       const app = new Hono()
-      app.use(structuredLogger({ createLogger, skip: () => false, onRequest: vi.fn() }))
+      app.use(
+        structuredLogger({ createLogger: () => createMockLogger(), skip: () => true, onResponse })
+      )
       app.get('/', (c) => c.text('ok'))
 
       await app.request('/')
 
-      expect(createLogger).toHaveBeenCalledTimes(1)
+      expect(onResponse).not.toHaveBeenCalled()
+    })
+
+    it('calls hooks normally when skip returns false', async () => {
+      const onResponse = vi.fn()
+
+      const app = new Hono()
+      app.use(
+        structuredLogger({ createLogger: () => createMockLogger(), skip: () => false, onResponse })
+      )
+      app.get('/', (c) => c.text('ok'))
+
+      await app.request('/')
+
+      expect(onResponse).toHaveBeenCalledTimes(1)
     })
 
     it('still processes the request when skipped', async () => {
@@ -444,7 +478,7 @@ describe('structuredLogger', () => {
         structuredLogger({
           createLogger: () => createMockLogger(),
           skip: () => true,
-          onRequest: vi.fn(),
+          onResponse: vi.fn(),
         })
       )
       app.get('/', (c) => c.text('ok'))
@@ -454,25 +488,43 @@ describe('structuredLogger', () => {
       expect(res.status).toBe(200)
     })
 
-    it('can skip based on path', async () => {
-      const createLogger = vi.fn(() => createMockLogger())
+    it('c.var.logger is still set when skip returns true', async () => {
+      let capturedLogger: unknown = null
+
+      const app = new Hono<StructuredLoggerEnv<MockLogger>>()
+      const mockLogger = createMockLogger()
+      app.use(
+        structuredLogger({ createLogger: () => mockLogger, skip: () => true, onResponse: vi.fn() })
+      )
+      app.get('/', (c) => {
+        capturedLogger = c.var.logger
+        return c.text('ok')
+      })
+
+      await app.request('/')
+
+      expect(capturedLogger).toBe(mockLogger)
+    })
+
+    it('can skip hooks based on path', async () => {
+      const onResponse = vi.fn()
 
       const app = new Hono()
       app.use(
         structuredLogger({
-          createLogger,
+          createLogger: () => createMockLogger(),
           skip: (c) => c.req.path === '/health',
-          onRequest: vi.fn(),
+          onResponse,
         })
       )
       app.get('/health', (c) => c.json({ status: 'ok' }))
       app.get('/api/data', (c) => c.text('data'))
 
       await app.request('/health')
-      expect(createLogger).not.toHaveBeenCalled()
+      expect(onResponse).not.toHaveBeenCalled()
 
       await app.request('/api/data')
-      expect(createLogger).toHaveBeenCalledTimes(1)
+      expect(onResponse).toHaveBeenCalledTimes(1)
     })
   })
 })
