@@ -44,9 +44,11 @@
   },
   "devDependencies": {
     "hono": "^4.11.5",
+    "pino": "^10.3.1",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.7",
+    "winston": "^3.19.0"
   },
   "engines": {
     "node": ">=16.0.0"
