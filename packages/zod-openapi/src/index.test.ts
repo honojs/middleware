@@ -3182,3 +3182,111 @@ describe('openapiRoutes', () => {
     // Let's verify type safety and runtime behaviors.
   })
 })
+
+describe('Media type gate for request bodies', () => {
+  const PostSchema = z.object({
+    id: z.number().openapi({}),
+  })
+
+  const createApp = (required: boolean) => {
+    const app = new OpenAPIHono()
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: PostSchema,
+              },
+            },
+            required,
+          },
+        },
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ idType: z.string() }),
+              },
+            },
+            description: 'Post result',
+          },
+        },
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({ idType: typeof data.id })
+      }
+    )
+    return app
+  }
+
+  const app = createApp(false)
+
+  it('Should return 415 when the content-type does not match the declared media types', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'text/plain' },
+    })
+    expect(res.status).toBe(415)
+  })
+
+  it('Should return 415 when a body is sent without a content-type', async () => {
+    const req = new Request('http://localhost/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+    })
+    req.headers.delete('content-type')
+    const res = await app.request(req)
+    expect(res.status).toBe(415)
+  })
+
+  it('Should return 200 when no body is sent and the body is optional', async () => {
+    const res = await app.request('/posts', { method: 'POST' })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'undefined' })
+  })
+
+  it('Should return 200 when an empty body stream is sent without a content-type', async () => {
+    const req = new Request('http://localhost/posts', {
+      method: 'POST',
+      body: '',
+    })
+    req.headers.delete('content-type')
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'undefined' })
+  })
+
+  it('Should validate the body when the content-type matches', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'application/json' },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'number' })
+  })
+
+  it('Should accept a JSON content-type with a suffix', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'application/vnd.api+json' },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'number' })
+  })
+
+  it('Should return 415 when the body is required and the content-type does not match', async () => {
+    const res = await createApp(true).request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'text/plain' },
+    })
+    expect(res.status).toBe(415)
+  })
+})

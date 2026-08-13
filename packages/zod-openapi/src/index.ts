@@ -27,6 +27,7 @@ import type {
   TypedResponse,
   ValidationTargets,
 } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import type { H, MergePath, MergeSchemaPath } from 'hono/types'
 import type {
   ClientErrorStatusCode,
@@ -632,6 +633,21 @@ export class OpenAPIHono<
     const bodyContent = route.request?.body?.content
 
     if (bodyContent) {
+      const declaredMediaTypes = Object.keys(bodyContent)
+      const mediaTypeGate: MiddlewareHandler = async (c, next) => {
+        const contentType = c.req.header('content-type')
+        if (contentType) {
+          if (!declaredMediaTypes.some((mediaType) => matchesMediaType(contentType, mediaType))) {
+            throw new HTTPException(415, { message: 'Unsupported Media Type' })
+          }
+        } else if (c.req.raw.body !== null && (await c.req.arrayBuffer()).byteLength > 0) {
+          // Server adapters may attach an empty body stream to bodyless
+          // requests, so a non-null stream alone does not prove a body was sent.
+          throw new HTTPException(415, { message: 'Unsupported Media Type' })
+        }
+        await next()
+      }
+      validators.push(mediaTypeGate)
       for (const mediaType of Object.keys(bodyContent)) {
         if (!bodyContent[mediaType]) {
           continue
@@ -931,6 +947,25 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
 
 function isJSONContentType(contentType: string) {
   return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+}
+
+// Mirrors how the body validators dispatch: a JSON media type accepts any
+// JSON content type, a form media type accepts any form content type.
+function matchesMediaType(contentType: string, mediaType: string) {
+  if (mediaType === '*/*') {
+    return true
+  }
+  if (isJSONContentType(mediaType)) {
+    return isJSONContentType(contentType)
+  }
+  if (isFormContentType(mediaType)) {
+    return isFormContentType(contentType)
+  }
+  const essence = contentType.split(';')[0].trim().toLowerCase()
+  if (mediaType.endsWith('/*')) {
+    return essence.startsWith(mediaType.slice(0, -1).toLowerCase())
+  }
+  return essence === mediaType.toLowerCase()
 }
 
 function isFormContentType(contentType: string) {
