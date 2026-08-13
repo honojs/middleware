@@ -3182,3 +3182,74 @@ describe('openapiRoutes', () => {
     // Let's verify type safety and runtime behaviors.
   })
 })
+
+describe('QUERY method', () => {
+  const SearchSchema = z.object({
+    keyword: z.string().openapi({}),
+  })
+
+  const route = createRoute({
+    method: 'query',
+    path: '/search',
+    request: {
+      body: {
+        content: {
+          'application/json': {
+            schema: SearchSchema,
+          },
+        },
+        required: true,
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: SearchSchema,
+          },
+        },
+        description: 'Search results',
+      },
+    },
+  })
+
+  const app = new OpenAPIHono()
+
+  app.openapi(route, (c) => {
+    const { keyword } = c.req.valid('json')
+    return c.json({ keyword })
+  })
+
+  it('Should return 200 response with correct contents', async () => {
+    const req = new Request('http://localhost/search', {
+      method: 'QUERY',
+      body: JSON.stringify({ keyword: 'hono' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ keyword: 'hono' })
+  })
+
+  it('Should return 400 response with correct contents', async () => {
+    const req = new Request('http://localhost/search', {
+      method: 'QUERY',
+      body: JSON.stringify({}),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const res = await app.request(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('Should register the query operation in the OpenAPI document', () => {
+    const doc = app.getOpenAPI31Document({
+      openapi: '3.1.0',
+      info: { title: 'Search API', version: '1.0.0' },
+    })
+    expect(doc.paths?.['/search']).toHaveProperty('query')
+  })
+})
