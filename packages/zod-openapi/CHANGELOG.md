@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.5.3
+
+### Patch Changes
+
+- [#2084](https://github.com/honojs/middleware/pull/2084) [`9a9324937cfa77db210a966be33e8c73bbbe33e3`](https://github.com/honojs/middleware/commit/9a9324937cfa77db210a966be33e8c73bbbe33e3) Thanks [@kamaal111](https://github.com/kamaal111)! - Revert the local z binding export because it causes zod types to degrade to any when built with tsdown.
+
 ## 1.5.2
 
 ### Patch Changes
