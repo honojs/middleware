@@ -1,6 +1,6 @@
 {
   "name": "@hono/zod-openapi",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts"
