@@ -49,6 +49,7 @@
     "turbo": "^2.10.7",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typia": "^12.1.1",
+    "unrun": "^0.3.1",
     "vitest": "^4.1.7"
   },
   "packageManager": "pnpm@11.9.0"
