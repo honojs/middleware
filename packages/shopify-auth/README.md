@@ -254,6 +254,8 @@ if (missing.length) {
 }
 ```
 
+A `write_*` grant satisfies a `read_*` requirement for the same resource, matching how Shopify issues scopes: an app that asks for `write_products` gets read access too, but the token response lists only `write_products`. So `missingScopes('write_products', ['read_products'])` is `[]`.
+
 ## Configuration
 
 All three middlewares read credentials from the environment via [`env()`](https://hono.dev/docs/helpers/adapter), so they work across runtimes with no configuration:

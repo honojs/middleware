@@ -92,4 +92,22 @@ describe('missingScopes', () => {
   it('requires an exact match', () => {
     expect(missingScopes('read_products', ['read_product'])).toEqual(['read_product'])
   })
+
+  it('treats a write scope as granting its read counterpart', () => {
+    expect(missingScopes('write_products', ['read_products', 'write_products'])).toEqual([])
+  })
+
+  it('treats an unauthenticated write scope as granting its read counterpart', () => {
+    expect(
+      missingScopes('unauthenticated_write_checkouts', ['unauthenticated_read_checkouts'])
+    ).toEqual([])
+  })
+
+  it('does not treat a read scope as granting write', () => {
+    expect(missingScopes('read_products', ['write_products'])).toEqual(['write_products'])
+  })
+
+  it('only implies the read scope for the same resource', () => {
+    expect(missingScopes('write_products', ['read_orders'])).toEqual(['read_orders'])
+  })
 })
