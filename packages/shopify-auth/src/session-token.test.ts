@@ -1,8 +1,14 @@
 import { shopFromPayload, verifyShopifySessionToken } from './session-token'
 import { API_KEY, API_SECRET, SHOP, sessionPayload, signSessionToken } from './test-utils'
+import type { SessionTokenPayload } from './types'
 
 const verify = (token: string, options?: { leewaySeconds?: number }) =>
   verifyShopifySessionToken(token, API_KEY, API_SECRET, options)
+
+const now = () => Math.floor(Date.now() / 1000)
+
+const base64Url = (value: string) =>
+  btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
 describe('verifyShopifySessionToken', () => {
   it('accepts a well-formed token', async () => {
@@ -14,60 +20,47 @@ describe('verifyShopifySessionToken', () => {
 
   describe('signature', () => {
     it('rejects a token signed with a different secret', async () => {
-      const token = await signSessionToken({}, { secret: 'not-our-secret' })
-      expect(await verify(token)).toBeNull()
+      expect(await verify(await signSessionToken({}, { secret: 'not-our-secret' }))).toBeNull()
     })
 
     it('rejects a tampered payload', async () => {
       const [header, , signature] = (await signSessionToken()).split('.')
-      const forged = btoa(JSON.stringify(sessionPayload({ dest: 'https://evil.myshopify.com' })))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '')
+      const forged = base64Url(
+        JSON.stringify(sessionPayload({ dest: 'https://evil.myshopify.com' }))
+      )
       expect(await verify(`${header}.${forged}.${signature}`)).toBeNull()
     })
   })
 
-  describe('algorithm', () => {
-    it('rejects alg: none', async () => {
-      const token = await signSessionToken({}, { header: { alg: 'none', typ: 'JWT' } })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects an asymmetric alg', async () => {
-      const token = await signSessionToken({}, { header: { alg: 'RS256', typ: 'JWT' } })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects a header with no alg', async () => {
-      const token = await signSessionToken({}, { header: { typ: 'JWT' } })
-      expect(await verify(token)).toBeNull()
-    })
+  // Only HS256 is ever legitimate — Shopify signs with the app's shared secret —
+  // so anything else is either a forgery attempt or a token we never issued.
+  it.each([
+    ['alg: none', { alg: 'none', typ: 'JWT' }],
+    ['an asymmetric alg', { alg: 'RS256', typ: 'JWT' }],
+    ['no alg at all', { typ: 'JWT' }],
+  ])('rejects a header with %s', async (_label, header) => {
+    expect(await verify(await signSessionToken({}, { header }))).toBeNull()
   })
 
   describe('lifetime', () => {
-    const now = () => Math.floor(Date.now() / 1000)
-
-    it('rejects an expired token', async () => {
-      expect(await verify(await signSessionToken({ exp: now() - 120 }))).toBeNull()
+    it.each<[string, () => Partial<SessionTokenPayload>]>([
+      ['an expired token', () => ({ exp: now() - 120 })],
+      ['a token that is not yet valid', () => ({ nbf: now() + 120 })],
+    ])('rejects %s', async (_label, claims) => {
+      expect(await verify(await signSessionToken(claims()))).toBeNull()
     })
 
-    it('accepts a token that expired within the leeway', async () => {
-      expect(await verify(await signSessionToken({ exp: now() - 5 }))).not.toBeNull()
+    it.each<[string, () => Partial<SessionTokenPayload>]>([
+      ['exp', () => ({ exp: now() - 5 })],
+      ['nbf', () => ({ nbf: now() + 5 })],
+    ])('accepts a token whose %s falls within the default leeway', async (_label, claims) => {
+      expect(await verify(await signSessionToken(claims()))).not.toBeNull()
     })
 
     it('honours a custom leeway', async () => {
       const token = await signSessionToken({ exp: now() - 30 })
       expect(await verify(token)).toBeNull()
       expect(await verify(token, { leewaySeconds: 60 })).not.toBeNull()
-    })
-
-    it('rejects a token that is not yet valid', async () => {
-      expect(await verify(await signSessionToken({ nbf: now() + 120 }))).toBeNull()
-    })
-
-    it('accepts an nbf within the leeway', async () => {
-      expect(await verify(await signSessionToken({ nbf: now() + 5 }))).not.toBeNull()
     })
   })
 
@@ -76,37 +69,26 @@ describe('verifyShopifySessionToken', () => {
       expect(await verify(await signSessionToken({ aud: 'someone-elses-key' }))).toBeNull()
     })
 
-    it('rejects a non-https dest', async () => {
-      const token = await signSessionToken({
-        dest: `http://${SHOP}`,
-        iss: `http://${SHOP}/admin`,
-      })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects a dest outside myshopify.com', async () => {
-      const token = await signSessionToken({
-        dest: 'https://attacker.example.com',
-        iss: 'https://attacker.example.com/admin',
-      })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects a host that merely contains myshopify.com', async () => {
-      const token = await signSessionToken({
-        dest: 'https://myshopify.com.attacker.example',
-        iss: 'https://myshopify.com.attacker.example/admin',
-      })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects iss and dest pointing at different shops', async () => {
-      const token = await signSessionToken({ iss: 'https://other.myshopify.com/admin' })
-      expect(await verify(token)).toBeNull()
-    })
-
-    it('rejects an unparseable dest', async () => {
-      expect(await verify(await signSessionToken({ dest: 'not a url' }))).toBeNull()
+    // `dest` names the shop the token speaks for and becomes the Admin API
+    // origin, so a valid signature over an attacker-chosen `dest` — or an `iss`
+    // that disagrees with it — must not resolve to a shop.
+    it.each<[string, Partial<SessionTokenPayload>]>([
+      ['a non-https dest', { dest: `http://${SHOP}`, iss: `http://${SHOP}/admin` }],
+      [
+        'a dest outside myshopify.com',
+        { dest: 'https://attacker.example.com', iss: 'https://attacker.example.com/admin' },
+      ],
+      [
+        'a host that merely contains myshopify.com',
+        {
+          dest: 'https://myshopify.com.attacker.example',
+          iss: 'https://myshopify.com.attacker.example/admin',
+        },
+      ],
+      ['iss and dest pointing at different shops', { iss: 'https://other.myshopify.com/admin' }],
+      ['an unparseable dest', { dest: 'not a url' }],
+    ])('rejects %s', async (_label, claims) => {
+      expect(await verify(await signSessionToken(claims))).toBeNull()
     })
   })
 

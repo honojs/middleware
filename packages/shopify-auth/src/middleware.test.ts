@@ -22,6 +22,7 @@ import {
 import type { ShopifySessionStorage, StoredShopifySession } from './types'
 
 const credentials = { apiKey: API_KEY, apiSecret: API_SECRET }
+const TOKEN_EXCHANGE = 'urn:ietf:params:oauth:grant-type:token-exchange'
 
 /** A stored session that is still valid for another hour. */
 const liveSession = (overrides: Partial<StoredShopifySession> = {}): StoredShopifySession => ({
@@ -33,11 +34,13 @@ const liveSession = (overrides: Partial<StoredShopifySession> = {}): StoredShopi
   ...overrides,
 })
 
-async function seed(
-  storage: ShopifySessionStorage,
+/** A store already holding a session for {@link SHOP}. Age it with overrides. */
+async function seeded(
   overrides: Partial<StoredShopifySession> = {}
-): Promise<void> {
+): Promise<ShopifySessionStorage> {
+  const storage = memoryStorage()
   await storage.store(SHOP, liveSession(overrides))
+  return storage
 }
 
 let fetchMock: ReturnType<typeof vi.fn<typeof fetch>>
@@ -49,6 +52,8 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+  vi.restoreAllMocks()
 })
 
 /** The parsed form body of the nth token request. */
@@ -62,30 +67,22 @@ describe('shopifySessionToken', () => {
   app.use('/api/*', shopifySessionToken(credentials))
   app.get('/api/test', (c) => c.json(getShopifySession(c)))
 
-  it('exposes the shop and claims', async () => {
+  it('exposes the shop and claims, without contacting Shopify', async () => {
     const res = await app.fetch(await authorizedRequest())
     expect(res.status).toBe(200)
     await expect(res.json()).resolves.toMatchObject({ shop: SHOP, payload: { aud: API_KEY } })
-  })
-
-  it('makes no network calls', async () => {
-    await app.fetch(await authorizedRequest())
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('rejects a request with no Authorization header', async () => {
-    const res = await app.fetch(new Request('http://localhost/api/test'))
+  it.each([
+    ['no Authorization header', {}],
+    ['a non-bearer Authorization header', { Authorization: 'Basic abc' }],
+  ])('rejects a request with %s', async (_label, headers) => {
+    const res = await app.fetch(new Request('http://localhost/api/test', { headers }))
     expect(res.status).toBe(401)
   })
 
-  it('rejects a non-bearer Authorization header', async () => {
-    const res = await app.fetch(
-      new Request('http://localhost/api/test', { headers: { Authorization: 'Basic abc' } })
-    )
-    expect(res.status).toBe(401)
-  })
-
-  it('rejects an invalid token', async () => {
+  it('rejects a token signed with the wrong secret', async () => {
     const token = await signSessionToken({}, { secret: 'wrong' })
     const res = await app.fetch(
       new Request('http://localhost/api/test', { headers: { Authorization: `Bearer ${token}` } })
@@ -103,19 +100,6 @@ describe('shopifySessionToken', () => {
 
     const res = await envApp.fetch(await authorizedRequest())
     expect(res.status).toBe(200)
-    vi.unstubAllEnvs()
-  })
-
-  it('accepts credentials resolved from the context', async () => {
-    const resolverApp = new Hono()
-    resolverApp.use(
-      '/api/*',
-      shopifySessionToken({ apiKey: () => API_KEY, apiSecret: () => API_SECRET })
-    )
-    resolverApp.get('/api/test', (c) => c.json(getShopifySession(c)))
-
-    const res = await resolverApp.fetch(await authorizedRequest())
-    expect(res.status).toBe(200)
   })
 
   it('fails with 500 when no credentials are available', async () => {
@@ -128,7 +112,6 @@ describe('shopifySessionToken', () => {
 
     const res = await bareApp.fetch(await authorizedRequest())
     expect(res.status).toBe(500)
-    vi.unstubAllEnvs()
   })
 })
 
@@ -143,27 +126,26 @@ describe('shopifyAccessToken', () => {
     return app
   }
 
-  describe('when the stored token is still valid', () => {
-    it('uses it without contacting Shopify', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
+  it('reuses a valid stored token without contacting Shopify', async () => {
+    const res = await buildApp(await seeded()).fetch(await authorizedRequest())
 
-      const res = await buildApp(storage).fetch(await authorizedRequest())
-      await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_stored' })
-      expect(fetchMock).not.toHaveBeenCalled()
-    })
+    await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_stored' })
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   describe('when there is no stored token', () => {
-    it('performs a token exchange and persists the result', async () => {
+    it('exchanges, persists the result and buffers the recorded expiry', async () => {
       const storage = memoryStorage()
+      const before = Date.now()
       const res = await buildApp(storage).fetch(await authorizedRequest())
 
       await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
-      await expect(storage.load(SHOP)).resolves.toMatchObject({
-        accessToken: 'shpua_new_token',
-        refreshToken: 'refresh_new',
-      })
+      const stored = await storage.load(SHOP)
+      expect(stored).toMatchObject({ accessToken: 'shpua_new_token', refreshToken: 'refresh_new' })
+      // expires_in 3600, less the 60s buffer.
+      const expected = before + 3_600_000 - 60_000
+      expect(stored?.expiresAt?.getTime()).toBeGreaterThanOrEqual(expected - 1000)
+      expect(stored?.expiresAt?.getTime()).toBeLessThanOrEqual(expected + 1000)
     })
 
     it('requests an expiring token', async () => {
@@ -176,7 +158,7 @@ describe('shopifyAccessToken', () => {
       // Without `expiring=1` Shopify issues a legacy non-expiring token that the
       // Admin API rejects with 403.
       expect(body.get('expiring')).toBe('1')
-      expect(body.get('grant_type')).toBe('urn:ietf:params:oauth:grant-type:token-exchange')
+      expect(body.get('grant_type')).toBe(TOKEN_EXCHANGE)
       expect(body.get('subject_token_type')).toBe('urn:ietf:params:oauth:token-type:id_token')
       expect(body.get('requested_token_type')).toBe(
         'urn:shopify:params:oauth:token-type:offline-access-token'
@@ -184,99 +166,72 @@ describe('shopifyAccessToken', () => {
       expect(body.get('client_id')).toBe(API_KEY)
       expect(body.get('client_secret')).toBe(API_SECRET)
     })
-
-    it('applies a safety buffer to the recorded expiry', async () => {
-      const storage = memoryStorage()
-      const before = Date.now()
-      await buildApp(storage).fetch(await authorizedRequest())
-
-      const stored = await storage.load(SHOP)
-      // expires_in 3600, less the 60s buffer.
-      const expected = before + 3_600_000 - 60_000
-      expect(stored?.expiresAt?.getTime()).toBeGreaterThanOrEqual(expected - 1000)
-      expect(stored?.expiresAt?.getTime()).toBeLessThanOrEqual(expected + 1000)
-    })
   })
 
-  describe('when the stored token has expired', () => {
-    it('prefers the refresh grant', async () => {
-      const storage = memoryStorage()
-      await seed(storage, { expiresAt: new Date(Date.now() - 1000) })
+  describe('when the stored token is no longer usable', () => {
+    const expired = { expiresAt: new Date(Date.now() - 1000) }
 
-      await buildApp(storage).fetch(await authorizedRequest())
+    it('prefers the refresh grant', async () => {
+      await buildApp(await seeded(expired)).fetch(await authorizedRequest())
 
       const body = tokenRequestBody()
       expect(body.get('grant_type')).toBe('refresh_token')
       expect(body.get('refresh_token')).toBe('refresh_stored')
     })
 
-    it('falls back to a token exchange when the refresh is rejected', async () => {
-      const storage = memoryStorage()
-      await seed(storage, { expiresAt: new Date(Date.now() - 1000) })
+    // A legacy non-expiring token records a null expiry and is re-exchanged for
+    // the same reason as the others: there is nothing usable to refresh with.
+    it.each([
+      [
+        'the refresh token has also expired',
+        { ...expired, refreshTokenExpiresAt: new Date(Date.now() - 1000) },
+      ],
+      ['no refresh token was stored', { ...expired, refreshToken: null }],
+      ['the stored token never expires', { expiresAt: null, refreshToken: null }],
+    ])('exchanges directly when %s', async (_label, overrides) => {
+      const res = await buildApp(await seeded(overrides)).fetch(await authorizedRequest())
 
+      await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      expect(tokenRequestBody().get('grant_type')).toBe(TOKEN_EXCHANGE)
+    })
+
+    it('falls back to a token exchange when the refresh is rejected', async () => {
       fetchMock.mockImplementationOnce(() =>
         Promise.resolve(new Response('invalid_grant', { status: 400 }))
       )
 
-      const res = await buildApp(storage).fetch(await authorizedRequest())
+      const res = await buildApp(await seeded(expired)).fetch(await authorizedRequest())
+
       await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
       expect(fetchMock).toHaveBeenCalledTimes(2)
-      expect(tokenRequestBody(1).get('grant_type')).toBe(
-        'urn:ietf:params:oauth:grant-type:token-exchange'
-      )
-    })
-
-    it('skips the refresh grant when the refresh token has also expired', async () => {
-      const storage = memoryStorage()
-      await seed(storage, {
-        expiresAt: new Date(Date.now() - 1000),
-        refreshTokenExpiresAt: new Date(Date.now() - 1000),
-      })
-
-      await buildApp(storage).fetch(await authorizedRequest())
-      expect(fetchMock).toHaveBeenCalledTimes(1)
-      expect(tokenRequestBody().get('grant_type')).toBe(
-        'urn:ietf:params:oauth:grant-type:token-exchange'
-      )
-    })
-
-    it('skips the refresh grant when no refresh token was stored', async () => {
-      const storage = memoryStorage()
-      await seed(storage, { expiresAt: new Date(Date.now() - 1000), refreshToken: null })
-
-      await buildApp(storage).fetch(await authorizedRequest())
-      expect(tokenRequestBody().get('grant_type')).toBe(
-        'urn:ietf:params:oauth:grant-type:token-exchange'
-      )
-    })
-  })
-
-  describe('legacy non-expiring tokens', () => {
-    it('treats a null expiry as expired and re-exchanges', async () => {
-      const storage = memoryStorage()
-      await seed(storage, { accessToken: 'shpat_legacy', expiresAt: null, refreshToken: null })
-
-      const res = await buildApp(storage).fetch(await authorizedRequest())
-      await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
+      expect(tokenRequestBody(1).get('grant_type')).toBe(TOKEN_EXCHANGE)
     })
   })
 
   describe('failure', () => {
-    it('answers 403 when Shopify refuses to issue a token', async () => {
-      fetchMock.mockImplementation(() =>
-        Promise.resolve(new Response('not installed', { status: 400 }))
-      )
+    /** An app whose middleware reports failures to the returned spy. */
+    const reportingApp = (storage: ShopifySessionStorage = memoryStorage()) => {
+      const onError = vi.fn()
+      const app = new Hono()
+      app.use('/api/*', shopifyAccessToken({ ...credentials, storage, onError }))
+      app.get('/api/test', (c) => c.text('ok'))
+      return { app, onError }
+    }
 
-      const res = await buildApp(memoryStorage()).fetch(await authorizedRequest())
-      expect(res.status).toBe(403)
-    })
-
-    // Shopify refuses a grant with a 200 carrying `{"error": ...}`, so an
-    // unchecked body would leave `accessToken` undefined behind a 200 response.
-    it('answers 403 when a 2xx response carries no access token', async () => {
-      fetchMock.mockImplementation(() =>
-        Promise.resolve(Response.json({ error: 'invalid_subject_token' }))
-      )
+    // Shopify refuses a grant either with an error status or with a 200 carrying
+    // `{"error": ...}`, so an unchecked body would leave `accessToken` undefined
+    // behind a 200 response.
+    it.each([
+      ['an error status', () => Promise.resolve(new Response('not installed', { status: 400 }))],
+      [
+        'a 2xx carrying no access token',
+        () => Promise.resolve(Response.json({ error: 'invalid_subject_token' })),
+      ],
+      ['a 2xx carrying no scope', () => Promise.resolve(tokenResponse({ scope: undefined }))],
+      ['a 2xx that is not JSON', () => Promise.resolve(new Response('<html>maintenance</html>'))],
+    ])('answers 403 and stores nothing when Shopify replies with %s', async (_label, reply) => {
+      fetchMock.mockImplementation(reply)
       const storage = memoryStorage()
 
       const res = await buildApp(storage).fetch(await authorizedRequest())
@@ -284,74 +239,49 @@ describe('shopifyAccessToken', () => {
       await expect(storage.load(SHOP)).resolves.toBeNull()
     })
 
-    it('answers 403 when a 2xx response carries no scope', async () => {
-      fetchMock.mockImplementation(() => Promise.resolve(tokenResponse({ scope: undefined })))
-      const storage = memoryStorage()
+    it('reports the underlying error through onError, and stays off the console', async () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      fetchMock.mockImplementation(() => Promise.resolve(new Response('nope', { status: 400 })))
+      const { app, onError } = reportingApp()
 
-      const res = await buildApp(storage).fetch(await authorizedRequest())
-      expect(res.status).toBe(403)
-      await expect(storage.load(SHOP)).resolves.toBeNull()
+      await app.fetch(await authorizedRequest())
+      expect(onError.mock.calls[0]?.[0]).toBeInstanceOf(Error)
+      expect(error).not.toHaveBeenCalled()
+      expect(warn).not.toHaveBeenCalled()
     })
 
-    it('answers 403 when a 2xx response is not JSON', async () => {
-      fetchMock.mockImplementation(() => Promise.resolve(new Response('<html>maintenance</html>')))
-
-      const res = await buildApp(memoryStorage()).fetch(await authorizedRequest())
-      expect(res.status).toBe(403)
-    })
-
+    // A partial body can still hold token material, so the response is never
+    // quoted back in the error message.
     it('does not quote the response body back through onError', async () => {
       fetchMock.mockImplementation(() =>
         Promise.resolve(Response.json({ access_token: 'shpua_leaked' }))
       )
-      const onError = vi.fn()
-
-      const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage: memoryStorage(), onError }))
-      app.get('/api/test', (c) => c.text('ok'))
+      const { app, onError } = reportingApp()
 
       await app.fetch(await authorizedRequest())
       expect(onError).toHaveBeenCalled()
       expect((onError.mock.calls[0]?.[0] as Error).message).not.toContain('shpua_leaked')
     })
-
-    it('reports the underlying error through onError', async () => {
-      fetchMock.mockImplementation(() => Promise.resolve(new Response('nope', { status: 400 })))
-      const onError = vi.fn()
-
-      const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage: memoryStorage(), onError }))
-      app.get('/api/test', (c) => c.text('ok'))
-
-      await app.fetch(await authorizedRequest())
-      expect(onError).toHaveBeenCalled()
-      expect(onError.mock.calls[0]?.[0]).toBeInstanceOf(Error)
-    })
-
-    it('does not write to the console', async () => {
-      const error = vi.spyOn(console, 'error').mockImplementation(() => {})
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      fetchMock.mockImplementation(() => Promise.resolve(new Response('nope', { status: 400 })))
-
-      await buildApp(memoryStorage()).fetch(await authorizedRequest())
-      expect(error).not.toHaveBeenCalled()
-      expect(warn).not.toHaveBeenCalled()
-    })
   })
 
   describe('reExchange', () => {
-    it('mints a fresh token and updates the context', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-
+    /** Route that re-exchanges, reporting the fresh token and the context's own. */
+    const reExchangeApp = (storage: ShopifySessionStorage) => {
       const app = new Hono()
       app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
       app.get('/api/test', async (c) => {
         const fresh = await getShopifyAccess(c).reExchange()
         return c.json({ fresh, current: getShopifyAccess(c).accessToken })
       })
+      return app
+    }
 
-      const res = await app.fetch(await authorizedRequest())
+    it('mints a fresh token and updates the context', async () => {
+      const storage = await seeded()
+
+      const res = await reExchangeApp(storage).fetch(await authorizedRequest())
+
       await expect(res.json()).resolves.toEqual({
         fresh: 'shpua_new_token',
         current: 'shpua_new_token',
@@ -360,15 +290,11 @@ describe('shopifyAccessToken', () => {
     })
 
     it('exchanges once for concurrent callers', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-
       const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
+      app.use('/api/*', shopifyAccessToken({ ...credentials, storage: await seeded() }))
       app.get('/api/test', async (c) => {
         const { reExchange } = getShopifyAccess(c)
-        const results = await Promise.all([reExchange(), reExchange(), reExchange()])
-        return c.json(results)
+        return c.json(await Promise.all([reExchange(), reExchange(), reExchange()]))
       })
 
       const res = await app.fetch(await authorizedRequest())
@@ -380,34 +306,20 @@ describe('shopifyAccessToken', () => {
       expect(fetchMock).toHaveBeenCalledTimes(1)
     })
 
-    it('returns null when the exchange fails', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-      fetchMock.mockImplementation(() => Promise.resolve(new Response('nope', { status: 400 })))
+    // A failed re-exchange leaves the caller with the token it already had,
+    // rather than an emptied context or a half-written session.
+    it.each([
+      ['the exchange fails', () => Promise.resolve(new Response('nope', { status: 400 }))],
+      [
+        'a 2xx carries no token',
+        () => Promise.resolve(Response.json({ error: 'invalid_subject_token' })),
+      ],
+    ])('returns null and leaves the stored session intact when %s', async (_label, reply) => {
+      const storage = await seeded()
+      fetchMock.mockImplementation(reply)
 
-      const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
-      app.get('/api/test', async (c) => c.json({ fresh: await getShopifyAccess(c).reExchange() }))
+      const res = await reExchangeApp(storage).fetch(await authorizedRequest())
 
-      const res = await app.fetch(await authorizedRequest())
-      await expect(res.json()).resolves.toEqual({ fresh: null })
-    })
-
-    it('leaves the stored session intact when a 2xx carries no token', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-      fetchMock.mockImplementation(() =>
-        Promise.resolve(Response.json({ error: 'invalid_subject_token' }))
-      )
-
-      const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
-      app.get('/api/test', async (c) => {
-        const fresh = await getShopifyAccess(c).reExchange()
-        return c.json({ fresh, current: getShopifyAccess(c).accessToken })
-      })
-
-      const res = await app.fetch(await authorizedRequest())
       await expect(res.json()).resolves.toEqual({ fresh: null, current: 'shpua_stored' })
       await expect(storage.load(SHOP)).resolves.toMatchObject({ accessToken: 'shpua_stored' })
     })
@@ -423,57 +335,39 @@ describe('shopifyAccessToken', () => {
       const app = new Hono()
       app.use('/api/*', shopifyAccessToken({ apiKey, apiSecret, storage }))
       app.get('/api/test', (c) => c.json({ accessToken: getShopifyAccess(c).accessToken }))
+      app.get('/api/re-exchange', async (c) =>
+        c.json({ fresh: await getShopifyAccess(c).reExchange() })
+      )
       return { app, apiKey, apiSecret }
     }
 
-    it('runs each resolver once when the stored token is reused', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-      const { app, apiKey, apiSecret } = resolverApp(storage)
+    it.each<[string, () => Promise<ShopifySessionStorage>, string]>([
+      ['the stored token is reused', () => seeded(), 'test'],
+      ['a token exchange is needed', () => Promise.resolve(memoryStorage()), 'test'],
+      ['the handler re-exchanges', () => seeded(), 're-exchange'],
+    ])('runs each resolver once when %s', async (_label, storage, path) => {
+      const { app, apiKey, apiSecret } = resolverApp(await storage())
 
-      const res = await app.fetch(await authorizedRequest())
+      const res = await app.fetch(await authorizedRequest(`http://localhost/api/${path}`))
       expect(res.status).toBe(200)
       expect(apiKey).toHaveBeenCalledTimes(1)
       expect(apiSecret).toHaveBeenCalledTimes(1)
     })
 
-    it('runs each resolver once when a token exchange is needed', async () => {
-      const { app, apiKey, apiSecret } = resolverApp(memoryStorage())
+    it('passes the resolved credentials to the token grant, not just the verification', async () => {
+      const { app } = resolverApp(memoryStorage())
 
-      const res = await app.fetch(await authorizedRequest())
-      await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
-      expect(apiKey).toHaveBeenCalledTimes(1)
-      expect(apiSecret).toHaveBeenCalledTimes(1)
-      // The resolved values still reach the grant, not just the verification.
+      await app.fetch(await authorizedRequest())
+
       expect(tokenRequestBody().get('client_id')).toBe(API_KEY)
       expect(tokenRequestBody().get('client_secret')).toBe(API_SECRET)
-    })
-
-    it('runs each resolver once when the handler re-exchanges', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-      const apiKey = vi.fn(() => API_KEY)
-      const apiSecret = vi.fn(() => API_SECRET)
-
-      const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ apiKey, apiSecret, storage }))
-      app.get('/api/test', async (c) => c.json({ fresh: await getShopifyAccess(c).reExchange() }))
-
-      await expect((await app.fetch(await authorizedRequest())).json()).resolves.toEqual({
-        fresh: 'shpua_new_token',
-      })
-      expect(apiKey).toHaveBeenCalledTimes(1)
-      expect(apiSecret).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('accessors', () => {
     it('also exposes the verified session', async () => {
-      const storage = memoryStorage()
-      await seed(storage)
-
       const app = new Hono()
-      app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
+      app.use('/api/*', shopifyAccessToken({ ...credentials, storage: await seeded() }))
       app.get('/api/test', (c) => c.json(getShopifySession(c)))
 
       const res = await app.fetch(await authorizedRequest())
@@ -503,6 +397,22 @@ describe('shopifyWebhook', () => {
 
   const body = JSON.stringify({ id: 1, name: '#1001' })
 
+  /** A correctly signed delivery whose shop header the caller picks freely. */
+  async function spoofed(shopHeader: string | null, payload: string = body): Promise<Request> {
+    const headers: Record<string, string> = {
+      'X-Shopify-Hmac-Sha256': await signWebhook(payload),
+      'X-Shopify-Topic': 'orders/fulfilled',
+    }
+    if (shopHeader !== null) {
+      headers['X-Shopify-Shop-Domain'] = shopHeader
+    }
+    return new Request('http://localhost/webhooks/test', { method: 'POST', headers, body: payload })
+  }
+
+  /** A delivery carrying no signature at all. */
+  const unsigned = (): Promise<Request> =>
+    Promise.resolve(new Request('http://localhost/webhooks/test', { method: 'POST', body }))
+
   it('exposes the delivery on a valid signature', async () => {
     const res = await buildApp().fetch(await webhookRequest(body))
     expect(res.status).toBe(200)
@@ -521,22 +431,19 @@ describe('shopifyWebhook', () => {
     await expect(res.json()).resolves.toMatchObject({ webhookId: 'wh-123' })
   })
 
-  it('rejects a tampered body', async () => {
-    const signature = await signWebhook(body)
-    const res = await buildApp().fetch(
-      new Request('http://localhost/webhooks/test', {
-        method: 'POST',
-        headers: { 'X-Shopify-Hmac-Sha256': signature },
-        body: JSON.stringify({ id: 2 }),
-      })
-    )
-    expect(res.status).toBe(401)
-  })
-
-  it('rejects a missing signature', async () => {
-    const res = await buildApp().fetch(
-      new Request('http://localhost/webhooks/test', { method: 'POST', body })
-    )
+  it.each([
+    [
+      'a tampered body',
+      async () =>
+        new Request('http://localhost/webhooks/test', {
+          method: 'POST',
+          headers: { 'X-Shopify-Hmac-Sha256': await signWebhook(body) },
+          body: JSON.stringify({ id: 2 }),
+        }),
+    ],
+    ['a missing signature', unsigned],
+  ])('rejects %s', async (_label, request) => {
+    const res = await buildApp().fetch(await request())
     expect(res.status).toBe(401)
   })
 
@@ -545,15 +452,16 @@ describe('shopifyWebhook', () => {
     expect(res.status).toBe(400)
   })
 
-  it('reports verification failures through onError', async () => {
+  it.each([
+    ['an invalid signature', unsigned],
+    ['a rejected shop domain', () => spoofed('evil.example.com')],
+  ])('reports %s through onError', async (_label, request) => {
     const onError = vi.fn()
     const app = new Hono()
     app.use('/webhooks/*', shopifyWebhook({ apiSecret: API_SECRET, onError }))
     app.post('/webhooks/test', (c) => c.text('ok'))
 
-    await app.fetch(
-      new Request('http://localhost/webhooks/test', { method: 'POST', body, headers: {} })
-    )
+    await app.fetch(await request())
     expect(onError).toHaveBeenCalled()
   })
 
@@ -578,22 +486,6 @@ describe('shopifyWebhook', () => {
   // A valid signature proves the body came from Shopify. It proves nothing at
   // all about which shop the delivery is for.
   describe('shop identity', () => {
-    /** A correctly signed delivery whose shop header the caller picks freely. */
-    async function spoofed(shopHeader: string | null, payload: string = body): Promise<Request> {
-      const headers: Record<string, string> = {
-        'X-Shopify-Hmac-Sha256': await signWebhook(payload),
-        'X-Shopify-Topic': 'orders/fulfilled',
-      }
-      if (shopHeader !== null) {
-        headers['X-Shopify-Shop-Domain'] = shopHeader
-      }
-      return new Request('http://localhost/webhooks/test', {
-        method: 'POST',
-        headers,
-        body: payload,
-      })
-    }
-
     // `shop` is interpolated straight into an Admin API origin by adminGraphql
     // (`https://${shop}/admin/api/…`), so anything that is not a bare
     // myshopify.com hostname is a redirect of an authenticated request. The
@@ -611,38 +503,24 @@ describe('shopifyWebhook', () => {
       ['an explicit port', 'example.myshopify.com:8443'],
       ['embedded whitespace', 'exam ple.myshopify.com'],
       ['an empty value', ''],
+      ['no shop header at all', null],
     ])('rejects %s in X-Shopify-Shop-Domain', async (_case, shopHeader) => {
       const res = await buildApp().fetch(await spoofed(shopHeader))
       expect(res.status).toBe(401)
     })
 
-    it('rejects a delivery carrying no shop header at all', async () => {
-      const res = await buildApp().fetch(await spoofed(null))
-      expect(res.status).toBe(401)
-    })
-
-    it('accepts a well-formed myshopify.com host', async () => {
-      const res = await buildApp().fetch(await spoofed('another-shop.myshopify.com'))
-      expect(res.status).toBe(200)
-      await expect(res.json()).resolves.toMatchObject({ shop: 'another-shop.myshopify.com' })
-    })
-
+    // Most topics (orders/*, products/*, …) carry no shop field, so there is
+    // nothing to cross-check against and host validation is the only defence.
+    //
     // `ShopifyVerifiedSession.shop` is documented as lowercased, and storage is
     // keyed by it — a mixed-case header must not open a second session record.
-    it('normalizes the shop domain to lower case', async () => {
-      const res = await buildApp().fetch(await spoofed('Another-Shop.MyShopify.Com'))
+    it.each([
+      ['a well-formed myshopify.com host', 'another-shop.myshopify.com'],
+      ['a mixed-case host, lowercased', 'Another-Shop.MyShopify.Com'],
+    ])('accepts %s', async (_label, shopHeader) => {
+      const res = await buildApp().fetch(await spoofed(shopHeader))
       expect(res.status).toBe(200)
       await expect(res.json()).resolves.toMatchObject({ shop: 'another-shop.myshopify.com' })
-    })
-
-    it('reports a rejected shop domain through onError', async () => {
-      const onError = vi.fn()
-      const app = new Hono()
-      app.use('/webhooks/*', shopifyWebhook({ apiSecret: API_SECRET, onError }))
-      app.post('/webhooks/test', (c) => c.text('ok'))
-
-      await app.fetch(await spoofed('evil.example.com'))
-      expect(onError).toHaveBeenCalled()
     })
 
     // The concrete harm. `shop` flows into the Admin API origin, so an
@@ -674,25 +552,15 @@ describe('shopifyWebhook', () => {
     // (`customers/data_request`, `customers/redact`, `shop/redact`) all carry
     // `shop_domain` — can be bound to a shop cryptographically. Where the body
     // says which shop it is for, the unsigned header must not disagree.
-    it('rejects a header that contradicts shop_domain in the signed body', async () => {
-      const payload = JSON.stringify({ shop_id: 42, shop_domain: 'attacker.myshopify.com' })
-      const res = await buildApp().fetch(await spoofed('victim.myshopify.com', payload))
-      expect(res.status).toBe(401)
-    })
+    it.each([
+      ['contradicts', 'attacker.myshopify.com', 401],
+      ['agrees with', 'victim.myshopify.com', 200],
+    ])('%s shop_domain in the signed body → %i', async (_label, signedShop, status) => {
+      const payload = JSON.stringify({ shop_id: 42, shop_domain: signedShop })
 
-    it('accepts a header that agrees with shop_domain in the signed body', async () => {
-      const payload = JSON.stringify({ shop_id: 42, shop_domain: 'victim.myshopify.com' })
       const res = await buildApp().fetch(await spoofed('victim.myshopify.com', payload))
-      expect(res.status).toBe(200)
-      await expect(res.json()).resolves.toMatchObject({ shop: 'victim.myshopify.com' })
-    })
 
-    // Most topics (orders/*, products/*, …) carry no shop field, so there is
-    // nothing to cross-check against and host validation is the only defence.
-    it('accepts a payload with no shop field once the host is valid', async () => {
-      const res = await buildApp().fetch(await spoofed('victim.myshopify.com'))
-      expect(res.status).toBe(200)
-      await expect(res.json()).resolves.toMatchObject({ shop: 'victim.myshopify.com' })
+      expect(res.status).toBe(status)
     })
   })
 })
