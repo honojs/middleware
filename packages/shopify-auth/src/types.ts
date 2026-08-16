@@ -70,6 +70,7 @@ export interface ShopifyAccessSession extends ShopifyVerifiedSession {
 
 /** A verified Shopify webhook delivery. */
 export interface ShopifyWebhookContext {
+  /** Shop domain, lowercased and validated as a `myshopify.com` host. */
   shop: string
   topic: string
   /** `X-Shopify-Webhook-Id`, useful for deduplicating retries. */

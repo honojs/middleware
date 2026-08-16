@@ -3,6 +3,7 @@ import { env } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import { verifyShopifyHmac } from './hmac'
 import { shopFromPayload, verifyShopifySessionToken } from './session-token'
+import { normalizeShopDomain, shopFromWebhookPayload } from './shop-domain'
 import {
   exchangeForOfflineToken,
   isAccessTokenExpired,
@@ -223,8 +224,13 @@ export function shopifyAccessToken(options: ShopifyAccessTokenOptions): Middlewa
  * Verifies the `X-Shopify-Hmac-Sha256` signature over the raw request body,
  * then exposes the parsed delivery to handlers via {@link getShopifyWebhook}.
  *
- * The body is consumed in order to sign the exact bytes Shopify sent, so
- * `c.req.json()` will fail downstream.
+ * `shop` is additionally validated as a `myshopify.com` host, and — on the
+ * topics whose payload names its own shop — checked against that. Both are
+ * containment measures rather than gates: see the comments below for what they
+ * do and do not buy you.
+ *
+ * Reading the raw bytes does not consume the body for handlers: Hono caches the
+ * parsed result, so `c.req.json()` still works downstream.
  */
 export function shopifyWebhook(
   options: ShopifyWebhookOptions = {}
@@ -233,30 +239,66 @@ export function shopifyWebhook(
     const apiSecret = credential(options.apiSecret, c, 'SHOPIFY_API_SECRET')
 
     const rawBody = await c.req.arrayBuffer()
-    const signature = c.req.header('X-Shopify-Hmac-Sha256') ?? null
+    const shopHeader = c.req.header('X-Shopify-Shop-Domain') ?? null
+    const topic = c.req.header('X-Shopify-Topic') ?? ''
 
+    /** Reports why the delivery was refused, then answers with `status`. */
+    const refuse = (status: 400 | 401, message: string, reason: unknown): HTTPException => {
+      report(options.onError, reason, c)
+      return new HTTPException(status, { message })
+    }
+
+    const signature = c.req.header('X-Shopify-Hmac-Sha256') ?? null
     if (!(await verifyShopifyHmac(rawBody, signature, apiSecret))) {
-      const shop = c.req.header('X-Shopify-Shop-Domain') ?? 'unknown'
-      const topic = c.req.header('X-Shopify-Topic') ?? 'unknown'
-      report(
-        options.onError,
-        new Error(`Shopify webhook HMAC verification failed for shop=${shop} topic=${topic}`),
-        c
+      throw refuse(
+        401,
+        'Invalid HMAC',
+        new Error(`Shopify webhook HMAC failed for shop=${shopHeader} topic=${topic}`)
       )
-      throw new HTTPException(401, { message: 'Invalid HMAC' })
+    }
+
+    // Past the HMAC, so this delivery came from Shopify or from someone holding
+    // the API secret — `shop` is not attacker-supplied in normal operation. It
+    // is validated anyway because it is about to become an Admin API origin.
+    // Should the secret ever leak, this line is the difference between an
+    // attacker forging webhook payloads and an attacker collecting every shop's
+    // access token by naming a host of their own.
+    //
+    // Lowercasing is unrelated to that: storage is keyed by `shop`, so an
+    // unnormalized header would open a second session record for one store.
+    const shop = normalizeShopDomain(shopHeader)
+    if (shop === null) {
+      throw refuse(
+        401,
+        'Invalid shop domain',
+        new Error(`Shopify webhook shop is not a myshopify.com host: ${shopHeader}`)
+      )
     }
 
     let payload: unknown
     try {
       payload = JSON.parse(new TextDecoder().decode(rawBody))
     } catch (error) {
-      report(options.onError, error, c)
-      throw new HTTPException(400, { message: 'Invalid JSON body' })
+      throw refuse(400, 'Invalid JSON body', error)
+    }
+
+    // Guards a leaked *delivery* rather than a leaked secret: anyone holding the
+    // secret would just sign a body whose shop_domain matches the header. But a
+    // genuine signed body recovered from a log can be replayed under a different
+    // shop, and the topics carrying shop_domain are the ones where that does
+    // real harm — a `customers/redact` aimed at a store that never asked for it.
+    const signedShop = shopFromWebhookPayload(payload)
+    if (signedShop !== null && signedShop !== shop) {
+      throw refuse(
+        401,
+        'Shop domain does not match the signed payload',
+        new Error(`Shopify webhook shop ${shop} contradicts signed payload ${signedShop}`)
+      )
     }
 
     c.set('shopifyWebhook', {
-      shop: c.req.header('X-Shopify-Shop-Domain') ?? '',
-      topic: c.req.header('X-Shopify-Topic') ?? '',
+      shop,
+      topic,
       webhookId: c.req.header('X-Shopify-Webhook-Id') ?? null,
       payload,
     })

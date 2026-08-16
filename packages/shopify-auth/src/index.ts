@@ -12,6 +12,7 @@ export type { VerifySessionTokenOptions } from './session-token'
 
 export { verifyShopifyHmac } from './hmac'
 export { missingScopes } from './scopes'
+export { normalizeShopDomain } from './shop-domain'
 export { memoryStorage } from './storage'
 
 export {

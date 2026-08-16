@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { adminGraphql } from './admin-graphql'
 import {
   getShopifyAccess,
   getShopifySession,
@@ -449,5 +450,132 @@ describe('shopifyWebhook', () => {
     const res = await app.fetch(await webhookRequest(body))
     expect(res.status).toBe(200)
     await expect(res.json()).resolves.toEqual({ id: 1, name: '#1001' })
+  })
+
+  // The HMAC covers the body and nothing else, and the secret it is computed
+  // with is the app's single API secret — shared by every shop that installs the
+  // app. `X-Shopify-Shop-Domain` is therefore unsigned *and* attacker-chosen:
+  // anyone who installs the app on their own store receives genuinely-signed
+  // deliveries that they can replay under someone else's shop identity.
+  //
+  // A valid signature proves the body came from Shopify. It proves nothing at
+  // all about which shop the delivery is for.
+  describe('shop identity', () => {
+    /** A correctly signed delivery whose shop header the caller picks freely. */
+    async function spoofed(shopHeader: string | null, payload: string = body): Promise<Request> {
+      const headers: Record<string, string> = {
+        'X-Shopify-Hmac-Sha256': await signWebhook(payload),
+        'X-Shopify-Topic': 'orders/fulfilled',
+      }
+      if (shopHeader !== null) {
+        headers['X-Shopify-Shop-Domain'] = shopHeader
+      }
+      return new Request('http://localhost/webhooks/test', {
+        method: 'POST',
+        headers,
+        body: payload,
+      })
+    }
+
+    // `shop` is interpolated straight into an Admin API origin by adminGraphql
+    // (`https://${shop}/admin/api/…`), so anything that is not a bare
+    // myshopify.com hostname is a redirect of an authenticated request. The
+    // fragment/query/path cases matter because a suffix-only check such as
+    // `shop.endsWith('.myshopify.com')` passes them while the resulting URL
+    // still resolves to the attacker's origin.
+    it.each([
+      ['a plain non-Shopify host', 'evil.example.com'],
+      ['a suffix lookalike with no dot', 'notmyshopify.com'],
+      ['myshopify.com as a left-hand label', 'example.myshopify.com.evil.example.com'],
+      ['a smuggled fragment', 'evil.example.com#.myshopify.com'],
+      ['a smuggled query string', 'evil.example.com?.myshopify.com'],
+      ['a smuggled path', 'evil.example.com/.myshopify.com'],
+      ['userinfo in the authority', 'user@shop.myshopify.com'],
+      ['an explicit port', 'example.myshopify.com:8443'],
+      ['embedded whitespace', 'exam ple.myshopify.com'],
+      ['an empty value', ''],
+    ])('rejects %s in X-Shopify-Shop-Domain', async (_case, shopHeader) => {
+      const res = await buildApp().fetch(await spoofed(shopHeader))
+      expect(res.status).toBe(401)
+    })
+
+    it('rejects a delivery carrying no shop header at all', async () => {
+      const res = await buildApp().fetch(await spoofed(null))
+      expect(res.status).toBe(401)
+    })
+
+    it('accepts a well-formed myshopify.com host', async () => {
+      const res = await buildApp().fetch(await spoofed('another-shop.myshopify.com'))
+      expect(res.status).toBe(200)
+      await expect(res.json()).resolves.toMatchObject({ shop: 'another-shop.myshopify.com' })
+    })
+
+    // `ShopifyVerifiedSession.shop` is documented as lowercased, and storage is
+    // keyed by it — a mixed-case header must not open a second session record.
+    it('normalizes the shop domain to lower case', async () => {
+      const res = await buildApp().fetch(await spoofed('Another-Shop.MyShopify.Com'))
+      expect(res.status).toBe(200)
+      await expect(res.json()).resolves.toMatchObject({ shop: 'another-shop.myshopify.com' })
+    })
+
+    it('reports a rejected shop domain through onError', async () => {
+      const onError = vi.fn()
+      const app = new Hono()
+      app.use('/webhooks/*', shopifyWebhook({ apiSecret: API_SECRET, onError }))
+      app.post('/webhooks/test', (c) => c.text('ok'))
+
+      await app.fetch(await spoofed('evil.example.com'))
+      expect(onError).toHaveBeenCalled()
+    })
+
+    // The concrete harm. `shop` flows into the Admin API origin, so an
+    // unvalidated header sends `X-Shopify-Access-Token` to a host the attacker
+    // controls. The handler below is the shape the README recommends.
+    it('never sends the access token to a spoofed origin', async () => {
+      const app = new Hono()
+      app.use('/webhooks/*', shopifyWebhook({ apiSecret: API_SECRET }))
+      app.post('/webhooks/test', async (c) => {
+        const { shop } = getShopifyWebhook(c)
+        await adminGraphql({
+          shop,
+          accessToken: 'shpua_victim_token',
+          query: '{ shop { name } }',
+        })
+        return c.text('ok')
+      })
+
+      await app.fetch(await spoofed('evil.example.com'))
+
+      const origins = fetchMock.mock.calls.map(
+        ([input]) => new URL(input instanceof Request ? input.url : input.toString()).origin
+      )
+      expect(origins).not.toContain('https://evil.example.com')
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    // Deliveries that name the shop inside the signed body — the GDPR topics
+    // (`customers/data_request`, `customers/redact`, `shop/redact`) all carry
+    // `shop_domain` — can be bound to a shop cryptographically. Where the body
+    // says which shop it is for, the unsigned header must not disagree.
+    it('rejects a header that contradicts shop_domain in the signed body', async () => {
+      const payload = JSON.stringify({ shop_id: 42, shop_domain: 'attacker.myshopify.com' })
+      const res = await buildApp().fetch(await spoofed('victim.myshopify.com', payload))
+      expect(res.status).toBe(401)
+    })
+
+    it('accepts a header that agrees with shop_domain in the signed body', async () => {
+      const payload = JSON.stringify({ shop_id: 42, shop_domain: 'victim.myshopify.com' })
+      const res = await buildApp().fetch(await spoofed('victim.myshopify.com', payload))
+      expect(res.status).toBe(200)
+      await expect(res.json()).resolves.toMatchObject({ shop: 'victim.myshopify.com' })
+    })
+
+    // Most topics (orders/*, products/*, …) carry no shop field, so there is
+    // nothing to cross-check against and host validation is the only defence.
+    it('accepts a payload with no shop field once the host is valid', async () => {
+      const res = await buildApp().fetch(await spoofed('victim.myshopify.com'))
+      expect(res.status).toBe(200)
+      await expect(res.json()).resolves.toMatchObject({ shop: 'victim.myshopify.com' })
+    })
   })
 })

@@ -212,6 +212,36 @@ Responds `401` when the signature does not verify and `400` when the body is not
 
 The middleware reads the raw body in order to verify the signature over the exact bytes Shopify sent. Hono caches the parsed body, so `c.req.json()` still works in your handler.
 
+### How `shop` is trusted
+
+The HMAC covers the request body, not the headers, so `X-Shopify-Shop-Domain` is not signed. That matters less than it sounds: signature verification runs first, so only Shopify — or someone holding your API secret — ever reaches the point where `shop` is read.
+
+The middleware still checks it, for two reasons:
+
+- **It must be a bare `myshopify.com` host**, matched in full and lowercased, because `shop` becomes an Admin API origin (`https://${shop}/admin/api/…`). This is containment against a compromised API secret: with the check, a leaked secret lets an attacker forge webhook payloads; without it, the same leak lets them harvest every shop's access token by naming a server of their own. Failures answer `401`.
+- **Where the payload names its own shop, the header must agree.** The GDPR topics (`customers/data_request`, `customers/redact`, `shop/redact`) carry `shop_domain` and `shop/*` carries `myshopify_domain`, all inside the signed body. This catches a genuine delivery that leaked — through request logging or error reporting — being replayed under a different shop. It does nothing against a leaked secret, since anyone with the secret would sign a matching body. Failures answer `401`.
+
+Most topics carry no shop field, so for `orders/*`, `products/*` and the rest the host check is all there is. If a handler acts on webhook data in ways that matter, confirm the shop is one of yours before trusting it:
+
+```ts
+app.post('/webhooks/orders/fulfilled', async (c) => {
+  const { shop, payload } = getShopifyWebhook(c)
+  if ((await storage.load(shop)) === null) {
+    return c.body(null, 200) // not an active install; acknowledge and drop
+  }
+  // ...
+})
+```
+
+`normalizeShopDomain` is exported for the same check elsewhere — an OAuth `shop` query parameter, say, which is genuinely attacker-supplied since no signature gates it:
+
+```ts
+import { normalizeShopDomain } from '@hono/shopify-auth'
+
+const shop = normalizeShopDomain(c.req.query('shop'))
+if (shop === null) return c.text('Invalid shop', 400)
+```
+
 ## Scopes
 
 ```ts
