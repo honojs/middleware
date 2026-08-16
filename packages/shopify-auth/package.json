@@ -1,0 +1,59 @@
+{
+  "name": "@hono/shopify-auth",
+  "version": "0.0.0",
+  "description": "Shopify embedded app and webhook authentication middleware for Hono",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm -w run build:pkg",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/shopify-auth"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "keywords": [
+    "hono",
+    "shopify",
+    "auth",
+    "middleware",
+    "session-token",
+    "webhook"
+  ],
+  "peerDependencies": {
+    "hono": ">=4.0.0"
+  },
+  "devDependencies": {
+    "hono": "^4.11.5",
+    "tsdown": "^0.22.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^4.1.7"
+  }
+}
