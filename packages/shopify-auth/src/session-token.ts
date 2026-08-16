@@ -96,6 +96,15 @@ export async function verifyShopifySessionToken(
     return null
   }
 
+  // The only segment still undecoded at this point, and `atob` throws on
+  // characters outside the base64 alphabet.
+  let signature: Uint8Array<ArrayBuffer>
+  try {
+    signature = base64UrlDecode(signatureB64)
+  } catch {
+    return null
+  }
+
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(apiSecret),
@@ -106,7 +115,7 @@ export async function verifyShopifySessionToken(
   const verified = await crypto.subtle.verify(
     'HMAC',
     key,
-    base64UrlDecode(signatureB64),
+    signature,
     new TextEncoder().encode(`${headerB64}.${payloadB64}`)
   )
   if (!verified) {

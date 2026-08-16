@@ -124,6 +124,13 @@ describe('verifyShopifySessionToken', () => {
       const [header, , signature] = (await signSessionToken()).split('.')
       expect(await verify(`${header}.${btoa('plain text')}.${signature}`)).toBeNull()
     })
+
+    // Every claim check passes, so this is the one path that reaches the
+    // signature decode. It must return null rather than throw.
+    it('rejects a non-base64 signature on an otherwise valid token', async () => {
+      const [header, payload] = (await signSessionToken()).split('.')
+      expect(await verify(`${header}.${payload}.!!!!`)).toBeNull()
+    })
   })
 })
 
