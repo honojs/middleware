@@ -16,6 +16,8 @@ interface ShopifyTokenJson {
   expires_in?: number
   refresh_token?: string
   refresh_token_expires_in?: number
+  /** Carried *instead of* a token when Shopify refuses the grant with a 200. */
+  error?: string
 }
 
 /** A token response, resolved against the clock at the moment it was issued. */
@@ -60,7 +62,22 @@ async function postTokenRequest(shop: string, body: URLSearchParams): Promise<Is
     )
   }
 
-  return toIssuedToken((await res.json()) as ShopifyTokenJson, Date.now())
+  const data = (await res.json().catch(() => null)) as ShopifyTokenJson | null
+
+  // A refused grant comes back as a 200 carrying `{"error": ...}` rather than an
+  // error status, so `res.ok` on its own does not mean a token was issued.
+  // Trusting it would persist `undefined` under a `string` type and surface far
+  // from here — as `X-Shopify-Access-Token: undefined` on the next Admin API
+  // call, or as a `TypeError` in a caller reading `scope`. The response is never
+  // quoted back: on a partial body it could still hold token material.
+  if (typeof data?.access_token !== 'string' || typeof data.scope !== 'string') {
+    const reason = typeof data?.error === 'string' ? data.error : 'no access_token in the body'
+    throw new Error(
+      `Shopify token request for ${shop} answered ${res.status} without issuing a token: ${reason}`
+    )
+  }
+
+  return toIssuedToken(data, Date.now())
 }
 
 /**

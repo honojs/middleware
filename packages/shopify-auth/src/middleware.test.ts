@@ -271,6 +271,50 @@ describe('shopifyAccessToken', () => {
       expect(res.status).toBe(403)
     })
 
+    // Shopify refuses a grant with a 200 carrying `{"error": ...}`, so an
+    // unchecked body would leave `accessToken` undefined behind a 200 response.
+    it('answers 403 when a 2xx response carries no access token', async () => {
+      fetchMock.mockImplementation(() =>
+        Promise.resolve(Response.json({ error: 'invalid_subject_token' }))
+      )
+      const storage = memoryStorage()
+
+      const res = await buildApp(storage).fetch(await authorizedRequest())
+      expect(res.status).toBe(403)
+      await expect(storage.load(SHOP)).resolves.toBeNull()
+    })
+
+    it('answers 403 when a 2xx response carries no scope', async () => {
+      fetchMock.mockImplementation(() => Promise.resolve(tokenResponse({ scope: undefined })))
+      const storage = memoryStorage()
+
+      const res = await buildApp(storage).fetch(await authorizedRequest())
+      expect(res.status).toBe(403)
+      await expect(storage.load(SHOP)).resolves.toBeNull()
+    })
+
+    it('answers 403 when a 2xx response is not JSON', async () => {
+      fetchMock.mockImplementation(() => Promise.resolve(new Response('<html>maintenance</html>')))
+
+      const res = await buildApp(memoryStorage()).fetch(await authorizedRequest())
+      expect(res.status).toBe(403)
+    })
+
+    it('does not quote the response body back through onError', async () => {
+      fetchMock.mockImplementation(() =>
+        Promise.resolve(Response.json({ access_token: 'shpua_leaked' }))
+      )
+      const onError = vi.fn()
+
+      const app = new Hono()
+      app.use('/api/*', shopifyAccessToken({ ...credentials, storage: memoryStorage(), onError }))
+      app.get('/api/test', (c) => c.text('ok'))
+
+      await app.fetch(await authorizedRequest())
+      expect(onError).toHaveBeenCalled()
+      expect((onError.mock.calls[0]?.[0] as Error).message).not.toContain('shpua_leaked')
+    })
+
     it('reports the underlying error through onError', async () => {
       fetchMock.mockImplementation(() => Promise.resolve(new Response('nope', { status: 400 })))
       const onError = vi.fn()
@@ -347,6 +391,25 @@ describe('shopifyAccessToken', () => {
 
       const res = await app.fetch(await authorizedRequest())
       await expect(res.json()).resolves.toEqual({ fresh: null })
+    })
+
+    it('leaves the stored session intact when a 2xx carries no token', async () => {
+      const storage = memoryStorage()
+      await seed(storage)
+      fetchMock.mockImplementation(() =>
+        Promise.resolve(Response.json({ error: 'invalid_subject_token' }))
+      )
+
+      const app = new Hono()
+      app.use('/api/*', shopifyAccessToken({ ...credentials, storage }))
+      app.get('/api/test', async (c) => {
+        const fresh = await getShopifyAccess(c).reExchange()
+        return c.json({ fresh, current: getShopifyAccess(c).accessToken })
+      })
+
+      const res = await app.fetch(await authorizedRequest())
+      await expect(res.json()).resolves.toEqual({ fresh: null, current: 'shpua_stored' })
+      await expect(storage.load(SHOP)).resolves.toMatchObject({ accessToken: 'shpua_stored' })
     })
   })
 
