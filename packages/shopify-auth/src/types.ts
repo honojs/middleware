@@ -41,6 +41,14 @@ export interface StoredShopifySession {
  * `store` must be last-write-wins per shop: exactly one session survives for a
  * given shop. Shopify invalidates the previous refresh token whenever it issues
  * a new pair, so retaining older records means retaining dead credentials.
+ *
+ * That has to hold **atomically**. An embedded app typically loads several
+ * endpoints at once, and on a cold cache every one of those requests misses,
+ * acquires its own token, and calls `store` concurrently. An implementation
+ * that clears the shop's previous rows and inserts the new one as two separate
+ * statements interleaves under exactly that load, and the shop is left with
+ * duplicates. Use an upsert against a unique key, or run the pair in a
+ * transaction.
  */
 export interface ShopifySessionStorage {
   load(shop: string): Promise<StoredShopifySession | null>

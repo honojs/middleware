@@ -102,9 +102,7 @@ async function verifyRequest(
  * already manage Shopify access tokens yourself. Handlers read the result with
  * {@link getShopifySession}.
  */
-export function shopifySessionToken(
-  options: ShopifySessionTokenOptions = {}
-): MiddlewareHandler<{ Variables: { shopifySession: ShopifyVerifiedSession } }> {
+export function shopifySessionToken(options: ShopifySessionTokenOptions = {}): MiddlewareHandler {
   return async function shopifySessionTokenMiddleware(c, next) {
     const { shop, payload } = await verifyRequest(c, options)
     c.set('shopifySession', { shop, payload })
@@ -157,9 +155,7 @@ async function acquireToken(
  * issued tokens are persisted before the request proceeds. Handlers read the
  * result with {@link getShopifyAccess}.
  */
-export function shopifyAccessToken(options: ShopifyAccessTokenOptions): MiddlewareHandler<{
-  Variables: { shopifySession: ShopifyVerifiedSession; shopifyAccess: ShopifyAccessSession }
-}> {
+export function shopifyAccessToken(options: ShopifyAccessTokenOptions): MiddlewareHandler {
   const storage: ShopifySessionStorage = options.storage
 
   return async function shopifyAccessTokenMiddleware(c, next) {
@@ -242,9 +238,7 @@ export function shopifyAccessToken(options: ShopifyAccessTokenOptions): Middlewa
  * Reading the raw bytes does not consume the body for handlers: Hono caches the
  * parsed result, so `c.req.json()` still works downstream.
  */
-export function shopifyWebhook(
-  options: ShopifyWebhookOptions = {}
-): MiddlewareHandler<{ Variables: { shopifyWebhook: ShopifyWebhookContext } }> {
+export function shopifyWebhook(options: ShopifyWebhookOptions = {}): MiddlewareHandler {
   return async function shopifyWebhookMiddleware(c, next) {
     const apiSecret = credential(options.apiSecret, c, 'SHOPIFY_API_SECRET')
 

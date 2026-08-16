@@ -122,6 +122,8 @@ interface StoredShopifySession {
 
 `store` must be **last-write-wins per shop** — exactly one session survives for a given shop. Shopify invalidates the presented refresh token whenever it issues a new pair, so retaining older records means retaining dead credentials.
 
+That has to hold atomically. An embedded app usually loads several endpoints at once, and on a cold cache every one of those requests misses, acquires its own token, and calls `store` concurrently. A single keyed write — like the `kv.put` below — is fine. A SQL adapter that deletes the shop's previous rows and then inserts the new one as two separate statements is not: those statements interleave under exactly that load and leave the shop with duplicates. Use an upsert against a unique key, or run the pair in a transaction.
+
 A `memoryStorage()` helper ships for tests and local development:
 
 ```ts
