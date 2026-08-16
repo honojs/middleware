@@ -413,6 +413,60 @@ describe('shopifyAccessToken', () => {
     })
   })
 
+  // A resolver may reach a secrets manager or a Secrets Store binding, so it is
+  // part of the per-request latency budget rather than free configuration.
+  describe('credential resolvers', () => {
+    const resolverApp = (storage: ShopifySessionStorage) => {
+      const apiKey = vi.fn(() => API_KEY)
+      const apiSecret = vi.fn(() => API_SECRET)
+
+      const app = new Hono()
+      app.use('/api/*', shopifyAccessToken({ apiKey, apiSecret, storage }))
+      app.get('/api/test', (c) => c.json({ accessToken: getShopifyAccess(c).accessToken }))
+      return { app, apiKey, apiSecret }
+    }
+
+    it('runs each resolver once when the stored token is reused', async () => {
+      const storage = memoryStorage()
+      await seed(storage)
+      const { app, apiKey, apiSecret } = resolverApp(storage)
+
+      const res = await app.fetch(await authorizedRequest())
+      expect(res.status).toBe(200)
+      expect(apiKey).toHaveBeenCalledTimes(1)
+      expect(apiSecret).toHaveBeenCalledTimes(1)
+    })
+
+    it('runs each resolver once when a token exchange is needed', async () => {
+      const { app, apiKey, apiSecret } = resolverApp(memoryStorage())
+
+      const res = await app.fetch(await authorizedRequest())
+      await expect(res.json()).resolves.toMatchObject({ accessToken: 'shpua_new_token' })
+      expect(apiKey).toHaveBeenCalledTimes(1)
+      expect(apiSecret).toHaveBeenCalledTimes(1)
+      // The resolved values still reach the grant, not just the verification.
+      expect(tokenRequestBody().get('client_id')).toBe(API_KEY)
+      expect(tokenRequestBody().get('client_secret')).toBe(API_SECRET)
+    })
+
+    it('runs each resolver once when the handler re-exchanges', async () => {
+      const storage = memoryStorage()
+      await seed(storage)
+      const apiKey = vi.fn(() => API_KEY)
+      const apiSecret = vi.fn(() => API_SECRET)
+
+      const app = new Hono()
+      app.use('/api/*', shopifyAccessToken({ apiKey, apiSecret, storage }))
+      app.get('/api/test', async (c) => c.json({ fresh: await getShopifyAccess(c).reExchange() }))
+
+      await expect((await app.fetch(await authorizedRequest())).json()).resolves.toEqual({
+        fresh: 'shpua_new_token',
+      })
+      expect(apiKey).toHaveBeenCalledTimes(1)
+      expect(apiSecret).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('accessors', () => {
     it('also exposes the verified session', async () => {
       const storage = memoryStorage()

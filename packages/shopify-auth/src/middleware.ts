@@ -64,10 +64,22 @@ function bearerToken(c: Context): string {
   return token
 }
 
+/**
+ * Resolved credentials are returned alongside the verified session so callers
+ * that need them again — `shopifyAccessToken`, for the token grants — reuse
+ * these rather than resolving a second time. Resolvers may reach a secrets
+ * manager or carry side effects, so each runs exactly once per request.
+ */
 async function verifyRequest(
   c: Context,
   options: ShopifySessionTokenOptions
-): Promise<{ rawToken: string; shop: string; payload: SessionTokenPayload }> {
+): Promise<{
+  rawToken: string
+  shop: string
+  payload: SessionTokenPayload
+  apiKey: string
+  apiSecret: string
+}> {
   const apiKey = credential(options.apiKey, c, 'SHOPIFY_API_KEY')
   const apiSecret = credential(options.apiSecret, c, 'SHOPIFY_API_SECRET')
 
@@ -79,7 +91,7 @@ async function verifyRequest(
     throw new HTTPException(401, { message: 'Invalid session token' })
   }
 
-  return { rawToken, shop: shopFromPayload(payload), payload }
+  return { rawToken, shop: shopFromPayload(payload), payload, apiKey, apiSecret }
 }
 
 /**
@@ -151,9 +163,7 @@ export function shopifyAccessToken(options: ShopifyAccessTokenOptions): Middlewa
   const storage: ShopifySessionStorage = options.storage
 
   return async function shopifyAccessTokenMiddleware(c, next) {
-    const apiKey = credential(options.apiKey, c, 'SHOPIFY_API_KEY')
-    const apiSecret = credential(options.apiSecret, c, 'SHOPIFY_API_SECRET')
-    const { rawToken, shop, payload } = await verifyRequest(c, options)
+    const { rawToken, shop, payload, apiKey, apiSecret } = await verifyRequest(c, options)
 
     const stored = await storage.load(shop)
     const now = new Date()
