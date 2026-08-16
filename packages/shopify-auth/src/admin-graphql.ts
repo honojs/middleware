@@ -86,6 +86,10 @@ export async function adminGraphql<T = unknown>(options: AdminGraphqlOptions): P
         retried = true
         const fresh = await reExchange()
         if (fresh !== null) {
+          // The 401 body is never read on this path. Undici keeps the socket
+          // checked out of the pool until a response is consumed or cancelled,
+          // so abandoning it here would leak a connection per revoked token.
+          await res.body?.cancel().catch(() => {})
           accessToken = fresh
           continue
         }
@@ -99,7 +103,10 @@ export async function adminGraphql<T = unknown>(options: AdminGraphqlOptions): P
     }
 
     const json = (await res.json()) as GraphqlResponse<T>
-    if (json.errors) {
+    // `[]` is truthy, and some gateways return `errors: []` alongside a good
+    // `data` payload. Treating that as a failure would discard a successful
+    // mutation, and classify it transient so a retry loop keeps re-running it.
+    if (Array.isArray(json.errors) ? json.errors.length > 0 : json.errors != null) {
       const message = `Shopify Admin GraphQL errors: ${JSON.stringify(json.errors)}`
       if (hasAccessDeniedCode(json.errors)) {
         throw new ShopifyAccessDeniedError(message, res.status, json.errors)

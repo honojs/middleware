@@ -11,7 +11,12 @@ export function memoryStorage(): ShopifySessionStorage {
 
   return {
     load(shop: string): Promise<StoredShopifySession | null> {
-      return Promise.resolve(sessions.get(shop) ?? null)
+      // Copied on the way out too, so mutating a loaded session cannot reach
+      // back into the store. Adapters backed by KV or SQL deserialize a fresh
+      // object every time; without this, code that mutates what it loaded would
+      // behave one way in tests and another in production.
+      const found = sessions.get(shop)
+      return Promise.resolve(found === undefined ? null : { ...found })
     },
     store(shop: string, session: StoredShopifySession): Promise<void> {
       // Copied so a later mutation by the caller cannot alter what is stored.

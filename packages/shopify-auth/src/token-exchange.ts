@@ -29,13 +29,26 @@ export interface IssuedToken {
   refreshTokenExpiresAt: Date | null
 }
 
+/**
+ * How long an issued token can be trusted: its lifetime, less the safety
+ * buffer.
+ *
+ * The buffer never takes more than half the grant. Subtracting a flat 60s from
+ * a shorter lifetime would record the token as expired the moment it arrived,
+ * and every request would mint — and rotate the refresh token for — a new one.
+ */
+function usableLifetimeMs(expiresInSeconds: number): number {
+  const lifetime = expiresInSeconds * 1000
+  return lifetime - Math.min(EXPIRY_SAFETY_BUFFER_MS, lifetime / 2)
+}
+
 function toIssuedToken(data: ShopifyTokenJson, nowMs: number): IssuedToken {
   return {
     accessToken: data.access_token,
     scope: data.scope,
     expiresAt:
       typeof data.expires_in === 'number'
-        ? new Date(nowMs + data.expires_in * 1000 - EXPIRY_SAFETY_BUFFER_MS)
+        ? new Date(nowMs + usableLifetimeMs(data.expires_in))
         : null,
     refreshToken: data.refresh_token ?? null,
     refreshTokenExpiresAt:

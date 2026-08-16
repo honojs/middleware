@@ -148,6 +148,23 @@ describe('shopifyAccessToken', () => {
       expect(stored?.expiresAt?.getTime()).toBeLessThanOrEqual(expected + 1000)
     })
 
+    // The 60s buffer cannot take more than half the grant. Subtracting it flat
+    // from a shorter lifetime would record the token as already expired, and
+    // every request would mint a new one and rotate the refresh token again.
+    it('keeps a grant shorter than the safety buffer usable', async () => {
+      fetchMock.mockImplementation(() => Promise.resolve(tokenResponse({ expires_in: 30 })))
+      const storage = memoryStorage()
+      const app = buildApp(storage)
+      const before = Date.now()
+
+      await app.fetch(await authorizedRequest())
+      const stored = await storage.load(SHOP)
+      expect(stored?.expiresAt?.getTime()).toBeGreaterThan(before)
+
+      await app.fetch(await authorizedRequest())
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
     it('requests an expiring token', async () => {
       await buildApp(memoryStorage()).fetch(await authorizedRequest())
 

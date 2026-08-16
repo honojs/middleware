@@ -77,6 +77,13 @@ describe('adminGraphql', () => {
       await expect(call()).rejects.toBeInstanceOf(ShopifyAccessDeniedError)
     })
 
+    // `[]` is truthy, and some gateways emit it alongside a good `data`
+    // payload. Throwing here would turn a successful mutation into a failure.
+    it('does not treat an empty errors array as a failure', async () => {
+      fetchMock.mockImplementation(respondJson({ data: { shop: { name: 'Example' } }, errors: [] }))
+      await expect(call()).resolves.toEqual({ shop: { name: 'Example' } })
+    })
+
     it('does not treat userErrors as fatal', async () => {
       fetchMock.mockImplementation(
         respondData({ productCreate: { userErrors: [{ message: 'Title is required' }] } })
@@ -101,6 +108,26 @@ describe('adminGraphql', () => {
       expect((retry.headers as Record<string, string>)['X-Shopify-Access-Token']).toBe(
         'shpua_fresh'
       )
+    })
+
+    // Undici holds the socket until a response is consumed or cancelled, so the
+    // abandoned 401 would leak a pooled connection per revoked token.
+    it('releases the abandoned 401 body before retrying', async () => {
+      let cancelled = false
+      const stalled = new Response(
+        new ReadableStream({
+          cancel() {
+            cancelled = true
+          },
+        }),
+        { status: 401 }
+      )
+      fetchMock
+        .mockImplementationOnce(() => Promise.resolve(stalled))
+        .mockImplementationOnce(respondData({ shop: { name: 'Example' } }))
+
+      await call({ reExchange: () => Promise.resolve<string | null>('shpua_fresh') })
+      expect(cancelled).toBe(true)
     })
 
     it('retries at most once', async () => {

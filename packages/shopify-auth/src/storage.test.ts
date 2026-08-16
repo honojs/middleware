@@ -57,6 +57,22 @@ describe('memoryStorage', () => {
 
     await expect(storage.load(SHOP)).resolves.toMatchObject({ accessToken: 'shpua_token' })
   })
+
+  // The read path has to be as isolating as the write path: a KV- or SQL-backed
+  // adapter deserializes a fresh object every time, so a handler that mutates
+  // what it loaded must not behave differently here than it does in production.
+  it('is unaffected by mutation of a loaded session', async () => {
+    const storage = memoryStorage()
+    await storage.store(SHOP, session())
+
+    const loaded = await storage.load(SHOP)
+    if (loaded === null) {
+      throw new Error('expected a stored session')
+    }
+    loaded.accessToken = 'mutated'
+
+    await expect(storage.load(SHOP)).resolves.toMatchObject({ accessToken: 'shpua_token' })
+  })
 })
 
 describe('missingScopes', () => {
