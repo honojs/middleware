@@ -22,6 +22,7 @@ interface TestServerConfig {
   eventStore?: EventStore
   onsessioninitialized?: (sessionId: string) => void | Promise<void>
   onsessionclosed?: (sessionId: string) => void
+  onsessiondisconnected?: (sessionId: string) => void | Promise<void>
   strictAcceptHeader?: boolean
 }
 
@@ -55,6 +56,7 @@ async function createTestServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    onsessiondisconnected: config.onsessiondisconnected,
     strictAcceptHeader: config.strictAcceptHeader,
   })
 
@@ -117,6 +119,7 @@ async function createTestAuthServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    onsessiondisconnected: config.onsessiondisconnected,
     strictAcceptHeader: config.strictAcceptHeader,
   })
 
@@ -1431,6 +1434,7 @@ describe('StreamableHTTPServerTransport with resumability', () => {
   let transport: StreamableHTTPTransport
   let sessionId: string
   let mcpServer: McpServer
+  let onSessionDisconnected: (sessionId: string) => void
   const storedEvents = new Map<string, { eventId: string; message: JSONRPCMessage }>()
 
   // Simple implementation of EventStore
@@ -1463,9 +1467,11 @@ describe('StreamableHTTPServerTransport with resumability', () => {
 
   beforeEach(async () => {
     storedEvents.clear()
+    onSessionDisconnected = vitest.fn<(sessionId: string) => void>()
     const result = await createTestServer({
       sessionIdGenerator: () => crypto.randomUUID(),
       eventStore,
+      onsessiondisconnected: onSessionDisconnected,
     })
 
     server = result.server
@@ -1531,6 +1537,9 @@ describe('StreamableHTTPServerTransport with resumability', () => {
   })
 
   it('should store and replay MCP server tool notifications', async () => {
+    const onclose = vitest.fn()
+    transport.onclose = onclose
+
     // Establish a standalone SSE stream
     const sseResponse = await server.request('/', {
       method: 'GET',
@@ -1568,6 +1577,10 @@ describe('StreamableHTTPServerTransport with resumability', () => {
 
     // Close the first SSE stream to simulate a disconnect
     await reader!.cancel()
+    await vitest.waitFor(() => {
+      expect(onSessionDisconnected).toHaveBeenCalledWith(sessionId)
+    })
+    expect(onclose).not.toHaveBeenCalled()
 
     // Reconnect with the Last-Event-ID to get missed messages
     const reconnectResponse = await server.request('/', {
@@ -1581,6 +1594,7 @@ describe('StreamableHTTPServerTransport with resumability', () => {
     })
 
     expect(reconnectResponse.status).toBe(200)
+    expect(onclose).not.toHaveBeenCalled()
 
     // Read the replayed notification
     const reconnectText = await readNSSEEvents(reconnectResponse, 2)
@@ -1721,40 +1735,6 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).toHaveBeenCalledTimes(1)
 
     // Clean up
-    await stopTestServer({ transport: result.transport })
-  })
-
-  it('should call onclose when the standalone SSE stream aborts', async () => {
-    const onclose = vitest.fn()
-    const result = await createTestServer({
-      sessionIdGenerator: () => crypto.randomUUID(),
-    })
-    result.transport.onclose = onclose
-
-    const initResponse = await sendPostRequest(result.server, TEST_MESSAGES.initialize)
-    const sessionId = initResponse.headers.get('mcp-session-id')
-    expect(sessionId).toBeDefined()
-
-    const sseResponse = await result.server.request('/', {
-      method: 'GET',
-      headers: {
-        Accept: 'text/event-stream',
-        'mcp-session-id': sessionId ?? '',
-        'mcp-protocol-version': '2025-03-26',
-      },
-    })
-    expect(sseResponse.status).toBe(200)
-
-    // Client disconnect without DELETE — cancel the SSE body.
-    await sseResponse.body?.cancel()
-    await vitest.waitFor(() => {
-      expect(onclose).toHaveBeenCalledTimes(1)
-    })
-
-    // Explicit close afterward must not double-fire onclose.
-    await result.transport.close()
-    expect(onclose).toHaveBeenCalledTimes(1)
-
     await stopTestServer({ transport: result.transport })
   })
 

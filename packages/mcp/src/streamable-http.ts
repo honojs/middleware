@@ -34,6 +34,7 @@ export class StreamableHTTPTransport implements Transport {
   #initialized = false
   #onSessionInitialized?: (sessionId: string) => void | Promise<void>
   #onSessionClosed?: (sessionId: string) => void | Promise<void>
+  #onSessionDisconnected?: (sessionId: string) => void | Promise<void>
   #sessionIdGenerator?: () => string
   #eventStore?: EventStore
   #enableJsonResponse = false
@@ -55,8 +56,6 @@ export class StreamableHTTPTransport implements Transport {
   #allowedOrigins?: string[]
   #enableDnsRebindingProtection: boolean
   #strictAcceptHeader: boolean
-  /** Guards against double-firing `onclose` when abort handlers race `close()`. */
-  #closedNotified = false
 
   sessionId?: string
   onclose?: () => void
@@ -72,6 +71,11 @@ export class StreamableHTTPTransport implements Transport {
        * compatibility with clients like Gemini CLI, Java MCP SDK, curl, and Open WebUI.
        */
       strictAcceptHeader?: boolean
+      /**
+       * Called when the standalone GET SSE stream disconnects. The session remains
+       * resumable until it is explicitly closed with DELETE.
+       */
+      onsessiondisconnected?: (sessionId: string) => void | Promise<void>
     }
   ) {
     this.#sessionIdGenerator = options?.sessionIdGenerator
@@ -79,6 +83,7 @@ export class StreamableHTTPTransport implements Transport {
     this.#eventStore = options?.eventStore
     this.#onSessionInitialized = options?.onsessioninitialized
     this.#onSessionClosed = options?.onsessionclosed
+    this.#onSessionDisconnected = options?.onsessiondisconnected
     this.#allowedHosts = options?.allowedHosts
     this.#allowedOrigins = options?.allowedOrigins
     this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false
@@ -256,12 +261,20 @@ export class StreamableHTTPTransport implements Transport {
           },
         })
 
-        // Set up close handler for client disconnects. MCP clients often drop
-        // the GET SSE stream without sending DELETE; surface that as `onclose`.
+        // Set up close handler for client disconnects. A dropped standalone SSE
+        // stream does not terminate the session because it may be resumed.
         stream.onAbort(() => {
           this.#streamMapping.get(resolvedStreamId)?.cleanup()
-          if (resolvedStreamId === this.#standaloneSseStreamId) {
-            this.#notifyClose()
+          if (
+            resolvedStreamId === this.#standaloneSseStreamId &&
+            this.#onSessionDisconnected &&
+            this.sessionId
+          ) {
+            Promise.resolve()
+              .then(() => this.#onSessionDisconnected!(this.sessionId!))
+              .catch((error) => {
+                this.onerror?.(error as Error)
+              })
           }
         })
       })
@@ -629,14 +642,6 @@ export class StreamableHTTPTransport implements Transport {
     return true
   }
 
-  #notifyClose(): void {
-    if (this.#closedNotified) {
-      return
-    }
-    this.#closedNotified = true
-    this.onclose?.()
-  }
-
   async close(): Promise<void> {
     // Close all SSE connections
 
@@ -648,9 +653,7 @@ export class StreamableHTTPTransport implements Transport {
 
     // Clear any pending responses
     this.#requestResponseMap.clear()
-    // Standalone SSE abort may already have notified; still notify when there
-    // was no GET stream (e.g. DELETE after JSON-only traffic).
-    this.#notifyClose()
+    this.onclose?.()
   }
 
   async send(message: JSONRPCMessage, options?: { relatedRequestId?: RequestId }): Promise<void> {
