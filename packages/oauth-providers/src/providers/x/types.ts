@@ -3,6 +3,7 @@ export type XScopes =
   | 'tweet.write'
   | 'tweet.moderate.write'
   | 'users.read'
+  | 'users.email'
   | 'follows.read'
   | 'follows.write'
   | 'offline.access'
@@ -17,22 +18,36 @@ export type XScopes =
   | 'block.write'
   | 'bookmark.read'
   | 'bookmark.write'
+  | 'dm.read'
+  | 'dm.write'
+  | 'media.write'
 
 export type XFields =
+  | 'affiliation'
+  | 'confirmed_email'
+  | 'connection_status'
   | 'created_at'
   | 'description'
   | 'entities'
   | 'id'
+  | 'is_identity_verified'
   | 'location'
   | 'most_recent_tweet_id'
   | 'name'
+  | 'parody'
   | 'pinned_tweet_id'
+  | 'profile_banner_url'
   | 'profile_image_url'
   | 'protected'
   | 'public_metrics'
+  | 'receives_your_dm'
+  | 'subscribes_to_you'
+  | 'subscription'
+  | 'subscription_type'
   | 'url'
   | 'username'
   | 'verified'
+  | 'verified_followers_count'
   | 'verified_type'
   | 'withheld'
 
@@ -58,6 +73,14 @@ export type XRevokeResponse = {
 }
 
 export type XUser = {
+  affiliation: {
+    badge_url: string
+    description: string
+    url: string
+    user_id: string[]
+  }
+  confirmed_email: string
+  connection_status: string[]
   created_at: string
   description: string
   entities: {
@@ -72,9 +95,12 @@ export type XUser = {
     }
   }
   id: string
+  is_identity_verified: boolean
   location: string
   most_recent_tweet_id: string
   name: string
+  parody: boolean
+  profile_banner_url: string
   profile_image_url: string
   protected: boolean
   public_metrics: {
@@ -84,8 +110,15 @@ export type XUser = {
     listed_count: number
     like_count: number
   }
+  receives_your_dm: boolean
+  subscribes_to_you: boolean
+  subscription: {
+    subscribes_to_you: boolean
+  }
+  subscription_type: string
   url: string
   username: string
   verified_type: string
   verified: boolean
+  verified_followers_count: number
 }
