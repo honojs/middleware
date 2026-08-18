@@ -22,6 +22,7 @@ interface TestServerConfig {
   eventStore?: EventStore
   onsessioninitialized?: (sessionId: string) => void | Promise<void>
   onsessionclosed?: (sessionId: string) => void
+  onsessiondisconnected?: (sessionId: string) => void | Promise<void>
   strictAcceptHeader?: boolean
 }
 
@@ -55,6 +56,7 @@ async function createTestServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    onsessiondisconnected: config.onsessiondisconnected,
     strictAcceptHeader: config.strictAcceptHeader,
   })
 
@@ -117,6 +119,7 @@ async function createTestAuthServer(
     eventStore: config.eventStore,
     onsessioninitialized: config.onsessioninitialized,
     onsessionclosed: config.onsessionclosed,
+    onsessiondisconnected: config.onsessiondisconnected,
     strictAcceptHeader: config.strictAcceptHeader,
   })
 
@@ -942,7 +945,7 @@ describe('MCP helper', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1431,6 +1434,7 @@ describe('StreamableHTTPServerTransport with resumability', () => {
   let transport: StreamableHTTPTransport
   let sessionId: string
   let mcpServer: McpServer
+  let onSessionDisconnected: (sessionId: string) => void
   const storedEvents = new Map<string, { eventId: string; message: JSONRPCMessage }>()
 
   // Simple implementation of EventStore
@@ -1463,9 +1467,11 @@ describe('StreamableHTTPServerTransport with resumability', () => {
 
   beforeEach(async () => {
     storedEvents.clear()
+    onSessionDisconnected = vitest.fn<(sessionId: string) => void>()
     const result = await createTestServer({
       sessionIdGenerator: () => crypto.randomUUID(),
       eventStore,
+      onsessiondisconnected: onSessionDisconnected,
     })
 
     server = result.server
@@ -1531,6 +1537,9 @@ describe('StreamableHTTPServerTransport with resumability', () => {
   })
 
   it('should store and replay MCP server tool notifications', async () => {
+    const onclose = vitest.fn()
+    transport.onclose = onclose
+
     // Establish a standalone SSE stream
     const sseResponse = await server.request('/', {
       method: 'GET',
@@ -1568,6 +1577,10 @@ describe('StreamableHTTPServerTransport with resumability', () => {
 
     // Close the first SSE stream to simulate a disconnect
     await reader!.cancel()
+    await vitest.waitFor(() => {
+      expect(onSessionDisconnected).toHaveBeenCalledWith(sessionId)
+    })
+    expect(onclose).not.toHaveBeenCalled()
 
     // Reconnect with the Last-Event-ID to get missed messages
     const reconnectResponse = await server.request('/', {
@@ -1581,6 +1594,7 @@ describe('StreamableHTTPServerTransport with resumability', () => {
     })
 
     expect(reconnectResponse.status).toBe(200)
+    expect(onclose).not.toHaveBeenCalled()
 
     // Read the replayed notification
     const reconnectText = await readNSSEEvents(reconnectResponse, 2)
@@ -1588,6 +1602,38 @@ describe('StreamableHTTPServerTransport with resumability', () => {
     // Verify we received the second notification that was sent after our stored eventId
     expect(reconnectText).toContain('Second notification from MCP server')
     expect(reconnectText).toContain('id: ')
+  })
+
+  it('should report errors from the session disconnect callback', async () => {
+    const onerror = vitest.fn()
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+      eventStore,
+      onsessiondisconnected: () => Promise.reject(new Error('disconnect callback failed')),
+    })
+    result.transport.onerror = onerror
+
+    const initResponse = await sendPostRequest(result.server, TEST_MESSAGES.initialize)
+    const tempSessionId = initResponse.headers.get('mcp-session-id')
+    expect(tempSessionId).toBeDefined()
+
+    const sseResponse = await result.server.request('/', {
+      method: 'GET',
+      headers: {
+        Accept: 'text/event-stream',
+        'mcp-session-id': tempSessionId ?? '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+    })
+    const reader = sseResponse.body?.getReader()
+    expect(reader).toBeDefined()
+
+    await reader?.cancel()
+    await vitest.waitFor(() => {
+      expect(onerror).toHaveBeenCalledWith(new Error('disconnect callback failed'))
+    })
+
+    await stopTestServer({ transport: result.transport })
   })
 })
 
@@ -1711,7 +1757,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1721,7 +1767,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).toHaveBeenCalledTimes(1)
 
     // Clean up
-    stopTestServer({ transport: result.transport })
+    await stopTestServer({ transport: result.transport })
   })
 
   it('should not call onsessionclosed callback when not provided', async () => {
@@ -1740,7 +1786,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1748,7 +1794,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(deleteResponse.status).toBe(200)
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should not call onsessionclosed callback for invalid session DELETE', async () => {
@@ -1778,7 +1824,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).not.toHaveBeenCalled()
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should call onsessionclosed callback with correct session ID when multiple sessions exist', async () => {
@@ -1815,7 +1861,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse1 = await server1.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': sessionId1 || '',
+        'mcp-session-id': sessionId1 ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1828,7 +1874,7 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     const deleteResponse2 = await server2.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': sessionId2 || '',
+        'mcp-session-id': sessionId2 ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1838,8 +1884,8 @@ describe('StreamableHTTPServerTransport onsessionclosed callback', () => {
     expect(mockCallback).toHaveBeenCalledTimes(2)
 
     // Clean up
-    stopTestServer({ transport: result1.transport })
-    stopTestServer({ transport: result2.transport })
+    await stopTestServer({ transport: result1.transport })
+    await stopTestServer({ transport: result2.transport })
   })
 })
 
@@ -1872,7 +1918,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(initializationOrder).toEqual(['async-start', 'async-end', tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should support sync onsessioninitialized callback (backwards compatibility)', async () => {
@@ -1895,7 +1941,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(capturedSessionId).toEqual([tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should support async onsessionclosed callback', async () => {
@@ -1924,7 +1970,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1937,7 +1983,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(closureOrder).toEqual(['async-close-start', 'async-close-end', tempSessionId])
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should propagate errors from async onsessioninitialized callback', async () => {
@@ -1959,7 +2005,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
 
     // Clean up
     consoleErrorSpy.mockRestore()
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should propagate errors from async onsessionclosed callback', async () => {
@@ -1983,7 +2029,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -1992,7 +2038,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
 
     // Clean up
     consoleErrorSpy.mockRestore()
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 
   it('should handle both async callbacks together', async () => {
@@ -2026,7 +2072,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     const deleteResponse = await tempServer.request('/', {
       method: 'DELETE',
       headers: {
-        'mcp-session-id': tempSessionId || '',
+        'mcp-session-id': tempSessionId ?? '',
         'mcp-protocol-version': '2025-03-26',
       },
     })
@@ -2040,7 +2086,7 @@ describe('StreamableHTTPServerTransport async callbacks', () => {
     expect(events).toHaveLength(2)
 
     // Clean up
-    stopTestServer(result)
+    await stopTestServer(result)
   })
 })
 

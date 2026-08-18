@@ -37,6 +37,7 @@ export default app
 The `StreamableHTTPTransport` constructor accepts all options from the MCP SDK's `StreamableHTTPServerTransportOptions`, plus:
 
 - **`strictAcceptHeader`** (default: `false`) — When `false` (the default), the transport accepts POST requests where the `Accept` header contains `application/json`, `text/event-stream`, or `*/*`. This improves compatibility with clients like Gemini CLI, Java MCP SDK, Open WebUI, and curl. When `true`, the transport enforces strict MCP spec compliance, requiring both `application/json` and `text/event-stream` in the `Accept` header.
+- **`onsessiondisconnected`** — Optional callback invoked with the session ID when the standalone GET SSE stream disconnects. This does not close the session; clients can reconnect and resume it until they send `DELETE`.
 
 ```ts
 // Permissive mode (default) — works with most HTTP clients

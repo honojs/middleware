@@ -34,6 +34,7 @@ export class StreamableHTTPTransport implements Transport {
   #initialized = false
   #onSessionInitialized?: (sessionId: string) => void | Promise<void>
   #onSessionClosed?: (sessionId: string) => void | Promise<void>
+  #onSessionDisconnected?: (sessionId: string) => void | Promise<void>
   #sessionIdGenerator?: () => string
   #eventStore?: EventStore
   #enableJsonResponse = false
@@ -70,6 +71,11 @@ export class StreamableHTTPTransport implements Transport {
        * compatibility with clients like Gemini CLI, Java MCP SDK, curl, and Open WebUI.
        */
       strictAcceptHeader?: boolean
+      /**
+       * Called when the standalone GET SSE stream disconnects. The session remains
+       * resumable until it is explicitly closed with DELETE.
+       */
+      onsessiondisconnected?: (sessionId: string) => void | Promise<void>
     }
   ) {
     this.#sessionIdGenerator = options?.sessionIdGenerator
@@ -77,6 +83,7 @@ export class StreamableHTTPTransport implements Transport {
     this.#eventStore = options?.eventStore
     this.#onSessionInitialized = options?.onsessioninitialized
     this.#onSessionClosed = options?.onsessionclosed
+    this.#onSessionDisconnected = options?.onsessiondisconnected
     this.#allowedHosts = options?.allowedHosts
     this.#allowedOrigins = options?.allowedOrigins
     this.#enableDnsRebindingProtection = options?.enableDnsRebindingProtection ?? false
@@ -190,10 +197,11 @@ export class StreamableHTTPTransport implements Transport {
 
       // Handle resumability: check for Last-Event-ID header
       if (this.#eventStore) {
+        const eventStore = this.#eventStore
         const lastEventId = ctx.req.header('last-event-id')
         if (lastEventId) {
           streamId = (stream) =>
-            this.#eventStore!.replayEventsAfter(lastEventId, {
+            eventStore.replayEventsAfter(lastEventId, {
               send: async (eventId: string, message: JSONRPCMessage) => {
                 try {
                   await stream.writeSSE({
@@ -254,9 +262,23 @@ export class StreamableHTTPTransport implements Transport {
           },
         })
 
-        // Set up close handler for client disconnects
+        // Set up close handler for client disconnects. A dropped standalone SSE
+        // stream does not terminate the session because it may be resumed.
         stream.onAbort(() => {
           this.#streamMapping.get(resolvedStreamId)?.cleanup()
+          const onSessionDisconnected = this.#onSessionDisconnected
+          const sessionId = this.sessionId
+          if (
+            resolvedStreamId === this.#standaloneSseStreamId &&
+            onSessionDisconnected &&
+            sessionId
+          ) {
+            Promise.resolve()
+              .then(() => onSessionDisconnected(sessionId))
+              .catch((error: unknown) => {
+                this.onerror?.(error instanceof Error ? error : new Error(String(error)))
+              })
+          }
         })
       })
     } catch (error) {
