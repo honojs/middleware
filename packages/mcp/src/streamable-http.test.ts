@@ -1603,6 +1603,38 @@ describe('StreamableHTTPServerTransport with resumability', () => {
     expect(reconnectText).toContain('Second notification from MCP server')
     expect(reconnectText).toContain('id: ')
   })
+
+  it('should report errors from the session disconnect callback', async () => {
+    const onerror = vitest.fn()
+    const result = await createTestServer({
+      sessionIdGenerator: () => crypto.randomUUID(),
+      eventStore,
+      onsessiondisconnected: () => Promise.reject(new Error('disconnect callback failed')),
+    })
+    result.transport.onerror = onerror
+
+    const initResponse = await sendPostRequest(result.server, TEST_MESSAGES.initialize)
+    const tempSessionId = initResponse.headers.get('mcp-session-id')
+    expect(tempSessionId).toBeDefined()
+
+    const sseResponse = await result.server.request('/', {
+      method: 'GET',
+      headers: {
+        Accept: 'text/event-stream',
+        'mcp-session-id': tempSessionId ?? '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+    })
+    const reader = sseResponse.body?.getReader()
+    expect(reader).toBeDefined()
+
+    await reader?.cancel()
+    await vitest.waitFor(() => {
+      expect(onerror).toHaveBeenCalledWith(new Error('disconnect callback failed'))
+    })
+
+    await stopTestServer({ transport: result.transport })
+  })
 })
 
 // Test stateless mode

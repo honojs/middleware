@@ -197,10 +197,11 @@ export class StreamableHTTPTransport implements Transport {
 
       // Handle resumability: check for Last-Event-ID header
       if (this.#eventStore) {
+        const eventStore = this.#eventStore
         const lastEventId = ctx.req.header('last-event-id')
         if (lastEventId) {
           streamId = (stream) =>
-            this.#eventStore!.replayEventsAfter(lastEventId, {
+            eventStore.replayEventsAfter(lastEventId, {
               send: async (eventId: string, message: JSONRPCMessage) => {
                 try {
                   await stream.writeSSE({
@@ -265,15 +266,17 @@ export class StreamableHTTPTransport implements Transport {
         // stream does not terminate the session because it may be resumed.
         stream.onAbort(() => {
           this.#streamMapping.get(resolvedStreamId)?.cleanup()
+          const onSessionDisconnected = this.#onSessionDisconnected
+          const sessionId = this.sessionId
           if (
             resolvedStreamId === this.#standaloneSseStreamId &&
-            this.#onSessionDisconnected &&
-            this.sessionId
+            onSessionDisconnected &&
+            sessionId
           ) {
             Promise.resolve()
-              .then(() => this.#onSessionDisconnected!(this.sessionId!))
-              .catch((error) => {
-                this.onerror?.(error as Error)
+              .then(() => onSessionDisconnected(sessionId))
+              .catch((error: unknown) => {
+                this.onerror?.(error instanceof Error ? error : new Error(String(error)))
               })
           }
         })
