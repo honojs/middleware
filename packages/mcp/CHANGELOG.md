@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.3.2
+
+### Patch Changes
+
+- [#2075](https://github.com/honojs/middleware/pull/2075) [`e73716f939f7fb18fcdea5f51b1bd8068294e881`](https://github.com/honojs/middleware/commit/e73716f939f7fb18fcdea5f51b1bd8068294e881) Thanks [@edenbuilds](https://github.com/edenbuilds)! - Add `onsessiondisconnected` so apps can detect standalone GET SSE disconnects without treating a resumable session as closed.
+
 ## 0.3.1
 
 ### Patch Changes
