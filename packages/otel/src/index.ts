@@ -116,8 +116,24 @@ export const httpInstrumentationMiddleware = (
         }
       } finally {
         activeReqs?.decrement(stableAttrs)
-        // Update route and name since they may have changed after routing finished
-        span?.setAttribute(ATTR_HTTP_ROUTE, routePath(c))
+        // Update route and name since they may have changed after routing finished.
+        // Prefer a value resolved by the user via `getRoute` (e.g. an RPC operation
+        // name that a downstream adapter has set on the context) over the matched
+        // Hono pattern, so adapters can surface the real operation in both the
+        // span attribute and the request duration metric.
+        let finalRoute = routePath(c)
+        if (config.getRoute) {
+          try {
+            const resolved = config.getRoute(c)
+            if (typeof resolved === 'string' && resolved.length > 0) {
+              finalRoute = resolved
+            }
+          } catch {
+            // Ignore errors from the user-supplied route resolver and fall back to
+            // the default pattern so the request still produces a clean span.
+          }
+        }
+        span?.setAttribute(ATTR_HTTP_ROUTE, finalRoute)
 
         span?.updateName(spanName(c))
         // Convert duration to seconds as the time unit from performance.now() is in milliseconds
@@ -125,7 +141,7 @@ export const httpInstrumentationMiddleware = (
 
         requestDuration.record(duration, {
           ...stableAttrs,
-          [ATTR_HTTP_ROUTE]: routePath(c),
+          [ATTR_HTTP_ROUTE]: finalRoute,
           [ATTR_HTTP_RESPONSE_STATUS_CODE]: c.res.status,
         })
       }
