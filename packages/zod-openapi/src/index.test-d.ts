@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory'
 import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
-import { OpenAPIHono, createRoute, z, $ } from './index'
+import { OpenAPIHono, createRoute, defineOpenAPIRoute, z, $ } from './index'
 import type { HonoToOpenAPIHono, MiddlewareToHandlerType, OfHandlerType } from './index'
 
 describe('Types', () => {
@@ -315,6 +315,43 @@ describe('Middleware', () => {
         return c.json({})
       }
     )
+  })
+
+  it('Should infer Env from router middleware in defineOpenAPIRoute', () => {
+    defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/books',
+        middleware: [
+          createMiddleware<{
+            Variables: { foo: string }
+          }>((c, next) => {
+            c.set('foo', 'abc')
+            return next()
+          }),
+          createMiddleware<{
+            Variables: { bar: number }
+          }>((c, next) => {
+            c.set('bar', 321)
+            return next()
+          }),
+        ] as const,
+        responses: {
+          200: {
+            description: 'response',
+          },
+        },
+      }),
+      handler: (c) => {
+        c.var.foo
+        c.var.bar
+
+        type verifyFoo = Expect<Equal<typeof c.var.foo, string>>
+        type verifyBar = Expect<Equal<typeof c.var.bar, number>>
+
+        return c.json({})
+      },
+    })
   })
 
   it('Should infer Env root when no middleware provided', async () => {
