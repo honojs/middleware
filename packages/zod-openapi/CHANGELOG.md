@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.6.1
+
+### Patch Changes
+
+- [#1988](https://github.com/honojs/middleware/pull/1988) [`4fce28c6fbba41795b316becaf7d8cffa11fb521`](https://github.com/honojs/middleware/commit/4fce28c6fbba41795b316becaf7d8cffa11fb521) Thanks [@thekiwi](https://github.com/thekiwi)! - Reduce route-typing type instantiations (~54% on TS6, ~48% on TS7 in a 100-route benchmark) by binding expensive sub-expressions once and sharing the input intersection / response-shape conditional.
+
 ## 1.6.0
 
 ### Minor Changes
