@@ -179,6 +179,99 @@ describe('supports async handler', () => {
     hono.openapi(routeWithDefault, errorHandler)
   })
 
+  test('handler may return a raw Response when no response schema is defined', () => {
+    // No Zod-typed response is declared, so a raw Response is allowed.
+    const route = createRoute({
+      method: 'get',
+      path: '/raw',
+      responses: {
+        200: {
+          description: 'No response schema',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = () => {
+      return new Response('hello')
+    }
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+  })
+
+  test('handler rejects a raw Response when a response schema is defined', () => {
+    // A Zod-typed response is declared, so only the typed response is allowed.
+    const route = createRoute({
+      method: 'get',
+      path: '/typed',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ id: z.string() }),
+            },
+          },
+          description: 'JSON body',
+        },
+      },
+    })
+
+    const handler: RouteHandler<typeof route> = (c) => c.json({ id: '123' }, 200)
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+
+    // @ts-expect-error a raw Response is not assignable when a response schema is defined
+    const invalid: RouteHandler<typeof route> = () => new Response('nope')
+    void invalid
+  })
+
+  test('RouteHandler distributes over a union of route configs', () => {
+    const routeA = createRoute({
+      method: 'get',
+      path: '/a',
+      responses: {
+        200: {
+          content: { 'application/json': { schema: z.object({ a: z.string() }) } },
+          description: 'ok',
+        },
+      },
+    })
+
+    const routeB = createRoute({
+      method: 'get',
+      path: '/b',
+      responses: {
+        201: {
+          content: { 'application/json': { schema: z.object({ b: z.number() }) } },
+          description: 'created',
+        },
+      },
+    })
+
+    const routeNoSchema = createRoute({
+      method: 'get',
+      path: '/c',
+      responses: {
+        204: { description: 'no content' },
+      },
+    })
+
+    // Each member of the union keeps its own typed-response union.
+    const handlerA: RouteHandler<typeof routeA | typeof routeB> = (c) => c.json({ a: 'x' }, 200)
+    const handlerB: RouteHandler<typeof routeA | typeof routeB> = (c) => c.json({ b: 1 }, 201)
+    void handlerA
+    void handlerB
+
+    // @ts-expect-error a raw Response is not allowed when every member declares a schema
+    const invalid: RouteHandler<typeof routeA | typeof routeB> = () => new Response('nope')
+    void invalid
+
+    // A raw Response is allowed when at least one member has no response schema.
+    const handlerRaw: RouteHandler<typeof routeA | typeof routeNoSchema> = () => new Response('raw')
+    void handlerRaw
+  })
+
   test('handler should respect explicitly defined status codes with default fallback', () => {
     const routeWithDefault = createRoute({
       method: 'get',
