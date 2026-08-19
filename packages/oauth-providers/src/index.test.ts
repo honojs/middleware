@@ -254,7 +254,6 @@ describe('OAuth Middleware', () => {
         'media.write',
       ],
       fields: [
-        'affiliation',
         'confirmed_email',
         'connection_status',
         'created_at',

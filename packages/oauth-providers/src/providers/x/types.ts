@@ -23,7 +23,6 @@ export type XScopes =
   | 'media.write'
 
 export type XFields =
-  | 'affiliation'
   | 'confirmed_email'
   | 'connection_status'
   | 'created_at'
@@ -73,12 +72,6 @@ export type XRevokeResponse = {
 }
 
 export type XUser = {
-  affiliation: {
-    badge_url: string
-    description: string
-    url: string
-    user_id: string[]
-  }
   confirmed_email: string
   connection_status: string[]
   created_at: string
