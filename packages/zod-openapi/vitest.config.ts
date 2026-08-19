@@ -5,7 +5,7 @@ export default defineProject({
     globals: true,
     include: ['src/**/*.test.ts'],
     typecheck: {
-      tsconfig: './tsconfig.json',
+      tsconfig: './tsconfig.spec.json',
       enabled: true,
     },
   },
