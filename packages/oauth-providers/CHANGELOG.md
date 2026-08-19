@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.8.8
+
+### Patch Changes
+
+- [#2092](https://github.com/honojs/middleware/pull/2092) [`952bb5b871d4291e203b6f9faeb57325b265d57f`](https://github.com/honojs/middleware/commit/952bb5b871d4291e203b6f9faeb57325b265d57f) Thanks [@DanMat](https://github.com/DanMat)! - Update X (Twitter) OAuth types to match the current API: add the `users.email`, `dm.read`, `dm.write` and `media.write` scopes, and the newer `user.fields` (e.g. `confirmed_email`, `is_identity_verified`, `subscription`, `verified_followers_count`). The corresponding properties are also added to the `XUser` response type. These were previously missing, so requesting them required casting around the types.
+
 ## 0.8.7
 
 ### Patch Changes
