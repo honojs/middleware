@@ -26,7 +26,8 @@ export function googleAuth(options: {
       login_hint: options.login_hint,
       prompt: options.prompt,
       access_type: options.access_type,
-      scope: options.scope,
+      // profile scope is always mandatory because https://www.googleapis.com/oauth2/v2/userinfo needs it
+      scope: options.includes("profile") ? options.scope : ["profile", ...options.scope],
       state: newState,
       code: c.req.query('code'),
       token: {
