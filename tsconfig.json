@@ -28,6 +28,7 @@
     { "path": "packages/oauth-providers" },
     { "path": "packages/oidc-auth" },
     { "path": "packages/otel" },
+    { "path": "packages/pino-logger" },
     { "path": "packages/prometheus" },
     { "path": "packages/qwik-city" },
     { "path": "packages/react-compat" },
