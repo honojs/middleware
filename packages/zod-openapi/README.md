@@ -398,6 +398,24 @@ const appRoutes = app.openapi(route, (c) => {
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
 
+#### Type-checking large RPC apps
+
+When an RPC app has many routes, register them on small `OpenAPIHono` instances and mount those apps with `.route()`.
+A long chain of `.openapi()` calls grows the schema type at each link.
+Type-checking can slow down when that app type is passed to `hc`.
+
+```ts
+const users = new OpenAPIHono().openapi(getUserRoute, getUserHandler)
+const posts = new OpenAPIHono().openapi(getPostRoute, getPostHandler)
+
+const appRoutes = new OpenAPIHono().route('/', users).route('/', posts)
+
+const client = hc<typeof appRoutes>('http://localhost:8787/')
+```
+
+Routing and OpenAPI output stay the same.
+TypeScript has less accumulated schema type work to do.
+
 ### Batch Route Registration
 
 For better code organization and type safety, you can use `defineOpenAPIRoute` and `openapiRoutes` to register multiple routes at once.
