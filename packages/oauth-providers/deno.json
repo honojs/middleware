@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts",
