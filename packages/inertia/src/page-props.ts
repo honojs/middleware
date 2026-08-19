@@ -49,6 +49,22 @@ type RenderOutput<App> =
       : never
     : never
 
+type NonEmptyProps<T> = T extends Record<string, never> ? never : T
+
+type NormalizeProps<T> = [T] extends [never]
+  ? never
+  : [NonEmptyProps<T>] extends [never]
+    ? {}
+    : [Extract<T, Record<string, never>>] extends [never]
+      ? NonEmptyProps<T>
+      : Partial<NonEmptyProps<T>>
+
+/**
+ * Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+ * @copyright from sindresorhus/type-fest
+ */
+type Simplify<T> = { [K in keyof T]: T[K] } & {}
+
 /**
  * Resolves the props type for a given Inertia page component name.
  *
@@ -56,4 +72,6 @@ type RenderOutput<App> =
  */
 export type PageProps<
   C extends RenderOutput<RegisteredApp>['component'] = RenderOutput<RegisteredApp>['component'],
-> = Extract<RenderOutput<RegisteredApp>, { component: C }>['props']
+> = C extends unknown
+  ? Simplify<NormalizeProps<Extract<RenderOutput<RegisteredApp>, { component: C }>['props']>>
+  : never
