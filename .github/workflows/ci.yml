@@ -82,7 +82,7 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: 'pnpm'
-      - run: pnpm install --filter @hono/${{ matrix.package }}
+      - run: pnpm install --filter "@hono/${{ matrix.package }}..."
       - run: pnpm turbo --filter @hono/${{ matrix.package }} build
       - run: pnpm test --coverage --project @hono/${{ matrix.package }}
         id: test
