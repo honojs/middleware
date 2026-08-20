@@ -28,16 +28,14 @@ type RegisteredApp = AppRegistry extends { app: infer A } ? A : never
 
 type Distribute<T> = T extends infer U ? U : never
 
+type MethodOutput<MethodSchema> = MethodSchema extends { output: infer O } ? Distribute<O> : never
+
 type AllOutputs<App> = Distribute<
   {
     [Path in keyof ExtractSchema<App> & string]: {
-      [
-        Method in keyof ExtractSchema<App>[Path] & string
-      ]: ExtractSchema<App>[Path][Method] extends {
-        output: infer O
-      }
-        ? Distribute<O>
-        : never
+      [Method in keyof ExtractSchema<App>[Path] & string]: MethodOutput<
+        ExtractSchema<App>[Path][Method]
+      >
     }[keyof ExtractSchema<App>[Path] & string]
   }[keyof ExtractSchema<App> & string]
 >
