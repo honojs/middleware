@@ -54,7 +54,7 @@ type NormalizeProps<T> = [T] extends [never]
   : [NonEmptyProps<T>] extends [never]
     ? {}
     : [Extract<T, Record<string, never>>] extends [never]
-      ? NonEmptyProps<T>
+      ? T
       : Partial<NonEmptyProps<T>>
 
 /**
