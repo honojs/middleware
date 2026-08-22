@@ -10,6 +10,7 @@
     "./google": "./src/providers/google/index.ts",
     "./linkedin": "./src/providers/linkedin/index.ts",
     "./msentra": "./src/providers/msentra/index.ts",
+    "./openstreetmap": "./src/providers/openstreetmap/index.ts",
     "./twitch": "./src/providers/twitch/index.ts",
     "./x": "./src/providers/x/index.ts"
   },

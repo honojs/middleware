@@ -23,6 +23,12 @@ import {
   msentraRefreshToken,
   msentraToken,
   msentraUser,
+  openStreetMapCodeError,
+  openStreetMapRejectedCode,
+  openStreetMapRevokeTokenError,
+  openStreetMapToken,
+  openStreetMapUser,
+  openStreetMapUserError,
   xCodeError,
   xRefreshToken,
   xRefreshTokenError,
@@ -54,6 +60,8 @@ import { linkedinAuth } from './providers/linkedin'
 import type { LinkedInUser } from './providers/linkedin'
 import type { MSEntraUser } from './providers/msentra'
 import { msentraAuth, refreshToken as msentraRefresh } from './providers/msentra'
+import type { OpenStreetMapUser } from './providers/openstreetmap'
+import { openstreetmapAuth, revokeToken as openstreetmapRevoke } from './providers/openstreetmap'
 import type { TwitchUser } from './providers/twitch'
 import {
   twitchAuth,
@@ -503,6 +511,62 @@ describe('OAuth Middleware', () => {
       tenant_id: 'fake-tenant-id',
       refresh_token: 'wrong-refresh-token',
     })
+    return c.json(response)
+  })
+
+  // OpenStreetMap
+  app.use(
+    '/openstreetmap',
+    openstreetmapAuth({
+      client_id,
+      client_secret,
+      scope: ['read_prefs', 'write_api', 'read_email'],
+    })
+  )
+  app.use(
+    '/openstreetmap-custom-redirect',
+    openstreetmapAuth({
+      client_id,
+      client_secret,
+      scope: ['read_prefs'],
+      redirect_uri: 'http://localhost:3000/openstreetmap',
+    })
+  )
+  app.use(
+    '/openstreetmap-custom-state',
+    openstreetmapAuth({
+      client_id,
+      client_secret,
+      scope: ['read_prefs'],
+      state: 'test-state',
+    })
+  )
+  // Without the options the middleware falls back to the environment, which
+  // does not carry the OpenStreetMap credentials either.
+  app.use('/openstreetmap-no-credentials', openstreetmapAuth({ scope: ['read_prefs'] }))
+  app.get('/openstreetmap', (c) => {
+    const token = c.get('token')
+    const refreshToken = c.get('refresh-token')
+    const user = c.get('user-openstreetmap')
+    const grantedScopes = c.get('granted-scopes')
+
+    return c.json({
+      token,
+      refreshToken,
+      grantedScopes,
+      user,
+    })
+  })
+  app.get('/openstreetmap/revoke', async (c) => {
+    const response = await openstreetmapRevoke(
+      client_id,
+      client_secret,
+      openStreetMapToken.access_token
+    )
+    return c.json(response)
+  })
+  app.get('/openstreetmap/revoke/error', async (c) => {
+    const response = await openstreetmapRevoke(client_id, client_secret, 'wrong-token')
     return c.json(response)
   })
 
@@ -1181,6 +1245,140 @@ describe('OAuth Middleware', () => {
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
         expect(await res.text()).toBe(msentraCodeError.error)
+      })
+    })
+  })
+
+  describe('openstreetmapAuth middleware', () => {
+    describe('middleware', () => {
+      it('Should redirect', async () => {
+        const res = await app.request('/openstreetmap')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(302)
+
+        const redirectUrl = new URL(res.headers.get('location') ?? '')
+        expect(redirectUrl.origin.concat(redirectUrl.pathname)).toBe(
+          'https://www.openstreetmap.org/oauth2/authorize'
+        )
+        expect(redirectUrl.searchParams.get('response_type')).toBe('code')
+        expect(redirectUrl.searchParams.get('client_id')).toBe(client_id)
+        expect(redirectUrl.searchParams.get('scope')).toBe('read_prefs write_api read_email')
+      })
+
+      it('Should redirect with a PKCE challenge', async () => {
+        const res = await app.request('/openstreetmap')
+
+        const redirectUrl = new URL(res.headers.get('location') ?? '')
+        expect(redirectUrl.searchParams.get('code_challenge_method')).toBe('S256')
+        expect(redirectUrl.searchParams.get('code_challenge')).toMatch(/^[A-Za-z0-9\-_]{43}$/)
+        // The verifier has to survive the round trip to the token endpoint.
+        expect(res.headers.get('set-cookie')).toContain('code-verifier=')
+      })
+
+      it('Should redirect to custom redirect_uri', async () => {
+        const res = await app.request('/openstreetmap-custom-redirect')
+
+        expect(res.status).toBe(302)
+        const redirectUrl = new URL(res.headers.get('location') ?? '')
+        expect(redirectUrl.searchParams.get('redirect_uri')).toBe(
+          'http://localhost:3000/openstreetmap'
+        )
+      })
+
+      it('Should redirect with custom state', async () => {
+        const res = await app.request('/openstreetmap-custom-state')
+
+        expect(res.status).toBe(302)
+        const redirectUrl = new URL(res.headers.get('location') ?? '')
+        expect(redirectUrl.searchParams.get('state')).toBe('test-state')
+      })
+
+      it('Prevent CSRF attack', async () => {
+        const res = await app.request(`/openstreetmap?code=${dummyCode}&state=malware-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
+      it('Prevent login CSRF when state is omitted', async () => {
+        const res = await app.request(`/openstreetmap?code=${dummyCode}`, {
+          headers: { cookie: 'state=valid-state' },
+        })
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
+      it('Should throw error for invalid code', async () => {
+        const res = await app.request(
+          '/openstreetmap?code=9348ffdsd-sdsdbad-code&state=valid-state',
+          { headers: { cookie: 'state=valid-state; code-verifier=valid-code-verifier' } }
+        )
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(openStreetMapCodeError.error_description)
+      })
+
+      it('Should throw error when the API rejects the token', async () => {
+        const res = await app.request(
+          `/openstreetmap?code=${openStreetMapRejectedCode}&state=valid-state`,
+          { headers: { cookie: 'state=valid-state; code-verifier=valid-code-verifier' } }
+        )
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(openStreetMapUserError)
+      })
+
+      it('Should throw error when the credentials are missing', async () => {
+        const res = await app.request('/openstreetmap-no-credentials')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(
+          'Required parameters were not found. Please provide them to proceed.'
+        )
+      })
+
+      it('Should work with received code', async () => {
+        const res = await app.request(`/openstreetmap?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state; code-verifier=valid-code-verifier' },
+        })
+        const response = (await res.json()) as {
+          token: Token
+          refreshToken: Token
+          user: OpenStreetMapUser
+          grantedScopes: string[]
+        }
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(response.user).toEqual(openStreetMapUser)
+        expect(response.grantedScopes).toEqual(['read_prefs', 'write_api', 'read_email'])
+        // OpenStreetMap access tokens neither expire nor come with a refresh token.
+        expect(response.token).toEqual({ token: openStreetMapToken.access_token })
+        expect(response.refreshToken).toBeUndefined()
+      })
+    })
+
+    describe('Revoke Token', () => {
+      it('Should revoke token', async () => {
+        const res = await app.request('/openstreetmap/revoke')
+
+        expect(res).not.toBeNull()
+        expect(await res.json()).toEqual(true)
+      })
+
+      it('Should return error for revoke', async () => {
+        const res = await app.request('/openstreetmap/revoke/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(openStreetMapRevokeTokenError.error_description)
       })
     })
   })
