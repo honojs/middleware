@@ -1,5 +1,13 @@
 # @hono/oauth-providers
 
+## 0.9.0
+
+### Minor Changes
+
+- [#2076](https://github.com/honojs/middleware/pull/2076) [`9e300a1df947c3abf34605292cce85f665dbcaf6`](https://github.com/honojs/middleware/commit/9e300a1df947c3abf34605292cce85f665dbcaf6) Thanks [@smellman](https://github.com/smellman)! - Add an OpenStreetMap OAuth 2.0 provider, available as `@hono/oauth-providers/openstreetmap`. The
+  flow always uses PKCE with the `S256` challenge method, and `revokeToken` is exported to invalidate
+  tokens, which OpenStreetMap never expires on its own.
+
 ## 0.8.8
 
 ### Patch Changes
