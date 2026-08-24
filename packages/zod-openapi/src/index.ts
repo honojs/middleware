@@ -357,8 +357,7 @@ type ComputeInput<R extends RouteConfig> = InputTypeParam<R> &
 
 // Helper: Merge env with route middleware env (if any)
 type EnvFromRoute<R extends RouteConfig, E extends Env> = R['middleware'] extends
-  | MiddlewareHandler[]
-  | MiddlewareHandler
+  MiddlewareHandler[] | MiddlewareHandler
   ? RouteMiddlewareParams<R>['env'] & E
   : E
 
