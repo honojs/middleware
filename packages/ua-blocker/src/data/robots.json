@@ -42,11 +42,11 @@
     "description": "Scrapes data for AI systems."
   },
   "AIWebIndex": {
-    "operator": "Lyrenth that builds an AI-readable index of web content for AI systems",
-    "respect": "Unclear at this time.",
-    "function": "AI Data Providers",
-    "frequency": "Unclear at this time.",
-    "description": "AIWebIndex is a web crawler operated by Lyrenth that builds an AI-readable index of web content for AI systems. More info can be found at https://knownagents.com/agents/aiwebindex"
+    "operator": "[Lyrenth](https://lyrenth.com)",
+    "respect": "[Yes](https://lyrenth.com/crawler-policy)",
+    "function": "AI Search Crawlers",
+    "frequency": "At most one request per domain every 2 seconds, and slower where robots.txt sets a longer Crawl-delay.",
+    "description": "Builds an index of public pages and serves them to AI agents as extracted, readable text with attribution and a link back to the source. Does not train foundation models on crawled content. Identity can be checked three ways: published IP ranges at https://lyrenth.com/bot/ip-ranges.json, forward-confirmed reverse DNS under lyrenth.com, and Web Bot Auth signatures (RFC 9421). Full policy at https://lyrenth.com/crawler-policy"
   },
   "amazon-kendra": {
     "operator": "Amazon",
@@ -757,11 +757,11 @@
     "respect": "Yes"
   },
   "Mozilla-Tabstack": {
-    "operator": "[Mozilla](https://docs.tabstack.ai/trust/controlling-access)",
+    "operator": "Mozilla that performs programmatic, AI-driven interactions with web content through Tabstack",
     "respect": "Yes",
     "function": "AI Data Providers",
     "frequency": "On demand via API.",
-    "description": "Tabstack is a web intelligence API for AI agents. It extracts structured data from web pages and makes it available to AI agents."
+    "description": "Mozilla-Tabstack is an AI agent operated by Mozilla that performs programmatic, AI-driven interactions with web content through Tabstack. More info can be found at https://knownagents.com/agents/mozilla-tabstack"
   },
   "MyCentralAIScraperBot": {
     "operator": "Unclear at this time.",
@@ -944,6 +944,13 @@
     "function": "Company offers AI detection, writing tools and other services.",
     "operator": "[Quillbot](https://quillbot.com)",
     "respect": "Unclear at this time."
+  },
+  "Reflectionbot": {
+    "operator": "[Reflection](https://reflection.ai/)",
+    "respect": "Unclear at this time.",
+    "function": "Undocumented AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "An undocumented crawler whose user agent links to Reflection, a company that builds AI models."
   },
   "SBIntuitionsBot": {
     "operator": "[SB Intuitions](https://www.sbintuitions.co.jp/en/)",
