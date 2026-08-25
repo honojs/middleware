@@ -47,18 +47,18 @@ type RenderOutput<App> =
       : never
     : never
 
-type NonEmptyProps<T> = T extends Record<string, never> ? never : T
-
-type NormalizeProps<T> = [T] extends [never]
-  ? never
-  : [NonEmptyProps<T>] extends [never]
-    ? {}
-    : [Extract<T, Record<string, never>>] extends [never]
-      ? T
-      : Partial<NonEmptyProps<T>>
+type AllKeys<T> = T extends unknown ? keyof T : never
 
 /**
- * Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+ * Props-less renders are normalized to the other renders' keys as optional `never`,
+ * so access keeps working while the value may still be `undefined`.
+ */
+type NormalizeProps<T, All = T> = T extends Record<string, never>
+  ? { [K in AllKeys<Exclude<All, Record<string, never>>>]?: never }
+  : T
+
+/**
+ * Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
  * @copyright from sindresorhus/type-fest
  */
 type Simplify<T> = { [K in keyof T]: T[K] } & {}
