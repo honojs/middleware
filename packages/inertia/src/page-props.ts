@@ -53,9 +53,10 @@ type AllKeys<T> = T extends unknown ? keyof T : never
  * Props-less renders are normalized to the other renders' keys as optional `never`,
  * so access keeps working while the value may still be `undefined`.
  */
-type NormalizeProps<T, All = T> = T extends Record<string, never>
-  ? { [K in AllKeys<Exclude<All, Record<string, never>>>]?: never }
-  : T
+type NormalizeProps<T, All = T> =
+  T extends Record<string, never>
+    ? { [K in AllKeys<Exclude<All, Record<string, never>>>]?: never }
+    : T
 
 /**
  * Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
