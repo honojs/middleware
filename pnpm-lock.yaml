@@ -1042,7 +1042,7 @@ importers:
     dependencies:
       '@asteasolutions/zod-to-openapi':
         specifier: ^9.1.0
-        version: 9.1.0(zod@4.4.3)
+        version: 9.1.0(zod@4.5.2)
       '@hono/zod-validator':
         specifier: workspace:^
         version: link:../zod-validator
@@ -1066,8 +1066,8 @@ importers:
         specifier: ^2.8.2
         version: 2.9.0
       zod:
-        specifier: ^4.2.1
-        version: 4.4.3
+        specifier: ^4.5.2
+        version: 4.5.2
 
   packages/zod-validator:
     devDependencies:
@@ -1084,8 +1084,8 @@ importers:
         specifier: ^4.1.7
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.2.0)(@typescript/typescript6@6.0.2))(vite@8.1.3(@types/node@26.2.0)(esbuild@0.28.2)(yaml@2.9.0))
       zod:
-        specifier: ^4.2.1
-        version: 4.4.3
+        specifier: ^4.5.2
+        version: 4.5.2
 
 packages:
 
@@ -7570,6 +7570,9 @@ packages:
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
+  zod@4.5.2:
+    resolution: {integrity: sha512-XkYXCol10+ba/6F/cueWV+TezUeOqXW0hdeJt5CdXjTYeAgAQg5N03RQdJ80mhfFE72+pblvYMW4wy2Qp4Qbrg==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -7619,10 +7622,10 @@ snapshots:
 
   '@ark/util@0.56.2': {}
 
-  '@asteasolutions/zod-to-openapi@9.1.0(zod@4.4.3)':
+  '@asteasolutions/zod-to-openapi@9.1.0(zod@4.5.2)':
     dependencies:
       openapi3-ts: 4.6.0
-      zod: 4.4.3
+      zod: 4.5.2
 
   '@auth/core@0.35.3':
     dependencies:
@@ -14627,5 +14630,7 @@ snapshots:
   zod@3.25.48: {}
 
   zod@4.4.3: {}
+
+  zod@4.5.2: {}
 
   zwitch@2.0.4: {}
