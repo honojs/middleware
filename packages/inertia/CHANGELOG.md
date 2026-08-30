@@ -1,5 +1,11 @@
 # @hono/inertia
 
+## 0.7.1
+
+### Patch Changes
+
+- [#2109](https://github.com/honojs/middleware/pull/2109) [`3e5c8c6d1ec80641a7861903d7df752a9cd21ff7`](https://github.com/honojs/middleware/commit/3e5c8c6d1ec80641a7861903d7df752a9cd21ff7) Thanks [@ashunar0](https://github.com/ashunar0)! - Rewrite `302` redirects to `303` for `PUT`, `PATCH`, and `DELETE` Inertia requests, so the client follows them with a `GET` instead of replaying the original method against the redirect target.
+
 ## 0.7.0
 
 ### Minor Changes
