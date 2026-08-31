@@ -476,6 +476,30 @@ describe('Only Types', () => {
 })
 
 describe('Case-Insensitive Headers', () => {
+  it('Should inspect the header schema shape only once', async () => {
+    const app = new Hono()
+    const headerSchema = z.object({
+      Authorization: z.string(),
+    })
+    const shape = headerSchema.shape
+    let shapeInspections = 0
+    Object.defineProperty(headerSchema, 'shape', {
+      value: new Proxy(shape, {
+        ownKeys(target) {
+          shapeInspections++
+          return Reflect.ownKeys(target)
+        },
+      }),
+    })
+
+    app.get('/', zValidator('header', headerSchema), (c) => c.json(c.req.valid('header')))
+
+    await app.request('/', { headers: { Authorization: 'Bearer token' } })
+    await app.request('/', { headers: { Authorization: 'Bearer token' } })
+
+    expect(shapeInspections).toBe(1)
+  })
+
   it('Should ignore the case for headers in the Zod schema and return 200', () => {
     const app = new Hono()
     const headerSchema = z.object({
