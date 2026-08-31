@@ -2,4 +2,4 @@
 '@hono/zod-openapi': patch
 ---
 
-Reuse projected response types across fluent route handlers and returned schemas to reduce TypeScript checker work.
+Reuse projected response types between `openapi()` route handlers and returned schemas to reduce TypeScript checker work.

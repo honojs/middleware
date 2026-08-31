@@ -195,7 +195,7 @@ type RouteHandlerResponse<R extends RouteConfig> = R extends {
   ? MaybePromise<RouteConfigToTypedResponse<R>>
   : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
 
-// The fluent openapi() signature needs the projected response for both contextual
+// The openapi() signature needs the projected response for both contextual
 // handler checking and the returned Hono schema. Bind it inside one internal alias
 // without introducing an inference-blocking public generic.
 type BoundRouteResponseTypes<R extends RouteConfig> = R extends RouteConfig
