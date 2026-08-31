@@ -195,6 +195,24 @@ type RouteHandlerResponse<R extends RouteConfig> = R extends {
   ? MaybePromise<RouteConfigToTypedResponse<R>>
   : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response>
 
+// The fluent openapi() signature needs the projected response for both contextual
+// handler checking and the returned Hono schema. Bind it inside one internal alias
+// without introducing an inference-blocking public generic.
+type BoundRouteResponseTypes<R extends RouteConfig> = R extends RouteConfig
+  ? [RouteConfigToTypedResponse<R>] extends [infer Output]
+    ? {
+        output: Output
+        handler: R extends {
+          responses: {
+            [statusCode: number]: { content: { [mediaType: string]: ZodMediaTypeObject } }
+          }
+        }
+          ? MaybePromise<Output>
+          : MaybePromise<Output> | MaybePromise<Response>
+      }
+    : never
+  : never
+
 export type Hook<T, E extends Env, P extends string, R> = (
   result: { target: keyof ValidationTargets } & (
     | {
@@ -485,12 +503,12 @@ export class OpenAPIHono<
       P,
       I,
       // If a response type is defined, only the typed response is allowed.
-      RouteHandlerResponse<R>
+      BoundRouteResponseTypes<R>['handler']
     >,
-    hook: Hook<I, E, P, RouteHandlerResponse<R> | undefined> | undefined = undefined // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    hook: Hook<I, E, P, BoundRouteResponseTypes<R>['handler'] | undefined> | undefined = undefined // eslint-disable-line @typescript-eslint/no-useless-default-assignment
   ): OpenAPIHono<
     E,
-    S & ToSchema<R['method'], MergePath<BasePath, P>, I, RouteConfigToTypedResponse<R>>,
+    S & ToSchema<R['method'], MergePath<BasePath, P>, I, BoundRouteResponseTypes<R>['output']>,
     BasePath
   > => {
     if (!hide) {
