@@ -1,5 +1,11 @@
 # @hono/zod-validator
 
+## 0.9.1
+
+### Patch Changes
+
+- [#2112](https://github.com/honojs/middleware/pull/2112) [`51b7f976286d0429179142e8058dcc59d1e82d75`](https://github.com/honojs/middleware/commit/51b7f976286d0429179142e8058dcc59d1e82d75) Thanks [@T4ko0522](https://github.com/T4ko0522)! - Cached case-insensitive header schema metadata when creating validator middleware.
+
 ## 0.9.0
 
 ### Minor Changes
