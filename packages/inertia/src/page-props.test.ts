@@ -8,10 +8,15 @@ const _app = new Hono()
   .get('/lazy-props', (c) => c.render('LazyProps', { lazy: () => Promise.resolve({ id: 0 }) }))
   .get('/without-props', (c) => c.render('WithoutProps'))
   .get(
-    '/union-props',
-    (c) => c.render('UnionProps'),
-    (c) => c.render('UnionProps', { kind: 'ok' as const, value: 0 }),
-    (c) => c.render('UnionProps', { kind: 'ng' as const, error: 'message' })
+    '/union-with-empty-props',
+    (c) => c.render('UnionWithEmptyProps'),
+    (c) => c.render('UnionWithEmptyProps', { kind: 'ok' as const, value: 0 }),
+    (c) => c.render('UnionWithEmptyProps', { kind: 'ng' as const, error: 'message' })
+  )
+  .get(
+    '/union-without-empty-props',
+    (c) => c.render('UnionWithoutEmptyProps', { a: 0 }),
+    (c) => c.render('UnionWithoutEmptyProps', { b: 'string' })
   )
 
 declare module '@hono/inertia' {
@@ -29,11 +34,17 @@ describe('PageProps', () => {
     expectTypeOf<PageProps<'WithoutProps'>>().toEqualTypeOf<{}>()
   })
 
-  it('normalizes union types', () => {
-    expectTypeOf<PageProps<'UnionProps'>>().toEqualTypeOf<
+  it('normalizes unions with empty props', () => {
+    expectTypeOf<PageProps<'UnionWithEmptyProps'>>().toEqualTypeOf<
       | { kind: 'ok'; value: number }
       | { kind: 'ng'; error: string }
       | { kind?: never; value?: never; error?: never }
+    >()
+  })
+
+  it('preserves unions without empty props', () => {
+    expectTypeOf<PageProps<'UnionWithoutEmptyProps'>>().toEqualTypeOf<
+      { a: number } | { b: string }
     >()
   })
 })
