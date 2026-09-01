@@ -469,6 +469,7 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const current = version ?? ''
       if (requested !== current) {
         c.header('X-Inertia-Location', c.req.url)
+        c.header('Vary', 'X-Inertia')
         return c.body(null, 409)
       }
     }
@@ -657,21 +658,78 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
 
     await next()
 
+    // The same URL yields a JSON page object for Inertia requests and a full
+    // HTML document otherwise, so every response varies on `X-Inertia` -- not
+    // just the ones that went through `c.render`. Redirects and errors never
+    // reach the renderer, and caching those without `Vary` would let a proxy
+    // serve an Inertia response to a browser navigation.
+    varyOnInertia(c)
+
+    if (!c.req.header('X-Inertia')) {
+      return c.res
+    }
+
     // Redirects issued from PUT / PATCH / DELETE must be 303, not 302: a 302
     // makes the client replay the original method against the redirect target,
     // while 303 forces the follow-up request to be a GET.
     // https://inertiajs.com/redirects
     if (
-      c.req.header('X-Inertia') &&
       c.res.status === 302 &&
       (c.req.method === 'PUT' || c.req.method === 'PATCH' || c.req.method === 'DELETE')
     ) {
       c.res = new Response(c.res.body, { status: 303, headers: c.res.headers })
     }
 
+    // A browser follows a redirect without ever sending the fragment to the
+    // server, so `Location: /users#profile` would drop `#profile`. Hand the
+    // location to the client instead and let it navigate in JavaScript, where
+    // the fragment survives. Prefetches are exempt: they must not navigate.
+    if (REDIRECT_STATUSES.has(c.res.status) && !isPrefetch(c)) {
+      const location = c.res.headers.get('Location')
+      if (location?.includes('#')) {
+        // Assigning `c.res` rather than returning: `compose` ignores a
+        // middleware's return value once the response is finalized. The
+        // setter copies the remaining headers (`Vary`) onto the new response.
+        c.res.headers.delete('Location')
+        c.res = new Response(null, { status: 409, headers: { 'X-Inertia-Redirect': location } })
+      }
+    }
+
     return c.res
   }
 }
+
+/**
+ * Statuses that carry a `Location` header. Mirrors Symfony's
+ * `Response::isRedirect`, which `inertia-laravel` gates the fragment check on.
+ */
+const REDIRECT_STATUSES = new Set([201, 301, 302, 303, 307, 308])
+
+/**
+ * Add `X-Inertia` to the response's `Vary` header, keeping any value the
+ * renderer already set (it also varies on `Accept`).
+ */
+const varyOnInertia = (c: Context): void => {
+  const current = c.res.headers.get('Vary')
+  if (
+    current
+      ?.toLowerCase()
+      .split(',')
+      .some((field) => field.trim() === 'x-inertia')
+  ) {
+    return
+  }
+  c.header('Vary', current ? `${current}, X-Inertia` : 'X-Inertia')
+}
+
+/**
+ * Whether the request is a prefetch. Mirrors Laravel's `Request::prefetch`,
+ * which `inertia-laravel` uses to skip the fragment redirect.
+ */
+const isPrefetch = (c: Context): boolean =>
+  c.req.header('X-Purpose')?.toLowerCase() === 'preview' ||
+  c.req.header('Purpose')?.toLowerCase() === 'prefetch' ||
+  c.req.header('Sec-Purpose')?.toLowerCase() === 'prefetch'
 
 /**
  * Registry of valid Inertia page component names.

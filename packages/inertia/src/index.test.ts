@@ -255,6 +255,106 @@ describe('inertia', () => {
     })
   })
 
+  describe('redirects with a URL fragment', () => {
+    const fragmentApp = () =>
+      new Hono()
+        .use(inertia())
+        .get('/go', (c) => c.redirect('/users#profile'))
+        .put('/users/1', (c) => c.redirect('/users#profile'))
+        .get('/plain', (c) => c.redirect('/users'))
+
+    it('converts it into a 409 with X-Inertia-Redirect', async () => {
+      const res = await fragmentApp().request('/go', {
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(409)
+      expect(res.headers.get('X-Inertia-Redirect')).toBe('/users#profile')
+      expect(res.headers.get('Location')).toBeNull()
+      expect(res.headers.get('Vary')).toBe('X-Inertia')
+      expect(await res.text()).toBe('')
+    })
+
+    it('applies after the 302 to 303 rewrite', async () => {
+      const res = await fragmentApp().request('/users/1', {
+        method: 'PUT',
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(409)
+      expect(res.headers.get('X-Inertia-Redirect')).toBe('/users#profile')
+    })
+
+    it('leaves fragment-less redirects untouched', async () => {
+      const res = await fragmentApp().request('/plain', {
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(302)
+      expect(res.headers.get('X-Inertia-Redirect')).toBeNull()
+    })
+
+    it('leaves non Inertia requests untouched', async () => {
+      const res = await fragmentApp().request('/go')
+
+      expect(res.status).toBe(302)
+      expect(res.headers.get('Location')).toBe('/users#profile')
+    })
+
+    for (const headers of [
+      { Purpose: 'prefetch' },
+      { 'Sec-Purpose': 'prefetch' },
+      { 'X-Purpose': 'preview' },
+    ]) {
+      const [name] = Object.keys(headers)
+      it(`leaves prefetches untouched (${name})`, async () => {
+        const res = await fragmentApp().request('/go', {
+          headers: { 'X-Inertia': 'true', ...headers },
+        })
+
+        expect(res.status).toBe(302)
+        expect(res.headers.get('X-Inertia-Redirect')).toBeNull()
+      })
+    }
+  })
+
+  describe('Vary', () => {
+    it('is set on responses that never reach the renderer', async () => {
+      const app = new Hono()
+        .use(inertia())
+        .put('/users/1', (c) => c.redirect('/users'))
+        .get('/boom', () => new Response('nope', { status: 500 }))
+
+      const redirect = await app.request('/users/1', {
+        method: 'PUT',
+        headers: { 'X-Inertia': 'true' },
+      })
+      expect(redirect.headers.get('Vary')).toBe('X-Inertia')
+
+      const error = await app.request('/boom')
+      expect(error.headers.get('Vary')).toBe('X-Inertia')
+    })
+
+    it('keeps the Accept the renderer already set', async () => {
+      const app = new Hono().use(inertia()).get('/', (c) => c.render('Home', {}))
+
+      const res = await app.request('/', { headers: { 'X-Inertia': 'true' } })
+
+      expect(res.headers.get('Vary')).toBe('Accept, X-Inertia')
+    })
+
+    it('is set on the version mismatch 409', async () => {
+      const app = new Hono().use(inertia({ version: '2' })).get('/', (c) => c.render('Home', {}))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': '1' },
+      })
+
+      expect(res.status).toBe(409)
+      expect(res.headers.get('Vary')).toBe('X-Inertia')
+    })
+  })
+
   describe('page.url resolution', () => {
     it('uses c.req.url for GET requests', async () => {
       const app = new Hono()
