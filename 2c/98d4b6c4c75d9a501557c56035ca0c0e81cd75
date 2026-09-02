@@ -1,0 +1,31 @@
+.changeset/heavy-lions-refuse.md
+  s_449966fc5983c0::t_deb59a12fe16a6 1-5
+packages/zod-openapi/src/index.test.ts
+  s_d992f993e71643::t_c182b1643fe56c 3365-3469
+packages/zod-openapi/src/index.ts
+  s_449966fc5983c0::t_bce83b43cb30a9 30,533-547,845-863
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2c98d4b6c4c75d9a501557c56035ca0c0e81cd75",
+  "prompts": {},
+  "sessions": {
+    "s_449966fc5983c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2f17bb4f-880e-4e5a-a9db-77bbb1298819",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    },
+    "s_d992f993e71643": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2551e13b-c8c4-4a54-b04f-e4c4ff974f53",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
