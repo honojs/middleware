@@ -385,26 +385,37 @@ type HookFromRoute<R extends RouteConfig, E extends Env> =
   | Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, RouteHandlerResponse<R> | undefined>
   | undefined
 
-// Recursive Helper: Merge Schemas for the Return Type
+// Merge each batch entry's schema into one normalized route map.
+type SchemaFromRoute<Entry, BasePath extends string> = Entry extends {
+  route: infer R extends RouteConfig
+  addRoute?: infer AddRoute
+}
+  ? [AddRoute] extends [false]
+    ? {}
+    : ToSchema<
+        R['method'],
+        MergePath<BasePath, ConvertPathType<R['path']>>,
+        ComputeInput<R>,
+        RouteConfigToTypedResponse<R>
+      >
+  : {}
+
+type UnionToIntersection<T> = (T extends unknown ? (value: T) => void : never) extends (
+  value: infer Intersection
+) => void
+  ? Intersection
+  : never
+
+type NormalizeSchema<S> = { [Path in keyof S]: S[Path] }
+
 type SchemaFromRoutes<
   Routes extends readonly { route: RouteConfig; addRoute?: boolean }[],
   BasePath extends string,
-> = Routes extends readonly [infer Head, ...infer Tail]
-  ? Head extends { route: infer R extends RouteConfig; addRoute?: infer AddRoute }
-    ? ([AddRoute] extends [false]
-        ? {}
-        : ToSchema<
-            R['method'],
-            MergePath<BasePath, ConvertPathType<R['path']>>,
-            ComputeInput<R>,
-            RouteConfigToTypedResponse<R>
-          >) &
-        SchemaFromRoutes<
-          Tail extends readonly { route: RouteConfig; addRoute?: boolean }[] ? Tail : [],
-          BasePath
-        >
-    : {}
-  : {}
+> = number extends Routes['length']
+  ? {}
+  : Routes extends readonly []
+    ? {}
+    : NormalizeSchema<UnionToIntersection<SchemaFromRoute<Routes[number], BasePath>>>
 
 export type OpenAPIRoute<
   R extends RouteConfig = RouteConfig,

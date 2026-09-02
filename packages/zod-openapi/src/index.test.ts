@@ -3282,6 +3282,11 @@ describe('openapiRoutes', () => {
 
     const app = new OpenAPIHono().openapiRoutes(routes)
 
+    const client = hc<typeof app>('http://localhost')
+    expectTypeOf(client.enabled.$get).toBeFunction()
+    // @ts-expect-error addRoute: false excludes the route from the RPC schema
+    client.disabled.$get
+
     const enabledRes = await app.request('/enabled')
     expect(enabledRes.status).toBe(200)
 
@@ -3291,6 +3296,53 @@ describe('openapiRoutes', () => {
     // The route should technically still be in OpenAPI definitions
     // if `hide: true` is not set, but the actual Hono router won't have it.
     // Let's verify type safety and runtime behaviors.
+  })
+
+  it('Should preserve empty and widened batch RPC behavior', () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/widened',
+        responses: {
+          200: {
+            description: 'Widened route',
+          },
+        },
+      }),
+      handler: (c) => c.body(null, 200),
+    })
+
+    const emptyApp = new OpenAPIHono().openapiRoutes([] as const)
+    const emptyClient = hc<typeof emptyApp>('http://localhost')
+    // @ts-expect-error an empty batch exposes no RPC routes
+    emptyClient.missing.$get
+
+    const widenedRoutes: (typeof route)[] = [route]
+    const widenedApp = new OpenAPIHono().openapiRoutes(widenedRoutes)
+    const widenedClient = hc<typeof widenedApp>('http://localhost')
+    // @ts-expect-error widened arrays retain the existing empty RPC schema
+    widenedClient.widened.$get
+  })
+
+  it('Should typecheck batches beyond the recursive instantiation limit', () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/large-batch',
+        responses: {
+          200: {
+            description: 'Large batch route',
+          },
+        },
+      }),
+      handler: (c) => c.body(null, 200),
+    })
+    const routes10 = [route, route, route, route, route, route, route, route, route, route] as const
+    const routes50 = [...routes10, ...routes10, ...routes10, ...routes10, ...routes10] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes50)
+    const client = hc<typeof app>('http://localhost')
+    expectTypeOf(client['large-batch'].$get).toBeFunction()
   })
 })
 
