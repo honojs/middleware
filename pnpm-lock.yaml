@@ -708,8 +708,8 @@ importers:
         specifier: ^19.2.18
         version: 19.2.18
       '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.18)
+        specifier: ^19.2.5
+        version: 19.2.5(@types/react@19.2.18)
       hono:
         specifier: ^4.11.5
         version: 4.12.28
@@ -2955,8 +2955,8 @@ packages:
   '@types/node@26.3.0':
     resolution: {integrity: sha512-L3fgrnchriRC2ExBflb8j4uZZURHZfQsmQeyVzhjcHW4kkwVyo8/0h1B2MVzMTrYUJYu6G7EWs14hW/L9putqw==}
 
-  '@types/react-dom@19.2.3':
-    resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
+  '@types/react-dom@19.2.5':
+    resolution: {integrity: sha512-fMPwH9v7r/pp43yUd2/Mbiex5KouJwwR3dzHkhLREUC6764VyDsqxhAxv6OFEYR1RhjOyD1naqba8ECDBe7ZQg==}
     peerDependencies:
       '@types/react': ^19.2.0
 
@@ -9307,7 +9307,7 @@ snapshots:
       undici-types: 8.3.0
     optional: true
 
-  '@types/react-dom@19.2.3(@types/react@19.2.18)':
+  '@types/react-dom@19.2.5(@types/react@19.2.18)':
     dependencies:
       '@types/react': 19.2.18
 
