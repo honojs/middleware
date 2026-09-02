@@ -1,0 +1,19 @@
+packages/zod-openapi/src/index.test.ts
+  s_d992f993e71643::t_024d0613af2386 3365-3367
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e130210b2c7232dd10081e4f046d6e79f895a683",
+  "prompts": {},
+  "sessions": {
+    "s_d992f993e71643": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2551e13b-c8c4-4a54-b04f-e4c4ff974f53",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
