@@ -1,4 +1,4 @@
-import { cloudflareTest } from '@cloudflare/vitest-pool-workers'
+import { cloudflareTest } from '@cloudflare/vitest-plugin'
 import { defineProject } from 'vitest/config'
 import type { Plugin } from 'vitest/config'
 
