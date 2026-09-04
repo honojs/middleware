@@ -31,7 +31,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.5",
     "@changesets/changelog-github": "^0.4.8",
-    "@changesets/cli": "^2.29.7",
+    "@changesets/cli": "^3.0.1",
     "@cloudflare/vitest-plugin": "^1.0.0",
     "@cloudflare/workers-types": "^4.20250612.0",
     "@hono/eslint-config": "workspace:*",
