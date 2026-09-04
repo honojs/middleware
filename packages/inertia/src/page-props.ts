@@ -28,16 +28,14 @@ type RegisteredApp = AppRegistry extends { app: infer A } ? A : never
 
 type Distribute<T> = T extends infer U ? U : never
 
+type MethodOutput<MethodSchema> = MethodSchema extends { output: infer O } ? Distribute<O> : never
+
 type AllOutputs<App> = Distribute<
   {
     [Path in keyof ExtractSchema<App> & string]: {
-      [
-        Method in keyof ExtractSchema<App>[Path] & string
-      ]: ExtractSchema<App>[Path][Method] extends {
-        output: infer O
-      }
-        ? Distribute<O>
-        : never
+      [Method in keyof ExtractSchema<App>[Path] & string]: MethodOutput<
+        ExtractSchema<App>[Path][Method]
+      >
     }[keyof ExtractSchema<App>[Path] & string]
   }[keyof ExtractSchema<App> & string]
 >
@@ -49,6 +47,23 @@ type RenderOutput<App> =
       : never
     : never
 
+type AllKeys<T> = T extends unknown ? keyof T : never
+
+/**
+ * Props-less renders are normalized to the other renders' keys as optional `never`,
+ * so access keeps working while the value may still be `undefined`.
+ */
+type NormalizeProps<T, All = T> =
+  T extends Record<string, never>
+    ? { [K in AllKeys<Exclude<All, Record<string, never>>>]?: never }
+    : T
+
+/**
+ * Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
+ * @copyright from sindresorhus/type-fest
+ */
+type Simplify<T> = { [K in keyof T]: T[K] } & {}
+
 /**
  * Resolves the props type for a given Inertia page component name.
  *
@@ -56,4 +71,6 @@ type RenderOutput<App> =
  */
 export type PageProps<
   C extends RenderOutput<RegisteredApp>['component'] = RenderOutput<RegisteredApp>['component'],
-> = Extract<RenderOutput<RegisteredApp>, { component: C }>['props']
+> = C extends unknown
+  ? Simplify<NormalizeProps<Extract<RenderOutput<RegisteredApp>, { component: C }>['props']>>
+  : never
