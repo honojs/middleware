@@ -1,0 +1,44 @@
+{
+  "name": "@hono/supertokens",
+  "version": "0.1.0",
+  "description": "SuperTokens authentication middleware for Hono",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown src/index.ts --format esm,cjs --dts --clean",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts"
+  },
+  "keywords": [
+    "hono",
+    "middleware",
+    "supertokens",
+    "auth",
+    "authentication",
+    "session"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "hono": ">=4.0.0",
+    "supertokens-node": ">=17.0.0"
+  },
+  "devDependencies": {
+    "hono": "^4.12.18",
+    "supertokens-node": "^21.1.2",
+    "tsdown": "^0.12.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.4"
+  }
+}
