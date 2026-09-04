@@ -46,13 +46,33 @@ import { rootView } from './root-view'
 
 const app = new Hono()
 
-app.use(inertia({ version: '1', rootView }))
-
 const routes = app
+  .use(inertia({ version: '1', rootView }))
   .get('/', (c) => c.render('Home', { message: 'Hello, Inertia' }))
   .get('/posts/:id', (c) => c.render('Posts/Show', { id: c.req.param('id') }))
 
 export default routes
+```
+
+### Shared Data
+
+Use `share` to add data to every page. It accepts a callback that receives the current Hono context and may be asynchronous. Shared data is shallow-merged before page props, so page-specific props override duplicate keys.
+
+To include shared data in `PageProps` type inference, chain `inertia()` when creating the app.
+
+```ts
+const app = new Hono()
+
+const routes = app
+  .use(
+    inertia({
+      share: (c) => ({
+        path: c.req.path,
+        appName: 'App Name',
+      }),
+    })
+  )
+  .get('/', (c) => c.render('Home'))
 ```
 
 ### React + Vite (`vite-ssr-components`) example
@@ -99,9 +119,8 @@ import { rootView } from './root-view'
 
 const app = new Hono()
 
-app.use(inertia({ rootView }))
-
 const routes = app
+  .use(inertia({ rootView }))
   .get('/', (c) => c.render('Home', { message: 'Hono x Inertia' }))
   .get('/posts/:id', (c) => {
     const id = Number(c.req.param('id'))
@@ -324,6 +343,7 @@ export default defineConfig({
 | ---------- | ---------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `version`  | `string \| null`                         | `null`                                        | Asset version. Stale `X-Inertia-Version` on a GET request triggers a `409 Conflict` with an `X-Inertia-Location` header so the client does a full reload. |
 | `rootView` | `(page, c) => string \| Promise<string>` | Minimal HTML shell embedding the page object. | HTML document for the initial (non Inertia) request.                                                                                                      |
+| `share`    | `(c: Context<E>) => V \| Promise<V>`     | `undefined`                                   | Shared data included with every page. Page-specific props override duplicate keys.                                                                        |
 
 ## Example app
 

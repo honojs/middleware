@@ -8,7 +8,8 @@
  * full HTML document for initial page loads.
  */
 
-import type { Context, MiddlewareHandler, TypedResponse } from 'hono'
+import type { Context, Env, MiddlewareHandler, TypedResponse } from 'hono'
+import type { InertiaSharedEnv } from './page-props'
 
 /**
  * Inertia page object sent to the client.
@@ -386,7 +387,7 @@ export const scroll = <T>(options: ScrollOptions<T>): T[] => {
   return marker as unknown as T[]
 }
 
-export interface InertiaOptions {
+export interface InertiaOptions<E extends Env = Env, V = Record<string, never>> {
   /**
    * Asset version. When an Inertia GET request's `X-Inertia-Version` header
    * does not match this value, the middleware short circuits with a
@@ -405,6 +406,15 @@ export interface InertiaOptions {
    * object into `<div id="app" data-page="...">`.
    */
   rootView?: RootView
+
+  /**
+   * Shared props included on every rendered page.
+   *
+   * Provide a callback that receives the current Hono context and returns the
+   * shared props synchronously or asynchronously.
+   * Page-specific props take precedence when a key exists in both objects.
+   */
+  share?: (c: Context<E>) => V | Promise<V>
 }
 
 /**
@@ -459,9 +469,12 @@ const defaultRootView: RootView = (page) =>
  * app.get('/', (c) => c.render('Home', { message: 'Hello' }))
  * ```
  */
-export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
+export const inertia = <E extends Env = Env, V = Record<string, never>>(
+  options: InertiaOptions<E, V> = {}
+): MiddlewareHandler<InertiaSharedEnv<V>> => {
   const version: string | null = options.version ?? null
   const rootView: RootView = options.rootView ?? defaultRootView
+  const share = options.share
 
   return async function inertia(c, next) {
     if (c.req.header('X-Inertia') && c.req.method === 'GET') {
@@ -473,11 +486,15 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       }
     }
 
-    c.setRenderer(((
+    c.setRenderer((async (
       component: string,
       propsInput: Record<string, unknown> = {},
       options: RenderOptions = {}
     ) => {
+      const sharedProps = share ? await share(c as unknown as Context<E>) : {}
+      // Merge shared props first so page-specific props override duplicate keys.
+      const mergedProps = { ...sharedProps, ...propsInput }
+
       // Use the Referer for non-GET requests to keep the original URL.
       // Override with options.url if provided.
       const url = (() => {
@@ -506,10 +523,8 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         (onlyKeys !== null && !onlyKeys.includes(key)) ||
         (exceptKeys !== null && exceptKeys.includes(key))
 
-      // Collect kept entries and decide sync vs async resolution. When no
-      // function-valued or deferred prop is encountered, the renderer stays
-      // fully sync — preserving the original `Response` (non-Promise) return
-      // type for the common case.
+      // Collect kept entries and decide which values need
+      // asynchronous resolution before the response is sent.
       //
       // Deferred props are handled per visit kind:
       //   - initial visit (`!isPartial`): the resolver is skipped, the key
@@ -533,7 +548,7 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const matchPropsOn: string[] = []
       const scrollProps: Record<string, ScrollDescriptor> = {}
       let needsAsync = false
-      for (const [key, value] of Object.entries(propsInput)) {
+      for (const [key, value] of Object.entries(mergedProps)) {
         if (isExcluded(key)) {
           continue
         }
@@ -705,7 +720,7 @@ declare module 'hono' {
       component: C,
       props?: P,
       options?: RenderOptions
-    ): Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
+    ): Promise<Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>>
   }
   interface NotFoundResponse extends Response, TypedResponse<string, 404, 'text'> {}
 }
