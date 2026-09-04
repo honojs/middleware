@@ -3542,6 +3542,18 @@ describe('Media type gate for request bodies', () => {
     expect(await res.json()).toEqual({ idType: 'number' })
   })
 
+  it('Should match the content-type case-insensitively', async () => {
+    for (const required of [false, true]) {
+      const res = await createApp(required).request('/posts', {
+        method: 'POST',
+        body: JSON.stringify({ id: 123 }),
+        headers: { 'content-type': 'Application/JSON' },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ idType: 'number' })
+    }
+  })
+
   // The schema accepts {} so a skipped parse shows up as a 200 instead of a 400.
   describe('Malformed content types', () => {
     const LooseSchema = z.object({ id: z.string().optional() })
@@ -3588,6 +3600,16 @@ describe('Media type gate for request bodies', () => {
       const form = new FormData()
       form.append('id', '123')
       const res = await formApp.request('/posts', { method: 'POST', body: form })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ data: { id: '123' } })
+    })
+
+    it('Should validate an urlencoded form body with an uppercase content-type', async () => {
+      const res = await formApp.request('/posts', {
+        method: 'POST',
+        body: 'id=123',
+        headers: { 'content-type': 'APPLICATION/X-WWW-FORM-URLENCODED' },
+      })
       expect(res.status).toBe(200)
       expect(await res.json()).toEqual({ data: { id: '123' } })
     })

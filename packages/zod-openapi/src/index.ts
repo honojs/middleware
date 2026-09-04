@@ -875,13 +875,13 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
 }
 
 function isJSONContentType(contentType: string) {
-  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+  return /^application\/([a-z-\.]+\+)?json/i.test(contentType)
 }
 
 // Mirrors hono/validator's checks. Anything looser lets Hono skip parsing and validate {}.
-const jsonRequestRegex = /^application\/([a-z-\.]+\+)?json(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/
-const multipartRequestRegex = /^multipart\/form-data(;\s?boundary=[a-zA-Z0-9'"()+_,\-./:=?]+)?$/
-const urlencodedRequestRegex = /^application\/x-www-form-urlencoded(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/
+const jsonRequestRegex = /^application\/([a-z-\.]+\+)?json(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/i
+const multipartRequestRegex = /^multipart\/form-data(;\s?boundary=[a-zA-Z0-9'"()+_,\-./:=?]+)?$/i
+const urlencodedRequestRegex = /^application\/x-www-form-urlencoded(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/i
 
 function matchesMediaType(contentType: string, mediaType: string) {
   if (mediaType === '*/*') {
@@ -930,8 +930,8 @@ async function hasRequestBody(c: Context): Promise<boolean> {
 }
 
 function isFormContentType(contentType: string) {
+  const lower = contentType.toLowerCase()
   return (
-    contentType.startsWith('multipart/form-data') ||
-    contentType.startsWith('application/x-www-form-urlencoded')
+    lower.startsWith('multipart/form-data') || lower.startsWith('application/x-www-form-urlencoded')
   )
 }
