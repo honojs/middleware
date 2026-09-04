@@ -27,6 +27,7 @@ import type {
   TypedResponse,
   ValidationTargets,
 } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import type { H, MergePath, MergeSchemaPath } from 'hono/types'
 import type {
   ClientErrorStatusCode,
@@ -561,7 +562,26 @@ export class OpenAPIHono<
     const bodyContent = route.request?.body?.content
 
     if (bodyContent) {
-      for (const mediaType of Object.keys(bodyContent)) {
+      const declaredMediaTypes = Object.keys(bodyContent)
+      const hasBodyValidator = declaredMediaTypes.some((mediaType) => {
+        const schema = (bodyContent[mediaType] as ZodMediaTypeObject | undefined)?.schema
+        return isZod(schema) && (isJSONContentType(mediaType) || isFormContentType(mediaType))
+      })
+      if (hasBodyValidator) {
+        const mediaTypeGate: MiddlewareHandler = async (c, next) => {
+          const contentType = c.req.header('content-type')
+          if (contentType) {
+            if (!declaredMediaTypes.some((mediaType) => matchesMediaType(contentType, mediaType))) {
+              throw new HTTPException(415, { message: 'Unsupported Media Type' })
+            }
+          } else if (await hasRequestBody(c)) {
+            throw new HTTPException(415, { message: 'Unsupported Media Type' })
+          }
+          await next()
+        }
+        validators.push(mediaTypeGate)
+      }
+      for (const mediaType of declaredMediaTypes) {
         if (!bodyContent[mediaType]) {
           continue
         }
@@ -855,12 +875,63 @@ function addBasePathToDocument(document: Record<string, any>, basePath: string) 
 }
 
 function isJSONContentType(contentType: string) {
-  return /^application\/([a-z-\.]+\+)?json/.test(contentType)
+  return /^application\/([a-z-\.]+\+)?json/i.test(contentType)
+}
+
+// Mirrors hono/validator's checks. Anything looser lets Hono skip parsing and validate {}.
+const jsonRequestRegex = /^application\/([a-z-\.]+\+)?json(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/i
+const multipartRequestRegex = /^multipart\/form-data(;\s?boundary=[a-zA-Z0-9'"()+_,\-./:=?]+)?$/i
+const urlencodedRequestRegex = /^application\/x-www-form-urlencoded(;\s*[a-zA-Z0-9\-]+\=([^;]+))*$/i
+
+function matchesMediaType(contentType: string, mediaType: string) {
+  if (mediaType === '*/*') {
+    return true
+  }
+  if (isJSONContentType(mediaType)) {
+    return jsonRequestRegex.test(contentType)
+  }
+  if (isFormContentType(mediaType)) {
+    return multipartRequestRegex.test(contentType) || urlencodedRequestRegex.test(contentType)
+  }
+  const essence = contentType.split(';')[0].trim().toLowerCase()
+  if (mediaType.endsWith('/*')) {
+    return essence.startsWith(mediaType.slice(0, -1).toLowerCase())
+  }
+  return essence === mediaType.toLowerCase()
+}
+
+// Peek at a clone so the body stays readable downstream and a slow body costs one chunk.
+async function hasRequestBody(c: Context): Promise<boolean> {
+  const raw = c.req.raw
+  if (raw.body === null) {
+    return false
+  }
+  if (raw.bodyUsed) {
+    return (await c.req.arrayBuffer()).byteLength > 0
+  }
+  const body = raw.clone().body
+  if (body === null) {
+    return false
+  }
+  const reader = body.getReader()
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) {
+        return false
+      }
+      if (value.byteLength > 0) {
+        return true
+      }
+    }
+  } finally {
+    reader.cancel().catch(() => {})
+  }
 }
 
 function isFormContentType(contentType: string) {
+  const lower = contentType.toLowerCase()
   return (
-    contentType.startsWith('multipart/form-data') ||
-    contentType.startsWith('application/x-www-form-urlencoded')
+    lower.startsWith('multipart/form-data') || lower.startsWith('application/x-www-form-urlencoded')
   )
 }
