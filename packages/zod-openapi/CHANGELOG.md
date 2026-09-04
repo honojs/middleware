@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.6.3
+
+### Patch Changes
+
+- [#2087](https://github.com/honojs/middleware/pull/2087) [`3b0860026438694e76c3155737cf0b8df32384f5`](https://github.com/honojs/middleware/commit/3b0860026438694e76c3155737cf0b8df32384f5) Thanks [@WolfieLeader](https://github.com/WolfieLeader)! - fix: return 415 when a JSON or form request body's Content-Type matches none of the route's declared media types, instead of validating an empty object
+
 ## 1.6.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @hono/inertia
 
+## 0.7.2
+
+### Patch Changes
+
+- [#2103](https://github.com/honojs/middleware/pull/2103) [`67cf944ad362ba3794c7070af8fae11df68ed38c`](https://github.com/honojs/middleware/commit/67cf944ad362ba3794c7070af8fae11df68ed38c) Thanks [@nkfr26](https://github.com/nkfr26)! - Normalize the props resolved by `PageProps`: renders without props now resolve to `{}`, and when the same page is rendered with and without props by different handlers, the props-less variant shares the other renders' keys as optional `never`, so absent props must be accessed with `?.`.
+
 ## 0.7.1
 
 ### Patch Changes
