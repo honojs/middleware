@@ -61,14 +61,23 @@ Use `share` to add data to every page. It accepts a callback that receives the c
 To include shared data in `PageProps` type inference, chain `inertia()` when creating the app.
 
 ```ts
-const app = new Hono()
+import type { Context } from 'hono'
+
+type Session = { user: { id: string } }
+type SissionEnv = { Variables: { session: Session | null } }
+
+const app = new Hono<SissionEnv>()
 
 const routes = app
+  .use((c, next) => {
+    c.set('session', null)
+    return next()
+  })
   .use(
     inertia({
-      share: (c) => ({
-        path: c.req.path,
+      share: (c: Context<SissionEnv>) => ({
         appName: 'App Name',
+        session: c.get('session'),
       }),
     })
   )
