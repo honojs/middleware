@@ -55,7 +55,7 @@
     "jose": "^6.0.11"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.16.10",
+    "@cloudflare/vitest-plugin": "^1.0.0",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",

@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.8.7",
+  "version": "0.9.0",
   "license": "MIT",
   "exports": {
     ".": "./src/index.ts",
@@ -10,6 +10,7 @@
     "./google": "./src/providers/google/index.ts",
     "./linkedin": "./src/providers/linkedin/index.ts",
     "./msentra": "./src/providers/msentra/index.ts",
+    "./openstreetmap": "./src/providers/openstreetmap/index.ts",
     "./twitch": "./src/providers/twitch/index.ts",
     "./x": "./src/providers/x/index.ts"
   },

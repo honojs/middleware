@@ -1,5 +1,21 @@
 # @hono/zod-openapi
 
+## 1.6.3
+
+### Patch Changes
+
+- [#2087](https://github.com/honojs/middleware/pull/2087) [`3b0860026438694e76c3155737cf0b8df32384f5`](https://github.com/honojs/middleware/commit/3b0860026438694e76c3155737cf0b8df32384f5) Thanks [@WolfieLeader](https://github.com/WolfieLeader)! - fix: return 415 when a JSON or form request body's Content-Type matches none of the route's declared media types, instead of validating an empty object
+
+## 1.6.2
+
+### Patch Changes
+
+- [#2115](https://github.com/honojs/middleware/pull/2115) [`525564dc5c275bfe8468b330902ea12dc450f54d`](https://github.com/honojs/middleware/commit/525564dc5c275bfe8468b330902ea12dc450f54d) Thanks [@scttcper](https://github.com/scttcper)! - Flatten batched route type inference so large `openapiRoutes` tuples do not hit TypeScript's recursive instantiation limit.
+
+- [#2116](https://github.com/honojs/middleware/pull/2116) [`38232db06e1c366e5eb1fb7cf6949c2541debd8c`](https://github.com/honojs/middleware/commit/38232db06e1c366e5eb1fb7cf6949c2541debd8c) Thanks [@scttcper](https://github.com/scttcper)! - Reuse projected response types between `openapi()` route handlers and returned schemas to reduce TypeScript checker work.
+
+- [#1986](https://github.com/honojs/middleware/pull/1986) [`28f1d39cd2a480d9d3bd557df9037c054a674279`](https://github.com/honojs/middleware/commit/28f1d39cd2a480d9d3bd557df9037c054a674279) Thanks [@VihaanAgarwal](https://github.com/VihaanAgarwal)! - fix(zod-openapi): infer route middleware env in `defineOpenAPIRoute` handler
+
 ## 1.6.1
 
 ### Patch Changes

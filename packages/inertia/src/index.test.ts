@@ -250,6 +250,67 @@ describe('inertia', () => {
     })
   })
 
+  describe('redirects', () => {
+    const redirectApp = () =>
+      new Hono()
+        .use(inertia())
+        .put('/users/1', (c) => c.redirect('/users'))
+        .patch('/users/1', (c) => c.redirect('/users'))
+        .delete('/users/1', (c) => c.redirect('/users'))
+        .post('/users', (c) => c.redirect('/users'))
+
+    for (const method of ['PUT', 'PATCH', 'DELETE'] as const) {
+      it(`converts a 302 into a 303 on ${method}`, async () => {
+        const res = await redirectApp().request('/users/1', {
+          method,
+          headers: { 'X-Inertia': 'true' },
+        })
+
+        expect(res.status).toBe(303)
+        expect(res.headers.get('Location')).toBe('/users')
+      })
+    }
+
+    it('leaves POST redirects at 302', async () => {
+      const res = await redirectApp().request('/users', {
+        method: 'POST',
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(302)
+    })
+
+    it('leaves non Inertia requests untouched', async () => {
+      const res = await redirectApp().request('/users/1', { method: 'PUT' })
+
+      expect(res.status).toBe(302)
+    })
+
+    it('leaves other redirect statuses untouched', async () => {
+      const app = new Hono().use(inertia()).put('/users/1', (c) => c.redirect('/users', 307))
+
+      const res = await app.request('/users/1', {
+        method: 'PUT',
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(307)
+    })
+
+    it('leaves rendered responses untouched', async () => {
+      const app = new Hono()
+        .use(inertia())
+        .put('/users/1', (c) => c.render('Users/Edit', { id: '1' }))
+
+      const res = await app.request('/users/1', {
+        method: 'PUT',
+        headers: { 'X-Inertia': 'true' },
+      })
+
+      expect(res.status).toBe(200)
+    })
+  })
+
   describe('page.url resolution', () => {
     it('uses c.req.url for GET requests', async () => {
       const app = new Hono()

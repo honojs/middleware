@@ -118,7 +118,9 @@ export default app
 ```
 
 > [!IMPORTANT]
-> The request must have the proper `Content-Type` to ensure the validation. For example, if you want to validate a JSON body, the request must have the `Content-Type` to `application/json` in the request. Otherwise, the value of `c.req.valid('json')` will be `{}`.
+> Request bodies are validated only for JSON and form media types with a Zod schema. Other declared media types, such as `application/xml`, reach the handler without validation.
+>
+> On a route with such a validator, a request that sends a body must declare a matching `Content-Type`. A body with a missing or unsupported `Content-Type` is rejected with `415 Unsupported Media Type`.
 >
 > ```ts
 > import { createRoute, z, OpenAPIHono } from '@hono/zod-openapi'
@@ -148,7 +150,7 @@ export default app
 >
 > app.openapi(route, (c) => {
 >   const validatedBody = c.req.valid('json')
->   return c.json(validatedBody) // validatedBody is {}
+>   return c.json(validatedBody)
 > })
 >
 > const res = await app.request('/books', {
@@ -157,11 +159,10 @@ export default app
 >   // The Content-Type header is lacking.
 > })
 >
-> const data = await res.json()
-> console.log(data) // {}
+> console.log(res.status) // 415
 > ```
 >
-> If you want to force validation of requests that do not have the proper `Content-Type`, set the value of `request.body.required` to `true`.
+> `request.body.required` controls whether the body may be absent. With the default `false`, a request with no body reaches the handler and `c.req.valid('json')` is `{}`. With `required: true`, an absent body fails validation with `400`.
 >
 > ```ts
 > const route = createRoute({
@@ -397,6 +398,24 @@ const appRoutes = app.openapi(route, (c) => {
 
 const client = hc<typeof appRoutes>('http://localhost:8787/')
 ```
+
+#### Type-checking large RPC apps
+
+When an RPC app has many routes, register them on small `OpenAPIHono` instances and mount those apps with `.route()`.
+A long chain of `.openapi()` calls grows the schema type at each link.
+Type-checking can slow down when that app type is passed to `hc`.
+
+```ts
+const users = new OpenAPIHono().openapi(getUserRoute, getUserHandler)
+const posts = new OpenAPIHono().openapi(getPostRoute, getPostHandler)
+
+const appRoutes = new OpenAPIHono().route('/', users).route('/', posts)
+
+const client = hc<typeof appRoutes>('http://localhost:8787/')
+```
+
+Routing and OpenAPI output stay the same.
+TypeScript has less accumulated schema type work to do.
 
 ### Batch Route Registration
 

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
     "outDir": "../../dist/packages/firebase-auth",
-    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers", "vitest/globals"]
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin", "vitest/globals"]
   },
   "include": ["src", "firebase-tools.d.ts", "tsdown.config.ts", "vitest.config.ts"],
   "references": []

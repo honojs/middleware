@@ -1,6 +1,6 @@
 {
   "name": "@hono/oauth-providers",
-  "version": "0.8.7",
+  "version": "0.9.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/honojs/middleware.git",
@@ -29,6 +29,7 @@
     "./google": "./src/providers/google/index.ts",
     "./linkedin": "./src/providers/linkedin/index.ts",
     "./msentra": "./src/providers/msentra/index.ts",
+    "./openstreetmap": "./src/providers/openstreetmap/index.ts",
     "./twitch": "./src/providers/twitch/index.ts",
     "./x": "./src/providers/x/index.ts",
     "./package.json": "./package.json"
@@ -67,6 +68,10 @@
         "import": "./dist/msentra/index.mjs",
         "require": "./dist/msentra/index.cjs"
       },
+      "./openstreetmap": {
+        "import": "./dist/openstreetmap/index.mjs",
+        "require": "./dist/openstreetmap/index.cjs"
+      },
       "./twitch": {
         "import": "./dist/twitch/index.mjs",
         "require": "./dist/twitch/index.cjs"
@@ -103,6 +108,9 @@
       ],
       "msentra": [
         "./dist/providers/msentra/index.d.ts"
+      ],
+      "openstreetmap": [
+        "./dist/providers/openstreetmap/index.d.ts"
       ]
     }
   },

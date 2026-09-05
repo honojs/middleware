@@ -3282,6 +3282,11 @@ describe('openapiRoutes', () => {
 
     const app = new OpenAPIHono().openapiRoutes(routes)
 
+    const client = hc<typeof app>('http://localhost')
+    expectTypeOf(client.enabled.$get).toBeFunction()
+    // @ts-expect-error addRoute: false excludes the route from the RPC schema
+    client.disabled.$get
+
     const enabledRes = await app.request('/enabled')
     expect(enabledRes.status).toBe(200)
 
@@ -3291,6 +3296,53 @@ describe('openapiRoutes', () => {
     // The route should technically still be in OpenAPI definitions
     // if `hide: true` is not set, but the actual Hono router won't have it.
     // Let's verify type safety and runtime behaviors.
+  })
+
+  it('Should preserve empty and widened batch RPC behavior', () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/widened',
+        responses: {
+          200: {
+            description: 'Widened route',
+          },
+        },
+      }),
+      handler: (c) => c.body(null, 200),
+    })
+
+    const emptyApp = new OpenAPIHono().openapiRoutes([] as const)
+    const emptyClient = hc<typeof emptyApp>('http://localhost')
+    // @ts-expect-error an empty batch exposes no RPC routes
+    emptyClient.missing.$get
+
+    const widenedRoutes: (typeof route)[] = [route]
+    const widenedApp = new OpenAPIHono().openapiRoutes(widenedRoutes)
+    const widenedClient = hc<typeof widenedApp>('http://localhost')
+    // @ts-expect-error widened arrays retain the existing empty RPC schema
+    widenedClient.widened.$get
+  })
+
+  it('Should typecheck batches beyond the recursive instantiation limit', () => {
+    const route = defineOpenAPIRoute({
+      route: createRoute({
+        method: 'get',
+        path: '/large-batch',
+        responses: {
+          200: {
+            description: 'Large batch route',
+          },
+        },
+      }),
+      handler: (c) => c.body(null, 200),
+    })
+    const routes10 = [route, route, route, route, route, route, route, route, route, route] as const
+    const routes50 = [...routes10, ...routes10, ...routes10, ...routes10, ...routes10] as const
+
+    const app = new OpenAPIHono().openapiRoutes(routes50)
+    const client = hc<typeof app>('http://localhost')
+    expectTypeOf(client['large-batch'].$get).toBeFunction()
   })
 })
 
@@ -3362,5 +3414,321 @@ describe('QUERY method', () => {
       info: { title: 'Search API', version: '1.0.0' },
     })
     expect(doc.paths?.['/search']).toHaveProperty('query')
+  })
+})
+
+describe('Media type gate for request bodies', () => {
+  const PostSchema = z.object({
+    id: z.number().openapi({}),
+  })
+
+  const createApp = (required: boolean) => {
+    const app = new OpenAPIHono()
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: {
+            content: {
+              'application/json': {
+                schema: PostSchema,
+              },
+            },
+            required,
+          },
+        },
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.object({ idType: z.string() }),
+              },
+            },
+            description: 'Post result',
+          },
+        },
+      }),
+      (c) => {
+        const data = c.req.valid('json')
+        return c.json({ idType: typeof data.id })
+      }
+    )
+    return app
+  }
+
+  const app = createApp(false)
+
+  it('Should return 415 when the content-type does not match the declared media types', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'text/plain' },
+    })
+    expect(res.status).toBe(415)
+  })
+
+  it('Should return 415 when a body is sent without a content-type', async () => {
+    const req = new Request('http://localhost/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+    })
+    req.headers.delete('content-type')
+    const res = await app.request(req)
+    expect(res.status).toBe(415)
+  })
+
+  it('Should return 200 when no body is sent and the body is optional', async () => {
+    const res = await app.request('/posts', { method: 'POST' })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'undefined' })
+  })
+
+  it('Should return 200 when an empty body stream is sent without a content-type', async () => {
+    const req = new Request('http://localhost/posts', {
+      method: 'POST',
+      body: '',
+    })
+    req.headers.delete('content-type')
+    const res = await app.request(req)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'undefined' })
+  })
+
+  it('Should validate the body when the content-type matches', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'application/json' },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'number' })
+  })
+
+  it('Should accept a JSON content-type with a suffix', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'application/vnd.api+json' },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'number' })
+  })
+
+  it('Should return 415 when the body is required and the content-type does not match', async () => {
+    const res = await createApp(true).request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'text/plain' },
+    })
+    expect(res.status).toBe(415)
+  })
+
+  it('Should return 415 when a content-type is sent without a body', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain' },
+    })
+    expect(res.status).toBe(415)
+  })
+
+  it('Should accept a JSON content-type with parameters', async () => {
+    const res = await app.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ id: 123 }),
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ idType: 'number' })
+  })
+
+  it('Should match the content-type case-insensitively', async () => {
+    for (const required of [false, true]) {
+      const res = await createApp(required).request('/posts', {
+        method: 'POST',
+        body: JSON.stringify({ id: 123 }),
+        headers: { 'content-type': 'Application/JSON' },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ idType: 'number' })
+    }
+  })
+
+  // The schema accepts {} so a skipped parse shows up as a 200 instead of a 400.
+  describe('Malformed content types', () => {
+    const LooseSchema = z.object({ id: z.string().optional() })
+    const responses = { 200: { description: 'Post result' } }
+
+    const jsonApp = new OpenAPIHono().openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: { body: { content: { 'application/json': { schema: LooseSchema } } } },
+        responses,
+      }),
+      (c) => c.json({ data: c.req.valid('json') })
+    )
+    const formApp = new OpenAPIHono().openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: { body: { content: { 'multipart/form-data': { schema: LooseSchema } } } },
+        responses,
+      }),
+      (c) => c.json({ data: c.req.valid('form') })
+    )
+
+    it('Should return 415 for application/jsonp', async () => {
+      const res = await jsonApp.request('/posts', {
+        method: 'POST',
+        body: JSON.stringify({ id: '123' }),
+        headers: { 'content-type': 'application/jsonp' },
+      })
+      expect(res.status).toBe(415)
+    })
+
+    it('Should return 415 for multipart/form-dataevil', async () => {
+      const res = await formApp.request('/posts', {
+        method: 'POST',
+        body: 'id=123',
+        headers: { 'content-type': 'multipart/form-dataevil' },
+      })
+      expect(res.status).toBe(415)
+    })
+
+    it('Should validate a multipart form body', async () => {
+      const form = new FormData()
+      form.append('id', '123')
+      const res = await formApp.request('/posts', { method: 'POST', body: form })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ data: { id: '123' } })
+    })
+
+    it('Should validate an urlencoded form body with an uppercase content-type', async () => {
+      const res = await formApp.request('/posts', {
+        method: 'POST',
+        body: 'id=123',
+        headers: { 'content-type': 'APPLICATION/X-WWW-FORM-URLENCODED' },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ data: { id: '123' } })
+    })
+  })
+
+  describe('Routes without a JSON or form validator', () => {
+    const createPassthroughApp = (content: Record<string, { schema: unknown }>) => {
+      const app = new OpenAPIHono()
+      app.openapi(
+        createRoute({
+          method: 'post',
+          path: '/posts',
+          request: { body: { content: content as never } },
+          responses: { 200: { description: 'Post result' } },
+        }),
+        async (c) => c.text(await c.req.text())
+      )
+      return app
+    }
+
+    it('Should not gate a route that only declares XML', async () => {
+      const res = await createPassthroughApp({ 'application/xml': { schema: z.string() } }).request(
+        '/posts',
+        {
+          method: 'POST',
+          body: 'hello',
+          headers: { 'content-type': 'text/plain' },
+        }
+      )
+      expect(res.status).toBe(200)
+      expect(await res.text()).toBe('hello')
+    })
+
+    it('Should not gate a JSON route whose schema is not a Zod schema', async () => {
+      const res = await createPassthroughApp({
+        'application/json': { schema: { type: 'object' } },
+      }).request('/posts', {
+        method: 'POST',
+        body: 'hello',
+        headers: { 'content-type': 'text/plain' },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.text()).toBe('hello')
+    })
+  })
+
+  describe('Routes declaring JSON and XML', () => {
+    const mixedApp = new OpenAPIHono()
+    mixedApp.openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: {
+            content: {
+              'application/json': { schema: PostSchema },
+              'application/xml': { schema: z.string() },
+            },
+          },
+        },
+        responses: { 200: { description: 'Post result' } },
+      }),
+      (c) => c.json({ data: c.req.valid('json') })
+    )
+
+    it('Should accept declared XML without validating it', async () => {
+      const res = await mixedApp.request('/posts', {
+        method: 'POST',
+        body: '<post><id>7</id></post>',
+        headers: { 'content-type': 'application/xml' },
+      })
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ data: {} })
+    })
+  })
+
+  describe('Body presence check', () => {
+    const rawApp = new OpenAPIHono()
+    rawApp.openapi(
+      createRoute({
+        method: 'post',
+        path: '/posts',
+        request: {
+          body: { content: { 'application/json': { schema: PostSchema } } },
+        },
+        responses: { 200: { description: 'Post result' } },
+      }),
+      async (c) => c.json({ raw: await c.req.raw.text() })
+    )
+
+    it('Should leave an empty body stream readable for the handler', async () => {
+      const req = new Request('http://localhost/posts', { method: 'POST', body: '' })
+      req.headers.delete('content-type')
+      const res = await rawApp.request(req)
+      expect(res.status).toBe(200)
+      expect(await res.json()).toEqual({ raw: '' })
+    })
+
+    it('Should return 415 after the first chunk of a body that never closes', async () => {
+      const stream = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode('{'))
+        },
+      })
+      const req = new Request('http://localhost/posts', {
+        method: 'POST',
+        body: stream,
+        duplex: 'half',
+      } as RequestInit)
+      req.headers.delete('content-type')
+      const res = await Promise.race([
+        app.request(req),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error('timed out'))
+          }, 1000)
+        }),
+      ])
+      expect(res.status).toBe(415)
+    })
   })
 })

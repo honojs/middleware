@@ -219,6 +219,21 @@ When the `Referer` header is unavailable (e.g. under a `no-referrer` Referrer-Po
 app.post('/users', (c) => c.render('Users/New', {}, { url: '/users/new' }))
 ```
 
+## Redirects
+
+Redirect the way you normally would in Hono:
+
+```ts
+app.put('/users/:id', async (c) => {
+  await updateUser(c.req.param('id'), await c.req.parseBody())
+  return c.redirect('/users')
+})
+```
+
+The Inertia protocol requires redirects issued from `PUT`, `PATCH`, and `DELETE` requests to use [`303 See Other`](https://inertiajs.com/redirects): with a `302` the client replays the original method against the redirect target instead of following it with a `GET`. The middleware rewrites `302` to `303` for those methods on Inertia requests, so `c.redirect` needs no special casing.
+
+Non-Inertia requests, `POST` redirects, and explicit statuses such as `307` are left untouched.
+
 ## Partial reloads
 
 Inertia's [partial reloads](https://inertiajs.com/partial-reloads) let a single visit re-fetch only a subset of the page's props, leaving the rest as they were. `@hono/inertia` honors the `X-Inertia-Partial-Component`, `X-Inertia-Partial-Data`, and `X-Inertia-Partial-Except` headers transparently — the route signature stays the same.

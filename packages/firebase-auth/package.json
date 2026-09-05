@@ -48,7 +48,7 @@
     "hono": ">=4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.16.10",
+    "@cloudflare/vitest-plugin": "^1.0.0",
     "firebase-tools": "^15.26.0",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",

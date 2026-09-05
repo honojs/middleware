@@ -136,20 +136,24 @@ function zValidatorFunction<
 ):
   | MiddlewareHandler<E, P, V, ZodValidatorFailureResponse<T>>
   | MiddlewareHandler<E, P, V, ExtractValidationResponse<HookFn>> {
+  const caseInsensitiveKeymap =
+    target === 'header' && ('_def' in schema || '_zod' in schema)
+      ? Object.fromEntries(
+          // @ts-expect-error the schema is a Zod Schema
+          Object.keys('in' in schema ? schema.in.shape : schema.shape).map((key) => [
+            key.toLowerCase(),
+            key,
+          ])
+        )
+      : undefined
+
   // @ts-expect-error not typed well
   return validator(target, async (value: ValidationTargets[Target], c) => {
     let validatorValue = value
 
     // in case where our `target` === `header`, Hono parses all of the headers into lowercase.
     // this might not match the Zod schema, so we want to make sure that we account for that when parsing the schema.
-    if ((target === 'header' && '_def' in schema) || (target === 'header' && '_zod' in schema)) {
-      // create an object that maps lowercase schema keys to lowercase
-      // @ts-expect-error the schema is a Zod Schema
-      const schemaKeys = Object.keys('in' in schema ? schema.in.shape : schema.shape)
-      const caseInsensitiveKeymap = Object.fromEntries(
-        schemaKeys.map((key) => [key.toLowerCase(), key])
-      )
-
+    if (caseInsensitiveKeymap) {
       validatorValue = Object.fromEntries(
         Object.entries(value).map(([key, value]) => [caseInsensitiveKeymap[key] || key, value])
       )

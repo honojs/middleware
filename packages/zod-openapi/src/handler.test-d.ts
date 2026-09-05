@@ -263,6 +263,11 @@ describe('supports async handler', () => {
     void handlerA
     void handlerB
 
+    const routeUnion: typeof routeA | typeof routeB = Math.random() > 0.5 ? routeA : routeB
+    new OpenAPIHono().openapi(routeUnion, (c) =>
+      Math.random() > 0.5 ? c.json({ a: 'x' }, 200) : c.json({ b: 1 }, 201)
+    )
+
     // @ts-expect-error a raw Response is not allowed when every member declares a schema
     const invalid: RouteHandler<typeof routeA | typeof routeB> = () => new Response('nope')
     void invalid

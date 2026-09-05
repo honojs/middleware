@@ -670,7 +670,21 @@ export const inertia = <E extends Env = Env, V = Record<string, never>>(
       ).then((entries) => respond(Object.fromEntries(entries)))
     }) as Parameters<typeof c.setRenderer>[0])
 
-    return next()
+    await next()
+
+    // Redirects issued from PUT / PATCH / DELETE must be 303, not 302: a 302
+    // makes the client replay the original method against the redirect target,
+    // while 303 forces the follow-up request to be a GET.
+    // https://inertiajs.com/redirects
+    if (
+      c.req.header('X-Inertia') &&
+      c.res.status === 302 &&
+      (c.req.method === 'PUT' || c.req.method === 'PATCH' || c.req.method === 'DELETE')
+    ) {
+      c.res = new Response(c.res.body, { status: 303, headers: c.res.headers })
+    }
+
+    return c.res
   }
 }
 
