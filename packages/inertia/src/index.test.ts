@@ -123,6 +123,62 @@ describe('inertia', () => {
     })
   })
 
+  describe('shared props', () => {
+    it('includes shared props and lets page props override duplicate keys', async () => {
+      const app = new Hono()
+      app.use(
+        inertia({
+          share: () => ({
+            static: 'value',
+            lazy: () => Promise.resolve({ id: 0 }),
+            duplicated: 0,
+          }),
+        })
+      )
+      app.get('/', (c) => c.render('Home', { duplicated: 'string', own: true }))
+
+      const res = await app.request('/', { headers: { 'X-Inertia': 'true' } })
+
+      const body = (await res.json()) as PageObject
+      expect(body.props).toEqual({
+        static: 'value',
+        lazy: { id: 0 },
+        duplicated: 'string',
+        own: true,
+      })
+    })
+
+    it('resolves shared props from an asynchronous callback', async () => {
+      const app = new Hono()
+      // eslint-disable-next-line @typescript-eslint/require-await
+      app.use(inertia({ share: async (c) => ({ path: c.req.path }) }))
+      app.get('/', (c) => c.render('Home'))
+
+      const res = await app.request('/', { headers: { 'X-Inertia': 'true' } })
+
+      const body = (await res.json()) as PageObject
+      expect(body.props).toEqual({ path: '/' })
+    })
+
+    it('filters shared props during a partial reload', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1', share: () => ({ id: 0 }) }))
+      app.get('/', (c) => c.render('Home', { partial: 'reload' }))
+
+      const res = await app.request('/', {
+        headers: {
+          'X-Inertia': 'true',
+          'X-Inertia-Version': 'v1',
+          'X-Inertia-Partial-Component': 'Home',
+          'X-Inertia-Partial-Data': 'partial',
+        },
+      })
+
+      const body = (await res.json()) as PageObject
+      expect(body.props).toEqual({ partial: 'reload' })
+    })
+  })
+
   describe('Inertia (XHR) request', () => {
     it('responds with JSON page object and Inertia headers', async () => {
       const app = new Hono()
