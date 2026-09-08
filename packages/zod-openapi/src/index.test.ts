@@ -3732,3 +3732,153 @@ describe('Media type gate for request bodies', () => {
     })
   })
 })
+
+describe('OpenAPI 3.2', () => {
+  const createApp = () => {
+    const app = new OpenAPIHono()
+
+    const route = createRoute({
+      method: 'get',
+      path: '/books',
+      tags: ['Books'],
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: z.object({ title: z.string() }),
+            },
+          },
+          description: 'Retrieve a book',
+        },
+      },
+    })
+
+    app.openapi(route, (c) => c.json({ title: 'Dune' }, 200))
+    return app
+  }
+
+  it('Should generate a 3.2.0 document with getOpenAPI32Document()', () => {
+    const doc = createApp().getOpenAPI32Document({
+      openapi: '3.2.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+
+    expect(doc.openapi).toBe('3.2.0')
+    expect(doc.paths).toHaveProperty('/books')
+  })
+
+  it('Should serve a 3.2.0 document from doc32()', async () => {
+    const app = createApp()
+    app.doc32('/doc32', {
+      openapi: '3.2.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+
+    const res = await app.request('/doc32')
+    expect(res.status).toBe(200)
+    const doc = (await res.json()) as { openapi: string; paths: Record<string, unknown> }
+    expect(doc.openapi).toBe('3.2.0')
+    expect(doc.paths).toHaveProperty('/books')
+  })
+
+  it('Should keep the hierarchical tag fields added in 3.2', () => {
+    const doc = createApp().getOpenAPI32Document({
+      openapi: '3.2.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+      tags: [
+        { name: 'Library', summary: 'Library', kind: 'nav' },
+        { name: 'Books', summary: 'Books', parent: 'Library' },
+      ],
+    })
+
+    expect(doc.tags).toEqual([
+      { name: 'Library', summary: 'Library', kind: 'nav' },
+      { name: 'Books', summary: 'Books', parent: 'Library' },
+    ])
+  })
+
+  it('Should include the base path in a 3.2.0 document', () => {
+    const router = new OpenAPIHono()
+    router.openapi(
+      createRoute({
+        method: 'get',
+        path: '/books',
+        responses: {
+          200: { description: 'Retrieve books' },
+        },
+      }),
+      (c) => c.json({}, 200)
+    )
+
+    const app = new OpenAPIHono().route('/api', router)
+    const doc = app.getOpenAPI32Document({
+      openapi: '3.2.0',
+      info: {
+        title: 'My API',
+        version: '1.0.0',
+      },
+    })
+
+    expect(doc.paths).toHaveProperty('/api/books')
+  })
+
+  it('Should pass generator options through doc32()', async () => {
+    const app = new OpenAPIHono()
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/hello',
+        responses: {
+          200: {
+            content: {
+              'application/json': {
+                schema: z.union([z.literal('hello'), z.literal('world')]),
+              },
+            },
+            description: 'Retrieve the greeting',
+          },
+        },
+      }),
+      (c) => c.json('hello' as const, 200)
+    )
+
+    app.doc32(
+      '/doc',
+      {
+        openapi: '3.2.0',
+        info: {
+          title: 'my API',
+          version: '1.0.0',
+        },
+      },
+      { unionPreferredType: 'anyOf' }
+    )
+
+    const res = await app.request('/doc')
+    expect(res.status).toBe(200)
+    const doc = (await res.json()) as {
+      paths: Record<
+        string,
+        Record<
+          string,
+          { responses: Record<string, { content: Record<string, { schema: unknown }> }> }
+        >
+      >
+    }
+    expect(doc.paths['/hello'].get.responses['200'].content['application/json'].schema).toEqual({
+      anyOf: [
+        { enum: ['hello'], type: 'string' },
+        { enum: ['world'], type: 'string' },
+      ],
+    })
+  })
+})
