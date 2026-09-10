@@ -161,6 +161,62 @@ export const defer = <T>(resolver: () => T | Promise<T>, group = 'default'): T =
   return marker as unknown as T
 }
 
+const ALWAYS_MARKER = Symbol.for('@hono/inertia/always')
+
+/**
+ * Internal marker produced by {@link always}. The renderer detects this and
+ * skips the partial-reload filter for the prop, so the value is sent on every
+ * response regardless of `X-Inertia-Partial-Data` /
+ * `X-Inertia-Partial-Except`.
+ *
+ * The shape is intentionally opaque — only the type guard inside the renderer
+ * reads it. The factory returns `T` so usage at call sites is transparent.
+ */
+interface AlwaysProp<T = unknown> {
+  [ALWAYS_MARKER]: true
+  data: T
+}
+
+const isAlways = (value: unknown): value is AlwaysProp =>
+  typeof value === 'object' && value !== null && ALWAYS_MARKER in value
+
+/**
+ * Marks a prop as **always included**. Partial reloads normally send only the
+ * props listed in `X-Inertia-Partial-Data` (or everything except the ones in
+ * `X-Inertia-Partial-Except`); a prop wrapped with `always` bypasses both
+ * filters and is present on every response.
+ *
+ * Use it for cross-cutting props — validation errors, flash messages, the
+ * authenticated user — that a page needs even when the client asked for a
+ * single prop.
+ *
+ * The wrapped value follows the same resolution rules as a plain prop: pass a
+ * function to defer the work until the prop is actually rendered.
+ *
+ * `always` is a filter escape hatch, not a prop type — wrap plain values or
+ * functions with it. Combining it with {@link defer} is not supported, since
+ * a deferred prop is by definition absent from the initial response.
+ *
+ * @example
+ * ```ts
+ * app.get('/users', (c) =>
+ *   c.render('Users/Index', {
+ *     users: () => fetchUsers(),
+ *     errors: always(getErrors(c)), // sent even on a partial reload of `users`
+ *   }),
+ * )
+ * ```
+ *
+ * @see https://inertiajs.com/partial-reloads
+ */
+export const always = <T>(data: T): T => {
+  const marker: AlwaysProp<T> = {
+    [ALWAYS_MARKER]: true,
+    data,
+  }
+  return marker as unknown as T
+}
+
 const MERGE_MARKER = Symbol.for('@hono/inertia/merge')
 
 /**
@@ -511,6 +567,11 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       // fully sync — preserving the original `Response` (non-Promise) return
       // type for the common case.
       //
+      // Props wrapped with `always()` skip `isExcluded` entirely, mirroring
+      // `AlwaysProp` in inertia-laravel: it short circuits
+      // `shouldIncludeInPartialResponse` before either the `only` or the
+      // `except` header is consulted.
+      //
       // Deferred props are handled per visit kind:
       //   - initial visit (`!isPartial`): the resolver is skipped, the key
       //     is recorded in `deferredGroups`, and nothing is added to `kept`.
@@ -533,8 +594,13 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const matchPropsOn: string[] = []
       const scrollProps: Record<string, ScrollDescriptor> = {}
       let needsAsync = false
-      for (const [key, value] of Object.entries(propsInput)) {
-        if (isExcluded(key)) {
+      for (const [key, raw] of Object.entries(propsInput)) {
+        // `always()` is unwrapped up front: it only opts the prop out of the
+        // partial-reload filter, then the inner value follows the same path as
+        // any other prop.
+        const forced = isAlways(raw)
+        const value = forced ? raw.data : raw
+        if (!forced && isExcluded(key)) {
           continue
         }
         if (isDeferred(value)) {

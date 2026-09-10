@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describe, expect, it } from 'vitest'
 import type { PageObject, ScrollDescriptor } from './index'
-import { deepMerge, defer, inertia, merge, prepend, scroll } from './index'
+import { always, deepMerge, defer, inertia, merge, prepend, scroll } from './index'
 
 describe('inertia', () => {
   describe('full page (non Inertia request)', () => {
@@ -575,6 +575,117 @@ describe('inertia', () => {
       expect(calls.sort()).toEqual(['a', 'b'])
       const body = (await res.json()) as { props: Record<string, unknown> }
       expect(body.props).toEqual({ a: 1, b: 2 })
+    })
+  })
+
+  describe('always props', () => {
+    const partialHeaders = (component: string, only?: string, except?: string) => {
+      const headers: Record<string, string> = {
+        'X-Inertia': 'true',
+        'X-Inertia-Version': 'v1',
+        'X-Inertia-Partial-Component': component,
+      }
+      if (only !== undefined) {
+        headers['X-Inertia-Partial-Data'] = only
+      }
+      if (except !== undefined) {
+        headers['X-Inertia-Partial-Except'] = except
+      }
+      return headers
+    }
+
+    it('keeps an always prop that is missing from X-Inertia-Partial-Data', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { a: 1, b: 2, errors: always({ name: 'required' }) }))
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'a') })
+
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ a: 1, errors: { name: 'required' } })
+    })
+
+    it('keeps an always prop listed in X-Inertia-Partial-Except', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { a: 1, errors: always({ name: 'required' }) }))
+
+      const res = await app.request('/', {
+        headers: partialHeaders('Home', undefined, 'errors'),
+      })
+
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ a: 1, errors: { name: 'required' } })
+    })
+
+    it('unwraps an always prop on a full visit', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { errors: always({ name: 'required' }) }))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ errors: { name: 'required' } })
+    })
+
+    it('resolves a function wrapped with always during a partial reload', async () => {
+      const calls: string[] = []
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', {
+          heavy: () => {
+            calls.push('heavy')
+            return 'h'
+          },
+          flash: always(async () => {
+            calls.push('flash')
+            await new Promise((r) => setTimeout(r, 5))
+            return 'saved'
+          }),
+        })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'heavy') })
+
+      expect(calls.sort()).toEqual(['flash', 'heavy'])
+      const body = (await res.json()) as { props: Record<string, unknown> }
+      expect(body.props).toEqual({ heavy: 'h', flash: 'saved' })
+    })
+
+    it('emits merge metadata for an always prop wrapping merge()', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) =>
+        c.render('Home', { a: 1, feed: always(merge([{ id: 1 }], { matchOn: 'id' })) })
+      )
+
+      const res = await app.request('/', { headers: partialHeaders('Home', 'a') })
+
+      const body = (await res.json()) as PageObject
+      expect(body.props).toEqual({ a: 1, feed: [{ id: 1 }] })
+      expect(body.mergeProps).toEqual(['feed'])
+      expect(body.matchPropsOn).toEqual(['feed.id'])
+    })
+
+    it('does not emit any page metadata for a plain always prop', async () => {
+      const app = new Hono()
+      app.use(inertia({ version: 'v1' }))
+      app.get('/', (c) => c.render('Home', { errors: always({ name: 'required' }) }))
+
+      const res = await app.request('/', {
+        headers: { 'X-Inertia': 'true', 'X-Inertia-Version': 'v1' },
+      })
+
+      expect(await res.json()).toEqual({
+        component: 'Home',
+        props: { errors: { name: 'required' } },
+        url: '/',
+        version: 'v1',
+      })
     })
   })
 
