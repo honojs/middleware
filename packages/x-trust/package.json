@@ -1,0 +1,27 @@
+{
+  "name": "@hono/x-trust",
+  "version": "0.0.1",
+  "description": "X-Trust human presence middleware for Hono. Zero KYC, zero PII. HMAC-SHA256.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": ["hono", "middleware", "x-trust", "human", "anti-bot", "zero-kyc"],
+  "license": "MIT",
+  "peerDependencies": {
+    "hono": ">=3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/honojs/middleware"
+  }
+}
