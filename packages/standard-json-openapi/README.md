@@ -199,7 +199,7 @@ Request bodies and parameters are described by the schema's **input** type; resp
 
 ### Reusable components
 
-Name a schema to have every use of it become a `$ref` into `components.schemas`. Any library works — the registry never looks at where the schema came from:
+Name a schema to have every use of it become a `$ref` into `components.schemas`, including when it is nested inside another schema. Any library works — the registry never looks at where the schema came from:
 
 ```ts
 const app = new OpenAPIHono()
