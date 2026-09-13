@@ -91,6 +91,41 @@ app.post(
 )
 ```
 
+### Synchronous parsing and compiled schemas
+
+Use `.safeParse()` through `validationFunction` to enable [compiled parsing](https://zod.dev/compile) for synchronous schemas.
+The default `.safeParseAsync()` bypasses compilation. This example uses Zod 4.6:
+
+```ts
+import { Hono } from 'hono'
+import * as z from 'zod'
+import { zValidator } from '@hono/zod-validator'
+
+const app = new Hono()
+const schema = z.compile(
+  z.object({
+    name: z.string(),
+    age: z.number(),
+  })
+)
+
+app.post(
+  '/author',
+  zValidator('json', schema, undefined, {
+    validationFunction: (schema, value) => schema.safeParse(value),
+  }),
+  (c) => c.json(c.req.valid('json'))
+)
+```
+
+Compile the final schema once, outside the request handler.
+Keep the default parser for asynchronous checks or transforms; `.safeParse()` throws when it encounters a Promise.
+Zod may run callbacks twice on invalid input and falls back to runtime parsing when compilation is unavailable or unsupported.
+See the compiler documentation for supported schemas and runtime requirements.
+
+Measure your endpoints before choosing this option.
+Use `.safeParse()`, not the boolean `.validate()`: the middleware needs parsed output and error details.
+
 ## Types
 
 ### `InferInput`
