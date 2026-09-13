@@ -95,6 +95,8 @@ export const generateDocument = (
     }
   }
 
+  builder.link()
+
   const components: ComponentsObject = {}
   const paths: PathsObject = {}
   const webhooks: PathsObject = {}
@@ -189,6 +191,7 @@ class DocumentBuilder {
   /** Component name -> a stable key for the schema as emitted, before its `$ref`s were rewritten. */
   readonly #sources = new Map<string, string>()
   readonly #named = new Map<StandardOpenAPISchema, Record<SchemaKind, string>>()
+  readonly #byKey = new Map<string, string>()
 
   constructor(private readonly targets: JSONSchemaTarget[]) {}
 
@@ -196,14 +199,32 @@ class DocumentBuilder {
   name(name: string, schema: StandardOpenAPISchema): void {
     const output = this.#convert(schema, 'output')
     const input = this.#convert(schema, 'input')
-    const outputKey = stableStringify(output)
-    const inputKey = stableStringify(input)
+    const outputKey = canonicalSchemaKey(output)
+    const inputKey = canonicalSchemaKey(input)
 
     const outputName = this.#nameFor(name, output, outputKey)
     const inputName =
       inputKey === outputKey ? outputName : this.#nameFor(`${name}Input`, input, inputKey)
 
     this.#named.set(schema, { input: inputName, output: outputName })
+  }
+
+  /** Rewrite nested copies of named schemas into `$ref`s. */
+  link(): void {
+    for (const names of this.#named.values()) {
+      const jsonInput = this.schemas[names.input]
+      const jsonOutput = this.schemas[names.output]
+      if (jsonInput && isCompoundSchema(jsonInput)) {
+        this.#byKey.set(canonicalSchemaKey(jsonInput), names.input)
+      }
+      if (jsonOutput && isCompoundSchema(jsonOutput)) {
+        this.#byKey.set(canonicalSchemaKey(jsonOutput), names.output)
+      }
+    }
+
+    for (const name of Object.keys(this.schemas)) {
+      this.schemas[name] = this.#refify(this.schemas[name], true)
+    }
   }
 
   schema(schema: RouteSchema, kind: SchemaKind): SchemaObject | ReferenceObject {
@@ -216,7 +237,7 @@ class DocumentBuilder {
       return { $ref: `#/components/schemas/${named[kind]}` }
     }
 
-    return this.#convert(schema, kind) as SchemaObject
+    return this.#refify(this.#convert(schema, kind), false) as SchemaObject
   }
 
   content(content: ContentObject, kind: SchemaKind): OASContentObject {
@@ -242,7 +263,7 @@ class DocumentBuilder {
 
   /** One entry per property of an object schema, in the shape parameters and headers share. */
   #split(schema: StandardOpenAPISchema, kind: SchemaKind): SplitProperty[] {
-    const converted = this.#convert(schema, kind)
+    const converted = this.#refify(this.#convert(schema, kind), true)
     // Parameters and headers have nowhere to put a `$ref`, so read through a hoisted component.
     const hoisted = componentRefName(converted)
     const jsonSchema = hoisted ? (this.schemas[hoisted] ?? converted) : converted
@@ -260,6 +281,37 @@ class DocumentBuilder {
 
   #convert(schema: StandardOpenAPISchema, kind: SchemaKind): JSONSchema {
     return this.#hoistDefs(toJSONSchema(schema, kind, this.targets))
+  }
+
+  #refify(value: JSONSchema, skipRoot: boolean): JSONSchema {
+    if (this.#byKey.size === 0) {
+      return value
+    }
+
+    const walk = (node: unknown, isRoot: boolean): unknown => {
+      if (Array.isArray(node)) {
+        return node.map((item) => walk(item, false))
+      }
+      if (node === null || typeof node !== 'object') {
+        return node
+      }
+
+      if (!(isRoot && skipRoot)) {
+        const name = this.#byKey.get(canonicalSchemaKey(node))
+        if (name) {
+          return { $ref: `#/components/schemas/${name}` }
+        }
+      }
+
+      return Object.fromEntries(
+        Object.entries(node as Record<string, unknown>).map(([key, child]) => [
+          key,
+          walk(child, false),
+        ])
+      )
+    }
+
+    return walk(value, true) as JSONSchema
   }
 
   /** Moves emitted `$defs` into `components.schemas` and repoints the `$ref`s at them. */
@@ -348,3 +400,33 @@ const componentRefName = (jsonSchema: JSONSchema): string | undefined => {
   const prefix = '#/components/schemas/'
   return typeof ref === 'string' && ref.startsWith(prefix) ? ref.slice(prefix.length) : undefined
 }
+
+/** Ignores `additionalProperties: false` so Zod input/output of the same shape share a component. */
+const canonicalSchemaKey = (value: unknown): string =>
+  stableStringify(omitFalseAdditionalProperties(value))
+
+const omitFalseAdditionalProperties = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map(omitFalseAdditionalProperties)
+  }
+  if (value === null || typeof value !== 'object') {
+    return value
+  }
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).flatMap(([key, child]) =>
+      key === 'additionalProperties' && child === false
+        ? []
+        : [[key, omitFalseAdditionalProperties(child)]]
+    )
+  )
+}
+
+/** Nested `$ref`s are only rewritten for object/array/combinator schemas, not primitives. */
+const isCompoundSchema = (schema: JSONSchema): boolean =>
+  schema.type === 'object' ||
+  schema.type === 'array' ||
+  schema.properties != null ||
+  schema.items != null ||
+  Array.isArray(schema.allOf) ||
+  Array.isArray(schema.anyOf) ||
+  Array.isArray(schema.oneOf)

@@ -516,6 +516,146 @@ describe('named components', () => {
     })
   })
 
+  it('does not emit a second Input component when Zod only adds additionalProperties: false', () => {
+    const app = new OpenAPIHono()
+    app.openAPIRegistry.register('Address', z.object({ street: z.string() }))
+
+    const schemas = app.getOpenAPI31Document(config31).components?.schemas
+    expect(schemas).toHaveProperty('Address')
+    expect(schemas).not.toHaveProperty('AddressInput')
+  })
+
+  it('emits a $ref when a registered schema is nested inside another schema', () => {
+    const app = new OpenAPIHono()
+    const Address = app.openAPIRegistry.register('Address', z.object({ street: z.string() }))
+
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/addresses',
+        responses: {
+          200: { description: 'ok', content: { 'application/json': { schema: Address } } },
+        },
+      }),
+      (c) => c.json({ street: '1' }, 200)
+    )
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/users',
+        responses: {
+          200: {
+            description: 'ok',
+            content: {
+              'application/json': { schema: z.object({ id: z.string(), address: Address }) },
+            },
+          },
+        },
+      }),
+      (c) => c.json({ id: '1', address: { street: '1' } }, 200)
+    )
+    app.openapi(
+      createRoute({
+        method: 'post',
+        path: '/users',
+        request: {
+          body: {
+            required: true,
+            content: {
+              'application/json': { schema: z.object({ id: z.string(), address: Address }) },
+            },
+          },
+        },
+        responses: { 200: { description: 'ok' } },
+      }),
+      (c) => c.json({}, 200)
+    )
+
+    const doc = app.getOpenAPI31Document(config31)
+    expect(doc).toMatchObject({
+      paths: {
+        '/addresses': {
+          get: {
+            responses: {
+              200: {
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/Address' } },
+                },
+              },
+            },
+          },
+        },
+        '/users': {
+          get: {
+            responses: {
+              200: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: { address: { $ref: '#/components/schemas/Address' } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          post: {
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: { address: { $ref: '#/components/schemas/Address' } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    expect(doc.components?.schemas).toHaveProperty('Address')
+    expect(doc.components?.schemas).not.toHaveProperty('AddressInput')
+  })
+
+  it('rewrites a nested registered schema inside another named component', () => {
+    const app = new OpenAPIHono()
+    const Address = app.openAPIRegistry.register('Address', type({ street: 'string' }))
+    const User = app.openAPIRegistry.register('User', type({ id: 'string', address: Address }))
+
+    app.openapi(
+      createRoute({
+        method: 'get',
+        path: '/users',
+        responses: {
+          200: { description: 'ok', content: { 'application/json': { schema: User } } },
+        },
+      }),
+      (c) => c.json({ id: '1', address: { street: '1' } }, 200)
+    )
+
+    expect(app.getOpenAPIDocument(config)).toMatchObject({
+      paths: {
+        '/users': {
+          get: {
+            responses: {
+              200: {
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/User' } } },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          User: { properties: { address: { $ref: '#/components/schemas/Address' } } },
+          Address: { type: 'object' },
+        },
+      },
+    })
+  })
+
   it('splits a named schema whose input and output differ into two components', () => {
     const app = new OpenAPIHono()
     const Post = app.openAPIRegistry.register(
