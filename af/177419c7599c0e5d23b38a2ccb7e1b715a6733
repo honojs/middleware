@@ -1,0 +1,19 @@
+.changeset/olive-jars-shake.md
+  s_a4a87a428148c2::t_756776a3a6f98b 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "af177419c7599c0e5d23b38a2ccb7e1b715a6733",
+  "prompts": {},
+  "sessions": {
+    "s_a4a87a428148c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f417d84f-7abb-4beb-aaf1-2ea05e3b1495",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
