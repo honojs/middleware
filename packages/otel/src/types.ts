@@ -11,6 +11,7 @@ export type HttpInstrumentationConfig = {
   getTime?(): TimeInput
   disableTracing?: boolean
   spanNameFactory?: (c: HonoContext) => string
+  routeFactory?: (c: HonoContext) => string | undefined
   serviceName?: string
   serviceVersion?: string
 }

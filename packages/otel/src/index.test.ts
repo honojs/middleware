@@ -1,4 +1,4 @@
-import { SpanKind, SpanStatusCode } from '@opentelemetry/api'
+import { context as otelContext, trace, SpanKind, SpanStatusCode } from '@opentelemetry/api'
 import { hrTime, millisToHrTime, timeInputToHrTime } from '@opentelemetry/core'
 import type {
   DataPoint,
@@ -557,5 +557,130 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     await app.request('http://localhost/no-active-tracking')
 
     assert.strictEqual(adds.length, 0)
+  })
+})
+
+describe('OpenTelemetry middleware - Route resolution', () => {
+  let memoryExporter: InMemorySpanExporter
+  let tracerProvider: NodeTracerProvider
+  let memoryMetricExporter: InMemoryMetricExporter
+  let meterProvider: MeterProvider
+  let metricReader: PeriodicExportingMetricReader
+
+  beforeEach(() => {
+    const { exporter, tracerProvider: provider } = createTestTracer()
+    memoryExporter = exporter
+    tracerProvider = provider
+    memoryExporter.reset()
+
+    // Registering the provider installs a real context manager, which is what
+    // lets a downstream handler reach the active span through `trace.getActiveSpan()`
+    // the way it would in an instrumented app.
+    tracerProvider.register()
+
+    const { meterProvider: mProvider, exporter: mExporter, reader: mReader } = createTestMeter()
+    memoryMetricExporter = mExporter
+    metricReader = mReader
+    meterProvider = mProvider
+  })
+
+  afterEach(async () => {
+    trace.disable()
+    otelContext.disable()
+    await tracerProvider.shutdown()
+    await meterProvider.shutdown()
+  })
+
+  const durationDataPoints = async (): Promise<DataPoint<Histogram>[]> => {
+    await metricReader.forceFlush()
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    return durationMetric.dataPoints as DataPoint<Histogram>[]
+  }
+
+  it('Should keep an http.route set by downstream middleware', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.all('/rpc/*', (c) => {
+      // An RPC adapter resolves the operation only once it has the request.
+      trace.getActiveSpan()?.setAttribute(ATTR_HTTP_ROUTE, '/rpc/user/getProfile')
+      return c.text('ok')
+    })
+
+    await app.request('http://localhost/rpc/user/getProfile')
+
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/user/getProfile')
+
+    const dps = await durationDataPoints()
+    assert.strictEqual(dps.length, 1)
+    assert.strictEqual(dps[0].attributes['http.route'], '/rpc/user/getProfile')
+  })
+
+  it('Should use the matched route when downstream middleware does not set one', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.all('/rpc/*', (c) => c.text('ok'))
+
+    await app.request('http://localhost/rpc/user/getProfile')
+
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
+
+    const dps = await durationDataPoints()
+    assert.strictEqual(dps[0].attributes['http.route'], '/rpc/*')
+  })
+
+  it('Should respect routeFactory over both the matched and downstream route', async () => {
+    const app = new Hono()
+    app.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        meterProvider,
+        routeFactory: (c: Context) => `${c.req.method} ${new URL(c.req.url).pathname}`,
+      })
+    )
+    app.all('/rpc/*', (c) => {
+      trace.getActiveSpan()?.setAttribute(ATTR_HTTP_ROUTE, '/rpc/user/getProfile')
+      return c.text('ok')
+    })
+
+    await app.request('http://localhost/rpc/user/getProfile')
+
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], 'GET /rpc/user/getProfile')
+
+    const dps = await durationDataPoints()
+    assert.strictEqual(dps[0].attributes['http.route'], 'GET /rpc/user/getProfile')
+  })
+
+  it('Should fall back to the matched route when routeFactory returns undefined', async () => {
+    const app = new Hono()
+    app.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        meterProvider,
+        routeFactory: () => undefined,
+      })
+    )
+    app.get('/foo', (c) => c.text('ok'))
+
+    await app.request('http://localhost/foo')
+
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/foo')
+  })
+
+  it('Should keep a downstream route on the duration metric when tracing is disabled', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider, disableTracing: true }))
+    app.all('/rpc/*', (c) => c.text('ok'))
+
+    await app.request('http://localhost/rpc/user/getProfile')
+
+    const dps = await durationDataPoints()
+    assert.strictEqual(dps[0].attributes['http.route'], '/rpc/*')
   })
 })
