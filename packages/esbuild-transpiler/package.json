@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
-    "esbuild-wasm": "^0.27.3",
+    "esbuild-wasm": "^0.28.2",
     "hono": "^4.11.5",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
