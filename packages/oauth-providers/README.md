@@ -24,14 +24,16 @@ app.use(
 )
 ```
 
+The examples below use `process.env` for brevity. Inside a middleware or handler you can read environment variables in a runtime-independent way with the [`env()` helper](https://hono.dev/docs/helpers/adapter#env), which works on Node.js, Bun, Cloudflare Workers and Deno alike.
+
 Also, there is two ways to use this middleware:
 
 ```ts
 app.use(
   '/google',
   googleAuth({
-    client_id: Bun.env.GOOGLE_ID,
-    client_secret: Bun.env.GOOGLE_SECRET,
+    client_id: process.env.GOOGLE_ID,
+    client_secret: process.env.GOOGLE_SECRET,
     scope: ['openid', 'email', 'profile'],
   })
 )
@@ -57,8 +59,8 @@ Or
 app.get(
   '/google',
   googleAuth({
-    client_id: Bun.env.GOOGLE_ID,
-    client_secret: Bun.env.GOOGLE_SECRET,
+    client_id: process.env.GOOGLE_ID,
+    client_secret: process.env.GOOGLE_SECRET,
     scope: ['openid', 'email', 'profile'],
   }),
   (c) => {
@@ -88,8 +90,8 @@ const app = new Hono()
 app.use(
   '/google',
   googleAuth({
-    client_id: Bun.env.GOOGLE_ID,
-    client_secret: Bun.env.GOOGLE_SECRET,
+    client_id: process.env.GOOGLE_ID,
+    client_secret: process.env.GOOGLE_SECRET,
     scope: ['openid', 'email', 'profile'],
   })
 )
@@ -200,8 +202,8 @@ const app = new Hono()
 app.use(
   '/facebook',
   facebookAuth({
-    client_id: Bun.env.FACEBOOK_ID,
-    client_secret: Bun.env.FACEBOOK_SECRET,
+    client_id: process.env.FACEBOOK_ID,
+    client_secret: process.env.FACEBOOK_SECRET,
     scope: ['email', 'public_profile'],
     fields: [
       'email',
@@ -412,8 +414,8 @@ const app = new Hono()
 app.use(
   '/github',
   githubAuth({
-    client_id: Bun.env.GITHUB_ID,
-    client_secret: Bun.env.GITHUB_SECRET,
+    client_id: process.env.GITHUB_ID,
+    client_secret: process.env.GITHUB_SECRET,
   })
 )
 
@@ -441,8 +443,8 @@ const app = new Hono()
 app.use(
   '/github',
   githubAuth({
-    client_id: Bun.env.GITHUB_ID,
-    client_secret: Bun.env.GITHUB_SECRET,
+    client_id: process.env.GITHUB_ID,
+    client_secret: process.env.GITHUB_SECRET,
     scope: ['public_repo', 'read:user', 'user', 'user:email', 'user:follow'],
     oauthApp: true,
   })
@@ -545,8 +547,8 @@ const app = new Hono()
 app.use(
   '/linkedin',
   linkedinAuth({
-    client_id: Bun.env.LINKEDIN_ID,
-    client_secret: Bun.env.LINKEDIN_SECRET,
+    client_id: process.env.LINKEDIN_ID,
+    client_secret: process.env.LINKEDIN_SECRET,
     scope: ['email', 'openid', 'profile'],
   })
 )
@@ -575,8 +577,8 @@ const app = new Hono()
 app.use(
   '/linkedin',
   linkedinAuth({
-    client_id: Bun.env.LINKEDIN_ID,
-    client_secret: Bun.env.LINKEDIN_SECRET,
+    client_id: process.env.LINKEDIN_ID,
+    client_secret: process.env.LINKEDIN_SECRET,
     appAuth: true,
   })
 )
@@ -629,8 +631,8 @@ const app = new Hono()
 app.use(
   '/x',
   xAuth({
-    client_id: Bun.env.X_ID,
-    client_secret: Bun.env.X_SECRET,
+    client_id: process.env.X_ID,
+    client_secret: process.env.X_SECRET,
     scope: ['tweet.read', 'users.read', 'offline.access'],
     fields: ['profile_image_url', 'url'],
   })
@@ -786,8 +788,8 @@ const app = new Hono()
 app.use(
   '/discord',
   discordAuth({
-    client_id: Bun.env.DISCORD_ID,
-    client_secret: Bun.env.DISCORD_SECRET,
+    client_id: process.env.DISCORD_ID,
+    client_secret: process.env.DISCORD_SECRET,
     scope: ['identify', 'email'],
   })
 )
