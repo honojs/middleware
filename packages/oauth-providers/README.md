@@ -22,7 +22,7 @@ app.use(
 )
 ```
 
-The examples below use `process.env`. If you are using Bun, replace it with `Bun.env` to resolve environment variables at runtime.
+The examples below use `process.env` for brevity. Inside a middleware or handler you can read environment variables in a runtime-independent way with the [`env()` helper](https://hono.dev/docs/helpers/adapter#env), which works on Node.js, Bun, Cloudflare Workers and Deno alike.
 
 Also, there is two ways to use this middleware:
 
