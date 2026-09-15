@@ -22,6 +22,8 @@ app.use(
 )
 ```
 
+The examples below use `process.env`. If you are using Bun, replace it with `Bun.env` to resolve environment variables at runtime.
+
 Also, there is two ways to use this middleware:
 
 ```ts
@@ -74,8 +76,6 @@ app.get(
 
 export default app
 ```
-
-If you are using Bun, replace `process.env` to `Bun.env` to resolve Environments at runtime.
 
 ### Google
 
