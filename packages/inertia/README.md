@@ -223,6 +223,25 @@ Function props (`() => T | Promise<T>`) are evaluated lazily, so heavy data fetc
 
 A request is treated as a partial reload only when `X-Inertia-Partial-Component` matches the rendered component **and** at least one of `X-Inertia-Partial-Data` / `X-Inertia-Partial-Except` is present. Otherwise the request is processed as a normal Inertia visit and every prop — including function props — is resolved.
 
+### Always included props
+
+Some props are needed by the page no matter what the client asked for — validation errors, flash messages, the authenticated user. Wrap them with `always()` and they bypass both `X-Inertia-Partial-Data` and `X-Inertia-Partial-Except`:
+
+```ts
+import { always } from '@hono/inertia'
+
+app.get('/users', (c) =>
+  c.render('Users/Index', {
+    users: () => db.users.all(),
+    errors: always(getErrors(c)), // present even on a partial reload of `users`
+  })
+)
+```
+
+The wrapped value follows the same rules as a plain prop, so `always(() => getFlash(c))` defers the work until the prop is rendered.
+
+`always()` is a filter escape hatch rather than a prop type — wrap plain values or functions with it. Combining it with `defer()` is not supported, since a deferred prop is by definition absent from the initial response.
+
 ## Deferred props
 
 [Deferred props](https://inertiajs.com/deferred-props) move heavy data fetching off the critical path: the initial response advertises which props are pending, the page becomes interactive immediately, and the Inertia client then issues a follow-up partial reload to fill them in.
