@@ -88,6 +88,11 @@ describe('PagePropsFor', () => {
     inertia({ share: async () => ({ session: await Promise.resolve(null) }) })
   })
 
+  it('requires share in the curried form', () => {
+    // @ts-expect-error The curried form is only for typing the share callback context.
+    inertia<{ Variables: { message: string } }>()({ version: 'v1' })
+  })
+
   it('merges shared props and prefers page props for duplicate keys', () => {
     const _app = new Hono()
       .use(

@@ -684,8 +684,8 @@ const createInertia = <
   }
 }
 
-type CurriedInertia<E extends Env> = <V extends Record<string, unknown> = EmptySharedProps>(
-  options: InertiaOptions<E, V>
+type InertiaFactory<E extends Env> = <V extends Record<string, unknown>>(
+  options: InertiaOptions<E, V> & { share: (c: Context<E>) => V }
 ) => MiddlewareHandler<InertiaSharedEnv<V>>
 
 /**
@@ -707,21 +707,46 @@ type CurriedInertia<E extends Env> = <V extends Record<string, unknown> = EmptyS
  * app.get('/', (c) => c.render('Home', { message: 'Hello' }))
  * ```
  */
-// inertia(options)
 export function inertia<E extends Env = Env, V extends Record<string, unknown> = EmptySharedProps>(
   options: InertiaOptions<E, V> | undefined
 ): MiddlewareHandler<InertiaSharedEnv<V>>
 
-// inertia()
 export function inertia(): MiddlewareHandler<InertiaSharedEnv<EmptySharedProps>>
 
-// inertia<E>()(options)
-export function inertia<E extends Env>(): CurriedInertia<E>
+/**
+ * Creates a factory that uses the specified `Env` to type the `Context`
+ * received by `share`.
+ *
+ * @example
+ * ```ts
+ * import { Hono } from 'hono'
+ * import { inertia } from '@hono/inertia'
+ *
+ * type Session = { user: { name: string } }
+ * type SessionEnv = { Variables: { session: Session | null } }
+ *
+ * const app = new Hono<SessionEnv>()
+ *
+ * const route = app
+ *   .use((c, next) => {
+ *     c.set('session', { user: { name: 'John Doe' } })
+ *     return next()
+ *   })
+ *   .use(
+ *     inertia<SessionEnv>()({
+ *       share: (c) => ({
+ *         session: c.get('session'),
+ *       }),
+ *     })
+ *   )
+ * ```
+ */
+export function inertia<E extends Env>(): InertiaFactory<E>
 
 export function inertia<E extends Env, V extends Record<string, unknown>>(
   // inertia(options) / inertia()
   ...args: [InertiaOptions<E, V> | undefined] | []
-): MiddlewareHandler<InertiaSharedEnv<V>> | CurriedInertia<E> {
+): MiddlewareHandler<InertiaSharedEnv<V>> | InertiaFactory<E> {
   // inertia(options)
   if (args.length === 1) {
     return createInertia<E, V>(args[0])
@@ -733,7 +758,7 @@ export function inertia<E extends Env, V extends Record<string, unknown>>(
   function dispatch(
     // app.use(inertia())
     // Hono invokes `dispatch` with (c, next)
-    ...args: Parameters<typeof middleware>
+    ...dispatchArgs: Parameters<typeof middleware>
   ): ReturnType<typeof middleware>
 
   function dispatch<Shared extends Record<string, unknown> = EmptySharedProps>(
@@ -743,15 +768,15 @@ export function inertia<E extends Env, V extends Record<string, unknown>>(
 
   function dispatch<Shared extends Record<string, unknown>>(
     // dispatch(c, next) / dispatch(options)
-    ...args: Parameters<typeof middleware> | [InertiaOptions<E, Shared>]
+    ...dispatchArgs: Parameters<typeof middleware> | [InertiaOptions<E, Shared>]
   ): ReturnType<typeof middleware> | MiddlewareHandler<InertiaSharedEnv<Shared>> {
     // app.use(inertia()) -> dispatch(c, next)
-    if (args.length === 2) {
-      return middleware(...args)
+    if (dispatchArgs.length === 2) {
+      return middleware(...dispatchArgs)
     }
 
     // inertia<E>()(options)
-    return createInertia<E, Shared>(args[0])
+    return createInertia<E, Shared>(dispatchArgs[0])
   }
 
   return dispatch

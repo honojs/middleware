@@ -208,13 +208,13 @@ Non-Inertia requests, `POST` redirects, and explicit statuses such as `307` are 
 
 ## Shared Data
 
-Use `share` to add data to every page. It accepts a synchronous callback that receives the current Hono context and returns shared props. Shared props are combined with page props, with page props taking precedence when keys overlap. They are processed in the same way as props passed to `c.render()`.
+Use `share` to add data to every page. It accepts a synchronous callback that receives the Hono `Context` and returns shared props. Shared props are combined with page props, with page props taking precedence when keys overlap. They are processed in the same way as props passed to `c.render()`.
 
-To include shared data in `PageProps` type inference, chain `inertia()` when creating the app.
+To include shared props in `PageProps` inference, chain the `inertia()` middleware when creating the app.
+
+When specifying an `Env` type for the `Context`, the curried form `inertia<Env>()({ ... })` is recommended.
 
 ```ts
-import type { Context } from 'hono'
-
 type Session = { user: { name: string } }
 type SessionEnv = { Variables: { session: Session | null } }
 
@@ -226,8 +226,8 @@ const routes = app
     return next()
   })
   .use(
-    inertia({
-      share: (c: Context<SessionEnv>) => ({
+    inertia<SessionEnv>()({
+      share: (c) => ({
         appName: 'App Name',
         session: c.get('session'),
       }),
