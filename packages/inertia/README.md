@@ -206,6 +206,38 @@ The Inertia protocol requires redirects issued from `PUT`, `PATCH`, and `DELETE`
 
 Non-Inertia requests, `POST` redirects, and explicit statuses such as `307` are left untouched.
 
+## Shared Data
+
+Use `share` to add data to every page. It accepts a synchronous callback that receives the Hono `Context` and returns shared props. Shared props are combined with page props, with page props taking precedence when keys overlap. They are processed in the same way as props passed to `c.render()`.
+
+To include shared props in `PageProps` inference, chain the `inertia()` middleware when creating the app.
+
+When specifying an `Env` type for the `Context`, the curried form `inertia<Env>()({ ... })` is recommended.
+
+```ts
+type Session = { user: { name: string } }
+type SessionEnv = { Variables: { session: Session | null } }
+
+const app = new Hono<SessionEnv>()
+
+const routes = app
+  .use((c, next) => {
+    c.set('session', { user: { name: 'John Doe' } })
+    return next()
+  })
+  .use(
+    inertia<SessionEnv>()({
+      share: (c) => ({
+        appName: 'App Name',
+        session: c.get('session'),
+      }),
+    })
+  )
+  .get('/', (c) => c.render('Home'))
+```
+
+The `page.sharedProps` field contains an array of top-level keys registered by `share`. The Inertia client uses these keys during instant visits.
+
 ## Partial reloads
 
 Inertia's [partial reloads](https://inertiajs.com/partial-reloads) let a single visit re-fetch only a subset of the page's props, leaving the rest as they were. `@hono/inertia` honors the `X-Inertia-Partial-Component`, `X-Inertia-Partial-Data`, and `X-Inertia-Partial-Except` headers transparently — the route signature stays the same.
@@ -339,6 +371,7 @@ export default defineConfig({
 | ---------- | ---------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `version`  | `string \| null`                         | `null`                                        | Asset version. Stale `X-Inertia-Version` on a GET request triggers a `409 Conflict` with an `X-Inertia-Location` header so the client does a full reload. |
 | `rootView` | `(page, c) => string \| Promise<string>` | Minimal HTML shell embedding the page object. | HTML document for the initial (non Inertia) request.                                                                                                      |
+| `share`    | `(c: Context<E>) => V`                   | `undefined`                                   | Shared data included with every page. Page-specific props override duplicate keys.                                                                        |
 
 ## Example app
 
