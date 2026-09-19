@@ -423,24 +423,9 @@ describe('mixing schema libraries', () => {
 })
 
 describe('libraries without a native JSON Schema interface', () => {
-  // Zod Mini ships `~standard.validate` but not `~standard.jsonSchema`. This mirrors the
-  // wrapper the README documents — keep the two in step.
-  const withJSONSchema = <T extends zm.core.$ZodType>(schema: T) =>
-    Object.assign(schema, {
-      '~standard': {
-        ...schema['~standard'],
-        jsonSchema: {
-          input: (options?: { target?: string }) =>
-            zm.toJSONSchema(schema, { io: 'input', target: options?.target as never }),
-          output: (options?: { target?: string }) =>
-            zm.toJSONSchema(schema, { io: 'output', target: options?.target as never }),
-        },
-      },
-    })
-
-  it('documents and validates a wrapped Zod Mini schema', async () => {
+  it('documents and validates a Zod Mini schema wrapped with z.toJSONSchema()', async () => {
     const app = new OpenAPIHono()
-    const Body = withJSONSchema(zm.object({ name: zm.string() }))
+    const Body = zm.toJSONSchema(zm.object({ name: zm.string() }))
 
     app.openapi(
       createRoute({
@@ -876,6 +861,7 @@ describe('validation hooks', () => {
           issues.push(...result.error.map((issue) => issue.message))
           return c.json({ ok: false }, 400)
         }
+        return undefined
       },
     })
 

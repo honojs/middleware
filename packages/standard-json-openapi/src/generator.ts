@@ -223,7 +223,10 @@ class DocumentBuilder {
     }
 
     for (const name of Object.keys(this.schemas)) {
-      this.schemas[name] = this.#refify(this.schemas[name], true)
+      const json = this.schemas[name]
+      if (json) {
+        this.schemas[name] = this.#refify(json, true)
+      }
     }
   }
 
@@ -268,13 +271,15 @@ class DocumentBuilder {
     const hoisted = componentRefName(converted)
     const jsonSchema = hoisted ? (this.schemas[hoisted] ?? converted) : converted
 
-    const properties = (jsonSchema.properties ?? {}) as Record<string, JSONSchema>
-    const required = new Set((jsonSchema.required ?? []) as string[])
+    const properties = (jsonSchema['properties'] ?? {}) as Record<string, JSONSchema>
+    const required = new Set((jsonSchema['required'] ?? []) as string[])
 
     return Object.entries(properties).map(([name, property]) => ({
       name,
       required: required.has(name),
-      ...(typeof property.description === 'string' ? { description: property.description } : {}),
+      ...(typeof property['description'] === 'string'
+        ? { description: property['description'] }
+        : {}),
       schema: property as SchemaObject,
     }))
   }
@@ -396,7 +401,7 @@ const defPointerKey = (ref: string): string | undefined => {
 }
 
 const componentRefName = (jsonSchema: JSONSchema): string | undefined => {
-  const ref = jsonSchema.$ref
+  const ref = jsonSchema['$ref']
   const prefix = '#/components/schemas/'
   return typeof ref === 'string' && ref.startsWith(prefix) ? ref.slice(prefix.length) : undefined
 }
@@ -423,10 +428,10 @@ const omitFalseAdditionalProperties = (value: unknown): unknown => {
 
 /** Nested `$ref`s are only rewritten for object/array/combinator schemas, not primitives. */
 const isCompoundSchema = (schema: JSONSchema): boolean =>
-  schema.type === 'object' ||
-  schema.type === 'array' ||
-  schema.properties != null ||
-  schema.items != null ||
-  Array.isArray(schema.allOf) ||
-  Array.isArray(schema.anyOf) ||
-  Array.isArray(schema.oneOf)
+  schema['type'] === 'object' ||
+  schema['type'] === 'array' ||
+  schema['properties'] != null ||
+  schema['items'] != null ||
+  Array.isArray(schema['allOf']) ||
+  Array.isArray(schema['anyOf']) ||
+  Array.isArray(schema['oneOf'])

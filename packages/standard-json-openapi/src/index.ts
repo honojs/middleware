@@ -265,7 +265,7 @@ export type RouteHook<
   I,
   E,
   P,
-  RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
+  RouteConfigToTypedResponse<R> | Response | Promise<Response> | undefined
 >
 
 export type OpenAPIObjectConfigure<E extends Env, P extends string> =
@@ -278,35 +278,6 @@ export type OpenAPIDocumentOptions = {
    * the matching OpenAPI version.
    */
   jsonSchemaTargets?: JSONSchemaTarget[]
-}
-
-/**
- * Utility type to convert Hono types to OpenAPIHono types.
- * Replaces Hono return types with OpenAPIHono in function signatures.
- *
- * @example
- * ```ts
- * type MyOpenAPIHono = HonoToOpenAPIHono<Hono<Env>>
- * ```
- */
-export type HonoToOpenAPIHono<T> =
-  T extends Hono<infer E, infer S, infer B> ? OpenAPIHono<E, S, B> : T
-
-/**
- * Converts a Hono instance to OpenAPIHono type.
- * Use this function to restore the OpenAPIHono type after chaining methods like `get`, `post`, `use`, etc.
- * @example
- * ```ts
- * import { OpenAPIHono, $ } from '@hono/standard-json-openapi'
- *
- * const app = $(
- *   new OpenAPIHono().use(middleware)
- * )
- * app.openapi(route, handler)
- * ```
- */
-export const $ = <T extends Hono<any, any, any>>(app: T): HonoToOpenAPIHono<T> => {
-  return app as HonoToOpenAPIHono<T>
 }
 
 // All request input types (param, query, header, cookie, form, json) merged for a route.
@@ -335,59 +306,6 @@ type HookReturn<R extends RouteConfig> =
   PinsResponseContent<R> extends true
     ? MaybePromise<RouteConfigToTypedResponse<R>> | undefined
     : MaybePromise<RouteConfigToTypedResponse<R>> | MaybePromise<Response> | undefined
-
-// The expected Handler type for a specific RouteConfig.
-type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
-  E,
-  ConvertPathType<R['path']>,
-  ComputeInput<R>,
-  HandlerReturn<R>
->
-
-type HookFromRoute<R extends RouteConfig, E extends Env> =
-  Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, HookReturn<R>> | undefined
-
-// Recursive Helper: Merge Schemas for the Return Type
-type SchemaFromRoutes<
-  Routes extends readonly { route: RouteConfig; addRoute?: boolean }[],
-  BasePath extends string,
-> = Routes extends readonly [infer Head, ...infer Tail]
-  ? Head extends { route: infer R extends RouteConfig; addRoute?: infer AddRoute }
-    ? ([AddRoute] extends [false]
-        ? {}
-        : ToSchema<
-            R['method'],
-            MergePath<BasePath, ConvertPathType<R['path']>>,
-            ComputeInput<R>,
-            RouteConfigToTypedResponse<R>
-          >) &
-        SchemaFromRoutes<
-          Tail extends readonly { route: RouteConfig; addRoute?: boolean }[] ? Tail : [],
-          BasePath
-        >
-    : {}
-  : {}
-
-export type OpenAPIRoute<
-  R extends RouteConfig = RouteConfig,
-  E extends Env = Env,
-  AddRoute extends boolean | undefined = boolean | undefined,
-> = {
-  route: R
-  handler: HandlerFromRoute<R, E>
-  hook?: HookFromRoute<R, E>
-  addRoute?: AddRoute
-}
-
-export const defineOpenAPIRoute = <
-  R extends RouteConfig,
-  E extends Env = Env,
-  const AddRoute extends boolean | undefined = undefined,
->(
-  def: OpenAPIRoute<R, E, AddRoute>
-): OpenAPIRoute<R, E, AddRoute> => {
-  return def
-}
 
 /** The request-body targets Hono validates, each with the Content-Types it covers. */
 const BODY_TARGETS = [
@@ -511,9 +429,10 @@ export class OpenAPIHono<
 
     const validate = (target: keyof ValidationTargets, schema: unknown) => {
       // A hand-written JSON Schema describes the document but cannot validate anything.
-      return isStandardJSONSchema(schema)
-        ? (sValidator(target, schema, effectiveHook as any) as MiddlewareHandler)
-        : undefined
+      if (!isStandardJSONSchema(schema)) {
+        return undefined
+      }
+      return sValidator(target, schema, effectiveHook as never) as MiddlewareHandler
     }
 
     const validators: MiddlewareHandler[] = []
@@ -562,40 +481,6 @@ export class OpenAPIHono<
     return this
   }
 
-  /**
-   * Register a list of routes with full Type Safety and RPC support.
-   * * @param inputs - An array of objects containing { route, handler, hook }.
-   * Must be defined `as const` or inline to preserve tuple types.
-   */
-  openapiRoutes = <
-    const Inputs extends readonly {
-      route: RouteConfig
-      handler: any
-      hook?: any
-      addRoute?: boolean
-    }[],
-  >(
-    inputs: Inputs
-  ): OpenAPIHono<E, S & SchemaFromRoutes<Inputs, BasePath>, BasePath> => {
-    type Result = {
-      [K in keyof Inputs]: Inputs[K] extends {
-        route: infer R extends RouteConfig
-        addRoute?: infer AR extends boolean | undefined
-      }
-        ? OpenAPIRoute<R, E, AR>
-        : never
-    }
-
-    const typedInputs = inputs as unknown as Result
-
-    typedInputs
-      .filter(({ addRoute }) => addRoute !== false)
-      .forEach(({ route, handler, hook }) => {
-        this.openapi(route, handler, hook)
-      })
-    return this
-  }
-
   #generate(
     version: '3.0' | '3.1',
     objectConfig: OpenAPIObjectConfig,
@@ -626,15 +511,16 @@ export class OpenAPIHono<
     configureObject: OpenAPIObjectConfigure<E, P>,
     documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
-    return this.get(path, (c) => {
+    this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
       try {
         return c.json(this.getOpenAPIDocument(objectConfig, documentOptions))
-      } catch (e: any) {
-        return c.json(e, 500)
+      } catch (error) {
+        return c.json(error, 500)
       }
-    }) as any
+    })
+    return this as OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath>
   }
 
   doc31 = <P extends string>(
@@ -642,15 +528,16 @@ export class OpenAPIHono<
     configureObject: OpenAPIObjectConfigure<E, P>,
     documentOptions?: OpenAPIDocumentOptions
   ): OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath> => {
-    return this.get(path, (c) => {
+    this.get(path, (c) => {
       const objectConfig =
         typeof configureObject === 'function' ? configureObject(c) : configureObject
       try {
         return c.json(this.getOpenAPI31Document(objectConfig, documentOptions))
-      } catch (e: any) {
-        return c.json(e, 500)
+      } catch (error) {
+        return c.json(error, 500)
       }
-    }) as any
+    })
+    return this as OpenAPIHono<E, S & ToSchema<'get', MergePath<BasePath, P>, {}, {}>, BasePath>
   }
 
   override route<
@@ -662,7 +549,7 @@ export class OpenAPIHono<
     path: SubPath,
     app: Hono<SubEnv, SubSchema, SubBasePath>
   ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath>
-  override route<SubPath extends string>(path: SubPath): Hono<E, RemoveBlankRecord<S>, BasePath>
+  override route(path: string): Hono<E, RemoveBlankRecord<S>, BasePath>
   override route<
     SubPath extends string,
     SubEnv extends Env,
@@ -673,10 +560,14 @@ export class OpenAPIHono<
     app?: Hono<SubEnv, SubSchema, SubBasePath>
   ): OpenAPIHono<E, MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S, BasePath> {
     const pathForOpenAPI = path.replaceAll(/:([^\/]+)/g, '{$1}')
-    super.route(path, app as any)
+    super.route(path, app as Hono<SubEnv, SubSchema, SubBasePath>)
 
     if (!(app instanceof OpenAPIHono)) {
-      return this as any
+      return this as OpenAPIHono<
+        E,
+        MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S,
+        BasePath
+      >
     }
 
     app.#parentApp ??= this
@@ -712,7 +603,11 @@ export class OpenAPIHono<
       }
     })
 
-    return this as any
+    return this as OpenAPIHono<
+      E,
+      MergeSchemaPath<SubSchema, MergePath<BasePath, SubPath>> & S,
+      BasePath
+    >
   }
 
   override basePath<SubPath extends string>(
@@ -720,7 +615,7 @@ export class OpenAPIHono<
   ): OpenAPIHono<E, S, MergePath<BasePath, SubPath>> {
     const cloned = super.basePath(path)
     const newApp = new OpenAPIHono<E, S, MergePath<BasePath, SubPath>>({
-      defaultHook: this.defaultHook,
+      ...(this.defaultHook ? { defaultHook: this.defaultHook } : {}),
       jsonSchemaTargets: this.#jsonSchemaTargets,
     })
     newApp.router = cloned.router
@@ -745,7 +640,7 @@ type RoutingPath<P extends string> = P extends `${infer Head}/{${infer Param}}${
   ? `${Head}/:${Param}${RoutingPath<Tail>}`
   : P
 
-export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'> & { path: P }>(
+export const createRoute = <R extends RouteConfig>(
   routeConfig: R
 ): R & {
   getRoutingPath(): RoutingPath<R['path']>
@@ -753,7 +648,7 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
   const route = {
     ...routeConfig,
     getRoutingPath(): RoutingPath<R['path']> {
-      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<P>
+      return routeConfig.path.replaceAll(/\/{(.+?)}/g, '/:$1') as RoutingPath<R['path']>
     },
   }
   return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
@@ -771,7 +666,6 @@ export type {
   RouteSchema,
 } from './route-config'
 export type { JSONSchema, JSONSchemaTarget, StandardOpenAPISchema } from './standard-schema'
-export type { DeepSimplify, MiddlewareToHandlerType, OfHandlerType } from './utils'
 
 function addBasePathToDocument<T extends { paths?: Record<string, unknown> }>(
   document: T,

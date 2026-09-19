@@ -24,7 +24,7 @@ Your schema library is the only other dependency, and it is yours to choose.
 
 Any validation library listed on the [Standard JSON Schema spec page](https://standardschema.dev/json-schema) is supported here.
 
-Some libraries (notably Valibot and Zod Mini) do **not** expose the `~standard.jsonSchema` interface by default for bundle size reasons. You'll need to follow their instructions on how to expose the interface (in the case of Valibot, this requires you to wrap your schema with the `toStandardJsonSchema` function from `@valibot/to-json-schema`, in Zod Mini's case, you build the interface yourself from `z.toJSONSchema`).
+Some libraries (notably Valibot and Zod Mini) do **not** expose `~standard.jsonSchema` on the schema itself. Wrap them first: Valibot with `toStandardJsonSchema()` from `@valibot/to-json-schema`, Zod Mini with `z.toJSONSchema()`.
 
 A schema that reaches a route without `~standard.jsonSchema` is treated as a literal JSON Schema object and is neither converted nor validated, so wrap before you use it.
 
@@ -43,27 +43,10 @@ const User = type({ name: 'string' })
 import * as v from 'valibot'
 import { toStandardJsonSchema } from '@valibot/to-json-schema'
 const User = toStandardJsonSchema(v.object({ name: v.string() }))
-```
 
-Zod Mini ships no wrapper that hands a schema back, so hang the interface off it yourself with `z.toJSONSchema`. Passing the result of `z.toJSONSchema()` straight into a route documents the schema but cannot validate it, because the plain JSON Schema object it returns has no `~standard.validate`:
-
-```ts
-import * as z from 'zod/mini'
-
-const withJSONSchema = <T extends z.core.$ZodType>(schema: T) =>
-  Object.assign(schema, {
-    '~standard': {
-      ...schema['~standard'],
-      jsonSchema: {
-        input: (options?: { target?: string }) =>
-          z.toJSONSchema(schema, { io: 'input', target: options?.target as never }),
-        output: (options?: { target?: string }) =>
-          z.toJSONSchema(schema, { io: 'output', target: options?.target as never }),
-      },
-    },
-  })
-
-const User = withJSONSchema(z.object({ name: z.string() }))
+// Zod Mini — wrap with `z.toJSONSchema()`.
+import * as zm from 'zod/mini'
+const User = zm.toJSONSchema(zm.object({ name: zm.string() }))
 ```
 
 ### Basic Usage
