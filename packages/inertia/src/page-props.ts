@@ -1,12 +1,14 @@
 /**
  * @module
- * Type helpers that derive page prop types from a Hono app's route schema.
+ * Type helpers that derive page prop types from a Hono app's route schema and shared props.
  *
  * Users augment {@link AppRegistry} (typically from a generated `pages.gen.ts`
  * file) so that {@link PageProps} can resolve the props for a given page name.
  */
 
+import type { HonoBase } from 'hono/hono-base'
 import type { ExtractSchema } from 'hono/types'
+import type { ResolvedProps } from './index'
 
 /**
  * Augment this interface to register a Hono app instance for type-safe page props.
@@ -24,7 +26,32 @@ import type { ExtractSchema } from 'hono/types'
  */
 export interface AppRegistry {}
 
+const SHARE_KEY: unique symbol = Symbol()
+
+/**
+ * Internal environment marker added by {@link inertia} for shared props.
+ *
+ * Used to infer shared props from a Hono app type.
+ *
+ * @internal
+ */
+export type InertiaSharedEnv<V> = {
+  Variables: {
+    [SHARE_KEY]: V
+  }
+}
+
 type RegisteredApp = AppRegistry extends { app: infer A } ? A : never
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AppEnv<App> = App extends HonoBase<infer E, any, any, any> ? E : never
+
+type SharedProps<App> =
+  AppEnv<App> extends InertiaSharedEnv<infer V>
+    ? V extends Record<string, never>
+      ? {}
+      : ResolvedProps<V>
+    : {}
 
 type Distribute<T> = T extends infer U ? U : never
 
@@ -53,9 +80,9 @@ type AllKeys<T> = T extends unknown ? keyof T : never
  * Props-less renders are normalized to the other renders' keys as optional `never`,
  * so access keeps working while the value may still be `undefined`.
  */
-type NormalizeProps<T, All = T> =
+type NormalizeProps<T, Shared, All = T> =
   T extends Record<string, never>
-    ? { [K in AllKeys<Exclude<All, Record<string, never>>>]?: never }
+    ? { [K in Exclude<AllKeys<Exclude<All, Record<string, never>>>, keyof Shared>]?: never }
     : T
 
 /**
@@ -64,6 +91,26 @@ type NormalizeProps<T, All = T> =
  */
 type Simplify<T> = { [K in keyof T]: T[K] } & {}
 
+type MergeProps<Shared, Own> = Own extends unknown ? Simplify<Omit<Shared, keyof Own> & Own> : never
+
+/**
+ * Resolves page props from an explicit Hono app type.
+ *
+ * Kept internal so type tests can define isolated apps
+ * without relying on the global {@link AppRegistry}.
+ *
+ * @internal
+ */
+export type PagePropsFor<
+  App,
+  C extends RenderOutput<App>['component'] = RenderOutput<App>['component'],
+> = C extends unknown
+  ? MergeProps<
+      SharedProps<App>,
+      NormalizeProps<Extract<RenderOutput<App>, { component: C }>['props'], SharedProps<App>>
+    >
+  : never
+
 /**
  * Resolves the props type for a given Inertia page component name.
  *
@@ -71,6 +118,4 @@ type Simplify<T> = { [K in keyof T]: T[K] } & {}
  */
 export type PageProps<
   C extends RenderOutput<RegisteredApp>['component'] = RenderOutput<RegisteredApp>['component'],
-> = C extends unknown
-  ? Simplify<NormalizeProps<Extract<RenderOutput<RegisteredApp>, { component: C }>['props']>>
-  : never
+> = PagePropsFor<RegisteredApp, C>

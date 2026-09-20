@@ -8,7 +8,8 @@
  * full HTML document for initial page loads.
  */
 
-import type { Context, MiddlewareHandler, TypedResponse } from 'hono'
+import type { Context, Env, MiddlewareHandler, TypedResponse } from 'hono'
+import type { InertiaSharedEnv } from './page-props'
 
 /**
  * Inertia page object sent to the client.
@@ -20,6 +21,8 @@ export type PageObject<P = Record<string, unknown>> = {
   props: P
   url: string
   version: string | null
+  /** Top-level keys registered by `share`. Omitted when no shared keys exist. */
+  sharedProps?: string[]
   /**
    * Deferred prop keys grouped by their fetch group. Present only on initial
    * (non-partial) responses when at least one prop was marked with
@@ -386,7 +389,12 @@ export const scroll = <T>(options: ScrollOptions<T>): T[] => {
   return marker as unknown as T[]
 }
 
-export interface InertiaOptions {
+type EmptySharedProps = Record<string, never>
+
+export interface InertiaOptions<
+  E extends Env = Env,
+  V extends Record<string, unknown> = EmptySharedProps,
+> {
   /**
    * Asset version. When an Inertia GET request's `X-Inertia-Version` header
    * does not match this value, the middleware short circuits with a
@@ -405,6 +413,15 @@ export interface InertiaOptions {
    * object into `<div id="app" data-page="...">`.
    */
   rootView?: RootView
+
+  /**
+   * Shared props included on every rendered page.
+   *
+   * Accepts a synchronous callback that receives the current Hono context and returns shared props.
+   * Shared props are combined with page props, with page props taking precedence
+   * when keys overlap. They are processed in the same way as props passed to `c.render()`.
+   */
+  share?: (c: Context<E>) => V
 }
 
 /**
@@ -440,28 +457,13 @@ const defaultRootView: RootView = (page) =>
   </body>
 </html>`
 
-/**
- * Inertia.js middleware for Hono.
- *
- * Sets up `c.render(component, props)` to respond according to the Inertia
- * protocol: JSON page objects for `X-Inertia` requests, props JSON for
- * `Accept: application/json` requests, full HTML otherwise.
- *
- * @example
- * ```ts
- * import { Hono } from 'hono'
- * import { inertia } from '@hono/inertia'
- *
- * const app = new Hono()
- *
- * app.use(inertia())
- *
- * app.get('/', (c) => c.render('Home', { message: 'Hello' }))
- * ```
- */
-export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
+/** Creates the configured Inertia middleware implementation. */
+const createInertia = <E extends Env = Env, V extends Record<string, unknown> = EmptySharedProps>(
+  options: InertiaOptions<E, V> = {}
+): MiddlewareHandler<InertiaSharedEnv<V>> => {
   const version: string | null = options.version ?? null
   const rootView: RootView = options.rootView ?? defaultRootView
+  const share = options.share
 
   return async function inertia(c, next) {
     if (c.req.header('X-Inertia') && c.req.method === 'GET') {
@@ -478,6 +480,11 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       propsInput: Record<string, unknown> = {},
       options: RenderOptions = {}
     ) => {
+      const sharedProps = share ? share(c as unknown as Context<E>) : {}
+      const sharedPropKeys = Object.keys(sharedProps)
+      // Merge shared props first so page-specific props override duplicate keys.
+      const mergedProps = { ...sharedProps, ...propsInput }
+
       // Use the Referer for non-GET requests to keep the original URL.
       // Override with options.url if provided.
       const url = (() => {
@@ -506,10 +513,8 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
         (onlyKeys !== null && !onlyKeys.includes(key)) ||
         (exceptKeys !== null && exceptKeys.includes(key))
 
-      // Collect kept entries and decide sync vs async resolution. When no
-      // function-valued or deferred prop is encountered, the renderer stays
-      // fully sync — preserving the original `Response` (non-Promise) return
-      // type for the common case.
+      // Collect kept entries and decide which values need
+      // asynchronous resolution before the response is sent.
       //
       // Deferred props are handled per visit kind:
       //   - initial visit (`!isPartial`): the resolver is skipped, the key
@@ -533,7 +538,7 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
       const matchPropsOn: string[] = []
       const scrollProps: Record<string, ScrollDescriptor> = {}
       let needsAsync = false
-      for (const [key, value] of Object.entries(propsInput)) {
+      for (const [key, value] of Object.entries(mergedProps)) {
         if (isExcluded(key)) {
           continue
         }
@@ -604,6 +609,9 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
           url: url.pathname + url.search,
           version,
         }
+        if (sharedPropKeys.length > 0) {
+          page.sharedProps = sharedPropKeys
+        }
         if (!isPartial && Object.keys(deferredGroups).length > 0) {
           page.deferredProps = deferredGroups
         }
@@ -673,6 +681,104 @@ export const inertia = (options: InertiaOptions = {}): MiddlewareHandler => {
   }
 }
 
+type InertiaFactory<E extends Env> = <V extends Record<string, unknown>>(
+  options: InertiaOptions<E, V> & { share: (c: Context<E>) => V }
+) => MiddlewareHandler<InertiaSharedEnv<V>>
+
+/**
+ * Inertia.js middleware for Hono.
+ *
+ * Sets up `c.render(component, props)` to respond according to the Inertia
+ * protocol: JSON page objects for `X-Inertia` requests, props JSON for
+ * `Accept: application/json` requests, full HTML otherwise.
+ *
+ * @example
+ * ```ts
+ * import { Hono } from 'hono'
+ * import { inertia } from '@hono/inertia'
+ *
+ * const app = new Hono()
+ *
+ * app.use(inertia())
+ *
+ * app.get('/', (c) => c.render('Home', { message: 'Hello' }))
+ * ```
+ */
+export function inertia<E extends Env = Env, V extends Record<string, unknown> = EmptySharedProps>(
+  options: InertiaOptions<E, V> | undefined
+): MiddlewareHandler<InertiaSharedEnv<V>>
+
+export function inertia(): MiddlewareHandler<InertiaSharedEnv<EmptySharedProps>>
+
+/**
+ * Creates a factory that uses the specified `Env` to type the `Context`
+ * received by `share`.
+ *
+ * @example
+ * ```ts
+ * import { Hono } from 'hono'
+ * import { inertia } from '@hono/inertia'
+ *
+ * type Session = { user: { name: string } }
+ * type SessionEnv = { Variables: { session: Session | null } }
+ *
+ * const app = new Hono<SessionEnv>()
+ *
+ * const route = app
+ *   .use((c, next) => {
+ *     c.set('session', { user: { name: 'John Doe' } })
+ *     return next()
+ *   })
+ *   .use(
+ *     inertia<SessionEnv>()({
+ *       share: (c) => ({
+ *         session: c.get('session'),
+ *       }),
+ *     })
+ *   )
+ * ```
+ */
+export function inertia<E extends Env>(): InertiaFactory<E>
+
+export function inertia<E extends Env, V extends Record<string, unknown>>(
+  // inertia(options) / inertia()
+  ...args: [InertiaOptions<E, V> | undefined] | []
+): MiddlewareHandler<InertiaSharedEnv<V>> | InertiaFactory<E> {
+  // inertia(options)
+  if (args.length === 1) {
+    return createInertia<E, V>(args[0])
+  }
+
+  // inertia()
+  const middleware = createInertia()
+
+  function dispatch(
+    // app.use(inertia())
+    // Hono invokes `dispatch` with (c, next)
+    ...dispatchArgs: Parameters<typeof middleware>
+  ): ReturnType<typeof middleware>
+
+  function dispatch<Shared extends Record<string, unknown> = EmptySharedProps>(
+    // inertia<E>()(options)
+    options: InertiaOptions<E, Shared>
+  ): MiddlewareHandler<InertiaSharedEnv<Shared>>
+
+  function dispatch<Shared extends Record<string, unknown>>(
+    // dispatch(c, next) / dispatch(options)
+    ...dispatchArgs: Parameters<typeof middleware> | [InertiaOptions<E, Shared>]
+  ): ReturnType<typeof middleware> | MiddlewareHandler<InertiaSharedEnv<Shared>> {
+    // app.use(inertia()) -> dispatch(c, next)
+    if (dispatchArgs.length === 2) {
+      return middleware(...dispatchArgs)
+    }
+
+    // inertia<E>()(options)
+    return createInertia<E, Shared>(dispatchArgs[0])
+  }
+
+  return dispatch
+}
+
 /**
  * Registry of valid Inertia page component names.
  *
@@ -713,13 +819,16 @@ export interface RenderOptions {
   url?: string
 }
 
+type RenderResponse<C extends PageName, P> = Response &
+  TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
+
 declare module 'hono' {
   interface ContextRenderer {
     <C extends PageName, P = Record<string, never>>(
       component: C,
       props?: P,
       options?: RenderOptions
-    ): Response & TypedResponse<{ component: C; props: ResolvedProps<P> }, 200, 'html'>
+    ): RenderResponse<C, P> | Promise<RenderResponse<C, P>>
   }
   interface NotFoundResponse extends Response, TypedResponse<string, 404, 'text'> {}
 }
