@@ -458,10 +458,7 @@ const defaultRootView: RootView = (page) =>
 </html>`
 
 /** Creates the configured Inertia middleware implementation. */
-const createInertia = <
-  E extends Env = Env,
-  V extends Record<string, unknown> = EmptySharedProps,
->(
+const createInertia = <E extends Env = Env, V extends Record<string, unknown> = EmptySharedProps>(
   options: InertiaOptions<E, V> = {}
 ): MiddlewareHandler<InertiaSharedEnv<V>> => {
   const version: string | null = options.version ?? null
