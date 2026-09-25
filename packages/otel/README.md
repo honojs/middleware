@@ -63,6 +63,21 @@ This function will be called with the `HonoContext` object as an argument, and s
 
 Be mindful that span names are actually defined by OpenTelemetry semantic conventions, and carry expactations about the format of the name.
 
+### routeFactory
+
+`routeFactory: (c: HonoContext) => string | undefined`
+
+By default the `http.route` attribute and the `http.server.request.duration` metric use the route
+matched by Hono. Pass a `routeFactory` to decide that value yourself. Returning `undefined` falls
+back to the default, so you can override only the routes you care about.
+
+This is useful when a single Hono route fronts many logical operations, such as an RPC adapter
+mounted on `/rpc/*`, and you want the operation rather than the wildcard in your traces and metrics.
+
+If a downstream middleware sets `http.route` on the active span itself, that value is kept as well,
+and is used for both the span attribute and the duration metric. `routeFactory` takes precedence
+over it.
+
 ## Usage on Cloudflare Workers
 
 Since @opentelemetry/sdk-node is not supported on [Cloudflare Workers](https://workers.cloudflare.com/), you need to use [@microlabs/otel-cf-workers](https://github.com/evanderkoogh/otel-cf-workers) instead.

@@ -41,6 +41,15 @@ const normalizeConfig = (
   return norm
 }
 
+// The OpenTelemetry API `Span` interface is write-only, so reading an attribute
+// back is only possible when the underlying SDK exposes it. Returns `undefined`
+// for implementations that don't, which keeps the previous behavior.
+const readRouteAttribute = (span: Span | undefined): string | undefined => {
+  const attributes = (span as { attributes?: Attributes } | undefined)?.attributes
+  const route = attributes?.[ATTR_HTTP_ROUTE]
+  return typeof route === 'string' ? route : undefined
+}
+
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
   if (config.tracer) {
     return config.tracer
@@ -87,7 +96,7 @@ export const httpInstrumentationMiddleware = (
       }
     }
 
-    const finalize = (span: Span | undefined, error: unknown) => {
+    const finalize = (span: Span | undefined, error: unknown, initialRoute?: string) => {
       try {
         const status = c.res.status
 
@@ -116,16 +125,32 @@ export const httpInstrumentationMiddleware = (
         }
       } finally {
         activeReqs?.decrement(stableAttrs)
-        // Update route and name since they may have changed after routing finished
-        span?.setAttribute(ATTR_HTTP_ROUTE, routePath(c))
+
+        // Update route and name since they may have changed after routing finished.
+        // A downstream middleware may have resolved a more precise route than the
+        // matched Hono route and set it on the span itself, e.g. an RPC adapter
+        // mounted on `/rpc/*` that knows the operation only at handler time. That
+        // value wins over `routePath(c)` so the operations don't all collapse into
+        // the adapter's wildcard route.
+        // https://github.com/honojs/middleware/issues/1914
+        const downstreamRoute = readRouteAttribute(span)
+        const route =
+          config.routeFactory?.(c) ??
+          (downstreamRoute !== undefined && downstreamRoute !== initialRoute
+            ? downstreamRoute
+            : routePath(c))
+
+        span?.setAttribute(ATTR_HTTP_ROUTE, route)
 
         span?.updateName(spanName(c))
         // Convert duration to seconds as the time unit from performance.now() is in milliseconds
         const duration = (performance.now() - monotonicStartTime) / 1000
 
+        // The metric has to agree with the span, otherwise the same request is
+        // reported under two different routes.
         requestDuration.record(duration, {
           ...stableAttrs,
-          [ATTR_HTTP_ROUTE]: routePath(c),
+          [ATTR_HTTP_ROUTE]: route,
           [ATTR_HTTP_RESPONSE_STATUS_CODE]: c.res.status,
         })
       }
@@ -142,6 +167,10 @@ export const httpInstrumentationMiddleware = (
       return
     }
 
+    // Kept so that finalize can tell an untouched attribute apart from one a
+    // downstream middleware overwrote.
+    const initialRoute = routePath(c)
+
     return tracer.startActiveSpan(
       spanName(c),
       {
@@ -150,7 +179,7 @@ export const httpInstrumentationMiddleware = (
         attributes: {
           ...stableAttrs,
           [ATTR_URL_FULL]: c.req.url,
-          [ATTR_HTTP_ROUTE]: routePath(c),
+          [ATTR_HTTP_ROUTE]: initialRoute,
         },
       },
       parent,
@@ -160,9 +189,9 @@ export const httpInstrumentationMiddleware = (
             span.setAttribute(k, v)
           }
           await next()
-          finalize(span, c.error)
+          finalize(span, c.error, initialRoute)
         } catch (e) {
-          finalize(span, e)
+          finalize(span, e, initialRoute)
           throw e
         } finally {
           span.end(config.getTime?.())
