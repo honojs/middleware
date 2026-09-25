@@ -374,19 +374,27 @@ type ComputeInput<R extends RouteConfig> = InputTypeParam<R> &
   InputTypeForm<R> &
   InputTypeJson<R>
 
+// Helper: Merge env with route middleware env (if any)
+type EnvFromRoute<R extends RouteConfig, E extends Env> = R['middleware'] extends
+  MiddlewareHandler[] | MiddlewareHandler
+  ? RouteMiddlewareParams<R>['env'] & E
+  : E
+
 // Helper: Calculate the expected Handler type for a specific RouteConfig
 type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
-  // use the env from the middleware if it's defined
-  R['middleware'] extends MiddlewareHandler[] | MiddlewareHandler
-    ? RouteMiddlewareParams<R>['env'] & E
-    : E,
+  EnvFromRoute<R, E>,
   ConvertPathType<R['path']>,
   ComputeInput<R>,
   RouteHandlerResponse<R>
 >
 
 type HookFromRoute<R extends RouteConfig, E extends Env> =
-  | Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, RouteHandlerResponse<R> | undefined>
+  | Hook<
+      ComputeInput<R>,
+      EnvFromRoute<R, E>,
+      ConvertPathType<R['path']>,
+      RouteHandlerResponse<R> | undefined
+    >
   | undefined
 
 // Merge each batch entry's schema into one normalized route map.
