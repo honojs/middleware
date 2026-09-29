@@ -1,0 +1,19 @@
+LICENSE
+  s_79755d88a4ef3f::t_61ce3f8a7b71ff 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a6360df7ec7553f8121dfc955e90a269044e6fec",
+  "prompts": {},
+  "sessions": {
+    "s_79755d88a4ef3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4df1b6c9-8a95-4f1d-b393-da289b25524a",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
