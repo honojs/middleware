@@ -87,7 +87,7 @@ jobs:
       - run: pnpm test --coverage --project @hono/${{ matrix.package }}
         id: test
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
-      - uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         if: ${{ matrix.package != 'eslint-config' && matrix.package != 'qwik-city' && matrix.package != 'react-compat' }}
         with:
           fail_ci_if_error: true
