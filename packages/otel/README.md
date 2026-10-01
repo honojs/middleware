@@ -63,6 +63,22 @@ This function will be called with the `HonoContext` object as an argument, and s
 
 Be mindful that span names are actually defined by OpenTelemetry semantic conventions, and carry expactations about the format of the name.
 
+### getUrlFull
+
+`getUrlFull: (c: HonoContext) => string | undefined`
+By default the `url.full` span attribute carries the complete request URL, including the query string. If your URLs can carry one-time tokens or other values that must not reach your tracing backend, pass a `getUrlFull` function and return a redacted form, for example the origin and path only:
+
+```ts
+httpInstrumentationMiddleware({
+  getUrlFull: (c) => {
+    const url = new URL(c.req.url)
+    return `${url.origin}${url.pathname}`
+  },
+})
+```
+
+The function runs when the span starts, before routing. Returning `undefined` or an empty string, or throwing, falls back to the full request URL.
+
 ## Usage on Cloudflare Workers
 
 Since @opentelemetry/sdk-node is not supported on [Cloudflare Workers](https://workers.cloudflare.com/), you need to use [@microlabs/otel-cf-workers](https://github.com/evanderkoogh/otel-cf-workers) instead.
