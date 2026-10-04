@@ -25,6 +25,22 @@ export type HttpInstrumentationConfig = {
    * the existing behavior is preserved when this hook is not provided.
    */
   getRoute?: (c: HonoContext) => string | undefined
+  /**
+   * Resolves the value of the `url.full` span attribute.
+   *
+   * By default the attribute carries the complete request URL, including the
+   * query string and any identifiers embedded in the path. Return a reduced
+   * form when those parts can hold credentials, tokens, or other data that
+   * must not reach the tracing backend.
+   *
+   * The hook runs when the span starts, before routing, so it sees the
+   * request but not values a handler sets on the context later.
+   *
+   * Returning `undefined`, an empty string, or throwing falls back to the
+   * default, so the existing behavior is preserved when this hook is not
+   * provided.
+   */
+  getUrlFull?: (c: HonoContext) => string | undefined
   serviceName?: string
   serviceVersion?: string
 }
