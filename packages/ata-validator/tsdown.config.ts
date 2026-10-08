@@ -1,5 +1,8 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  entry: 'src/index.ts',
+  attw: {
+    profile: 'node16',
+  },
+  entry: ['src/index.ts', 'src/compiled.ts'],
 })

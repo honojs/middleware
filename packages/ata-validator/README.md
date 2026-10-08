@@ -65,6 +65,26 @@ app.get('/posts', ataValidator('query', page), (c) => {
 })
 ```
 
+## Compiled ahead of time
+
+`ata build` turns a schema into a JavaScript module that imports nothing. The `compiled` entry takes such a module, and imports nothing itself, so the validator engine stays out of the bundle: a Hono app with one validated route is about 2 KB gzipped over the same app with no validation, and it starts as fast. The `.d.ts` that `ata build` writes next to the module types `c.req.valid()`.
+
+```sh
+npx ata build 'schemas/*.schema.json' --out-dir src/generated
+```
+
+```ts
+import { ataCompiled } from '@hono/ata-validator/compiled'
+import * as user from './generated/user.schema.js'
+
+app.post('/user', ataCompiled('json', user), (c) => {
+  const data = c.req.valid('json')
+  return c.json({ success: true, message: `${data.name} is ${data.age}` })
+})
+```
+
+The hook and the `400` body are the same as above. The module reports every error with `keyword`, `instancePath`, `schemaPath`, `params` and `message`.
+
 ## Author
 
 Mert Can Altin <https://github.com/mertcanaltin>
