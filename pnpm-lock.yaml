@@ -117,6 +117,24 @@ importers:
         specifier: ^4.1.7
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.3.0)(@typescript/typescript6@6.0.2))(vite@8.1.3(@types/node@26.3.0)(esbuild@0.28.2)(yaml@2.9.0))
 
+  packages/ata-validator:
+    devDependencies:
+      ata-validator:
+        specifier: ^1.46.1
+        version: 1.46.1(yaml@2.9.0)
+      hono:
+        specifier: ^4.11.5
+        version: 4.12.28
+      tsdown:
+        specifier: ^0.22.3
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+      typescript:
+        specifier: npm:@typescript/typescript6@^6.0.2
+        version: '@typescript/typescript6@6.0.2'
+      vitest:
+        specifier: ^4.1.7
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.3.0)(@typescript/typescript6@6.0.2))(vite@8.1.3(@types/node@26.3.0)(esbuild@0.28.2)(yaml@2.9.0))
+
   packages/auth-js:
     devDependencies:
       '@auth/core':
@@ -1124,6 +1142,45 @@ packages:
     resolution: {integrity: sha512-pLMeRgRYS7/vZIgAAkOe2P6+XGTifR1MT9pqDoxZ11EmcJJ+DPmdPqLN8ZZF4U8R9KHCCQCS9c2wtuE8wSrfkw==}
     peerDependencies:
       zod: ^4.0.0
+
+  '@ata-validator/native-darwin-arm64@1.46.1':
+    resolution: {integrity: sha512-lQw7xFzwCQIma2GZ3WeMskOSDckupDlYGPPKjdAM47k7pSdDrcy4Nr1PpTiDqRn9lT+WTc1dc02GTuUslJxcDQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@ata-validator/native-darwin-x64@1.46.1':
+    resolution: {integrity: sha512-Clp9KWHdFv0PB1LNpeirsPyYg2dojSxfVd6lElkpf1e7HGQJzBPm1oJjwTdQzgYawf5nGpY7wFMYSsq37qJg3A==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@ata-validator/native-linux-arm64-gnu@1.46.1':
+    resolution: {integrity: sha512-wHgVqS5rDy0q8qFEMFzOiI/WcFzlfOGbEhoHYgMUThnnN/39SSXB3xRMZ9T053H2xAu5/SNWyxSmRAvzZzRlKg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@ata-validator/native-linux-arm64-musl@1.46.1':
+    resolution: {integrity: sha512-GX8wpaPTzUgoRYt4DieA2gB1qlTdxP3SKDJsxhU5YsvR0dC7rmW60/bddcTLGFhw8vBvMOCXgt1HTeldNUmvXg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@ata-validator/native-linux-x64-gnu@1.46.1':
+    resolution: {integrity: sha512-pv6mo3bXLIIHpPQJV+f+lpUJhqRYJQV9s3ycdLo16+Hc7glikKbfz1wdbczbF+ZyEaLU2voj9mBAQn+FGK7q4w==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@ata-validator/native-linux-x64-musl@1.46.1':
+    resolution: {integrity: sha512-AXyGIOZr7l0uxJMLoPHf1ZjPgGuR8ZptoYgoyQjV71UUyy5F3QAg++zsZl1qhguArfUaLJtU5+k3JzbbM4b8MA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@ata-validator/native-win32-x64@1.46.1':
+    resolution: {integrity: sha512-DplLOLeiPXGCR3txEkI0ZhVGRmXyGsBGYyh+XUyZDhmNmIMY/jfcqyzvW28HWDFLYaz8D/D0OB2hbL3OZ4awsg==}
+    cpu: [x64]
+    os: [win32]
 
   '@auth/core@0.35.3':
     resolution: {integrity: sha512-g6qfiqU4OtyvIEZ8J7UoIwAxEnNnLJV0/f/DW41U+4G5nhBlaCrnKhawJIJpU0D3uavXLeDT3B0BkjtiimvMDA==}
@@ -3685,6 +3742,16 @@ packages:
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+
+  ata-validator@1.46.1:
+    resolution: {integrity: sha512-ioDRXJBd955FKFkDFjh+Q9bCtnJYpBGW4qjisADAu9F8O5nt5DLzafzGdzopmqAP11F5YoLFaJMrPsNaYVyN9Q==}
+    engines: {node: '>=20.0.0'}
+    hasBin: true
+    peerDependencies:
+      yaml: ^2.0.0
+    peerDependenciesMeta:
+      yaml:
+        optional: true
 
   atomic-sleep@1.0.0:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
@@ -7669,6 +7736,27 @@ snapshots:
       openapi3-ts: 4.6.0
       zod: 4.4.3
 
+  '@ata-validator/native-darwin-arm64@1.46.1':
+    optional: true
+
+  '@ata-validator/native-darwin-x64@1.46.1':
+    optional: true
+
+  '@ata-validator/native-linux-arm64-gnu@1.46.1':
+    optional: true
+
+  '@ata-validator/native-linux-arm64-musl@1.46.1':
+    optional: true
+
+  '@ata-validator/native-linux-x64-gnu@1.46.1':
+    optional: true
+
+  '@ata-validator/native-linux-x64-musl@1.46.1':
+    optional: true
+
+  '@ata-validator/native-win32-x64@1.46.1':
+    optional: true
+
   '@auth/core@0.35.3':
     dependencies:
       '@panva/hkdf': 1.2.1
@@ -10037,6 +10125,17 @@ snapshots:
   async@3.2.6: {}
 
   asynckit@0.4.0: {}
+
+  ata-validator@1.46.1(yaml@2.9.0):
+    optionalDependencies:
+      '@ata-validator/native-darwin-arm64': 1.46.1
+      '@ata-validator/native-darwin-x64': 1.46.1
+      '@ata-validator/native-linux-arm64-gnu': 1.46.1
+      '@ata-validator/native-linux-arm64-musl': 1.46.1
+      '@ata-validator/native-linux-x64-gnu': 1.46.1
+      '@ata-validator/native-linux-x64-musl': 1.46.1
+      '@ata-validator/native-win32-x64': 1.46.1
+      yaml: 2.9.0
 
   atomic-sleep@1.0.0: {}
 
@@ -14496,6 +14595,35 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
       '@types/node': 25.9.5
+      '@vitest/coverage-istanbul': 4.1.10(vitest@4.1.10)
+    transitivePeerDependencies:
+      - msw
+
+  vitest@4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.3.0)(@typescript/typescript6@6.0.2))(vite@8.1.3(@types/node@26.3.0)(esbuild@0.28.2)(yaml@2.9.0)):
+    dependencies:
+      '@vitest/expect': 4.1.10
+      '@vitest/mocker': 4.1.10(msw@2.15.0(@types/node@26.3.0)(@typescript/typescript6@6.0.2))(vite@8.1.3(@types/node@26.3.0)(esbuild@0.28.2)(yaml@2.9.0))
+      '@vitest/pretty-format': 4.1.10
+      '@vitest/runner': 4.1.10
+      '@vitest/snapshot': 4.1.10
+      '@vitest/spy': 4.1.10
+      '@vitest/utils': 4.1.10
+      es-module-lexer: 2.3.0
+      expect-type: 1.4.0
+      magic-string: 0.30.21
+      obug: 2.1.3
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      std-env: 4.2.0
+      tinybench: 2.9.0
+      tinyexec: 1.2.4
+      tinyglobby: 0.2.17
+      tinyrainbow: 3.1.0
+      vite: 8.1.3(@types/node@26.3.0)(esbuild@0.28.2)(yaml@2.9.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+      '@types/node': 26.3.0
       '@vitest/coverage-istanbul': 4.1.10(vitest@4.1.10)
     transitivePeerDependencies:
       - msw
