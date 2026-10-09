@@ -7,6 +7,7 @@ import {
   SpanStatusCode,
 } from '@opentelemetry/api'
 import {
+  ATTR_ERROR_TYPE,
   ATTR_HTTP_REQUEST_METHOD,
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
@@ -15,6 +16,7 @@ import {
   ATTR_HTTP_RESPONSE_HEADER,
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
+  ERROR_TYPE_VALUE_OTHER,
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler, Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
@@ -39,6 +41,22 @@ const normalizeConfig = (
     captureResponseHeaders: resHeadersSrc,
   }
   return norm
+}
+
+/**
+ * Resolves the `error.type` attribute for a request that ended with an error, following the
+ * HTTP semantic conventions: the exception type if one was thrown, otherwise the status code
+ * of a 5xx response. Returns `undefined` when the request did not end with an error.
+ */
+const getErrorType = (error: unknown, status: number): string | undefined => {
+  if (error) {
+    const name = (error as { name?: unknown }).name
+    return typeof name === 'string' && name.length > 0 ? name : ERROR_TYPE_VALUE_OTHER
+  }
+  if (status >= 500) {
+    return String(status)
+  }
+  return undefined
 }
 
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
@@ -88,9 +106,10 @@ export const httpInstrumentationMiddleware = (
     }
 
     const finalize = (span: Span | undefined, error: unknown) => {
-      try {
-        const status = c.res.status
+      const status = c.res.status
+      const errorType = getErrorType(error, status)
 
+      try {
         if (span) {
           const captureResp = config.responseHeaderSet
           for (const [name, value] of c.res.headers.entries()) {
@@ -112,6 +131,10 @@ export const httpInstrumentationMiddleware = (
               // Ignore errors when recording exception
             }
             span.setStatus({ code: SpanStatusCode.ERROR })
+          }
+
+          if (errorType !== undefined) {
+            span.setAttribute(ATTR_ERROR_TYPE, errorType)
           }
         }
       } finally {
@@ -142,7 +165,8 @@ export const httpInstrumentationMiddleware = (
         requestDuration.record(duration, {
           ...stableAttrs,
           [ATTR_HTTP_ROUTE]: finalRoute,
-          [ATTR_HTTP_RESPONSE_STATUS_CODE]: c.res.status,
+          [ATTR_HTTP_RESPONSE_STATUS_CODE]: status,
+          ...(errorType !== undefined && { [ATTR_ERROR_TYPE]: errorType }),
         })
       }
     }
@@ -150,7 +174,7 @@ export const httpInstrumentationMiddleware = (
     if (!tracer) {
       try {
         await next()
-        finalize(undefined, undefined)
+        finalize(undefined, c.error)
       } catch (e) {
         finalize(undefined, e)
         throw e
