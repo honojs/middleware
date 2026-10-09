@@ -49,6 +49,54 @@ const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | un
   return provider.getTracer(INSTRUMENTATION_SCOPE.name, INSTRUMENTATION_SCOPE.version)
 }
 
+/**
+ * Swap in a pass-through body that calls `onEnd` once: when the body has been
+ * fully sent, errors, or the client goes away. That is when the request ends
+ * for a streamed body (`stream`, `streamSSE`) and, a moment after the handler
+ * returns, for a buffered one; the headers cannot tell the two apart, since
+ * `stream()` sets none.
+ *
+ * Returns false, changing nothing, when there is no body to wait for: a null
+ * body, an error, or HEAD, whose body Hono discards unread.
+ */
+const onBodyEnd = (c: Context, onEnd: (cause?: unknown) => void): boolean => {
+  const res = c.res
+  if (c.error || !res.body || c.req.method === 'HEAD') {
+    return false
+  }
+  let ended = false
+  const end = (cause?: unknown) => {
+    if (ended) {
+      return
+    }
+    ended = true
+    onEnd(cause)
+  }
+  const reader = res.body.getReader()
+  const body = new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const { done, value } = await reader.read()
+        if (done) {
+          controller.close()
+          end()
+        } else {
+          controller.enqueue(value)
+        }
+      } catch (e) {
+        controller.error(e)
+        end(e)
+      }
+    },
+    cancel(reason) {
+      end()
+      return reader.cancel(reason)
+    },
+  })
+  c.res = new Response(body, res)
+  return true
+}
+
 export const httpInstrumentationMiddleware = (
   userConfig: HttpInstrumentationConfig = {
     captureRequestHeaders: [],
@@ -150,6 +198,13 @@ export const httpInstrumentationMiddleware = (
     if (!tracer) {
       try {
         await next()
+        if (
+          onBodyEnd(c, (cause) => {
+            finalize(undefined, cause)
+          })
+        ) {
+          return
+        }
         finalize(undefined, undefined)
       } catch (e) {
         finalize(undefined, e)
@@ -171,17 +226,29 @@ export const httpInstrumentationMiddleware = (
       },
       parent,
       async (span) => {
+        let deferred = false
         try {
           for (const [k, v] of Object.entries(deferredRequestHeaderAttributes)) {
             span.setAttribute(k, v)
           }
           await next()
+          // The response isn't sent when the handler returns (a streamed body
+          // may run for minutes): end the span when the body has been sent.
+          deferred = onBodyEnd(c, (cause) => {
+            finalize(span, cause)
+            span.end(config.getTime?.())
+          })
+          if (deferred) {
+            return
+          }
           finalize(span, c.error)
         } catch (e) {
           finalize(span, e)
           throw e
         } finally {
-          span.end(config.getTime?.())
+          if (!deferred) {
+            span.end(config.getTime?.())
+          }
         }
       }
     )
