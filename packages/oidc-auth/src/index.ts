@@ -178,6 +178,24 @@ const getOidcAuthEnv = (c: Context) => {
 }
 
 /**
+ * Deletes the session cookie. A cookie's identity is its (name, domain, path)
+ * triple, so when OIDC_COOKIE_DOMAIN is configured the deletion must also cover
+ * the domain-scoped cookie — deleting only the host-only cookie would leave the
+ * domain cookie (and its still-valid session JWT) intact.
+ */
+const deleteSessionCookie = (c: Context, env: Required<OidcAuthEnv>): void => {
+  // Always delete host-only cookie
+  deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+  // If domain is set, also delete domain-scoped cookie
+  if (env.OIDC_COOKIE_DOMAIN) {
+    deleteCookie(c, env.OIDC_COOKIE_NAME, {
+      path: env.OIDC_COOKIE_PATH,
+      domain: env.OIDC_COOKIE_DOMAIN,
+    })
+  }
+}
+
+/**
  * Returns the OAuth2 authorization server metadata.
  * If the metadata is not cached, it will be retrieved from the discovery endpoint.
  */
@@ -240,7 +258,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     try {
       auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET, env.OIDC_JWT_ALG)) as OidcAuth
     } catch {
-      deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+      deleteSessionCookie(c, env)
       return null
     }
     if (auth === null || auth.rtkexp === undefined || auth.ssnexp === undefined) {
@@ -261,7 +279,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
     if (auth.rtkexp < now) {
       // Refresh the token if it has expired
       if (auth.rtk === undefined || auth.rtk === '') {
-        deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+        deleteSessionCookie(c, env)
         return null
       }
       const as = await getAuthorizationServer(c)
@@ -287,7 +305,7 @@ export const getAuth = async (c: Context): Promise<OidcAuth | null> => {
           if (refreshErrorHook !== undefined) {
             await refreshErrorHook(error, c)
           }
-          deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+          deleteSessionCookie(c, env)
           return null
         }
         throw error
@@ -350,14 +368,7 @@ export const revokeSession = async (c: Context): Promise<void> => {
   const session_jwt = getCookie(c, env.OIDC_COOKIE_NAME)
   if (session_jwt !== undefined) {
     // Always delete host-only cookie
-    deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
-    // If domain is set, also delete domain-scoped cookie
-    if (env.OIDC_COOKIE_DOMAIN) {
-      deleteCookie(c, env.OIDC_COOKIE_NAME, {
-        path: env.OIDC_COOKIE_PATH,
-        domain: env.OIDC_COOKIE_DOMAIN,
-      })
-    }
+    deleteSessionCookie(c, env)
     const auth = (await verify(session_jwt, env.OIDC_AUTH_SECRET, env.OIDC_JWT_ALG)) as OidcAuth
     if (auth.rtk !== undefined && auth.rtk !== '') {
       // revoke refresh token
@@ -453,7 +464,12 @@ export const processOAuthCallback = async (
   // Parses the authorization response and validates the state parameter
   const state = getCookie(c, 'state')
   const path = new URL(env.OIDC_REDIRECT_URI, c.req.url).pathname
-  deleteCookie(c, 'state', { path })
+  // The state, nonce, code_verifier and continue cookies are set with the
+  // configured domain (when any), so the deletion must carry it as well —
+  // cookie identity is the (name, domain, path) triple.
+  const flowCookieOptions =
+    env.OIDC_COOKIE_DOMAIN == null ? { path } : { path, domain: env.OIDC_COOKIE_DOMAIN }
+  deleteCookie(c, 'state', flowCookieOptions)
   const currentUrl: URL = new URL(c.req.url)
   let params: URLSearchParams
   try {
@@ -470,11 +486,11 @@ export const processOAuthCallback = async (
   // Exchanges the authorization code for a refresh token
   const code = c.req.query('code')
   const nonce = getCookie(c, 'nonce')
-  deleteCookie(c, 'nonce', { path })
+  deleteCookie(c, 'nonce', flowCookieOptions)
   const code_verifier = getCookie(c, 'code_verifier')
-  deleteCookie(c, 'code_verifier', { path })
+  deleteCookie(c, 'code_verifier', flowCookieOptions)
   const continue_url = getCookie(c, 'continue')
-  deleteCookie(c, 'continue', { path })
+  deleteCookie(c, 'continue', flowCookieOptions)
   if (code === undefined || nonce === undefined || code_verifier === undefined) {
     throw new HTTPException(500, { message: 'Missing required parameters / cookies' })
   }
@@ -577,7 +593,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
         return c.redirect(url)
       }
     } catch {
-      deleteCookie(c, env.OIDC_COOKIE_NAME, { path: env.OIDC_COOKIE_PATH })
+      deleteSessionCookie(c, env)
       throw new HTTPException(500, { message: 'Invalid session' })
     }
     await next()
@@ -589,6 +605,7 @@ export const oidcAuthMiddleware = (): MiddlewareHandler => {
         path: env.OIDC_COOKIE_PATH,
         httpOnly: true,
         secure: true,
+        ...(env.OIDC_COOKIE_DOMAIN == null ? {} : { domain: env.OIDC_COOKIE_DOMAIN }),
       })
     }
   })
