@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import type { Context } from 'hono'
 import { describe, expect, it } from 'vitest'
 import type { PageObject, ScrollDescriptor } from './index'
-import { deepMerge, defer, inertia, merge, prepend, scroll } from './index'
+import { deepMerge, defer, inertia, merge, prepend, scroll, serializePage } from './index'
 
 describe('inertia', () => {
   describe('full page (non Inertia request)', () => {
@@ -84,10 +84,30 @@ describe('inertia', () => {
 
       // Only one real <script ...application/json> opening, and one real
       // closing </script> for it. The user payload's </script> must be
-      // neutralized via "/" -> "\/".
-      expect(html).toContain('<\\/script>')
+      // neutralized via JSON escaping.
+      expect(html).toContain('\\u003c\\/script>')
       expect(html.match(/<script data-page="app" type="application\/json">/g)).toHaveLength(1)
       expect(html.match(/<\/script>/g)).toHaveLength(1)
+    })
+
+    it('escapes "<" so a prop cannot put the script element in the double escaped state', async () => {
+      const app = new Hono()
+      app.use(inertia())
+      const payload = '<!--<script>'
+      app.get('/', (c) => c.render('Home', { q: payload }))
+
+      const res = await app.request('/')
+      const html = await res.text()
+      const json = html.match(
+        /<script data-page="app" type="application\/json">([\s\S]*?)<\/script>/
+      )?.[1]
+
+      expect(json).toBeDefined()
+      expect(json).not.toContain('<')
+      expect(json).toContain('\\u003c!--\\u003cscript>')
+      const page = JSON.parse(json ?? '') as PageObject
+      expect(page.props['q']).toBe(payload)
+      expect(html).toContain('</script>\n    <div id="app"></div>')
     })
 
     it('defaults version to null in the page object', async () => {
@@ -1594,5 +1614,27 @@ describe('inertia', () => {
       // so scroll metadata isn't relevant — only the unwrapped value matters.
       expect(await res.json()).toEqual({ users: [{ id: 1 }] })
     })
+  })
+})
+
+describe('serializePage', () => {
+  it.each([
+    '<!--<script>',
+    '</script><script>alert(1)</script>',
+    '<ScRiPt>',
+    '<div>& "text"</div>',
+    '/posts/42',
+    '你好 😀',
+  ])('round-trips %s as JSON without literal less-than signs', (value) => {
+    const page: PageObject = {
+      component: 'Home',
+      props: { value },
+      url: '/',
+      version: null,
+    }
+    const json = serializePage(page)
+
+    expect(json).not.toContain('<')
+    expect(JSON.parse(json)).toEqual(page)
   })
 })
