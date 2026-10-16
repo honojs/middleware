@@ -1,3 +1,4 @@
+import type { Meter } from '@opentelemetry/api'
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api'
 import { hrTime, millisToHrTime, timeInputToHrTime } from '@opentelemetry/core'
 import type {
@@ -23,8 +24,19 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
+import { stream, streamSSE } from 'hono/streaming'
 import { createMockMeterProvider, createTestMeter, createTestTracer } from './test-utils'
 import { httpInstrumentationMiddleware } from './index'
+
+/**
+ * `app.request`, then drain the body the way a server does: the span ends once
+ * the response has been sent. Reads a clone, so the caller can still read `res`.
+ */
+const send = async (app: Hono, ...args: Parameters<Hono['request']>): Promise<Response> => {
+  const res = await app.request(...args)
+  await res.clone().arrayBuffer()
+  return res
+}
 
 describe('OpenTelemetry middleware - Spans (combined)', () => {
   let app: Hono
@@ -52,7 +64,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
   })
 
   it('Should make a span', async () => {
-    const response = await app.request('http://localhost/foo')
+    const response = await send(app, 'http://localhost/foo')
     assert.strictEqual(response.status, 200)
     const spans = memoryExporter.getFinishedSpans()
     assert.strictEqual(spans.length, 1)
@@ -77,14 +89,14 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     )
     app2.get('/foo', (c) => c.text('ok'))
 
-    await app2.request('http://localhost/foo')
+    await send(app2, 'http://localhost/foo')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_SERVICE_NAME], 'test-service')
     assert.strictEqual(span.attributes[ATTR_SERVICE_VERSION], '1.2.3')
   })
 
   it('Should make a span with error (thrown)', async () => {
-    await app.request('http://localhost/error', { method: 'POST' })
+    await send(app, 'http://localhost/error', { method: 'POST' })
     const spans = memoryExporter.getFinishedSpans()
     assert.strictEqual(spans.length, 1)
     const [span] = spans
@@ -105,7 +117,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
 
   it('Should update the active span (parent span honored)', async () => {
     await tracerProvider.getTracer('test').startActiveSpan('existing span', async (parentSpan) => {
-      await app.request('http://localhost/foo')
+      await send(app, 'http://localhost/foo')
       parentSpan.end()
     })
     const spans = memoryExporter.getFinishedSpans()
@@ -116,7 +128,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
   })
 
   it('Should set the correct span name for subapp route', async () => {
-    await app.request('http://localhost/subapp/hello')
+    await send(app, 'http://localhost/subapp/hello')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.name, 'GET /subapp/hello')
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/subapp/hello')
@@ -132,7 +144,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     )
     app2.get('/foo', (c) => c.text('foo'))
 
-    await app2.request('http://localhost/foo', {
+    await send(app2, 'http://localhost/foo', {
       headers: {
         'Content-Type': 'application/json',
         'X-Custom-Header': 'custom-value',
@@ -163,7 +175,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       return c.json({ message: 'test' })
     })
 
-    await app2.request('http://localhost/foo')
+    await send(app2, 'http://localhost/foo')
 
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(
@@ -192,7 +204,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       return c.text('foo')
     })
 
-    await app2.request('http://localhost/foo', {
+    await send(app2, 'http://localhost/foo', {
       headers: {
         'Accept-Language': 'en-US',
         'X-Custom-Header': 'custom-value',
@@ -249,10 +261,10 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       (c) => c.json({})
     )
 
-    await app2.request('http://localhost/date')
-    await app2.request('http://localhost/unix')
-    await app2.request('http://localhost/hrt')
-    await app2.request('http://localhost/perf')
+    await send(app2, 'http://localhost/date')
+    await send(app2, 'http://localhost/unix')
+    await send(app2, 'http://localhost/hrt')
+    await send(app2, 'http://localhost/perf')
 
     const spans = memoryExporter.getFinishedSpans()
     const dateSpan = spans.find((s) => s.name === 'GET /date')!
@@ -280,7 +292,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const app2 = new Hono()
     app2.use(httpInstrumentationMiddleware({ tracerProvider }))
     app2.get('/boom', () => new Response('fail', { status: 503 }))
-    await app2.request('http://localhost/boom')
+    await send(app2, 'http://localhost/boom')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 503)
     assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
@@ -295,7 +307,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       })
     )
     app2.get('/foo', (c) => c.text('x'))
-    await app2.request('http://localhost/foo')
+    await send(app2, 'http://localhost/foo')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.name, 'custom GET')
   })
@@ -309,7 +321,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       })
     )
     app2.get('/foo', (c) => c.text('ok'))
-    await app2.request('http://localhost/foo')
+    await send(app2, 'http://localhost/foo')
     const spans = memoryExporter.getFinishedSpans()
     assert.strictEqual(spans.length, 0)
   })
@@ -330,7 +342,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       c.set('rpc.route' as never, '/rpc/user/getProfile' as never)
       return c.text('ok')
     })
-    await app2.request('http://localhost/rpc/user/getProfile')
+    await send(app2, 'http://localhost/rpc/user/getProfile')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/user/getProfile')
   })
@@ -344,7 +356,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       })
     )
     app2.get('/rpc/*', (c) => c.text('ok'))
-    await app2.request('http://localhost/rpc/user/getProfile')
+    await send(app2, 'http://localhost/rpc/user/getProfile')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
   })
@@ -358,7 +370,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       })
     )
     app2.get('/rpc/*', (c) => c.text('ok'))
-    await app2.request('http://localhost/rpc/user/getProfile')
+    await send(app2, 'http://localhost/rpc/user/getProfile')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
   })
@@ -374,7 +386,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       })
     )
     app2.get('/rpc/*', (c) => c.text('ok'))
-    await app2.request('http://localhost/rpc/user/getProfile')
+    await send(app2, 'http://localhost/rpc/user/getProfile')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
   })
@@ -401,7 +413,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.use(httpInstrumentationMiddleware({ meterProvider }))
     app.get('/metrics-test', (c) => c.text('success'))
 
-    await app.request('http://localhost/metrics-test')
+    await send(app, 'http://localhost/metrics-test')
     await metricReader.forceFlush()
 
     const resourceMetrics = memoryMetricExporter.getMetrics()
@@ -432,7 +444,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.use(httpInstrumentationMiddleware({ meterProvider }))
     app.get('/metrics-test', (c) => c.text('success'))
 
-    await app.request('http://localhost/metrics-test')
+    await send(app, 'http://localhost/metrics-test')
     await metricReader.forceFlush()
 
     const resourceMetrics = memoryMetricExporter.getMetrics()
@@ -455,7 +467,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     )
     app.get('/metrics-with-service', (c) => c.text('success'))
 
-    await app.request('http://localhost/metrics-with-service')
+    await send(app, 'http://localhost/metrics-with-service')
     await metricReader.forceFlush()
 
     const resourceMetrics = memoryMetricExporter.getMetrics()
@@ -478,10 +490,10 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.post('/created', (c) => c.text('created', 201))
     app.get('/not-found', (c) => c.text('not found', 404))
 
-    await app.request('http://localhost/success')
-    await app.request('http://localhost/success')
-    await app.request('http://localhost/created', { method: 'POST' })
-    await app.request('http://localhost/not-found')
+    await send(app, 'http://localhost/success')
+    await send(app, 'http://localhost/success')
+    await send(app, 'http://localhost/created', { method: 'POST' })
+    await send(app, 'http://localhost/not-found')
 
     await metricReader.forceFlush()
 
@@ -504,7 +516,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     })
 
     try {
-      await app.request('http://localhost/error', { method: 'POST' })
+      await send(app, 'http://localhost/error', { method: 'POST' })
     } catch {
       // ignore
     }
@@ -531,7 +543,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.get('/both', (c) => c.text('success'))
 
     memorySpanExporter.reset()
-    await app.request('http://localhost/both')
+    await send(app, 'http://localhost/both')
 
     const spans = memorySpanExporter.getFinishedSpans()
     assert.strictEqual(spans.length, 1)
@@ -552,7 +564,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     const app = new Hono()
     app.use(httpInstrumentationMiddleware({}))
     app.get('/no-metrics', (c) => c.text('success'))
-    const response = await app.request('http://localhost/no-metrics')
+    const response = await send(app, 'http://localhost/no-metrics')
     assert.strictEqual(response.status, 200)
   })
 
@@ -563,7 +575,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.use(httpInstrumentationMiddleware({ meterProvider }))
     app.route('/api', sub)
 
-    await app.request('http://localhost/api/nested')
+    await send(app, 'http://localhost/api/nested')
     await metricReader.forceFlush()
 
     const resourceMetrics = memoryMetricExporter.getMetrics()
@@ -589,7 +601,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     app.use(httpInstrumentationMiddleware({ meterProvider: mockMeterProvider }))
     app.get('/inflight', (c) => c.text('ok'))
 
-    await app.request('http://localhost/inflight')
+    await send(app, 'http://localhost/inflight')
 
     assert.strictEqual(adds.length, 2)
     assert.deepEqual(
@@ -619,7 +631,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     )
     app.get('/no-active-tracking', (c) => c.text('ok'))
 
-    await app.request('http://localhost/no-active-tracking')
+    await send(app, 'http://localhost/no-active-tracking')
 
     assert.strictEqual(adds.length, 0)
   })
@@ -639,7 +651,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
       c.set('rpc.route' as never, '/rpc/user/getProfile' as never)
       return c.text('ok')
     })
-    await app.request('http://localhost/rpc/user/getProfile')
+    await send(app, 'http://localhost/rpc/user/getProfile')
     await metricReader.forceFlush()
 
     const resourceMetrics = memoryMetricExporter.getMetrics()
@@ -653,5 +665,167 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.strictEqual(dp.attributes['http.route'], '/rpc/user/getProfile')
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
     assert.strictEqual(dp.attributes['http.response.status_code'], 200)
+  })
+})
+
+describe('OpenTelemetry middleware - Streamed responses', () => {
+  let memoryExporter: InMemorySpanExporter
+  let tracerProvider: NodeTracerProvider
+  let durations: number
+  let activeAdds: number[]
+
+  const meterProvider = createMockMeterProvider({
+    createHistogram: () =>
+      ({
+        record() {
+          durations++
+        },
+      }) as unknown as ReturnType<Meter['createHistogram']>,
+    createUpDownCounter: () =>
+      ({
+        add(value: number) {
+          activeAdds.push(value)
+        },
+      }) as unknown as ReturnType<Meter['createUpDownCounter']>,
+  })
+
+  beforeEach(() => {
+    const { exporter, tracerProvider: provider } = createTestTracer()
+    memoryExporter = exporter
+    tracerProvider = provider
+    durations = 0
+    activeAdds = []
+  })
+
+  /** An SSE route that sends one event after `release` resolves, then closes. */
+  const sseApp = (release: Promise<void>, disableTracing = false) => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider, disableTracing }))
+    app.get('/sse', (c) =>
+      streamSSE(c, async (s) => {
+        await release
+        await s.writeSSE({ data: 'done' })
+      })
+    )
+    return app
+  }
+
+  it('Should end the span when the stream finishes, not when the handler returns', async () => {
+    let release!: () => void
+    const app = sseApp(new Promise<void>((r) => (release = r)))
+
+    const res = await app.request('http://localhost/sse')
+    assert.include(res.headers.get('content-type'), 'text/event-stream')
+    // Handler returned, stream still open: nothing finalized yet.
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 0)
+    assert.strictEqual(durations, 0)
+    assert.deepEqual(activeAdds, [1])
+
+    release()
+    assert.include(await res.text(), 'data: done')
+
+    const spans = memoryExporter.getFinishedSpans()
+    assert.strictEqual(spans.length, 1)
+    assert.strictEqual(spans[0].attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 200)
+    assert.strictEqual(durations, 1)
+    assert.deepEqual(activeAdds, [1, -1])
+  })
+
+  it('Should end the span once when the client cancels the stream', async () => {
+    const app = sseApp(new Promise<void>(() => {}))
+
+    const res = await app.request('http://localhost/sse')
+    await res.body?.cancel()
+
+    const spans = memoryExporter.getFinishedSpans()
+    assert.strictEqual(spans.length, 1)
+    assert.strictEqual(spans[0].status.code, SpanStatusCode.UNSET)
+    assert.strictEqual(durations, 1)
+  })
+
+  it('Should record the error when the stream fails part-way', async () => {
+    // Hono's stream helpers swallow errors, so fail a raw body directly.
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.get(
+      '/sse',
+      () =>
+        new Response(
+          new ReadableStream({
+            pull(controller) {
+              controller.error(new Error('upstream failed'))
+            },
+          }),
+          { headers: { 'content-type': 'text/event-stream' } }
+        )
+    )
+
+    const res = await app.request('http://localhost/sse')
+    let readError: unknown
+    try {
+      await res.text()
+    } catch (e) {
+      readError = e
+    }
+    assert.ok(readError)
+
+    const spans = memoryExporter.getFinishedSpans()
+    assert.strictEqual(spans.length, 1)
+    assert.strictEqual(spans[0].status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(spans[0].events[0].attributes?.[ATTR_EXCEPTION_MESSAGE], 'upstream failed')
+  })
+
+  it('Should record duration at stream end when tracing is disabled', async () => {
+    let release!: () => void
+    const app = sseApp(new Promise<void>((r) => (release = r)), true)
+
+    const res = await app.request('http://localhost/sse')
+    assert.strictEqual(durations, 0)
+    release()
+    await res.text()
+    assert.strictEqual(durations, 1)
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 0)
+  })
+
+  it('Should wait for stream() bodies, which carry no streaming headers', async () => {
+    let release!: () => void
+    const released = new Promise<void>((r) => (release = r))
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.get('/raw', (c) =>
+      stream(c, async (s) => {
+        await released
+        await s.write('done')
+      })
+    )
+
+    const res = await app.request('http://localhost/raw')
+    assert.isNull(res.headers.get('content-type'))
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 0)
+
+    release()
+    assert.strictEqual(await res.text(), 'done')
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 1)
+    assert.strictEqual(durations, 1)
+  })
+
+  it('Should end at once for a body-less response', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.get('/empty', (c) => c.body(null, 204))
+
+    await app.request('http://localhost/empty')
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 1)
+  })
+
+  it('Should end HEAD requests at once, since Hono discards their body unread', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ tracerProvider, meterProvider }))
+    app.get('/page', (c) => c.text('hello'))
+
+    const res = await app.request('http://localhost/page', { method: 'HEAD' })
+    assert.isNull(res.body)
+    assert.strictEqual(memoryExporter.getFinishedSpans().length, 1)
+    assert.strictEqual(durations, 1)
   })
 })
