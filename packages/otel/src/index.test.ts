@@ -378,6 +378,70 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/rpc/*')
   })
+
+  // The `url.full` attribute is set when the span starts, so a `getUrlFull` config
+  // callback lets callers drop query strings or path identifiers before they
+  // reach the tracing backend.
+  it('Should use getUrlFull return value for the span url.full attribute', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getUrlFull: (c: Context) => {
+          const url = new URL(c.req.url)
+          return `${url.origin}${url.pathname}`
+        },
+      })
+    )
+    app2.get('/reset', (c) => c.text('ok'))
+    await app2.request('http://localhost/reset?token=secret')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/reset')
+  })
+
+  it('Should fall back to the request URL when getUrlFull returns undefined', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getUrlFull: () => undefined,
+      })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?a=1')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+  })
+
+  it('Should fall back to the request URL when getUrlFull returns an empty string', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getUrlFull: () => '',
+      })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?a=1')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+  })
+
+  it('Should fall back to the request URL when getUrlFull throws', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getUrlFull: () => {
+          throw new Error('boom')
+        },
+      })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?a=1')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+  })
 })
 
 describe('OpenTelemetry middleware - Metrics (combined)', () => {

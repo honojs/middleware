@@ -60,6 +60,22 @@ export const httpInstrumentationMiddleware = (
   const tracer = config.disableTracing ? undefined : resolveTracer(config)
 
   const spanName = (c: Context) => config.spanNameFactory?.(c) ?? `${c.req.method} ${routePath(c)}`
+  // Let the user reduce `url.full` before the span starts, since the attribute is
+  // set at span creation and the raw URL may carry query strings or identifiers
+  // that must not reach the tracing backend.
+  const urlFull = (c: Context) => {
+    if (config.getUrlFull) {
+      try {
+        const resolved = config.getUrlFull(c)
+        if (typeof resolved === 'string' && resolved.length > 0) {
+          return resolved
+        }
+      } catch {
+        // Ignore errors from the user-supplied resolver and fall back to the raw URL.
+      }
+    }
+    return c.req.url
+  }
 
   const activeReqs = config.captureActiveRequests ? createActiveRequestsTracker(config) : undefined
   const requestDuration = createRequestDurationTracker(config)
@@ -165,7 +181,7 @@ export const httpInstrumentationMiddleware = (
         startTime: config.getTime?.(),
         attributes: {
           ...stableAttrs,
-          [ATTR_URL_FULL]: c.req.url,
+          [ATTR_URL_FULL]: urlFull(c),
           [ATTR_HTTP_ROUTE]: routePath(c),
         },
       },
