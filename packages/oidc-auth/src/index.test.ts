@@ -485,6 +485,57 @@ describe('oidcAuthMiddleware()', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('set-cookie')).toMatch(`Domain=${MOCK_COOKIE_DOMAIN}`)
   })
+  test('Should delete the domain-scoped session cookie when the session JWT is invalid', async () => {
+    // With OIDC_COOKIE_DOMAIN set the session cookie is stored domain-scoped, so
+    // invalidating the session must delete that cookie too - deleting only the
+    // host-only cookie would keep the old (still valid) session JWT alive.
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_INCORRECT_SECRET}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    const deletions = res.headers.getSetCookie().filter((v) => v.startsWith('oidc-auth=;'))
+    expect(deletions).toHaveLength(2)
+    expect(deletions.some((v) => v.includes(`Domain=${MOCK_COOKIE_DOMAIN}`))).toBe(true)
+  })
+  test('Should delete the domain-scoped session cookie when the refresh-token grant is rejected', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const refreshTokenGrantRequest = vi.mocked(oauth2.refreshTokenGrantRequest)
+    refreshTokenGrantRequest.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: 'invalid_grant', error_description: 'Bad Request' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
+      })
+    )
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(302)
+    const deletions = res.headers.getSetCookie().filter((v) => v.startsWith('oidc-auth=;'))
+    expect(deletions).toHaveLength(2)
+    expect(deletions.some((v) => v.includes(`Domain=${MOCK_COOKIE_DOMAIN}`))).toBe(true)
+  })
+  test('Should renew the session cookie only with the configured domain (no host-only duplicate)', async () => {
+    const MOCK_COOKIE_DOMAIN = (process.env.OIDC_COOKIE_DOMAIN = 'example.com')
+    const req = new Request('http://localhost/', {
+      method: 'GET',
+      headers: { cookie: `oidc-auth=${MOCK_JWT_TOKEN_EXPIRED_SESSION}` },
+    })
+    const res = await app.request(req, {}, {})
+    expect(res).not.toBeNull()
+    expect(res.status).toBe(200)
+    const sessionCookies = res.headers.getSetCookie().filter((v) => v.startsWith('oidc-auth='))
+    expect(sessionCookies.length).toBeGreaterThan(0)
+    for (const value of sessionCookies) {
+      expect(value).toContain(`Domain=${MOCK_COOKIE_DOMAIN}`)
+    }
+  })
   test('Should use custom audience if defined', async () => {
     process.env.OIDC_AUDIENCE = 'audience'
     const req = new Request('http://localhost/', {
