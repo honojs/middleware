@@ -323,6 +323,33 @@ app.getOpenAPI31Document(
 
 The second parameter is optional and accepts generator options as supported by the `@asteasolutions/zod-to-openapi` library. Refer to their documentation for the complete list of available options and their usage.
 
+### OpenAPI v3.2
+
+You can generate OpenAPI v3.2 spec using the following methods:
+
+```ts
+app.doc32('/docs', { openapi: '3.2.0', info: { title: 'foo', version: '1' } }) // new endpoint
+app.getOpenAPI32Document({
+  openapi: '3.2.0',
+  info: { title: 'foo', version: '1' },
+}) // schema object
+```
+
+v3.2 adds hierarchical tags, so a tag can carry a `summary`, a `kind` and a `parent`:
+
+```ts
+app.doc32('/docs', {
+  openapi: '3.2.0',
+  info: { title: 'foo', version: '1' },
+  tags: [
+    { name: 'Library', summary: 'Library', kind: 'nav' },
+    { name: 'Books', summary: 'Books', parent: 'Library' },
+  ],
+})
+```
+
+Both methods accept the same optional generator options as their v3.1 counterparts.
+
 ### The Registry
 
 You can access the [`OpenAPIRegistry`](https://github.com/asteasolutions/zod-to-openapi#the-registry) object via `app.openAPIRegistry`:
