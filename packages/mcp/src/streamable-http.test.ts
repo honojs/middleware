@@ -514,6 +514,30 @@ describe('MCP helper', () => {
     )
   })
 
+  it('should accept session IDs containing commas from custom generators', async () => {
+    const customResult = await createTestServer({
+      sessionIdGenerator: () => 'session,token',
+    })
+    const customServer = customResult.server
+
+    const initResponse = await sendPostRequest(customServer, TEST_MESSAGES.initialize)
+    const customSessionId = initResponse.headers.get('mcp-session-id')
+    expect(customSessionId).toBe('session,token')
+
+    const response = await customServer.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+        'mcp-session-id': customSessionId ?? '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
   it('should establish standalone SSE stream and receive server-initiated messages', async () => {
     // First initialize to get a session ID
     sessionId = await initializeServer()

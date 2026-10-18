@@ -593,7 +593,7 @@ export class StreamableHTTPTransport implements Transport {
       })
     }
 
-    if (Array.isArray(sessionId as unknown) || sessionId.includes(',')) {
+    if (Array.isArray(sessionId as unknown) || sessionId.includes(', ')) {
       throw new HTTPException(400, {
         res: Response.json({
           jsonrpc: '2.0',
