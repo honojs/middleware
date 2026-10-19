@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=swagger-ui)](https://codecov.io/github/honojs/middleware)
 
-This library, `@hono/swagger-ui`, provides a middleware and a component for integrating [Swagger UI](https://swagger.io/docs/specification/v3_0/about/) with Hono applications. Swagger UI is an interactive documentation interface for APIs compliant with the OpenAPI Specification, making it easier to understand and test API endpoints.
+This library, `@hono/swagger-ui`, provides a middleware and a component for integrating Swagger UI with Hono applications. Swagger UI is an interactive documentation interface for APIs compliant with the OpenAPI Specification, making it easier to understand and test API endpoints.
 
 ## Installation
 
