@@ -24,6 +24,7 @@ import { swaggerUI } from '@hono/swagger-ui'
 
 const app = new Hono()
 
+// Describe your API
 const openApiDoc = {
   openapi: '3.0.0',
   info: {
