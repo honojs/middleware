@@ -311,8 +311,8 @@ importers:
         specifier: ^1.17.1
         version: 1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))
       '@conform-to/yup':
-        specifier: ^1.19.4
-        version: 1.19.4(yup@1.7.1)
+        specifier: ^1.21.2
+        version: 1.21.2(yup@1.7.1)
       '@conform-to/zod':
         specifier: ^1.20.2
         version: 1.20.2(zod@4.4.3)
@@ -1385,13 +1385,16 @@ packages:
   '@conform-to/dom@1.20.2':
     resolution: {integrity: sha512-HfVb0XCHZijXODupqdV7+DrlZgJAYRQsXm/FpfFjKZO1P1S8LhlS7yMBTH2K5zkMyhk6fV/BvfUZi88Kp1EslA==}
 
+  '@conform-to/dom@1.21.2':
+    resolution: {integrity: sha512-43LIYhFUPOMtV01LOH9Pes/8vROW7Qgh249ytv0EBfPCR963g0HR6xK6hUD1r2EjM8Zgs17oMZgoRyRT8krH/Q==}
+
   '@conform-to/valibot@1.19.4':
     resolution: {integrity: sha512-aAKgNpvycZNK9JIzmWu7Q/ogULRYKTeKsMmWS9h04dZH8jjBe0AKiE7WTWJosGOZjq2Ce/arm7D9//9QmGgyIA==}
     peerDependencies:
       valibot: '>= 0.32.0'
 
-  '@conform-to/yup@1.19.4':
-    resolution: {integrity: sha512-SdLGNXGimJyv66yqLQy9RDJl+s6d1JXP6PMUabzvYAqoCPiaWyaqBWpmF9figlto2OrFqw+5I5jERBJ0lmrIhA==}
+  '@conform-to/yup@1.21.2':
+    resolution: {integrity: sha512-Ca1peEXbzGrIBua3tQWyBejeGQzi5EBoTz+Cwi8fOYfBjzhqYO/eAQ4ff96BaXdPH+Hz0puTNe1ntmYWfN834Q==}
     peerDependencies:
       yup: '>=0.32.0'
 
@@ -8098,14 +8101,16 @@ snapshots:
 
   '@conform-to/dom@1.20.2': {}
 
+  '@conform-to/dom@1.21.2': {}
+
   '@conform-to/valibot@1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))':
     dependencies:
       '@conform-to/dom': 1.19.4
       valibot: 1.5.0(@typescript/typescript6@6.0.2)
 
-  '@conform-to/yup@1.19.4(yup@1.7.1)':
+  '@conform-to/yup@1.21.2(yup@1.7.1)':
     dependencies:
-      '@conform-to/dom': 1.19.4
+      '@conform-to/dom': 1.21.2
       yup: 1.7.1
 
   '@conform-to/zod@1.20.2(zod@4.4.3)':
