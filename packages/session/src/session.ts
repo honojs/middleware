@@ -333,10 +333,12 @@ export function getSession<Data extends SessionData>({
 }
 
 /**
- * Shallow merge session data with the session cookie,
+ * Split the session cookie into its `exp`, `iat`, and `sid` claims and the session data.
+ *
+ * When `data` is provided it replaces the session data stored in the cookie,
  * ensuring that the original `exp`, `iat`, and `sid` claims are preserved.
  */
 function getStatelessCookie(payload: SessionCookie, data?: SessionData | null) {
   const { exp, iat, sid, ...rest } = payload
-  return { payload: { exp, iat, sid }, data: { ...rest, ...data } }
+  return { payload: { exp, iat, sid }, data: { ...(data ?? rest) } }
 }
