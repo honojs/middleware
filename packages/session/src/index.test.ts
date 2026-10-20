@@ -168,6 +168,21 @@ describe('session.get(refresh)', () => {
     expect(sessionCookie?.payload.sub).toStrictEqual(newSub)
   })
 
+  it('removes data omitted by refresh from the session cookie', async () => {
+    refresh.mockResolvedValue({ sub })
+    const expiredSession = { ...session.payload, exp: recent, iat: recent, sub, role: 'admin' }
+    const cookie = await encrypt(expiredSession)
+    const res = await app.request('/session', { headers: { cookie: `sid=${cookie}` } })
+    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data).toStrictEqual({ sub })
+    expect(sessionCookie?.payload.sid).toStrictEqual(expiredSession.sid)
+    expect(sessionCookie?.payload.sub).toStrictEqual(sub)
+    expect(sessionCookie?.payload).not.toHaveProperty('role')
+  })
+
   it('replaces the session when refresh returns null', async () => {
     refresh.mockResolvedValue(null)
     const expiredSession = { ...session.payload, exp: recent, iat: recent, sub }
@@ -314,6 +329,39 @@ describe('session.update(fn)', () => {
       iat: recent,
       sub: newSub,
     })
+  })
+})
+
+describe('session.update(fn) removing data', () => {
+  const app = new Hono().put('/session', useSession<TestData>({ secret }), async (c) => {
+    await c.var.session.update((data) => {
+      const { role: _role, ...rest } = data ?? { sub }
+      return rest as TestData
+    })
+    return c.json(c.var.session.data)
+  })
+
+  it('removes data omitted by the update from the session cookie', async () => {
+    const cookie = await encrypt({ ...session.payload, iat: recent, sub, role: 'admin' })
+    const res = await app.request('/session', {
+      method: 'PUT',
+      headers: { cookie: `sid=${cookie}` },
+    })
+    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data).toStrictEqual({ sub })
+    expect(sessionCookie?.payload).toStrictEqual({ ...session.payload, iat: recent, sub })
+
+    const nextApp = new Hono().get('/session', useSession<TestData>({ secret }), async (c) => {
+      return c.json(await c.var.session.get())
+    })
+    const nextRes = await nextApp.request('/session', {
+      headers: { cookie: `sid=${sessionCookie?.value}` },
+    })
+
+    expect(await nextRes.json()).toStrictEqual({ sub })
   })
 })
 
