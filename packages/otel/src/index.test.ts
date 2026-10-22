@@ -10,6 +10,7 @@ import type {
 import { InMemorySpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 import {
+  ATTR_ERROR_TYPE,
   ATTR_HTTP_REQUEST_METHOD,
   ATTR_HTTP_RESPONSE_STATUS_CODE,
   ATTR_HTTP_ROUTE,
@@ -284,6 +285,47 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 503)
     assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '503')
+  })
+
+  it('Should set error.type to the exception type when the handler throws', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/throws', () => {
+      throw new TypeError('boom')
+    })
+    await app2.request('http://localhost/throws')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 500)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], 'TypeError')
+  })
+
+  it('Should set error.type to _OTHER when the thrown error has no name', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/throws', () => {
+      const error = new Error('anonymous')
+      error.name = ''
+      throw error
+    })
+    await app2.request('http://localhost/throws')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '_OTHER')
+  })
+
+  it('Should not set error.type for non-error responses', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/ok', (c) => c.text('ok'))
+    app2.get('/missing', (c) => c.text('missing', 404))
+    await app2.request('http://localhost/ok')
+    await app2.request('http://localhost/missing')
+    const spans = memoryExporter.getFinishedSpans()
+    assert.strictEqual(spans.length, 2)
+    for (const span of spans) {
+      assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], undefined)
+    }
   })
 
   it('Should respect spanNameFactory override', async () => {
@@ -517,6 +559,35 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     const dp = durationMetric.dataPoints.find((dp) => dp.attributes['http.route'] === '/error')!
     assert.strictEqual(dp.attributes['http.request.method'], 'POST')
     // Status code is not currently recorded in metric attributes by the instrumentation; allow absence compared to previous OTEL middleware
+  })
+
+  it('Should record error.type on the request duration metric for errors', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider }))
+    app.get('/ok', (c) => c.text('ok'))
+    app.get('/unavailable', (c) => c.text('unavailable', 503))
+    app.get('/throws', () => {
+      throw new TypeError('boom')
+    })
+
+    await app.request('http://localhost/ok')
+    await app.request('http://localhost/unavailable')
+    await app.request('http://localhost/throws')
+    await metricReader.forceFlush()
+
+    const resourceMetrics = memoryMetricExporter.getMetrics()
+    const metrics = resourceMetrics[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const errorTypeByRoute: Record<string, unknown> = {}
+    for (const dp of durationMetric.dataPoints) {
+      errorTypeByRoute[String(dp.attributes[ATTR_HTTP_ROUTE])] = dp.attributes[ATTR_ERROR_TYPE]
+    }
+    assert.deepStrictEqual(errorTypeByRoute, {
+      '/ok': undefined,
+      '/unavailable': '503',
+      '/throws': 'TypeError',
+    })
   })
 
   it('Should work with both tracer and meter providers', async () => {
