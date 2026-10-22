@@ -1,7 +1,7 @@
 // Constants derived from typical core-js patterns for string escaping
 // (e.g., related to JS_STRING_ESCAPE or similar proposals)
 const FIRST_DIGIT_OR_ASCII = /^[0-9A-Za-z]/
-const SYNTAX_SOLIDUS = /[/]/
+const SYNTAX_SOLIDUS = /[$()*+./?[\\\]^{|}]/
 const OTHER_PUNCTUATORS_AND_WHITESPACES = /[!"#$&'()*+,./:;<=>?@[\]^`{|}~\s]/
 
 // Control characters to escape, mapping to their escape sequence character
@@ -100,3 +100,8 @@ interface RegExpConstructor {
 
 //@ts-expect-error: RegExp.escape is only included in Node.js v24+ and Deno v2.3+
 export const escape = (RegExp.escape as RegExpConstructor['escape']) || $escape
+
+// Export for testing purposes
+export const __test = {
+  $escape,
+}
