@@ -1,5 +1,13 @@
 # @hono/ua-blocker
 
+## 0.1.45
+
+### Patch Changes
+
+- [#2185](https://github.com/honojs/middleware/pull/2185) [`0d6d733417faaafb82c851e706d3ca2f919bbc1f`](https://github.com/honojs/middleware/commit/0d6d733417faaafb82c851e706d3ca2f919bbc1f) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore(ua-blocker): sync `robots.json` with upstream
+
+- [#2190](https://github.com/honojs/middleware/pull/2190) [`9bbe9439bbc4763fa684b0a22e41b21ef85f96ba`](https://github.com/honojs/middleware/commit/9bbe9439bbc4763fa684b0a22e41b21ef85f96ba) Thanks [@RaphaelFakhri](https://github.com/RaphaelFakhri)! - Escape regex syntax characters in the `RegExp.escape` polyfill so blocklist entries such as `Bot (v1.0)` or `C++Bot` match literally on runtimes without native `RegExp.escape`, such as Node.js 22.
+
 ## 0.1.44
 
 ### Patch Changes
