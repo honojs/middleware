@@ -1,0 +1,19 @@
+packages/ua-blocker/src/index.test.ts
+  s_93e1062e309397::t_d16f8656889c19 143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d26a54e710f56287eb2343b265438a2b693bb276",
+  "prompts": {},
+  "sessions": {
+    "s_93e1062e309397": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b7c3f59-4b9a-4006-9097-80db661d676b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
