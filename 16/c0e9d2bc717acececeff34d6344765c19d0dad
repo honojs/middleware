@@ -1,0 +1,37 @@
+.changeset/auto-sync-robots.md
+  s_93e1062e309397::t_da6b7340ddbdb8 1-5
+.github/workflows/ci.yml
+  s_93e1062e309397::t_fddcea07f556f5 23
+packages/arktype-validator/package.json
+  s_93e1062e309397::t_601c111a755dc7 47
+packages/conform-validator/package.json
+  s_93e1062e309397::t_394bed9405172d 49
+packages/standard-validator/package.json
+  s_93e1062e309397::t_3b538a94bea2d3 48
+packages/typedriver-validator/package.json
+  s_93e1062e309397::t_94f8bb4993e801 47
+packages/ua-blocker/src/data/robots.json
+  s_93e1062e309397::t_e5283d3136a5c5 332-338,472-478,612-618,640-646,696-702,892-898,906-912,1298-1304,1326-1332
+packages/ua-blocker/src/generated.ts
+  s_93e1062e309397::t_5dc31187df99f8 50,70,90,94,102,130,132,188,192,199,201,203,205
+packages/ua-blocker/src/index.test.ts
+  s_93e1062e309397::t_2c215721d589bc 143
+pnpm-lock.yaml
+  s_93e1062e309397::t_f76d2f5ded1614 105-106,314-315,801-802,957-958,1117-1118,1120-1121,1388-1390,1396-1397,3670-3671,3673-3674,6220-6221,6614-6615,7690,7692,7694,8104-8105,8111,8113,10038,10040,10042,10044-10046,11708,13052,13542,14372,14385,14398,14411
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "16c0e9d2bc717acececeff34d6344765c19d0dad",
+  "prompts": {},
+  "sessions": {
+    "s_93e1062e309397": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b7c3f59-4b9a-4006-9097-80db661d676b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
