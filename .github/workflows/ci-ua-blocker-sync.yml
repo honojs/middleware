@@ -38,7 +38,7 @@ jobs:
         run: pnpm --filter @hono/ua-blocker prebuild
 
       - name: Format
-        run: pnpm prettier --write "packages/ua-blocker"
+        run: pnpm vp fmt packages/ua-blocker
 
       - name: Check for changes
         id: changes

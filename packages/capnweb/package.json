@@ -10,11 +10,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
-    "lint": "eslint",
+    "build": "vp pack",
+    "lint": "vp lint",
     "publint": "attw --pack && publint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest",
+    "test": "vp test",
     "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
@@ -51,9 +51,9 @@
     "capnweb": "^0.10.0",
     "hono": "^4.11.5",
     "publint": "^0.3.16",
-    "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "^4.1.7",
-    "ws": "^8.17.0"
+    "vitest": "catalog:",
+    "ws": "^8.17.0",
+    "vite-plus": "catalog:"
   }
 }

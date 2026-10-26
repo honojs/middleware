@@ -5,5 +5,5 @@
     "outDir": "../../dist/packages/inertia",
     "types": ["vitest/globals", "node"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

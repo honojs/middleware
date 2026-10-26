@@ -18,7 +18,7 @@ const { stdout } = await exec.getExecOutput('pnpm', [
 
 const changed = []
 
-for (const workspace of JSON.parse(stdout || '[]')) {
+for (const workspace of JSON.parse(stdout || '[]') as { name: string; private?: boolean }[]) {
   if (workspace.private) {
     continue
   }

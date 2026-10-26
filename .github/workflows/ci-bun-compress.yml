@@ -27,7 +27,7 @@ jobs:
         with:
           cache: true
       - run: pnpm install --filter @hono/bun-compress
-      - run: pnpm turbo --filter @hono/bun-compress build
+      - run: pnpm vp run --filter @hono/bun-compress build
       - run: bun test packages/bun-compress --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:

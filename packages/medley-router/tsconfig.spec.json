@@ -4,5 +4,5 @@
     "outDir": "../../dist/packages/medley-router",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

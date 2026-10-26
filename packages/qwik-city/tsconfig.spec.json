@@ -4,6 +4,6 @@
     "noImplicitReturns": false,
     "outDir": "../../dist/packages/quwik-city"
   },
-  "include": ["src", "tsdown.config.ts"],
-  "references": []
+  "include": ["src", "vite.config.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

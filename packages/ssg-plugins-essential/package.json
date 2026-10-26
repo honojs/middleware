@@ -7,10 +7,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
-    "lint": "eslint",
+    "build": "vp pack",
+    "lint": "vp lint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest"
+    "test": "vp test"
   },
   "exports": {
     "./robots-txt": "./src/plugins/robots-txt.ts",
@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
-    "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "^4.1.7"
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

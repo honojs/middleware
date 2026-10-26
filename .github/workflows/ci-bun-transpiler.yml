@@ -24,7 +24,7 @@ jobs:
         with:
           cache: true
       - run: pnpm install --filter @hono/bun-transpiler
-      - run: pnpm turbo --filter @hono/bun-transpiler build
+      - run: pnpm vp run --filter @hono/bun-transpiler build
       - run: bun test packages/bun-transpiler --coverage --coverage-reporter lcov
       - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:

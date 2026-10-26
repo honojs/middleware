@@ -7,9 +7,9 @@
   },
   "include": [
     "scripts",
-    "eslint.config.mjs",
     "packages/eslint-config/index.js",
-    "tsdown.config.ts",
-    "vitest.config.ts"
+    "vite.config.ts",
+    "vite.shared.ts",
+    "lint-suppressions.ts"
   ]
 }

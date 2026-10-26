@@ -9,5 +9,5 @@
     "outDir": "../../dist/packages/auth-js",
     "jsx": "react"
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

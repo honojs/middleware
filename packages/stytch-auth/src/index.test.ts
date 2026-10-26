@@ -1,25 +1,24 @@
 import { Hono } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
-import type { Mock } from 'vitest'
 import { Consumer, B2B } from '.'
 
 type sessionMock = {
-  authenticate: Mock
-  authenticateJwt: Mock
+  authenticate: ReturnType<typeof vi.fn>
+  authenticateJwt: ReturnType<typeof vi.fn>
 }
 
 type oauthMock = {
-  introspectTokenLocal: Mock
+  introspectTokenLocal: ReturnType<typeof vi.fn>
 }
 
 type b2bSessionMock = {
-  authenticate: Mock
-  authenticateJwt: Mock
+  authenticate: ReturnType<typeof vi.fn>
+  authenticateJwt: ReturnType<typeof vi.fn>
 }
 
 type b2bIdpMock = {
-  introspectTokenLocal: Mock
+  introspectTokenLocal: ReturnType<typeof vi.fn>
 }
 
 vi.mock(import('stytch'), async (importOriginal) => {

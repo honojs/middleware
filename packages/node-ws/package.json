@@ -10,8 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
-    "test": "vitest",
+    "build": "vp pack",
+    "test": "vp test",
     "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
@@ -41,9 +41,9 @@
     "@hono/node-server": "^2.1.1",
     "@types/ws": "^8.18.1",
     "hono": "^4.11.5",
-    "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "^4.1.7"
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   },
   "dependencies": {
     "ws": "^8.17.0"

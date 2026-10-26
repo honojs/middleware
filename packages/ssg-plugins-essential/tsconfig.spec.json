@@ -6,5 +6,5 @@
     "outDir": "../../dist/packages/ssg-plugins-essential",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

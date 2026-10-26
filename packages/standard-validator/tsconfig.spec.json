@@ -8,6 +8,6 @@
     "outDir": "../../dist/packages/standard-validator",
     "types": ["vitest/globals"]
   },
-  "include": ["__schemas__", "src", "tsdown.config.ts", "vitest.config.ts"],
-  "references": []
+  "include": ["__schemas__", "src", "vite.config.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

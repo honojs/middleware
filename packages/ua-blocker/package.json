@@ -10,11 +10,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
+    "build": "vp pack",
     "prebuild": "node --experimental-strip-types ./script/prebuild.ts",
-    "lint": "eslint",
+    "lint": "vp lint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest",
+    "test": "vp test",
     "getrobotstxt": "node --experimental-strip-types ./script/get-robots-txt.ts"
   },
   "exports": {
@@ -51,8 +51,8 @@
   "devDependencies": {
     "@types/node": "^25.2.3",
     "hono": "^4.11.5",
-    "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "^4.1.7"
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   }
 }

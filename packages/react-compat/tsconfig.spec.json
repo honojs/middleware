@@ -3,6 +3,6 @@
   "compilerOptions": {
     "outDir": "../../dist/packages/react-compat"
   },
-  "include": ["src", "tsdown.config.ts"],
-  "references": []
+  "include": ["src", "vite.config.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

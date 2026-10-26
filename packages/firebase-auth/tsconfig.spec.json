@@ -5,6 +5,6 @@
     "outDir": "../../dist/packages/firebase-auth",
     "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin", "vitest/globals"]
   },
-  "include": ["src", "firebase-tools.d.ts", "tsdown.config.ts", "vitest.config.ts"],
-  "references": []
+  "include": ["src", "firebase-tools.d.ts", "vite.config.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

@@ -1,7 +1,0 @@
-{
-  "src/clerk-auth.ts": {
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "count": 1
-    }
-  }
-}

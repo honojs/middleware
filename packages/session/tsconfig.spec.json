@@ -7,6 +7,6 @@
     "outDir": "../../dist/packages/session",
     "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin/types", "vitest/globals"]
   },
-  "include": ["examples", "src", "tsdown.config.ts", "vitest.config.ts"],
-  "references": []
+  "include": ["examples", "src", "vite.config.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

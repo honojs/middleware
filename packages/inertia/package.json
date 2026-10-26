@@ -10,10 +10,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
-    "lint": "eslint",
+    "build": "vp pack",
+    "lint": "vp lint",
     "typecheck": "tsc -b tsconfig.json",
-    "test": "vitest",
+    "test": "vp test",
     "version:jsr": "pnpm -w run version:set $npm_package_version"
   },
   "exports": {
@@ -55,10 +55,10 @@
   },
   "devDependencies": {
     "hono": "^4.11.5",
-    "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite": "^8.1.1",
-    "vitest": "^4.1.7"
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"

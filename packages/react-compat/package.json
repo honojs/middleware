@@ -44,8 +44,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm -w run build:pkg",
-    "lint": "eslint",
+    "build": "vp pack",
+    "lint": "vp lint",
     "typecheck": "tsc -b tsconfig.json --noEmit"
   },
   "exports": {
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "hono": "^4.11.5",
-    "tsdown": "^0.22.3",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vite-plus": "catalog:"
   }
 }

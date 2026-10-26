@@ -6,5 +6,5 @@
     "outDir": "../../dist/packages/conform-validator",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

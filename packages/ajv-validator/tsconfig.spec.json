@@ -5,5 +5,5 @@
     "outDir": "../../dist/packages/ajv-validator",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

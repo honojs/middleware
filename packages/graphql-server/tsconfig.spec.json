@@ -7,5 +7,5 @@
     "types": ["vitest/globals"]
   },
   "exclude": ["node_modules", "bun_test"],
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

@@ -7,5 +7,5 @@
     "outDir": "../../dist/packages/stytch-auth",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

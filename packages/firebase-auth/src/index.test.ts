@@ -5,7 +5,6 @@ import type { GoogleOAuthAccessToken } from 'firebase-auth-cloudflare-workers/di
 import { Hono } from 'hono'
 import { setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
-import { describe, it, expect, beforeAll, vi } from 'vitest'
 import type { VerifyFirebaseAuthEnv } from '.'
 import { verifyFirebaseAuth, getFirebaseToken, verifySessionCookieFirebaseAuth } from '.'
 
