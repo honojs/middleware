@@ -38,6 +38,39 @@ export type Hook<
 
 type HasUndefined<T> = undefined extends T ? true : false
 
+const RESTRICTED_DATA_FIELDS: Partial<Record<keyof ValidationTargets, string[]>> = {
+  header: ['cookie'],
+}
+
+const omitFields = (value: unknown, fields: string[]): unknown => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return value
+  }
+  return Object.fromEntries(Object.entries(value).filter(([key]) => !fields.includes(key)))
+}
+
+/**
+ * Removes sensitive fields (like cookies) from the `input` of each issue and of each
+ * path item, so that the default 400 response does not echo them back to the client.
+ */
+const sanitizeResult = <T extends GenericSchema | GenericSchemaAsync>(
+  result: SafeParseResult<T>,
+  target: keyof ValidationTargets
+): SafeParseResult<T> => {
+  const fields = RESTRICTED_DATA_FIELDS[target]
+  if (!fields || result.success) {
+    return result
+  }
+  return {
+    ...result,
+    issues: result.issues.map((issue) => ({
+      ...issue,
+      input: omitFields(issue.input, fields),
+      path: issue.path?.map((item) => ({ ...item, input: omitFields(item.input, fields) })),
+    })),
+  } as SafeParseResult<T>
+}
+
 export const vValidator = <
   T extends GenericSchema | GenericSchemaAsync,
   Target extends keyof ValidationTargets,
@@ -86,7 +119,7 @@ export const vValidator = <
     }
 
     if (!result.success) {
-      return c.json(result, 400)
+      return c.json(sanitizeResult(result, target), 400)
     }
 
     return result.output
