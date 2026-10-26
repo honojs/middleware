@@ -1,0 +1,29 @@
+.changeset/strip-cookie-from-400-body.md
+  s_eebc5901743536::t_11e5341a4f6bc0 1-6
+packages/standard-validator/src/index.test.ts
+  s_eebc5901743536::t_06ca8f0672ef9e 468-470,473
+packages/standard-validator/src/index.ts
+  s_eebc5901743536::t_459ce15b83e66f 6,157-160
+packages/standard-validator/src/sanitize-issues.ts
+  s_eebc5901743536::t_a7baea71206871 8-31
+packages/valibot-validator/src/index.test.ts
+  s_eebc5901743536::t_82e04831e67037 217-244
+packages/valibot-validator/src/index.ts
+  s_eebc5901743536::t_d06fb6af40ff69 41-73,122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c479737ba0b405c74104deecacbdc1036c9c5eb4",
+  "prompts": {},
+  "sessions": {
+    "s_eebc5901743536": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b59199-b4e1-4360-a86d-9ab798da0bfd",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
