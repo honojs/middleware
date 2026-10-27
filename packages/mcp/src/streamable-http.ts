@@ -724,6 +724,12 @@ export class StreamableHTTPTransport implements Transport {
     }
 
     if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
+      // The client disconnected before the response was ready, so there is nowhere to deliver it
+      if (!response) {
+        this.#requestToStreamMapping.delete(requestId)
+        return
+      }
+
       this.#requestResponseMap.set(requestId, message)
       const relatedIds = Array.from(this.#requestToStreamMapping.entries())
         .filter(([, streamId]) => this.#streamMapping.get(streamId) === response)
@@ -733,9 +739,6 @@ export class StreamableHTTPTransport implements Transport {
       const allResponsesReady = relatedIds.every((id) => this.#requestResponseMap.has(id))
 
       if (allResponsesReady) {
-        if (!response) {
-          throw new Error(`No connection established for request ID: ${String(requestId)}`)
-        }
         if (this.#enableJsonResponse) {
           // All responses ready, send as JSON
           if (this.sessionId !== undefined) {
