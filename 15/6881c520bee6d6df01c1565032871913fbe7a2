@@ -1,0 +1,127 @@
+packages/arktype-validator/src/index.test.ts
+  s_f134022a816c97::t_bace92fff49db5 72,140
+packages/auth-js/src/client.test.ts
+  s_f134022a816c97::t_6f5a12a654bdae 1
+packages/auth-js/src/index.test.ts
+  s_f134022a816c97::t_c31b641091b748 6
+packages/capnweb/src/index.ts
+  s_f134022a816c97::t_8c8a809f4904b1 40
+packages/casbin/src/index.test.ts
+  s_f134022a816c97::t_53a49ab385e33e 5
+packages/class-validator/src/index.test.ts
+  s_f134022a816c97::t_88113a229102c1 49
+packages/cloudflare-access/src/index.test.ts
+  s_f134022a816c97::t_6768e0c8db9cde 2
+packages/conform-validator/src/hook.test.ts
+  s_f134022a816c97::t_8eb44e617a55af 4
+packages/conform-validator/src/index.ts
+  s_f134022a816c97::t_c5e132f479bd28 1
+packages/conform-validator/src/valibot.test.ts
+  s_f134022a816c97::t_b920f70623ffeb 61
+packages/conform-validator/src/yup.test.ts
+  s_f134022a816c97::t_242bffefae6df3 57
+packages/conform-validator/src/zod.test.ts
+  s_f134022a816c97::t_aa71088fc590d0 57
+packages/effect-validator/src/index.test.ts
+  s_f134022a816c97::t_8a91f2bc82cc52 67,143
+packages/esbuild-transpiler/src/transpilers/node.test.ts
+  s_f134022a816c97::t_7103d4825a0a60 2
+packages/esbuild-transpiler/src/types.esbuild.ts
+  s_f134022a816c97::t_2c3cd6fd799416 1
+packages/event-emitter/src/index.test.ts
+  s_f134022a816c97::t_deea87ca3bc91b 3
+packages/graphql-server/src/index.ts
+  s_f134022a816c97::t_3b52659cde7161 23,29,39
+packages/inertia/src/index.test.ts
+  s_f134022a816c97::t_6f13815751d0d7 3
+packages/inertia/src/page-props.test.ts
+  s_f134022a816c97::t_9f8b33fd423721 3
+packages/inertia/src/page-props.ts
+  s_f134022a816c97::t_11236cda9393da 46
+packages/mcp/src/auth/helpers/token.test.ts
+  s_f134022a816c97::t_cb4d034b24773f 20
+packages/mcp/src/auth/providers/proxy-provider.test.ts
+  s_f134022a816c97::t_846be14f0beaf0 12
+packages/mcp/src/stores/memory.test.ts
+  s_f134022a816c97::t_016378324b8afb 2
+packages/medley-router/src/router.ts
+  s_f134022a816c97::t_7024c7a137459b 1,5,10
+packages/node-ws/src/index.ts
+  s_f134022a816c97::t_95e225c43b17a5 23
+packages/oauth-providers/src/providers/twitch/revokeToken.ts
+  s_f134022a816c97::t_2018f9256ce24f 27
+packages/oauth-providers/src/utils/objectToQuery.ts
+  s_f134022a816c97::t_7603bc7fe1d631 1
+packages/qwik-city/src/index.ts
+  s_f134022a816c97::t_fa0562f3e11a35 1
+packages/react-renderer/src/react-renderer.ts
+  s_f134022a816c97::t_95c0dbfe0f5bd3 20,74,83
+packages/sentry/src/index.test.ts
+  s_f134022a816c97::t_e06c87fa73e913 10,14,16,35,55
+packages/sentry/src/index.ts
+  s_f134022a816c97::t_f0523d651b8755 15,19,21
+packages/ssg-plugins-essential/src/plugins/robots-txt.test.ts
+  s_f134022a816c97::t_60d2bbfdce8168 4
+packages/ssg-plugins-essential/src/plugins/rss.test.ts
+  s_f134022a816c97::t_54a736e32f7c6f 4
+packages/ssg-plugins-essential/src/plugins/sitemaps.test.ts
+  s_f134022a816c97::t_7f9fe343d91542 4
+packages/ssg-plugins-essential/src/utils/canonicalizeFilePath.test.ts
+  s_f134022a816c97::t_39d3c8d4062b6a 1
+packages/standard-validator/src/index.test.ts
+  s_f134022a816c97::t_95e6ae1acf4fa0 6
+packages/structured-logger/src/index.test.ts
+  s_f134022a816c97::t_2f3193fa093583 2
+packages/stytch-auth/src/index.test.ts
+  s_f134022a816c97::t_629dc5172f6e79 47,58,89,506
+packages/typebox-validator/src/index.test.ts
+  s_f134022a816c97::t_087a3e221fa38a 37,46,70,79,92,112,133,141
+packages/typebox-validator/src/index.ts
+  s_f134022a816c97::t_9480f3d3fd63e6 59
+packages/typedriver-validator/src/index.test.ts
+  s_f134022a816c97::t_5d3ef72e5c7a84 37,62,70,96,104,129,137,162,170,195,203,228,244,252
+packages/typedriver-validator/src/index.ts
+  s_f134022a816c97::t_801edad86524d9 52
+packages/typia-validator/src/http.test.ts
+  s_f134022a816c97::t_208db763d38a99 73,165
+packages/typia-validator/src/http.ts
+  s_f134022a816c97::t_50dc88e83eb7a0 75
+packages/typia-validator/src/index.test.ts
+  s_f134022a816c97::t_30b315b1ca13cb 44
+packages/typia-validator/src/index.ts
+  s_f134022a816c97::t_b137d5e341061d 10
+packages/valibot-validator/src/index.test.ts
+  s_f134022a816c97::t_55ad0df55316c9 446,448
+packages/zod-openapi/src/createRoute.test.ts
+  s_f134022a816c97::t_a2e40ebc2943d7 1
+packages/zod-openapi/src/index.test.ts
+  s_f134022a816c97::t_bd8de25fdeb93f 8,29
+packages/zod-openapi/src/index.ts
+  s_f134022a816c97::t_a77bed65a1cf5d 1,526,596,615
+packages/zod-openapi/src/zod-typeguart.test.ts
+  s_f134022a816c97::t_f19e5fe8badc71 1
+packages/zod-validator/src/index.ts
+  s_f134022a816c97::t_cff6a7d0ad8eea 1
+packages/zod-validator/src/v3.test.ts
+  s_f134022a816c97::t_a64f34d7357af4 6,81,167,220,277,599
+packages/zod-validator/src/v4.test.ts
+  s_f134022a816c97::t_cef39b76c1717f 6,81,167,220,282,604
+vite.config.ts
+  s_f134022a816c97::t_180195975d186b 351
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "156881c520bee6d6df01c1565032871913fbe7a2",
+  "prompts": {},
+  "sessions": {
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
