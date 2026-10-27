@@ -6,6 +6,6 @@
     "outDir": "../../dist/packages/casbin",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "tsdown.config.ts", "vitest.config.ts", "vitest.setup.ts"],
-  "references": []
+  "include": ["src", "vite.config.ts", "vitest.setup.ts"],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

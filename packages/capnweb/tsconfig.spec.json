@@ -4,5 +4,8 @@
     "outDir": "../../dist/packages/capnweb",
     "types": ["vitest/globals"]
   },
-  "references": [{ "path": "../node-ws/tsconfig.build.json" }]
+  "references": [
+    { "path": "../../tsconfig.repo-config-files.json" },
+    { "path": "../node-ws/tsconfig.build.json" }
+  ]
 }

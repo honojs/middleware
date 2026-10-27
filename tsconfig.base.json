@@ -7,6 +7,7 @@
     "declaration": true,
     "declarationMap": true,
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "emitDecoratorMetadata": true,
     "emitDeclarationOnly": true,
     "experimentalDecorators": true,
@@ -14,10 +15,5 @@
     "noEmitOnError": true,
     "types": []
   },
-  "include": [
-    "${configDir}/vitest.config.ts",
-    "${configDir}/tsdown.config.ts",
-    "${configDir}/package.json",
-    "${configDir}/src"
-  ]
+  "include": ["${configDir}/vite.config.ts", "${configDir}/package.json", "${configDir}/src"]
 }

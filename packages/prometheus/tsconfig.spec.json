@@ -6,5 +6,5 @@
     "outDir": "../../dist/packages/prometheus",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

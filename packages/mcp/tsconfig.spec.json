@@ -8,5 +8,5 @@
     "outDir": "../../dist/packages/mcp",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

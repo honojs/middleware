@@ -4,5 +4,5 @@
     "outDir": "../../dist/packages/swagger-editor",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

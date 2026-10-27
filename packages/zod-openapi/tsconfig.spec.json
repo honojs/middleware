@@ -10,5 +10,5 @@
     "outDir": "../../dist/packages/zod-openapi",
     "types": ["vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

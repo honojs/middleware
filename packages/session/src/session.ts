@@ -69,7 +69,9 @@ interface UpdateSession<Data> {
 }
 
 export type SessionResult<Data> =
-  InitialisedSession<Data> | UpdateSession<Data> | DeleteSession<Data>
+  | InitialisedSession<Data>
+  | UpdateSession<Data>
+  | DeleteSession<Data>
 
 interface SessionStore<Data> extends Session<Data> {
   /**

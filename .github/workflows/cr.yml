@@ -27,16 +27,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
-        with:
-          path: |
-            .turbo
-            packages/*/.cache
-          key: ${{ runner.os }}-turbo-preview-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-preview-
-            ${{ runner.os }}-turbo-
-
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           cache: true
@@ -45,7 +35,7 @@ jobs:
         with:
           node-version-file: .tool-versions
       - name: Build
-        run: pnpm turbo build
+        run: pnpm build
 
       - name: Publish to StackBlitz
         run: pnpm pkg-pr-new publish --compact --no-template './packages/*'

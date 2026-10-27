@@ -6,5 +6,5 @@
     "outDir": "../../dist/packages/cloudflare-access",
     "types": ["@cloudflare/workers-types", "vitest/globals"]
   },
-  "references": []
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }

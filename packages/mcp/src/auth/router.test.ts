@@ -18,6 +18,10 @@ import { wellKnownRouter } from './helpers/wellknown'
 import { mcpAuthRouter } from './router'
 import type { AuthRouterOptions } from './router'
 
+vi.mock('pkce-challenge', () => ({
+  verifyChallenge: vi.fn().mockResolvedValue(true),
+}))
+
 describe('MCP Auth Router', () => {
   // Setup mock provider with full capabilities
   const mockClientStore: OAuthRegisteredClientsStore = {
@@ -330,11 +334,6 @@ describe('MCP Auth Router', () => {
     })
 
     it('routes to token endpoint', async () => {
-      // Setup verifyChallenge mock for token handler
-      vi.mock('pkce-challenge', () => ({
-        verifyChallenge: vi.fn().mockResolvedValue(true),
-      }))
-
       const response = await app.request('/token', {
         method: 'POST',
         body: JSON.stringify({

@@ -10,5 +10,6 @@
     {
       "transform": "typia/lib/transform"
     }
-  ]
+  ],
+  "references": [{ "path": "../../tsconfig.repo-config-files.json" }]
 }
