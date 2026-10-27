@@ -1,5 +1,11 @@
 # @hono/session
 
+## 0.2.2
+
+### Patch Changes
+
+- [#2195](https://github.com/honojs/middleware/pull/2195) [`6e7baa2`](https://github.com/honojs/middleware/commit/6e7baa261deac5c00cb8a60683d68dece7b9effa) Thanks [@sebxt](https://github.com/sebxt)! - Replace the data stored in a stateless session cookie on `update()` and refresh, so keys removed from the session data are no longer kept in the cookie. In stateless mode, `update()` now replaces the session data instead of merging it with the data already in the cookie, matching the behaviour with `useSessionStorage()`.
+
 ## 0.2.1
 
 ### Patch Changes
