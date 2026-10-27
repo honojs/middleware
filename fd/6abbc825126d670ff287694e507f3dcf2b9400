@@ -1,0 +1,358 @@
+packages/casbin/vite.config.ts
+  s_f134022a816c97::t_6579f10840f310 1-11,18
+packages/ssg-plugins-essential/vite.config.ts
+  s_f134022a816c97::t_3fd15c35910983 1-18
+packages/session/src/session.ts
+  s_f134022a816c97::t_706330e2fe2dd5 72-74
+.github/workflows/autofix.yml
+  s_f134022a816c97::t_413aaaaa6b0952 30-31
+packages/structured-logger/vite.config.ts
+  s_f134022a816c97::t_f563767c4f7d05 1-8,13
+packages/esbuild-transpiler/package.json
+  s_f134022a816c97::t_5c1951eca9a0d1 13-14,16,70-71
+packages/cloudflare-access/tsconfig.spec.json
+  s_f134022a816c97::t_3741344a49a502 9
+packages/bun-compress/package.json
+  s_f134022a816c97::t_03ecef90a0ff14 14-15,49-50
+packages/conform-validator/package.json
+  s_f134022a816c97::t_1869d33d850c5b 13-14,16,54,56-57
+packages/qwik-city/vite.config.ts
+  s_f134022a816c97::t_e5f15a07eeebba 1-7
+.vscode/settings.json
+  s_f134022a816c97::t_8ca889a689eb60 3-5,7-23
+.github/workflows/ci-ua-blocker-sync.yml
+  s_f134022a816c97::t_c7eacb707cbb49 41
+packages/valibot-validator/package.json
+  s_f134022a816c97::t_5ebc0be59b0de5 17-18,20,50-51
+packages/react-renderer/package.json
+  s_f134022a816c97::t_eaa2f27f3a25cf 13-14,16,48,55-56
+packages/esbuild-transpiler/tsconfig.spec.json
+  s_f134022a816c97::t_9b0dde2bf292c9 7
+packages/typedriver-validator/package.json
+  s_f134022a816c97::t_6e1a0defe66b13 17-18,20,53-55
+packages/casbin/tsconfig.spec.json
+  s_f134022a816c97::t_ccb075bf33436b 9-10
+packages/swagger-editor/tsconfig.spec.json
+  s_f134022a816c97::t_b5f51b9c10ebe7 7
+packages/capnweb/vite.config.ts
+  s_f134022a816c97::t_2d54d51fef0b05 1-8,12
+tsconfig.base.json
+  s_f134022a816c97::t_ef4040009fd5e8 10,18
+packages/mcp/vite.config.ts
+  s_f134022a816c97::t_c2dc7b6172b55b 1-19
+packages/stytch-auth/package.json
+  s_f134022a816c97::t_473d1d9c05e7a4 13-14,16,49-50
+packages/event-emitter/tsconfig.spec.json
+  s_f134022a816c97::t_242dd23739fd6a 8
+packages/standard-validator/src/index.ts
+  s_f134022a816c97::t_8b3c5779dbdf1b 33-40,131-134
+vite.shared.ts
+  s_f134022a816c97::t_84f91beab920cf 1-17
+packages/node-ws/tsconfig.spec.json
+  s_f134022a816c97::t_5b2a7060b9254e 8
+packages/clerk-auth/vite.config.ts
+  s_f134022a816c97::t_5fd7ecf03cf7d1 1-8,14
+packages/class-validator/package.json
+  s_f134022a816c97::t_7d7f6710e111db 17-18,20,48-49
+packages/ssg-plugins-essential/package.json
+  s_f134022a816c97::t_b347335933cf95 10-11,13,54-55
+packages/medley-router/package.json
+  s_f134022a816c97::t_b28028c6b249d6 13-14,16,48-49
+packages/oauth-providers/vite.config.ts
+  s_f134022a816c97::t_8f32c737f4ae37 1-19
+packages/typedriver-validator/vite.config.ts
+  s_f134022a816c97::t_50d83a32e8ddcb 1-13
+packages/valibot-validator/tsconfig.spec.json
+  s_f134022a816c97::t_1964f4323f068e 9
+packages/inertia/vite.config.ts
+  s_f134022a816c97::t_4c502e4f768e7a 1-15
+packages/typia-validator/tsconfig.spec.json
+  s_f134022a816c97::t_80a64206a32629 13-14
+packages/valibot-validator/vite.config.ts
+  s_f134022a816c97::t_11d79e4b67798c 1-13
+packages/session/vite.config.ts
+  s_f134022a816c97::t_18be238e1cacf6 2-12,26
+packages/trpc-server/vite.config.ts
+  s_f134022a816c97::t_90fc5848e9ed22 1-13
+packages/otel/tsconfig.spec.json
+  s_f134022a816c97::t_f5d0cbefb97787 10
+packages/event-emitter/vite.config.ts
+  s_f134022a816c97::t_3aae042725362b 1-13
+packages/standard-validator/tsconfig.spec.json
+  s_f134022a816c97::t_f0f7a4a753ce0b 11-12
+packages/valibot-validator/src/index.ts
+  s_f134022a816c97::t_1caf1e2450de8a 30-37,103-106
+packages/swagger-ui/tsconfig.spec.json
+  s_f134022a816c97::t_632789fcc2ef17 8
+packages/zod-openapi/tsconfig.spec.json
+  s_f134022a816c97::t_90040a2babe93c 13
+packages/oidc-auth/tsconfig.spec.json
+  s_f134022a816c97::t_f1c7a328f0f9fd 10
+packages/ajv-validator/vite.config.ts
+  s_f134022a816c97::t_5616314d057efa 1-8,12
+packages/firebase-auth/tsconfig.spec.json
+  s_f134022a816c97::t_ca9a4d222e8df8 8-9
+packages/stytch-auth/src/index.test.ts
+  s_f134022a816c97::t_4ce25afb47cb0c 7-8,12,16-17,21
+tsconfig.repo-config-files.json
+  s_f134022a816c97::t_4e69a8660a62e4 11-13
+packages/zod-validator/package.json
+  s_f134022a816c97::t_1813772935f478 17-18,20,49-51
+packages/hello/vite.config.ts
+  s_f134022a816c97::t_88e9b2b7a66f73 1-13
+packages/auth-js/vite.config.ts
+  s_f134022a816c97::t_cd266d24178319 1-16
+packages/mcp/tsconfig.spec.json
+  s_f134022a816c97::t_421079fac895d1 11
+packages/cloudflare-access/package.json
+  s_f134022a816c97::t_2674ae5fafa9e6 13-14,16,49-50
+packages/conform-validator/tsconfig.spec.json
+  s_f134022a816c97::t_58f5af12c9a3d6 9
+packages/graphql-server/tsconfig.spec.json
+  s_f134022a816c97::t_43615b09638d75 10
+packages/auth-js/tsconfig.spec.json
+  s_f134022a816c97::t_d1c40e0f9b5eac 12
+.github/workflows/pr.yml
+  s_f134022a816c97::t_724fa8dbb08701 48,79
+packages/firebase-auth/vite.config.ts
+  s_f134022a816c97::t_973b56d477f7a7 2-29,33
+packages/otel/vite.config.ts
+  s_f134022a816c97::t_de7369a7bf9ee4 1-13
+packages/oauth-providers/tsconfig.spec.json
+  s_f134022a816c97::t_5f06e87988d4c9 10-11
+pnpm-lock.yaml
+  s_f134022a816c97::t_ef73e7168b83bf 7-26,41-42,57,59-60,76-81,83-84,106-108,110-111,124-126,128-129,148-150,163-165,167-168,181-183,185-186,211-213,215-216,235-237,239-240,260-262,264-265,288-290,292-293,306-308,310-311,336-338,340-341,360-362,364-365,381-383,385-386,405-407,409-410,419-420,423,430-432,434-435,452-454,456-457,467-469,471-472,475-478,486-488,490-491,514-516,518-519,536-538,540-541,561-563,565-566,575,579-581,583-584,604-606,608-609,638-640,642-643,656-658,660-661,667,670,677-679,689-691,696-697,716-718,720-721,735-737,739-740,749-750,760-762,764-765,779-781,783-784,803-805,807-808,824-826,828-829,845-847,849-850,860-862,864-865,878-880,882-883,896-898,900-901,920-922,924-925,938-940,942-943,965-967,969-970,979,988-991,993-994,1007-1009,1011-1012,1025-1027,1029-1030,1050-1052,1054-1055,1071-1073,1075-1076,1137-1139,1141-1143,1145-1147,1149-1151,1153-1155,1157-1159,1165-1168,1173-1175,1177-1183,1190-1194,1199-1201,1203-1205,1211-1217,1330-1331,1339-1340,1342,1344-1345,1350-1351,1356-1357,1362-1363,1368-1369,1867-1868,1879-1880,1885-1886,1895-1896,1905-1906,1916-1917,1928-1929,1940-1941,1952-1953,1964-1965,1976-1977,1988-1989,2000-2001,2013-2014,2027-2028,2041-2042,2055-2056,2069-2070,2083-2084,2097-2098,2111-2112,2123-2124,2127-2128,2138-2139,2150-2151,2162-2163,2180,2189,2198,2207,2216,2225,2234,2243,2260,2269,2278,2287,2296,2305,2314,2323,2332,2352-2354,2496,2503,2525-2527,2529-2530,2532-2536,2538-2539,2544-2545,2550-2551,2556-2557,2562-2569,2574-2575,2581-2582,2588-2589,2595-2610,2616-2617,2623-2624,2630-2631,2636-2637,2639-2640,2642-2643,2645,2648-2649,2654-2657,2659-2662,2664-2686,2690-2692,2696-2698,2702-2704,2708-2710,2714-2716,2720-2722,2726-2728,2733-2735,2740-2742,2747-2749,2754-2756,2761-2763,2768-2770,2775-2777,2782-2784,2788-2790,2794-2796,2800-2802,2806-2808,2810-2811,2813-3027,3054-3063,3079-3081,3106-3108,3112-3114,3427-3614,3618-3620,3625-3627,3632-3634,3638-3640,3644-3648,3650-3651,3656-3657,3662-3663,3668-3669,3675-3676,3682-3683,3689-3690,3696-3697,3703-3704,3710-3711,3716-3717,3722-3729,3734-3735,3740-3741,3746-3747,3753-3754,3760-3761,3767-3768,3774-3775,3781-3782,3788-3789,3794-3795,3800-3801,3887-3890,3916-3918,4553-4555,4657-4658,5003-5006,5297-5298,5488-5490,5742-5745,5749-5753,5952-5953,6001-6004,6145-6150,6206-6235,6425-6428,6470-6472,6607-6609,6812-6813,6815-6819,6859-6862,7088-7090,7092-7093,7100-7102,7130-7133,7264-7265,7459-7462,7473-7479,7481,7483,7486-7488,7493-7499,7502,7577-7578,7582-7583,7587,7689-7690,7692-7693,7695-7696,7716-7718,7789-7794,7796,7798-7806,7808,7810,7812-7813,7815,7817-7819,7821,7824,7826-7827,7829-7830,7832,7836-7837,7840-7842,7844,7846-7847,7853-7856,7859,7861-7863,7865,7867-7873,7880-7886,7889,7898,7902,7904-7905,7908,7918-7919,7922,7927,8136,8140,8142,8145-8163,8166,8170,8173,8176,8179,8182,8535,8537,8545,8547,8550,8552,8558,8564,8570,8576,8582,8588,8594,8600,8606,8612,8620,8622,8630,8632,8640,8642,8650,8652,8660,8662,8670,8672,8680,8682,8690,8692,8700,8705,8707,8713,8719,8725,8732,8735,8737,8740,8742,8744-8745,8747,8757,8759-8760,8762,8764,8768,8775,8790,8794,8800,8802,8804-8806,8808,8810,8812-8813,8816,8825,8830,8836,8838-8839,8841,8843,8845-8846,8848,8850,8853-8854,8856-8869,8871,8873,8875-8876,8879,8881,8883,8885,8888,8890,8893,8895,8898,8900,8902,8909,8911,8930-8935,8952,8978,9164-9300,9321-9322,9356-9357,9363,9468-9482,9496-9497,9523-9524,9529-9530,9601,9603-9604,9717,9732,9736,9748,9751,9831-9921,9925-9934,9936,9938-9942,9944,9946-9952,9954,9956-9957,9959,9961-9962,9964,9966-9967,9969,9971-9972,9974,9976-9977,9979,9981-9982,9984,9988,9990-9992,9995-9997,9999-10001,10003-10005,10007,10009,10013-10118,10121,10124,10127,10130,10133,10136,10139,10142,10145,10148,10151,10154,10157,10160,10163,10166,10169,10172,10175,10178,10181,10184,10261,10263,10302-10305,10686-10687,10809,10894-10895,10986,11121,11125-11126,11128-11129,11412,11414,11494,11501,11586-11587,11994,12026,12028,12175-12176,12393-12394,12399-12403,12407,12774-12787,12790-12792,12796,12846-12847,12880,12882,13003-13005,13074-13229,13416-13417,13452-13456,13603-13604,13919-13952,13958-13983,14027-14032,14303,14305,14309-14310,14312,14332-14333,14359,14454,14463,14484,14555,14657-14658,14677-14692,14694-14730,14732-14747,14749-14785,14787-14802,14804-14840,14842,14844-14850,14852-14854,14856-14857,14859-14865,14867,14869-14872,14874-14876,14878-14879,14881,14886-14888,14892,14894-14897,14899-14901,14903-14904,14906,14910-14913,14917,14919-14922,14924-14926,14928-14929,14931,14935-14938,14942,14944-14947,14949-14951,14953-14954,14956,14960-14963,15024,15026-15030,15032,15035,15037-15056,15059,15064,15152,15154,15156,15158,15160-15176,15178-15189,15212-15213
+packages/eslint-config/package.json
+  s_eebc5901743536::t_6b92dd42da881c 26
+packages/sentry/vite.config.ts
+  s_f134022a816c97::t_26492fcc287aac 1-8,14
+packages/trpc-server/package.json
+  s_f134022a816c97::t_7e37ed7e75c180 13-14,16,50-52
+lint-suppressions.ts
+  s_f134022a816c97::t_0ce5eb5080d68b 1-679
+packages/oauth-providers/package.json
+  s_f134022a816c97::t_ebf97fb208d794 18-19,21,124-125
+packages/medley-router/vite.config.ts
+  s_f134022a816c97::t_828c7cecd8896c 1-13
+packages/effect-validator/tsconfig.spec.json
+  s_f134022a816c97::t_b0736640090b15 8
+packages/graphql-server/package.json
+  s_f134022a816c97::t_6c99fb7204e34e 35-36,38,51-52
+packages/event-emitter/package.json
+  s_f134022a816c97::t_760b7d1e102147 13-14,16,49-50
+packages/capnweb/package.json
+  s_f134022a816c97::t_6ccc762088c77f 13-14,17,55-57
+packages/graphql-server/vite.config.ts
+  s_f134022a816c97::t_820dcd9d6f61a3 1-8,14
+.github/workflows/ci-bun-compress.yml
+  s_f134022a816c97::t_4ef655de343666 30
+packages/standard-validator/package.json
+  s_f134022a816c97::t_d95a9973a14763 17-18,20,52-54
+packages/swagger-editor/src/types.ts
+  s_f134022a816c97::t_230c08602f175c 135-142,254-261
+vite.config.ts
+  s_f134022a816c97::t_180195975d186b 351
+  s_f134022a816c97::t_66ab477af58055 1-350,352-420
+packages/bun-compress/tsconfig.spec.json
+  s_f134022a816c97::t_34d253fefa2f23 8
+packages/react-compat/tsconfig.spec.json
+  s_f134022a816c97::t_ebc15e7426717a 6-7
+packages/session/tsconfig.spec.json
+  s_f134022a816c97::t_684f264759b4a9 10-11
+packages/effect-validator/package.json
+  s_f134022a816c97::t_95680b3d895568 17-18,20,50-51
+packages/prometheus/package.json
+  s_f134022a816c97::t_70882258fa5bd3 13-14,16,50-51
+.github/actions/what-changed/main.ts
+  s_f134022a816c97::t_ef90286051b404 21
+packages/tsyringe/package.json
+  s_f134022a816c97::t_edf22cacbb4093 13-14,16,51-52
+packages/clerk-auth/package.json
+  s_f134022a816c97::t_d3a335c0eeeaa5 13-14,16,54-55
+packages/standard-validator/vite.config.ts
+  s_f134022a816c97::t_3cead4fb40fc59 1-13
+packages/bun-transpiler/vite.config.ts
+  s_f134022a816c97::t_ab2dad9a6f2559 1-8
+packages/ua-blocker/tsconfig.spec.json
+  s_f134022a816c97::t_b8219c83a08ba3 7-8
+packages/sentry/package.json
+  s_f134022a816c97::t_c39fbbee8aa937 13-14,16,52-53
+packages/mcp/package.json
+  s_f134022a816c97::t_26ff97f162f3e8 13-14,16,62-64
+packages/trpc-server/tsconfig.spec.json
+  s_f134022a816c97::t_9bf4ad51a6483a 7
+packages/sentry/tsconfig.spec.json
+  s_f134022a816c97::t_b357b2fe856c54 7
+packages/qwik-city/package.json
+  s_f134022a816c97::t_ae27d38e01fd6d 13-14,49-50
+packages/hello/tsconfig.spec.json
+  s_f134022a816c97::t_1dc023024d07f5 7
+packages/bun-compress/vite.config.ts
+  s_f134022a816c97::t_7fc7f547c8de4a 1-8,12
+tsconfig.build.json
+  s_f134022a816c97::t_64447a758e58fb 12
+packages/conform-validator/vite.config.ts
+  s_f134022a816c97::t_9fbb0e4ef44d6a 1-13
+.github/workflows/cr.yml
+  s_f134022a816c97::t_4240c53afbcdb5 38
+packages/react-renderer/tsconfig.spec.json
+  s_f134022a816c97::t_c05532cf169ab3 9
+packages/ua-blocker/package.json
+  s_f134022a816c97::t_2864ff4a508fd6 13,15,17,55-56
+packages/auth-js/package.json
+  s_f134022a816c97::t_dd1676d50a3c04 25-26,28,65
+packages/swagger-ui/vite.config.ts
+  s_f134022a816c97::t_0d614924dc4b64 1-13
+packages/ajv-validator/tsconfig.spec.json
+  s_f134022a816c97::t_004e18dc51e15d 8
+.gitignore
+  s_f134022a816c97::t_81a8b21e80f649 26
+packages/oidc-auth/vite.config.ts
+  s_f134022a816c97::t_5553feeac34d12 1-8,14
+packages/prometheus/tsconfig.spec.json
+  s_f134022a816c97::t_b279495ca29f21 9
+packages/capnweb/tsconfig.spec.json
+  s_f134022a816c97::t_f4bd410cdbddfa 7-10
+packages/otel/package.json
+  s_f134022a816c97::t_60baaddb0afbab 13-14,16,56-57
+packages/zod-openapi/vite.config.ts
+  s_f134022a816c97::t_c7b4b6c371932b 1-8,16
+packages/tsyringe/vite.config.ts
+  s_f134022a816c97::t_88acee5b02a547 1-13
+packages/bun-transpiler/tsconfig.spec.json
+  s_f134022a816c97::t_1a6cb4b830be24 8
+pnpm-workspace.yaml
+  s_f134022a816c97::t_eb052370ac4fca 14-31
+packages/auth-js/src/client.ts
+  s_f134022a816c97::t_d8456041dadcf7 52-55,77-86
+packages/typebox-validator/tsconfig.spec.json
+  s_f134022a816c97::t_b9dc6a0445fda8 8
+packages/cloudflare-access/vite.config.ts
+  s_f134022a816c97::t_a209822fd7bfd5 1-8,12
+packages/tsyringe/tsconfig.spec.json
+  s_f134022a816c97::t_ffacd70e3d9a3b 7
+scripts/version-set.ts
+  s_f134022a816c97::t_10684e647dfaf2 2,15-18,22-23
+packages/structured-logger/tsconfig.spec.json
+  s_f134022a816c97::t_e09eb1d9043ea5 8
+packages/typebox-validator/package.json
+  s_f134022a816c97::t_afd0e002a8b82b 17-18,20,50-51
+.github/workflows/ci.yml
+  s_f134022a816c97::t_a3202fbc04e817 49,70
+packages/medley-router/tsconfig.spec.json
+  s_f134022a816c97::t_caca2ed92d4637 7
+packages/swagger-ui/package.json
+  s_f134022a816c97::t_0b2ded992de5dc 17-18,20,49-50
+packages/ssg-plugins-essential/tsconfig.spec.json
+  s_f134022a816c97::t_660f1be20f579b 9
+packages/ua-blocker/vite.config.ts
+  s_f134022a816c97::t_c9e8f29c5595b2 1-16
+packages/swagger-editor/vite.config.ts
+  s_f134022a816c97::t_ed36a85f3e826c 1-13
+packages/react-renderer/vite.config.ts
+  s_f134022a816c97::t_ee5691891ecd0f 2-9,21
+packages/prometheus/vite.config.ts
+  s_f134022a816c97::t_5761c587f47fec 1-13
+packages/zod-validator/tsconfig.spec.json
+  s_f134022a816c97::t_27319107f3d40f 9
+packages/stytch-auth/tsconfig.spec.json
+  s_f134022a816c97::t_c91b6a3e50f065 10
+packages/structured-logger/package.json
+  s_f134022a816c97::t_94dbd720b6f911 13-14,16,49-51
+.github/workflows/release.yml
+  s_f134022a816c97::t_e13fb2ae4a46b5 40
+packages/typebox-validator/vite.config.ts
+  s_f134022a816c97::t_31f82a79004d1b 1-13
+packages/react-compat/vite.config.ts
+  s_f134022a816c97::t_9d8b0fc437293e 1-16
+packages/qwik-city/tsconfig.spec.json
+  s_f134022a816c97::t_a5514544b11453 7-8
+packages/swagger-editor/package.json
+  s_f134022a816c97::t_0ce1ce8f5aee43 17-18,20,48-49
+packages/zod-validator/vite.config.ts
+  s_f134022a816c97::t_a7d180976cd669 1-13
+package.json
+  s_f134022a816c97::t_ffeabcc201bb6a 7,13,18-21,33,39,45-47
+packages/arktype-validator/tsconfig.spec.json
+  s_f134022a816c97::t_c7514562832625 9
+packages/zod-openapi/package.json
+  s_f134022a816c97::t_356993e6c626a8 13-14,16,49,51-52
+packages/casbin/package.json
+  s_f134022a816c97::t_dc4aff20694802 18-19,21,56-57
+packages/clerk-auth/tsconfig.spec.json
+  s_f134022a816c97::t_9e422668450c01 9
+packages/node-ws/package.json
+  s_f134022a816c97::t_7f007cf82db409 13-14,45-46
+packages/inertia/package.json
+  s_f134022a816c97::t_c7916cc9d9119d 13-14,16,59-61
+packages/class-validator/tsconfig.spec.json
+  s_f134022a816c97::t_a306ed92aef2f6 8
+.github/workflows/ci-bun-transpiler.yml
+  s_f134022a816c97::t_c9e8f7ea877923 27
+packages/ajv-validator/package.json
+  s_f134022a816c97::t_7a770290e04d97 13-14,16,50-51
+packages/mcp/src/auth/router.test.ts
+  s_f134022a816c97::t_93ffc3100fed88 21-24
+packages/class-validator/vite.config.ts
+  s_f134022a816c97::t_41ca73507cd11b 1-8,16
+packages/bun-transpiler/package.json
+  s_f134022a816c97::t_08501cf53b91a6 13-14,48-49
+packages/react-compat/package.json
+  s_f134022a816c97::t_59ecb94bb6621d 47-48,64-65
+packages/typia-validator/package.json
+  s_f134022a816c97::t_fb52bae714fa84 18-19,21,56-57
+packages/stytch-auth/vite.config.ts
+  s_f134022a816c97::t_6d149601132595 1-15
+packages/typedriver-validator/tsconfig.spec.json
+  s_f134022a816c97::t_3fdde436551e2f 7
+packages/arktype-validator/vite.config.ts
+  s_f134022a816c97::t_1368575569fe1c 1-8,12
+packages/oidc-auth/package.json
+  s_f134022a816c97::t_cef07d08d8ecbc 13-14,16,50-51
+packages/esbuild-transpiler/vite.config.ts
+  s_f134022a816c97::t_b86dafd5287223 1-21
+packages/effect-validator/vite.config.ts
+  s_f134022a816c97::t_d5f70e4366727c 1-13
+packages/inertia/tsconfig.spec.json
+  s_f134022a816c97::t_b8f84e37f4da8b 8
+packages/arktype-validator/package.json
+  s_f134022a816c97::t_6c6afe91cbb628 13-14,16,50-51
+packages/typia-validator/vite.config.ts
+  s_f134022a816c97::t_f8a9df20af2453 2-12,21
+packages/session/package.json
+  s_f134022a816c97::t_be5f7bcd8f6d14 13-14,16,58,62-63
+packages/node-ws/vite.config.ts
+  s_f134022a816c97::t_cc15c6374c9563 1-13
+packages/zod-openapi/src/index.ts
+  s_f134022a816c97::t_daf514b130ed37 73-74,334-335,340-341
+packages/oauth-providers/src/providers/facebook/authFlow.ts
+  s_f134022a816c97::t_0832c14b7f4089 78-79
+packages/hello/package.json
+  s_f134022a816c97::t_366f9c1f82e4e4 13-14,16,48-49
+packages/firebase-auth/package.json
+  s_f134022a816c97::t_86e40c0e95e080 13,17-18,51,55-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fd6abbc825126d670ff287694e507f3dcf2b9400",
+  "prompts": {},
+  "sessions": {
+    "s_eebc5901743536": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b59199-b4e1-4360-a86d-9ab798da0bfd",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    },
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
