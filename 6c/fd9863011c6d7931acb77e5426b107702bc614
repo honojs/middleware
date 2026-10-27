@@ -1,0 +1,23 @@
+.changeset/session-stateless-update-replaces-data.md
+  s_f134022a816c97::t_62a689982f2973 5
+packages/session/src/index.test.ts
+  s_f134022a816c97::t_25059e0cfb10d5 265-280
+packages/session/src/session.ts
+  s_f134022a816c97::t_947b21910ce409 238,274,290,336,338-339
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6cfd9863011c6d7931acb77e5426b107702bc614",
+  "prompts": {},
+  "sessions": {
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
