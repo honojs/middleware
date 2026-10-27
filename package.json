@@ -36,15 +36,15 @@
     "@types/node": "^25.2.3",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@typia/unplugin": "^12.1.1",
-    "@vitest/coverage-istanbul": "catalog:",
+    "@vitest/coverage-istanbul": "5.0.1",
     "hono": "^4.11.5",
     "pkg-pr-new": "^0.0.78",
     "publint": "^0.3.16",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typia": "^12.1.1",
-    "vite": "catalog:",
-    "vite-plus": "catalog:",
-    "vitest": "catalog:"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
+    "vite-plus": "1.0.0",
+    "vitest": "5.0.1"
   },
   "packageManager": "pnpm@11.9.0"
 }

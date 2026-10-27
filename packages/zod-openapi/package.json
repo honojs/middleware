@@ -46,10 +46,10 @@
   "devDependencies": {
     "hono": "^4.11.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "catalog:",
+    "vitest": "5.0.1",
     "yaml": "^2.8.2",
     "zod": "^4.2.1",
-    "vite-plus": "catalog:"
+    "vite-plus": "1.0.0"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",

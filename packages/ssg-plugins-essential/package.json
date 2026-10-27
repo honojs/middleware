@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/node": "^25.2.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "catalog:",
-    "vite-plus": "catalog:"
+    "vitest": "5.0.1",
+    "vite-plus": "1.0.0"
   }
 }

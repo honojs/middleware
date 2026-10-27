@@ -50,8 +50,8 @@
     "typedriver": "^0.8.6",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "valibot": "^1.5.0",
-    "vitest": "catalog:",
+    "vitest": "5.0.1",
     "zod": "^4.2.1",
-    "vite-plus": "catalog:"
+    "vite-plus": "1.0.0"
   }
 }

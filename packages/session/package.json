@@ -59,7 +59,7 @@
     "hono": "^4.11.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "unstorage": "^1.17.4",
-    "vite-plus": "catalog:",
-    "vitest": "catalog:"
+    "vite-plus": "1.0.0",
+    "vitest": "5.0.1"
   }
 }

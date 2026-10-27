@@ -48,7 +48,7 @@
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "catalog:",
-    "vite-plus": "catalog:"
+    "vitest": "5.0.1",
+    "vite-plus": "1.0.0"
   }
 }

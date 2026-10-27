@@ -48,8 +48,8 @@
     "@types/bun": "^1.4.2",
     "hono": "^4.11.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "catalog:",
-    "vite-plus": "catalog:"
+    "vitest": "5.0.1",
+    "vite-plus": "1.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

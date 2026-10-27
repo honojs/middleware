@@ -62,6 +62,6 @@
   "devDependencies": {
     "hono": "^4.11.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite-plus": "catalog:"
+    "vite-plus": "1.0.0"
   }
 }

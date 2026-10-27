@@ -4,21 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    '@vitest/coverage-istanbul':
-      specifier: 5.0.1
-      version: 5.0.1
-    vite:
-      specifier: npm:@voidzero-dev/vite-plus-core@1.0.0
-      version: 1.0.0
-    vite-plus:
-      specifier: 1.0.0
-      version: 1.0.0
-    vitest:
-      specifier: 5.0.1
-      version: 5.0.1
-
 overrides:
   vite@*: npm:@voidzero-dev/vite-plus-core@1.0.0
   vitest@*: 5.0.1
@@ -56,7 +41,7 @@ importers:
         specifier: ^12.1.1
         version: 12.1.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(rollup@4.62.2)(typia@12.1.1(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
       '@vitest/coverage-istanbul':
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(vitest@5.0.1)
       hono:
         specifier: ^4.11.5
@@ -74,13 +59,13 @@ importers:
         specifier: ^12.1.1
         version: 12.1.1(@types/node@25.9.5)(@typescript/typescript6@6.0.2)
       vite:
-        specifier: 'catalog:'
+        specifier: npm:@voidzero-dev/vite-plus-core@1.0.0
         version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0)'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
 
   .github/actions/what-changed:
@@ -104,10 +89,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/arktype-validator:
@@ -122,10 +107,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/auth-js:
@@ -146,7 +131,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
 
   packages/bun-compress:
@@ -161,10 +146,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/bun-transpiler:
@@ -179,10 +164,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/capnweb:
@@ -209,10 +194,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       ws:
         specifier: ^8.17.0
@@ -233,10 +218,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
 
   packages/class-validator:
@@ -258,10 +243,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/clerk-auth:
@@ -286,10 +271,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/cloudflare-access:
@@ -304,10 +289,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
 
   packages/conform-validator:
@@ -334,10 +319,10 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       yup:
         specifier: ^1.7.1
@@ -358,10 +343,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/esbuild-transpiler:
@@ -379,10 +364,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.1)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.1)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/eslint-config:
@@ -403,10 +388,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/firebase-auth:
@@ -428,10 +413,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/graphql-server:
@@ -450,10 +435,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/hello:
@@ -465,10 +450,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/inertia:
@@ -484,10 +469,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/mcp:
@@ -512,10 +497,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
       zod:
         specifier: ^4.2.1
@@ -534,10 +519,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/node-ws:
@@ -559,10 +544,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/oauth-providers:
@@ -577,10 +562,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/oidc-auth:
@@ -602,10 +587,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/otel:
@@ -636,10 +621,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/prometheus:
@@ -654,10 +639,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/qwik-city:
@@ -675,7 +660,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
 
   packages/react-compat:
@@ -687,7 +672,7 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
 
   packages/react-renderer:
@@ -714,10 +699,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/sentry:
@@ -733,10 +718,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/session:
@@ -758,10 +743,10 @@ importers:
         specifier: ^1.17.4
         version: 1.17.5
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/ssg-plugins-essential:
@@ -777,10 +762,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
 
   packages/standard-validator:
@@ -801,10 +786,10 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       zod:
         specifier: ^4.2.1
@@ -822,10 +807,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       winston:
         specifier: ^3.19.0
@@ -843,10 +828,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/swagger-editor:
@@ -858,10 +843,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/swagger-ui:
@@ -876,10 +861,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/trpc-server:
@@ -894,10 +879,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       zod:
         specifier: ^4.2.1
@@ -918,10 +903,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/typebox-validator:
@@ -936,10 +921,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/typedriver-validator:
@@ -963,10 +948,10 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       zod:
         specifier: ^4.2.1
@@ -987,10 +972,10 @@ importers:
         specifier: ^12.1.1
         version: 12.1.1(@types/node@25.9.9)(@typescript/typescript6@6.0.2)
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/ua-blocker:
@@ -1005,10 +990,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.5)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.5)(@typescript/typescript6@6.0.2))
 
   packages/valibot-validator:
@@ -1023,10 +1008,10 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
 
   packages/zod-openapi:
@@ -1048,10 +1033,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       yaml:
         specifier: ^2.8.2
@@ -1069,10 +1054,10 @@ importers:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
       vite-plus:
-        specifier: 'catalog:'
+        specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))(publint@0.3.21)(yaml@2.9.0)
       vitest:
-        specifier: 'catalog:'
+        specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@25.9.9)(@vitest/browser-preview@5.0.1)(@vitest/coverage-istanbul@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@25.9.9)(@typescript/typescript6@6.0.2)(esbuild@0.28.2)(publint@0.3.21)(yaml@2.9.0))(msw@2.15.0(@types/node@25.9.9)(@typescript/typescript6@6.0.2))
       zod:
         specifier: ^4.2.1
@@ -6762,10 +6747,6 @@ packages:
   sonic-boom@4.2.1:
     resolution: {integrity: sha512-w6AxtubXa2wTXAUsZMMWERrsIRAdrK0Sc+FUytWvYAhBJLyuI4llrMIC1DtlNSdI99EI86KZum2MMq3EAZlF9Q==}
 
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
-    engines: {node: '>=0.10.0'}
-
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
@@ -10620,7 +10601,7 @@ snapshots:
   css-tree@2.3.1:
     dependencies:
       mdn-data: 2.0.30
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   css-what@6.2.2: {}
 
@@ -13745,8 +13726,6 @@ snapshots:
   sonic-boom@4.2.1:
     dependencies:
       atomic-sleep: 1.0.0
-
-  source-map-js@1.2.1: {}
 
   source-map-js@1.2.2: {}
 

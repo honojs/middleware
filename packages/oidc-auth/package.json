@@ -47,8 +47,8 @@
     "hono": "^4.11.5",
     "jsonwebtoken": "^9.0.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vitest": "catalog:",
-    "vite-plus": "catalog:"
+    "vitest": "5.0.1",
+    "vite-plus": "1.0.0"
   },
   "dependencies": {
     "oauth4webapi": "^3.8.6"
