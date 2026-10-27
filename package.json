@@ -9,7 +9,7 @@
     "publish": "pnpm publish:npm && pnpm publish:jsr",
     "publish:npm": "pnpm -r publish --no-git-checks && changeset git-tag",
     "publish:jsr": "deno install --no-lock && deno publish",
-    "version": "pnpm version:npm && pnpm version:jsr",
+    "version": "pnpm version:npm && pnpm version:jsr && prettier --write 'packages/*/CHANGELOG.md'",
     "version:npm": "changeset version",
     "version:jsr": "turbo run version:jsr",
     "version:set": "node scripts/version-set.ts",
