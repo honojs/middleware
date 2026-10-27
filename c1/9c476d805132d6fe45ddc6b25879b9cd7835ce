@@ -1,0 +1,113 @@
+package.json
+  s_f134022a816c97::t_2df41998ce2fb4 39,45-47
+packages/ajv-validator/package.json
+  s_f134022a816c97::t_36dae7cd346f4c 50-51
+packages/arktype-validator/package.json
+  s_f134022a816c97::t_cf0f76138d5b8a 50-51
+packages/auth-js/package.json
+  s_f134022a816c97::t_451de54324c210 65
+packages/bun-compress/package.json
+  s_f134022a816c97::t_bcb2f90f4703a3 49-50
+packages/bun-transpiler/package.json
+  s_f134022a816c97::t_e91df0e4f024ee 48-49
+packages/capnweb/package.json
+  s_f134022a816c97::t_4538fce71b91b3 55,57
+packages/casbin/package.json
+  s_f134022a816c97::t_e15a453278d0cd 56-57
+packages/class-validator/package.json
+  s_f134022a816c97::t_ef63c29852e869 48-49
+packages/clerk-auth/package.json
+  s_f134022a816c97::t_67df0bb2ffa871 54-55
+packages/cloudflare-access/package.json
+  s_f134022a816c97::t_ad46d0c6cd3830 49-50
+packages/conform-validator/package.json
+  s_f134022a816c97::t_a6ae8d9dc76839 54,57
+packages/effect-validator/package.json
+  s_f134022a816c97::t_c92b83a184415b 50-51
+packages/esbuild-transpiler/package.json
+  s_f134022a816c97::t_83aadf9c6eef1f 70-71
+packages/event-emitter/package.json
+  s_f134022a816c97::t_72e825c779cfd7 49-50
+packages/firebase-auth/package.json
+  s_f134022a816c97::t_48b9d0ced23353 55-56
+packages/graphql-server/package.json
+  s_f134022a816c97::t_0e2c05db86edd6 51-52
+packages/hello/package.json
+  s_f134022a816c97::t_fe3fadff3c7604 48-49
+packages/inertia/package.json
+  s_f134022a816c97::t_db1a984d9bf1a4 59-61
+packages/mcp/package.json
+  s_f134022a816c97::t_7b29f2bffb3e08 62,64
+packages/medley-router/package.json
+  s_f134022a816c97::t_e914b3adba9936 48-49
+packages/node-ws/package.json
+  s_f134022a816c97::t_994924c840fb9e 45-46
+packages/oauth-providers/package.json
+  s_f134022a816c97::t_4f984c96c7c851 124-125
+packages/oidc-auth/package.json
+  s_f134022a816c97::t_da4d4edf752e37 50-51
+packages/otel/package.json
+  s_f134022a816c97::t_eef0c777d9809a 56-57
+packages/prometheus/package.json
+  s_f134022a816c97::t_e01b80a4496dbd 50-51
+packages/qwik-city/package.json
+  s_f134022a816c97::t_2275aedc46b15a 50
+packages/react-compat/package.json
+  s_f134022a816c97::t_c604fca25570ac 65
+packages/react-renderer/package.json
+  s_f134022a816c97::t_59acb44fa59bca 55-56
+packages/sentry/package.json
+  s_f134022a816c97::t_95e1aeee7c47f8 52-53
+packages/session/package.json
+  s_f134022a816c97::t_e01759bab8fb61 62-63
+packages/ssg-plugins-essential/package.json
+  s_f134022a816c97::t_ba47c648acac16 54-55
+packages/standard-validator/package.json
+  s_f134022a816c97::t_76ec15c9b2e889 52,54
+packages/structured-logger/package.json
+  s_f134022a816c97::t_ca9837e9e359d0 49,51
+packages/stytch-auth/package.json
+  s_f134022a816c97::t_94fd51c811b5a6 49-50
+packages/swagger-editor/package.json
+  s_f134022a816c97::t_790b02dda0f25d 48-49
+packages/swagger-ui/package.json
+  s_f134022a816c97::t_f145001f77b288 49-50
+packages/trpc-server/package.json
+  s_f134022a816c97::t_64429be8c494cb 50,52
+packages/tsyringe/package.json
+  s_f134022a816c97::t_8038418e5f28d4 51-52
+packages/typebox-validator/package.json
+  s_f134022a816c97::t_0f3a83f93c3bce 50-51
+packages/typedriver-validator/package.json
+  s_f134022a816c97::t_c2ebf6e3d8de6f 53,55
+packages/typia-validator/package.json
+  s_f134022a816c97::t_5aceed103af5f8 56-57
+packages/ua-blocker/package.json
+  s_f134022a816c97::t_b00d4bd8398f69 55-56
+packages/valibot-validator/package.json
+  s_f134022a816c97::t_9a7af42a51c0b7 50-51
+packages/zod-openapi/package.json
+  s_f134022a816c97::t_adc50c69a410d7 49,52
+packages/zod-validator/package.json
+  s_f134022a816c97::t_c0c13c68b588a5 49,51
+pnpm-lock.yaml
+  s_f134022a816c97::t_aac4f756287419 44,62,65,68,92,95,110,113,134,149,152,167,170,197,200,221,224,246,249,274,277,292,295,322,325,346,349,367,370,391,394,416,419,438,441,453,456,472,475,500,503,522,525,547,550,565,568,590,593,624,627,642,645,663,675,702,705,721,724,746,749,765,768,789,792,810,813,831,834,846,849,864,867,882,885,906,909,924,927,951,954,975,978,993,996,1011,1014,1036,1039,1057,1060,10604
+pnpm-workspace.yaml
+  s_f134022a816c97::t_17c0cc25386f21 15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c19c476d805132d6fe45ddc6b25879b9cd7835ce",
+  "prompts": {},
+  "sessions": {
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
