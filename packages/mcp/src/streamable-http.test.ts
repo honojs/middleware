@@ -407,6 +407,38 @@ describe('MCP helper', () => {
     })
   })
 
+  it('should discard the response when the client disconnects before it is ready', async () => {
+    sessionId = await initializeServer()
+
+    let releaseTool!: () => void
+    const toolReleased = new Promise<void>((resolve) => {
+      releaseTool = resolve
+    })
+    mcpServer.registerTool(
+      'slow',
+      { description: 'A tool that waits until released' },
+      async (): Promise<CallToolResult> => {
+        await toolReleased
+        return { content: [{ type: 'text', text: 'done' }] }
+      }
+    )
+    const onerror = vi.fn()
+    mcpServer.server.onerror = onerror
+
+    const toolCallMessage: JSONRPCMessage = {
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: { name: 'slow', arguments: {} },
+      id: 'call-1',
+    }
+    const response = await sendPostRequest(server, toolCallMessage, sessionId)
+    await response.body?.cancel()
+    releaseTool()
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    expect(onerror).not.toHaveBeenCalled()
+  })
+
   /***
    * Test: Tool With Request Info
    */

@@ -1,5 +1,11 @@
 # @hono/inertia
 
+## 0.8.1
+
+### Patch Changes
+
+- [#2177](https://github.com/honojs/middleware/pull/2177) [`149f0b9b5dacb547731bc36c37be3d577f898ecb`](https://github.com/honojs/middleware/commit/149f0b9b5dacb547731bc36c37be3d577f898ecb) Thanks [@ChethankumarGS](https://github.com/ChethankumarGS)! - Escape less-than signs in serialized page JSON so props containing `<!--<script>` cannot swallow the rest of the HTML document.
+
 ## 0.8.0
 
 ### Minor Changes

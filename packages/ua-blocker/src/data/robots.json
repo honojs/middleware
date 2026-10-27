@@ -20,6 +20,13 @@
     "frequency": "Requests RSS feed every 5-6 minutes.",
     "description": "Scrapes data for AI news aggregation and republishing."
   },
+  "AGI Agent": {
+    "operator": "AGI, Inc",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "AGI Agent is an AI assistant operated by AGI, Inc. that navigates websites to complete user-directed tasks, including online purchases and other actions. More info can be found at https://knownagents.com/agents/agi-agent"
+  },
   "AI2Bot": {
     "operator": "[Ai2](https://allenai.org/crawler)",
     "respect": "Yes",
@@ -230,6 +237,13 @@
     "frequency": "Unclear at this time.",
     "description": "Downloads data to train LLMS, including ChatGPT competitors."
   },
+  "CartAI Agentic Commerce": {
+    "operator": "CartAI that accesses online stores to support user-directed shopping and checkout workflows",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "CartAI Agentic Commerce is a signed browser agent operated by CartAI that accesses online stores to support user-directed shopping and checkout workflows. More info can be found at https://knownagents.com/agents/cartai-agentic-commerce"
+  },
   "CCBot": {
     "operator": "[Common Crawl Foundation](https://commoncrawl.org)",
     "respect": "[Yes](https://commoncrawl.org/ccbot)",
@@ -300,6 +314,13 @@
     "frequency": "No information provided.",
     "description": "Scrapes data to train LLMs and AI products offered by Anthropic."
   },
+  "CledaraBot": {
+    "operator": "Cledara that visits SaaS providers to complete customer-approved administrative tasks, including invoice collection and user managem…",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "CledaraBot is an AI agent operated by Cledara that visits SaaS providers to complete customer-approved administrative tasks, including invoice collection and user managem… More info can be found at https://knownagents.com/agents/cledarabot"
+  },
   "Cloudflare-AutoRAG": {
     "operator": "[Cloudflare](https://developers.cloudflare.com/autorag)",
     "respect": "Yes",
@@ -328,6 +349,13 @@
     "frequency": "Unclear at this time.",
     "description": "Code (GitHub Copilot) is an AI coding agent that can autonomously plan, build, and execute development tasks, functioning as a collaborative AI pair programmer. More info can be found at https://knownagents.com/agents/code",
     "has_name_and_version": true
+  },
+  "Codex": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Coding Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Codex is an AI coding agent by OpenAI that helps developers write, review, debug, and ship code. More info can be found at https://knownagents.com/agents/codex"
   },
   "cohere-ai": {
     "operator": "[Cohere](https://cohere.com)",
@@ -413,6 +441,13 @@
     "frequency": "Only when prompted by a user.",
     "description": "Diffbot-User is used by requests originating on behalf of a human user browsing a URL using Diffbot software, in response to their input. Documented by Diffbot at https://docs.diffbot.com/docs/does-crawl-respect-robotstxt"
   },
+  "Dot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Dot is an OpenAI AI agent that uses a cloud browser to research websites and carry out ongoing tasks for users. More info can be found at https://knownagents.com/agents/dot"
+  },
   "DoubaoBot": {
     "operator": "ByteDance",
     "respect": "Unclear at this time.",
@@ -441,6 +476,13 @@
     "frequency": "Unclear at this time.",
     "description": "Supports company's AI-powered social and email management products."
   },
+  "ElevenlabsBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unclear at this time.",
+    "description": "ElevenlabsBot fetches pages that customers add to or refresh in ElevenLabs agents' knowledge bases, making that content available in conversations. More info can be found at https://knownagents.com/agents/elevenlabsbot"
+  },
   "ERNIEBot": {
     "operator": "Baidu",
     "respect": "Unclear at this time.",
@@ -461,6 +503,13 @@
     "function": "AI Search Crawlers",
     "frequency": "Unclear at this time.",
     "description": "ExaSearchBot is a web crawler operated by Exa that discovers and indexes public web pages so their content can be found, retrieved, and cited through Exa. More info can be found at https://knownagents.com/agents/exasearchbot"
+  },
+  "ExaUser": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Assistants",
+    "frequency": "Unclear at this time.",
+    "description": "ExaUser is Exa's on-demand fetcher that retrieves live website content when a user or an application built on the Exa API requests it. More info can be found at https://knownagents.com/agents/exauser"
   },
   "FacebookBot": {
     "operator": "Meta/Facebook",
@@ -595,12 +644,47 @@
     "frequency": "No information.",
     "description": "Data is used to train current and future models, removed paywalled data, PII and data that violates the company's policies."
   },
+  "Grok Bot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Grok Bot is a personal AI agent created by xAI that runs on a persistent cloud computer with a browser, filesystem, and terminal. It completes multi-step tasks across app… More info can be found at https://knownagents.com/agents/grok-bot"
+  },
+  "GrokAppAndroid": {
+    "operator": "[xAI](https://x.ai)",
+    "respect": "Unclear at this time.",
+    "function": "AI Search Crawlers",
+    "frequency": "Unclear at this time.",
+    "description": "Grok AI is an advanced AI assistant built by xAI that leverages real-time web and X data to produce context-aware, multimodal responses."
+  },
+  "GrokBot": {
+    "operator": "[xAI](https://x.ai)",
+    "respect": "Unclear at this time.",
+    "function": "AI Search Crawlers",
+    "frequency": "Unclear at this time.",
+    "description": "Used to collect publicly available web content to support the training of Grok AI models."
+  },
+  "HarkBot": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "HarkBot visits web pages on behalf of signed-in Hark users as Hark carries out research, form-filling, and account actions. More info can be found at https://knownagents.com/agents/harkbot"
+  },
   "HenkBot": {
     "operator": "Unclear at this time.",
     "respect": "Unclear at this time.",
     "function": "AI Data Providers",
     "frequency": "Unclear at this time.",
     "description": "Henkbot crawls the web on behalf of Valyu, an AI search infrastructure provider that indexes content for use in AI-powered retrieval pipelines. More info can be found at https://knownagents.com/agents/henkbot"
+  },
+  "Hunyuan": {
+    "operator": "[Tencent](https://hunyuan.tencent.com)",
+    "respect": "Unclear at this time.",
+    "function": "Hunyuan is a training crawler operated by Tencent.",
+    "frequency": "Unclear at this time.",
+    "description": "Hunyuan is a training crawler operated by Tencent. Its job is to read public web pages and feed that content into a machine-learning pipeline that trains future versions of the model."
   },
   "iAskBot": {
     "operator": "Unclear at this time.",
@@ -651,6 +735,13 @@
     "operator": "[img2dataset](https://github.com/rom1504/img2dataset)",
     "respect": "Unclear at this time."
   },
+  "Instinct": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Instinct is a personal AI agent that uses a phone and computer to complete everyday tasks such as ordering groceries, booking travel, arranging appointments, and communic… More info can be found at https://knownagents.com/agents/instinct"
+  },
   "ISSCyberRiskCrawler": {
     "description": "Used to train machine learning based models to quantify cyber risk.",
     "frequency": "No information.",
@@ -671,6 +762,13 @@
     "function": "AI Data Scrapers",
     "frequency": "Unclear at this time.",
     "description": "Kangaroo Bot is used by the company Kangaroo LLM to download data to train AI models tailored to Australian language and culture. More info can be found at https://knownagents.com/agents/kangaroo-bot"
+  },
+  "KeenableBot": {
+    "operator": "[Keenable](https://keenable.ai/)",
+    "respect": "Unclear at this time.",
+    "function": "AI Search Crawlers",
+    "frequency": "Unclear at this time.",
+    "description": "KeenableBot is a web crawler operated by Keenable for indexing web content for AI search."
   },
   "Kimi-Agent": {
     "operator": "Moonshot AI that browses websites while carrying out user-directed research and other tasks",
@@ -833,12 +931,26 @@
     "description": "MistralAI-User is for user actions in LeChat. When users ask LeChat a question, it may visit a web page to help answer and include a link to the source in its response.",
     "respect": "Yes"
   },
+  "MoonshotBot": {
+    "operator": "[Kimi](https://www.kimi.ai/)",
+    "respect": "Unclear at this time.",
+    "function": "MoonshotBot is a training crawler.",
+    "frequency": "Unclear at this time.",
+    "description": "MoonshotBot is a training crawler operated by Kimi. Its job is to read public web pages and feed that content into a machine-learning pipeline that trains future versions of the model."
+  },
   "Mozilla-Tabstack": {
     "operator": "Mozilla that performs programmatic, AI-driven interactions with web content through Tabstack",
     "respect": "Yes",
     "function": "AI Data Providers",
     "frequency": "On demand via API.",
     "description": "Mozilla-Tabstack is an AI agent operated by Mozilla that performs programmatic, AI-driven interactions with web content through Tabstack. More info can be found at https://knownagents.com/agents/mozilla-tabstack"
+  },
+  "Muse": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Muse is a personal AI agent created by Meta that uses a web browser and connected apps to complete multi-step tasks such as filling out forms, booking travel, sending ema… More info can be found at https://knownagents.com/agents/muse"
   },
   "MyCentralAIScraperBot": {
     "operator": "Unclear at this time.",
@@ -853,6 +965,13 @@
     "function": "AI data scraper",
     "frequency": "Unclear at this time.",
     "description": "'Naget revolutionizes content discovery through an AI-powered ecosystem that transforms how we generate, organize, share, and discover valuable content.' (https://naget.com/) User-agent string links https://naget.ai/bot which yields 404."
+  },
+  "nbot": {
+    "operator": "[NBot](https://nbot.ai)",
+    "respect": "Unclear at this time.",
+    "function": "AI Search Crawlers",
+    "frequency": "Unclear at this time.",
+    "description": "NBot uses advanced AI to scan news outlets, industry blogs, newsletters, and social media."
   },
   "netEstate Imprint Crawler": {
     "operator": "netEstate",
@@ -952,6 +1071,13 @@
     "frequency": "The Panscient web crawler will request a page at most once every second from the same domain name or the same IP address.",
     "description": "Compiles data on businesses and business professionals that is structured using AI and machine learning."
   },
+  "Payhawk Invoice Fetching Agent": {
+    "operator": "Payhawk that retrieves invoices from supplier websites for users and attaches them to expense records",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Payhawk Invoice Fetching Agent is a browser agent operated by Payhawk that retrieves invoices from supplier websites for users and attaches them to expense records. More info can be found at https://knownagents.com/agents/payhawk-invoice-fetching-agent"
+  },
   "Perplexity-User": {
     "operator": "[Perplexity](https://www.perplexity.ai/)",
     "respect": "[No](https://docs.perplexity.ai/guides/bots)",
@@ -978,7 +1104,7 @@
     "respect": "Unclear at this time.",
     "function": "AI Assistants",
     "frequency": "No explicit frequency provided.",
-    "description": "Phind is an AI-powered answer engine designed for developers, offering technical answers and code examples. It uses real-time web search and specialized AI models to prov… More info can be found at https://knownagents.com/agents/phindbot"
+    "description": "PhindBot retrieves web pages to support Phind's developer-focused search and answer engine, which uses current web information to answer technical questions. More info can be found at https://knownagents.com/agents/phindbot"
   },
   "Poggio-Citations": {
     "operator": "Poggio, a company that provides AI sales enablement tools for creating tailored narratives, business cases, and account plan…",
@@ -1218,6 +1344,13 @@
     "frequency": "Unclear at this time.",
     "description": "Description unavailable from knownagents.com More info can be found at https://knownagents.com/agents/wrtnbot"
   },
+  "xAI-Grok": {
+    "operator": "[xAI](https://x.ai/)",
+    "respect": "Unclear at this time.",
+    "function": "xAI-Grok is an xAI crawler token associated with Grok content collection.",
+    "frequency": "Unclear at this time.",
+    "description": "xAI-Grok is an xAI crawler token associated with Grok content collection. It is classified as training because it performs automated collection rather than a user-triggered fetch."
+  },
   "YaK": {
     "operator": "[Meltwater](https://www.meltwater.com/en/suite/consumer-intelligence)",
     "respect": "Unclear at this time.",
@@ -1238,6 +1371,13 @@
     "function": "Scrapes/analyzes data for the YandexGPT LLM.",
     "frequency": "No information.",
     "description": "Retrieves data used for YandexGPT quick answers features."
+  },
+  "YiBot": {
+    "operator": "[01.ai](https://01.ai/), an AI company founded by Kai-Fu Lee.",
+    "respect": "Unclear at this time.",
+    "function": "This bot crawls the web to gather data and content for indexation and AI model training.",
+    "frequency": "Unclear at this time.",
+    "description": "YiBot/1.0 is an advanced artificial intelligence platform designed to enhance interaction and engagement across various applications. Its architecture allows for seamless integration into websites and applications, providing users with a responsive and intuitive interface."
   },
   "YiyanBot": {
     "operator": "Baidu that fetches web content for the yiyan",

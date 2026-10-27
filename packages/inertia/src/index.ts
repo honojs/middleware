@@ -428,13 +428,13 @@ export interface InertiaOptions<
  * Serializes a {@link PageObject} into a JSON string that is safe to embed
  * inside a `<script type="application/json">` element.
  *
- * Mirrors `@inertiajs/core`'s `buildSSRBody`: only the forward slash is
- * escaped (`/` → `\/`) so a `</script>` sequence inside the JSON cannot
- * close the surrounding `<script>` tag. No HTML entity encoding is applied
- * because script `textContent` is not HTML parsed.
+ * Mirrors `@inertiajs/core`'s `buildSSRBody`: forward slashes and less-than
+ * signs are escaped so props cannot close the surrounding `<script>` tag
+ * or put the HTML parser into the script data double escaped state.
+ * JSON.parse restores the original values without HTML entity decoding.
  */
 export const serializePage = (page: PageObject): string =>
-  JSON.stringify(page).replace(/\//g, '\\/')
+  JSON.stringify(page).replace(/\//g, '\\/').replace(/</g, '\\u003c')
 
 const parseKeys = (header: string | undefined): string[] | null =>
   header

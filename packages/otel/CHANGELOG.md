@@ -1,5 +1,13 @@
 # @hono/otel
 
+## 1.3.0
+
+### Minor Changes
+
+- [#2164](https://github.com/honojs/middleware/pull/2164) [`7366a56`](https://github.com/honojs/middleware/commit/7366a56d1775d5d86b2987c4392cdc75f6456b45) Thanks [@martinfrancois](https://github.com/martinfrancois)! - feat(otel): add `getUrlFull` config callback to redact the `url.full` span attribute
+
+  The middleware records the complete request URL as `url.full`, including the query string. The OpenTelemetry semantic conventions note that `url.full` may carry credentials, and query strings or path segments can also carry one-time tokens such as password-reset or invitation links. `getUrlFull(c)` is an optional config callback: when it returns a non-empty string, that value is recorded instead. Returning `undefined`, an empty string, or throwing falls back to the raw request URL, so existing behavior is unchanged when the hook is not provided.
+
 ## 1.2.0
 
 ### Minor Changes

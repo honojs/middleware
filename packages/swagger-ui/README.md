@@ -24,8 +24,33 @@ import { swaggerUI } from '@hono/swagger-ui'
 
 const app = new Hono()
 
-// Use the middleware to serve Swagger UI at /ui
-app.get('/ui', swaggerUI({ url: '/doc' }))
+// Document the API
+const openApiDoc = {
+  openapi: '3.0.0',
+  info: {
+    title: 'API Documentation',
+    version: '1.0.0',
+  },
+  paths: {
+    '/health': {
+      get: {
+        summary: 'Health check',
+        responses: {
+          '200': {
+            description: 'OK',
+          },
+        },
+      },
+    },
+    // ...other endpoints
+  },
+}
+
+// Serve the OpenAPI document
+app.get('/openapi', (c) => c.json(openApiDoc))
+
+// Render the OpenAPI document through Swagger UI
+app.get('/ui', swaggerUI({ url: '/openapi' }))
 
 export default app
 ```

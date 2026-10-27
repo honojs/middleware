@@ -214,6 +214,34 @@ describe('Basic', () => {
   })
 })
 
+describe('Sensitive Data Removal', () => {
+  it("doesn't return cookies after headers validation", async () => {
+    const app = new Hono()
+    const schema = v.object({
+      'user-agent': v.string(),
+    })
+
+    app.get('/headers', vValidator('header', schema), (c) =>
+      c.json({ success: true, userAgent: c.req.header('User-Agent') })
+    )
+
+    const req = new Request('http://localhost/headers', {
+      headers: {
+        // Not passing the User-Agent header to trigger the validation error
+        Cookie: 'SECRET=123',
+      },
+    })
+
+    const res = await app.request(req)
+    expect(res.status).toBe(400)
+    const body = await res.text()
+    expect(body).not.toContain('SECRET=123')
+    const data = JSON.parse(body) as { success: boolean; issues: unknown[] }
+    expect(data.success).toBe(false)
+    expect(data.issues.length).toBeGreaterThan(0)
+  })
+})
+
 describe('With Hook', () => {
   const app = new Hono()
 

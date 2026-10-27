@@ -6,6 +6,30 @@ const RESTRICTED_DATA_FIELDS = {
 }
 
 /**
+ * Removes sensitive fields (like cookies) from the validated value before it is
+ * returned to the client in the default 400 response.
+ *
+ * @param value - The value that was validated
+ * @param target - The validation target being processed ('header', 'json', etc.)
+ * @returns A copy of the value without the sensitive fields, or the value itself if nothing applies
+ */
+export function sanitizeData<T>(value: T, target: keyof ValidationTargets): T {
+  if (
+    !(target in RESTRICTED_DATA_FIELDS) ||
+    typeof value !== 'object' ||
+    value === null ||
+    Array.isArray(value)
+  ) {
+    return value
+  }
+
+  const restrictedFields = RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS]
+  return Object.fromEntries(
+    Object.entries(value).filter(([key]) => !restrictedFields.includes(key))
+  ) as T
+}
+
+/**
  * Sanitizes validation issues by removing sensitive data fields from error messages.
  *
  * This function removes potentially sensitive information (like cookies) from validation
