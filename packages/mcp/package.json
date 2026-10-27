@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@types/node": "^25.2.3",
+    "@types/node": "^26.6.5",
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.3",
     "tsdown": "^0.22.3",
