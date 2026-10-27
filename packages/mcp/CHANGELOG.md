@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.3.3
+
+### Patch Changes
+
+- [#2197](https://github.com/honojs/middleware/pull/2197) [`595368b`](https://github.com/honojs/middleware/commit/595368bff74cf1f3dcae2d5d49fa6b0f0eee1242) Thanks [@itsdouges](https://github.com/itsdouges)! - Discard responses for requests whose client disconnected instead of retaining them until the transport closes
+
 ## 0.3.2
 
 ### Patch Changes
