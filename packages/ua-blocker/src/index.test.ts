@@ -140,7 +140,7 @@ describe('uaBlocker middleware', () => {
     it('Should allow unknown bots not in the AI list', async () => {
       const res = await app.request('http://localhost/ai/test', {
         headers: {
-          'User-Agent': 'UnknownBot/1.0',
+          'User-Agent': 'SomeCrawler/1.0',
         },
       })
       expect(res.status).toBe(200)

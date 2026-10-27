@@ -1,5 +1,11 @@
 # @hono/standard-validator
 
+## 0.4.1
+
+### Patch Changes
+
+- [#2203](https://github.com/honojs/middleware/pull/2203) [`6e0bda7e14e2f1fdca8f6c4e671bd42b1b3948e5`](https://github.com/honojs/middleware/commit/6e0bda7e14e2f1fdca8f6c4e671bd42b1b3948e5) Thanks [@yusukebe](https://github.com/yusukebe)! - Remove the `cookie` header from the default 400 response body of `header` validation
+
 ## 0.4.0
 
 ### Minor Changes

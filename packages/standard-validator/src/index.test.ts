@@ -465,9 +465,12 @@ describe('Standard Schema Validation', () => {
 
           const res = await app.request(req)
           expect(res.status).toBe(400)
-          const data = (await res.json()) as { success: false; error: unknown[] }
+          const body = await res.text()
+          expect(body).not.toContain('SECRET=123')
+          const data = JSON.parse(body) as { success: false; error: unknown[]; data: unknown }
           expect(data.success).toBe(false)
           expect(data.error).toBeDefined()
+          expect(data.data).not.toHaveProperty('cookie')
 
           if (lib === 'arktype') {
             expect(
