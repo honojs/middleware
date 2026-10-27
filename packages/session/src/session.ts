@@ -235,7 +235,7 @@ export function getSession<Data extends SessionData>({
       payload = createCookie()
     }
 
-    // Merge session data with the stateless session cookie
+    // Store the new session data in the stateless session cookie, replacing the previous data
     if (!storage) {
       const cookie = getStatelessCookie(payload, data)
       payload = { ...cookie.payload, ...cookie.data }
@@ -271,7 +271,7 @@ export function getSession<Data extends SessionData>({
   /**
    * Update the session with new session data.
    *
-   * Optionally merges session data with a stateless session cookie.
+   * In stateless mode, replaces the data stored in the session cookie with the new session data.
    */
   function updateSession(data: Data, payload?: cookies.CookiePayload): UpdateSession<Data> {
     payload ??= createCookie(data)
@@ -287,7 +287,7 @@ export function getSession<Data extends SessionData>({
   /**
    * Create a session cookie with a new session id.
    *
-   * Optionally merges session data with a stateless session cookie.
+   * In stateless mode, replaces the data stored in the session cookie with the new session data.
    */
   function createCookie(init?: SessionData): SessionCookie {
     // Always generate a new session id to avoid session fixation attacks
@@ -333,10 +333,10 @@ export function getSession<Data extends SessionData>({
 }
 
 /**
- * Split the session cookie into its `exp`, `iat`, and `sid` claims and the session data.
+ * Split a stateless session cookie into its `exp`, `iat`, and `sid` claims and its session data.
  *
- * When `data` is provided it replaces the session data stored in the cookie,
- * ensuring that the original `exp`, `iat`, and `sid` claims are preserved.
+ * When `data` is provided, it is returned in place of the data stored in the cookie.
+ * The original claims are always preserved.
  */
 function getStatelessCookie(payload: SessionCookie, data?: SessionData | null) {
   const { exp, iat, sid, ...rest } = payload

@@ -262,6 +262,22 @@ describe('session.update()', () => {
     })
   })
 
+  it('removes data omitted by the update from the session cookie', async () => {
+    const newSub = 'new-subject'
+    const cookie = await encrypt({ ...session.payload, iat: recent, sub, role: 'admin' })
+    const res = await app.request(`/session/${newSub}`, {
+      method: 'PUT',
+      headers: { cookie: `sid=${cookie}` },
+    })
+    const sessionCookie = await getSetCookie(res, 'sid', decrypt)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data).toStrictEqual({ sub: newSub })
+    expect(sessionCookie?.payload).toStrictEqual({ ...session.payload, iat: recent, sub: newSub })
+    expect(sessionCookie?.payload).not.toHaveProperty('role')
+  })
+
   it('replaces an expired session', async () => {
     const newSub = 'new-subject'
     const expiredSession = { ...session.payload, exp: recent, iat: recent }
