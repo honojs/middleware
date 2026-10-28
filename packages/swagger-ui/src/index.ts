@@ -1,5 +1,5 @@
 import type { Env, MiddlewareHandler } from 'hono'
-import { html } from 'hono/html'
+import { html, raw } from 'hono/html'
 import type { DistSwaggerUIOptions } from './swagger/renderer'
 import { renderSwaggerUIOptions } from './swagger/renderer'
 import type { AssetURLs } from './swagger/resource'
@@ -74,7 +74,7 @@ const middleware =
   <E extends Env>(options: SwaggerUIOptions): MiddlewareHandler<E> =>
   async (c) => {
     const title = options?.title ?? 'SwaggerUI'
-    return c.html(/* html */ `
+    return c.html(html`
       <!doctype html>
       <html lang="en">
         <head>
@@ -84,7 +84,7 @@ const middleware =
           <title>${title}</title>
         </head>
         <body>
-          ${SwaggerUI(options)}
+          ${raw(SwaggerUI(options))}
         </body>
       </html>
     `)
