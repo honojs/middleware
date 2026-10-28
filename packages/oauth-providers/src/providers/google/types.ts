@@ -17,6 +17,11 @@ export type GoogleTokenResponse = {
   id_token: string
 }
 
+export type GoogleRefreshTokenResponse = Omit<
+  GoogleTokenResponse,
+  'refresh_token' | 'refresh_token_expires_in'
+>
+
 export type GoogleTokenInfoResponse = {
   issued_to: string
   audience: string
@@ -37,9 +42,4 @@ export type GoogleUser = {
   family_name: string
   picture: string
   locale: string
-}
-
-export type Token = {
-  token: string
-  expires_in: number
 }

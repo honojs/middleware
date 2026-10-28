@@ -2,4 +2,4 @@
 '@hono/oauth-providers': minor
 ---
 
-Allow for access_type to be passed for "offline" mode, defaults to "online". Allowing for refresh tokens to be used in subsequent requests
+Add `refreshToken` to the Google provider to get a new access token from the refresh token returned with `access_type: 'offline'`
