@@ -1,0 +1,27 @@
+.changeset/escape-swagger-ui-options.md
+  s_eebc5901743536::t_cd00ffd6f64ee2 1-5
+packages/swagger-ui/src/index.test.ts
+  s_eebc5901743536::t_537b29e5abca3b 16,33,81,98,116,126,147,152-166
+packages/swagger-ui/src/index.ts
+  s_eebc5901743536::t_5801f64fd77b14 2,77,87
+packages/swagger-ui/src/option-renderer.test.ts
+  s_eebc5901743536::t_32bf842dc36860 12,17,22,24,31,35,39-40,44-45,50,55,60,65,70,75,80,84-85,90,92,96,101,106,111,116,121,126,131,136,141,146,150-151,156,161,166,170-171,176,181,186,193,195,204-215
+packages/swagger-ui/src/swagger/renderer.ts
+  s_eebc5901743536::t_ac04445adbb972 126-133,145,152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8178eef80a36018d2dfac9c7b4d3d237957e41d9",
+  "prompts": {},
+  "sessions": {
+    "s_eebc5901743536": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b59199-b4e1-4360-a86d-9ab798da0bfd",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
