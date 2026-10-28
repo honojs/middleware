@@ -234,6 +234,14 @@ export const errorMessages = (
   }
 }
 
+// JSON.stringify() handles quotes and backslashes; also escape what could close the script element or break the literal
+const toScriptLiteral = (value: string): string =>
+  JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
+
 export const respondWithGraphiQL = (c: Context): Response => {
   // https://github.com/graphql/graphiql/blob/fd3f9e6a91be728a69a136ad8680f6e3c7241198/examples/graphiql-cdn/index.html
   return c.html(`<!--
@@ -300,7 +308,7 @@ export const respondWithGraphiQL = (c: Context): Response => {
       import 'graphiql/setup-workers/esm.sh';
 
       const fetcher = createGraphiQLFetcher({
-        url: '${c.req.path}',
+        url: ${toScriptLiteral(c.req.path)},
       });
       const plugins = [HISTORY_PLUGIN, explorerPlugin()];
 
