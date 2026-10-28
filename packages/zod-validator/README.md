@@ -24,6 +24,22 @@ app.post('/author', zValidator('json', schema), (c) => {
 })
 ```
 
+### Default error response
+
+If validation fails and no hook is provided, the middleware responds with `400 Bad Request` and the serialized Zod `safeParse` result as the body. For the schema above, sending `{ "name": "a", "age": "x" }` returns:
+
+```json
+{
+  "success": false,
+  "error": {
+    "name": "ZodError",
+    "message": "[\n  {\n    \"expected\": \"number\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"age\"\n    ],\n    \"message\": \"Invalid input: expected number, received string\"\n  }\n]"
+  }
+}
+```
+
+Note that `error.message` is a JSON string of Zod's issue array, not a nested object. This is the Zod v4 shape; with Zod v3 the same code serializes the issues inline instead (`"error": { "issues": [...], "name": "ZodError" }`). The format is Zod's own serialization and is not guaranteed to be stable across Zod versions. If clients parse the error body, define your own format with a hook (see below).
+
 Hook:
 
 ```ts
@@ -32,6 +48,33 @@ app.post(
   zValidator('json', schema, (result, c) => {
     if (!result.success) {
       return c.text('Invalid!', 400)
+    }
+  })
+  //...
+)
+```
+
+For example, a hook returning an [RFC 9457 Problem Details](https://datatracker.ietf.org/doc/html/rfc9457) body:
+
+```ts
+app.post(
+  '/post',
+  zValidator('json', schema, (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          type: 'about:blank',
+          title: 'Bad Request',
+          status: 400,
+          detail: 'Request validation failed.',
+          errors: result.error.issues.map((issue) => ({
+            detail: issue.message,
+            pointer: `#/${issue.path.join('/')}`,
+          })),
+        },
+        400,
+        { 'content-type': 'application/problem+json' }
+      )
     }
   })
   //...
