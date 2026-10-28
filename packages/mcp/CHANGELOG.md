@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.3.5
+
+### Patch Changes
+
+- [#2221](https://github.com/honojs/middleware/pull/2221) [`b4986d9`](https://github.com/honojs/middleware/commit/b4986d91a20298ff6348b0797e9ff4954dda0053) Thanks [@yusukebe](https://github.com/yusukebe)! - Enforce the rate limits of `mcpAuthRouter` per client address, and generate `client_secret` from the CSPRNG
+
 ## 0.3.4
 
 ### Patch Changes
