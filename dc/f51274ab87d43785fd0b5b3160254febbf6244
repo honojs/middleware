@@ -1,0 +1,19 @@
+packages/mcp/src/streamable-http.ts
+  s_f134022a816c97::t_f9a25853b74548 596,627,630-631
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dcf51274ab87d43785fd0b5b3160254febbf6244",
+  "prompts": {},
+  "sessions": {
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
