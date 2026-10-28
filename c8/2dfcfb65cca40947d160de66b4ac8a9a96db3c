@@ -1,0 +1,27 @@
+.changeset/mcp-auth-hardening.md
+  s_eebc5901743536::t_e7a98c811b953d 1-5
+packages/mcp/src/auth/helpers/register.test.ts
+  s_eebc5901743536::t_6c7392783065fd 131-148
+packages/mcp/src/auth/helpers/register.ts
+  s_eebc5901743536::t_68049ea4eabfec 90-92
+packages/mcp/src/auth/router.test.ts
+  s_eebc5901743536::t_a8e6442a3dd3b0 382-399
+packages/mcp/src/auth/router.ts
+  s_eebc5901743536::t_1bea4cb7786688 4,230-235,244-259
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c82dfcfb65cca40947d160de66b4ac8a9a96db3c",
+  "prompts": {},
+  "sessions": {
+    "s_eebc5901743536": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b59199-b4e1-4360-a86d-9ab798da0bfd",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
