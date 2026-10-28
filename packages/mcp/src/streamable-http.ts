@@ -593,7 +593,7 @@ export class StreamableHTTPTransport implements Transport {
       })
     }
 
-    if (Array.isArray(sessionId)) {
+    if (sessionId.includes(', ')) {
       throw new HTTPException(400, {
         res: Response.json({
           jsonrpc: '2.0',
@@ -624,14 +624,15 @@ export class StreamableHTTPTransport implements Transport {
   }
 
   #validateProtocolVersion(ctx: Context): boolean {
-    let protocolVersion =
-      ctx.req.header('mcp-protocol-version') ?? DEFAULT_NEGOTIATED_PROTOCOL_VERSION
-    if (Array.isArray(protocolVersion)) {
-      protocolVersion = protocolVersion[protocolVersion.length - 1]
+    let protocolVersion = DEFAULT_NEGOTIATED_PROTOCOL_VERSION
+    const rawProtocolVersion = ctx.req.header('mcp-protocol-version')
+    if (rawProtocolVersion) {
+      const versions = rawProtocolVersion.split(',').map((v) => v.trim())
+      protocolVersion = versions[versions.length - 1]
     }
 
     if (!SUPPORTED_PROTOCOL_VERSIONS.includes(protocolVersion)) {
-      throw new HTTPException(404, {
+      throw new HTTPException(400, {
         res: Response.json({
           jsonrpc: '2.0',
           error: {

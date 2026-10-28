@@ -523,6 +523,53 @@ describe('MCP helper', () => {
     expectErrorResponse(errorData, -32001, /Session not found/)
   })
 
+  it('should reject requests with duplicate mcp-session-id header', async () => {
+    sessionId = await initializeServer()
+
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    headers.set('Accept', 'application/json, text/event-stream')
+    headers.append('mcp-session-id', sessionId)
+    headers.append('mcp-session-id', 'another-session-id')
+
+    const response = await server.request('/', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(400)
+    expectErrorResponse(
+      await response.json(),
+      -32000,
+      /Bad Request: Mcp-Session-Id header must be a single value/
+    )
+  })
+
+  it('should accept session IDs containing commas from custom generators', async () => {
+    const customResult = await createTestServer({
+      sessionIdGenerator: () => 'session,token',
+    })
+    const customServer = customResult.server
+
+    const initResponse = await sendPostRequest(customServer, TEST_MESSAGES.initialize)
+    const customSessionId = initResponse.headers.get('mcp-session-id')
+    expect(customSessionId).toBe('session,token')
+
+    const response = await customServer.request('/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+        'mcp-session-id': customSessionId ?? '',
+        'mcp-protocol-version': '2025-03-26',
+      },
+      body: JSON.stringify(TEST_MESSAGES.toolsList),
+    })
+
+    expect(response.status).toBe(200)
+  })
+
   it('should establish standalone SSE stream and receive server-initiated messages', async () => {
     // First initialize to get a session ID
     sessionId = await initializeServer()
@@ -1046,7 +1093,7 @@ describe('MCP helper', () => {
         body: JSON.stringify(TEST_MESSAGES.toolsList),
       })
 
-      expect(response.status).toBe(404)
+      expect(response.status).toBe(400)
       const errorData = await response.json()
       expectErrorResponse(
         errorData,
@@ -1092,7 +1139,7 @@ describe('MCP helper', () => {
         },
       })
 
-      expect(response.status).toBe(404)
+      expect(response.status).toBe(400)
       const errorData = await response.json()
       expectErrorResponse(
         errorData,
@@ -1113,10 +1160,53 @@ describe('MCP helper', () => {
         },
       })
 
-      expect(response.status).toBe(404)
+      expect(response.status).toBe(400)
       const errorData = await response.json()
       expectErrorResponse(
         errorData,
+        -32000,
+        /Bad Request: Unsupported protocol version \(supported versions: .+\)/
+      )
+    })
+
+    it('should use the last value when multiple protocol version headers are provided', async () => {
+      sessionId = await initializeServer()
+
+      const headers = new Headers()
+      headers.set('Content-Type', 'application/json')
+      headers.set('Accept', 'application/json, text/event-stream')
+      headers.set('mcp-session-id', sessionId)
+      headers.append('mcp-protocol-version', '1999-01-01')
+      headers.append('mcp-protocol-version', '2025-03-26')
+
+      const response = await server.request('/', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(TEST_MESSAGES.toolsList),
+      })
+
+      expect(response.status).toBe(200)
+    })
+
+    it('should reject when multiple protocol versions end with an unsupported version', async () => {
+      sessionId = await initializeServer()
+
+      const headers = new Headers()
+      headers.set('Content-Type', 'application/json')
+      headers.set('Accept', 'application/json, text/event-stream')
+      headers.set('mcp-session-id', sessionId)
+      headers.append('mcp-protocol-version', '2025-03-26')
+      headers.append('mcp-protocol-version', '1999-01-01')
+
+      const response = await server.request('/', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(TEST_MESSAGES.toolsList),
+      })
+
+      expect(response.status).toBe(400)
+      expectErrorResponse(
+        await response.json(),
         -32000,
         /Bad Request: Unsupported protocol version \(supported versions: .+\)/
       )
