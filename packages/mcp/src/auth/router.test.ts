@@ -379,6 +379,24 @@ describe('MCP Auth Router', () => {
       expect(response.status).not.toBe(404)
     })
 
+    it('rate limits per client address', async () => {
+      const register = (address?: string) =>
+        app.request('/register', {
+          method: 'POST',
+          headers: address ? { 'x-forwarded-for': address } : {},
+          body: JSON.stringify({ redirect_uris: ['https://example.com/callback'] }),
+        })
+
+      // the registration endpoint allows 20 requests per hour
+      for (let i = 0; i < 20; i++) {
+        expect((await register('192.0.2.1')).status).toBe(201)
+      }
+      expect((await register('192.0.2.1')).status).toBe(429)
+      expect((await register('192.0.2.2')).status).toBe(201)
+      // without a client address the request is not counted
+      expect((await register()).status).toBe(201)
+    })
+
     it('excludes endpoints for unsupported features', async () => {
       // Setup minimal router
       const minimalApp = new Hono()

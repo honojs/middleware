@@ -24,9 +24,6 @@
   "src/auth/helpers/register.ts": {
     "@typescript-eslint/no-non-null-assertion": {
       "count": 1
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 1
     }
   },
   "src/auth/helpers/revoke.test.ts": {
@@ -117,9 +114,6 @@
     }
   },
   "src/auth/router.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 1
-    },
     "@typescript-eslint/prefer-nullish-coalescing": {
       "count": 4
     }

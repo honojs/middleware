@@ -1,7 +1,7 @@
 import { TooManyRequestsError } from '@modelcontextprotocol/sdk/server/auth/errors.js'
 import type { OAuthServerProvider } from '@modelcontextprotocol/sdk/server/auth/provider.js'
 import type { OAuthMetadata } from '@modelcontextprotocol/sdk/shared/auth.js'
-import type { Env, MiddlewareHandler, Schema } from 'hono'
+import type { Context, Env, MiddlewareHandler, Schema } from 'hono'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ConfigType as RateLimitOptions } from 'hono-rate-limiter'
@@ -151,7 +151,6 @@ export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>
       windowMs: 15 * 60 * 1000, // 15 minutes
       limit: 100, // 100 requests per windowMs
       standardHeaders: true,
-      keyGenerator: () => 'some-unique-key',
       message: new TooManyRequestsError(
         'You have exceeded the rate limit for token requests'
       ).toResponseObject(),
@@ -169,7 +168,6 @@ export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>
       windowMs: 15 * 60 * 1000, // 15 minutes
       limit: 50, // 50 requests per windowMs
       standardHeaders: true,
-      keyGenerator: () => 'some-unique-key',
       message: new TooManyRequestsError(
         'You have exceeded the rate limit for token requests'
       ).toResponseObject(),
@@ -198,7 +196,6 @@ export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>
         windowMs: 60 * 60 * 1000, // 1 hour
         limit: 20, // 20 requests per windowMs
         standardHeaders: true,
-        keyGenerator: () => 'some-unique-key',
         message: new TooManyRequestsError(
           'You have exceeded the rate limit for client registration requests'
         ).toResponseObject(),
@@ -218,7 +215,6 @@ export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>
         windowMs: 15 * 60 * 1000, // 15 minutes
         limit: 50, // 50 requests per windowMs
         standardHeaders: true,
-        keyGenerator: () => 'some-unique-key',
         message: new TooManyRequestsError(
           'You have exceeded the rate limit for token revocation requests'
         ).toResponseObject(),
@@ -231,6 +227,12 @@ export function mcpAuthRouter<E extends Env, S extends Schema, P extends string>
   return router as unknown as Hono<E, S, P>
 }
 
+// the client address as set by the edge or a trusted proxy; there is no runtime-neutral connection info
+const clientAddress = (c: Context): string | undefined =>
+  c.req.header('cf-connecting-ip') ??
+  c.req.header('x-real-ip') ??
+  c.req.header('x-forwarded-for')?.split(',')[0].trim()
+
 function applyRateLimiter(
   options: Partial<RateLimitOptions> | undefined | false,
   defaultOptions: Partial<RateLimitOptions>
@@ -239,16 +241,21 @@ function applyRateLimiter(
     return (_c, next) => next()
   }
 
-  return async (c, next) => {
-    try {
-      const rateLimiter = await import('hono-rate-limiter').then((m) => m.rateLimiter)
-
-      return await rateLimiter({
-        ...defaultOptions,
-        ...options,
-      } as RateLimitOptions)(c, next)
-    } catch {
-      throw new Error('@hono/mcp: Missing dependencies "hono-rate-limiter".')
-    }
+  // build the limiter once so that its store keeps counting across requests
+  let limiter: Promise<MiddlewareHandler> | undefined
+  return (c, next) => {
+    limiter ??= import('hono-rate-limiter').then(
+      ({ rateLimiter }) =>
+        rateLimiter({
+          keyGenerator: (c) => clientAddress(c) ?? '',
+          skip: (c) => clientAddress(c) === undefined,
+          ...defaultOptions,
+          ...options,
+        } as RateLimitOptions),
+      () => {
+        throw new Error('@hono/mcp: Missing dependencies "hono-rate-limiter".')
+      }
+    )
+    return limiter.then((limiter) => limiter(c, next))
   }
 }

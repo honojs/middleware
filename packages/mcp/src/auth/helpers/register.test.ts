@@ -128,6 +128,24 @@ describe('Client Registration Handler', () => {
       expect(spyRegisterClient).toHaveBeenCalledTimes(1)
     })
 
+    it('generates client_secret from the CSPRNG', async () => {
+      const spyRandom = vi.spyOn(Math, 'random')
+      const spyGetRandomValues = vi.spyOn(crypto, 'getRandomValues')
+
+      const response = await app.request('/register', {
+        method: 'POST',
+        body: JSON.stringify({ redirect_uris: ['https://example.com/callback'] }),
+      })
+
+      expect(response.status).toBe(201)
+      const body = (await response.json()) as { client_secret: string }
+      expect(body.client_secret).toMatch(/^[0-9a-f]{64}$/)
+      expect(spyRandom).not.toHaveBeenCalled()
+      expect(spyGetRandomValues).toHaveBeenCalled()
+
+      vi.restoreAllMocks()
+    })
+
     it('sets client_secret to undefined for token_endpoint_auth_method=none', async () => {
       const clientMetadata: OAuthClientMetadata = {
         redirect_uris: ['https://example.com/callback'],
