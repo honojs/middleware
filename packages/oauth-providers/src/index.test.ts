@@ -888,8 +888,17 @@ describe('OAuth Middleware', () => {
         expect(res.status).toBe(401)
       })
 
+      it('Prevent login CSRF when state is omitted', async () => {
+        const res = await app.request(`/x?code=${dummyCode}`)
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(401)
+      })
+
       it('Should throw error for invalid code', async () => {
-        const res = await app.request('/x?code=9348ffdsd-sdsdbad-code')
+        const res = await app.request('/x?code=9348ffdsd-sdsdbad-code&state=valid-state', {
+          headers: { cookie: 'state=valid-state' },
+        })
 
         expect(res).not.toBeNull()
         expect(res.status).toBe(400)
@@ -897,7 +906,9 @@ describe('OAuth Middleware', () => {
       })
 
       it('Should work with received code', async () => {
-        const res = await app.request(`/x?code=${dummyCode}`)
+        const res = await app.request(`/x?code=${dummyCode}&state=valid-state`, {
+          headers: { cookie: 'state=valid-state' },
+        })
         const response = (await res.json()) as {
           token: Token
           refreshToken: Token
