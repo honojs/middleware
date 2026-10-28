@@ -1,5 +1,11 @@
 # @hono/graphql-server
 
+## 0.7.1
+
+### Patch Changes
+
+- [#2217](https://github.com/honojs/middleware/pull/2217) [`a6ff362`](https://github.com/honojs/middleware/commit/a6ff362e484ee79292d514b9e19eb9694ae8e575) Thanks [@yusukebe](https://github.com/yusukebe)! - Escape the request path embedded in the GraphiQL page script
+
 ## 0.7.0
 
 ### Minor Changes
