@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.6.2
+
+### Patch Changes
+
+- [#2219](https://github.com/honojs/middleware/pull/2219) [`28b6f52`](https://github.com/honojs/middleware/commit/28b6f52403db975227f1232fc12077a7c86e3a9a) Thanks [@yusukebe](https://github.com/yusukebe)! - Escape the title and the string options embedded in the Swagger UI page
+
 ## 0.6.1
 
 ### Patch Changes
