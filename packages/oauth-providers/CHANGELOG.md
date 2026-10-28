@@ -1,5 +1,11 @@
 # @hono/oauth-providers
 
+## 0.9.1
+
+### Patch Changes
+
+- [#2223](https://github.com/honojs/middleware/pull/2223) [`fea6fc2`](https://github.com/honojs/middleware/commit/fea6fc2e0753849dd3a6d601ce4e95c50c2cb171) Thanks [@yusukebe](https://github.com/yusukebe)! - Reject an X callback without `state`, and set the `state` and `code-verifier` cookies with `Secure` and `SameSite=Lax`, matching the other providers
+
 ## 0.9.0
 
 ### Minor Changes
