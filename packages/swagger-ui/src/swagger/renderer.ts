@@ -123,6 +123,14 @@ const RENDER_TYPE_MAP = {
   (typeof RENDER_TYPE)[keyof typeof RENDER_TYPE]
 >
 
+// the output is embedded in an inline <script>, so also escape what could close it or break the literal
+const toScriptLiteral = (value: unknown): string =>
+  JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
+
 export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions): string => {
   const optionsStrings = Object.entries(options)
     .map(([k, v]) => {
@@ -134,14 +142,14 @@ export const renderSwaggerUIOptions = (options: DistSwaggerUIOptions): string =>
 
       switch (RENDER_TYPE_MAP[key]) {
         case RENDER_TYPE.STRING:
-          return `${key}: '${v}'`
+          return `${key}: ${toScriptLiteral(String(v))}`
         case RENDER_TYPE.STRING_ARRAY:
           if (!Array.isArray(v)) {
             return ''
           }
           return `${key}: [${v.map((ve) => `${ve}`).join(',')}]`
         case RENDER_TYPE.JSON_STRING:
-          return `${key}: ${JSON.stringify(v)}`
+          return `${key}: ${toScriptLiteral(v)}`
         case RENDER_TYPE.RAW:
           return `${key}: ${v}`
         default:

@@ -13,7 +13,7 @@ describe('SwaggerUI Rendering', () => {
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            dom_id: '#swagger-ui',url: '${url}',
+            dom_id: '#swagger-ui',url: "${url}",
           })
         }
       </script>
@@ -30,7 +30,7 @@ describe('SwaggerUI Rendering', () => {
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            dom_id: '#swagger-ui',url: '${url}',
+            dom_id: '#swagger-ui',url: "${url}",
           })
         }
       </script>
@@ -78,7 +78,7 @@ describe('SwaggerUI Rendering', () => {
             window.onload = () => {
               window.ui = SwaggerUIBundle({
                 dom_id: '#swagger-ui-manually',
-                url: '${url}',
+                url: "${url}",
               })
             }
           </script>
@@ -95,7 +95,7 @@ describe('SwaggerUI Rendering', () => {
             window.onload = () => {
               window.ui = SwaggerUIBundle({
                 dom_id: '#swagger-ui-manually',
-                url: '${url}',
+                url: "${url}",
               })
             }
           </script>
@@ -142,6 +142,21 @@ describe('SwaggerUI Middleware', () => {
     expect(html).toContain('(a, b) => a.get("path").localeCompare(b.get("path"))') // RENDER_TYPE.RAW
     expect(html).toContain('{"info":{"title":"Custom UI","version":"1.0.0"}}') // RENDER_TYPE.JSON_STRING
     expect(html).toContain('window.ui = SwaggerUIBundle({') // entry point of SwaggerUI
+  })
+
+  it('escapes the title', async () => {
+    app.get(
+      '/',
+      swaggerUI({
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
+        title: '</title><script>alert(1)</script>',
+      })
+    )
+
+    const res = await app.request('/')
+    const html = await res.text()
+    expect(html).toContain('<title>&lt;/title&gt;&lt;script&gt;alert(1)&lt;/script&gt;</title>')
+    expect(html).not.toContain('<script>alert(1)</script>')
   })
 
   it('should handle baseUrl correctly', async () => {
