@@ -515,8 +515,8 @@ importers:
         specifier: ^4.11.5
         version: 4.12.28
       hono-rate-limiter:
-        specifier: ^0.5.3
-        version: 0.5.3(hono@4.12.28)(unstorage@1.17.5)
+        specifier: ^0.5.4
+        version: 0.5.4(hono@4.12.28)(unstorage@1.17.5)
       tsdown:
         specifier: ^0.22.3
         version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
@@ -5070,8 +5070,8 @@ packages:
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
 
-  hono-rate-limiter@0.5.3:
-    resolution: {integrity: sha512-M0DxbVMpPELEzLi0AJg1XyBHLGJXz7GySjsPoK+gc5YeeBsdGDGe+2RvVuCAv8ydINiwlbxqYMNxUEyYfRji/A==}
+  hono-rate-limiter@0.5.4:
+    resolution: {integrity: sha512-P3/cscAmz1hA+MuM+Hn9gP/EyO2zWv2aXIFkVYuLZkPzrPa4oaWdVCS94vyDlsNBgeMnE/Hr2+LznIKQxrF0ng==}
     peerDependencies:
       hono: ^4.10.8
       unstorage: ^1.17.3
@@ -11509,7 +11509,7 @@ snapshots:
 
   highlight.js@10.7.3: {}
 
-  hono-rate-limiter@0.5.3(hono@4.12.28)(unstorage@1.17.5):
+  hono-rate-limiter@0.5.4(hono@4.12.28)(unstorage@1.17.5):
     dependencies:
       hono: 4.12.28
     optionalDependencies:

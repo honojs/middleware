@@ -50,14 +50,14 @@
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "hono": "*",
-    "hono-rate-limiter": "^0.5.3",
+    "hono-rate-limiter": "^0.5.4",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/node": "^26.6.5",
     "hono": "^4.11.5",
-    "hono-rate-limiter": "^0.5.3",
+    "hono-rate-limiter": "^0.5.4",
     "tsdown": "^0.22.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.7",
