@@ -87,4 +87,6 @@ export function clientRegistrationHandler({
 }
 
 const genRanHex = (size: number) =>
-  [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
+  Array.from(crypto.getRandomValues(new Uint8Array(size / 2)), (b) =>
+    b.toString(16).padStart(2, '0')
+  ).join('')
