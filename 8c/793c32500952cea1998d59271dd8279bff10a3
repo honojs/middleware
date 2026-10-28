@@ -1,0 +1,23 @@
+.changeset/oauth-x-state.md
+  s_eebc5901743536::t_572257c0a10794 1-5
+packages/oauth-providers/src/index.test.ts
+  s_eebc5901743536::t_741e4785a84e2b 891-897,899-901,909-911
+packages/oauth-providers/src/providers/x/xAuth.ts
+  s_eebc5901743536::t_6e401d3b615b10 41-42,48-49,54-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8c793c32500952cea1998d59271dd8279bff10a3",
+  "prompts": {},
+  "sessions": {
+    "s_eebc5901743536": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e4b59199-b4e1-4360-a86d-9ab798da0bfd",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
