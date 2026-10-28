@@ -297,6 +297,20 @@ describe('GraphQL Middleware - GET functionality', () => {
     expect(res.status).toBe(200)
     expect(await res.text()).toContain('<div id="graphiql">')
   })
+
+  it('Escapes the request path in the GraphiQL script', async () => {
+    const app = new Hono()
+    app.use('/graphql/*', graphqlServer({ schema: TestSchema, graphiql: true }))
+
+    const res = await app.request('http://localhost/graphql/a%27b%3C/script%3Ec', {
+      method: 'GET',
+    })
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expect(html).toContain('url: "/graphql/a\'b\\u003c/script\\u003ec",')
+    expect(html).not.toContain('</script>c')
+    expect(html.match(/<\/script>/g)?.length).toBe(2)
+  })
 })
 
 describe('GraphQL Middleware - POST functionality', () => {
