@@ -113,7 +113,7 @@ describe('SwaggerUI Middleware', () => {
   })
 
   it('responds with status 200', async () => {
-    app.get('/', swaggerUI({ url: "https://petstore3.swagger.io/api/v3/openapi.json" }))
+    app.get('/', swaggerUI({ url: 'https://petstore3.swagger.io/api/v3/openapi.json' }))
 
     const res = await app.request('/')
     expect(res.status).toBe(200)
@@ -123,7 +123,7 @@ describe('SwaggerUI Middleware', () => {
     app.get(
       '/',
       swaggerUI({
-        url: "https://petstore3.swagger.io/api/v3/openapi.json",
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
         spec: {
           info: {
             title: 'Custom UI',
@@ -163,7 +163,7 @@ describe('SwaggerUI Middleware', () => {
     app.get(
       '/',
       swaggerUI({
-        url: "https://petstore3.swagger.io/api/v3/openapi.json",
+        url: 'https://petstore3.swagger.io/api/v3/openapi.json',
         baseUrl: '/docs',
       })
     )

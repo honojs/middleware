@@ -28,7 +28,7 @@ describe('SwaggerUIOption Rendering', () => {
         spec: {
           openapi: '3.0.0',
           info: { title: 'Swagger Petstore', version: '1.0.0' },
-          servers: [{ url: "https://petstore3.swagger.io/api/v3" }],
+          servers: [{ url: 'https://petstore3.swagger.io/api/v3' }],
         },
         url: baseUrl,
       },
@@ -36,12 +36,12 @@ describe('SwaggerUIOption Rendering', () => {
     ],
     [
       'layout',
-      { layout: "StandaloneLayout", url: baseUrl },
+      { layout: 'StandaloneLayout', url: baseUrl },
       `layout: "StandaloneLayout",url: "${baseUrl}"`,
     ],
     [
       'docExpansion',
-      { docExpansion: "list", url: baseUrl },
+      { docExpansion: 'list', url: baseUrl },
       `docExpansion: "list",url: "${baseUrl}"`,
     ],
     [
@@ -81,7 +81,7 @@ describe('SwaggerUIOption Rendering', () => {
     ],
     [
       'defaultModelRendering',
-      { defaultModelRendering: "model", url: baseUrl },
+      { defaultModelRendering: 'model', url: baseUrl },
       `defaultModelRendering: "model",url: "${baseUrl}"`,
     ],
     [
@@ -147,7 +147,7 @@ describe('SwaggerUIOption Rendering', () => {
     ],
     [
       'oauth2RedirectUrl',
-      { oauth2RedirectUrl: "https://example.com/oauth2-redirect.html", url: baseUrl },
+      { oauth2RedirectUrl: 'https://example.com/oauth2-redirect.html', url: baseUrl },
       `oauth2RedirectUrl: "https://example.com/oauth2-redirect.html",url: "${baseUrl}"`,
     ],
     [
@@ -167,7 +167,7 @@ describe('SwaggerUIOption Rendering', () => {
     ],
     [
       'validatorUrl',
-      { validatorUrl: "https://validator.swagger.io", url: baseUrl },
+      { validatorUrl: 'https://validator.swagger.io', url: baseUrl },
       `validatorUrl: "https://validator.swagger.io",url: "${baseUrl}"`,
     ],
     [
