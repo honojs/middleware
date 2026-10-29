@@ -1,0 +1,12 @@
+{
+  "src/index.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 1
+    }
+  },
+  "src/compiled.ts": {
+    "@typescript-eslint/no-invalid-void-type": {
+      "count": 1
+    }
+  }
+}

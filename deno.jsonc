@@ -3,6 +3,7 @@
   "workspace": [
     "packages/ajv-validator",
     "packages/arktype-validator",
+    "packages/ata-validator",
     // "packages/auth-js",
     // "packages/bun-compress",
     // "packages/bun-transpiler",
