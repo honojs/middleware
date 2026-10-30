@@ -88,7 +88,7 @@ So far I have not been able to see solid support for metrics in Cloudflare Worke
 The following example shows how to use @microlabs/otel-cf-workers with [Honeycomb](https://www.honeycomb.io/):
 
 ```ts
-import { otel } from '@hono/otel'
+import { httpInstrumentationMiddleware } from '@hono/otel'
 import { instrument, ResolveConfigFn } from '@microlabs/otel-cf-workers'
 import { Hono } from 'hono'
 
