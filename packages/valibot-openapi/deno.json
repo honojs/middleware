@@ -1,0 +1,16 @@
+{
+  "name": "@hono/valibot-openapi",
+  "version": "0.0.0",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.8.3",
+    "valibot": "jsr:@valibot/valibot@^1.1.0"
+  },
+  "publish": {
+    "include": ["deno.json", "README.md", "src/**/*.ts"],
+    "exclude": ["src/**/*.test.ts", "src/**/*.test-d.ts"]
+  }
+}

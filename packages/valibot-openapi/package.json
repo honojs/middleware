@@ -40,10 +40,16 @@
   },
   "homepage": "https://github.com/honojs/middleware",
   "peerDependencies": {
+    "hono": ">=4.10.0",
     "valibot": "^1.0.0"
   },
   "devDependencies": {
-    "valibot": "^1.5.0"
+    "hono": "^4.11.5",
+    "tsdown": "^0.22.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "valibot": "^1.5.0",
+    "vitest": "^4.1.7",
+    "yaml": "^2.8.2"
   },
   "dependencies": {
     "@hono/valibot-validator": "workspace:^"

@@ -1026,9 +1026,24 @@ importers:
         specifier: workspace:^
         version: link:../valibot-validator
     devDependencies:
+      hono:
+        specifier: ^4.11.5
+        version: 4.12.28
+      tsdown:
+        specifier: ^0.22.3
+        version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
+      typescript:
+        specifier: npm:@typescript/typescript6@^6.0.2
+        version: '@typescript/typescript6@6.0.2'
       valibot:
         specifier: ^1.5.0
-        version: 1.5.0(typescript@7.0.2)
+        version: 1.5.0(@typescript/typescript6@6.0.2)
+      vitest:
+        specifier: ^4.1.7
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+      yaml:
+        specifier: ^2.8.2
+        version: 2.9.0
 
   packages/valibot-validator:
     devDependencies:
@@ -14006,10 +14021,6 @@ snapshots:
   valibot@1.5.0(@typescript/typescript6@6.0.2):
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
-
-  valibot@1.5.0(typescript@7.0.2):
-    optionalDependencies:
-      typescript: 7.0.2
 
   valid-url@1.0.9: {}
 
