@@ -1,0 +1,54 @@
+{
+  "name": "@hono/valibot-openapi",
+  "version": "0.0.0",
+  "description": "A wrapper class of Hono which supports OpenAPI with Valibot.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm -w run build:pkg",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "pnpm -w run version:set $npm_package_version"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true,
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/valibot-openapi"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "valibot": "^1.0.0"
+  },
+  "devDependencies": {
+    "valibot": "^1.5.0"
+  },
+  "dependencies": {
+    "@hono/valibot-validator": "workspace:^"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
