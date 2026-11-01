@@ -526,10 +526,10 @@ export class OpenAPIHono<
     const effectiveHook: Hook<any, E, any, any> =
       hook ?? ((result, c): unknown => this.#resolveDefaultHook()?.(result, c))
 
-    const validate = (target: keyof ValidationTargets, schema: GenericSchema) =>
+    const validate = (target: keyof ValidationTargets, schema: GenericSchema): MiddlewareHandler =>
       vValidator(target, schema, effectiveHook)
 
-    const validators: H[] = []
+    const validators: MiddlewareHandler[] = []
     const request = route.request
 
     if (request?.query) {
