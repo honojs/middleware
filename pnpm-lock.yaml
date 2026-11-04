@@ -180,8 +180,8 @@ importers:
   packages/capnweb:
     devDependencies:
       '@hono/node-server':
-        specifier: ^2.1.1
-        version: 2.1.1(hono@4.12.28)
+        specifier: ^2.1.5
+        version: 2.1.5(hono@4.12.28)
       '@hono/node-ws':
         specifier: workspace:^
         version: link:../node-ws
@@ -556,8 +556,8 @@ importers:
         version: 8.21.0
     devDependencies:
       '@hono/node-server':
-        specifier: ^2.1.1
-        version: 2.1.1(hono@4.12.28)
+        specifier: ^2.1.5
+        version: 2.1.5(hono@4.12.28)
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
@@ -1850,11 +1850,11 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/node-server@2.1.1':
-    resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
+  '@hono/node-server@2.1.5':
+    resolution: {integrity: sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==}
     engines: {node: '>=20'}
     peerDependencies:
-      hono: ^4
+      hono: ^4 || ^5.0.0-0
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -8343,7 +8343,7 @@ snapshots:
     dependencies:
       hono: 4.12.28
 
-  '@hono/node-server@2.1.1(hono@4.12.28)':
+  '@hono/node-server@2.1.5(hono@4.12.28)':
     dependencies:
       hono: 4.12.28
 
@@ -8845,7 +8845,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.30.0(zod@4.4.3)':
     dependencies:
-      '@hono/node-server': 2.1.1(hono@4.12.28)
+      '@hono/node-server': 2.1.5(hono@4.12.28)
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
