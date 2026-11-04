@@ -1,0 +1,31 @@
+.github/workflows/ci.yml
+  s_f134022a816c97::t_e86757b537f3cd 89,91
+.github/workflows/pr.yml
+  s_f134022a816c97::t_7a8fa4c4df5792 98,100
+pnpm-lock.yaml
+  s_c69514c5437df9::t_fadf221a08bf2c 6709-6710,6715-6716,6729-6732,11773
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0b459e7d97e4f1ded5daa61b5cd57bff7b663d96",
+  "prompts": {},
+  "sessions": {
+    "s_c69514c5437df9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc1a66c1-ea28-495e-a94c-a564ed52fb06",
+        "model": "unknown"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    },
+    "s_f134022a816c97": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0238a0c2-31ea-4cd9-a345-18ea2c1d4b46",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Yusuke Wada <yusuke@kamawada.com>"
+    }
+  }
+}
