@@ -26,7 +26,6 @@
     // "packages/oidc-auth",
     "packages/otel",
     "packages/prometheus",
-    "packages/qwik-city",
     "packages/react-compat",
     // "packages/react-renderer",
     // "packages/sentry",
