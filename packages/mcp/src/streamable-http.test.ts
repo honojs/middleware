@@ -827,6 +827,20 @@ describe('MCP helper', () => {
     const response = await sendPostRequest(server, batchNotifications, sessionId)
 
     expect(response.status).toBe(202)
+    expect(response.body).toBeNull()
+  })
+
+  it('should return 202 with no body for JSON-RPC responses', async () => {
+    sessionId = await initializeServer()
+
+    const response = await sendPostRequest(
+      server,
+      { jsonrpc: '2.0', id: 'client-response', result: {} },
+      sessionId
+    )
+
+    expect(response.status).toBe(202)
+    expect(response.body).toBeNull()
   })
 
   it('should return JSON content-type for notification-only requests', async () => {
@@ -844,6 +858,7 @@ describe('MCP helper', () => {
 
     expect(response.status).toBe(202)
     expect(response.headers.get('content-type')).toBe('application/json')
+    expect(response.body).toBeNull()
   })
 
   it('should handle batch request messages with SSE stream for responses', async () => {
