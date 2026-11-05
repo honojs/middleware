@@ -7,7 +7,7 @@ import { STATUS_CODES } from 'node:http'
 import type { IncomingMessage, Server } from 'node:http'
 import type { Http2SecureServer, Http2Server } from 'node:http2'
 import type { Duplex } from 'node:stream'
-import { CloseEvent } from './events'
+import { CloseEvent, ErrorEvent } from './events'
 
 export interface NodeWebSocket {
   upgradeWebSocket: UpgradeWebSocket<
