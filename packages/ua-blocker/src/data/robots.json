@@ -1,4 +1,11 @@
 {
+  "__usage_ai-training": {
+    "operator": "Not applicable.",
+    "respect": "Yes ([Anthropic](https://mailarchive.ietf.org/arch/msg/ai-control/mddjatOxSR0h6GmLRBWlc839c7w/), [OpenAI](https://openai.com/index/helping-websites-express-ai-training-preferences/), [Google](https://developers.google.com/search/blog/2026/10/ai-training-control), [Microsoft Bing](https://blogs.bing.com/search/2026/10/your-content-your-choice-clearer-preferences-for-training-and-grounding/))",
+    "function": "AI Data Scrapers",
+    "frequency": "Not applicable.",
+    "description": "`__usage_ai-training` is a policy token defined in an [Internet Draft](https://datatracker.ietf.org/doc/draft-kelley-aipref-training-preference-signal/) that Anthropic's Kevin Kelley submitted to the AI Preferences working group at the IETF to show a preference against crawling data for AI training."
+  },
   "AddSearchBot": {
     "operator": "Unclear at this time.",
     "respect": "Unclear at this time.",
@@ -278,6 +285,13 @@
     "function": "AI Assistants",
     "frequency": "Only when prompted by a user.",
     "description": "ChatGPT-User is OpenAI's web crawler that visits websites when ChatGPT users request information. This enables ChatGPT to include links in its responses. More info can be found at https://knownagents.com/agents/chatgpt-user"
+  },
+  "Claude-Agent": {
+    "operator": "Unclear at this time.",
+    "respect": "Unclear at this time.",
+    "function": "AI Agents",
+    "frequency": "Unclear at this time.",
+    "description": "Claude-Agent is Anthropic's cloud browser agent for Claude Duet. It navigates websites and completes multi-step tasks on behalf of users. More info can be found at https://knownagents.com/agents/claude-agent"
   },
   "Claude-Code": {
     "operator": "Unclear at this time.",
