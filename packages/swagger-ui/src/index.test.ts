@@ -52,16 +52,35 @@ describe('SwaggerUI Rendering', () => {
     <div>
       <div id="swagger-ui"></div>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.css" />
-      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-standalone-preset.js" crossorigin="anonymous"></script>
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
-            dom_id: '#swagger-ui',urls: [{"name":"Petstore","url":"${url}"}],
+            dom_id: '#swagger-ui',urls: [{"name":"Petstore","url":"${url}"}],presets: [SwaggerUIBundle.presets.apis,SwaggerUIStandalonePreset],layout: "StandaloneLayout",
           })
         }
       </script>
     </div>
   `)
+  })
+
+  it('keeps user-provided presets and layout when using urls', () => {
+    const html = SwaggerUI({
+      urls: [{ name: 'Petstore', url }],
+      presets: ['SwaggerUIStandalonePreset'],
+      layout: 'BaseLayout',
+    })
+    expect(html).toContain('swagger-ui-standalone-preset.js')
+    expect(html).toContain('presets: [SwaggerUIStandalonePreset]')
+    expect(html).toContain('layout: "BaseLayout"')
+    expect(html).not.toContain('StandaloneLayout')
+  })
+
+  it('does not load the standalone preset when only url is given', () => {
+    const html = SwaggerUI({ url })
+    expect(html).not.toContain('swagger-ui-standalone-preset.js')
+    expect(html).not.toContain('presets:')
+    expect(html).not.toContain('layout:')
   })
 
   it('renders correctly with custom UI', () => {
