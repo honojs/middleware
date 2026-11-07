@@ -10,9 +10,6 @@
   "src/index.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 2
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 2
     }
   },
   "src/swagger/renderer.ts": {

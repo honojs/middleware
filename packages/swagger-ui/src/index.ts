@@ -43,22 +43,30 @@ type OriginalSwaggerUIOptions = {
 type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions
 
 const SwaggerUI = ({ baseUrl, version, ...options }: SwaggerUIOptions): string => {
-  const asset = remoteAssets({
-    baseUrl: baseUrl,
-    version: version,
-  })
-
   if (options.manuallySwaggerUIHtml) {
-    return options.manuallySwaggerUIHtml(asset)
+    return options.manuallySwaggerUIHtml(remoteAssets({ baseUrl, version }))
   }
 
-  const optionsStrings = renderSwaggerUIOptions(options)
+  // Swagger UI only loads a definition from `urls` through the TopBar plugin,
+  // which ships in the standalone preset, so enable it when `urls` is given.
+  const useStandalonePreset = options.urls !== undefined
+  const asset = remoteAssets({ baseUrl, version, standalonePreset: useStandalonePreset })
+
+  const optionsStrings = renderSwaggerUIOptions(
+    useStandalonePreset
+      ? {
+          ...options,
+          presets: options.presets ?? ['SwaggerUIBundle.presets.apis', 'SwaggerUIStandalonePreset'],
+          layout: options.layout ?? 'StandaloneLayout',
+        }
+      : options
+  )
 
   return `
     <div>
       <div id="swagger-ui"></div>
-      ${asset.css.map((url) => html`<link rel="stylesheet" href="${url}" />`)}
-      ${asset.js.map((url) => html`<script src="${url}" crossorigin="anonymous"></script>`)}
+      ${asset.css.map((url) => html`<link rel="stylesheet" href="${url}" />`).join('')}
+      ${asset.js.map((url) => html`<script src="${url}" crossorigin="anonymous"></script>`).join('')}
       <script>
         window.onload = () => {
           window.ui = SwaggerUIBundle({
