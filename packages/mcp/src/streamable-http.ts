@@ -422,8 +422,8 @@ export class StreamableHTTPTransport implements Transport {
           this.onmessage?.(message, { authInfo, requestInfo })
         }
 
-        // if it only contains notifications or responses, return 202
-        return ctx.json(null, { status: 202 })
+        // if it only contains notifications or responses, return 202 with no body
+        return ctx.body(null, 202, { 'Content-Type': 'application/json' })
       }
 
       if (hasRequests) {
@@ -701,10 +701,10 @@ export class StreamableHTTPTransport implements Transport {
 
     // Get the response for this request
     const streamId = this.#requestToStreamMapping.get(requestId)
-    const response = this.#streamMapping.get(streamId!)
     if (!streamId) {
       throw new Error(`No connection established for request ID: ${String(requestId)}`)
     }
+    const response = this.#streamMapping.get(streamId)
 
     if (!this.#enableJsonResponse) {
       // For SSE responses, generate event ID if event store is provided
@@ -735,7 +735,6 @@ export class StreamableHTTPTransport implements Transport {
       const relatedIds = Array.from(this.#requestToStreamMapping.entries())
         .filter(([, streamId]) => this.#streamMapping.get(streamId) === response)
         .map(([id]) => id)
-      isJSONRPCResultResponse
       // Check if we have responses for all requests using this connection
       const allResponsesReady = relatedIds.every((id) => this.#requestResponseMap.has(id))
 
