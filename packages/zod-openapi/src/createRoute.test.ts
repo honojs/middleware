@@ -1,5 +1,6 @@
 import { describe, it, expect, expectTypeOf } from 'vitest'
-import { createRoute, z } from '.'
+import type { RouteHandler } from '.'
+import { createRoute, createRouteHandler, z } from '.'
 
 describe('createRoute', () => {
   it.each([
@@ -53,5 +54,34 @@ describe('createRoute', () => {
     expect(route).toEqual(config)
     expect(route.getRoutingPath()).toBe(expected)
     expectTypeOf(route.getRoutingPath()).toEqualTypeOf<typeof expected>()
+  })
+})
+
+describe('createRouteHandler', () => {
+  const route = createRoute({
+    method: 'get',
+    path: '/users',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({ id: z.string() }),
+          },
+        },
+        description: 'Retrieve user',
+      },
+    },
+  })
+
+  it('returns the handler function directly when called with (route, handler)', () => {
+    const fn: RouteHandler<typeof route> = (c) => c.json({ id: '1' }, 200)
+    const handler = createRouteHandler(route, fn)
+    expect(handler).toBe(fn)
+  })
+
+  it('returns the handler function directly when called with generic (handler)', () => {
+    const fn: RouteHandler<typeof route> = (c) => c.json({ id: '1' }, 200)
+    const handler = createRouteHandler<typeof route>(fn)
+    expect(handler).toBe(fn)
   })
 })
