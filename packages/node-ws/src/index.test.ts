@@ -192,6 +192,32 @@ describe('WebSocket helper', () => {
     ws.close(testCode, testReason)
   })
 
+  it('ErrorEvent should be passed to onError without crash', async () => {
+    const mainPromise = new Promise<Event & { error?: unknown }>((resolve) =>
+      app.get(
+        '/',
+        upgradeWebSocket(() => ({
+          onMessage(_event, ctx) {
+            ctx.raw?.emit('error', new Error('Simulated error'))
+          },
+          onError(event) {
+            resolve(event)
+          },
+        }))
+      )
+    )
+
+    const ws = new WebSocket('ws://localhost:3030/')
+    await new Promise<void>((resolve) => ws.on('open', resolve))
+    ws.send('trigger')
+
+    const event = await mainPromise
+    expect(event.type).toBe('error')
+    expect(event.error).toBeInstanceOf(Error)
+    expect((event.error as Error).message).toBe('Simulated error')
+    ws.close()
+  })
+
   it('Should be able to send and receive binary content with good length', async () => {
     const mainPromise = new Promise<WSMessageReceive>((resolve) =>
       app.get(
