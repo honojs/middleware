@@ -97,7 +97,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/arktype-validator:
     devDependencies:
@@ -115,7 +115,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/auth-js:
     devDependencies:
@@ -139,7 +139,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/bun-compress:
     devDependencies:
@@ -157,7 +157,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/bun-transpiler:
     devDependencies:
@@ -175,7 +175,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/capnweb:
     devDependencies:
@@ -205,7 +205,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       ws:
         specifier: ^8.17.0
         version: 8.21.0
@@ -254,7 +254,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/clerk-auth:
     dependencies:
@@ -282,7 +282,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/cloudflare-access:
     devDependencies:
@@ -314,8 +314,8 @@ importers:
         specifier: ^1.21.2
         version: 1.21.2(yup@1.7.1)
       '@conform-to/zod':
-        specifier: ^1.20.2
-        version: 1.20.2(zod@4.4.3)
+        specifier: ^1.21.3
+        version: 1.21.3(zod@4.4.3)
       hono:
         specifier: ^4.11.5
         version: 4.12.28
@@ -330,7 +330,7 @@ importers:
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       yup:
         specifier: ^1.7.1
         version: 1.7.1
@@ -354,7 +354,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/esbuild-transpiler:
     devDependencies:
@@ -375,7 +375,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/eslint-config:
     dependencies:
@@ -417,7 +417,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/firebase-auth:
     dependencies:
@@ -442,7 +442,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/graphql-server:
     dependencies:
@@ -464,7 +464,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/hello:
     devDependencies:
@@ -479,7 +479,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/inertia:
     devDependencies:
@@ -497,7 +497,7 @@ importers:
         version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/mcp:
     dependencies:
@@ -547,7 +547,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/node-ws:
     dependencies:
@@ -572,7 +572,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/oauth-providers:
     devDependencies:
@@ -581,7 +581,7 @@ importers:
         version: 4.12.28
       msw:
         specifier: ^2.12.10
-        version: 2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2)
+        version: 2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2)
       tsdown:
         specifier: ^0.22.3
         version: 0.22.4(@arethetypeswrong/core@0.18.5)(@typescript/typescript6@6.0.2)(publint@0.3.21)
@@ -590,7 +590,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/oidc-auth:
     dependencies:
@@ -615,7 +615,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/otel:
     dependencies:
@@ -649,7 +649,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/prometheus:
     devDependencies:
@@ -667,7 +667,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/react-compat:
     devDependencies:
@@ -709,7 +709,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/sentry:
     dependencies:
@@ -728,7 +728,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/session:
     dependencies:
@@ -753,7 +753,7 @@ importers:
         version: 1.17.5
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/ssg-plugins-essential:
     dependencies:
@@ -796,7 +796,7 @@ importers:
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       zod:
         specifier: ^4.2.1
         version: 4.4.3
@@ -817,7 +817,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       winston:
         specifier: ^3.19.0
         version: 3.19.0
@@ -838,7 +838,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/swagger-editor:
     devDependencies:
@@ -853,7 +853,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/swagger-ui:
     devDependencies:
@@ -871,7 +871,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/trpc-server:
     devDependencies:
@@ -889,7 +889,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       zod:
         specifier: ^4.2.1
         version: 4.4.3
@@ -913,7 +913,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/typebox-validator:
     devDependencies:
@@ -931,7 +931,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/typedriver-validator:
     devDependencies:
@@ -958,7 +958,7 @@ importers:
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       zod:
         specifier: ^4.2.1
         version: 4.4.3
@@ -967,7 +967,7 @@ importers:
     devDependencies:
       '@typia/unplugin':
         specifier: ^12.1.1
-        version: 12.1.1(rollup@4.62.2)(typia@12.1.1(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 12.1.1(rollup@4.62.2)(typia@12.1.1(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       hono:
         specifier: ^4.11.5
         version: 4.12.28
@@ -979,10 +979,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       typia:
         specifier: ^12.1.1
-        version: 12.1.1(@types/node@26.6.5)(@typescript/typescript6@6.0.2)
+        version: 12.1.1(@types/node@26.6.6)(@typescript/typescript6@6.0.2)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/ua-blocker:
     devDependencies:
@@ -1018,7 +1018,7 @@ importers:
         version: 1.5.0(@typescript/typescript6@6.0.2)
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
 
   packages/zod-openapi:
     dependencies:
@@ -1043,7 +1043,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       yaml:
         specifier: ^2.8.2
         version: 2.9.0
@@ -1064,7 +1064,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       vitest:
         specifier: ^4.1.7
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
       zod:
         specifier: ^4.2.1
         version: 4.4.3
@@ -1362,11 +1362,11 @@ packages:
   '@conform-to/dom@1.19.4':
     resolution: {integrity: sha512-P/mBdVRl946iE74TXmF5YLY9+1IDrQzxKdj9A7qv7Cd4l/O02EvJskg3X7cHwhmFFIXXgNzSmf/y4B597SS4gg==}
 
-  '@conform-to/dom@1.20.2':
-    resolution: {integrity: sha512-HfVb0XCHZijXODupqdV7+DrlZgJAYRQsXm/FpfFjKZO1P1S8LhlS7yMBTH2K5zkMyhk6fV/BvfUZi88Kp1EslA==}
-
   '@conform-to/dom@1.21.2':
     resolution: {integrity: sha512-43LIYhFUPOMtV01LOH9Pes/8vROW7Qgh249ytv0EBfPCR963g0HR6xK6hUD1r2EjM8Zgs17oMZgoRyRT8krH/Q==}
+
+  '@conform-to/dom@1.21.3':
+    resolution: {integrity: sha512-gaFYBWPCLwIJASd+VQWtcLfJnhn3Fo0/U8NS0LAMvUHuWU6UZ354MqYNUgvkaMtEfPfqSai6p4txdDp9JelDww==}
 
   '@conform-to/valibot@1.19.4':
     resolution: {integrity: sha512-aAKgNpvycZNK9JIzmWu7Q/ogULRYKTeKsMmWS9h04dZH8jjBe0AKiE7WTWJosGOZjq2Ce/arm7D9//9QmGgyIA==}
@@ -1378,8 +1378,8 @@ packages:
     peerDependencies:
       yup: '>=0.32.0'
 
-  '@conform-to/zod@1.20.2':
-    resolution: {integrity: sha512-NMMmj1ND00s+AM9aFbNl15JI6VxNlvORYy4X7UbVM0kFsKIOP7pqU4TVKSVGTGKhOn1k2tnEieA0srVdgMe/CA==}
+  '@conform-to/zod@1.21.3':
+    resolution: {integrity: sha512-IbFw4iMywJ7fWfZ1MIDEMlUfFa9ZkZhG8hL2K6zcx1eM6SPhwWAmmsFi478POShOLDj72A0qQ9nLCz+2qAEF5A==}
     peerDependencies:
       zod: ^3.21.0 || ^4.0.0
 
@@ -2357,8 +2357,8 @@ packages:
   '@oxc-project/types@0.139.0':
     resolution: {integrity: sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==}
 
-  '@oxc-project/types@0.155.0':
-    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
+  '@oxc-project/types@0.156.0':
+    resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
 
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
@@ -2429,8 +2429,8 @@ packages:
   '@quansync/fs@1.0.0':
     resolution: {integrity: sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ==}
 
-  '@rolldown/binding-android-arm-eabi@1.2.15':
-    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
+  '@rolldown/binding-android-arm-eabi@1.2.16':
+    resolution: {integrity: sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [android]
@@ -2441,8 +2441,8 @@ packages:
     cpu: [arm64]
     os: [android]
 
-  '@rolldown/binding-android-arm64@1.2.15':
-    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
+  '@rolldown/binding-android-arm64@1.2.16':
+    resolution: {integrity: sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [android]
@@ -2453,8 +2453,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@rolldown/binding-darwin-arm64@1.2.15':
-    resolution: {integrity: sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==}
+  '@rolldown/binding-darwin-arm64@1.2.16':
+    resolution: {integrity: sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [darwin]
@@ -2465,8 +2465,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@rolldown/binding-darwin-x64@1.2.15':
-    resolution: {integrity: sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==}
+  '@rolldown/binding-darwin-x64@1.2.16':
+    resolution: {integrity: sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [darwin]
@@ -2477,8 +2477,8 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
-  '@rolldown/binding-freebsd-x64@1.2.15':
-    resolution: {integrity: sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==}
+  '@rolldown/binding-freebsd-x64@1.2.16':
+    resolution: {integrity: sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [freebsd]
@@ -2489,8 +2489,8 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
-    resolution: {integrity: sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==}
+  '@rolldown/binding-linux-arm-gnueabihf@1.2.16':
+    resolution: {integrity: sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
@@ -2502,8 +2502,8 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@rolldown/binding-linux-arm64-gnu@1.2.15':
-    resolution: {integrity: sha512-iTBjXx+B5QSvgI89lJfmqh4wTh8NabR1YZIIN3hNx4zSG0EVfVqkOvLulNpG4251pbd6/IAmZ/LefVk1Y4rPhw==}
+  '@rolldown/binding-linux-arm64-gnu@1.2.16':
+    resolution: {integrity: sha512-FJiLGAblPBMlBEdbOqw6kW6QcXDWAf/oJu7gYs9ZJZwmg+K+/zjFLxPTIY9izJUzxzc24FHvmseyA0IvJSl17w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
@@ -2516,8 +2516,8 @@ packages:
     os: [linux]
     libc: [musl]
 
-  '@rolldown/binding-linux-arm64-musl@1.2.15':
-    resolution: {integrity: sha512-uN26XOnVR7rqQupG3V9oAG2EGGatWjcJHOeDOHUFCh4TBWmP2tHTFoVN13aYbwfm0aHqJAEmcwhAu6sooIjfqQ==}
+  '@rolldown/binding-linux-arm64-musl@1.2.16':
+    resolution: {integrity: sha512-hrJpblMsrQ58U9veWpbXzkhV5zStunds6HWLprqq1qauvgBr1E6P+24kLj6lSLI9vjRn/RYpjprhkHQPKGWpNg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
@@ -2530,8 +2530,8 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@rolldown/binding-linux-ppc64-gnu@1.2.15':
-    resolution: {integrity: sha512-9nWkcdd+H+XhaA3fQIwpHnKIrfx/PQ6rO0pivr78Og07tXlUlctBBJoEYLPfhTmCR/QxEVdn6uPjHV5SymPhdw==}
+  '@rolldown/binding-linux-ppc64-gnu@1.2.16':
+    resolution: {integrity: sha512-qJd/dC6j6CwLG9/s/RP2nb1RZ0GIgj7Ioj7x/SYa3RzjVrlzrmH0fhIOpfvqQDeIsdP0loi+kHaMhJzY1PBIaA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
@@ -2544,8 +2544,8 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@rolldown/binding-linux-s390x-gnu@1.2.15':
-    resolution: {integrity: sha512-Ggh0ciFjLwIusLSLz7LZYEaGdxOAUJXI+Qu5JCbhPJJHEt8vP+IjRATTJheiJsdzzTYgUiHUiw3X1Ea3ZpMBdA==}
+  '@rolldown/binding-linux-s390x-gnu@1.2.16':
+    resolution: {integrity: sha512-Vx7Xg5uUJuNcujJjI70OICaH0EYj80BtOLZTSN7uOYg8QOLlyKnaG0IW7Fn/J0IpJsaKzmDKMhOQv1JBM9m9vg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
@@ -2558,8 +2558,8 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@rolldown/binding-linux-x64-gnu@1.2.15':
-    resolution: {integrity: sha512-FHg60rS6DBePAYZ9X9F67x+JObFdmgn6tupA1C/a3B+CufFmTD4mX+e8M75tCiAO3foR/6xwVBI0KQiI7sn/rw==}
+  '@rolldown/binding-linux-x64-gnu@1.2.16':
+    resolution: {integrity: sha512-TNKhgE3uJTsTzatUSSYt0Kgo+Oa2uSlSjz4r1aEIea7HX6ULBym4fAlYUhG1i6pjNf2njfCUAfKwr6C3E9Xg1w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
@@ -2572,8 +2572,8 @@ packages:
     os: [linux]
     libc: [musl]
 
-  '@rolldown/binding-linux-x64-musl@1.2.15':
-    resolution: {integrity: sha512-/cvV/7v5VGz/moiz0XKRj2dE8DzsKyhIu1KpOvJGPjRywg3yscON889UGvAe8zfiJLHup7VLjBduoGWi3HusWQ==}
+  '@rolldown/binding-linux-x64-musl@1.2.16':
+    resolution: {integrity: sha512-7chXdpjXZ8qG0+mIxECN3cT9kvhZ3/oZhMX6Pp876P7CDrIy8nJswva6Mq357JR7eYXfuskwZxMeV1SzoZdHrA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
@@ -2585,8 +2585,8 @@ packages:
     cpu: [arm64]
     os: [openharmony]
 
-  '@rolldown/binding-openharmony-arm64@1.2.15':
-    resolution: {integrity: sha512-MyzC5Hrv/sm+Z7TSGKP/j8001RO2xQm1zOpCNVL4j0cY/VhBZviludA2YFQ7i4lH6ZAXxQm0lcMdBzM+99mE7w==}
+  '@rolldown/binding-openharmony-arm64@1.2.16':
+    resolution: {integrity: sha512-Kwjt+7uNTJK5/MDkGWGVO2KQPnj8yAV75dMpfwyHZrJSXWHrniOB0aUEWlVYf3H1hOqFLIStLdM5QXq6bnKmOQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
@@ -2602,8 +2602,8 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@rolldown/binding-win32-arm64-msvc@1.2.15':
-    resolution: {integrity: sha512-+PgYiS+AH5omy6L45ZLxybasauJaj3M8buoT83D+nzPmCayXlxUV9hydhciCKVyIg0B/v0BtXPDE1uGqNwCPpg==}
+  '@rolldown/binding-win32-arm64-msvc@1.2.16':
+    resolution: {integrity: sha512-/LH6WfjDRXXJz/p5xl4TmU+jpcnwcxbKEQBW/GZE0JHfN0lGIyTtsUEGaQ/q/GikkGJ2yLKe6pwm7AnEWO8pdw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [win32]
@@ -2614,8 +2614,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rolldown/binding-win32-x64-msvc@1.2.15':
-    resolution: {integrity: sha512-HFZd2QNQYn1JbIi+Hpd7H+r/lkWxcfIu28nirZ6eCn2LafuvmExMlb/P96Sfx5tf7pPArw39IdhmCF8vmV+NhQ==}
+  '@rolldown/binding-win32-x64-msvc@1.2.16':
+    resolution: {integrity: sha512-1lv1KvX0Z871zfk7vw+dnXMMnHNyDwMzWG8Kv3HxDXMOhzCX4SHc7HK319fInP0i+0p9D8brkfzL7pJOaGl+tw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -2876,6 +2876,9 @@ packages:
 
   '@types/node@26.6.5':
     resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
+
+  '@types/node@26.6.6':
+    resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
 
   '@types/react-dom@19.3.0':
     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
@@ -6003,8 +6006,8 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  rolldown@1.2.15:
-    resolution: {integrity: sha512-6odND+fel5zVw3I4Yc2e69gvguDnX0CAAGiNDZSq4ik5WUcaLrkD2GLuog0XcODbor31hZ5ayEMgVDno+KPV5g==}
+  rolldown@1.2.16:
+    resolution: {integrity: sha512-bWvlMpFKiTfDKfnK7FC2MPgPeWCf/Kpwsq49ApdW+FQaBZb6O6dZ4MAPbPUjp7hYQrw/RobqCzn64BRrQecGHw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
@@ -6057,6 +6060,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.8.6:
+    resolution: {integrity: sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   send@0.19.2:
     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
     engines: {node: '>= 0.8.0'}
@@ -6073,8 +6081,8 @@ packages:
     resolution: {integrity: sha512-xRXBn0pPqQTVQiC8wyQrKs2MOlX24zQ0POGaj0kultvoOCstBQM5yvOhAVSUwOMjQtTvsPWoNCHfPGwaaQJhTw==}
     engines: {node: '>= 18'}
 
-  set-cookie-parser@3.2.1:
-    resolution: {integrity: sha512-Npd1Pt+4zb3BrSZDPd2qFwRpS6b1EUEasRrO8xS0zMJi0fApXXK5YuzP0minyJnxwnFHoVoJwA55q0A0cu63gQ==}
+  set-cookie-parser@3.2.2:
+    resolution: {integrity: sha512-df017qMeYuXo4emL09nlyMpi2i2MtEIKS/6jtXH3vmjFgIRsOi852/5RmhJ4EkvN3ZF8jXadM/EkTPXgc8yPIw==}
 
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
@@ -6337,8 +6345,8 @@ packages:
     resolution: {integrity: sha512-LgO3D9yZJjApUiuUfl9iFAwrtaX4+lok3wJIqttGoKCHlWUqHqbQpnxCf82L8FjgKsh4iGo78hqJwgL8F6To2A==}
     engines: {node: '>=14.0.0'}
 
-  tldts-core@7.4.19:
-    resolution: {integrity: sha512-goNXV6Ho9TIOfpJZanTd6CKG5DyYgYAL+k+22T0SLh8l6+KHIfBUPFuePuSZv05UttIaaLmI9tb7TmGIdK5AkQ==}
+  tldts-core@7.4.20:
+    resolution: {integrity: sha512-C630TWXZCZmLq0F2bW4QqwnaaxCQ/svpAqvJwnC4JvgEM5ohhBnGsEzTLSOXcN+xjz+kEaHS5uoWIw2klnqd0A==}
 
   tldts@7.4.19:
     resolution: {integrity: sha512-48dH6aSpQnpbzDUc4vIQZ1VjB8tkK+e8c1yx05/SZK+rkssgjEOlxDd/yU8/a4vGYQ9vRgJr9dwMq9TJ0b3X2Q==}
@@ -7359,9 +7367,9 @@ snapshots:
 
   '@conform-to/dom@1.19.4': {}
 
-  '@conform-to/dom@1.20.2': {}
-
   '@conform-to/dom@1.21.2': {}
+
+  '@conform-to/dom@1.21.3': {}
 
   '@conform-to/valibot@1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))':
     dependencies:
@@ -7373,9 +7381,9 @@ snapshots:
       '@conform-to/dom': 1.21.2
       yup: 1.7.1
 
-  '@conform-to/zod@1.20.2(zod@4.4.3)':
+  '@conform-to/zod@1.21.3(zod@4.4.3)':
     dependencies:
-      '@conform-to/dom': 1.20.2
+      '@conform-to/dom': 1.21.3
       zod: 4.4.3
 
   '@cspotcode/source-map-support@0.8.1':
@@ -7844,6 +7852,14 @@ snapshots:
       '@inquirer/type': 4.2.1(@types/node@26.6.5)
     optionalDependencies:
       '@types/node': 26.6.5
+    optional: true
+
+  '@inquirer/confirm@6.3.5(@types/node@26.6.6)':
+    dependencies:
+      '@inquirer/core': 12.0.6(@types/node@26.6.6)
+      '@inquirer/type': 4.2.1(@types/node@26.6.6)
+    optionalDependencies:
+      '@types/node': 26.6.6
 
   '@inquirer/core@10.3.2(@types/node@26.6.5)':
     dependencies:
@@ -7869,6 +7885,19 @@ snapshots:
       signal-exit: 4.1.0
     optionalDependencies:
       '@types/node': 26.6.5
+    optional: true
+
+  '@inquirer/core@12.0.6(@types/node@26.6.6)':
+    dependencies:
+      '@inquirer/ansi': 2.0.10
+      '@inquirer/figures': 2.0.10
+      '@inquirer/type': 4.2.1(@types/node@26.6.6)
+      cli-width: 4.1.0
+      fast-wrap-ansi: 0.2.2
+      mute-stream: 3.0.0
+      signal-exit: 4.1.0
+    optionalDependencies:
+      '@types/node': 26.6.6
 
   '@inquirer/editor@4.2.23(@types/node@26.6.5)':
     dependencies:
@@ -7892,6 +7921,13 @@ snapshots:
       iconv-lite: 0.7.3
     optionalDependencies:
       '@types/node': 26.6.5
+
+  '@inquirer/external-editor@1.0.3(@types/node@26.6.6)':
+    dependencies:
+      chardet: 2.2.0
+      iconv-lite: 0.7.3
+    optionalDependencies:
+      '@types/node': 26.6.6
 
   '@inquirer/figures@1.0.15': {}
 
@@ -7968,6 +8004,11 @@ snapshots:
   '@inquirer/type@4.2.1(@types/node@26.6.5)':
     optionalDependencies:
       '@types/node': 26.6.5
+    optional: true
+
+  '@inquirer/type@4.2.1(@types/node@26.6.6)':
+    optionalDependencies:
+      '@types/node': 26.6.6
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -8181,7 +8222,7 @@ snapshots:
 
   '@oxc-project/types@0.139.0': {}
 
-  '@oxc-project/types@0.155.0': {}
+  '@oxc-project/types@0.156.0': {}
 
   '@panva/hkdf@1.2.1': {}
 
@@ -8244,79 +8285,79 @@ snapshots:
     dependencies:
       quansync: 1.0.0
 
-  '@rolldown/binding-android-arm-eabi@1.2.15':
+  '@rolldown/binding-android-arm-eabi@1.2.16':
     optional: true
 
   '@rolldown/binding-android-arm64@1.1.5':
     optional: true
 
-  '@rolldown/binding-android-arm64@1.2.15':
+  '@rolldown/binding-android-arm64@1.2.16':
     optional: true
 
   '@rolldown/binding-darwin-arm64@1.1.5':
     optional: true
 
-  '@rolldown/binding-darwin-arm64@1.2.15':
+  '@rolldown/binding-darwin-arm64@1.2.16':
     optional: true
 
   '@rolldown/binding-darwin-x64@1.1.5':
     optional: true
 
-  '@rolldown/binding-darwin-x64@1.2.15':
+  '@rolldown/binding-darwin-x64@1.2.16':
     optional: true
 
   '@rolldown/binding-freebsd-x64@1.1.5':
     optional: true
 
-  '@rolldown/binding-freebsd-x64@1.2.15':
+  '@rolldown/binding-freebsd-x64@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-arm-gnueabihf@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
+  '@rolldown/binding-linux-arm-gnueabihf@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-arm64-gnu@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-arm64-gnu@1.2.15':
+  '@rolldown/binding-linux-arm64-gnu@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-arm64-musl@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-arm64-musl@1.2.15':
+  '@rolldown/binding-linux-arm64-musl@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-ppc64-gnu@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-ppc64-gnu@1.2.15':
+  '@rolldown/binding-linux-ppc64-gnu@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-s390x-gnu@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-s390x-gnu@1.2.15':
+  '@rolldown/binding-linux-s390x-gnu@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-x64-gnu@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-x64-gnu@1.2.15':
+  '@rolldown/binding-linux-x64-gnu@1.2.16':
     optional: true
 
   '@rolldown/binding-linux-x64-musl@1.1.5':
     optional: true
 
-  '@rolldown/binding-linux-x64-musl@1.2.15':
+  '@rolldown/binding-linux-x64-musl@1.2.16':
     optional: true
 
   '@rolldown/binding-openharmony-arm64@1.1.5':
     optional: true
 
-  '@rolldown/binding-openharmony-arm64@1.2.15':
+  '@rolldown/binding-openharmony-arm64@1.2.16':
     optional: true
 
   '@rolldown/binding-wasm32-wasi@1.1.5':
@@ -8329,13 +8370,13 @@ snapshots:
   '@rolldown/binding-win32-arm64-msvc@1.1.5':
     optional: true
 
-  '@rolldown/binding-win32-arm64-msvc@1.2.15':
+  '@rolldown/binding-win32-arm64-msvc@1.2.16':
     optional: true
 
   '@rolldown/binding-win32-x64-msvc@1.1.5':
     optional: true
 
-  '@rolldown/binding-win32-x64-msvc@1.2.15':
+  '@rolldown/binding-win32-x64-msvc@1.2.16':
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
@@ -8510,6 +8551,10 @@ snapshots:
     dependencies:
       undici-types: 8.9.0
 
+  '@types/node@26.6.6':
+    dependencies:
+      undici-types: 8.9.0
+
   '@types/react-dom@19.3.0(@types/react@19.3.0)':
     dependencies:
       '@types/react': 19.3.0
@@ -8520,7 +8565,7 @@ snapshots:
 
   '@types/set-cookie-parser@2.4.10':
     dependencies:
-      '@types/node': 26.6.5
+      '@types/node': 26.6.6
 
   '@types/statuses@2.0.6': {}
 
@@ -8639,7 +8684,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.63.0
       debug: 4.4.3
       minimatch: 10.2.6
-      semver: 7.8.5
+      semver: 7.8.6
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -8777,6 +8822,25 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
+  '@typia/unplugin@12.1.1(rollup@4.62.2)(typia@12.1.1(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))':
+    dependencies:
+      '@rollup/pluginutils': 5.4.0(rollup@4.62.2)
+      bun-only: 0.0.1
+      consola: 3.4.2
+      defu: 6.1.7
+      diff-match-patch-es: 1.0.1
+      find-cache-dir: 5.0.0
+      magic-string: 0.30.21
+      pathe: 2.0.3
+      pkg-types: 2.3.1
+      type-fest: 4.41.0
+      typia: 12.1.1(@types/node@26.6.6)(@typescript/typescript6@6.0.2)
+      unplugin: 2.3.11
+    optionalDependencies:
+      vite: 8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - rollup
+
   '@typia/utils@12.1.1':
     dependencies:
       '@typia/interface': 12.1.1
@@ -8884,6 +8948,24 @@ snapshots:
     optionalDependencies:
       msw: 2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2)
       vite: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)
+
+  '@vitest/mocker@4.1.10(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))':
+    dependencies:
+      '@vitest/spy': 4.1.10
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      msw: 2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2)
+      vite: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)
+
+  '@vitest/mocker@4.1.10(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))':
+    dependencies:
+      '@vitest/spy': 4.1.10
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      msw: 2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2)
+      vite: 8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0)
 
   '@vitest/pretty-format@4.1.10':
     dependencies:
@@ -10532,7 +10614,7 @@ snapshots:
   headers-polyfill@5.0.1:
     dependencies:
       '@types/set-cookie-parser': 2.4.10
-      set-cookie-parser: 3.2.1
+      set-cookie-parser: 3.2.2
 
   heap-js@2.7.1: {}
 
@@ -10611,6 +10693,26 @@ snapshots:
   inquirer@8.2.7(@types/node@26.6.5):
     dependencies:
       '@inquirer/external-editor': 1.0.3(@types/node@26.6.5)
+      ansi-escapes: 4.3.2
+      chalk: 4.1.2
+      cli-cursor: 3.1.0
+      cli-width: 3.0.0
+      figures: 3.2.0
+      lodash: 4.18.1
+      mute-stream: 0.0.8
+      ora: 5.4.1
+      run-async: 2.4.1
+      rxjs: 7.8.2
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
+      through: 2.3.8
+      wrap-ansi: 6.2.0
+    transitivePeerDependencies:
+      - '@types/node'
+
+  inquirer@8.2.7(@types/node@26.6.6):
+    dependencies:
+      '@inquirer/external-editor': 1.0.3(@types/node@26.6.6)
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       cli-cursor: 3.1.0
@@ -11084,6 +11186,32 @@ snapshots:
   msw@2.15.0(@types/node@26.6.5)(@typescript/typescript6@6.0.2):
     dependencies:
       '@inquirer/confirm': 6.3.5(@types/node@26.6.5)
+      '@mswjs/interceptors': 0.41.9
+      '@open-draft/deferred-promise': 3.0.0
+      '@types/statuses': 2.0.6
+      cookie: 1.1.1
+      graphql: 16.14.2
+      headers-polyfill: 5.0.1
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      rettime: 0.11.12
+      statuses: 2.0.2
+      strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.2
+      type-fest: 5.10.0
+      until-async: 3.0.2
+      yargs: 17.7.3
+    optionalDependencies:
+      typescript: '@typescript/typescript6@6.0.2'
+    transitivePeerDependencies:
+      - '@types/node'
+    optional: true
+
+  msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2):
+    dependencies:
+      '@inquirer/confirm': 6.3.5(@types/node@26.6.6)
       '@mswjs/interceptors': 0.41.9
       '@open-draft/deferred-promise': 3.0.0
       '@types/statuses': 2.0.6
@@ -11719,26 +11847,26 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.1.5
       '@rolldown/binding-win32-x64-msvc': 1.1.5
 
-  rolldown@1.2.15:
+  rolldown@1.2.16:
     dependencies:
-      '@oxc-project/types': 0.155.0
+      '@oxc-project/types': 0.156.0
       '@rolldown/pluginutils': 1.0.1
     optionalDependencies:
-      '@rolldown/binding-android-arm-eabi': 1.2.15
-      '@rolldown/binding-android-arm64': 1.2.15
-      '@rolldown/binding-darwin-arm64': 1.2.15
-      '@rolldown/binding-darwin-x64': 1.2.15
-      '@rolldown/binding-freebsd-x64': 1.2.15
-      '@rolldown/binding-linux-arm-gnueabihf': 1.2.15
-      '@rolldown/binding-linux-arm64-gnu': 1.2.15
-      '@rolldown/binding-linux-arm64-musl': 1.2.15
-      '@rolldown/binding-linux-ppc64-gnu': 1.2.15
-      '@rolldown/binding-linux-s390x-gnu': 1.2.15
-      '@rolldown/binding-linux-x64-gnu': 1.2.15
-      '@rolldown/binding-linux-x64-musl': 1.2.15
-      '@rolldown/binding-openharmony-arm64': 1.2.15
-      '@rolldown/binding-win32-arm64-msvc': 1.2.15
-      '@rolldown/binding-win32-x64-msvc': 1.2.15
+      '@rolldown/binding-android-arm-eabi': 1.2.16
+      '@rolldown/binding-android-arm64': 1.2.16
+      '@rolldown/binding-darwin-arm64': 1.2.16
+      '@rolldown/binding-darwin-x64': 1.2.16
+      '@rolldown/binding-freebsd-x64': 1.2.16
+      '@rolldown/binding-linux-arm-gnueabihf': 1.2.16
+      '@rolldown/binding-linux-arm64-gnu': 1.2.16
+      '@rolldown/binding-linux-arm64-musl': 1.2.16
+      '@rolldown/binding-linux-ppc64-gnu': 1.2.16
+      '@rolldown/binding-linux-s390x-gnu': 1.2.16
+      '@rolldown/binding-linux-x64-gnu': 1.2.16
+      '@rolldown/binding-linux-x64-musl': 1.2.16
+      '@rolldown/binding-openharmony-arm64': 1.2.16
+      '@rolldown/binding-win32-arm64-msvc': 1.2.16
+      '@rolldown/binding-win32-x64-msvc': 1.2.16
 
   rollup@4.62.2:
     dependencies:
@@ -11810,6 +11938,9 @@ snapshots:
 
   semver@7.8.5: {}
 
+  semver@7.8.6:
+    optional: true
+
   send@0.19.2:
     dependencies:
       debug: 2.6.9
@@ -11862,7 +11993,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  set-cookie-parser@3.2.1: {}
+  set-cookie-parser@3.2.2: {}
 
   setprototypeof@1.2.0: {}
 
@@ -12189,11 +12320,11 @@ snapshots:
 
   tinyrainbow@3.2.0: {}
 
-  tldts-core@7.4.19: {}
+  tldts-core@7.4.20: {}
 
   tldts@7.4.19:
     dependencies:
-      tldts-core: 7.4.19
+      tldts-core: 7.4.20
 
   tmp@0.2.7: {}
 
@@ -12374,6 +12505,22 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  typia@12.1.1(@types/node@26.6.6)(@typescript/typescript6@6.0.2):
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@typia/core': 12.1.1
+      '@typia/interface': 12.1.1
+      '@typia/transform': 12.1.1
+      '@typia/utils': 12.1.1
+      commander: 10.0.1
+      comment-json: 4.6.2
+      inquirer: 8.2.7(@types/node@26.6.6)
+      package-manager-detector: 0.2.11
+      randexp: 0.5.3
+      typescript: '@typescript/typescript6@6.0.2'
+    transitivePeerDependencies:
+      - '@types/node'
+
   ufo@1.6.4: {}
 
   unconfig-core@7.5.0:
@@ -12530,10 +12677,23 @@ snapshots:
       lightningcss: 1.33.0
       picomatch: 4.0.7
       postcss: 8.5.32
-      rolldown: 1.2.15
+      rolldown: 1.2.16
       tinyglobby: 0.2.17
     optionalDependencies:
       '@types/node': 26.6.5
+      esbuild: 0.28.2
+      fsevents: 2.3.3
+      yaml: 2.9.0
+
+  vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0):
+    dependencies:
+      lightningcss: 1.33.0
+      picomatch: 4.0.7
+      postcss: 8.5.32
+      rolldown: 1.2.16
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 26.6.6
       esbuild: 0.28.2
       fsevents: 2.3.3
       yaml: 2.9.0
@@ -12559,6 +12719,64 @@ snapshots:
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
       vite: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+      '@types/node': 26.6.5
+      '@vitest/coverage-istanbul': 4.1.10(vitest@4.1.10)
+    transitivePeerDependencies:
+      - msw
+
+  vitest@4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)):
+    dependencies:
+      '@vitest/expect': 4.1.10
+      '@vitest/mocker': 4.1.10(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0))
+      '@vitest/pretty-format': 4.1.10
+      '@vitest/runner': 4.1.10
+      '@vitest/snapshot': 4.1.10
+      '@vitest/spy': 4.1.10
+      '@vitest/utils': 4.1.10
+      es-module-lexer: 2.3.0
+      expect-type: 1.4.0
+      magic-string: 0.30.21
+      obug: 2.1.3
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      std-env: 4.2.0
+      tinybench: 2.9.0
+      tinyexec: 1.2.4
+      tinyglobby: 0.2.17
+      tinyrainbow: 3.1.0
+      vite: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+      '@types/node': 26.6.5
+      '@vitest/coverage-istanbul': 4.1.10(vitest@4.1.10)
+    transitivePeerDependencies:
+      - msw
+
+  vitest@4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(@vitest/coverage-istanbul@4.1.10)(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0)):
+    dependencies:
+      '@vitest/expect': 4.1.10
+      '@vitest/mocker': 4.1.10(msw@2.15.0(@types/node@26.6.6)(@typescript/typescript6@6.0.2))(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0))
+      '@vitest/pretty-format': 4.1.10
+      '@vitest/runner': 4.1.10
+      '@vitest/snapshot': 4.1.10
+      '@vitest/spy': 4.1.10
+      '@vitest/utils': 4.1.10
+      es-module-lexer: 2.3.0
+      expect-type: 1.4.0
+      magic-string: 0.30.21
+      obug: 2.1.3
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      std-env: 4.2.0
+      tinybench: 2.9.0
+      tinyexec: 1.2.4
+      tinyglobby: 0.2.17
+      tinyrainbow: 3.1.0
+      vite: 8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
