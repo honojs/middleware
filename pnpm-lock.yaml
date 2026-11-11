@@ -314,8 +314,8 @@ importers:
         specifier: ^1.21.2
         version: 1.21.2(yup@1.7.1)
       '@conform-to/zod':
-        specifier: ^1.20.2
-        version: 1.20.2(zod@4.4.3)
+        specifier: ^1.21.3
+        version: 1.21.3(zod@4.4.3)
       hono:
         specifier: ^4.11.5
         version: 4.12.28
@@ -1362,11 +1362,11 @@ packages:
   '@conform-to/dom@1.19.4':
     resolution: {integrity: sha512-P/mBdVRl946iE74TXmF5YLY9+1IDrQzxKdj9A7qv7Cd4l/O02EvJskg3X7cHwhmFFIXXgNzSmf/y4B597SS4gg==}
 
-  '@conform-to/dom@1.20.2':
-    resolution: {integrity: sha512-HfVb0XCHZijXODupqdV7+DrlZgJAYRQsXm/FpfFjKZO1P1S8LhlS7yMBTH2K5zkMyhk6fV/BvfUZi88Kp1EslA==}
-
   '@conform-to/dom@1.21.2':
     resolution: {integrity: sha512-43LIYhFUPOMtV01LOH9Pes/8vROW7Qgh249ytv0EBfPCR963g0HR6xK6hUD1r2EjM8Zgs17oMZgoRyRT8krH/Q==}
+
+  '@conform-to/dom@1.21.3':
+    resolution: {integrity: sha512-gaFYBWPCLwIJASd+VQWtcLfJnhn3Fo0/U8NS0LAMvUHuWU6UZ354MqYNUgvkaMtEfPfqSai6p4txdDp9JelDww==}
 
   '@conform-to/valibot@1.19.4':
     resolution: {integrity: sha512-aAKgNpvycZNK9JIzmWu7Q/ogULRYKTeKsMmWS9h04dZH8jjBe0AKiE7WTWJosGOZjq2Ce/arm7D9//9QmGgyIA==}
@@ -1378,8 +1378,8 @@ packages:
     peerDependencies:
       yup: '>=0.32.0'
 
-  '@conform-to/zod@1.20.2':
-    resolution: {integrity: sha512-NMMmj1ND00s+AM9aFbNl15JI6VxNlvORYy4X7UbVM0kFsKIOP7pqU4TVKSVGTGKhOn1k2tnEieA0srVdgMe/CA==}
+  '@conform-to/zod@1.21.3':
+    resolution: {integrity: sha512-IbFw4iMywJ7fWfZ1MIDEMlUfFa9ZkZhG8hL2K6zcx1eM6SPhwWAmmsFi478POShOLDj72A0qQ9nLCz+2qAEF5A==}
     peerDependencies:
       zod: ^3.21.0 || ^4.0.0
 
@@ -7367,9 +7367,9 @@ snapshots:
 
   '@conform-to/dom@1.19.4': {}
 
-  '@conform-to/dom@1.20.2': {}
-
   '@conform-to/dom@1.21.2': {}
+
+  '@conform-to/dom@1.21.3': {}
 
   '@conform-to/valibot@1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))':
     dependencies:
@@ -7381,9 +7381,9 @@ snapshots:
       '@conform-to/dom': 1.21.2
       yup: 1.7.1
 
-  '@conform-to/zod@1.20.2(zod@4.4.3)':
+  '@conform-to/zod@1.21.3(zod@4.4.3)':
     dependencies:
-      '@conform-to/dom': 1.20.2
+      '@conform-to/dom': 1.21.3
       zod: 4.4.3
 
   '@cspotcode/source-map-support@0.8.1':
