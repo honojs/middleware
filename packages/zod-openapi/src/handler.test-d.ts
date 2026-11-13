@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from 'hono'
 import type { Equal, Expect } from 'hono/utils/types'
 import type { MiddlewareToHandlerType, OfHandlerType, RouteHandler } from '.'
-import { OpenAPIHono, createRoute, z } from '.'
+import { OpenAPIHono, createRoute, createRouteHandler, z } from '.'
 
 describe('supports async handler', () => {
   const route = createRoute({
@@ -53,6 +53,24 @@ describe('supports async handler', () => {
     const hono = new OpenAPIHono()
     hono.openapi(route, handler)
     hono.openapi(route, asyncHandler)
+  })
+
+  test('createRouteHandler helper', () => {
+    const handler = createRouteHandler(route, (c) => {
+      return c.json({
+        id: '123',
+      })
+    })
+
+    const genericHandler = createRouteHandler<typeof route>((c) => {
+      return c.json({
+        id: '123',
+      })
+    })
+
+    const hono = new OpenAPIHono()
+    hono.openapi(route, handler)
+    hono.openapi(route, genericHandler)
   })
 
   test('RouteHandler infers env type from middleware', () => {

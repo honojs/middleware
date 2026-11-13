@@ -858,6 +858,36 @@ export const createRoute = <P extends string, R extends Omit<RouteConfig, 'path'
   return Object.defineProperty(route, 'getRoutingPath', { enumerable: false })
 }
 
+export function createRouteHandler<
+  R extends RouteConfig,
+  E extends Env = RouteConfigToEnv<R>,
+  I extends Input = ComputeInput<R>,
+  P extends string = ConvertPathType<R['path']>,
+>(route: R, handler: RouteHandler<R, E, I, P>): RouteHandler<R, E, I, P>
+export function createRouteHandler<
+  R extends RouteConfig,
+  E extends Env = RouteConfigToEnv<R>,
+  I extends Input = ComputeInput<R>,
+  P extends string = ConvertPathType<R['path']>,
+>(handler: RouteHandler<R, E, I, P>): RouteHandler<R, E, I, P>
+export function createRouteHandler<
+  R extends RouteConfig,
+  E extends Env = RouteConfigToEnv<R>,
+  I extends Input = ComputeInput<R>,
+  P extends string = ConvertPathType<R['path']>,
+>(
+  routeOrHandler: R | RouteHandler<R, E, I, P>,
+  handler?: RouteHandler<R, E, I, P>
+): RouteHandler<R, E, I, P> {
+  if (typeof routeOrHandler === 'function') {
+    return routeOrHandler
+  }
+  if (handler) {
+    return handler
+  }
+  return (() => {}) as unknown as RouteHandler<R, E, I, P>
+}
+
 extendZodWithOpenApi(z)
 export { extendZodWithOpenApi, z }
 
