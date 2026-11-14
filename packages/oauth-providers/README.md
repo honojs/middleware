@@ -126,15 +126,31 @@ export default app
     - `none`: Do not display any authentication or consent screens. Must not be specified with other values.
     - `consent`: Prompt the user for consent.
     - `select_account`: Prompt the user to select an account.
+- `access_type`:
+  - Type: `string`.
+  - `Optional`.
+  - Indicates whether your app can refresh access tokens when the user is not present at the browser. Choose one of the following options:
+    - `online`: Default. Google does not return a refresh token.
+    - `offline`: Google returns a refresh token, available as `refresh-token` after the flow.
+      > Google only returns the refresh token the first time the user grants access. Set `prompt` to `consent` to receive one on every login.
 
 #### Authentication Flow
 
 After the completion of the Google OAuth flow, essential data has been prepared for use in the subsequent steps that your app needs to take.
 
-`googleAuth` method provides 3 set key data:
+`googleAuth` method provides 4 set key data:
 
 - `token`:
   - Access token to make requests to the google API for retrieving user information and performing actions on their behalf.
+  - Type:
+    ```
+    {
+      token: string
+      expires_in: number
+    }
+    ```
+- `refresh-token`:
+  - You can get new access tokens with this token. Only available when `access_type` is set to `offline`.
   - Type:
     ```
     {
@@ -166,14 +182,39 @@ To access this data, utilize the `c.get` method within the callback of the upcom
 ```ts
 app.get('/google', (c) => {
   const token = c.get('token')
+  const refreshToken = c.get('refresh-token')
   const grantedScopes = c.get('granted-scopes')
   const user = c.get('user-google')
 
   return c.json({
     token,
+    refreshToken,
     grantedScopes,
     user,
   })
+})
+```
+
+#### Refresh Token
+
+Once the user token expires you can refresh their token without the need to prompt the user again for access. In such scenario, you can utilize the `refreshToken` method, which accepts the `client_id`, `client_secret` and `refresh_token` as parameters. The `refresh_token` is the one you received with `access_type: 'offline'`.
+
+> Google does not send a new `refresh_token` when you refresh. Keep using the one you already have.
+
+```ts
+import { googleAuth, refreshToken } from '@hono/oauth-providers/google'
+
+app.post('/google/refresh', async (c, next) => {
+  const newTokens = await refreshToken(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
+  // newTokens = {
+  //   access_token: 'ya29.a0AfH6SMC...',
+  //   expires_in: 3599,
+  //   scope: 'openid email profile',
+  //   token_type: 'Bearer',
+  //   id_token: 'eyJhbGciOiJSUzI1NiJ9...'
+  // }
+
+  // ...
 })
 ```
 
