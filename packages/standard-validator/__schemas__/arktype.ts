@@ -36,13 +36,35 @@ const userSchema = type({
   '+': 'reject',
 })
 
+const petSchema = type({
+  name: 'string > 0',
+  'owner/id': 'string',
+  tags: 'string[]',
+})
+
+const petIdSchema = type({
+  id: 'string | number',
+})
+
+const tagsQuerySchema = type({
+  tags: '(string >= 2)[]',
+})
+
+const ownerFormSchema = type({
+  'owner/id': 'string >= 2',
+})
+
 export {
   headerSchema,
   idJSONSchema,
+  ownerFormSchema,
   personJSONSchema,
+  petIdSchema,
+  petSchema,
   postJSONSchema,
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
+  tagsQuerySchema,
   userSchema,
 }

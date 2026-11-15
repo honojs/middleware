@@ -40,13 +40,35 @@ const userSchema = z.strictObject({
   password: z.string().trim().min(4, 'Password must be at least 4 characters long'),
 })
 
+const petSchema = z.object({
+  name: z.string().min(1),
+  'owner/id': z.string(),
+  tags: z.array(z.string()),
+})
+
+const petIdSchema = z.object({
+  id: z.union([z.string(), z.number()]),
+})
+
+const tagsQuerySchema = z.object({
+  tags: z.array(z.string().min(2)),
+})
+
+const ownerFormSchema = z.object({
+  'owner/id': z.string().min(2),
+})
+
 export {
   headerSchema,
   idJSONSchema,
+  ownerFormSchema,
   personJSONSchema,
+  petIdSchema,
+  petSchema,
   postJSONSchema,
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
+  tagsQuerySchema,
   userSchema,
 }

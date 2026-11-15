@@ -194,3 +194,56 @@ export const flattenErrors = (issues: readonly StandardSchemaV1.Issue[]): Flatte
 
   return { formErrors, fieldErrors }
 }
+
+interface ProblemDetails {
+  type: 'about:blank'
+  title: 'Bad Request'
+  status: 400
+  detail: string
+  errors: { detail: string; pointer?: string }[]
+}
+
+const toJsonPointer = (path: StandardSchemaV1.Issue['path'] = []): string | undefined => {
+  const keys = path.map((segment) => (typeof segment === 'object' ? segment.key : segment))
+  // A symbol (or a `Map` key) has no place in a JSON document.
+  if (keys.some((key) => typeof key !== 'number' && typeof key !== 'string')) {
+    return undefined
+  }
+
+  // Escape `~` before `/`, so a `~1` in a key becomes `~01` instead of a `/`.
+  return keys.map((key) => `/${String(key).replaceAll('~', '~0').replaceAll('/', '~1')}`).join('')
+}
+
+/**
+ * Formats validation issues as an [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details object.
+ * Each issue becomes an entry in `errors`, with its message as `detail` and its path as a
+ * [JSON Pointer (RFC 6901)](https://www.rfc-editor.org/rfc/rfc6901) into the validated target as `pointer`.
+ * A path that can't be expressed as a JSON Pointer, like one with a symbol key, gets no `pointer`.
+ * @param issues An array of {@link StandardSchemaV1.Issue validation issues}.
+ * @returns A Problem Details object with a `400` status.
+ */
+export const problemDetails = (issues: readonly StandardSchemaV1.Issue[]): ProblemDetails => ({
+  type: 'about:blank',
+  title: 'Bad Request',
+  status: 400,
+  detail: 'The request did not pass validation.',
+  errors: issues.map((issue) => ({ detail: issue.message, pointer: toJsonPointer(issue.path) })),
+})
+
+/**
+ * Creates a hook that responds to failed validation with an `application/problem+json` body
+ * built by {@link problemDetails}.
+ * @returns A hook to pass to `sValidator`.
+ */
+export const problemDetailsHook =
+  () =>
+  (
+    result: { success: true } | { success: false; error: readonly StandardSchemaV1.Issue[] },
+    c: Context
+  ): (Response & TypedResponse<ProblemDetails, 400, 'json'>) | undefined => {
+    if (!result.success) {
+      return c.json(problemDetails(result.error), 400, {
+        'Content-Type': 'application/problem+json',
+      })
+    }
+  }
