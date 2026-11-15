@@ -8,7 +8,7 @@ import { vi } from 'vitest'
 import * as arktypeSchemas from '../__schemas__/arktype'
 import * as valibotSchemas from '../__schemas__/valibot'
 import * as zodSchemas from '../__schemas__/zod'
-import { sValidator, flattenErrors } from '.'
+import { sValidator, flattenErrors, problemDetails, problemDetailsHook } from '.'
 
 type MergeDiscriminatedUnion<U> =
   UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
@@ -558,6 +558,177 @@ describe('sortErrors', () => {
         password: ['password must be at least length 4 (was 3)'],
         role: ['role must be removed'],
       },
+    })
+  })
+})
+
+describe('problemDetails', () => {
+  const problem = {
+    type: 'about:blank',
+    title: 'Bad Request',
+    status: 400,
+    detail: 'The request did not pass validation.',
+  }
+
+  it('escapes `~` and `/` in keys', () => {
+    expect(problemDetails([{ message: 'Invalid', path: ['a~1b/c', 'd~e'] }])).toStrictEqual({
+      ...problem,
+      errors: [{ detail: 'Invalid', pointer: '/a~01b~1c/d~0e' }],
+    })
+  })
+
+  it('reads keys from path segment objects', () => {
+    expect(
+      problemDetails([{ message: 'Invalid', path: [{ key: 'tags' }, { key: 0 }, 'name'] }])
+    ).toStrictEqual({
+      ...problem,
+      errors: [{ detail: 'Invalid', pointer: '/tags/0/name' }],
+    })
+  })
+
+  it('points to the whole target for an empty or missing path', () => {
+    expect(
+      problemDetails([{ message: 'Empty path', path: [] }, { message: 'No path' }])
+    ).toStrictEqual({
+      ...problem,
+      errors: [
+        { detail: 'Empty path', pointer: '' },
+        { detail: 'No path', pointer: '' },
+      ],
+    })
+  })
+
+  it('leaves out the pointer for keys a JSON document cannot have', () => {
+    const mapKey = {} as PropertyKey
+
+    expect(
+      problemDetails([
+        { message: 'Symbol key', path: ['pets', Symbol('id')] },
+        { message: 'Map key', path: ['pets', { key: mapKey }] },
+      ])
+    ).toStrictEqual({
+      ...problem,
+      errors: [
+        { detail: 'Symbol key', pointer: undefined },
+        { detail: 'Map key', pointer: undefined },
+      ],
+    })
+  })
+
+  libs.forEach((lib) => {
+    const schemas = schemasByLibrary[lib]
+
+    describe(`Using ${lib} schemas for validation`, () => {
+      it('responds with an `application/problem+json` body', async () => {
+        const app = new Hono()
+        app.post('/pets', sValidator('json', schemas.petSchema, problemDetailsHook()), (c) =>
+          c.json(c.req.valid('json'), 201)
+        )
+
+        const res = await app.request('/pets', {
+          body: JSON.stringify({ name: '', 'owner/id': 5, tags: ['indoor', 1] }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+
+        expect(res.status).toBe(400)
+        expect(res.headers.get('Content-Type')).toBe('application/problem+json')
+        expect(await res.json()).toStrictEqual({
+          ...problem,
+          errors: [
+            expect.objectContaining({ pointer: '/name' }),
+            expect.objectContaining({ pointer: '/owner~1id' }),
+            expect.objectContaining({ pointer: '/tags/1' }),
+          ],
+        })
+      })
+
+      it('passes valid requests through', async () => {
+        const app = new Hono()
+        app.post('/pets', sValidator('json', schemas.petSchema, problemDetailsHook()), (c) =>
+          c.json(c.req.valid('json'), 201)
+        )
+        const pet = { name: 'Rex', 'owner/id': '5', tags: ['indoor'] }
+
+        const res = await app.request('/pets', {
+          body: JSON.stringify(pet),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+
+        expect(res.status).toBe(201)
+        expect(await res.json()).toStrictEqual(pet)
+      })
+
+      it('points to a failed union as a whole', async () => {
+        const app = new Hono()
+        app.post('/pets', sValidator('json', schemas.petIdSchema, problemDetailsHook()), (c) =>
+          c.json(c.req.valid('json'), 201)
+        )
+
+        const res = await app.request('/pets', {
+          body: JSON.stringify({ id: true }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+
+        expect(await res.json()).toStrictEqual({
+          ...problem,
+          errors: [expect.objectContaining({ pointer: '/id' })],
+        })
+      })
+
+      it('points into the parsed query', async () => {
+        const app = new Hono()
+        app.get('/pets', sValidator('query', schemas.tagsQuerySchema, problemDetailsHook()), (c) =>
+          c.json(c.req.valid('query'))
+        )
+
+        const res = await app.request('/pets?tags=a&tags=indoor')
+
+        expect(await res.json()).toStrictEqual({
+          ...problem,
+          errors: [expect.objectContaining({ pointer: '/tags/0' })],
+        })
+      })
+
+      it('points into the parsed form', async () => {
+        const app = new Hono()
+        app.post('/pets', sValidator('form', schemas.ownerFormSchema, problemDetailsHook()), (c) =>
+          c.json(c.req.valid('form'), 201)
+        )
+        const body = new FormData()
+        body.append('owner/id', '5')
+
+        const res = await app.request('/pets', { body, method: 'POST' })
+
+        expect(await res.json()).toStrictEqual({
+          ...problem,
+          errors: [expect.objectContaining({ pointer: '/owner~1id' })],
+        })
+      })
+
+      it('leaves the default response unchanged', async () => {
+        const app = new Hono()
+        app.post('/pets', sValidator('json', schemas.petSchema), (c) =>
+          c.json(c.req.valid('json'), 201)
+        )
+        const pet = { name: '', 'owner/id': '5', tags: [] }
+
+        const res = await app.request('/pets', {
+          body: JSON.stringify(pet),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+
+        expect(res.status).toBe(400)
+        expect(res.headers.get('Content-Type')).toBe('application/json')
+        expect(await res.json()).toStrictEqual({
+          data: pet,
+          error: [expect.objectContaining({ path: [expect.anything()] })],
+          success: false,
+        })
+      })
     })
   })
 })
