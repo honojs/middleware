@@ -15,6 +15,24 @@ describe('canonicalizeFilePath', () => {
     expect(root.url).toBe('https://example.com/')
   })
 
+  it('should not treat a file name ending in index.html as index.html', () => {
+    const result = canonicalizeFilePath(
+      './static/search-index.html',
+      './static',
+      'https://example.com'
+    )
+    expect(result.routePath).toBe('/search-index')
+    expect(result.url).toBe('https://example.com/search-index')
+    const nested = canonicalizeFilePath(
+      'static/blog/myindex.html',
+      'static',
+      'https://example.com',
+      false
+    )
+    expect(nested.routePath).toBe('/blog/myindex')
+    expect(nested.url).toBe('https://example.com/blog/myindex.html')
+  })
+
   it('should canonicalize .html extension when canonicalize=true', () => {
     const result = canonicalizeFilePath(
       './static/about.html',
