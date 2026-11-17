@@ -1,8 +1,5 @@
 {
   "mocks.ts": {
-    "@typescript-eslint/no-deprecated": {
-      "count": 14
-    },
     "@typescript-eslint/require-await": {
       "count": 8
     }
