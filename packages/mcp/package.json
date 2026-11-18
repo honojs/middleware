@@ -48,13 +48,13 @@
     "pkce-challenge": "^5.0.0"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "hono": "*",
     "hono-rate-limiter": "^0.5.4",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@types/node": "^26.6.5",
     "hono": "^4.11.5",
     "hono-rate-limiter": "^0.5.4",
