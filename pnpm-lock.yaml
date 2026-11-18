@@ -308,8 +308,8 @@ importers:
         specifier: ^1.14.0
         version: 1.19.4
       '@conform-to/valibot':
-        specifier: ^1.17.1
-        version: 1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))
+        specifier: ^1.21.3
+        version: 1.21.3(valibot@1.5.0(@typescript/typescript6@6.0.2))
       '@conform-to/yup':
         specifier: ^1.21.2
         version: 1.21.2(yup@1.7.1)
@@ -1366,8 +1366,8 @@ packages:
   '@conform-to/dom@1.21.3':
     resolution: {integrity: sha512-gaFYBWPCLwIJASd+VQWtcLfJnhn3Fo0/U8NS0LAMvUHuWU6UZ354MqYNUgvkaMtEfPfqSai6p4txdDp9JelDww==}
 
-  '@conform-to/valibot@1.19.4':
-    resolution: {integrity: sha512-aAKgNpvycZNK9JIzmWu7Q/ogULRYKTeKsMmWS9h04dZH8jjBe0AKiE7WTWJosGOZjq2Ce/arm7D9//9QmGgyIA==}
+  '@conform-to/valibot@1.21.3':
+    resolution: {integrity: sha512-OhIdW86JuIzovWBZLC8KbK1IZ4sGCFmnkoxBJj2V3DcbO9EbYZonl6sOQ0VqvYKsxUpxeMiSO97D5rxqn4z0ig==}
     peerDependencies:
       valibot: '>= 0.32.0'
 
@@ -7235,9 +7235,9 @@ snapshots:
 
   '@conform-to/dom@1.21.3': {}
 
-  '@conform-to/valibot@1.19.4(valibot@1.5.0(@typescript/typescript6@6.0.2))':
+  '@conform-to/valibot@1.21.3(valibot@1.5.0(@typescript/typescript6@6.0.2))':
     dependencies:
-      '@conform-to/dom': 1.19.4
+      '@conform-to/dom': 1.21.3
       valibot: 1.5.0(@typescript/typescript6@6.0.2)
 
   '@conform-to/yup@1.21.2(yup@1.7.1)':
