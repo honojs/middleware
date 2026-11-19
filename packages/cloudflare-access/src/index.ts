@@ -51,7 +51,7 @@ export const cloudflareAccess = (
   }
 
   // This var will hold already imported jwt keys, this reduces the load of importing the key on every request
-  let cacheKeys: Record<string, CryptoKey> = {}
+  let cacheKeys: Record<string, CryptoKey> = Object.create(null) as Record<string, CryptoKey>
   let cacheExpiration = 0
 
   async function refreshKeys() {
@@ -171,7 +171,8 @@ async function getPublicKeys(accessTeamName: string) {
   // Because we keep CryptoKey's in memory between requests, we need to make sure they are refreshed once in a while
   const cacheExpiration = Math.floor(Date.now() / 1000) + 3600 // 1h
 
-  const importedKeys: Record<string, CryptoKey> = {}
+  // No prototype, so a kid such as "constructor" cannot resolve to an inherited property
+  const importedKeys: Record<string, CryptoKey> = Object.create(null) as Record<string, CryptoKey>
   for (const key of data.keys) {
     // Skip keys without kid — we need it to index into the cache for key selection
     if (!key.kid) {

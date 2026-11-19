@@ -1077,4 +1077,20 @@ describe('Cloudflare Access middleware', async () => {
     const payload = (await res.json()) as { sub: string }
     expect(payload.sub).toBe('user+test/special_chars')
   })
+
+  it.each(['constructor', '__proto__', 'toString'])(
+    'Should reject token whose kid is the Object.prototype property "%s"',
+    async (kid) => {
+      const token = generateJWTWithHeader(
+        keyPair3.privateKey,
+        { alg: 'RS256', typ: 'JWT', kid },
+        { sub: '1234567890', iss: 'https://my-cool-team-name.cloudflareaccess.com' }
+      )
+      const res = await app.request('http://localhost/hello-behind-access', {
+        headers: { 'cf-access-jwt-assertion': token },
+      })
+      expect(res.status).toBe(401)
+      expect(await res.text()).toBe('Authentication error: Invalid Token')
+    }
+  )
 })
