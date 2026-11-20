@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.3.2
+
+### Patch Changes
+
+- [#2263](https://github.com/honojs/middleware/pull/2263) [`b712a5e`](https://github.com/honojs/middleware/commit/b712a5e61e984a09bc92d5d3707d6b20d1a060bc) Thanks [@yusukebe](https://github.com/yusukebe)! - fix(node-ws): harden the upgrade listener against malformed requests. A request-target that is not a valid URL no longer crashes the process, the host now comes from the `Host` header, backslashes and non-WebSocket upgrades are rejected, and a closed socket no longer throws.
+
 ## 1.3.1
 
 ### Patch Changes
