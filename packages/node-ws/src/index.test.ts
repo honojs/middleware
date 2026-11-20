@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import type { WSMessageReceive } from 'hono/ws'
+import { connect } from 'node:net'
 import { WebSocket } from 'ws'
 import { createNodeWebSocket } from '.'
 
@@ -326,5 +327,185 @@ describe('WebSocket helper', () => {
         resolve()
       })
     )
+  })
+  describe('Upgrade request hardening', () => {
+    const upgradeHeaders = (upgrade = 'websocket') =>
+      'Host: localhost:3030\r\n' +
+      `Upgrade: ${upgrade}\r\n` +
+      'Connection: Upgrade\r\n' +
+      'Sec-WebSocket-Version: 13\r\n' +
+      'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n'
+
+    const requestUpgrade = (target: string, upgrade?: string) =>
+      new Promise<string>((resolve, reject) => {
+        const socket = connect(3030, 'localhost', () => {
+          socket.write(`GET ${target} HTTP/1.1\r\n${upgradeHeaders(upgrade)}\r\n`)
+        })
+        let response = ''
+        socket.on('data', (chunk) => {
+          response += chunk.toString('utf-8')
+          if (response.includes('\r\n\r\n')) {
+            socket.destroy()
+            resolve(response.split('\r\n')[0] ?? '')
+          }
+        })
+        socket.once('error', reject)
+        socket.once('close', () => reject(new Error('Socket closed before receiving a response')))
+        socket.setTimeout(1_000, () => socket.destroy(new Error('upgrade timed out')))
+      })
+
+    const connectClient = async (url = 'ws://localhost:3030/ws') => {
+      const ws = new WebSocket(url)
+      await new Promise<void>((resolve, reject) => {
+        ws.on('open', () => resolve())
+        ws.on('error', reject)
+      })
+      ws.close()
+    }
+
+    it('Should not crash on a request-target that is not a valid URL', async () => {
+      const seenUrls: string[] = []
+      app.get(
+        '*',
+        upgradeWebSocket((c) => {
+          seenUrls.push(c.req.url)
+          return {}
+        })
+      )
+
+      expect(await requestUpgrade('//[')).toBe('HTTP/1.1 101 Switching Protocols')
+      expect(seenUrls).toEqual(['http://localhost:3030//['])
+      await connectClient()
+    })
+
+    it.each([
+      '/admin\\secret',
+      '/public\\..\\admin/secret',
+      '/public\\%2e%2e\\admin/secret',
+      '/admin\\secret?next=public',
+      'http://localhost:3030/admin\\secret',
+    ])('Should return 400 before calling the app for %s', async (target) => {
+      let called = false
+      app.get(
+        '*',
+        upgradeWebSocket(() => {
+          called = true
+          return {}
+        })
+      )
+
+      expect(await requestUpgrade(target)).toBe('HTTP/1.1 400 Bad Request')
+      expect(called).toBe(false)
+    })
+
+    it('Should keep the host from the Host header for a request-target starting with //', async () => {
+      const seenUrls: string[] = []
+      app.get(
+        '*',
+        upgradeWebSocket((c) => {
+          seenUrls.push(c.req.url)
+          return {}
+        })
+      )
+
+      expect(await requestUpgrade('//attacker.example/ws')).toBe('HTTP/1.1 101 Switching Protocols')
+      expect(seenUrls).toEqual(['http://localhost:3030//attacker.example/ws'])
+    })
+
+    it('Should accept an absolute-form request-target', async () => {
+      const seenUrls: string[] = []
+      app.get(
+        '/ws',
+        upgradeWebSocket((c) => {
+          seenUrls.push(c.req.url)
+          return {}
+        })
+      )
+
+      expect(await requestUpgrade('http://localhost:3030/ws')).toBe(
+        'HTTP/1.1 101 Switching Protocols'
+      )
+      expect(seenUrls).toEqual(['http://localhost:3030/ws'])
+    })
+
+    it('Should reject a request-target that does not start with /', async () => {
+      app.get(
+        '/ws',
+        upgradeWebSocket(() => ({}))
+      )
+
+      expect(await requestUpgrade('ws')).toBe('HTTP/1.1 400 Bad Request')
+    })
+
+    it('Should use baseUrl as the origin when given', async () => {
+      const app = new Hono()
+      const seenUrls: string[] = []
+      const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
+        app,
+        baseUrl: 'https://example.com/ignored',
+      })
+      app.get(
+        '*',
+        upgradeWebSocket((c) => {
+          seenUrls.push(c.req.url)
+          return {}
+        })
+      )
+      const server = await new Promise<ServerType>((resolve) => {
+        const server = serve({ fetch: app.fetch, port: 3031 }, () => resolve(server))
+      })
+      injectWebSocket(server)
+
+      try {
+        await connectClient('ws://localhost:3031//attacker.example/ws')
+        expect(seenUrls).toEqual(['https://example.com//attacker.example/ws'])
+      } finally {
+        server.close()
+      }
+    })
+
+    it('Should reject an upgrade request for another protocol', async () => {
+      let called = false
+      app.get('*', (c) => {
+        called = true
+        return c.text('ok')
+      })
+
+      expect(await requestUpgrade('/', 'h2c')).toBe('HTTP/1.1 400 Bad Request')
+      expect(called).toBe(false)
+    })
+
+    it.each([
+      ['a TCP reset', (socket: ReturnType<typeof connect>) => socket.resetAndDestroy()],
+      ['a graceful close', (socket: ReturnType<typeof connect>) => socket.destroy()],
+    ])('Should survive %s while the app is still running', async (_name, end) => {
+      let handled = 0
+      app.use('/ws', async (_c, next) => {
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await next()
+      })
+      app.get(
+        '/ws',
+        upgradeWebSocket(() => ({
+          onOpen() {
+            handled++
+          },
+        }))
+      )
+
+      await new Promise<void>((resolve) => {
+        const socket = connect(3030, 'localhost', () => {
+          socket.write(`GET /ws HTTP/1.1\r\n${upgradeHeaders()}\r\n`, () => end(socket))
+        })
+        socket.on('error', () => {})
+        socket.on('close', () => resolve())
+      })
+      await new Promise((resolve) => setTimeout(resolve, 150))
+      expect(handled).toBe(0)
+
+      await connectClient()
+      await new Promise((resolve) => setTimeout(resolve, 20))
+      expect(handled).toBe(1)
+    })
   })
 })
