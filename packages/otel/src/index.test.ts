@@ -308,6 +308,24 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(span.events.length, 0)
   })
 
+  // Hono only hands `Error` instances to `onError`, so any other thrown value
+  // escapes through the middleware instead of becoming a 500 response.
+  it('Should mark the span as an error when a non-Error value escapes the middleware', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/escape', () => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw 'boom'
+    })
+    await expect(app2.request('http://localhost/escape')).rejects.toBe('boom')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '_OTHER')
+    const exceptions = span.events.filter((e) => e.name === 'exception')
+    assert.strictEqual(exceptions.length, 1)
+    assert.strictEqual(exceptions[0].attributes?.[ATTR_EXCEPTION_MESSAGE], 'boom')
+  })
+
   it('Should set error.type to the exception class for a 5xx HTTPException', async () => {
     const app2 = new Hono()
     app2.use(httpInstrumentationMiddleware({ tracerProvider }))
@@ -752,6 +770,23 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.strictEqual(dp.attributes['http.route'], '/rpc/user/getProfile')
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
     assert.strictEqual(dp.attributes['http.response.status_code'], 200)
+  })
+
+  it('Should set error.type on the duration metric when a non-Error value escapes', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider, disableTracing: true }))
+    app.get('/escape', () => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw 'boom'
+    })
+    await expect(app.request('http://localhost/escape')).rejects.toBe('boom')
+    await metricReader.forceFlush()
+
+    const metrics = memoryMetricExporter.getMetrics()[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const dp = durationMetric.dataPoints.find((d) => d.attributes['http.route'] === '/escape')
+    assert.strictEqual(dp?.attributes['error.type'], '_OTHER')
   })
 
   it('Should set error.type on the duration metric only for failed requests', async () => {
