@@ -882,10 +882,10 @@ export function createRouteHandler<
   if (typeof routeOrHandler === 'function') {
     return routeOrHandler
   }
-  if (handler) {
-    return handler
+  if (typeof handler !== 'function') {
+    throw new TypeError('createRouteHandler requires a handler function')
   }
-  return (() => {}) as unknown as RouteHandler<R, E, I, P>
+  return handler
 }
 
 extendZodWithOpenApi(z)

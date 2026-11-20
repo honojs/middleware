@@ -84,4 +84,10 @@ describe('createRouteHandler', () => {
     const handler = createRouteHandler<typeof route>(fn)
     expect(handler).toBe(fn)
   })
+
+  it('throws when a JavaScript caller supplies a route without a handler', () => {
+    expect(() => {
+      Reflect.apply(createRouteHandler, undefined, [route])
+    }).toThrow(new TypeError('createRouteHandler requires a handler function'))
+  })
 })
