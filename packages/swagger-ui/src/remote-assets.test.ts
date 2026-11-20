@@ -25,6 +25,14 @@ describe('remoteAssets', () => {
     expect(assets.js).toEqual([`${baseUrl}/swagger-ui-dist/swagger-ui-bundle.js`])
   })
 
+  it('should add the standalone preset script when standalonePreset is true', () => {
+    const assets = remoteAssets({ version: '5.0.0', standalonePreset: true })
+    expect(assets.js).toEqual([
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.0.0/swagger-ui-bundle.js',
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.0.0/swagger-ui-standalone-preset.js',
+    ])
+  })
+
   it('should support baseUrl with version', () => {
     const baseUrl = 'https://unpkg.com'
     const version = '5.0.0'
