@@ -16,6 +16,7 @@ import {
   ATTR_URL_FULL,
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_RESPONSE_HEADER,
+  ATTR_ERROR_TYPE,
   ATTR_EXCEPTION_MESSAGE,
   ATTR_EXCEPTION_TYPE,
   ATTR_SERVICE_NAME,
@@ -23,6 +24,7 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { createMockMeterProvider, createTestMeter, createTestTracer } from './test-utils'
 import { httpInstrumentationMiddleware } from './index'
 
@@ -64,6 +66,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo')
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/foo')
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 200)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], undefined)
   })
 
   it('Should include serviceName and serviceVersion in span attributes', async () => {
@@ -95,6 +98,8 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/error')
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/error')
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 500)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], 'Error')
+    assert.strictEqual(span.status.message, 'error message')
     const event = span.events.find((e) => e.name === 'exception') ?? span.events[0]
 
     assert.ok(event.attributes)
@@ -284,6 +289,36 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 503)
     assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '503')
+    assert.strictEqual(span.events.length, 0)
+  })
+
+  it('Should leave the status unset and record no exception for a 4xx HTTPException', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/private', () => {
+      throw new HTTPException(401, { message: 'unauthorized' })
+    })
+    const response = await app2.request('http://localhost/private')
+    assert.strictEqual(response.status, 401)
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 401)
+    assert.strictEqual(span.status.code, SpanStatusCode.UNSET)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], undefined)
+    assert.strictEqual(span.events.length, 0)
+  })
+
+  it('Should set error.type to the exception class for a 5xx HTTPException', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider }))
+    app2.get('/down', () => {
+      throw new HTTPException(503, { message: 'down' })
+    })
+    await app2.request('http://localhost/down')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
+    assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], 'HTTPException')
+    assert.strictEqual(span.events.filter((e) => e.name === 'exception').length, 1)
   })
 
   it('Should respect spanNameFactory override', async () => {
@@ -717,5 +752,32 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.strictEqual(dp.attributes['http.route'], '/rpc/user/getProfile')
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
     assert.strictEqual(dp.attributes['http.response.status_code'], 200)
+  })
+
+  it('Should set error.type on the duration metric only for failed requests', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider, disableTracing: true }))
+    app.get('/error', () => {
+      throw new TypeError('bad')
+    })
+    app.get('/unavailable', (c) => c.text('down', 503))
+    app.get('/denied', () => {
+      throw new HTTPException(403)
+    })
+    await app.request('http://localhost/error')
+    await app.request('http://localhost/unavailable')
+    await app.request('http://localhost/denied')
+    await metricReader.forceFlush()
+
+    const metrics = memoryMetricExporter.getMetrics()[0].scopeMetrics[0].metrics
+    const durationMetric = metrics.find((m) => m.descriptor.name === 'http.server.request.duration')
+    assert.ok(durationMetric)
+    const errorType = (route: string) =>
+      durationMetric.dataPoints.find((dp) => dp.attributes['http.route'] === route)?.attributes[
+        'error.type'
+      ]
+    assert.strictEqual(errorType('/error'), 'TypeError')
+    assert.strictEqual(errorType('/unavailable'), '503')
+    assert.strictEqual(errorType('/denied'), undefined)
   })
 })
