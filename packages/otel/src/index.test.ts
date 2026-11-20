@@ -321,6 +321,8 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
     assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '_OTHER')
+    // No response was sent, so there is no status code to report.
+    assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], undefined)
     const exceptions = span.events.filter((e) => e.name === 'exception')
     assert.strictEqual(exceptions.length, 1)
     assert.strictEqual(exceptions[0].attributes?.[ATTR_EXCEPTION_MESSAGE], 'boom')
@@ -787,6 +789,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.ok(durationMetric)
     const dp = durationMetric.dataPoints.find((d) => d.attributes['http.route'] === '/escape')
     assert.strictEqual(dp?.attributes['error.type'], '_OTHER')
+    assert.strictEqual(dp?.attributes['http.response.status_code'], undefined)
   })
 
   it('Should set error.type on the duration metric only for failed requests', async () => {

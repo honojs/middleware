@@ -125,34 +125,38 @@ export const httpInstrumentationMiddleware = (
     }
 
     const finalize = (span: Span | undefined, error: unknown, escaped: boolean) => {
-      const status = c.res.status
+      // When an error escaped the middleware, no response was built, so `c.res`
+      // is still Hono's default and says nothing about what the client got.
+      const status = escaped ? undefined : c.res.status
       // Server spans only fail on 5xx; a 4xx is the client's error, even when a
-      // handler threw an `HTTPException` to produce it. An error that escaped the
-      // middleware fails the request whatever `c.res` says.
-      const failed = escaped || status >= 500
+      // handler threw an `HTTPException` to produce it.
+      const failed = status === undefined || status >= 500
       let errorType: string | undefined
       if (failed) {
-        errorType = escaped || error !== undefined ? errorTypeOf(error) : String(status)
+        errorType =
+          status === undefined || error !== undefined ? errorTypeOf(error) : String(status)
       }
 
       try {
         if (span) {
-          const captureResp = config.responseHeaderSet
-          for (const [name, value] of c.res.headers.entries()) {
-            const lower = name.toLowerCase()
-            if (captureResp.has(lower)) {
-              span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(lower), value)
+          if (status !== undefined) {
+            const captureResp = config.responseHeaderSet
+            for (const [name, value] of c.res.headers.entries()) {
+              const lower = name.toLowerCase()
+              if (captureResp.has(lower)) {
+                span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(lower), value)
+              }
             }
-          }
 
-          span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, status)
+            span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, status)
+          }
           if (errorType !== undefined) {
             span.setAttribute(ATTR_ERROR_TYPE, errorType)
           }
 
           if (failed) {
             // Record the exception only when it is what failed the request.
-            if (escaped || error !== undefined) {
+            if (status === undefined || error !== undefined) {
               try {
                 span.recordException(toException(error))
               } catch {
@@ -193,7 +197,7 @@ export const httpInstrumentationMiddleware = (
         requestDuration.record(duration, {
           ...stableAttrs,
           [ATTR_HTTP_ROUTE]: finalRoute,
-          [ATTR_HTTP_RESPONSE_STATUS_CODE]: status,
+          ...(status !== undefined && { [ATTR_HTTP_RESPONSE_STATUS_CODE]: status }),
           ...(errorType !== undefined && { [ATTR_ERROR_TYPE]: errorType }),
         })
       }
