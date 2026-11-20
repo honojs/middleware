@@ -23,6 +23,7 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import type { Context } from 'hono'
 import { Hono } from 'hono'
+import packageJson from '../package.json' with { type: 'json' }
 import { createMockMeterProvider, createTestMeter, createTestTracer } from './test-utils'
 import { httpInstrumentationMiddleware } from './index'
 
@@ -717,5 +718,22 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.strictEqual(dp.attributes['http.route'], '/rpc/user/getProfile')
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
     assert.strictEqual(dp.attributes['http.response.status_code'], 200)
+  })
+
+  it('Should report the meter version and the active requests unit', async () => {
+    const app = new Hono()
+    app.use(httpInstrumentationMiddleware({ meterProvider }))
+    app.get('/foo', (c) => c.text('ok'))
+    await app.request('http://localhost/foo')
+    await metricReader.forceFlush()
+
+    const [scopeMetrics] = memoryMetricExporter.getMetrics()[0].scopeMetrics
+    assert.strictEqual(scopeMetrics.scope.name, packageJson.name)
+    assert.strictEqual(scopeMetrics.scope.version, packageJson.version)
+    const active = scopeMetrics.metrics.find(
+      (m) => m.descriptor.name === 'http.server.active_requests'
+    )
+    assert.ok(active)
+    assert.strictEqual(active.descriptor.unit, '{request}')
   })
 })
