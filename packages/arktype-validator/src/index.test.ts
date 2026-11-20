@@ -119,9 +119,10 @@ describe('Basic', () => {
     const res = await app.request(req)
     expect(res).not.toBeNull()
     expect(res.status).toBe(400)
-    const data = (await res.json()) as { succcess: false; errors: type.errors }
+    const data = (await res.json()) as { succcess: false; errors: { data?: object }[] }
     expect(data.errors).toHaveLength(1)
-    expect(data.errors[0].data).not.toHaveProperty('cookie')
+    expect(data.errors[0].data ?? {}).not.toHaveProperty('cookie')
+    expect(JSON.stringify(data)).not.toContain('SECRET')
   })
 })
 
