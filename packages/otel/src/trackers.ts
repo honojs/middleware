@@ -1,7 +1,6 @@
 import { metrics, ValueType } from '@opentelemetry/api'
 import type { Attributes } from '@opentelemetry/api'
 import { METRIC_HTTP_SERVER_REQUEST_DURATION } from '@opentelemetry/semantic-conventions'
-// `http.server.active_requests` is still in development, so it is only exported from incubating.
 import { METRIC_HTTP_SERVER_ACTIVE_REQUESTS } from '@opentelemetry/semantic-conventions/incubating'
 import { INSTRUMENTATION_SCOPE } from './consts'
 import type { NormalizedHttpInstrumentationConfig } from './types'
