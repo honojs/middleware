@@ -30,6 +30,48 @@ const generateConnectionSymbol = () => Symbol('connection')
 /** @example `c.env[CONNECTION_SYMBOL_KEY]` */
 const CONNECTION_SYMBOL_KEY: unique symbol = Symbol('CONNECTION_SYMBOL_KEY')
 
+const rejectUpgradeRequest = (socket: Duplex, status: number) => {
+  if (socket.destroyed) {
+    return
+  }
+  socket.end(
+    `HTTP/1.1 ${status.toString()} ${STATUS_CODES[status] ?? ''}\r\n` +
+      'Connection: close\r\n' +
+      'Content-Length: 0\r\n' +
+      '\r\n'
+  )
+}
+
+const validateRequestTarget = (target: string): void => {
+  const backslash = target.indexOf('\\')
+  if (backslash !== -1) {
+    const query = target.indexOf('?')
+    if (query === -1 || backslash < query) {
+      throw new Error('Backslash in request path')
+    }
+  }
+}
+
+const createUpgradeUrl = (request: IncomingMessage, baseUrl?: string | URL): URL => {
+  const target = request.url ?? '/'
+  validateRequestTarget(target)
+  if (target.startsWith('http://') || target.startsWith('https://')) {
+    return new URL(target)
+  }
+  if (target[0] !== '/') {
+    throw new Error('Invalid request target')
+  }
+  if (baseUrl) {
+    return new URL(new URL(baseUrl).origin + target)
+  }
+  const protocol = (request.socket as { encrypted?: boolean }).encrypted ? 'https' : 'http'
+  const base = new URL(`${protocol}://${request.headers.host ?? 'localhost'}`)
+  if (base.username || base.password || base.pathname !== '/' || base.search || base.hash) {
+    throw new Error('Invalid host header')
+  }
+  return new URL(base.origin + target)
+}
+
 /**
  * Create WebSockets for Node.js
  * @param init Options
@@ -39,7 +81,11 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
   const wss = new WebSocketServer({ noServer: true })
   const waiterMap = new Map<
     IncomingMessage,
-    { resolve: (ws: WebSocket) => void; connectionSymbol: symbol }
+    {
+      resolve: (ws: WebSocket) => void
+      reject: (reason: Error) => void
+      connectionSymbol: symbol
+    }
   >()
 
   wss.on('connection', (ws, request) => {
@@ -50,9 +96,17 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
     }
   })
 
+  const rejectWaiter = (request: IncomingMessage) => {
+    const waiter = waiterMap.get(request)
+    if (waiter) {
+      waiterMap.delete(request)
+      waiter.reject(new Error('WebSocket handshake aborted'))
+    }
+  }
+
   const nodeUpgradeWebSocket = (request: IncomingMessage, connectionSymbol: symbol) => {
-    return new Promise<WebSocket>((resolve) => {
-      waiterMap.set(request, { resolve, connectionSymbol })
+    return new Promise<WebSocket>((resolve, reject) => {
+      waiterMap.set(request, { resolve, reject, connectionSymbol })
     })
   }
 
@@ -60,7 +114,26 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
     wss,
     injectWebSocket(server) {
       server.on('upgrade', async (request, socket: Duplex, head) => {
-        const url = new URL(request.url ?? '/', init.baseUrl ?? 'http://localhost')
+        if (request.headers.upgrade?.toLowerCase() !== 'websocket') {
+          if (server.listenerCount('upgrade') === 1) {
+            rejectUpgradeRequest(socket, 400)
+          }
+          return
+        }
+
+        const ignoreSocketError = () => {}
+        const reclaimWaiterOnClose = () => rejectWaiter(request)
+        socket.on('error', ignoreSocketError)
+        socket.once('close', reclaimWaiterOnClose)
+
+        let url: URL
+        try {
+          url = createUpgradeUrl(request, init.baseUrl)
+        } catch {
+          rejectUpgradeRequest(socket, 400)
+          return
+        }
+
         const headers = new Headers()
         for (const key in request.headers) {
           const value = request.headers[key]
@@ -78,21 +151,32 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
           incoming: request,
           outgoing: undefined,
         }
-        const response = await init.app.request(url, { headers: headers }, env)
+
+        let response: Response
+        try {
+          response = await init.app.request(url, { headers: headers }, env)
+        } catch {
+          rejectWaiter(request)
+          rejectUpgradeRequest(socket, 500)
+          return
+        }
+
+        if (socket.destroyed) {
+          rejectWaiter(request)
+          return
+        }
+
         const waiter = waiterMap.get(request)
 
         if (!waiter || waiter.connectionSymbol !== env[CONNECTION_SYMBOL_KEY]) {
-          socket.end(
-            `HTTP/1.1 ${response.status.toString()} ${STATUS_CODES[response.status] ?? ''}\r\n` +
-              'Connection: close\r\n' +
-              'Content-Length: 0\r\n' +
-              '\r\n'
-          )
-          waiterMap.delete(request)
+          rejectWaiter(request)
+          rejectUpgradeRequest(socket, response.status)
           return
         }
 
         wss.handleUpgrade(request, socket, head, (ws) => {
+          socket.off('close', reclaimWaiterOnClose)
+          socket.off('error', ignoreSocketError)
           wss.emit('connection', ws, request)
         })
       })
@@ -106,7 +190,12 @@ export const createNodeWebSocket = (init: NodeWebSocketInit): NodeWebSocket => {
       const connectionSymbol = generateConnectionSymbol()
       c.env[CONNECTION_SYMBOL_KEY] = connectionSymbol
       ;(async () => {
-        const ws = await nodeUpgradeWebSocket(c.env.incoming, connectionSymbol)
+        let ws: WebSocket
+        try {
+          ws = await nodeUpgradeWebSocket(c.env.incoming, connectionSymbol)
+        } catch {
+          return
+        }
 
         // buffer messages to handle messages received before the events are set up
         const messagesReceivedInStarting: [data: WebSocket.RawData, isBinary: boolean][] = []
