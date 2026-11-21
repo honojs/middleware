@@ -59,8 +59,10 @@ export const arktypeValidator = <
         {
           success: false,
           errors:
-            target in RESTRICTED_DATA_FIELDS
-              ? out.map((error) => {
+            // arktype 2's ArkErrors is an array whose JSON includes each error's data, so strip
+            // restricted fields from it. arktype 3's is not an array, and its JSON leaves data out.
+            target in RESTRICTED_DATA_FIELDS && Array.isArray(out)
+              ? (out as readonly unknown[]).map((error) => {
                   const restrictedFields =
                     RESTRICTED_DATA_FIELDS[target as keyof typeof RESTRICTED_DATA_FIELDS] || []
 
