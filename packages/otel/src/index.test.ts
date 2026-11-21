@@ -314,8 +314,8 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const app2 = new Hono()
     app2.use(httpInstrumentationMiddleware({ tracerProvider }))
     app2.get('/escape', () => {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw 'boom'
+      const boom: unknown = 'boom'
+      throw boom
     })
     await expect(app2.request('http://localhost/escape')).rejects.toBe('boom')
     const [span] = memoryExporter.getFinishedSpans()
@@ -779,8 +779,8 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     const app = new Hono()
     app.use(httpInstrumentationMiddleware({ meterProvider, disableTracing: true }))
     app.get('/escape', () => {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw 'boom'
+      const boom: unknown = 'boom'
+      throw boom
     })
     await expect(app.request('http://localhost/escape')).rejects.toBe('boom')
     await metricReader.forceFlush()

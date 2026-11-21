@@ -59,23 +59,19 @@ const toException = (error: unknown): Exception => {
   if (typeof error === 'object' && error !== null) {
     return error as Exception
   }
-  return String(error as number | boolean | bigint | symbol | undefined)
+  return String(error)
 }
 
-// The span status description: an error's message, the text of a thrown
-// string or primitive, or the `message` of an error-like object.
+// The span status description, taken from the same value `recordException` gets.
 const errorMessage = (error: unknown): string | undefined => {
-  if (error instanceof Error) {
-    return error.message
-  }
   if (error === undefined) {
     return undefined
   }
-  if (typeof error === 'object' && error !== null) {
-    const message = (error as { message?: unknown }).message
-    return typeof message === 'string' ? message : undefined
+  const exception = toException(error)
+  if (typeof exception === 'string') {
+    return exception
   }
-  return String(error as string | number | boolean | bigint | symbol | null)
+  return typeof exception.message === 'string' ? exception.message : undefined
 }
 
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
