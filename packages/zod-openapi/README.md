@@ -183,6 +183,23 @@ export default app
 > })
 > ```
 
+### Defining a handler in a separate file
+
+Export the `route` from your route module, then pass it to `createRouteHandler()` in the handler module. The route supplies the types for validated inputs and responses.
+
+```ts
+// handler.ts
+import { createRouteHandler } from '@hono/zod-openapi'
+import { route } from './route'
+
+export const getUser = createRouteHandler(route, (c) => {
+  const { id } = c.req.valid('param')
+  return c.json({ id, age: 20, name: 'Ultra-man' }, 200)
+})
+```
+
+In your app, register it with `app.openapi(route, getUser)`.
+
 ### Handling Validation Errors
 
 Validation errors can be handled as follows:
