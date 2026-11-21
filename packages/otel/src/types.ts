@@ -26,29 +26,39 @@ export type HttpInstrumentationConfig = {
    */
   getRoute?: (c: HonoContext) => string | undefined
   /**
-   * Resolves the value of the `url.full` span attribute.
+   * Returns the URL to report instead of the request URL, so you can remove
+   * tokens or identifiers that must not reach your tracing backend.
    *
-   * By default the attribute carries the complete request URL, including the
-   * query string and any identifiers embedded in the path. Return a reduced
-   * form when those parts can hold credentials, tokens, or other data that
-   * must not reach the tracing backend.
+   * `url.full`, `url.path` and `url.query` all come from the returned URL.
+   * Credentials and the query parameters in `sensitiveQueryParameters` are
+   * still redacted afterwards. Return an absolute URL: anything else is
+   * reported as `url.full` only, with no `url.path` or `url.query`.
    *
-   * The hook runs when the span starts, before routing, so it sees the
-   * request but not values a handler sets on the context later.
+   * Runs when the span starts, before routing, so values a handler sets on the
+   * context later are not available.
    *
-   * Returning `undefined`, an empty string, or throwing falls back to the
-   * default, so the existing behavior is preserved when this hook is not
-   * provided.
+   * Return `undefined` or an empty string, or throw, to use the request URL.
    */
   getUrlFull?: (c: HonoContext) => string | undefined
+  /**
+   * Query parameters whose values are replaced with `REDACTED` in the
+   * `url.full` and `url.query` span attributes. Keys match case-sensitively.
+   *
+   * This list replaces the default (`X-Amz-Signature`, `X-Amz-Credential`,
+   * `X-Amz-Security-Token`, `AWSAccessKeyId`, `Signature`, `sig`,
+   * `X-Goog-Signature`)
+   * Pass an empty array to turn redaction off.
+   */
+  sensitiveQueryParameters?: string[]
   serviceName?: string
   serviceVersion?: string
 }
 
 export type NormalizedHttpInstrumentationConfig = Omit<
   HttpInstrumentationConfig,
-  'captureRequestHeaders' | 'captureResponseHeaders'
+  'captureRequestHeaders' | 'captureResponseHeaders' | 'sensitiveQueryParameters'
 > & {
+  readonly sensitiveQueryParameters: ReadonlySet<string>
   readonly requestHeaderSet: ReadonlySet<string>
   readonly responseHeaderSet: ReadonlySet<string>
   readonly captureRequestHeaders?: readonly string[]

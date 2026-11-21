@@ -14,6 +14,13 @@ import {
   ATTR_HTTP_RESPONSE_STATUS_CODE,
   ATTR_HTTP_ROUTE,
   ATTR_URL_FULL,
+  ATTR_URL_PATH,
+  ATTR_URL_QUERY,
+  ATTR_URL_SCHEME,
+  ATTR_SERVER_ADDRESS,
+  ATTR_SERVER_PORT,
+  ATTR_CLIENT_ADDRESS,
+  ATTR_USER_AGENT_ORIGINAL,
   ATTR_HTTP_REQUEST_HEADER,
   ATTR_HTTP_RESPONSE_HEADER,
   ATTR_ERROR_TYPE,
@@ -64,6 +71,11 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(span.status.code, SpanStatusCode.UNSET)
     assert.strictEqual(span.attributes[ATTR_HTTP_REQUEST_METHOD], 'GET')
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo')
+    assert.strictEqual(span.attributes[ATTR_URL_PATH], '/foo')
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], undefined)
+    assert.strictEqual(span.attributes[ATTR_URL_SCHEME], 'http')
+    assert.strictEqual(span.attributes[ATTR_SERVER_ADDRESS], 'localhost')
+    assert.strictEqual(span.attributes[ATTR_SERVER_PORT], 80)
     assert.strictEqual(span.attributes[ATTR_HTTP_ROUTE], '/foo')
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], 200)
     assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], undefined)
@@ -453,6 +465,8 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     await app2.request('http://localhost/reset?token=secret')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/reset')
+    assert.strictEqual(span.attributes[ATTR_URL_PATH], '/reset')
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], undefined)
   })
 
   it('Should fall back to the request URL when getUrlFull returns undefined', async () => {
@@ -467,6 +481,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     await app2.request('http://localhost/foo?a=1')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'a=1')
   })
 
   it('Should fall back to the request URL when getUrlFull returns an empty string', async () => {
@@ -481,6 +496,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     await app2.request('http://localhost/foo?a=1')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'a=1')
   })
 
   it('Should fall back to the request URL when getUrlFull throws', async () => {
@@ -497,6 +513,131 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     await app2.request('http://localhost/foo?a=1')
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?a=1')
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'a=1')
+  })
+  it('Should report a getUrlFull value that is not an absolute URL as url.full only', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider, getUrlFull: () => '/redacted' }))
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?token=secret')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], '/redacted')
+    assert.strictEqual(span.attributes[ATTR_URL_PATH], undefined)
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], undefined)
+  })
+
+  it('Should redact sensitive query parameter values by default', async () => {
+    await app.request('http://localhost/foo?q=hono&sig=secret&X-Amz-Signature=abc')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(
+      span.attributes[ATTR_URL_QUERY],
+      'q=hono&sig=REDACTED&X-Amz-Signature=REDACTED'
+    )
+    assert.strictEqual(
+      span.attributes[ATTR_URL_FULL],
+      'http://localhost/foo?q=hono&sig=REDACTED&X-Amz-Signature=REDACTED'
+    )
+  })
+
+  it('Should redact the AWSAccessKeyId and Signature query parameters by default', async () => {
+    await app.request('http://localhost/foo?AWSAccessKeyId=AKIA&Signature=abc&Expires=1')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(
+      span.attributes[ATTR_URL_QUERY],
+      'AWSAccessKeyId=REDACTED&Signature=REDACTED&Expires=1'
+    )
+  })
+
+  it('Should redact credentials from url.full', async () => {
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({
+        tracerProvider,
+        getUrlFull: () => 'https://user:secret@example.com/foo',
+      })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'https://REDACTED:REDACTED@example.com/foo')
+    assert.strictEqual(span.attributes[ATTR_URL_PATH], '/foo')
+  })
+
+  it('Should replace the redacted query parameters with sensitiveQueryParameters', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider, sensitiveQueryParameters: ['token'] }))
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?token=abc&sig=xyz')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'token=REDACTED&sig=xyz')
+    assert.strictEqual(
+      span.attributes[ATTR_URL_FULL],
+      'http://localhost/foo?token=REDACTED&sig=xyz'
+    )
+  })
+
+  it('Should not redact query parameters when sensitiveQueryParameters is empty', async () => {
+    const app2 = new Hono()
+    app2.use(httpInstrumentationMiddleware({ tracerProvider, sensitiveQueryParameters: [] }))
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?sig=xyz')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'sig=xyz')
+    assert.strictEqual(span.attributes[ATTR_URL_FULL], 'http://localhost/foo?sig=xyz')
+  })
+
+  it('Should set server, client and user agent attributes from the request', async () => {
+    await app.request('https://example.com:8443/foo', {
+      headers: {
+        'User-Agent': 'test-agent/1.0',
+        'X-Forwarded-For': '203.0.113.7, 10.0.0.1',
+      },
+    })
+    await app.request('http://localhost/foo', {
+      headers: { 'X-Forwarded-For': '[2001:db8::1]:4711' },
+    })
+    await app.request('http://localhost/foo')
+    const [first, second, third] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(first.attributes[ATTR_URL_SCHEME], 'https')
+    assert.strictEqual(first.attributes[ATTR_SERVER_ADDRESS], 'example.com')
+    assert.strictEqual(first.attributes[ATTR_SERVER_PORT], 8443)
+    assert.strictEqual(first.attributes[ATTR_USER_AGENT_ORIGINAL], 'test-agent/1.0')
+    assert.strictEqual(first.attributes[ATTR_CLIENT_ADDRESS], '203.0.113.7')
+    assert.strictEqual(second.attributes[ATTR_CLIENT_ADDRESS], '2001:db8::1')
+    assert.strictEqual(third.attributes[ATTR_CLIENT_ADDRESS], undefined)
+    assert.strictEqual(third.attributes[ATTR_USER_AGENT_ORIGINAL], undefined)
+  })
+
+  it('Should provide request attributes at span creation for samplers', async () => {
+    let startAttributes: Record<string, unknown> = {}
+    const provider = new NodeTracerProvider({
+      spanProcessors: [
+        {
+          onStart(span) {
+            startAttributes = { ...(span as unknown as { attributes: object }).attributes }
+          },
+          onEnd() {
+            return
+          },
+          forceFlush: () => Promise.resolve(),
+          shutdown: () => Promise.resolve(),
+        },
+      ],
+    })
+    const app2 = new Hono()
+    app2.use(
+      httpInstrumentationMiddleware({ tracerProvider: provider, captureRequestHeaders: ['x-id'] })
+    )
+    app2.get('/foo', (c) => c.text('ok'))
+    await app2.request('http://localhost/foo?a=1', {
+      headers: { 'x-id': '42', 'user-agent': 'test-agent/1.0' },
+    })
+    assert.strictEqual(startAttributes[ATTR_URL_PATH], '/foo')
+    assert.strictEqual(startAttributes[ATTR_URL_QUERY], 'a=1')
+    assert.strictEqual(startAttributes[ATTR_URL_SCHEME], 'http')
+    assert.strictEqual(startAttributes[ATTR_SERVER_ADDRESS], 'localhost')
+    assert.strictEqual(startAttributes[ATTR_USER_AGENT_ORIGINAL], 'test-agent/1.0')
+    assert.strictEqual(startAttributes[ATTR_HTTP_REQUEST_HEADER('x-id')], '42')
   })
 })
 
@@ -534,6 +675,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     assert.strictEqual(dps.length, 1)
     const dp = dps[0]
     assert.strictEqual(dp.attributes['http.request.method'], 'GET')
+    assert.strictEqual(dp.attributes['url.scheme'], 'http')
     assert.strictEqual(dp.attributes['http.route'], '/metrics-test')
     if (dp.attributes['http.response.status_code']) {
       assert.strictEqual(dp.attributes['http.response.status_code'], 200)
@@ -718,6 +860,7 @@ describe('OpenTelemetry middleware - Metrics (combined)', () => {
     )
     assert.deepEqual(adds[0].attrs, adds[1].attrs)
     assert.strictEqual(adds[0].attrs['http.request.method'], 'GET')
+    assert.strictEqual(adds[0].attrs['url.scheme'], 'http')
   })
 
   it('Should not track active requests when captureActiveRequests is false', async () => {

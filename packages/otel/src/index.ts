@@ -7,9 +7,16 @@ import {
   SpanStatusCode,
 } from '@opentelemetry/api'
 import {
+  ATTR_CLIENT_ADDRESS,
   ATTR_ERROR_TYPE,
   ATTR_HTTP_REQUEST_METHOD,
+  ATTR_SERVER_ADDRESS,
+  ATTR_SERVER_PORT,
   ATTR_URL_FULL,
+  ATTR_URL_PATH,
+  ATTR_URL_QUERY,
+  ATTR_URL_SCHEME,
+  ATTR_USER_AGENT_ORIGINAL,
   ATTR_HTTP_ROUTE,
   ATTR_HTTP_RESPONSE_STATUS_CODE,
   ATTR_HTTP_REQUEST_HEADER,
@@ -21,6 +28,12 @@ import {
 import type { MiddlewareHandler, Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { routePath } from 'hono/route'
+import {
+  DEFAULT_SENSITIVE_QUERY_PARAMETERS,
+  clientAddress,
+  redactQuery,
+  serverPort,
+} from './attributes'
 import { INSTRUMENTATION_SCOPE } from './consts'
 import { createActiveRequestsTracker, createRequestDurationTracker } from './trackers'
 import type { HttpInstrumentationConfig, NormalizedHttpInstrumentationConfig } from './types'
@@ -39,6 +52,9 @@ const normalizeConfig = (
     captureActiveRequests: config?.captureActiveRequests ?? true,
     captureRequestHeaders: reqHeadersSrc,
     captureResponseHeaders: resHeadersSrc,
+    sensitiveQueryParameters: new Set(
+      config?.sensitiveQueryParameters ?? DEFAULT_SENSITIVE_QUERY_PARAMETERS
+    ),
   }
   return norm
 }
@@ -93,10 +109,10 @@ export const httpInstrumentationMiddleware = (
   const tracer = config.disableTracing ? undefined : resolveTracer(config)
 
   const spanName = (c: Context) => config.spanNameFactory?.(c) ?? `${c.req.method} ${routePath(c)}`
-  // Let the user reduce `url.full` before the span starts, since the attribute is
-  // set at span creation and the raw URL may carry query strings or identifiers
-  // that must not reach the tracing backend.
-  const urlFull = (c: Context) => {
+  // Let the user reduce the URL before the span starts, since `url.full`,
+  // `url.path` and `url.query` are set at span creation and the raw URL may
+  // carry query strings or identifiers that must not reach the tracing backend.
+  const resolveUrl = (c: Context): string => {
     if (config.getUrlFull) {
       try {
         const resolved = config.getUrlFull(c)
@@ -110,6 +126,34 @@ export const httpInstrumentationMiddleware = (
     return c.req.url
   }
 
+  // The URL attributes, with the values of sensitive query parameters redacted.
+  // A resolved URL that cannot be parsed is still reported as `url.full`, but
+  // yields no `url.path` or `url.query`.
+  const urlAttributes = (c: Context): Attributes => {
+    const resolved = resolveUrl(c)
+    let url: URL
+    try {
+      url = new URL(resolved)
+    } catch {
+      return { [ATTR_URL_FULL]: resolved }
+    }
+    // `url.full` must not carry credentials from the userinfo part of the URL.
+    if (url.username || url.password) {
+      url.username = 'REDACTED'
+      url.password = 'REDACTED'
+    }
+    const query = redactQuery(url.search.slice(1), config.sensitiveQueryParameters)
+    url.search = query
+    const attributes: Attributes = {
+      [ATTR_URL_FULL]: url.href,
+      [ATTR_URL_PATH]: url.pathname,
+    }
+    if (query.length > 0) {
+      attributes[ATTR_URL_QUERY] = query
+    }
+    return attributes
+  }
+
   const activeReqs = config.captureActiveRequests ? createActiveRequestsTracker(config) : undefined
   const requestDuration = createRequestDurationTracker(config)
 
@@ -117,9 +161,13 @@ export const httpInstrumentationMiddleware = (
     const parent = propagation.extract(otelContext.active(), c.req.header())
 
     const method = c.req.method
+    const requestUrl = new URL(c.req.url)
+    // `URL.protocol` includes the trailing colon ("https:"); `url.scheme` doesn't.
+    const scheme = requestUrl.protocol.slice(0, -1)
 
     const stableAttrs: Attributes = {
       [ATTR_HTTP_REQUEST_METHOD]: method,
+      [ATTR_URL_SCHEME]: scheme,
       [ATTR_SERVICE_NAME]: config.serviceName,
       [ATTR_SERVICE_VERSION]: config.serviceVersion,
     }
@@ -127,12 +175,12 @@ export const httpInstrumentationMiddleware = (
     activeReqs?.increment(stableAttrs)
     const monotonicStartTime = performance.now()
 
-    const deferredRequestHeaderAttributes: Record<string, string> = {}
+    const requestHeaderAttributes: Attributes = {}
     const reqHeaders = c.req.header()
     for (const [rawName, value] of Object.entries(reqHeaders)) {
       const name = rawName.toLowerCase()
       if (config.requestHeaderSet.has(name)) {
-        deferredRequestHeaderAttributes[ATTR_HTTP_REQUEST_HEADER(name)] = value
+        requestHeaderAttributes[ATTR_HTTP_REQUEST_HEADER(name)] = value
       }
     }
 
@@ -231,18 +279,23 @@ export const httpInstrumentationMiddleware = (
       {
         kind: SpanKind.SERVER,
         startTime: config.getTime?.(),
+        // Everything known before the handler runs goes in at creation, since
+        // samplers only see the attributes present then.
         attributes: {
           ...stableAttrs,
-          [ATTR_URL_FULL]: urlFull(c),
+          ...urlAttributes(c),
           [ATTR_HTTP_ROUTE]: routePath(c),
+          // Strip the brackets URL keeps around IPv6 hosts.
+          [ATTR_SERVER_ADDRESS]: requestUrl.hostname.replace(/^\[|\]$/g, ''),
+          [ATTR_SERVER_PORT]: serverPort(requestUrl, scheme),
+          [ATTR_CLIENT_ADDRESS]: clientAddress(c.req.raw.headers),
+          [ATTR_USER_AGENT_ORIGINAL]: c.req.header('user-agent'),
+          ...requestHeaderAttributes,
         },
       },
       parent,
       async (span) => {
         try {
-          for (const [k, v] of Object.entries(deferredRequestHeaderAttributes)) {
-            span.setAttribute(k, v)
-          }
           await next()
           finalize(span, c.error, false)
         } catch (e) {
