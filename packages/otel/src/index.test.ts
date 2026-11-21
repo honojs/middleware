@@ -321,6 +321,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     const [span] = memoryExporter.getFinishedSpans()
     assert.strictEqual(span.status.code, SpanStatusCode.ERROR)
     assert.strictEqual(span.attributes[ATTR_ERROR_TYPE], '_OTHER')
+    assert.strictEqual(span.status.message, 'boom')
     // No response was sent, so there is no status code to report.
     assert.strictEqual(span.attributes[ATTR_HTTP_RESPONSE_STATUS_CODE], undefined)
     const exceptions = span.events.filter((e) => e.name === 'exception')

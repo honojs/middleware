@@ -62,6 +62,22 @@ const toException = (error: unknown): Exception => {
   return String(error as number | boolean | bigint | symbol | undefined)
 }
 
+// The span status description: an error's message, the text of a thrown
+// string or primitive, or the `message` of an error-like object.
+const errorMessage = (error: unknown): string | undefined => {
+  if (error instanceof Error) {
+    return error.message
+  }
+  if (error === undefined) {
+    return undefined
+  }
+  if (typeof error === 'object' && error !== null) {
+    const message = (error as { message?: unknown }).message
+    return typeof message === 'string' ? message : undefined
+  }
+  return String(error as string | number | boolean | bigint | symbol | null)
+}
+
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
   if (config.tracer) {
     return config.tracer
@@ -165,7 +181,7 @@ export const httpInstrumentationMiddleware = (
             }
             span.setStatus({
               code: SpanStatusCode.ERROR,
-              message: error instanceof Error ? error.message : undefined,
+              message: errorMessage(error),
             })
           }
         }
