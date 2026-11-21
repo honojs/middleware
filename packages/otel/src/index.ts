@@ -1,4 +1,4 @@
-import type { Span, Tracer, Attributes } from '@opentelemetry/api'
+import type { Span, Tracer, Attributes, Exception } from '@opentelemetry/api'
 import {
   context as otelContext,
   propagation,
@@ -7,6 +7,7 @@ import {
   SpanStatusCode,
 } from '@opentelemetry/api'
 import {
+  ATTR_ERROR_TYPE,
   ATTR_HTTP_REQUEST_METHOD,
   ATTR_URL_FULL,
   ATTR_HTTP_ROUTE,
@@ -15,6 +16,7 @@ import {
   ATTR_HTTP_RESPONSE_HEADER,
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
+  ERROR_TYPE_VALUE_OTHER,
 } from '@opentelemetry/semantic-conventions'
 import type { MiddlewareHandler, Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
@@ -39,6 +41,37 @@ const normalizeConfig = (
     captureResponseHeaders: resHeadersSrc,
   }
   return norm
+}
+
+// Prefer the constructor name so subclasses such as `HTTPException` are told
+// apart from a plain `Error`.
+const errorTypeOf = (error: unknown): string =>
+  error instanceof Error
+    ? error.constructor?.name || error.name || ERROR_TYPE_VALUE_OTHER
+    : ERROR_TYPE_VALUE_OTHER
+
+// `recordException` reads `name`, `message` and `stack` from objects, and takes
+// strings as the message. Other thrown values are stringified.
+const toException = (error: unknown): Exception => {
+  if (error instanceof Error || typeof error === 'string') {
+    return error
+  }
+  if (typeof error === 'object' && error !== null) {
+    return error as Exception
+  }
+  return String(error)
+}
+
+// The span status description, taken from the same value `recordException` gets.
+const errorMessage = (error: unknown): string | undefined => {
+  if (error === undefined) {
+    return undefined
+  }
+  const exception = toException(error)
+  if (typeof exception === 'string') {
+    return exception
+  }
+  return typeof exception.message === 'string' ? exception.message : undefined
 }
 
 const resolveTracer = (config: NormalizedHttpInstrumentationConfig): Tracer | undefined => {
@@ -103,31 +136,49 @@ export const httpInstrumentationMiddleware = (
       }
     }
 
-    const finalize = (span: Span | undefined, error: unknown) => {
+    const finalize = (span: Span | undefined, error: unknown, escaped: boolean) => {
+      // When an error escaped the middleware, no response was built, so `c.res`
+      // is still Hono's default and says nothing about what the client got.
+      const status = escaped ? undefined : c.res.status
+      // Server spans only fail on 5xx; a 4xx is the client's error, even when a
+      // handler threw an `HTTPException` to produce it.
+      const failed = status === undefined || status >= 500
+      let errorType: string | undefined
+      if (failed) {
+        errorType =
+          status === undefined || error !== undefined ? errorTypeOf(error) : String(status)
+      }
+
       try {
-        const status = c.res.status
-
         if (span) {
-          const captureResp = config.responseHeaderSet
-          for (const [name, value] of c.res.headers.entries()) {
-            const lower = name.toLowerCase()
-            if (captureResp.has(lower)) {
-              span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(lower), value)
+          if (status !== undefined) {
+            const captureResp = config.responseHeaderSet
+            for (const [name, value] of c.res.headers.entries()) {
+              const lower = name.toLowerCase()
+              if (captureResp.has(lower)) {
+                span.setAttribute(ATTR_HTTP_RESPONSE_HEADER(lower), value)
+              }
             }
+
+            span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, status)
+          }
+          if (errorType !== undefined) {
+            span.setAttribute(ATTR_ERROR_TYPE, errorType)
           }
 
-          span.setAttribute(ATTR_HTTP_RESPONSE_STATUS_CODE, status)
-          if (status >= 500) {
-            span.setStatus({ code: SpanStatusCode.ERROR })
-          }
-
-          if (error) {
-            try {
-              span.recordException(error as Error)
-            } catch {
-              // Ignore errors when recording exception
+          if (failed) {
+            // Record the exception only when it is what failed the request.
+            if (status === undefined || error !== undefined) {
+              try {
+                span.recordException(toException(error))
+              } catch {
+                // Ignore errors when recording exception
+              }
             }
-            span.setStatus({ code: SpanStatusCode.ERROR })
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: errorMessage(error),
+            })
           }
         }
       } finally {
@@ -158,7 +209,8 @@ export const httpInstrumentationMiddleware = (
         requestDuration.record(duration, {
           ...stableAttrs,
           [ATTR_HTTP_ROUTE]: finalRoute,
-          [ATTR_HTTP_RESPONSE_STATUS_CODE]: c.res.status,
+          ...(status !== undefined && { [ATTR_HTTP_RESPONSE_STATUS_CODE]: status }),
+          ...(errorType !== undefined && { [ATTR_ERROR_TYPE]: errorType }),
         })
       }
     }
@@ -166,9 +218,9 @@ export const httpInstrumentationMiddleware = (
     if (!tracer) {
       try {
         await next()
-        finalize(undefined, undefined)
+        finalize(undefined, c.error, false)
       } catch (e) {
-        finalize(undefined, e)
+        finalize(undefined, e, true)
         throw e
       }
       return
@@ -192,9 +244,9 @@ export const httpInstrumentationMiddleware = (
             span.setAttribute(k, v)
           }
           await next()
-          finalize(span, c.error)
+          finalize(span, c.error, false)
         } catch (e) {
-          finalize(span, e)
+          finalize(span, e, true)
           throw e
         } finally {
           span.end(config.getTime?.())
