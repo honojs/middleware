@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
+import { readFile } from 'node:fs/promises'
 
 describe('react entry point', () => {
   it('Should be marked as a Client Component module', async () => {
