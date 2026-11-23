@@ -1,5 +1,11 @@
 # @hono/auth-js
 
+## 1.1.2
+
+### Patch Changes
+
+- [#2268](https://github.com/honojs/middleware/pull/2268) [`8f7e385`](https://github.com/honojs/middleware/commit/8f7e38583330dc0a90b0ed2c72794531f53c17cb) Thanks [@Taiwudao](https://github.com/Taiwudao)! - Mark the `@hono/auth-js/react` entry as a Client Component so importing it from a React Server Component no longer throws `createContext only works in Client Components`
+
 ## 1.1.1
 
 ### Patch Changes

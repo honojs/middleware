@@ -1,3 +1,5 @@
+'use client'
+
 import type { BuiltInProviderType, RedirectableProviderType } from '@auth/core/providers'
 import type { LoggerInstance, Session } from '@auth/core/types'
 import * as React from 'react'

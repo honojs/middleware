@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 1.4.0
+
+### Minor Changes
+
+- [#2267](https://github.com/honojs/middleware/pull/2267) [`2616c1a`](https://github.com/honojs/middleware/commit/2616c1a0921d52e607323fd1bc98876c7e37b980) Thanks [@chdsbd](https://github.com/chdsbd)! - Don't mark server spans as errors for 4xx responses. Now only 5xx responses and errors that escape the middleware mark a server span as an error. Also, failed requests now set `error.type` on the span and the `http.server.request.duration` metric.
+
 ## 1.3.0
 
 ### Minor Changes
