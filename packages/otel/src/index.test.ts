@@ -548,6 +548,12 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     )
   })
 
+  it('Should redact every value of a repeated sensitive query parameter in place', async () => {
+    await app.request('http://localhost/foo?a=1&sig=abc&b=2&sig=zyx')
+    const [span] = memoryExporter.getFinishedSpans()
+    assert.strictEqual(span.attributes[ATTR_URL_QUERY], 'a=1&sig=REDACTED&b=2&sig=REDACTED')
+  })
+
   it('Should redact credentials from url.full', async () => {
     const app2 = new Hono()
     app2.use(

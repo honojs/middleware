@@ -20,12 +20,14 @@ export const DEFAULT_SENSITIVE_QUERY_PARAMETERS: readonly string[] = [
  * redacted, and re-encoded by `URLSearchParams` when something is.
  */
 export const redactQuery = (query: string, sensitive: ReadonlySet<string>): string => {
-  const params = new URLSearchParams(query)
+  const params = new URLSearchParams()
   let redacted = false
-  for (const key of sensitive) {
-    if (params.has(key)) {
-      params.set(key, 'REDACTED')
+  for (const [key, value] of new URLSearchParams(query)) {
+    if (sensitive.has(key)) {
+      params.append(key, 'REDACTED')
       redacted = true
+    } else {
+      params.append(key, value)
     }
   }
   return redacted ? params.toString() : query
