@@ -47,6 +47,10 @@ import { isZod } from './zod-typeguard'
 
 type MaybePromise<T> = Promise<T> | T
 
+// Allowed hook return type for a handler response type `T`. A hook returns nothing
+// to let the handler run, so an async hook may resolve to `undefined` as well.
+type HookResponse<T> = MaybePromise<Awaited<T> | void>
+
 export type RouteConfig = RouteConfigBase & {
   middleware?: H | H[]
   hide?: boolean
@@ -318,12 +322,7 @@ export type RouteHook<
   E extends Env = RouteConfigToEnv<R>,
   I extends Input = ComputeInput<R>,
   P extends string = ConvertPathType<R['path']>,
-> = Hook<
-  I,
-  E,
-  P,
-  RouteConfigToTypedResponse<R> | Response | Promise<Response> | void | Promise<void>
->
+> = Hook<I, E, P, HookResponse<RouteConfigToTypedResponse<R> | Response>>
 
 type OpenAPIObjectConfig = Parameters<
   InstanceType<typeof OpenApiGeneratorV3>['generateDocument']
@@ -386,7 +385,7 @@ type HandlerFromRoute<R extends RouteConfig, E extends Env> = Handler<
 >
 
 type HookFromRoute<R extends RouteConfig, E extends Env> =
-  | Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, RouteHandlerResponse<R> | undefined>
+  | Hook<ComputeInput<R>, E, ConvertPathType<R['path']>, HookResponse<RouteHandlerResponse<R>>>
   | undefined
 
 // Merge each batch entry's schema into one normalized route map.
@@ -520,7 +519,7 @@ export class OpenAPIHono<
       // If a response type is defined, only the typed response is allowed.
       BoundRouteResponseTypes<R>['handler']
     >,
-    hook: Hook<I, E, P, BoundRouteResponseTypes<R>['handler'] | undefined> | undefined = undefined // eslint-disable-line @typescript-eslint/no-useless-default-assignment
+    hook: Hook<I, E, P, HookResponse<BoundRouteResponseTypes<R>['handler']>> | undefined = undefined // eslint-disable-line @typescript-eslint/no-useless-default-assignment
   ): OpenAPIHono<
     E,
     S & ToSchema<R['method'], MergePath<BasePath, P>, I, BoundRouteResponseTypes<R>['output']>,

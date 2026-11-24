@@ -4,7 +4,13 @@ import type { ExtractSchema } from 'hono/types'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import type { Equal, Expect } from 'hono/utils/types'
 import { OpenAPIHono, createRoute, defineOpenAPIRoute, z, $ } from './index'
-import type { HonoToOpenAPIHono, MiddlewareToHandlerType, OfHandlerType } from './index'
+import type {
+  HonoToOpenAPIHono,
+  MiddlewareToHandlerType,
+  OfHandlerType,
+  RouteHandler,
+  RouteHook,
+} from './index'
 
 describe('Types', () => {
   const RequestSchema = z.object({
@@ -510,5 +516,110 @@ describe('$', () => {
     expectTypeOf(app.openapi).toBeFunction()
     expectTypeOf(app.doc).toBeFunction()
     expectTypeOf(app.getOpenAPIDocument).toBeFunction()
+  })
+})
+
+describe('Hook return types', () => {
+  const BookSchema = z.object({ title: z.string() })
+  const ErrorSchema = z.object({ ok: z.boolean() })
+
+  const route = createRoute({
+    method: 'post',
+    path: '/books',
+    request: {
+      body: { content: { 'application/json': { schema: BookSchema } } },
+    },
+    responses: {
+      200: { content: { 'application/json': { schema: BookSchema } }, description: 'A book' },
+      400: { content: { 'application/json': { schema: ErrorSchema } }, description: 'Error' },
+    },
+  })
+
+  const handler: RouteHandler<typeof route> = (c) => c.json(c.req.valid('json'), 200)
+  const audit = (_result: unknown) => Promise.resolve()
+
+  it('Should accept a sync hook that returns a response only on failure', () => {
+    new OpenAPIHono().openapi(route, handler, (result, c) => {
+      if (!result.success) {
+        return c.json({ ok: false }, 400)
+      }
+    })
+  })
+
+  it('Should accept an async hook that returns a response only on failure', () => {
+    new OpenAPIHono().openapi(route, handler, async (result, c) => {
+      await audit(result)
+      if (!result.success) {
+        return c.json({ ok: false }, 400)
+      }
+    })
+  })
+
+  it('Should accept a hook that never returns', () => {
+    new OpenAPIHono().openapi(route, handler, (result) => {
+      void audit(result)
+    })
+    new OpenAPIHono().openapi(route, handler, async (result) => {
+      await audit(result)
+    })
+  })
+
+  it('Should accept an async hook in defineOpenAPIRoute', () => {
+    defineOpenAPIRoute({
+      route,
+      handler,
+      hook: async (result, c) => {
+        await audit(result)
+        if (!result.success) {
+          return c.json({ ok: false }, 400)
+        }
+      },
+    })
+  })
+
+  it('Should accept an async RouteHook that returns a response only on failure', () => {
+    const _hook: RouteHook<typeof route> = async (result, c) => {
+      await audit(result)
+      if (!result.success) {
+        return c.json({ ok: false }, 400)
+      }
+    }
+  })
+
+  it('Should reject a hook that returns a response not defined in the route', () => {
+    new OpenAPIHono().openapi(
+      route,
+      handler,
+      // @ts-expect-error 422 is not a response of the route
+      async (result, c) => {
+        await audit(result)
+        if (!result.success) {
+          return c.json({ message: 'invalid' }, 422)
+        }
+      }
+    )
+  })
+
+  it('Should accept an async hook that returns a Response for a route without content', () => {
+    const noContentRoute = createRoute({
+      method: 'post',
+      path: '/books',
+      request: {
+        body: { content: { 'application/json': { schema: BookSchema } } },
+      },
+      responses: {
+        204: { description: 'Created' },
+      },
+    })
+    new OpenAPIHono().openapi(
+      noContentRoute,
+      (c) => c.body(null, 204),
+      async (result) => {
+        await audit(result)
+        if (!result.success) {
+          return new Response('Bad Request', { status: 400 })
+        }
+      }
+    )
   })
 })
