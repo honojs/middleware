@@ -603,7 +603,10 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
       headers: { 'X-Forwarded-For': '[2001:db8::1]:4711' },
     })
     await app.request('http://localhost/foo')
-    const [first, second, third] = memoryExporter.getFinishedSpans()
+    await app.request('http://localhost/foo', {
+      headers: { 'X-Forwarded-For': '2001:db8::2' },
+    })
+    const [first, second, third, fourth] = memoryExporter.getFinishedSpans()
     assert.strictEqual(first.attributes[ATTR_URL_SCHEME], 'https')
     assert.strictEqual(first.attributes[ATTR_SERVER_ADDRESS], 'example.com')
     assert.strictEqual(first.attributes[ATTR_SERVER_PORT], 8443)
@@ -612,6 +615,7 @@ describe('OpenTelemetry middleware - Spans (combined)', () => {
     assert.strictEqual(second.attributes[ATTR_CLIENT_ADDRESS], '2001:db8::1')
     assert.strictEqual(third.attributes[ATTR_CLIENT_ADDRESS], undefined)
     assert.strictEqual(third.attributes[ATTR_USER_AGENT_ORIGINAL], undefined)
+    assert.strictEqual(fourth.attributes[ATTR_CLIENT_ADDRESS], '2001:db8::2')
   })
 
   it('Should provide request attributes at span creation for samplers', async () => {
