@@ -189,8 +189,8 @@ importers:
         specifier: ^8.5.0
         version: 8.18.1
       capnweb:
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: ^0.12.0
+        version: 0.12.0
       hono:
         specifier: ^4.11.5
         version: 4.12.28
@@ -3633,8 +3633,8 @@ packages:
   caniuse-lite@1.0.30001803:
     resolution: {integrity: sha512-g/uHREV2ZpK9qMalCsWaxmA6ol+DX8GYhuf3T40RKoP+oL7vhRJh8LNt73PCjpnR6l14FzfPrB5Yux4PKm2meg==}
 
-  capnweb@0.10.0:
-    resolution: {integrity: sha512-lQ2nlzaifkqBeNfs8RLErn7NZ8FNf3vn1W7J3nSH73edWG+0B5nHZGR51S2S9HMZEuZcEypOO469dZRY/BluFA==}
+  capnweb@0.12.0:
+    resolution: {integrity: sha512-jgZ/LMtMVTi+RVlooIslH78Gg23XbDTdvcLghWx3oz17D6u5GuJARt+uhZk/wcTo+f81eeabfnow4d3zLBj+JQ==}
 
   casbin@5.51.1:
     resolution: {integrity: sha512-90AzVZ39sCAeytW/mc5UyKnr3nfhTT2uf8Qu1YiRwGoEdtoMa4CL+fqDHHdsPrvbG6JWz7njvJCFb/NIrCMwWA==}
@@ -9227,7 +9227,7 @@ snapshots:
 
   caniuse-lite@1.0.30001803: {}
 
-  capnweb@0.10.0: {}
+  capnweb@0.12.0: {}
 
   casbin@5.51.1:
     dependencies:
