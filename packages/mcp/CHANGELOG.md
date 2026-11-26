@@ -1,5 +1,11 @@
 # @hono/mcp
 
+## 0.3.6
+
+### Patch Changes
+
+- [#2230](https://github.com/honojs/middleware/pull/2230) [`1eb71f6`](https://github.com/honojs/middleware/commit/1eb71f62c7b84a24037467ca47baf4dbd25bd793) Thanks [@Ethan-OwO](https://github.com/Ethan-OwO)! - Return 202 Accepted with no body for notification and response-only requests, as required by the Streamable HTTP spec
+
 ## 0.3.5
 
 ### Patch Changes

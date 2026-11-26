@@ -1,5 +1,11 @@
 # @hono/otel
 
+## 1.4.1
+
+### Patch Changes
+
+- [#2266](https://github.com/honojs/middleware/pull/2266) [`db007d2`](https://github.com/honojs/middleware/commit/db007d21d506147a1019830a885839204a3417f2) Thanks [@chdsbd](https://github.com/chdsbd)! - Report the instrumentation version on the meter and give `http.server.active_requests` the `{request}` unit.
+
 ## 1.4.0
 
 ### Minor Changes
