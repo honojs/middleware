@@ -1,5 +1,11 @@
 # @hono/ssg-plugins-essential
 
+## 0.1.1
+
+### Patch Changes
+
+- [#2254](https://github.com/honojs/middleware/pull/2254) [`dee7915`](https://github.com/honojs/middleware/commit/dee7915ad772594d8f83d9d536f999d5efc347e0) Thanks [@mmporong](https://github.com/mmporong)! - Keep the full name of pages such as `search-index.html` in sitemap and RSS URLs instead of treating them as `index.html`
+
 ## 0.1.0
 
 ### Minor Changes
