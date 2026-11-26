@@ -1,0 +1,651 @@
+# Valibot OpenAPI Hono
+
+[![codecov](https://codecov.io/github/honojs/middleware/graph/badge.svg?flag=valibot-openapi)](https://codecov.io/github/honojs/middleware)
+
+**Valibot OpenAPI Hono** is an extended Hono class that supports OpenAPI. With it, you can validate values and types using [**Valibot**](https://valibot.dev/) and generate OpenAPI Swagger documentation.
+
+_Note: This is not standalone middleware but is hosted on the monorepo "[github.com/honojs/middleware](https://github.com/honojs/middleware)"._
+
+## Usage
+
+### Installation
+
+You can install it via npm. It should be installed alongside `hono` and `valibot`.
+
+```sh
+npm i hono valibot @hono/valibot-openapi
+```
+
+### Basic Usage
+
+#### Setting up your application
+
+First, define your schemas with Valibot. The `v` object should be imported from `@hono/valibot-openapi`:
+
+```ts
+import { v } from '@hono/valibot-openapi'
+
+const ParamsSchema = v.object({
+  id: v.pipe(
+    v.string(),
+    v.minLength(3),
+    v.openapi({
+      param: {
+        name: 'id',
+        in: 'path',
+      },
+      example: '1212121',
+    })
+  ),
+})
+
+const UserSchema = v.pipe(
+  v.object({
+    id: v.pipe(
+      v.string(),
+      v.openapi({
+        example: '123',
+      })
+    ),
+    name: v.pipe(
+      v.string(),
+      v.openapi({
+        example: 'John Doe',
+      })
+    ),
+    age: v.pipe(
+      v.number(),
+      v.openapi({
+        example: 42,
+      })
+    ),
+  }),
+  v.openapi('User')
+)
+```
+
+> [!TIP]
+>
+> `UserSchema` schema will be registered as `"#/components/schemas/User"` refs in the OpenAPI document.
+> If you want to register the schema as referenced components, use `v.openapi('User')` in `v.pipe()`.
+
+Next, create a route:
+
+```ts
+import { createRoute } from '@hono/valibot-openapi'
+
+const route = createRoute({
+  method: 'get',
+  path: '/users/{id}',
+  request: {
+    params: ParamsSchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: UserSchema,
+        },
+      },
+      description: 'Retrieve the user',
+    },
+  },
+})
+```
+
+Finally, set up the app:
+
+```ts
+import { OpenAPIHono } from '@hono/valibot-openapi'
+
+const app = new OpenAPIHono()
+
+app.openapi(route, (c) => {
+  const { id } = c.req.valid('param')
+  return c.json(
+    {
+      id,
+      age: 20,
+      name: 'Ultra-man',
+    },
+    200 // You should specify the status code even if it is 200.
+  )
+})
+
+// The OpenAPI documentation will be available at /doc
+app.doc('/doc', {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+})
+```
+
+You can start your app just like you would with Hono. For Cloudflare Workers and Bun, use this entry point:
+
+```ts
+export default app
+```
+
+> [!IMPORTANT]
+> Request bodies are validated only for JSON and form media types with a Valibot schema. Other declared media types, such as `application/xml`, reach the handler without validation.
+>
+> On a route with such a validator, a request that sends a body must declare a matching `Content-Type`. A body with a missing or unsupported `Content-Type` is rejected with `415 Unsupported Media Type`.
+>
+> ```ts
+> import { createRoute, v, OpenAPIHono } from '@hono/valibot-openapi'
+>
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: v.object({
+>             title: v.string(),
+>           }),
+>         },
+>       },
+>     },
+>   },
+>   responses: {
+>     200: {
+>       description: 'Success message',
+>     },
+>   },
+> })
+>
+> const app = new OpenAPIHono()
+>
+> app.openapi(route, (c) => {
+>   const validatedBody = c.req.valid('json')
+>   return c.json(validatedBody)
+> })
+>
+> const res = await app.request('/books', {
+>   method: 'POST',
+>   body: JSON.stringify({ title: 'foo' }),
+>   // The Content-Type header is lacking.
+> })
+>
+> console.log(res.status) // 415
+> ```
+>
+> `request.body.required` controls whether the body may be absent. With the default `false`, a request with no body reaches the handler and `c.req.valid('json')` is `{}`. With `required: true`, an absent body fails validation with `400`.
+>
+> ```ts
+> const route = createRoute({
+>   method: 'post',
+>   path: '/books',
+>   request: {
+>     body: {
+>       content: {
+>         'application/json': {
+>           schema: v.object({
+>             title: v.string(),
+>           }),
+>         },
+>       },
+>       required: true, // <== add
+>     },
+>   },
+> })
+> ```
+
+### Handling Validation Errors
+
+Validation errors can be handled as follows:
+
+First, define the error schema:
+
+```ts
+const ErrorSchema = v.object({
+  code: v.pipe(
+    v.number(),
+    v.openapi({
+      example: 400,
+    })
+  ),
+  message: v.pipe(
+    v.string(),
+    v.openapi({
+      example: 'Bad Request',
+    })
+  ),
+})
+```
+
+Then, add the error response:
+
+```ts
+const route = createRoute({
+  method: 'get',
+  path: '/users/{id}',
+  request: {
+    params: ParamsSchema,
+  },
+  responses: {
+    400: {
+      content: {
+        'application/json': {
+          schema: ErrorSchema,
+        },
+      },
+      description: 'Returns an error',
+    },
+  },
+})
+```
+
+Finally, add the hook:
+
+```ts
+app.openapi(
+  route,
+  (c) => {
+    const { id } = c.req.valid('param')
+    return c.json(
+      {
+        id,
+        age: 20,
+        name: 'Ultra-man',
+      },
+      200
+    )
+  },
+  // Hook
+  (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          code: 400,
+          message: 'Validation Error',
+        },
+        400
+      )
+    }
+  }
+)
+```
+
+### A DRY approach to handling validation errors
+
+In the case that you have a common error formatter, you can initialize the `OpenAPIHono` instance with a `defaultHook`.
+
+```ts
+const app = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          ok: false,
+          errors: formatValibotErrors(result),
+          source: 'custom_error_handler',
+        },
+        422
+      )
+    }
+  },
+})
+```
+
+You can still override the `defaultHook` by providing the hook at the call site when appropriate.
+
+```ts
+// uses the defaultHook
+app.openapi(createPostRoute, (c) => {
+  const { title } = c.req.valid('json')
+  return c.json({ title })
+})
+
+// override the defaultHook by passing in a hook
+app.openapi(
+  createBookRoute,
+  (c) => {
+    const { title } = c.req.valid('json')
+    return c.json({ title }, 200)
+  },
+  (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          ok: false,
+          source: 'routeHook' as const,
+        },
+        400
+      )
+    }
+  }
+)
+```
+
+### OpenAPI v3.1
+
+You can generate OpenAPI v3.1 spec by setting the `openapi` version:
+
+```ts
+app.doc('/docs', { openapi: '3.1.0', info: { title: 'foo', version: '1' } }) // endpoint
+app.getOpenAPIDocument(
+  {
+    openapi: '3.1.0',
+    info: { title: 'foo', version: '1' },
+  }, // OpenAPI object config
+  {
+    unionPreferredType: 'oneOf',
+  } // Generator options
+) // schema object
+```
+
+The output follows the `openapi` field: `3.0.x`, `3.1.x` and `3.2.0` are supported. The second parameter is optional and accepts generator options (`unionPreferredType` and `sortComponents`).
+
+### The Registry
+
+You can access the `OpenAPIRegistry` object via `app.openAPIRegistry`:
+
+```ts
+const registry = app.openAPIRegistry
+```
+
+### Middleware
+
+Valibot OpenAPI Hono is an extension of Hono, so you can use Hono's middleware in the same way:
+
+```ts
+import { prettyJSON } from 'hono/pretty-json'
+
+//...
+
+app.use('/doc/*', prettyJSON())
+```
+
+### Configure middleware for each endpoint
+
+You can configure middleware for each endpoint from a route created by `createRoute` as follows.
+
+```ts
+import { prettyJSON } from 'hono/pretty-json'
+import { cache } from 'hono/cache'
+
+app.use(route.getRoutingPath(), prettyJSON(), cache({ cacheName: 'my-cache' }))
+app.openapi(route, handler)
+```
+
+Or you can use the `middleware` property in the route definition.
+
+```ts
+const route = createRoute({
+  method: 'get',
+  path: '/users/{id}',
+  request: {
+    params: ParamsSchema,
+  },
+  middleware: [prettyJSON(), cache({ cacheName: 'my-cache' })] as const, // Use `as const` to ensure TypeScript infers the middleware's Context.
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: UserSchema,
+        },
+      },
+      description: 'Retrieve the user',
+    },
+  },
+})
+```
+
+### RPC Mode
+
+Valibot OpenAPI Hono supports Hono's RPC mode. You can define types for the Hono Client as follows:
+
+```ts
+import { hc } from 'hono/client'
+
+const appRoutes = app.openapi(route, (c) => {
+  const data = c.req.valid('json')
+  return c.json(
+    {
+      id: data.id,
+      message: 'Success',
+    },
+    200
+  )
+})
+
+const client = hc<typeof appRoutes>('http://localhost:8787/')
+```
+
+#### Type-checking large RPC apps
+
+When an RPC app has many routes, register them on small `OpenAPIHono` instances and mount those apps with `.route()`.
+A long chain of `.openapi()` calls grows the schema type at each link.
+Type-checking can slow down when that app type is passed to `hc`.
+
+```ts
+const users = new OpenAPIHono().openapi(getUserRoute, getUserHandler)
+const posts = new OpenAPIHono().openapi(getPostRoute, getPostHandler)
+
+const appRoutes = new OpenAPIHono().route('/', users).route('/', posts)
+
+const client = hc<typeof appRoutes>('http://localhost:8787/')
+```
+
+Routing and OpenAPI output stay the same.
+TypeScript has less accumulated schema type work to do.
+
+### Batch Route Registration
+
+For better code organization and type safety, you can use `defineOpenAPIRoute` and `openapiRoutes` to register multiple routes at once.
+
+#### Using `defineOpenAPIRoute`
+
+`defineOpenAPIRoute` provides explicit type safety for route definitions:
+
+```ts
+import { OpenAPIHono, defineOpenAPIRoute, createRoute, v } from '@hono/valibot-openapi'
+
+const getUserRoute = defineOpenAPIRoute({
+  route: createRoute({
+    method: 'get',
+    path: '/users/{id}',
+    request: {
+      params: v.object({ id: v.string() }),
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: v.object({ id: v.string(), name: v.string() }),
+          },
+        },
+      },
+    },
+  }),
+  handler: (c) => {
+    const { id } = c.req.valid('param')
+    return c.json({ id, name: 'John Doe' }, 200)
+  },
+})
+```
+
+#### Using openapiRoutes for Batch Registration
+
+Register multiple routes at once with full type safety:
+
+```ts
+const app = new OpenAPIHono()
+
+// 'as const' is important for type inference
+app.openapiRoutes([getUserRoute, createUserRoute, updateUserRoute] as const)
+```
+
+#### Conditional Routes
+
+Use the addRoute flag to conditionally include routes:
+
+```ts
+const debugRoute = defineOpenAPIRoute({
+  route: createRoute({/* ... */}),
+  handler: (c) => {
+    /* ... */
+  },
+  addRoute: process.env.NODE_ENV === 'development', // Only in dev
+})
+```
+
+#### Modular Organization
+
+Organize routes across multiple files:
+
+```ts
+// routes/users.ts
+export const userRoutes = [getUserRoute, createUserRoute, updateUserRoute] as const
+
+// app.ts
+import { userRoutes } from './routes/users'
+import { postRoutes } from './routes/posts'
+
+app.openapiRoutes([...userRoutes, ...postRoutes] as const)
+```
+
+## Tips
+
+### Type utilities
+
+Methods like `get()`, `post()`, `use()`, etc. return `Hono` type instead of `OpenAPIHono`. This can cause issues when you need the `OpenAPIHono` type. Use the `$()` function to convert the instance back to `OpenAPIHono` type:
+
+```ts
+import { OpenAPIHono, $ } from '@hono/valibot-openapi'
+
+const app = $(new OpenAPIHono().use(middleware))
+app.openapi(route, handler)
+```
+
+You can also use the `HonoToOpenAPIHono` utility type to convert the return type at the type level:
+
+```ts
+import type { HonoToOpenAPIHono } from '@hono/valibot-openapi'
+
+const app = new OpenAPIHono()
+const result = app.get('/hello', (c) => c.json({ message: 'Hello' }))
+
+// `result` is Hono type, convert it to OpenAPIHono
+type MyApp = HonoToOpenAPIHono<typeof result>
+```
+
+### How to register components
+
+You can register components to the registry as follows:
+
+```ts
+app.openAPIRegistry.register('User', UserSchema)
+```
+
+### How to setup authorization
+
+You can setup authorization as follows:
+
+eg. Bearer Auth
+
+Register the security scheme:
+
+```ts
+app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
+  type: 'http',
+  scheme: 'bearer',
+})
+```
+
+And setup the security scheme for specific routes:
+
+```ts
+const route = createRoute({
+  // ...
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+})
+```
+
+### How to access context in app.doc
+
+You can access the context in `app.doc` as follows:
+
+```ts
+app.doc('/doc', (c) => ({
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'My API',
+  },
+  servers: [
+    {
+      url: new URL(c.req.url).origin,
+      description: 'Current environment',
+    },
+  ],
+}))
+```
+
+### How to exclude a specific route from OpenAPI docs
+
+You can use `hide` property as follows:
+
+```ts
+const route = createRoute({
+  // ...
+  hide: true,
+})
+```
+
+## Limitations
+
+### Combining with `Hono`
+
+Be careful when combining `OpenAPIHono` instances with plain `Hono` instances. `OpenAPIHono` will merge the definitions of direct subapps, but plain `Hono` knows nothing about the OpenAPI spec additions. Similarly `OpenAPIHono` will not "dig" for instances deep inside a branch of plain `Hono` instances.
+
+If you're migrating from plain `Hono` to `OpenAPIHono`, we recommend porting your top-level app, then working your way down the router tree.
+
+When using the `.route()` method to mount a child OpenAPIHono app that uses path parameters, you should use the Hono _:param_ syntax in the parent route path, rather than the OpenAPI _{param}_ syntax:
+
+```
+const bookActionsApp = new OpenAPIHono()
+...
+// ❌ Incorrect: This will not match the route
+app.route('/books/{bookId}', bookActionsApp)
+
+// ✅ Using Hono parameter syntax
+app.route('/books/:bookId', bookActionsApp)
+```
+
+### Header keys
+
+Header keys that you define in your schema must be in lowercase.
+
+```ts
+const HeadersSchema = v.object({
+  // Header keys must be in lowercase, `Authorization` is not allowed.
+  authorization: v.pipe(
+    v.string(),
+    v.openapi({
+      example: 'Bearer SECRET',
+    })
+  ),
+})
+```
+
+## References
+
+- [Hono](https://hono.dev/)
+- [Valibot](https://valibot.dev/)
+
+## Authors
+
+- Yusuke Wada <https://github.com/yusukebe>
+
+## License
+
+MIT
