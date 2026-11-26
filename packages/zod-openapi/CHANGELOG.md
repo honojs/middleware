@@ -1,5 +1,11 @@
 # @hono/zod-openapi
 
+## 1.6.4
+
+### Patch Changes
+
+- [#2276](https://github.com/honojs/middleware/pull/2276) [`32f50fa`](https://github.com/honojs/middleware/commit/32f50fa99d4dc42eaa8a5ef2fd87e6f1995f0cce) Thanks [@shivamlaur022](https://github.com/shivamlaur022)! - Allow an async validation hook to return nothing on success. The `hook` of `app.openapi()` and `defineOpenAPIRoute()` and the `RouteHook` type now accept a `Promise` that resolves to a response or `undefined`
+
 ## 1.6.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @hono/node-ws
 
+## 1.3.3
+
+### Patch Changes
+
+- [#2231](https://github.com/honojs/middleware/pull/2231) [`c931894`](https://github.com/honojs/middleware/commit/c931894aaed124aef3d641042201cd05d22fa49e) Thanks [@TonyTech404](https://github.com/TonyTech404)! - Fix `onError` never being called on Node.js versions without a global `ErrorEvent` (such as 18, 20, and 22), where it threw `ReferenceError: ErrorEvent is not defined`. A fallback is now used, like the existing one for `CloseEvent`.
+
 ## 1.3.2
 
 ### Patch Changes
