@@ -29,7 +29,7 @@ export const canonicalizeFilePath = (
   }
   const canonicalBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
   let url: string
-  if (relativePath.endsWith('index.html')) {
+  if (path.basename(relativePath) === 'index.html') {
     const dir = relativePath.slice(0, -'index.html'.length)
     url = new URL(dir, canonicalBaseUrl).toString()
   } else if (canonicalize && relativePath.endsWith('.html')) {
