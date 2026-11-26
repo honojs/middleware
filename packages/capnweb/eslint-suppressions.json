@@ -5,9 +5,6 @@
     },
     "@typescript-eslint/no-unsafe-argument": {
       "count": 2
-    },
-    "@typescript-eslint/unbound-method": {
-      "count": 1
     }
   },
   "src/index.ts": {
