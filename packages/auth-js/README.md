@@ -55,6 +55,36 @@ app.get('/api/protected', (c) => {
 export default app
 ```
 
+### Test GitHub sign-in locally or in CI
+
+You can test GitHub sign-in without creating a GitHub OAuth app. Install
+`@mockatoo/connect-authjs` and use its provider outside production; the real
+provider remains unchanged in production:
+
+```sh
+npm i @mockatoo/connect-authjs
+```
+
+```ts
+import { MockGitHub } from '@mockatoo/connect-authjs'
+
+// Keep the existing GitHub import and options from the example above.
+providers: [
+  c.env.NODE_ENV === 'production'
+    ? GitHub({
+        clientId: c.env.GITHUB_ID,
+        clientSecret: c.env.GITHUB_SECRET,
+      })
+    : MockGitHub(),
+]
+```
+
+`MockGitHub()` uses the GitHub mock of [Mockatoo](https://mockatoo.globalunderdog.com), a free hosted mock OAuth provider, and its shared test client. In a
+Playwright test, set `MOCKATOO_TEST_EMAIL` and `MOCKATOO_TEST_PASSWORD`, fill the
+**Email** and **Password** fields, click **Log in with password**, then click
+**Authorize** and assert that the session contains the user. Use `@auth/core`
+`0.37.1` or newer with this connector.
+
 React component
 
 ```tsx
