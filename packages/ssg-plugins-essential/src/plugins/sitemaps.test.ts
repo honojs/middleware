@@ -74,7 +74,10 @@ describe('Sitemap Plugin', () => {
       dir: 'dist',
     })
 
-    expect(mockFsModule.writeFile).toHaveBeenCalledWith('dist/sitemap.xml', expect.any(String))
+    expect(mockFsModule.writeFile).toHaveBeenCalledWith(
+      path.join('dist', 'sitemap.xml'),
+      expect.any(String)
+    )
   })
 
   it('should handle empty file list', async () => {

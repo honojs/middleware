@@ -231,4 +231,90 @@ describe('RSS Plugin', () => {
       /<item>\s*<title>Home &lt;b&gt;Page&lt;\/b&gt; &amp;amp; &lt;foo\/&gt;<\/title>\s*<link>https:\/\/example\.com\/danger<\/link>\s*<description>Description with &lt;bar&gt; &amp;amp; &lt;baz\/&gt;\.<\/description>\s*<\/item>/
     )
   })
+
+  it('should correctly match page metadata when non-HTML and ssgParams routes exist', async () => {
+    const { ssgParams } = await import('hono/ssg')
+    const app = new Hono()
+    app.get('/data.json', (c) => c.json({ ok: true }))
+    app.get('/', (c) =>
+      c.html(
+        '<html><head><title>Home</title><meta name="description" content="Home page"></head></html>'
+      )
+    )
+    app.get('/posts/:slug', ssgParams([{ slug: 'hello' }, { slug: 'world' }]), (c) => {
+      const slug = c.req.param('slug')
+      return c.html(
+        `<html><head><title>Post: ${slug}</title><meta name="description" content="About ${slug}"></head></html>`
+      )
+    })
+    app.get('/search-index', (c) =>
+      c.html(
+        '<html><head><title>Search</title><meta name="description" content="Search page"></head></html>'
+      )
+    )
+
+    const plugin = rssPlugin({
+      baseUrl: 'https://example.com',
+      feedTitle: 'Blog',
+      feedDescription: 'Updates',
+    })
+
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
+
+    const rssPath = path.join(DEFAULT_OUTPUT_DIR, 'rss.xml')
+    const rssContent = writtenFiles[rssPath]
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Home<\/title>\s*<link>https:\/\/example\.com\/<\/link>\s*<description>Home page<\/description>\s*<\/item>/
+    )
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Post: hello<\/title>\s*<link>https:\/\/example\.com\/posts\/hello<\/link>\s*<description>About hello<\/description>\s*<\/item>/
+    )
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Post: world<\/title>\s*<link>https:\/\/example\.com\/posts\/world<\/link>\s*<description>About world<\/description>\s*<\/item>/
+    )
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Search<\/title>\s*<link>https:\/\/example\.com\/search-index<\/link>\s*<description>Search page<\/description>\s*<\/item>/
+    )
+  })
+
+  it('should correctly match page metadata when disableSSG routes exist', async () => {
+    const { disableSSG, ssgParams } = await import('hono/ssg')
+    const app = new Hono()
+    app.get('/private', disableSSG(), (c) => c.text('private'))
+    app.get('/', (c) =>
+      c.html(
+        '<html><head><title>Home</title><meta name="description" content="Home page"></head></html>'
+      )
+    )
+    app.get('/posts/:slug', ssgParams([{ slug: 'hello' }]), (c) => {
+      const slug = c.req.param('slug')
+      return c.html(
+        `<html><head><title>Post: ${slug}</title><meta name="description" content="About ${slug}"></head></html>`
+      )
+    })
+
+    const plugin = rssPlugin({
+      baseUrl: 'https://example.com',
+      feedTitle: 'Blog',
+      feedDescription: 'Updates',
+    })
+
+    await toSSG(app, mockFsModule, {
+      plugins: [plugin],
+      dir: DEFAULT_OUTPUT_DIR,
+    })
+
+    const rssPath = path.join(DEFAULT_OUTPUT_DIR, 'rss.xml')
+    const rssContent = writtenFiles[rssPath]
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Home<\/title>\s*<link>https:\/\/example\.com\/<\/link>\s*<description>Home page<\/description>\s*<\/item>/
+    )
+    expect(rssContent).toMatch(
+      /<item>\s*<title>Post: hello<\/title>\s*<link>https:\/\/example\.com\/posts\/hello<\/link>\s*<description>About hello<\/description>\s*<\/item>/
+    )
+    expect(rssContent).not.toContain('private')
+  })
 })
