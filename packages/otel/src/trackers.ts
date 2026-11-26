@@ -1,15 +1,16 @@
 import { metrics, ValueType } from '@opentelemetry/api'
 import type { Attributes } from '@opentelemetry/api'
-import {
-  METRIC_HTTP_SERVER_ACTIVE_REQUESTS,
-  METRIC_HTTP_SERVER_REQUEST_DURATION,
-} from '@opentelemetry/semantic-conventions/incubating'
+import { METRIC_HTTP_SERVER_REQUEST_DURATION } from '@opentelemetry/semantic-conventions'
+import { METRIC_HTTP_SERVER_ACTIVE_REQUESTS } from '@opentelemetry/semantic-conventions/incubating'
 import { INSTRUMENTATION_SCOPE } from './consts'
 import type { NormalizedHttpInstrumentationConfig } from './types'
 
 // Helper to select the appropriate meter (prefer explicit provider if supplied)
 const getMeter = (config: NormalizedHttpInstrumentationConfig) =>
-  (config.meterProvider ?? metrics.getMeterProvider()).getMeter(INSTRUMENTATION_SCOPE.name)
+  (config.meterProvider ?? metrics.getMeterProvider()).getMeter(
+    INSTRUMENTATION_SCOPE.name,
+    INSTRUMENTATION_SCOPE.version
+  )
 
 export const createRequestDurationTracker = (
   config: NormalizedHttpInstrumentationConfig
@@ -39,6 +40,7 @@ export const createActiveRequestsTracker = (
 } => {
   const counter = getMeter(config).createUpDownCounter(METRIC_HTTP_SERVER_ACTIVE_REQUESTS, {
     description: 'Number of active (in-flight) HTTP server requests',
+    unit: '{request}',
     valueType: ValueType.DOUBLE,
   })
   return {
