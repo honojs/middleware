@@ -1,5 +1,11 @@
 # @hono/swagger-ui
 
+## 0.6.3
+
+### Patch Changes
+
+- [#2241](https://github.com/honojs/middleware/pull/2241) [`b7c9c4e`](https://github.com/honojs/middleware/commit/b7c9c4e9f9840fc6c59cd8047cff6e94bad24d81) Thanks [@pedrorubinger](https://github.com/pedrorubinger)! - Load the standalone preset when `urls` is set so the first definition loads and can be switched from the top bar
+
 ## 0.6.2
 
 ### Patch Changes
