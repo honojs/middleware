@@ -63,10 +63,15 @@ This function will be called with the `HonoContext` object as an argument, and s
 
 Be mindful that span names are actually defined by OpenTelemetry semantic conventions, and carry expactations about the format of the name.
 
+### sensitiveQueryParameters
+
+`sensitiveQueryParameters: string[]`
+The values of these query parameters are replaced with `REDACTED` in the `url.full` and `url.query` span attributes. The default is `X-Amz-Signature`, `X-Amz-Credential`, `X-Amz-Security-Token`, `AWSAccessKeyId`, `Signature`, `sig` and `X-Goog-Signature`; a list you pass replaces it, and an empty list turns redaction off.
+
 ### getUrlFull
 
 `getUrlFull: (c: HonoContext) => string | undefined`
-By default the `url.full` span attribute carries the complete request URL, including the query string. If your URLs can carry one-time tokens or other values that must not reach your tracing backend, pass a `getUrlFull` function and return a redacted form, for example the origin and path only:
+Returns the URL to report instead of the request URL. `url.full`, `url.path` and `url.query` all come from it. Use it when your URLs can carry one-time tokens or other values that must not reach your tracing backend, for example to keep only the origin and path:
 
 ```ts
 httpInstrumentationMiddleware({
@@ -77,7 +82,7 @@ httpInstrumentationMiddleware({
 })
 ```
 
-The function runs when the span starts, before routing. Returning `undefined` or an empty string, or throwing, falls back to the full request URL.
+Credentials and the query parameters in `sensitiveQueryParameters` are still redacted afterwards. Return an absolute URL: anything else is reported as `url.full` only, with no `url.path` or `url.query`. The function runs when the span starts, before routing. Return `undefined` or an empty string, or throw, to use the request URL.
 
 ## Usage on Cloudflare Workers
 
