@@ -84,6 +84,8 @@ app.post('/dataset1/test', (c) => c.text('dataset1 test')) // Only alice can acc
 By using `jwtAuthorizer`, you can perform authorization control after JWT authentication.
 By default, `jwtAuthorizer` uses the `sub` in the JWT payload as the username.
 
+`jwtAuthorizer` uses only the payload that the JWT middleware of `hono/jwt` has verified. Put `jwt()` before `casbin()`. Without it, `jwtAuthorizer` denies the request.
+
 ```ts
 import { Hono } from 'hono'
 import { jwt } from 'hono/jwt'
