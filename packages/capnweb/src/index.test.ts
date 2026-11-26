@@ -1,9 +1,8 @@
-import { serve } from '@hono/node-server'
-import type { ServerType } from '@hono/node-server'
-import { createNodeWebSocket } from '@hono/node-ws'
+import { serve, upgradeWebSocket } from '@hono/node-server'
+import type { ServerType, WebSocketServerLike } from '@hono/node-server'
 import { RpcTarget, newWebSocketRpcSession } from 'capnweb'
 import { Hono } from 'hono'
-import { WebSocket } from 'ws'
+import { WebSocket, WebSocketServer } from 'ws'
 import { newRpcResponse } from './index'
 
 class MyApiServer extends RpcTarget {
@@ -20,13 +19,9 @@ describe("Cap'n Web middleware - Node.js", () => {
   let app: Hono
   let server: ServerType
   let port: number
-  let upgradeWebSocket: ReturnType<typeof createNodeWebSocket>['upgradeWebSocket']
 
   beforeEach(async () => {
     app = new Hono()
-
-    const { injectWebSocket, upgradeWebSocket: upgrade } = createNodeWebSocket({ app })
-    upgradeWebSocket = upgrade
 
     app.all('/api', (c) => {
       return newRpcResponse(c, new MyApiServer(), { upgradeWebSocket })
@@ -37,12 +32,19 @@ describe("Cap'n Web middleware - Node.js", () => {
     })
 
     server = await new Promise<ServerType>((resolve) => {
-      const srv = serve({ fetch: app.fetch, port: 0 }, () => {
-        resolve(srv)
-      })
+      const srv = serve(
+        {
+          fetch: app.fetch,
+          port: 0,
+          websocket: {
+            server: new WebSocketServer({ noServer: true }) as unknown as WebSocketServerLike,
+          },
+        },
+        () => {
+          resolve(srv)
+        }
+      )
     })
-
-    injectWebSocket(server)
     const address = server.address()
     port = typeof address === 'object' && address ? address.port : 0
   })

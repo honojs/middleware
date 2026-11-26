@@ -50,15 +50,13 @@ export default app
 ### Node.js
 
 ```ts
-import { serve } from '@hono/node-server'
-import { createNodeWebSocket } from '@hono/node-ws'
+import { serve, upgradeWebSocket } from '@hono/node-server'
+import { WebSocketServer } from 'ws'
 import { Hono } from 'hono'
 import { newRpcResponse } from '@hono/capnweb'
 import { MyApiServer } from './my-api-server'
 
 const app = new Hono()
-
-const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app })
 
 app.all('/api', (c) => {
   return newRpcResponse(c, new MyApiServer(), {
@@ -66,12 +64,11 @@ app.all('/api', (c) => {
   })
 })
 
-const server = serve({
+serve({
   port: 8787,
   fetch: app.fetch,
+  websocket: { server: new WebSocketServer({ noServer: true }) },
 })
-
-injectWebSocket(server)
 ```
 
 ### Deno

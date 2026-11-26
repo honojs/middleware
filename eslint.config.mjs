@@ -2,15 +2,7 @@ import baseConfig from '@hono/eslint-config'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig(
-  globalIgnores([
-    '.yarn',
-    '**/coverage',
-    '**/dist',
-    '**/.cache',
-    '**/.turbo',
-    '**/sandbox',
-    'packages/node-ws',
-  ]),
+  globalIgnores(['.yarn', '**/coverage', '**/dist', '**/.cache', '**/.turbo', '**/sandbox']),
   {
     extends: baseConfig,
 

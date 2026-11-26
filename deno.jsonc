@@ -21,7 +21,6 @@
     "packages/hello",
     "packages/mcp",
     // "packages/medley-router",
-    // "packages/node-ws",
     // "packages/oauth-providers",
     // "packages/oidc-auth",
     "packages/otel",
