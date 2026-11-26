@@ -1,5 +1,11 @@
 # @hono/arktype-validator
 
+## 2.0.2
+
+### Patch Changes
+
+- [#2265](https://github.com/honojs/middleware/pull/2265) [`c8dd59d`](https://github.com/honojs/middleware/commit/c8dd59dd2c324dabc3e633310a6b616fcd422449) Thanks [@ssalbdivad](https://github.com/ssalbdivad)! - Support ArkType 3: an invalid `header` responds 400 instead of throwing `out.map is not a function`
+
 ## 2.0.1
 
 ### Patch Changes
