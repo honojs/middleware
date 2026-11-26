@@ -1,5 +1,11 @@
 # @hono/cloudflare-access
 
+## 0.4.1
+
+### Patch Changes
+
+- [#2261](https://github.com/honojs/middleware/pull/2261) [`fad31de`](https://github.com/honojs/middleware/commit/fad31de4b6a2c9c87df0e92d5c7a128b86f5dcc6) Thanks [@thangldw](https://github.com/thangldw)! - fix(cloudflare-access): reject tokens whose `kid` matches an `Object.prototype` property with 401 instead of an unhandled error
+
 ## 0.4.0
 
 ### Minor Changes
