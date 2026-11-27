@@ -158,6 +158,63 @@ Now, error messages are grouped by field as arrays under the `fieldErrors` prope
 }
 ```
 
+## Problem Details
+
+To respond with an [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details body instead, pass `problemDetailsHook()` to `sValidator`:
+
+```ts
+import * as z from 'zod'
+import { problemDetailsHook, sValidator } from '@hono/standard-validator'
+
+const schema = z.object({
+  name: z.string().min(1),
+  'owner/id': z.string(),
+  tags: z.array(z.string()),
+})
+
+app.post('/pets', sValidator('json', schema, problemDetailsHook()), (c) =>
+  c.json(c.req.valid('json'), 201)
+)
+```
+
+A request with `{ "name": "", "owner/id": 5, "tags": ["indoor", 1] }` then gets a `400` response with `Content-Type: application/problem+json`:
+
+```json
+{
+  "type": "about:blank",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "The request did not pass validation.",
+  "errors": [
+    { "detail": "Too small: expected string to have >=1 characters", "pointer": "/name" },
+    { "detail": "Invalid input: expected string, received number", "pointer": "/owner~1id" },
+    { "detail": "Invalid input: expected string, received number", "pointer": "/tags/1" }
+  ]
+}
+```
+
+Each `pointer` is a [JSON Pointer (RFC 6901)](https://www.rfc-editor.org/rfc/rfc6901) into the validated target, so for `form`, `header`, `param` and `query` it points into the parsed values rather than the raw request. An issue without a path points to the whole target (`""`), and one whose path has a key a JSON document can't have, like a symbol, has no `pointer`.
+
+To build the response yourself, for example to add an `instance` member, use `problemDetails` inside a hook:
+
+```ts
+import { problemDetails, sValidator } from '@hono/standard-validator'
+
+app.post(
+  '/pets',
+  sValidator('json', schema, (result, c) => {
+    if (!result.success) {
+      return c.json({ ...problemDetails(result.error), instance: c.req.path }, 400, {
+        'Content-Type': 'application/problem+json',
+      })
+    }
+  }),
+  (c) => {
+    // ...
+  }
+)
+```
+
 ## Author
 
 Rokas Muningis <https://github.com/muningis>

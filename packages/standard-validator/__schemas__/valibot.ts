@@ -1,4 +1,5 @@
 import {
+  array,
   object,
   string,
   number,
@@ -12,6 +13,7 @@ import {
   minLength,
   regex,
   trim,
+  union,
 } from 'valibot'
 
 const personJSONSchema = object({
@@ -55,13 +57,35 @@ const userSchema = strictObject({
   password: pipe(string(), trim(), minLength(4, 'Password must be at least 4 characters long')),
 })
 
+const petSchema = object({
+  name: pipe(string(), minLength(1)),
+  'owner/id': string(),
+  tags: array(string()),
+})
+
+const petIdSchema = object({
+  id: union([string(), number()]),
+})
+
+const tagsQuerySchema = object({
+  tags: array(pipe(string(), minLength(2))),
+})
+
+const ownerFormSchema = object({
+  'owner/id': pipe(string(), minLength(2)),
+})
+
 export {
   headerSchema,
   idJSONSchema,
+  ownerFormSchema,
   personJSONSchema,
+  petIdSchema,
+  petSchema,
   postJSONSchema,
   queryNameSchema,
   queryPaginationSchema,
   querySortSchema,
+  tagsQuerySchema,
   userSchema,
 }
