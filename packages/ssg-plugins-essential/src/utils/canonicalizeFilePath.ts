@@ -19,7 +19,7 @@ export const canonicalizeFilePath = (
   const posixOutputDir = outputDir.replace(/\\/g, '/')
   const outputDirCanonical = path.posix.resolve(path.posix.normalize(posixOutputDir))
   const filePathResolved = path.posix.resolve(path.posix.normalize(posixFilePath))
-  const relativePath = path.relative(outputDirCanonical, filePathResolved)
+  const relativePath = path.posix.relative(outputDirCanonical, filePathResolved)
 
   let routePath = '/' + relativePath
   if (routePath.endsWith('/index.html')) {

@@ -95,7 +95,10 @@ describe('robots.txt Plugin', () => {
       plugins: [plugin],
       dir: 'dist',
     })
-    expect(mockFsModule.writeFile).toHaveBeenCalledWith('dist/robots.txt', expect.any(String))
+    expect(mockFsModule.writeFile).toHaveBeenCalledWith(
+      path.join('dist', 'robots.txt'),
+      expect.any(String)
+    )
   })
 
   it('should include extraLines for each user-agent rule', async () => {
