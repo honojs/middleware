@@ -1,4 +1,5 @@
 export { googleAuth } from './googleAuth'
+export { refreshToken } from './refreshToken'
 export { revokeToken } from './revokeToken'
 export * from './types'
 import type { OAuthVariables } from '../../types'

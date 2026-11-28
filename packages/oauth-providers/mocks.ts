@@ -33,7 +33,17 @@ export const handlers = [
     async ({
       request,
     }): Promise<StrictResponse<Partial<GoogleTokenResponse> | GoogleErrorResponse>> => {
-      const body = (await request.json()) as Promise<DefaultBodyType> & { code: string }
+      const body = (await request.json()) as Promise<DefaultBodyType> & {
+        code: string
+        grant_type: string
+        refresh_token: string
+      }
+      if (body.grant_type === 'refresh_token') {
+        if (body.refresh_token === dummyToken.refresh_token) {
+          return HttpResponse.json(googleRefreshToken)
+        }
+        return HttpResponse.json(googleRefreshTokenError)
+      }
       if (body.code === dummyCode) {
         return HttpResponse.json(dummyToken)
       }
@@ -297,6 +307,21 @@ export const googleCodeError = {
     error: 'code_invalid',
   },
   error_description: 'Invalid code.',
+}
+export const googleRefreshToken = {
+  access_token: 'ya29.a0AfH6SMC-new-access-token',
+  expires_in: 3599,
+  scope: 'openid email profile',
+  token_type: 'Bearer',
+  id_token: 'eyJhbGciOiJSUzI1NiJ9.dummy-id-token',
+}
+export const googleRefreshTokenError = {
+  error: {
+    code: 400,
+    message: 'Token has been expired or revoked.',
+    status: '400',
+  },
+  error_description: 'Token has been expired or revoked.',
 }
 export const googleTokenError = {
   error: {

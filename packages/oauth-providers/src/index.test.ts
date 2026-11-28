@@ -14,6 +14,8 @@ import {
   githubToken,
   githubUser,
   googleCodeError,
+  googleRefreshToken,
+  googleRefreshTokenError,
   googleUser,
   handlers,
   linkedInCodeError,
@@ -54,7 +56,7 @@ import { facebookAuth } from './providers/facebook'
 import type { FacebookUser } from './providers/facebook'
 import { githubAuth } from './providers/github'
 import type { GitHubUser } from './providers/github'
-import { googleAuth } from './providers/google'
+import { googleAuth, refreshToken as googleRefresh } from './providers/google'
 import type { GoogleUser } from './providers/google'
 import { linkedinAuth } from './providers/linkedin'
 import type { LinkedInUser } from './providers/linkedin'
@@ -122,6 +124,37 @@ describe('OAuth Middleware', () => {
       grantedScopes,
       refreshToken,
     })
+  })
+  app.use(
+    '/google-offline',
+    googleAuth({
+      client_id,
+      client_secret,
+      scope: ['openid', 'email', 'profile'],
+      access_type: 'offline',
+      prompt: 'consent',
+    })
+  )
+  app.get('/google-offline', (c) => {
+    const token = c.get('token')
+    const refreshToken = c.get('refresh-token')
+
+    return c.json({
+      token,
+      refreshToken,
+    })
+  })
+  app.get('/google/refresh', async (c) => {
+    const response = await googleRefresh(client_id, client_secret, dummyToken.refresh_token)
+    return c.json(response)
+  })
+  app.get('/google/refresh/error', async (c) => {
+    const response = await googleRefresh(client_id, client_secret, 'wrong-refresh-token')
+    return c.json(response)
+  })
+  app.get('/google/refresh/missing', async (c) => {
+    const response = await googleRefresh(client_id, client_secret, '')
+    return c.json(response)
   })
 
   // Facebook
@@ -659,6 +692,53 @@ describe('OAuth Middleware', () => {
       expect(response.refreshToken).toEqual({
         token: dummyToken.refresh_token,
         expires_in: dummyToken.refresh_token_expires_in,
+      })
+    })
+
+    it('Should return the refresh token when access_type is offline', async () => {
+      const res = await app.request(`/google-offline?code=${dummyCode}&state=valid-state`, {
+        headers: { cookie: 'state=valid-state' },
+      })
+      const response = (await res.json()) as {
+        token: Token
+        refreshToken: Token
+      }
+
+      expect(res).not.toBeNull()
+      expect(res.status).toBe(200)
+      expect(response.token).toEqual({
+        token: dummyToken.access_token,
+        expires_in: dummyToken.expires_in,
+      })
+      expect(response.refreshToken).toEqual({
+        token: dummyToken.refresh_token,
+        expires_in: dummyToken.refresh_token_expires_in,
+      })
+    })
+
+    describe('Refresh Token', () => {
+      it('Should refresh token', async () => {
+        const res = await app.request('/google/refresh')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(200)
+        expect(await res.json()).toEqual(googleRefreshToken)
+      })
+
+      it('Should return error for refresh', async () => {
+        const res = await app.request('/google/refresh/error')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe(googleRefreshTokenError.error_description)
+      })
+
+      it('Should return error when the refresh token is missing', async () => {
+        const res = await app.request('/google/refresh/missing')
+
+        expect(res).not.toBeNull()
+        expect(res.status).toBe(400)
+        expect(await res.text()).toBe('Refresh token not found')
       })
     })
   })
