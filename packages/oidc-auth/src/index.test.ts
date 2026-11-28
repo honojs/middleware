@@ -852,3 +852,90 @@ describe('initOidcAuthMiddleware()', () => {
     expect(client?.client_secret).toBe(CUSTOM_OIDC_CLIENT_SECRET)
   })
 })
+describe('Discovery document cache', () => {
+  // Each test uses its own issuer so the module-level cache cannot leak between tests.
+  let issuerCount = 0
+  const nextIssuer = () => `https://cache-test-${++issuerCount}.example.com/`
+  const discoveryRequest = vi.mocked(oauth2.discoveryRequest)
+  const echoIssuer = (issuer: URL) =>
+    Promise.resolve(
+      new Response(
+        JSON.stringify({
+          issuer: issuer.href,
+          authorization_endpoint: `${issuer.href}auth`,
+          token_endpoint: `${issuer.href}token`,
+          scopes_supported: ['openid'],
+        })
+      )
+    )
+  const appFor = (config: Partial<Parameters<typeof initOidcAuthMiddleware>[0]>) => {
+    const app = new Hono()
+    app.use(initOidcAuthMiddleware(config))
+    app.use('/*', oidcAuthMiddleware())
+    app.get('/*', (c) => c.text('OK'))
+    return app
+  }
+  const discoveryCallsFor = (issuer: string) =>
+    discoveryRequest.mock.calls.filter(([url]) => url.href === issuer).length
+
+  beforeEach(() => {
+    discoveryRequest.mockImplementation(echoIssuer)
+  })
+
+  test('Should fetch the discovery document once across separate requests', async () => {
+    const OIDC_ISSUER = nextIssuer()
+    const app = appFor({ OIDC_ISSUER })
+    for (let i = 0; i < 3; i++) {
+      const res = await app.request('http://localhost/')
+      expect(res.status).toBe(302)
+      expect(res.headers.get('location')).toMatch(new RegExp(`^${OIDC_ISSUER}auth`))
+    }
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(1)
+  })
+  test('Should share one fetch between concurrent requests', async () => {
+    const OIDC_ISSUER = nextIssuer()
+    const app = appFor({ OIDC_ISSUER })
+    const responses = await Promise.all(
+      [1, 2, 3].map(async () => await app.request('http://localhost/'))
+    )
+    expect(responses.map((res) => res.status)).toEqual([302, 302, 302])
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(1)
+  })
+  test('Should cache each issuer separately', async () => {
+    const issuerA = nextIssuer()
+    const issuerB = nextIssuer()
+    await appFor({ OIDC_ISSUER: issuerA }).request('http://localhost/')
+    const res = await appFor({ OIDC_ISSUER: issuerB }).request('http://localhost/')
+    expect(res.headers.get('location')).toMatch(new RegExp(`^${issuerB}auth`))
+    expect(discoveryCallsFor(issuerA)).toBe(1)
+    expect(discoveryCallsFor(issuerB)).toBe(1)
+  })
+  test('Should not cache a failed discovery request', async () => {
+    const OIDC_ISSUER = nextIssuer()
+    const app = appFor({ OIDC_ISSUER })
+    discoveryRequest.mockRejectedValueOnce(new Error('IdP unavailable'))
+    expect((await app.request('http://localhost/')).status).toBe(500)
+    expect((await app.request('http://localhost/')).status).toBe(302)
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(2)
+  })
+  test('Should fetch again once OIDC_DISCOVERY_CACHE_TTL has passed', async () => {
+    const OIDC_ISSUER = nextIssuer()
+    const app = appFor({ OIDC_ISSUER, OIDC_DISCOVERY_CACHE_TTL: '60' })
+    const now = Date.now()
+    const dateNow = vi.spyOn(Date, 'now').mockReturnValue(now)
+    await app.request('http://localhost/')
+    dateNow.mockReturnValue(now + 59 * 1000)
+    await app.request('http://localhost/')
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(1)
+    dateNow.mockReturnValue(now + 61 * 1000)
+    await app.request('http://localhost/')
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(2)
+  })
+  test('Should not cache when OIDC_DISCOVERY_CACHE_TTL is 0', async () => {
+    const OIDC_ISSUER = nextIssuer()
+    const app = appFor({ OIDC_ISSUER, OIDC_DISCOVERY_CACHE_TTL: '0' })
+    await app.request('http://localhost/')
+    await app.request('http://localhost/')
+    expect(discoveryCallsFor(OIDC_ISSUER)).toBe(2)
+  })
+})

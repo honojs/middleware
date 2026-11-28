@@ -58,6 +58,7 @@ const defaultOidcAuthCookiePath = '/'
 const defaultOidcAuthCookieName = 'oidc-auth'
 const defaultRefreshInterval = 15 * 60 // 15 minutes
 const defaultExpirationInterval = 60 * 60 * 24 // 1 day
+const defaultDiscoveryCacheTtl = 60 * 60 // 1 hour
 
 export type OidcAuth = {
   rtk: string // refresh token
@@ -80,6 +81,7 @@ export type OidcAuthEnv = {
   OIDC_AUDIENCE?: string
   OIDC_AUTH_EXTERNAL_URL?: string
   OIDC_JWT_ALG?: SignatureAlgorithm
+  OIDC_DISCOVERY_CACHE_TTL?: string
 }
 
 /**
@@ -118,6 +120,7 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
     OIDC_AUDIENCE: config?.OIDC_AUDIENCE ?? ev.OIDC_AUDIENCE,
     OIDC_AUTH_EXTERNAL_URL: config?.OIDC_AUTH_EXTERNAL_URL ?? ev.OIDC_AUTH_EXTERNAL_URL,
     OIDC_JWT_ALG: config?.OIDC_JWT_ALG ?? ev.OIDC_JWT_ALG,
+    OIDC_DISCOVERY_CACHE_TTL: config?.OIDC_DISCOVERY_CACHE_TTL ?? ev.OIDC_DISCOVERY_CACHE_TTL,
   }
   if (oidcAuthEnv.OIDC_AUTH_SECRET === undefined) {
     throw new HTTPException(500, { message: 'Session secret is not provided' })
@@ -162,6 +165,8 @@ const setOidcAuthEnv = (c: Context, config?: Partial<OidcAuthEnv>) => {
   oidcAuthEnv.OIDC_AUTH_EXPIRES = oidcAuthEnv.OIDC_AUTH_EXPIRES ?? `${defaultExpirationInterval}`
   oidcAuthEnv.OIDC_SCOPES = oidcAuthEnv.OIDC_SCOPES ?? ''
   oidcAuthEnv.OIDC_JWT_ALG = oidcAuthEnv.OIDC_JWT_ALG ?? 'HS256'
+  oidcAuthEnv.OIDC_DISCOVERY_CACHE_TTL =
+    oidcAuthEnv.OIDC_DISCOVERY_CACHE_TTL ?? `${defaultDiscoveryCacheTtl}`
   c.set('oidcAuthEnv', oidcAuthEnv)
 }
 
@@ -178,16 +183,49 @@ const getOidcAuthEnv = (c: Context) => {
 }
 
 /**
+ * Discovery documents shared across requests, keyed by issuer so that apps serving
+ * several issuers keep them apart. The in-flight promise is stored, so concurrent
+ * requests share one fetch.
+ */
+const discoveryCache = new Map<
+  string,
+  { promise: Promise<oauth2.AuthorizationServer>; expires: number }
+>()
+
+const discover = async (issuer: URL): Promise<oauth2.AuthorizationServer> => {
+  const response = await oauth2.discoveryRequest(issuer)
+  return oauth2.processDiscoveryResponse(issuer, response)
+}
+
+/**
  * Returns the OAuth2 authorization server metadata.
  * If the metadata is not cached, it will be retrieved from the discovery endpoint.
+ * The result is reused across requests for OIDC_DISCOVERY_CACHE_TTL seconds.
  */
 export const getAuthorizationServer = async (c: Context): Promise<oauth2.AuthorizationServer> => {
   const env = getOidcAuthEnv(c)
   let as = c.get('oidcAuthorizationServer')
   if (as === undefined) {
     const issuer = new URL(env.OIDC_ISSUER)
-    const response = await oauth2.discoveryRequest(issuer)
-    as = await oauth2.processDiscoveryResponse(issuer, response)
+    const ttl = Number(env.OIDC_DISCOVERY_CACHE_TTL)
+    if (ttl > 0) {
+      const now = Date.now()
+      let entry = discoveryCache.get(issuer.href)
+      if (entry === undefined || entry.expires <= now) {
+        const promise = discover(issuer)
+        entry = { promise, expires: now + ttl * 1000 }
+        discoveryCache.set(issuer.href, entry)
+        // A failed fetch is not cached, so the next request tries again.
+        promise.catch(() => {
+          if (discoveryCache.get(issuer.href)?.promise === promise) {
+            discoveryCache.delete(issuer.href)
+          }
+        })
+      }
+      as = await entry.promise
+    } else {
+      as = await discover(issuer)
+    }
     c.set('oidcAuthorizationServer', as)
   }
   return as
